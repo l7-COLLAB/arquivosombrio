@@ -29,7 +29,7 @@ const casosArquivo = [
 
         status: "NÃO SOLUCIONADO",
 
-        imagem: "imagens/mistério/dyatlov.jpg",
+        imagem: "imagens/misterio/dyatlov.jpg",
 
         resumo:
             "Nove caminhantes experientes morreram durante uma expedição nas montanhas dos Urais sob circunstâncias que durante décadas alimentaram inúmeras teorias.",
