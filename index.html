@@ -1111,41 +1111,55 @@
             </p>
 
 
-            <form id="form-admin-login">
+          <form id="form-admin-login">
 
-                <div class="form-row">
+    <div class="form-row">
 
-                    <label for="admin-pass">
-                        CREDENCIAL
-                    </label>
+        <label for="admin-email">
+            E-MAIL ADMINISTRATIVO
+        </label>
 
-                    <input
-                        type="password"
-                        id="admin-pass"
-                        placeholder="Código de acesso"
-                        autocomplete="current-password"
-                        required
-                    >
+        <input
+            type="email"
+            id="admin-email"
+            placeholder="Digite seu e-mail"
+            autocomplete="username"
+            required
+        >
 
-                </div>
+    </div>
 
+    <div class="form-row">
 
-                <button
-                    type="submit"
-                    class="btn-primary btn-form"
-                >
-                    <i class="fa-solid fa-unlock-keyhole"></i>
-                    Acessar Painel
-                </button>
+        <label for="admin-pass">
+            SENHA
+        </label>
 
+        <input
+            type="password"
+            id="admin-pass"
+            placeholder="Digite sua senha"
+            autocomplete="current-password"
+            required
+        >
 
-                <p
-                    class="form-message error-message"
-                    id="admin-login-erro"
-                    aria-live="polite"
-                ></p>
+    </div>
 
-            </form>
+    <button
+        type="submit"
+        class="btn-primary btn-form"
+    >
+        <i class="fa-solid fa-unlock-keyhole"></i>
+        Acessar Painel
+    </button>
+
+    <p
+        id="admin-login-erro"
+        class="form-message error-message"
+        aria-live="polite"
+    ></p>
+
+</form>
 
         </div>
 
