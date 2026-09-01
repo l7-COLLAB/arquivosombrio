@@ -113,7 +113,7 @@ teorias: [
 
         status: "CASO HISTÓRICO",
 
-        imagem: "imagens/mistério/somerton.jpg",
+        imagem: "imagens/misterio/somerton.jpg",
 
         resumo:
             "Um homem foi encontrado morto na praia de Somerton, dando origem a uma das investigações de identidade mais intrigantes da Austrália.",
