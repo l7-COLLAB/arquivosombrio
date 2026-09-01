@@ -21,7 +21,7 @@ const CONFIG = {
      *
      * Posteriormente podemos migrar o painel para autenticação real.
      */
-    ADMIN_PASSWORD: "1234"
+    ADMIN_PASSWORD: "052448"
 };
 
 
