@@ -5,6 +5,24 @@
 
 "use strict";
 
+
+/* ==========================================================================
+   SUPABASE
+   ========================================================================== */
+
+const SUPABASE_URL =
+    "https://iuhotznurbyujzbyhizf.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj";
+
+const SUPABASE_SDK_URL =
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
+let clienteSupabase = null;
+let promessaSupabaseSDK = null;
+
+
 /* ==========================================================================
    CONFIGURAÇÕES
    ========================================================================== */
@@ -13,15 +31,7 @@ const CONFIG = {
     STORAGE_CASOS: "arquivo_sombrio_casos",
     STORAGE_LIVROS: "arquivo_sombrio_livros",
     STORAGE_COMENTARIOS: "arquivo_sombrio_comentarios",
-    STORAGE_SUGESTOES: "arquivo_sombrio_sugestoes",
-
-    /*
-     * Esta senha é apenas uma barreira visual/local.
-     * Não é segurança real para produção.
-     *
-     * Posteriormente podemos migrar o painel para autenticação real.
-     */
-    ADMIN_PASSWORD: "052448"
+    STORAGE_SUGESTOES: "arquivo_sombrio_sugestoes"
 };
 
 
@@ -73,6 +83,173 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarModais();
 
 });
+
+
+/* ==========================================================================
+   SUPABASE / AUTENTICAÇÃO
+   ========================================================================== */
+
+function carregarSupabaseSDK() {
+
+    if (
+        window.supabase &&
+        typeof window.supabase.createClient === "function"
+    ) {
+        return Promise.resolve();
+    }
+
+    if (promessaSupabaseSDK) {
+        return promessaSupabaseSDK;
+    }
+
+    promessaSupabaseSDK = new Promise((resolve, reject) => {
+
+        const scriptExistente =
+            document.querySelector(
+                'script[data-arquivo-sombrio-supabase="true"]'
+            );
+
+        if (scriptExistente) {
+
+            scriptExistente.addEventListener(
+                "load",
+                () => resolve(),
+                { once: true }
+            );
+
+            scriptExistente.addEventListener(
+                "error",
+                () => reject(
+                    new Error("Falha ao carregar o Supabase.")
+                ),
+                { once: true }
+            );
+
+            return;
+        }
+
+        const script =
+            document.createElement("script");
+
+        script.src = SUPABASE_SDK_URL;
+        script.async = true;
+        script.dataset.arquivoSombrioSupabase = "true";
+
+        script.addEventListener(
+            "load",
+            () => resolve(),
+            { once: true }
+        );
+
+        script.addEventListener(
+            "error",
+            () => reject(
+                new Error("Falha ao carregar o Supabase.")
+            ),
+            { once: true }
+        );
+
+        document.head.appendChild(script);
+    });
+
+    return promessaSupabaseSDK;
+}
+
+
+async function obterClienteSupabase() {
+
+    if (clienteSupabase) {
+        return clienteSupabase;
+    }
+
+    await carregarSupabaseSDK();
+
+    if (
+        !window.supabase ||
+        typeof window.supabase.createClient !== "function"
+    ) {
+        throw new Error(
+            "A biblioteca do Supabase não ficou disponível."
+        );
+    }
+
+    clienteSupabase =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY,
+            {
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true
+                }
+            }
+        );
+
+    return clienteSupabase;
+}
+
+
+async function obterSessaoAdmin() {
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.getSession();
+
+        if (error) {
+
+            console.warn(
+                "Não foi possível verificar a sessão administrativa.",
+                error
+            );
+
+            return null;
+        }
+
+        return data?.session || null;
+
+    } catch (erro) {
+
+        console.error(
+            "Falha ao inicializar a autenticação administrativa.",
+            erro
+        );
+
+        return null;
+    }
+}
+
+
+async function sairAdmin() {
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+        await supabaseClient.auth.signOut();
+
+    } catch (erro) {
+
+        console.warn(
+            "Não foi possível encerrar a sessão no Supabase.",
+            erro
+        );
+    }
+
+    document
+        .getElementById("admin-manager")
+        ?.classList.remove("active");
+
+    fecharFormularioAdmin();
+}
 
 
 /* ==========================================================================
@@ -159,7 +336,7 @@ function escaparHTML(valor) {
 
 
 /**
- * Normaliza evidências.
+ * Normaliza evidências e listas de texto.
  */
 function normalizarEvidencias(evidencias) {
 
@@ -183,7 +360,7 @@ function normalizarEvidencias(evidencias) {
 
 
 /**
- * Retorna os casos iniciais do arquivo data/caso.js.
+ * Retorna os casos iniciais do arquivo dados/caso.js.
  */
 function obterCasosIniciais() {
 
@@ -210,14 +387,6 @@ function obterTodosCasos() {
 
     const iniciais = obterCasosIniciais();
 
-    /*
-     * Casos personalizados aparecem primeiro.
-     *
-     * IDs diferentes não geram duplicação.
-     * Caso alguém edite futuramente um caso inicial pelo sistema,
-     * podemos evoluir esta função para sobrescrever o original.
-     */
-
     const idsPersonalizados = new Set(
         personalizados.map(caso => Number(caso.id))
     );
@@ -238,10 +407,6 @@ function obterTodosCasos() {
    ========================================================================== */
 
 function criarCardCaso(caso) {
-
-    const evidencias = normalizarEvidencias(
-        caso.evidencias
-    );
 
     return `
         <article class="case-card" data-case-id="${escaparHTML(caso.id)}">
@@ -379,8 +544,6 @@ function carregarForense() {
         .map(criarCardCaso)
         .join("");
 }
-
-
 /* ==========================================================================
    LIVROS
    ========================================================================== */
@@ -498,11 +661,6 @@ function inicializarMenuMobile() {
     let overlay =
         document.getElementById("mobile-overlay");
 
-    /*
-     * Criamos o overlay automaticamente.
-     * Assim o HTML não depende de um elemento adicional.
-     */
-
     if (!overlay) {
 
         overlay =
@@ -546,6 +704,7 @@ function inicializarMenuMobile() {
     button.addEventListener("click", abrir);
 
     if (closeButton) {
+
         closeButton.addEventListener(
             "click",
             fechar
@@ -557,7 +716,6 @@ function inicializarMenuMobile() {
         fechar
     );
 
-
     sidebar
         .querySelectorAll("a")
         .forEach(link => {
@@ -568,7 +726,6 @@ function inicializarMenuMobile() {
             );
 
         });
-
 
     document.addEventListener(
         "keydown",
@@ -948,7 +1105,7 @@ function fecharMenuMobile() {
 }
 
 
-function abrirPainelAdmin() {
+async function abrirPainelAdmin() {
 
     const modal =
         document.getElementById("modal-admin");
@@ -958,22 +1115,42 @@ function abrirPainelAdmin() {
     }
 
     /*
-     * O modal atualmente é a tela de login.
-     * O painel de gerenciamento será exibido depois da autenticação.
+     * Se já houver uma sessão válida no Supabase,
+     * não será necessário digitar a senha novamente.
      */
+    const sessao =
+        await obterSessaoAdmin();
+
+    if (sessao) {
+
+        fecharModalAdmin();
+
+        renderizarGerenciadorAdmin();
+
+        return;
+    }
 
     modal.classList.add("active");
+
+    const email =
+        document.getElementById("admin-email");
 
     const senha =
         document.getElementById("admin-pass");
 
-    if (senha) {
+    setTimeout(
+        () => {
 
-        setTimeout(
-            () => senha.focus(),
-            100
-        );
-    }
+            if (email) {
+                email.focus();
+                return;
+            }
+
+            senha?.focus();
+
+        },
+        100
+    );
 }
 
 
@@ -990,29 +1167,118 @@ function fecharModalAdmin() {
 }
 
 
-function autenticarAdmin(evento) {
+/* ==========================================================================
+   LOGIN ADMINISTRATIVO COM SUPABASE
+   ========================================================================== */
+
+async function autenticarAdmin(evento) {
 
     evento.preventDefault();
 
-    const senha =
-        document.getElementById("admin-pass")?.value;
+    const formulario =
+        evento.currentTarget;
 
-    if (senha !== CONFIG.ADMIN_PASSWORD) {
+    const email =
+        document
+            .getElementById("admin-email")
+            ?.value
+            .trim();
+
+    const senha =
+        document
+            .getElementById("admin-pass")
+            ?.value;
+
+    if (!email || !senha) {
 
         mostrarMensagem(
             "admin-login-erro",
-            "Credencial inválida."
+            "Informe o e-mail e a senha."
         );
 
         return;
     }
 
-    fecharModalAdmin();
+    const botao =
+        formulario?.querySelector(
+            'button[type="submit"]'
+        );
 
-    renderizarGerenciadorAdmin();
+    const textoOriginal =
+        botao?.innerHTML;
+
+    if (botao) {
+
+        botao.disabled = true;
+
+        botao.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Verificando...
+        `;
+    }
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.signInWithPassword({
+                email,
+                password: senha
+            });
+
+        if (
+            error ||
+            !data?.session
+        ) {
+
+            console.warn(
+                "Falha no login administrativo.",
+                error
+            );
+
+            mostrarMensagem(
+                "admin-login-erro",
+                "E-mail ou senha inválidos."
+            );
+
+            return;
+        }
+
+        formulario?.reset();
+
+        fecharModalAdmin();
+
+        renderizarGerenciadorAdmin();
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao autenticar no Supabase.",
+            erro
+        );
+
+        mostrarMensagem(
+            "admin-login-erro",
+            "Não foi possível conectar ao serviço de autenticação."
+        );
+
+    } finally {
+
+        if (botao) {
+
+            botao.disabled = false;
+
+            if (textoOriginal !== undefined) {
+                botao.innerHTML = textoOriginal;
+            }
+        }
+    }
 }
-
-
 /* ==========================================================================
    GERENCIADOR ADMINISTRATIVO
    ========================================================================== */
@@ -1098,6 +1364,15 @@ function renderizarGerenciadorAdmin() {
                 >
                     <i class="fa-solid fa-book-medical"></i>
                     Novo Livro
+                </button>
+
+                <button
+                    type="button"
+                    class="admin-action-button"
+                    id="admin-logout"
+                >
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Sair
                 </button>
 
             </div>
@@ -1252,6 +1527,14 @@ function renderizarGerenciadorAdmin() {
         ?.addEventListener(
             "click",
             () => abrirFormularioAdmin("livro")
+        );
+
+
+    document
+        .getElementById("admin-logout")
+        ?.addEventListener(
+            "click",
+            sairAdmin
         );
 
 
@@ -1450,7 +1733,7 @@ function abrirFormularioAdmin(tipo, dados = null) {
                             type="text"
                             id="admin-image"
                             value="${dados ? escaparHTML(dados.imagem) : ""}"
-                            placeholder="imagens/mistério/exemplo.jpg"
+                            placeholder="imagens/misterio/exemplo.jpg"
                         >
                     </label>
 
@@ -1486,7 +1769,8 @@ function abrirFormularioAdmin(tipo, dados = null) {
                         <textarea
                             id="admin-theories"
                             rows="5"
-                        >${dados ? escaparHTML(dados.teorias) : ""}</textarea>
+                            placeholder="Uma hipótese por linha"
+                        >${dados ? escaparHTML(normalizarEvidencias(dados.teorias).join("\n")) : ""}</textarea>
                     </label>
 
                     `
@@ -1597,8 +1881,6 @@ function abrirFormularioAdmin(tipo, dados = null) {
             }
         );
 }
-
-
 /* ==========================================================================
    SALVAR CASO ADMIN
    ========================================================================== */
@@ -1646,7 +1928,9 @@ function salvarCasoAdmin(evento, casoExistente = null) {
             ),
 
         teorias:
-            document.getElementById("admin-theories").value.trim()
+            normalizarEvidencias(
+                document.getElementById("admin-theories").value
+            )
     };
 
 
@@ -1682,7 +1966,6 @@ function salvarCasoAdmin(evento, casoExistente = null) {
         carregarForense();
 
         renderizarGerenciadorAdmin();
-
     }
 }
 
@@ -1753,7 +2036,6 @@ function salvarLivroAdmin(evento, livroExistente = null) {
         carregarLivros();
 
         renderizarGerenciadorAdmin();
-
     }
 }
 
@@ -1985,3 +2267,5 @@ window.removerLivro = removerLivro;
 
 window.editarCaso = editarCaso;
 window.editarLivro = editarLivro;
+
+window.sairAdmin = sairAdmin;
