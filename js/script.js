@@ -73,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarNavegacaoInterna();
 
     carregarCasosSupabase();
-    carregarForense();
     carregarLivros();
     carregarComentarios();
 
