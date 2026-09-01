@@ -21,6 +21,7 @@ const SUPABASE_SDK_URL =
 
 let clienteSupabase = null;
 let promessaSupabaseSDK = null;
+let casosSupabase = [];
 
 
 /* ==========================================================================
@@ -378,25 +379,66 @@ function obterCasosIniciais() {
 /* ==========================================================================
    BANCO DE CASOS
    ========================================================================== */
+async function carregarCasosSupabase() {
 
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("Casos")
+                .select("*")
+                .order("created_at", {
+                    ascending: false
+                });
+
+        if (error) {
+            throw error;
+        }
+
+        casosSupabase =
+            Array.isArray(data)
+                ? data
+                : [];
+
+        carregarCasos();
+        carregarForense();
+
+    } catch (erro) {
+
+        console.error(
+            "Não foi possível carregar os casos do Supabase.",
+            erro
+        );
+    }
+}
 function obterTodosCasos() {
 
-    const personalizados = lerStorage(
-        CONFIG.STORAGE_CASOS
-    );
+    const iniciais =
+        obterCasosIniciais();
 
-    const iniciais = obterCasosIniciais();
+    const idsSupabase =
+        new Set(
+            casosSupabase.map(
+                caso => Number(caso.id)
+            )
+        );
 
-    const idsPersonalizados = new Set(
-        personalizados.map(caso => Number(caso.id))
-    );
-
-    const casosIniciaisFiltrados = iniciais.filter(
-        caso => !idsPersonalizados.has(Number(caso.id))
-    );
+    const casosIniciaisFiltrados =
+        iniciais.filter(
+            caso =>
+                !idsSupabase.has(
+                    Number(caso.id)
+                )
+        );
 
     return [
-        ...personalizados,
+        ...casosSupabase,
         ...casosIniciaisFiltrados
     ];
 }
