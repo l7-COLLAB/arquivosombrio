@@ -1,477 +1,39 @@
-```javascript
-/* ==========================================================================
-   ARQUIVO SOMBRIO
-   CASO.JS
-   LÓGICA DA PÁGINA INDIVIDUAL DE DOSSIÊ
-   ========================================================================== */
+"use strict";
 
 
-const STORAGE_CASOS = "casos_customizados";
+document.addEventListener(
+    "DOMContentLoaded",
+    carregarCaso
+);
 
 
-document.addEventListener("DOMContentLoaded", () => {
+function lerStorage(chave, fallback = []) {
 
-    configurarMenuCaso();
+    try {
 
-    carregarDossie();
+        const valor = localStorage.getItem(chave);
 
-    configurarComentariosCaso();
+        if (!valor) {
+            return fallback;
+        }
 
-});
+        return JSON.parse(valor);
 
+    } catch (erro) {
 
-/* ==========================================================================
-   MENU
-   ========================================================================== */
+        console.error(
+            "Erro ao ler localStorage:",
+            erro
+        );
 
-function configurarMenuCaso() {
-
-    const botao =
-        document.getElementById("menu-toggle");
-
-    const sidebar =
-        document.getElementById("sidebar-menu");
-
-    const fechar =
-        document.getElementById("close-sidebar");
-
-    if (!botao || !sidebar) return;
-
-    botao.addEventListener("click", () => {
-        sidebar.classList.add("active");
-    });
-
-    if (fechar) {
-
-        fechar.addEventListener("click", () => {
-            sidebar.classList.remove("active");
-        });
-
+        return fallback;
     }
-
-    sidebar.querySelectorAll("a").forEach(link => {
-
-        link.addEventListener("click", () => {
-            sidebar.classList.remove("active");
-        });
-
-    });
-}
-
-
-/* ==========================================================================
-   BUSCAR CASO
-   ========================================================================== */
-
-function obterCasoAtual() {
-
-    const parametros =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    const id =
-        Number(parametros.get("id"));
-
-    if (!id) return null;
-
-    const personalizados =
-        JSON.parse(
-            localStorage.getItem(STORAGE_CASOS) || "[]"
-        );
-
-    const padrao =
-        Array.isArray(window.casosArquivo)
-            ? window.casosArquivo
-            : [];
-
-    const todos =
-        [...personalizados, ...padrao];
-
-    return todos.find(caso => caso.id === id) || null;
-}
-
-
-/* ==========================================================================
-   CARREGAR DOSSIÊ
-   ========================================================================== */
-
-function carregarDossie() {
-
-    const caso =
-        obterCasoAtual();
-
-    if (!caso) {
-
-        mostrarDossieNaoEncontrado();
-
-        return;
-    }
-
-    document.title =
-        `${caso.titulo} — Arquivo Sombrio`;
-
-    preencherElemento(
-        "case-title",
-        caso.titulo
-    );
-
-    preencherElemento(
-        "case-category",
-        caso.categoria
-    );
-
-    preencherElemento(
-        "case-status",
-        caso.status
-    );
-
-    preencherElemento(
-        "case-location",
-        caso.local || "Não informado"
-    );
-
-    preencherElemento(
-        "case-year",
-        caso.ano || "Não informado"
-    );
-
-    preencherElemento(
-        "case-id",
-        `#${caso.id}`
-    );
-
-    const imagem =
-        document.getElementById("case-image");
-
-    if (imagem) {
-
-        imagem.src = caso.imagem;
-
-        imagem.alt =
-            `Imagem do dossiê ${caso.titulo}`;
-
-    }
-
-    preencherElemento(
-        "case-summary",
-        caso.resumo
-    );
-
-    const historia =
-        document.getElementById("case-history");
-
-    if (historia) {
-
-        historia.innerHTML =
-            caso.historia || "<p>Informação não disponível.</p>";
-
-    }
-
-    carregarEvidencias(caso);
-
-    carregarTeorias(caso);
-
-}
-
-
-/* ==========================================================================
-   EVIDÊNCIAS
-   ========================================================================== */
-
-function carregarEvidencias(caso) {
-
-    const lista =
-        document.getElementById(
-            "case-evidence-list"
-        );
-
-    if (!lista) return;
-
-    const evidencias =
-        Array.isArray(caso.evidencias)
-            ? caso.evidencias
-            : [];
-
-    if (!evidencias.length) {
-
-        lista.innerHTML = `
-            <li class="evidencia-vazia">
-                Nenhuma evidência registrada.
-            </li>
-        `;
-
-        return;
-    }
-
-    lista.innerHTML =
-        evidencias.map(evidencia => `
-            <li>
-
-                <i class="fa-solid fa-vial-circle-check"></i>
-
-                <span>
-                    ${escaparHTML(evidencia)}
-                </span>
-
-            </li>
-        `).join("");
-}
-
-
-/* ==========================================================================
-   TEORIAS
-   ========================================================================== */
-
-function carregarTeorias(caso) {
-
-    const caixa =
-        document.getElementById(
-            "case-theories"
-        );
-
-    if (!caixa) return;
-
-    caixa.innerHTML = `
-        <p>
-            ${escaparHTML(
-                caso.teorias ||
-                "Nenhuma linha de investigação registrada."
-            )}
-        </p>
-    `;
-
-}
-
-
-/* ==========================================================================
-   CASO NÃO ENCONTRADO
-   ========================================================================== */
-
-function mostrarDossieNaoEncontrado() {
-
-    document.title =
-        "Dossiê não encontrado — Arquivo Sombrio";
-
-    const conteudo =
-        document.querySelector(
-            ".case-details-container"
-        );
-
-    if (!conteudo) return;
-
-    conteudo.innerHTML = `
-        <section class="dossie-erro">
-
-            <i class="fa-solid fa-folder-open"></i>
-
-            <span>ARQUIVO NÃO LOCALIZADO</span>
-
-            <h1>
-                Dossiê não encontrado
-            </h1>
-
-            <p>
-                O documento solicitado não existe,
-                foi removido ou o identificador informado
-                é inválido.
-            </p>
-
-            <a
-                href="index.html#casos"
-                class="btn-voltar"
-            >
-                <i class="fa-solid fa-arrow-left"></i>
-                Voltar ao acervo
-            </a>
-
-        </section>
-    `;
-}
-
-
-/* ==========================================================================
-   COMENTÁRIOS
-   ========================================================================== */
-
-function configurarComentariosCaso() {
-
-    const formulario =
-        document.getElementById(
-            "form-case-comment"
-        );
-
-    if (!formulario) return;
-
-    formulario.addEventListener(
-        "submit",
-        adicionarComentarioCaso
-    );
-
-    carregarComentariosCaso();
-}
-
-
-function obterChaveComentarios() {
-
-    const caso =
-        obterCasoAtual();
-
-    if (!caso) return null;
-
-    return `comentarios_caso_${caso.id}`;
-}
-
-
-function carregarComentariosCaso() {
-
-    const lista =
-        document.getElementById(
-            "case-comments-list"
-        );
-
-    const chave =
-        obterChaveComentarios();
-
-    if (!lista || !chave) return;
-
-    const comentarios =
-        JSON.parse(
-            localStorage.getItem(chave) || "[]"
-        );
-
-    if (!comentarios.length) {
-
-        lista.innerHTML = `
-            <div class="comentarios-vazio">
-                <i class="fa-solid fa-comment-slash"></i>
-                <p>
-                    Nenhuma análise publicada neste dossiê.
-                </p>
-            </div>
-        `;
-
-        return;
-    }
-
-    lista.innerHTML =
-        comentarios.map(comentario => `
-            <article class="comentario-caso">
-
-                <header>
-
-                    <strong>
-                        <i class="fa-solid fa-user-secret"></i>
-                        ${escaparHTML(comentario.autor)}
-                    </strong>
-
-                    <time>
-                        ${escaparHTML(comentario.data)}
-                    </time>
-
-                </header>
-
-                <p>
-                    ${escaparHTML(comentario.texto)}
-                </p>
-
-            </article>
-        `).join("");
-}
-
-
-function adicionarComentarioCaso(event) {
-
-    event.preventDefault();
-
-    const autor =
-        document.getElementById(
-            "comment-author"
-        );
-
-    const texto =
-        document.getElementById(
-            "comment-text"
-        );
-
-    if (!autor || !texto) return;
-
-    const autorValor =
-        autor.value.trim();
-
-    const textoValor =
-        texto.value.trim();
-
-    if (!autorValor || !textoValor) return;
-
-    const chave =
-        obterChaveComentarios();
-
-    if (!chave) return;
-
-    const comentarios =
-        JSON.parse(
-            localStorage.getItem(chave) || "[]"
-        );
-
-    const agora =
-        new Date();
-
-    comentarios.unshift({
-
-        autor: autorValor,
-
-        texto: textoValor,
-
-        data:
-            agora.toLocaleDateString("pt-BR")
-            + " • "
-            + agora.toLocaleTimeString(
-                "pt-BR",
-                {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                }
-            )
-
-    });
-
-    localStorage.setItem(
-        chave,
-        JSON.stringify(comentarios)
-    );
-
-    event.target.reset();
-
-    carregarComentariosCaso();
-
-}
-
-
-/* ==========================================================================
-   UTILITÁRIO
-   ========================================================================== */
-
-function preencherElemento(id, valor) {
-
-    const elemento =
-        document.getElementById(id);
-
-    if (elemento) {
-        elemento.textContent =
-            valor ?? "";
-    }
-
 }
 
 
 function escaparHTML(valor) {
 
-    if (valor === null || valor === undefined) {
-        return "";
-    }
-
-    return String(valor)
+    return String(valor ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -480,5 +42,417 @@ function escaparHTML(valor) {
 }
 
 
-window.carregarDossie = carregarDossie;
-```
+function obterTodosCasos() {
+
+    const base =
+        typeof casosArquivo !== "undefined"
+            ? casosArquivo
+            : [];
+
+    const personalizados =
+        lerStorage(
+            "arquivo_sombrio_casos",
+            []
+        );
+
+    return [
+        ...base,
+        ...personalizados
+    ];
+}
+
+
+function obterIdDaURL() {
+
+    const parametros =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const id =
+        parametros.get("id");
+
+    if (!id) {
+        return null;
+    }
+
+    return String(id);
+}
+
+
+function carregarCaso() {
+
+    const id =
+        obterIdDaURL();
+
+    if (!id) {
+
+        mostrarNaoEncontrado();
+
+        return;
+    }
+
+
+    const casos =
+        obterTodosCasos();
+
+
+    const caso =
+        casos.find(
+            item =>
+                String(item.id) === id
+        );
+
+
+    if (!caso) {
+
+        mostrarNaoEncontrado();
+
+        return;
+    }
+
+
+    renderizarCaso(caso);
+}
+
+
+function renderizarCaso(caso) {
+
+    preencherTexto(
+        "caso-titulo",
+        caso.titulo
+    );
+
+    preencherTexto(
+        "caso-categoria",
+        caso.categoria || "ARQUIVO"
+    );
+
+    preencherTexto(
+        "caso-status",
+        caso.status || "EM ANÁLISE"
+    );
+
+    preencherTexto(
+        "caso-local",
+        caso.local || "Não informado"
+    );
+
+    preencherTexto(
+        "caso-ano",
+        caso.ano || "—"
+    );
+
+    preencherTexto(
+        "caso-status-meta",
+        caso.status || "Em análise"
+    );
+
+    preencherTexto(
+        "caso-resumo",
+        caso.resumo || ""
+    );
+
+
+    preencherTexto(
+        "caso-id",
+        `AS-${String(caso.id).padStart(3, "0")}`
+    );
+
+    preencherTexto(
+        "caso-categoria-sidebar",
+        caso.categoria || "ARQUIVO"
+    );
+
+    preencherTexto(
+        "caso-local-sidebar",
+        caso.local || "Não informado"
+    );
+
+    preencherTexto(
+        "caso-ano-sidebar",
+        caso.ano || "—"
+    );
+
+    preencherTexto(
+        "caso-status-sidebar",
+        caso.status || "Em análise"
+    );
+
+
+    renderizarImagem(caso);
+
+    renderizarHistoria(caso);
+
+    renderizarEvidencias(caso.evidencias);
+
+    renderizarTeorias(caso.teorias);
+
+
+    document.title =
+        `${caso.titulo} — Arquivo Sombrio`;
+}
+
+
+function preencherTexto(id, valor) {
+
+    const elemento =
+        document.getElementById(id);
+
+    if (!elemento) {
+        return;
+    }
+
+    elemento.textContent =
+        valor ?? "";
+}
+
+
+function renderizarImagem(caso) {
+
+    const imagem =
+        document.getElementById(
+            "caso-imagem"
+        );
+
+    if (!imagem) {
+        return;
+    }
+
+
+    imagem.src =
+        caso.imagem ||
+        "https://placehold.co/900x650/111/777?text=Arquivo+Sombrio";
+
+
+    imagem.alt =
+        caso.titulo
+            ? `Imagem relacionada ao caso ${caso.titulo}`
+            : "Imagem do dossiê";
+
+
+    imagem.onerror =
+        function () {
+
+            this.onerror = null;
+
+            this.src =
+                "https://placehold.co/900x650/111/777?text=Arquivo+Sombrio";
+        };
+}
+
+
+function renderizarHistoria(caso) {
+
+    const container =
+        document.getElementById(
+            "caso-historia"
+        );
+
+    if (!container) {
+        return;
+    }
+
+
+    const casoBase =
+        typeof casosArquivo !== "undefined" &&
+        casosArquivo.some(
+            item =>
+                String(item.id) ===
+                String(caso.id)
+        );
+
+
+    if (
+        casoBase &&
+        caso.historia
+    ) {
+
+        container.innerHTML =
+            caso.historia;
+
+        return;
+    }
+
+
+    const historia =
+        String(
+            caso.historia || ""
+        ).trim();
+
+
+    if (!historia) {
+
+        container.innerHTML =
+            "<p>Este arquivo ainda não possui histórico detalhado.</p>";
+
+        return;
+    }
+
+
+    const paragrafos =
+        historia
+            .split(/\n\s*\n/)
+            .map(
+                trecho =>
+                    trecho.trim()
+            )
+            .filter(Boolean);
+
+
+    container.innerHTML =
+        paragrafos
+            .map(
+                paragrafo =>
+                    `<p>${escaparHTML(paragrafo)}</p>`
+            )
+            .join("");
+}
+
+
+function renderizarEvidencias(evidencias) {
+
+    const container =
+        document.getElementById(
+            "caso-evidencias"
+        );
+
+    if (!container) {
+        return;
+    }
+
+
+    const lista =
+        Array.isArray(evidencias)
+            ? evidencias
+            : [];
+
+
+    if (!lista.length) {
+
+        container.innerHTML =
+            `
+            <div class="evidence-item">
+                <i class="fa-solid fa-folder-open"></i>
+
+                <p>
+                    Nenhuma evidência foi cadastrada neste arquivo.
+                </p>
+            </div>
+            `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        lista
+            .map(
+                evidencia =>
+                    `
+                    <div class="evidence-item">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <p>
+                            ${escaparHTML(evidencia)}
+                        </p>
+
+                    </div>
+                    `
+            )
+            .join("");
+}
+
+
+function renderizarTeorias(teorias) {
+
+    const container =
+        document.getElementById(
+            "caso-teorias"
+        );
+
+    if (!container) {
+        return;
+    }
+
+
+    const lista =
+        Array.isArray(teorias)
+            ? teorias
+            : [];
+
+
+    if (!lista.length) {
+
+        container.innerHTML =
+            `
+            <div class="theory-item">
+
+                <i class="fa-solid fa-question"></i>
+
+                <p>
+                    Nenhuma teoria foi registrada neste arquivo.
+                </p>
+
+            </div>
+            `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        lista
+            .map(
+                teoria =>
+                    `
+                    <div class="theory-item">
+
+                        <i class="fa-solid fa-circle-question"></i>
+
+                        <p>
+                            ${escaparHTML(teoria)}
+                        </p>
+
+                    </div>
+                    `
+            )
+            .join("");
+}
+
+
+function mostrarNaoEncontrado() {
+
+    const hero =
+        document.querySelector(
+            ".case-hero"
+        );
+
+    const conteudo =
+        document.querySelector(
+            ".case-content-section"
+        );
+
+    const erro =
+        document.getElementById(
+            "caso-nao-encontrado"
+        );
+
+
+    if (hero) {
+        hero.style.display = "none";
+    }
+
+    if (conteudo) {
+        conteudo.style.display = "none";
+    }
+
+    if (erro) {
+        erro.classList.add("active");
+    }
+
+
+    document.title =
+        "Arquivo não encontrado — Arquivo Sombrio";
+}
