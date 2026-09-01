@@ -52,9 +52,13 @@ const casosArquivo = [
             "Vestígios e circunstâncias da cena alimentaram diferentes hipóteses."
         ],
 
-        teorias:
-            "Entre as hipóteses estudadas estão avalanche de placa, condições meteorológicas extremas, fenômenos acústicos, erros humanos e outras possibilidades relacionadas às circunstâncias da expedição."
-    },
+teorias: [
+    "A hipótese de avalanche de placa é uma das principais explicações estudadas para o incidente.",
+    "As condições meteorológicas extremas podem ter contribuído para que o grupo abandonasse a barraca de maneira repentina.",
+    "Fenômenos acústicos e efeitos provocados pelo vento também foram considerados como possíveis fatores.",
+    "Outras hipóteses envolvendo ação humana e acontecimentos incomuns surgiram ao longo das décadas, embora muitas não possuam evidências suficientes."
+]
+},
 
     {
         id: 102,
