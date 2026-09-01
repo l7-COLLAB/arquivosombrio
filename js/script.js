@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarMenuMobile();
     inicializarNavegacaoInterna();
 
-    carregarCasos();
+    carregarCasosSupabase();
     carregarForense();
     carregarLivros();
     carregarComentarios();
