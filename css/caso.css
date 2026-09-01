@@ -1,0 +1,993 @@
+```css
+/* ==========================================================================
+   ARQUIVO SOMBRIO
+   CASO.CSS
+   ESTILOS ESPECÍFICOS DA PÁGINA DE DOSSIÊ
+   ========================================================================== */
+
+
+/* ==========================================================================
+   CONTAINER
+   ========================================================================== */
+
+.case-details-container {
+
+    padding-top: 40px;
+
+    padding-bottom: 70px;
+
+}
+
+
+/* ==========================================================================
+   CABEÇALHO DO DOSSIÊ
+   ========================================================================== */
+
+.case-header-card {
+
+    position: relative;
+
+    padding: 40px;
+
+    margin-bottom: 25px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            #171310,
+            #0c0b0a
+        );
+
+    border: 1px solid var(--borda);
+
+}
+
+
+.case-header-card::before {
+
+    content: "CONFIDENCIAL";
+
+    position: absolute;
+
+    right: 30px;
+
+    top: 35px;
+
+    color: rgba(148,17,17,0.08);
+
+    font-family: var(--display);
+
+    font-size: 4rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.08em;
+
+    pointer-events: none;
+
+}
+
+
+.arquivo-carimbo {
+
+    display: inline-block;
+
+    margin-bottom: 20px;
+
+    padding: 5px 9px;
+
+    color: var(--vinho-vivo);
+
+    border: 1px solid var(--vinho);
+
+    font-family: var(--mono);
+
+    font-size: 0.6rem;
+
+    letter-spacing: 0.12em;
+
+}
+
+
+.case-badge-group {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+}
+
+
+.badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 7px 10px;
+
+    font-family: var(--mono);
+
+    font-size: 0.6rem;
+
+    font-weight: 500;
+
+    letter-spacing: 0.08em;
+
+}
+
+
+.badge.category {
+
+    color: var(--papel);
+
+    background: var(--vinho);
+
+}
+
+
+.badge.status {
+
+    color: var(--dourado-claro);
+
+    background: rgba(165,138,82,0.08);
+
+    border: 1px solid var(--borda);
+
+}
+
+
+.case-main-title {
+
+    max-width: 850px;
+
+    margin: 18px 0 30px;
+
+    color: var(--papel);
+
+    font-family: var(--display);
+
+    font-size: clamp(2rem, 5vw, 3.6rem);
+
+    font-weight: 600;
+
+    line-height: 1.12;
+
+}
+
+
+.case-meta-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            1fr
+        );
+
+    border-top: 1px solid var(--borda);
+
+}
+
+
+.meta-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 22px 20px 0 0;
+
+}
+
+
+.meta-item + .meta-item {
+
+    padding-left: 20px;
+
+    border-left: 1px solid var(--borda);
+
+}
+
+
+.meta-item i {
+
+    color: var(--vinho-vivo);
+
+    font-size: 1rem;
+
+}
+
+
+.meta-item small {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--cinza);
+
+    font-family: var(--mono);
+
+    font-size: 0.57rem;
+
+    letter-spacing: 0.1em;
+
+}
+
+
+.meta-item strong {
+
+    display: block;
+
+    color: var(--papel-escuro);
+
+    font-family: var(--mono);
+
+    font-size: 0.72rem;
+
+    font-weight: 400;
+
+}
+
+
+/* ==========================================================================
+   HERO
+   ========================================================================== */
+
+.case-hero-section {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.45fr)
+        minmax(300px, 0.75fr);
+
+    gap: 25px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.case-image-wrapper {
+
+    position: relative;
+
+    min-height: 480px;
+
+    overflow: hidden;
+
+    background: #050505;
+
+    border: 1px solid var(--borda);
+
+}
+
+
+.case-image-wrapper::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent 55%,
+            rgba(0,0,0,0.5)
+        );
+
+}
+
+
+.case-image-wrapper img {
+
+    width: 100%;
+
+    height: 100%;
+
+    min-height: 480px;
+
+    object-fit: cover;
+
+    filter:
+        grayscale(15%)
+        contrast(1.05)
+        brightness(0.72);
+
+}
+
+
+.imagem-legenda {
+
+    position: absolute;
+
+    z-index: 3;
+
+    left: 20px;
+
+    bottom: 18px;
+
+    color: var(--papel);
+
+    font-family: var(--mono);
+
+    font-size: 0.58rem;
+
+    letter-spacing: 0.1em;
+
+}
+
+
+.case-summary-box {
+
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    padding: 35px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #181512,
+            #0d0c0b
+        );
+
+    border: 1px solid var(--borda);
+
+}
+
+
+.document-label,
+.section-kicker {
+
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: var(--dourado);
+
+    font-family: var(--mono);
+
+    font-size: 0.58rem;
+
+    letter-spacing: 0.14em;
+
+}
+
+
+.case-summary-box h2 {
+
+    margin-bottom: 20px;
+
+    color: var(--papel);
+
+    font-family: var(--display);
+
+    font-size: 1.25rem;
+
+    line-height: 1.3;
+
+}
+
+
+.case-summary-box h2 i {
+
+    margin-right: 7px;
+
+    color: var(--vinho-vivo);
+
+}
+
+
+.case-summary-box p {
+
+    color: var(--cinza);
+
+    font-size: 0.88rem;
+
+    line-height: 1.8;
+
+}
+
+
+.summary-stamp {
+
+    align-self: flex-end;
+
+    margin-top: 30px;
+
+    padding: 7px 10px;
+
+    color: rgba(196,170,112,0.35);
+
+    border: 1px solid rgba(196,170,112,0.2);
+
+    transform: rotate(-4deg);
+
+    font-family: var(--mono);
+
+    font-size: 0.55rem;
+
+    letter-spacing: 0.12em;
+
+}
+
+
+/* ==========================================================================
+   SEÇÕES
+   ========================================================================== */
+
+.case-body-section,
+.case-evidence-section,
+.case-theories-section,
+.case-comments-section {
+
+    margin-bottom: 25px;
+
+    padding: 35px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151311,
+            #0c0b0a
+        );
+
+    border: 1px solid var(--borda);
+
+}
+
+
+.section-title-wrapper {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 18px;
+
+    margin-bottom: 28px;
+
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid var(--borda);
+
+}
+
+
+.section-index {
+
+    color: var(--vinho-vivo);
+
+    font-family: var(--mono);
+
+    font-size: 0.68rem;
+
+}
+
+
+.section-title-wrapper h2 {
+
+    color: var(--papel);
+
+    font-family: var(--display);
+
+    font-size: 1.3rem;
+
+    line-height: 1.3;
+
+}
+
+
+.section-title-wrapper h2 i {
+
+    margin-right: 7px;
+
+    color: var(--vinho-vivo);
+
+}
+
+
+/* ==========================================================================
+   TEXTO
+   ========================================================================== */
+
+.case-full-text {
+
+    max-width: 900px;
+
+    color: var(--papel-escuro);
+
+    font-size: 0.94rem;
+
+    line-height: 2;
+
+}
+
+
+.case-full-text p {
+
+    margin-bottom: 20px;
+
+}
+
+
+.case-full-text p:last-child {
+
+    margin-bottom: 0;
+
+}
+
+
+/* ==========================================================================
+   EVIDÊNCIAS
+   ========================================================================== */
+
+.evidence-list {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 12px;
+
+    list-style: none;
+
+}
+
+
+.evidence-list li {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 13px;
+
+    padding: 17px;
+
+    color: var(--papel-escuro);
+
+    background: #0b0a09;
+
+    border: 1px solid rgba(196,170,112,0.1);
+
+    font-size: 0.8rem;
+
+    line-height: 1.6;
+
+}
+
+
+.evidence-list li i {
+
+    flex: 0 0 auto;
+
+    margin-top: 3px;
+
+    color: var(--vinho-vivo);
+
+}
+
+
+.evidencia-vazia {
+
+    grid-column: 1 / -1;
+
+}
+
+
+/* ==========================================================================
+   TEORIAS
+   ========================================================================== */
+
+.theories-box {
+
+    position: relative;
+
+    padding: 25px 25px 25px 30px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(111,8,8,0.09),
+            transparent
+        );
+
+    border-left: 3px solid var(--vinho);
+
+}
+
+
+.theories-box::before {
+
+    content: "HIPÓTESE";
+
+    display: block;
+
+    margin-bottom: 12px;
+
+    color: var(--vinho-vivo);
+
+    font-family: var(--mono);
+
+    font-size: 0.58rem;
+
+    letter-spacing: 0.12em;
+
+}
+
+
+.theories-box p {
+
+    color: var(--papel-escuro);
+
+    font-size: 0.88rem;
+
+    line-height: 1.85;
+
+}
+
+
+/* ==========================================================================
+   COMENTÁRIOS
+   ========================================================================== */
+
+.comment-form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+
+    margin-bottom: 35px;
+
+    padding-bottom: 30px;
+
+    border-bottom: 1px solid var(--borda);
+
+}
+
+
+.comments-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+}
+
+
+.comentario-caso {
+
+    padding: 20px;
+
+    background: #0b0a09;
+
+    border: 1px solid rgba(196,170,112,0.1);
+
+    border-left: 2px solid var(--vinho);
+
+}
+
+
+.comentario-caso header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.comentario-caso strong {
+
+    color: var(--papel);
+
+    font-family: var(--mono);
+
+    font-size: 0.7rem;
+
+}
+
+
+.comentario-caso strong i {
+
+    color: var(--vinho-vivo);
+
+}
+
+
+.comentario-caso time {
+
+    color: var(--cinza-escuro);
+
+    font-family: var(--mono);
+
+    font-size: 0.58rem;
+
+}
+
+
+.comentario-caso p {
+
+    color: var(--cinza);
+
+    font-size: 0.82rem;
+
+}
+
+
+.comentarios-vazio {
+
+    padding: 35px;
+
+    text-align: center;
+
+    color: var(--cinza);
+
+    border: 1px dashed var(--borda);
+
+}
+
+
+.comentarios-vazio i {
+
+    margin-bottom: 10px;
+
+    color: var(--vinho);
+
+    font-size: 1.5rem;
+
+}
+
+
+/* ==========================================================================
+   ERRO
+   ========================================================================== */
+
+.dossie-erro {
+
+    min-height: 55vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 50px;
+
+}
+
+
+.dossie-erro > i {
+
+    margin-bottom: 20px;
+
+    color: var(--vinho-vivo);
+
+    font-size: 3rem;
+
+}
+
+
+.dossie-erro span {
+
+    margin-bottom: 10px;
+
+    color: var(--dourado);
+
+    font-family: var(--mono);
+
+    font-size: 0.65rem;
+
+    letter-spacing: 0.14em;
+
+}
+
+
+.dossie-erro h1 {
+
+    margin-bottom: 15px;
+
+    font-family: var(--display);
+
+}
+
+
+.dossie-erro p {
+
+    max-width: 500px;
+
+    margin-bottom: 25px;
+
+    color: var(--cinza);
+
+}
+
+
+.btn-voltar {
+
+    padding: 12px 18px;
+
+    color: white;
+
+    background: var(--vinho);
+
+    font-family: var(--mono);
+
+    font-size: 0.67rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+
+}
+
+
+/* ==========================================================================
+   RESPONSIVIDADE
+   ========================================================================== */
+
+@media (max-width: 950px) {
+
+    .case-hero-section {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .case-image-wrapper,
+    .case-image-wrapper img {
+
+        min-height: 400px;
+
+    }
+
+}
+
+
+@media (max-width: 720px) {
+
+    .case-header-card,
+    .case-body-section,
+    .case-evidence-section,
+    .case-theories-section,
+    .case-comments-section {
+
+        padding: 25px;
+
+    }
+
+    .case-meta-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .meta-item,
+    .meta-item + .meta-item {
+
+        padding: 15px 0;
+
+        border-left: 0;
+
+        border-bottom: 1px solid var(--borda);
+
+    }
+
+    .meta-item:last-child {
+
+        border-bottom: 0;
+
+    }
+
+    .evidence-list {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    .case-details-container {
+
+        padding-top: 20px;
+
+    }
+
+    .case-header-card {
+
+        padding: 22px;
+
+    }
+
+    .case-header-card::before {
+
+        display: none;
+
+    }
+
+    .case-main-title {
+
+        font-size: 1.75rem;
+
+    }
+
+    .case-image-wrapper,
+    .case-image-wrapper img {
+
+        min-height: 280px;
+
+    }
+
+    .case-summary-box {
+
+        padding: 25px;
+
+    }
+
+    .case-body-section,
+    .case-evidence-section,
+    .case-theories-section,
+    .case-comments-section {
+
+        padding: 22px;
+
+    }
+
+    .section-title-wrapper h2 {
+
+        font-size: 1.05rem;
+
+    }
+
+    .comentario-caso header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+}
+```

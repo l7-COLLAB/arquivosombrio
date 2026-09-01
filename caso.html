@@ -1,0 +1,570 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Dossiê — Arquivo Sombrio
+    </title>
+
+    <meta
+        name="description"
+        content="Dossiê documental do Arquivo Sombrio."
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/caso.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:wght@400;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body class="pagina-caso">
+
+
+    <!-- ================================================================
+         HEADER
+         ================================================================ -->
+
+    <header class="main-header">
+
+        <div class="container header-content">
+
+            <a
+                href="index.html"
+                class="logo"
+            >
+
+                <span class="logo-simbolo">
+                    <i class="fa-solid fa-folder-open"></i>
+                </span>
+
+                <span class="logo-texto">
+                    ARQUIVO
+                    <strong>SOMBRIO</strong>
+                </span>
+
+            </a>
+
+
+            <nav class="nav-menu">
+
+                <a href="index.html">
+                    <i class="fa-solid fa-house"></i>
+                    Início
+                </a>
+
+                <a href="index.html#casos">
+                    <i class="fa-solid fa-box-archive"></i>
+                    Acervo
+                </a>
+
+                <a href="index.html#forum">
+                    <i class="fa-solid fa-comments"></i>
+                    Fórum
+                </a>
+
+            </nav>
+
+
+            <button
+                class="menu-toggle"
+                id="menu-toggle"
+                aria-label="Abrir menu"
+            >
+
+                <i class="fa-solid fa-bars"></i>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================================================================
+         SIDEBAR MOBILE
+         ================================================================ -->
+
+    <aside
+        class="sidebar-menu"
+        id="sidebar-menu"
+    >
+
+        <button
+            class="close-sidebar"
+            id="close-sidebar"
+            aria-label="Fechar menu"
+        >
+            ×
+        </button>
+
+        <div class="sidebar-marca">
+            ARQUIVO
+            <strong>SOMBRIO</strong>
+        </div>
+
+        <nav class="sidebar-links">
+
+            <a href="index.html">
+                <i class="fa-solid fa-house"></i>
+                Início
+            </a>
+
+            <a href="index.html#casos">
+                <i class="fa-solid fa-box-archive"></i>
+                Acervo
+            </a>
+
+            <a href="index.html#forense">
+                <i class="fa-solid fa-microscope"></i>
+                Perícia
+            </a>
+
+            <a href="index.html#livros">
+                <i class="fa-solid fa-book"></i>
+                Biblioteca
+            </a>
+
+            <a href="index.html#forum">
+                <i class="fa-solid fa-comments"></i>
+                Fórum
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- ================================================================
+         BREADCRUMB
+         ================================================================ -->
+
+    <div class="breadcrumb-bar">
+
+        <div class="container">
+
+            <a href="index.html#casos">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Voltar ao acervo
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================================
+         CONTEÚDO
+         ================================================================ -->
+
+    <main class="container case-details-container">
+
+
+        <!-- CABEÇALHO -->
+
+        <section class="case-header-card">
+
+            <div class="arquivo-carimbo">
+                DOCUMENTO ARQUIVADO
+            </div>
+
+
+            <div class="case-badge-group">
+
+                <span
+                    class="badge category"
+                    id="case-category"
+                >
+                    CATEGORIA
+                </span>
+
+                <span
+                    class="badge status"
+                    id="case-status"
+                >
+                    STATUS
+                </span>
+
+            </div>
+
+
+            <h1
+                class="case-main-title"
+                id="case-title"
+            >
+                Carregando dossiê...
+            </h1>
+
+
+            <div class="case-meta-grid">
+
+                <div class="meta-item">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    <div>
+
+                        <small>
+                            LOCALIZAÇÃO
+                        </small>
+
+                        <strong id="case-location">
+                            ---
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="meta-item">
+
+                    <i class="fa-solid fa-calendar-days"></i>
+
+                    <div>
+
+                        <small>
+                            ANO / PERÍODO
+                        </small>
+
+                        <strong id="case-year">
+                            ---
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="meta-item">
+
+                    <i class="fa-solid fa-hashtag"></i>
+
+                    <div>
+
+                        <small>
+                            ID DO DOCUMENTO
+                        </small>
+
+                        <strong id="case-id">
+                            #000
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- IMAGEM + RESUMO -->
+
+        <section class="case-hero-section">
+
+            <div class="case-image-wrapper">
+
+                <div class="imagem-legenda">
+                    REGISTRO VISUAL
+                </div>
+
+                <img
+                    id="case-image"
+                    src=""
+                    alt="Imagem do dossiê"
+                >
+
+            </div>
+
+
+            <aside class="case-summary-box">
+
+                <span class="document-label">
+                    RESUMO EXECUTIVO
+                </span>
+
+                <h2>
+                    <i class="fa-solid fa-file-lines"></i>
+                    Síntese do caso
+                </h2>
+
+                <p id="case-summary">
+                    Carregando informações...
+                </p>
+
+                <div class="summary-stamp">
+                    ARQUIVO SOMBRIO
+                </div>
+
+            </aside>
+
+        </section>
+
+
+        <!-- RELATÓRIO -->
+
+        <section class="case-body-section">
+
+            <div class="section-title-wrapper">
+
+                <span class="section-index">
+                    01
+                </span>
+
+                <div>
+
+                    <span class="section-kicker">
+                        DOCUMENTAÇÃO
+                    </span>
+
+                    <h2>
+                        <i class="fa-solid fa-book-open"></i>
+                        Relatório Circunstanciado
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="case-full-text"
+                id="case-history"
+            ></div>
+
+        </section>
+
+
+        <!-- EVIDÊNCIAS -->
+
+        <section class="case-evidence-section">
+
+            <div class="section-title-wrapper">
+
+                <span class="section-index">
+                    02
+                </span>
+
+                <div>
+
+                    <span class="section-kicker">
+                        ANÁLISE
+                    </span>
+
+                    <h2>
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Evidências & Achados
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <ul
+                class="evidence-list"
+                id="case-evidence-list"
+            ></ul>
+
+        </section>
+
+
+        <!-- TEORIAS -->
+
+        <section class="case-theories-section">
+
+            <div class="section-title-wrapper">
+
+                <span class="section-index">
+                    03
+                </span>
+
+                <div>
+
+                    <span class="section-kicker">
+                        INVESTIGAÇÃO
+                    </span>
+
+                    <h2>
+                        <i class="fa-solid fa-brain"></i>
+                        Hipóteses e Linhas de Investigação
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="theories-box"
+                id="case-theories"
+            ></div>
+
+        </section>
+
+
+        <!-- COMENTÁRIOS -->
+
+        <section class="case-comments-section">
+
+            <div class="section-title-wrapper">
+
+                <span class="section-index">
+                    04
+                </span>
+
+                <div>
+
+                    <span class="section-kicker">
+                        DISCUSSÃO
+                    </span>
+
+                    <h2>
+                        <i class="fa-solid fa-comments"></i>
+                        Análises dos Pesquisadores
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <form
+                id="form-case-comment"
+                class="comment-form"
+            >
+
+                <div class="form-row">
+
+                    <label for="comment-author">
+                        IDENTIFICAÇÃO
+                    </label>
+
+                    <input
+                        type="text"
+                        id="comment-author"
+                        placeholder="Seu nome ou codinome"
+                        maxlength="60"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <label for="comment-text">
+                        ANÁLISE
+                    </label>
+
+                    <textarea
+                        id="comment-text"
+                        rows="5"
+                        maxlength="1000"
+                        placeholder="Registre sua análise, hipótese ou observação..."
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn-submit"
+                >
+
+                    <i class="fa-solid fa-paper-plane"></i>
+
+                    Publicar análise
+
+                </button>
+
+            </form>
+
+
+            <div
+                class="comments-list"
+                id="case-comments-list"
+            ></div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================================================================
+         FOOTER
+         ================================================================ -->
+
+    <footer class="main-footer">
+
+        <div class="container footer-content">
+
+            <div class="footer-logo">
+                ARQUIVO <strong>SOMBRIO</strong>
+            </div>
+
+            <p>
+                Sistema de documentação criminalística,
+                investigação e pesquisa forense.
+            </p>
+
+            <small>
+                Conteúdo destinado a fins documentais,
+                educacionais e de pesquisa.
+            </small>
+
+        </div>
+
+    </footer>
+
+
+    <!-- SCRIPTS -->
+
+    <script src="data/caso.js"></script>
+    <script src="js/caso.js"></script>
+
+</body>
+
+</html>
+```
