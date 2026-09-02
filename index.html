@@ -452,6 +452,346 @@
 
                 </header>
 
+<!-- ========================================================
+     PESQUISA E FILTROS DOS DOSSIÊS
+     ======================================================== -->
+
+<div class="archive-search-panel">
+
+    <!-- PESQUISA -->
+    <div class="archive-search">
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+            type="search"
+            id="busca-casos"
+            placeholder="Pesquisar um caso..."
+            autocomplete="off"
+            aria-label="Pesquisar dossiês"
+        >
+
+        <button
+            type="button"
+            id="limpar-busca"
+            class="clear-search-button"
+            aria-label="Limpar pesquisa"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+    </div>
+
+
+    <!-- FILTROS PRINCIPAIS -->
+    <div
+        class="quick-filters"
+        id="filtros-rapidos"
+    >
+
+        <button
+            type="button"
+            class="filter-chip active"
+            data-filtro="todos"
+        >
+            Todos
+        </button>
+
+        <button
+            type="button"
+            class="filter-chip"
+            data-filtro="solucionado"
+        >
+            Solucionados
+        </button>
+
+        <button
+            type="button"
+            class="filter-chip"
+            data-filtro="nao-solucionado"
+        >
+            Não solucionados
+        </button>
+
+        <button
+            type="button"
+            class="filter-chip"
+            data-filtro="serial-killer"
+        >
+            Serial Killers
+        </button>
+
+        <button
+            type="button"
+            class="filter-chip"
+            data-filtro="crime-familiar"
+        >
+            Crimes Familiares
+        </button>
+
+        <button
+            type="button"
+            class="filter-chip"
+            data-filtro="desaparecimento"
+        >
+            Desaparecimentos
+        </button>
+
+        <button
+            type="button"
+            class="filter-chip"
+            data-filtro="misterio"
+        >
+            Mistérios
+        </button>
+
+    </div>
+
+
+    <!-- CONTROLES -->
+    <div class="archive-filter-actions">
+
+        <button
+            type="button"
+            class="advanced-filter-button"
+            id="abrir-filtros-avancados"
+        >
+            <i class="fa-solid fa-sliders"></i>
+
+            Mais filtros
+
+            <i
+                class="fa-solid fa-chevron-down"
+                id="icone-filtros"
+            ></i>
+        </button>
+
+
+        <select
+            id="ordenar-casos"
+            class="archive-order"
+            aria-label="Ordenar dossiês"
+        >
+
+            <option value="padrao">
+                Adicionados recentemente
+            </option>
+
+            <option value="az">
+                Título: A–Z
+            </option>
+
+            <option value="za">
+                Título: Z–A
+            </option>
+
+            <option value="recentes">
+                Ano: mais recentes
+            </option>
+
+            <option value="antigos">
+                Ano: mais antigos
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- FILTROS AVANÇADOS -->
+    <div
+        class="advanced-filters"
+        id="filtros-avancados"
+        hidden
+    >
+
+        <div class="advanced-filter-field">
+
+            <label for="filtro-status">
+                STATUS
+            </label>
+
+            <select id="filtro-status">
+
+                <option value="">
+                    Todos
+                </option>
+
+                <option value="solucionado">
+                    Solucionado
+                </option>
+
+                <option value="nao-solucionado">
+                    Não solucionado
+                </option>
+
+                <option value="em-investigacao">
+                    Em investigação
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="advanced-filter-field">
+
+            <label for="filtro-crime">
+                TIPO
+            </label>
+
+            <select id="filtro-crime">
+
+                <option value="">
+                    Todos
+                </option>
+
+                <option value="homicidio">
+                    Homicídio
+                </option>
+
+                <option value="serial-killer">
+                    Serial Killer
+                </option>
+
+                <option value="desaparecimento">
+                    Desaparecimento
+                </option>
+
+                <option value="crime-familiar">
+                    Crime Familiar
+                </option>
+
+                <option value="matricidio">
+                    Matricídio
+                </option>
+
+                <option value="parricidio">
+                    Parricídio
+                </option>
+
+                <option value="filicidio">
+                    Filicídio
+                </option>
+
+                <option value="misterio">
+                    Mistério
+                </option>
+
+                <option value="morte-inexplicada">
+                    Morte inexplicada
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="advanced-filter-field">
+
+            <label for="filtro-autor">
+                PERFIL DO AUTOR
+            </label>
+
+            <select id="filtro-autor">
+
+                <option value="">
+                    Todos
+                </option>
+
+                <option value="homem">
+                    Homem
+                </option>
+
+                <option value="mulher">
+                    Mulher
+                </option>
+
+                <option value="dupla">
+                    Dupla
+                </option>
+
+                <option value="grupo">
+                    Grupo
+                </option>
+
+                <option value="desconhecido">
+                    Desconhecido
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="advanced-filter-field">
+
+            <label for="filtro-pais">
+                PAÍS
+            </label>
+
+            <select id="filtro-pais">
+
+                <option value="">
+                    Todos
+                </option>
+
+                <option value="Brasil">
+                    Brasil
+                </option>
+
+                <option value="Estados Unidos">
+                    Estados Unidos
+                </option>
+
+                <option value="Austrália">
+                    Austrália
+                </option>
+
+                <option value="Rússia">
+                    Rússia
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="reset-filters-button"
+            id="resetar-filtros"
+        >
+            <i class="fa-solid fa-rotate-left"></i>
+            Limpar filtros
+        </button>
+
+    </div>
+
+
+    <!-- CONTADOR -->
+    <div class="archive-results-bar">
+
+        <p>
+            <strong id="contador-casos">
+                0
+            </strong>
+
+            <span id="contador-texto">
+                dossiês encontrados
+            </span>
+        </p>
+
+        <span
+            class="active-filter-indicator"
+            id="filtro-ativo-label"
+        >
+            ACERVO COMPLETO
+        </span>
+
+    </div>
+
+</div>
 
                 <div
                     class="casos-grid"
