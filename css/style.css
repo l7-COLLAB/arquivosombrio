@@ -2491,3 +2491,368 @@ form {
     }
 
 }
+
+/* =========================================================
+   ESTANTE DO INVESTIGADOR
+   ========================================================= */
+
+.bookshelf-library {
+    width: 100%;
+    margin-top: 35px;
+}
+
+
+/* categorias */
+
+.books-category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+    margin-top: 25px;
+}
+
+
+/* estante */
+
+.bookshelf {
+    position: relative;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    min-height: 230px;
+
+    padding:
+        35px
+        18px
+        28px;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    border:
+        1px solid
+        rgba(167, 128, 64, 0.35);
+
+    border-radius: 3px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(39, 29, 20, 0.92),
+            rgba(13, 10, 8, 0.98)
+        );
+
+    box-shadow:
+        inset 0 0 35px
+        rgba(0, 0, 0, 0.75),
+
+        0 12px 28px
+        rgba(0, 0, 0, 0.35);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease;
+}
+
+
+.bookshelf:hover {
+    transform:
+        translateY(-4px);
+
+    border-color:
+        rgba(174, 35, 35, 0.75);
+}
+
+
+/* madeira da prateleira */
+
+.bookshelf::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 18px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #49331f,
+            #24170f
+        );
+
+    border-top:
+        1px solid
+        rgba(196, 150, 78, 0.45);
+
+    box-shadow:
+        0 -5px 15px
+        rgba(0, 0, 0, 0.7);
+}
+
+
+/* lombada */
+
+.bookshelf-spine {
+    position: relative;
+    z-index: 2;
+
+    width: 75%;
+
+    min-height: 155px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content:
+        space-between;
+
+    align-items: center;
+
+    padding:
+        22px
+        10px;
+
+    color:
+        #e8dfd0;
+
+    text-align:
+        center;
+
+    background:
+        linear-gradient(
+            90deg,
+            #3a1010,
+            #741515,
+            #321010
+        );
+
+    border:
+        1px solid
+        rgba(185, 122, 73, 0.5);
+
+    box-shadow:
+        inset 5px 0 12px
+        rgba(255,255,255,0.04),
+
+        inset -6px 0 14px
+        rgba(0,0,0,0.55),
+
+        5px 7px 12px
+        rgba(0,0,0,0.5);
+}
+
+
+/* texto da lombada */
+
+.bookshelf-spine strong,
+.bookshelf-spine span {
+    position: relative;
+    z-index: 3;
+}
+
+
+.bookshelf-spine strong {
+    font-family:
+        "Cinzel",
+        serif;
+
+    font-size:
+        0.9rem;
+
+    line-height:
+        1.35;
+
+    letter-spacing:
+        0.09em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.bookshelf-spine span {
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    font-size:
+        0.68rem;
+
+    letter-spacing:
+        0.08em;
+
+    color:
+        #c7a56b;
+}
+
+
+/* botão gerado pela estante */
+
+button.bookshelf {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 100%;
+
+    font: inherit;
+
+    color: inherit;
+
+    border-radius: 3px;
+}
+
+
+/* =========================================================
+   LIVROS
+   ========================================================= */
+
+#grid-livros {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 24px;
+
+    margin-top: 35px;
+}
+
+
+#grid-livros .book-card {
+    width: 100%;
+
+    overflow: hidden;
+
+    background:
+        rgba(18, 15, 12, 0.95);
+
+    border:
+        1px solid
+        rgba(156, 121, 65, 0.25);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease;
+}
+
+
+#grid-livros .book-card:hover {
+    transform:
+        translateY(-4px);
+
+    border-color:
+        rgba(169, 29, 29, 0.75);
+}
+
+
+#grid-livros img {
+    display: block;
+
+    width: 100%;
+
+    aspect-ratio:
+        2 / 3;
+
+    object-fit:
+        cover;
+}
+
+
+/* =========================================================
+   RESPONSIVO — ESTANTE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .books-category-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+@media (max-width: 620px) {
+
+    .bookshelf-library {
+        margin-top: 22px;
+    }
+
+
+    .books-category-grid {
+        grid-template-columns:
+            1fr;
+
+        gap: 18px;
+    }
+
+
+    .bookshelf {
+        min-height: 175px;
+
+        padding:
+            24px
+            15px
+            24px;
+    }
+
+
+    .bookshelf-spine {
+        width: 62%;
+
+        min-height: 125px;
+
+        padding:
+            18px
+            10px;
+    }
+
+
+    .bookshelf-spine strong {
+        font-size:
+            0.78rem;
+    }
+
+
+    #grid-livros {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        gap: 14px;
+
+        margin-top: 25px;
+    }
+
+}
+
+
+@media (max-width: 390px) {
+
+    #grid-livros {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+
+    .bookshelf-spine {
+        width: 70%;
+    }
+
+}
