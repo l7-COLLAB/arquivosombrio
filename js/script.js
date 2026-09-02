@@ -45,20 +45,28 @@ const livrosIniciais = [
         id: 1,
         titulo: "Casos de Rotina: Perícia Forense em Ação",
         autor: "Dr. A. Forense",
+        ano: 2024,
+        editora: "Arquivo Sombrio",
         capa: "imagens/livros/pericia.jpg",
         descricao:
             "Uma introdução aos métodos científicos utilizados na análise de vestígios e cenas de crime.",
-        tag: "PERÍCIA & CRIMINOLOGIA"
+        tag: "PERÍCIA & CRIMINOLOGIA",
+        recomendado: true,
+        criadoEm: "2026-01-01T12:00:00.000Z"
     },
 
     {
         id: 2,
         titulo: "Compêndio de Lendas Urbanas e Mitos",
         autor: "H. P. Silva",
+        ano: 2023,
+        editora: "Arquivo Sombrio",
         capa: "imagens/livros/lendas.jpg",
         descricao:
             "Uma compilação sobre a origem histórica de mitos, lendas urbanas e folclore obscuro.",
-        tag: "FOLCLORE & MISTÉRIOS"
+        tag: "FOLCLORE & MISTÉRIOS",
+        recomendado: true,
+        criadoEm: "2026-01-02T12:00:00.000Z"
     }
 ];
 
@@ -787,8 +795,7 @@ async function processarUploadImagemAdmin({
     const tiposPermitidos = [
         "image/jpeg",
         "image/png",
-        "image/webp",
-        "image/gif"
+        "image/webp"
     ];
 
     if (
@@ -798,7 +805,21 @@ async function processarUploadImagemAdmin({
     ) {
 
         alert(
-            "Escolha uma imagem JPG, PNG, WEBP ou GIF."
+            "Escolha uma imagem JPG, PNG ou WEBP."
+        );
+
+        inputArquivo.value = "";
+
+        return;
+    }
+
+    const limiteImagem =
+        10 * 1024 * 1024;
+
+    if (arquivo.size > limiteImagem) {
+
+        alert(
+            "A imagem deve ter no máximo 10 MB."
         );
 
         inputArquivo.value = "";
@@ -1597,6 +1618,8 @@ function inicializarFiltrosForenses() {
         }
     );
 }
+
+
 /* ==========================================================================
    LIVROS
    ========================================================================== */
@@ -1768,7 +1791,6 @@ function renderizarLinksAfiliadosLivro(
         </div>
     `;
 }
-
 
 function criarLinhaAfiliado(link = {}) {
 
@@ -1956,6 +1978,83 @@ function obterTodosLivros() {
 }
 
 
+function normalizarTextoLivro(valor) {
+
+    return String(valor || "")
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .toLowerCase()
+        .trim();
+}
+
+
+function obterDataLivro(livro) {
+
+    const valor =
+        livro.criadoEm ||
+        livro.created_at ||
+        livro.dataCadastro ||
+        "";
+
+    const timestamp =
+        Date.parse(valor);
+
+    if (!Number.isNaN(timestamp)) {
+        return timestamp;
+    }
+
+    const idNumerico =
+        Number(livro.id);
+
+    if (
+        Number.isFinite(idNumerico) &&
+        idNumerico > 1000000000000
+    ) {
+        return idNumerico;
+    }
+
+    return 0;
+}
+
+
+function livroEhRecomendado(livro) {
+
+    if (
+        typeof livro.recomendado ===
+        "boolean"
+    ) {
+        return livro.recomendado;
+    }
+
+    const texto =
+        normalizarTextoLivro(
+            `${livro.tag || ""} ${livro.destaque || ""}`
+        );
+
+    return texto.includes(
+        "recomendado"
+    );
+}
+
+
+function livroTemLinkCompra(livro) {
+
+    return normalizarLinksAfiliados(
+        livro.linksAfiliados
+    ).some(
+        link =>
+            Boolean(
+                normalizarURLComercial(
+                    link.url
+                )
+            )
+    );
+}
+
+
 function carregarLivros() {
 
     const grid =
@@ -1992,19 +2091,6 @@ function carregarLivros() {
     }
 
 
-    function normalizarCategoria(valor) {
-
-        return String(valor || "")
-            .normalize("NFD")
-            .replace(
-                /[\u0300-\u036f]/g,
-                ""
-            )
-            .toLowerCase()
-            .trim();
-    }
-
-
     function identificarCategoria(livro) {
 
         const categoriaOriginal =
@@ -2014,161 +2100,100 @@ function carregarLivros() {
             "";
 
         const categoria =
-            normalizarCategoria(
+            normalizarTextoLivro(
                 categoriaOriginal
             );
 
-
         if (
-            categoria.includes(
-                "crime real"
-            ) ||
-            categoria.includes(
-                "true crime"
-            )
+            categoria.includes("crime real") ||
+            categoria.includes("true crime")
         ) {
-
             return {
                 id: "crimes-reais",
                 nome: "Crimes Reais"
             };
         }
 
-
         if (
-            categoria.includes(
-                "terror"
-            ) ||
-            categoria.includes(
-                "horror"
-            )
+            categoria.includes("terror") ||
+            categoria.includes("horror")
         ) {
-
             return {
                 id: "terror",
                 nome: "Terror"
             };
         }
 
-
         if (
-            categoria.includes(
-                "mister"
-            )
+            categoria.includes("mister")
         ) {
-
             return {
                 id: "misterios",
                 nome: "Mistérios"
             };
         }
 
-
         if (
-            categoria.includes(
-                "serial"
-            )
+            categoria.includes("serial")
         ) {
-
             return {
                 id: "serial-killers",
                 nome: "Serial Killers"
             };
         }
 
-
         if (
-            categoria.includes(
-                "forense"
-            ) ||
-            categoria.includes(
-                "pericia"
-            )
+            categoria.includes("forense") ||
+            categoria.includes("pericia")
         ) {
-
             return {
                 id: "forense",
                 nome: "Ciência Forense"
             };
         }
 
-
         if (
-            categoria.includes(
-                "psicologia"
-            ) ||
-            categoria.includes(
-                "criminologia"
-            )
+            categoria.includes("psicologia") ||
+            categoria.includes("criminologia")
         ) {
-
             return {
-                id:
-                    "psicologia-criminal",
-
-                nome:
-                    "Psicologia Criminal"
+                id: "psicologia-criminal",
+                nome: "Psicologia Criminal"
             };
         }
 
-
         if (
-            categoria.includes(
-                "sem solucao"
-            ) ||
-            categoria.includes(
-                "nao solucionado"
-            )
+            categoria.includes("sem solucao") ||
+            categoria.includes("nao solucionado")
         ) {
-
             return {
-                id:
-                    "casos-sem-solucao",
-
-                nome:
-                    "Casos sem Solução"
+                id: "casos-sem-solucao",
+                nome: "Casos sem Solução"
             };
         }
 
-
         if (
-            categoria.includes(
-                "lenda"
-            ) ||
-            categoria.includes(
-                "folclore"
-            )
+            categoria.includes("lenda") ||
+            categoria.includes("folclore")
         ) {
-
             return {
                 id: "lendas",
                 nome: "Lendas & Folclore"
             };
         }
 
-
         if (
-            categoria.includes(
-                "arquivo"
-            ) ||
-            categoria.includes(
-                "segredo"
-            )
+            categoria.includes("arquivo") ||
+            categoria.includes("segredo")
         ) {
-
             return {
-                id:
-                    "arquivos-secretos",
-
-                nome:
-                    "Arquivos Secretos"
+                id: "arquivos-secretos",
+                nome: "Arquivos Secretos"
             };
         }
 
-
         return {
             id: "outros",
-
             nome:
                 categoriaOriginal ||
                 "Outros"
@@ -2179,44 +2204,30 @@ function carregarLivros() {
     const categorias =
         new Map();
 
-
     livros.forEach(
-        function(livro) {
+        livro => {
 
             const categoria =
                 identificarCategoria(
                     livro
                 );
 
-            if (
-                !categorias.has(
-                    categoria.id
-                )
-            ) {
+            if (!categorias.has(categoria.id)) {
 
                 categorias.set(
                     categoria.id,
                     {
-                        id:
-                            categoria.id,
-
-                        nome:
-                            categoria.nome,
-
-                        livros:
-                            []
+                        id: categoria.id,
+                        nome: categoria.nome,
+                        livros: []
                     }
                 );
             }
 
             categorias
-                .get(
-                    categoria.id
-                )
+                .get(categoria.id)
                 .livros
-                .push(
-                    livro
-                );
+                .push(livro);
         }
     );
 
@@ -2238,7 +2249,6 @@ function carregarLivros() {
 
                 </div>
 
-
                 <div class="bookshelf">
 
                     ${
@@ -2247,78 +2257,213 @@ function carregarLivros() {
                                 categorias.values()
                             )
                             .map(
-                                function(categoria) {
+                                categoria => `
+                                    <button
+                                        type="button"
+                                        class="bookshelf-spine"
+                                        data-categoria="${escaparHTML(categoria.id)}"
+                                    >
 
-                                    return `
-                                        <button
-                                            type="button"
-                                            class="bookshelf-spine"
-                                            data-categoria="${escaparHTML(categoria.id)}"
-                                        >
+                                        <span class="bookshelf-spine-title">
+                                            ${escaparHTML(categoria.nome)}
+                                        </span>
 
-                                            <span class="bookshelf-spine-title">
-                                                ${escaparHTML(categoria.nome)}
-                                            </span>
+                                        <small>
+                                            ${categoria.livros.length}
+                                        </small>
 
-                                            <small>
-                                                ${categoria.livros.length}
-                                            </small>
-
-                                        </button>
-                                    `;
-                                }
+                                    </button>
+                                `
                             )
                             .join("")
                     }
 
                 </div>
 
-
                 <div class="bookshelf-base"></div>
 
             </div>
         `;
 
-
-        const lombadas =
-            grid.querySelectorAll(
+        grid
+            .querySelectorAll(
                 ".bookshelf-spine"
-            );
-
-
-        lombadas.forEach(
-            function(lombada) {
+            )
+            .forEach(lombada => {
 
                 lombada.addEventListener(
                     "click",
-                    function() {
-
-                        const id =
-                            lombada.dataset
-                                .categoria;
+                    () => {
 
                         const categoria =
                             categorias.get(
-                                id
+                                lombada.dataset.categoria
                             );
 
-                        if (!categoria) {
-                            return;
+                        if (categoria) {
+                            renderizarCategoria(
+                                categoria
+                            );
                         }
-
-                        renderizarCategoria(
-                            categoria
-                        );
                     }
                 );
-            }
+            });
+    }
+
+
+    function criarOpcoesUnicas(
+        lista,
+        campo
+    ) {
+
+        return Array.from(
+            new Set(
+                lista
+                    .map(item =>
+                        String(
+                            item?.[campo] || ""
+                        ).trim()
+                    )
+                    .filter(Boolean)
+            )
+        ).sort(
+            (a, b) =>
+                a.localeCompare(
+                    b,
+                    "pt-BR",
+                    { sensitivity: "base" }
+                )
         );
+    }
+
+
+    function criarCardLivro(
+        livro,
+        categoria
+    ) {
+
+        const metadados = [];
+
+        if (livro.ano) {
+            metadados.push(
+                `<span><i class="fa-regular fa-calendar"></i>${escaparHTML(livro.ano)}</span>`
+            );
+        }
+
+        if (livro.editora) {
+            metadados.push(
+                `<span><i class="fa-solid fa-building-columns"></i>${escaparHTML(livro.editora)}</span>`
+            );
+        }
+
+        return `
+            <article class="book-card">
+
+                <div class="book-image">
+
+                    <img
+                        src="${escaparHTML(
+                            livro.capa || ""
+                        )}"
+                        alt="${escaparHTML(
+                            livro.titulo || "Livro"
+                        )}"
+                        loading="lazy"
+                        onerror="this.src='https://placehold.co/300x450/111/777?text=Arquivo+Sombrio'"
+                    >
+
+                    ${
+                        livroEhRecomendado(livro)
+                            ? `
+                                <span class="book-label">
+                                    RECOMENDADO
+                                </span>
+                            `
+                            : ""
+                    }
+
+                </div>
+
+                <div class="book-content">
+
+                    <span class="book-category">
+                        ${escaparHTML(
+                            livro.tag ||
+                            categoria.nome
+                        )}
+                    </span>
+
+                    <h3>
+                        ${escaparHTML(
+                            livro.titulo ||
+                            "Sem título"
+                        )}
+                    </h3>
+
+                    <p class="book-author">
+                        ${escaparHTML(
+                            livro.autor ||
+                            "Autor não informado"
+                        )}
+                    </p>
+
+                    ${
+                        metadados.length
+                            ? `
+                                <div class="book-meta">
+                                    ${metadados.join("")}
+                                </div>
+                            `
+                            : ""
+                    }
+
+                    <p class="book-description">
+                        ${escaparHTML(
+                            livro.descricao || ""
+                        )}
+                    </p>
+
+                    ${renderizarLinksAfiliadosLivro(
+                        livro
+                    )}
+
+                </div>
+
+            </article>
+        `;
     }
 
 
     function renderizarCategoria(
         categoria
     ) {
+
+        const autores =
+            criarOpcoesUnicas(
+                categoria.livros,
+                "autor"
+            );
+
+        const editoras =
+            criarOpcoesUnicas(
+                categoria.livros,
+                "editora"
+            );
+
+        const anos =
+            Array.from(
+                new Set(
+                    categoria.livros
+                        .map(livro =>
+                            Number(livro.ano)
+                        )
+                        .filter(ano =>
+                            Number.isFinite(ano) &&
+                            ano > 0
+                        )
+                )
+            )
+                .sort((a, b) => b - a);
 
         grid.innerHTML = `
             <div class="books-category-view">
@@ -2330,13 +2475,9 @@ function carregarLivros() {
                         class="books-back-button"
                         id="voltar-estantes"
                     >
-
                         <i class="fa-solid fa-arrow-left"></i>
-
                         VOLTAR ÀS ESTANTES
-
                     </button>
-
 
                     <div>
 
@@ -2352,7 +2493,6 @@ function carregarLivros() {
 
                         <p>
                             ${categoria.livros.length}
-
                             ${
                                 categoria.livros.length === 1
                                     ? "livro arquivado"
@@ -2365,99 +2505,673 @@ function carregarLivros() {
                 </div>
 
 
-                <div class="books-category-grid">
+                <div class="books-filter-panel">
 
-                    ${
-                        categoria.livros
-                            .map(
-                                function(livro) {
+                    <div class="books-filter-search">
 
-                                    return `
-                                        <article class="book-card">
+                        <i class="fa-solid fa-magnifying-glass"></i>
 
-                                            <div class="book-image">
+                        <input
+                            type="search"
+                            id="books-search"
+                            placeholder="Pesquisar título, autor ou editora..."
+                            autocomplete="off"
+                        >
 
-                                                <img
-                                                    src="${escaparHTML(
-                                                        livro.capa ||
-                                                        ""
-                                                    )}"
-                                                    alt="${escaparHTML(
-                                                        livro.titulo ||
-                                                        "Livro"
-                                                    )}"
-                                                    loading="lazy"
-                                                    onerror="this.src='https://placehold.co/300x450/111/777?text=Arquivo+Sombrio'"
-                                                >
+                        <button
+                            type="button"
+                            id="books-clear-search"
+                            aria-label="Limpar pesquisa"
+                            title="Limpar pesquisa"
+                        >
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
 
-                                                <span class="book-label">
-                                                    RECOMENDADO
-                                                </span>
+                    </div>
 
-                                            </div>
+                    <div class="books-filter-chips">
+
+                        <button
+                            type="button"
+                            class="books-filter-chip active"
+                            data-book-highlight="todos"
+                        >
+                            Todos
+                        </button>
+
+                        <button
+                            type="button"
+                            class="books-filter-chip"
+                            data-book-highlight="recomendados"
+                        >
+                            Recomendados
+                        </button>
+
+                        <button
+                            type="button"
+                            class="books-filter-chip"
+                            data-book-highlight="comprar"
+                        >
+                            Com link de compra
+                        </button>
+
+                    </div>
+
+                    <div class="books-filter-grid">
+
+                        <label>
+                            ORDENAR POR
+                            <select id="books-sort">
+                                <option value="recentes">
+                                    Adicionados recentemente
+                                </option>
+
+                                <option value="antigos-adicionados">
+                                    Adicionados há mais tempo
+                                </option>
+
+                                <option value="titulo-az">
+                                    Título: A–Z
+                                </option>
+
+                                <option value="titulo-za">
+                                    Título: Z–A
+                                </option>
+
+                                <option value="autor-az">
+                                    Autor: A–Z
+                                </option>
+
+                                <option value="autor-za">
+                                    Autor: Z–A
+                                </option>
+
+                                <option value="ano-recente">
+                                    Ano: mais recente
+                                </option>
+
+                                <option value="ano-antigo">
+                                    Ano: mais antigo
+                                </option>
+                            </select>
+                        </label>
 
 
-                                            <div class="book-content">
+                        <label>
+                            AUTOR
 
-                                                <span class="book-category">
-                                                    ${escaparHTML(
-                                                        livro.tag ||
-                                                        categoria.nome
-                                                    )}
-                                                </span>
+                            <select id="books-author-filter">
 
-                                                <h3>
-                                                    ${escaparHTML(
-                                                        livro.titulo ||
-                                                        "Sem título"
-                                                    )}
-                                                </h3>
+                                <option value="">
+                                    Todos os autores
+                                </option>
 
-                                                <p class="book-author">
-                                                    ${escaparHTML(
-                                                        livro.autor ||
-                                                        "Autor não informado"
-                                                    )}
-                                                </p>
-
-                                                <p class="book-description">
-                                                    ${escaparHTML(
-                                                        livro.descricao ||
-                                                        ""
-                                                    )}
-                                                </p>
-
-                                                ${renderizarLinksAfiliadosLivro(
-                                                    livro
-                                                )}
-
-                                            </div>
-
-                                        </article>
-                                    `;
+                                ${
+                                    autores
+                                        .map(autor => `
+                                            <option value="${escaparHTML(autor)}">
+                                                ${escaparHTML(autor)}
+                                            </option>
+                                        `)
+                                        .join("")
                                 }
-                            )
-                            .join("")
-                    }
+
+                            </select>
+                        </label>
+
+
+                        <label>
+                            ANO
+
+                            <select id="books-year-filter">
+
+                                <option value="">
+                                    Todos os anos
+                                </option>
+
+                                ${
+                                    anos
+                                        .map(ano => `
+                                            <option value="${ano}">
+                                                ${ano}
+                                            </option>
+                                        `)
+                                        .join("")
+                                }
+
+                            </select>
+                        </label>
+
+
+                        <label>
+                            EDITORA
+
+                            <select id="books-publisher-filter">
+
+                                <option value="">
+                                    Todas as editoras
+                                </option>
+
+                                ${
+                                    editoras
+                                        .map(editora => `
+                                            <option value="${escaparHTML(editora)}">
+                                                ${escaparHTML(editora)}
+                                            </option>
+                                        `)
+                                        .join("")
+                                }
+
+                            </select>
+                        </label>
+
+                    </div>
+
+
+                    <div class="books-results-bar">
+
+                        <p id="books-results-count">
+                            Exibindo ${categoria.livros.length} de ${categoria.livros.length}
+                        </p>
+
+                        <button
+                            type="button"
+                            class="books-reset-filters"
+                            id="books-reset-filters"
+                        >
+                            <i class="fa-solid fa-rotate-left"></i>
+                            Limpar filtros
+                        </button>
+
+                    </div>
 
                 </div>
+
+
+                <div
+                    class="books-category-grid"
+                    id="books-category-results"
+                ></div>
 
             </div>
         `;
 
 
-        const voltar =
+        const campoBusca =
             document.getElementById(
-                "voltar-estantes"
+                "books-search"
             );
 
-        if (voltar) {
+        const ordenar =
+            document.getElementById(
+                "books-sort"
+            );
 
-            voltar.addEventListener(
+        const filtroAutor =
+            document.getElementById(
+                "books-author-filter"
+            );
+
+        const filtroAno =
+            document.getElementById(
+                "books-year-filter"
+            );
+
+        const filtroEditora =
+            document.getElementById(
+                "books-publisher-filter"
+            );
+
+        const resultados =
+            document.getElementById(
+                "books-category-results"
+            );
+
+        const contador =
+            document.getElementById(
+                "books-results-count"
+            );
+
+        const chips =
+            Array.from(
+                document.querySelectorAll(
+                    "[data-book-highlight]"
+                )
+            );
+
+        let destaqueAtivo =
+            "todos";
+
+
+        function aplicarFiltrosLivros() {
+
+            const busca =
+                normalizarTextoLivro(
+                    campoBusca?.value
+                );
+
+            const autor =
+                filtroAutor?.value || "";
+
+            const ano =
+                filtroAno?.value || "";
+
+            const editora =
+                filtroEditora?.value || "";
+
+            const ordem =
+                ordenar?.value ||
+                "recentes";
+
+            let filtrados =
+                categoria.livros.filter(
+                    livro => {
+
+                        const textoBusca =
+                            normalizarTextoLivro(
+                                [
+                                    livro.titulo,
+                                    livro.autor,
+                                    livro.editora,
+                                    livro.ano,
+                                    livro.tag
+                                ].join(" ")
+                            );
+
+                        if (
+                            busca &&
+                            !textoBusca.includes(
+                                busca
+                            )
+                        ) {
+                            return false;
+                        }
+
+                        if (
+                            autor &&
+                            String(
+                                livro.autor || ""
+                            ) !== autor
+                        ) {
+                            return false;
+                        }
+
+                        if (
+                            ano &&
+                            String(
+                                livro.ano || ""
+                            ) !== ano
+                        ) {
+                            return false;
+                        }
+
+                        if (
+                            editora &&
+                            String(
+                                livro.editora || ""
+                            ) !== editora
+                        ) {
+                            return false;
+                        }
+
+                        if (
+                            destaqueAtivo ===
+                                "recomendados" &&
+                            !livroEhRecomendado(
+                                livro
+                            )
+                        ) {
+                            return false;
+                        }
+
+                        if (
+                            destaqueAtivo ===
+                                "comprar" &&
+                            !livroTemLinkCompra(
+                                livro
+                            )
+                        ) {
+                            return false;
+                        }
+
+                        return true;
+                    }
+                );
+
+
+            filtrados =
+                [...filtrados];
+
+
+            const compararTexto =
+                (a, b, campo) =>
+                    String(
+                        a?.[campo] || ""
+                    )
+                        .localeCompare(
+                            String(
+                                b?.[campo] || ""
+                            ),
+                            "pt-BR",
+                            {
+                                sensitivity:
+                                    "base"
+                            }
+                        );
+
+
+            switch (ordem) {
+
+                case "antigos-adicionados":
+
+                    filtrados.sort(
+                        (a, b) =>
+                            obterDataLivro(a) -
+                            obterDataLivro(b)
+                    );
+
+                    break;
+
+
+                case "titulo-az":
+
+                    filtrados.sort(
+                        (a, b) =>
+                            compararTexto(
+                                a,
+                                b,
+                                "titulo"
+                            )
+                    );
+
+                    break;
+
+
+                case "titulo-za":
+
+                    filtrados.sort(
+                        (a, b) =>
+                            compararTexto(
+                                b,
+                                a,
+                                "titulo"
+                            )
+                    );
+
+                    break;
+
+
+                case "autor-az":
+
+                    filtrados.sort(
+                        (a, b) =>
+                            compararTexto(
+                                a,
+                                b,
+                                "autor"
+                            )
+                    );
+
+                    break;
+
+
+                case "autor-za":
+
+                    filtrados.sort(
+                        (a, b) =>
+                            compararTexto(
+                                b,
+                                a,
+                                "autor"
+                            )
+                    );
+
+                    break;
+
+
+                case "ano-recente":
+
+                    filtrados.sort(
+                        (a, b) =>
+                            Number(
+                                b.ano || 0
+                            ) -
+                            Number(
+                                a.ano || 0
+                            )
+                    );
+
+                    break;
+
+
+                case "ano-antigo":
+
+                    filtrados.sort(
+                        (a, b) => {
+
+                            const anoA =
+                                Number(
+                                    a.ano || 0
+                                ) ||
+                                Number
+                                    .MAX_SAFE_INTEGER;
+
+                            const anoB =
+                                Number(
+                                    b.ano || 0
+                                ) ||
+                                Number
+                                    .MAX_SAFE_INTEGER;
+
+                            return anoA - anoB;
+                        }
+                    );
+
+                    break;
+
+
+                case "recentes":
+                default:
+
+                    filtrados.sort(
+                        (a, b) =>
+                            obterDataLivro(b) -
+                            obterDataLivro(a)
+                    );
+
+                    break;
+            }
+
+
+            if (!filtrados.length) {
+
+                resultados.innerHTML = `
+                    <div class="empty-state">
+
+                        <i class="fa-solid fa-book-open"></i>
+
+                        <h3>
+                            Nenhum livro encontrado
+                        </h3>
+
+                        <p>
+                            Nenhum volume desta estante corresponde aos filtros selecionados.
+                        </p>
+
+                    </div>
+                `;
+
+            } else {
+
+                resultados.innerHTML =
+                    filtrados
+                        .map(
+                            livro =>
+                                criarCardLivro(
+                                    livro,
+                                    categoria
+                                )
+                        )
+                        .join("");
+            }
+
+
+            if (contador) {
+
+                contador.textContent =
+                    `Exibindo ${filtrados.length} de ${categoria.livros.length} ${
+                        categoria.livros.length === 1
+                            ? "livro"
+                            : "livros"
+                    }`;
+            }
+        }
+
+
+        campoBusca?.addEventListener(
+            "input",
+            aplicarFiltrosLivros
+        );
+
+
+        ordenar?.addEventListener(
+            "change",
+            aplicarFiltrosLivros
+        );
+
+
+        filtroAutor?.addEventListener(
+            "change",
+            aplicarFiltrosLivros
+        );
+
+
+        filtroAno?.addEventListener(
+            "change",
+            aplicarFiltrosLivros
+        );
+
+
+        filtroEditora?.addEventListener(
+            "change",
+            aplicarFiltrosLivros
+        );
+
+
+        chips.forEach(
+            chip => {
+
+                chip.addEventListener(
+                    "click",
+                    () => {
+
+                        destaqueAtivo =
+                            chip.dataset
+                                .bookHighlight ||
+                            "todos";
+
+                        chips.forEach(
+                            item =>
+                                item.classList
+                                    .remove(
+                                        "active"
+                                    )
+                        );
+
+                        chip.classList.add(
+                            "active"
+                        );
+
+                        aplicarFiltrosLivros();
+                    }
+                );
+            }
+        );
+
+
+        document
+            .getElementById(
+                "books-clear-search"
+            )
+            ?.addEventListener(
+                "click",
+                () => {
+
+                    if (campoBusca) {
+
+                        campoBusca.value =
+                            "";
+
+                        campoBusca.focus();
+                    }
+
+                    aplicarFiltrosLivros();
+                }
+            );
+
+
+        document
+            .getElementById(
+                "books-reset-filters"
+            )
+            ?.addEventListener(
+                "click",
+                () => {
+
+                    if (campoBusca) {
+                        campoBusca.value = "";
+                    }
+
+                    if (ordenar) {
+                        ordenar.value =
+                            "recentes";
+                    }
+
+                    if (filtroAutor) {
+                        filtroAutor.value =
+                            "";
+                    }
+
+                    if (filtroAno) {
+                        filtroAno.value =
+                            "";
+                    }
+
+                    if (filtroEditora) {
+                        filtroEditora.value =
+                            "";
+                    }
+
+                    destaqueAtivo =
+                        "todos";
+
+                    chips.forEach(
+                        item =>
+                            item.classList
+                                .toggle(
+                                    "active",
+                                    item.dataset
+                                        .bookHighlight ===
+                                        "todos"
+                                )
+                    );
+
+                    aplicarFiltrosLivros();
+                }
+            );
+
+
+        document
+            .getElementById(
+                "voltar-estantes"
+            )
+            ?.addEventListener(
                 "click",
                 renderizarEstantes
             );
-        }
+
+
+        aplicarFiltrosLivros();
     }
 
 
@@ -2880,18 +3594,16 @@ function enviarSugestao(evento) {
                 "sug-descricao"
             )
             ?.value
-            .trim() || "";
+            .trim();
 
-    if (!nome || !titulo) {
+    if (
+        !nome ||
+        !titulo
+    ) {
         return;
     }
 
-    const sugestoes =
-        lerStorage(
-            CONFIG.STORAGE_SUGESTOES
-        );
-
-    sugestoes.unshift({
+    const sugestao = {
 
         id:
             Date.now(),
@@ -2905,21 +3617,40 @@ function enviarSugestao(evento) {
         data:
             new Date()
                 .toLocaleString(
-                    "pt-BR"
+                    "pt-BR",
+                    {
+                        dateStyle:
+                            "short",
+
+                        timeStyle:
+                            "short"
+                    }
                 )
-    });
+    };
 
-    salvarStorage(
-        CONFIG.STORAGE_SUGESTOES,
-        sugestoes
+    const sugestoes =
+        lerStorage(
+            CONFIG.STORAGE_SUGESTOES
+        );
+
+    sugestoes.unshift(
+        sugestao
     );
 
-    evento.target.reset();
+    if (
+        salvarStorage(
+            CONFIG.STORAGE_SUGESTOES,
+            sugestoes
+        )
+    ) {
 
-    mostrarMensagem(
-        "mensagem-sucesso",
-        `Obrigado, ${nome}. Sua sugestão foi enviada para análise.`
-    );
+        evento.target.reset();
+
+        mostrarMensagem(
+            "mensagem-sucesso",
+            "Sugestão enviada para o arquivo."
+        );
+    }
 }
 
 
@@ -2948,7 +3679,7 @@ function mostrarMensagem(
         "visible"
     );
 
-    setTimeout(
+    window.setTimeout(
         () => {
 
             elemento.classList.remove(
@@ -2956,7 +3687,7 @@ function mostrarMensagem(
             );
 
         },
-        6000
+        4500
     );
 }
 
@@ -2974,7 +3705,12 @@ function inicializarAdmin() {
 
     const abrirMobile =
         document.getElementById(
-            "mobile-btn-admin"
+            "btn-open-admin-mobile"
+        );
+
+    const modal =
+        document.getElementById(
+            "modal-admin"
         );
 
     const fechar =
@@ -2987,12 +3723,25 @@ function inicializarAdmin() {
             "form-admin-login"
         );
 
-
     if (abrir) {
 
         abrir.addEventListener(
             "click",
-            abrirPainelAdmin
+            async () => {
+
+                const sessao =
+                    await obterSessaoAdmin();
+
+                if (sessao) {
+
+                    abrirPainelAdmin();
+                    return;
+                }
+
+                modal?.classList.add(
+                    "active"
+                );
+            }
         );
     }
 
@@ -3001,14 +3750,22 @@ function inicializarAdmin() {
 
         abrirMobile.addEventListener(
             "click",
-            evento => {
+            async evento => {
 
                 evento.preventDefault();
 
-                fecharMenuMobile();
+                const sessao =
+                    await obterSessaoAdmin();
 
-                abrirPainelAdmin();
+                if (sessao) {
 
+                    abrirPainelAdmin();
+                    return;
+                }
+
+                modal?.classList.add(
+                    "active"
+                );
             }
         );
     }
@@ -3030,111 +3787,39 @@ function inicializarAdmin() {
             autenticarAdmin
         );
     }
-}
 
 
-function fecharMenuMobile() {
+    obterSessaoAdmin()
+        .then(sessao => {
 
-    const sidebar =
-        document.getElementById(
-            "sidebar-menu"
-        );
-
-    const overlay =
-        document.getElementById(
-            "mobile-overlay"
-        );
-
-    if (sidebar) {
-        sidebar.classList.remove(
-            "active"
-        );
-    }
-
-    if (overlay) {
-        overlay.classList.remove(
-            "active"
-        );
-    }
-
-    document.body.classList.remove(
-        "menu-open"
-    );
-}
-
-
-async function abrirPainelAdmin() {
-
-    const modal =
-        document.getElementById(
-            "modal-admin"
-        );
-
-    if (!modal) {
-        return;
-    }
-
-    /*
-     * Se já houver uma sessão válida no Supabase,
-     * não será necessário digitar a senha novamente.
-     */
-
-    const sessao =
-        await obterSessaoAdmin();
-
-    if (sessao) {
-
-        fecharModalAdmin();
-
-        renderizarGerenciadorAdmin();
-
-        return;
-    }
-
-    modal.classList.add(
-        "active"
-    );
-
-    const email =
-        document.getElementById(
-            "admin-email"
-        );
-
-    const senha =
-        document.getElementById(
-            "admin-pass"
-        );
-
-    setTimeout(
-        () => {
-
-            if (email) {
-                email.focus();
+            if (!sessao) {
                 return;
             }
 
-            senha?.focus();
-
-        },
-        100
-    );
+            console.info(
+                "Sessão administrativa ativa."
+            );
+        });
 }
 
 
 function fecharModalAdmin() {
 
-    const modal =
-        document.getElementById(
+    document
+        .getElementById(
             "modal-admin"
+        )
+        ?.classList.remove(
+            "active"
         );
+}
 
-    if (!modal) {
-        return;
-    }
 
-    modal.classList.remove(
-        "active"
-    );
+function abrirPainelAdmin() {
+
+    fecharModalAdmin();
+
+    renderizarGerenciadorAdmin();
 }
 
 
@@ -3162,25 +3847,49 @@ async function autenticarAdmin(evento) {
             .getElementById(
                 "admin-pass"
             )
-            ?.value;
+            ?.value || "";
+
+    const erroElemento =
+        document.getElementById(
+            "admin-login-erro"
+        );
+
+    if (erroElemento) {
+
+        erroElemento.textContent =
+            "";
+
+        erroElemento.classList.remove(
+            "visible"
+        );
+    }
+
 
     if (!email || !senha) {
 
-        mostrarMensagem(
-            "admin-login-erro",
-            "Informe o e-mail e a senha."
-        );
+        if (erroElemento) {
+
+            erroElemento.textContent =
+                "Preencha o e-mail e a senha.";
+
+            erroElemento.classList.add(
+                "visible"
+            );
+        }
 
         return;
     }
 
-    const botao =
-        formulario?.querySelector(
-            'button[type="submit"]'
-        );
 
-    const textoOriginal =
+    const botao =
+        formulario
+            .querySelector(
+                'button[type="submit"]'
+            );
+
+    const htmlOriginal =
         botao?.innerHTML;
+
 
     if (botao) {
 
@@ -3192,6 +3901,7 @@ async function autenticarAdmin(evento) {
         `;
     }
 
+
     try {
 
         const supabaseClient =
@@ -3201,47 +3911,52 @@ async function autenticarAdmin(evento) {
             data,
             error
         } =
-            await supabaseClient.auth
+            await supabaseClient
+                .auth
                 .signInWithPassword({
                     email,
                     password: senha
                 });
 
-        if (
-            error ||
-            !data?.session
-        ) {
 
-            console.warn(
-                "Falha no login administrativo.",
-                error
-            );
-
-            mostrarMensagem(
-                "admin-login-erro",
-                "E-mail ou senha inválidos."
-            );
-
-            return;
+        if (error) {
+            throw error;
         }
 
-        formulario?.reset();
+
+        if (!data?.session) {
+
+            throw new Error(
+                "Não foi possível iniciar a sessão."
+            );
+        }
+
+
+        formulario.reset();
 
         fecharModalAdmin();
 
-        renderizarGerenciadorAdmin();
+        abrirPainelAdmin();
+
 
     } catch (erro) {
 
         console.error(
-            "Erro ao autenticar no Supabase.",
+            "Falha no login administrativo.",
             erro
         );
 
-        mostrarMensagem(
-            "admin-login-erro",
-            "Não foi possível conectar ao serviço de autenticação."
-        );
+
+        if (erroElemento) {
+
+            erroElemento.textContent =
+                "Credenciais inválidas ou acesso não autorizado.";
+
+            erroElemento.classList.add(
+                "visible"
+            );
+        }
+
 
     } finally {
 
@@ -3250,11 +3965,11 @@ async function autenticarAdmin(evento) {
             botao.disabled = false;
 
             if (
-                textoOriginal !==
+                htmlOriginal !==
                 undefined
             ) {
                 botao.innerHTML =
-                    textoOriginal;
+                    htmlOriginal;
             }
         }
     }
@@ -3643,8 +4358,6 @@ function renderizarGerenciadorAdmin() {
 
         });
 }
-
-
 /* ==========================================================================
    FORMULÁRIOS ADMINISTRATIVOS
    ========================================================================== */
@@ -3916,7 +4629,7 @@ function abrirFormularioAdmin(
                         <input
                             type="file"
                             id="admin-image-file"
-                            accept="image/jpeg,image/png,image/webp,image/gif"
+                            accept="image/jpeg,image/png,image/webp"
                             hidden
                         >
 
@@ -4142,6 +4855,76 @@ function abrirFormularioAdmin(
                     </label>
 
 
+                    <div class="admin-book-metadata-grid">
+
+                        <label>
+
+                            Ano de publicação
+
+                            <input
+                                type="number"
+                                id="admin-book-year"
+                                min="0"
+                                max="2100"
+                                step="1"
+                                value="${
+                                    dados?.ano
+                                        ? escaparHTML(
+                                            dados.ano
+                                        )
+                                        : ""
+                                }"
+                                placeholder="Ex.: 1977"
+                            >
+
+                        </label>
+
+
+                        <label>
+
+                            Editora
+
+                            <input
+                                type="text"
+                                id="admin-book-publisher"
+                                value="${
+                                    dados?.editora
+                                        ? escaparHTML(
+                                            dados.editora
+                                        )
+                                        : ""
+                                }"
+                                placeholder="Ex.: Suma"
+                            >
+
+                        </label>
+
+                    </div>
+
+
+                    <label class="admin-book-featured-option">
+
+                        <input
+                            type="checkbox"
+                            id="admin-book-recommended"
+                            ${
+                                dados
+                                    ? (
+                                        livroEhRecomendado(dados)
+                                            ? "checked"
+                                            : ""
+                                    )
+                                    : "checked"
+                            }
+                        >
+
+                        <span>
+                            Marcar como livro recomendado
+                        </span>
+
+                    </label>
+
+
                     <div class="admin-upload-section">
 
 
@@ -4162,7 +4945,7 @@ function abrirFormularioAdmin(
                         <input
                             type="file"
                             id="admin-book-cover-file"
-                            accept="image/jpeg,image/png,image/webp,image/gif"
+                            accept="image/jpeg,image/png,image/webp"
                             hidden
                         >
 
@@ -4441,7 +5224,6 @@ function abrirFormularioAdmin(
     }
 }
 
-
 /* ==========================================================================
    SALVAR CASO ADMIN — SUPABASE
    ========================================================================== */
@@ -4453,16 +5235,13 @@ async function salvarCasoAdmin(
 
     evento.preventDefault();
 
-
     const formulario =
         evento.currentTarget;
-
 
     const botaoSalvar =
         formulario?.querySelector(
             'button[type="submit"]'
         );
-
 
     const htmlOriginal =
         botaoSalvar?.innerHTML;
@@ -4482,10 +5261,6 @@ async function salvarCasoAdmin(
 
     try {
 
-        /*
-         * Garante que apenas um usuário
-         * autenticado consiga gravar dados.
-         */
         const sessao =
             await obterSessaoAdmin();
 
@@ -4637,15 +5412,10 @@ async function salvarCasoAdmin(
         let resultado;
 
 
-        /*
-         * EDITAR CASO EXISTENTE
-         */
         if (
             casoExistente &&
-            casoExistente.id !==
-                undefined &&
-            casoExistente.id !==
-                null
+            casoExistente.id !== undefined &&
+            casoExistente.id !== null
         ) {
 
             resultado =
@@ -4663,9 +5433,6 @@ async function salvarCasoAdmin(
 
         } else {
 
-            /*
-             * CRIAR NOVO CASO
-             */
             resultado =
                 await supabaseClient
                     .from("Casos")
@@ -4683,21 +5450,10 @@ async function salvarCasoAdmin(
         }
 
 
-        /*
-         * Fecha o formulário.
-         */
         fecharFormularioAdmin();
 
-
-        /*
-         * Busca novamente os registros do banco.
-         */
         await carregarCasosSupabase();
 
-
-        /*
-         * Atualiza o painel administrativo.
-         */
         renderizarGerenciadorAdmin();
 
 
@@ -4742,6 +5498,7 @@ async function salvarCasoAdmin(
     }
 }
 
+
 /* ==========================================================================
    SALVAR LIVRO ADMIN
    ========================================================================== */
@@ -4753,10 +5510,164 @@ function salvarLivroAdmin(
 
     evento.preventDefault();
 
+
     const livros =
         lerStorage(
             CONFIG.STORAGE_LIVROS
         );
+
+
+    const titulo =
+        document
+            .getElementById(
+                "admin-book-title"
+            )
+            ?.value
+            .trim() ||
+        "";
+
+
+    const autor =
+        document
+            .getElementById(
+                "admin-book-author"
+            )
+            ?.value
+            .trim() ||
+        "";
+
+
+    const capa =
+        document
+            .getElementById(
+                "admin-book-cover"
+            )
+            ?.value
+            .trim() ||
+        "";
+
+
+    const descricao =
+        document
+            .getElementById(
+                "admin-book-description"
+            )
+            ?.value
+            .trim() ||
+        "";
+
+
+    const tag =
+        document
+            .getElementById(
+                "admin-book-tag"
+            )
+            ?.value
+            .trim() ||
+        "RECOMENDADO";
+
+
+    const anoValor =
+        document
+            .getElementById(
+                "admin-book-year"
+            )
+            ?.value
+            .trim() ||
+        "";
+
+
+    const editora =
+        document
+            .getElementById(
+                "admin-book-publisher"
+            )
+            ?.value
+            .trim() ||
+        "";
+
+
+    const recomendado =
+        Boolean(
+            document
+                .getElementById(
+                    "admin-book-recommended"
+                )
+                ?.checked
+        );
+
+
+    if (!titulo) {
+
+        alert(
+            "Informe o título do livro."
+        );
+
+        return;
+    }
+
+
+    if (!autor) {
+
+        alert(
+            "Informe o autor do livro."
+        );
+
+        return;
+    }
+
+
+    if (!capa) {
+
+        alert(
+            "Adicione uma capa para o livro."
+        );
+
+        return;
+    }
+
+
+    if (!descricao) {
+
+        alert(
+            "Informe uma descrição para o livro."
+        );
+
+        return;
+    }
+
+
+    let ano = null;
+
+
+    if (anoValor) {
+
+        ano =
+            Number(
+                anoValor
+            );
+
+
+        if (
+            !Number.isInteger(ano) ||
+            ano < 0 ||
+            ano > 2100
+        ) {
+
+            alert(
+                "Informe um ano de publicação válido."
+            );
+
+            return;
+        }
+    }
+
+
+    const criadoEm =
+        livroExistente?.criadoEm ||
+        livroExistente?.created_at ||
+        new Date().toISOString();
+
 
     const livro = {
 
@@ -4767,46 +5678,23 @@ function salvarLivroAdmin(
                 )
                 : Date.now(),
 
-        titulo:
-            document
-                .getElementById(
-                    "admin-book-title"
-                )
-                .value
-                .trim(),
+        titulo,
 
-        autor:
-            document
-                .getElementById(
-                    "admin-book-author"
-                )
-                .value
-                .trim(),
+        autor,
 
-        capa:
-            document
-                .getElementById(
-                    "admin-book-cover"
-                )
-                .value
-                .trim(),
+        ano,
 
-        descricao:
-            document
-                .getElementById(
-                    "admin-book-description"
-                )
-                .value
-                .trim(),
+        editora,
 
-        tag:
-            document
-                .getElementById(
-                    "admin-book-tag"
-                )
-                .value
-                .trim() ||
-            "RECOMENDADO",
+        capa,
+
+        descricao,
+
+        tag,
+
+        recomendado,
+
+        criadoEm,
 
         linksAfiliados:
             coletarLinksAfiliadosAdmin()
@@ -4824,6 +5712,7 @@ function salvarLivroAdmin(
                     )
             );
 
+
         if (indice !== -1) {
 
             livros[indice] =
@@ -4835,6 +5724,7 @@ function salvarLivroAdmin(
                 livro
             );
         }
+
 
     } else {
 
@@ -4868,10 +5758,6 @@ async function editarCaso(id) {
 
     try {
 
-        /*
-         * Primeiro tenta encontrar o caso
-         * na lista que já veio do Supabase.
-         */
         let caso =
             casosSupabase.find(
                 item =>
@@ -4880,14 +5766,11 @@ async function editarCaso(id) {
             );
 
 
-        /*
-         * Se não estiver carregado em memória,
-         * busca diretamente no banco.
-         */
         if (!caso) {
 
             const supabaseClient =
                 await obterClienteSupabase();
+
 
             const {
                 data,
@@ -4904,6 +5787,7 @@ async function editarCaso(id) {
 
 
             if (error) {
+
                 throw error;
             }
 
@@ -4950,6 +5834,7 @@ function editarLivro(id) {
             CONFIG.STORAGE_LIVROS
         );
 
+
     const livro =
         livros.find(
             item =>
@@ -4957,9 +5842,16 @@ function editarLivro(id) {
                 Number(id)
         );
 
+
     if (!livro) {
+
+        alert(
+            "Livro não encontrado."
+        );
+
         return;
     }
+
 
     abrirFormularioAdmin(
         "livro",
@@ -4981,16 +5873,13 @@ async function removerCaso(id) {
 
 
     if (!confirmar) {
+
         return;
     }
 
 
     try {
 
-        /*
-         * Confirma que existe uma sessão
-         * administrativa válida.
-         */
         const sessao =
             await obterSessaoAdmin();
 
@@ -5007,9 +5896,6 @@ async function removerCaso(id) {
             await obterClienteSupabase();
 
 
-        /*
-         * Remove o registro da tabela Casos.
-         */
         const {
             error
         } =
@@ -5028,16 +5914,8 @@ async function removerCaso(id) {
         }
 
 
-        /*
-         * Atualiza novamente os casos
-         * carregados a partir do banco.
-         */
         await carregarCasosSupabase();
 
-
-        /*
-         * Atualiza o painel administrativo.
-         */
         renderizarGerenciadorAdmin();
 
 
@@ -5069,9 +5947,12 @@ function removerLivro(id) {
             "Tem certeza que deseja excluir este livro?"
         );
 
+
     if (!confirmar) {
+
         return;
     }
+
 
     const livros =
         lerStorage(
@@ -5083,10 +5964,12 @@ function removerLivro(id) {
                     Number(id)
             );
 
+
     salvarStorage(
         CONFIG.STORAGE_LIVROS,
         livros
     );
+
 
     carregarLivros();
 
@@ -5104,6 +5987,7 @@ function fecharFormularioAdmin() {
         document.getElementById(
             "admin-form-modal"
         );
+
 
     if (modal) {
 
@@ -5123,6 +6007,7 @@ function inicializarModais() {
     document.addEventListener(
         "click",
         evento => {
+
 
             if (
                 evento.target
@@ -5183,8 +6068,10 @@ function inicializarModais() {
                 evento.key !==
                 "Escape"
             ) {
+
                 return;
             }
+
 
             document
                 .querySelectorAll(
@@ -5207,11 +6094,6 @@ function inicializarModais() {
 /* ==========================================================================
    COMPATIBILIDADE
    ========================================================================== */
-
-/*
- * Mantemos algumas funções globais para evitar problemas caso algum HTML
- * antigo ainda possua onclick="..." enquanto fazemos a transição.
- */
 
 window.carregarCasos =
     carregarCasos;
@@ -5248,5 +6130,4 @@ window.editarLivro =
 
 
 window.sairAdmin =
-    sairAdmin; 
-
+    sairAdmin;
