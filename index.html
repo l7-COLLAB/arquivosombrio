@@ -59,6 +59,157 @@
         href="css/style.css"
     >
 
+
+    <!-- ================================================================
+         AJUSTES DE NAVEGAÇÃO
+         Faixa documental no topo + hierarquia tipográfica
+         ================================================================ -->
+
+    <style>
+
+        /*
+         * Navegação principal:
+         * ligeiramente maior para ganhar legibilidade e presença.
+         */
+        .nav-menu a {
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.075em;
+        }
+
+        .btn-restricted {
+            font-size: 0.70rem;
+            font-weight: 500;
+            letter-spacing: 0.065em;
+        }
+
+
+        /*
+         * Navegação documental secundária:
+         * menor e mais discreta que o menu principal.
+         */
+        .archive-strip {
+            background: #050504;
+            border-top: 1px solid rgba(255, 255, 255, 0.035);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .archive-strip-content {
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(18px, 3.2vw, 46px);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .archive-strip-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .archive-strip-link {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            color: var(--paper-soft);
+
+            font-family: var(--font-mono);
+            font-size: 0.66rem;
+            font-weight: 500;
+
+            line-height: 1;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            white-space: nowrap;
+
+            opacity: 0.82;
+
+            transition:
+                color 0.22s ease,
+                opacity 0.22s ease;
+        }
+
+        .archive-strip-link i {
+            margin-right: 0;
+            color: var(--red-light);
+            font-size: 0.72rem;
+        }
+
+        .archive-strip-link:hover,
+        .archive-strip-link:focus-visible {
+            color: var(--paper);
+            opacity: 1;
+        }
+
+
+        /*
+         * Ajuste intermediário para notebooks e telas menores.
+         */
+        @media (max-width: 1000px) {
+
+            .nav-menu a {
+                font-size: 0.70rem;
+            }
+
+            .btn-restricted {
+                font-size: 0.65rem;
+            }
+
+            .archive-strip-content {
+                min-height: 40px;
+                gap: 24px;
+            }
+
+            .archive-strip-link {
+                font-size: 0.60rem;
+            }
+
+            .archive-strip-link i {
+                font-size: 0.68rem;
+            }
+        }
+
+
+        /*
+         * No mobile o menu principal vira sidebar.
+         * A faixa documental continua horizontal e pode ser deslizada.
+         */
+        @media (max-width: 850px) {
+
+            .archive-strip-content {
+                justify-content: flex-start;
+                min-height: 39px;
+                gap: 22px;
+                padding-inline: 2px;
+            }
+
+            .archive-strip-link {
+                font-size: 0.58rem;
+            }
+        }
+
+
+        @media (max-width: 430px) {
+
+            .archive-strip-content {
+                min-height: 37px;
+                gap: 18px;
+            }
+
+            .archive-strip-link {
+                font-size: 0.55rem;
+            }
+
+            .archive-strip-link i {
+                font-size: 0.64rem;
+            }
+        }
+
+    </style>
+
 </head>
 
 
@@ -146,6 +297,79 @@
                 <i class="fa-solid fa-bars"></i>
 
             </button>
+
+        </div>
+
+
+        <!-- ============================================================
+             FAIXA DOCUMENTAL
+             ============================================================ -->
+
+        <div class="archive-strip">
+
+
+            <div class="container archive-strip-content">
+
+
+                <a
+                    href="#casos"
+                    class="archive-strip-link"
+                >
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    INVESTIGAÇÕES
+
+                </a>
+
+
+                <a
+                    href="#forense"
+                    class="archive-strip-link"
+                >
+
+                    <i class="fa-solid fa-fingerprint"></i>
+                    VESTÍGIOS
+
+                </a>
+
+
+                <a
+                    href="#forense"
+                    class="archive-strip-link"
+                >
+
+                    <i class="fa-solid fa-vial"></i>
+                    PERÍCIA
+
+                </a>
+
+
+                <a
+                    href="#casos"
+                    class="archive-strip-link"
+                    data-atalho-filtro="misterio"
+                >
+
+                    <i class="fa-solid fa-book-skull"></i>
+                    ARQUIVOS OBSCUROS
+
+                </a>
+
+
+                <a
+                    href="#casos"
+                    class="archive-strip-link"
+                    data-atalho-filtro="todos"
+                >
+
+                    <i class="fa-solid fa-user-secret"></i>
+                    CASOS REAIS
+
+                </a>
+
+
+            </div>
+
 
         </div>
 
@@ -293,8 +517,6 @@
                         </span>
 
                     </div>
-
-
                     <p class="hero-eyebrow">
                         CRIMINOLOGIA • MISTÉRIOS • PERÍCIA FORENSE
                     </p>
@@ -471,80 +693,6 @@
 
 
         </section>
-
-
-
-        <!-- ============================================================
-             FAIXA DOCUMENTAL
-             ============================================================ -->
-
-        <div class="archive-strip">
-
-
-            <div class="container archive-strip-content">
-
-
-                <a
-                    href="#casos"
-                    class="archive-strip-link"
-                >
-
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    INVESTIGAÇÕES
-
-                </a>
-
-
-                <a
-                    href="#forense"
-                    class="archive-strip-link"
-                >
-
-                    <i class="fa-solid fa-fingerprint"></i>
-                    VESTÍGIOS
-
-                </a>
-
-
-                <a
-                    href="#forense"
-                    class="archive-strip-link"
-                >
-
-                    <i class="fa-solid fa-vial"></i>
-                    PERÍCIA
-
-                </a>
-
-
-                <a
-                    href="#casos"
-                    class="archive-strip-link"
-                    data-atalho-filtro="misterio"
-                >
-
-                    <i class="fa-solid fa-book-skull"></i>
-                    ARQUIVOS OBSCUROS
-
-                </a>
-
-
-                <a
-                    href="#casos"
-                    class="archive-strip-link"
-                    data-atalho-filtro="todos"
-                >
-
-                    <i class="fa-solid fa-user-secret"></i>
-                    CASOS REAIS
-
-                </a>
-
-
-            </div>
-
-
-        </div>
 
 
 
@@ -1404,7 +1552,8 @@
 
 
 
-                            <button
+                            <button 
+
                                 type="submit"
                                 class="btn-primary btn-form"
                             >
@@ -1918,4 +2067,4 @@
 
 </body>
 
-</html>
+</html>    
