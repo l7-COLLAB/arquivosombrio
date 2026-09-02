@@ -70,6 +70,7 @@ const livrosIniciais = [
 document.addEventListener("DOMContentLoaded", () => {
 
     inicializarMenuMobile();
+   inicializarFiltrosForenses();
     inicializarNavegacaoInterna();
 
     carregarCasosSupabase();
@@ -554,7 +555,71 @@ function carregarCasos() {
 /**
  * Carrega os casos da categoria PERÍCIA.
  */
-function carregarForense() {
+
+function normalizarTextoForense(valor) {
+
+    return String(valor || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+}
+
+
+function identificarTipoForense(caso) {
+
+    const texto = normalizarTextoForense(
+        [
+            caso.titulo,
+            caso.resumo,
+            caso.historia,
+            caso.descricao,
+            caso.categoria,
+            caso.tipoForense,
+            caso.tag
+        ].join(" ")
+    );
+
+
+    if (
+        texto.includes("papiloscopia") ||
+        texto.includes("impressao digital") ||
+        texto.includes("impressoes digitais") ||
+        texto.includes("datiloscopia")
+    ) {
+        return "papiloscopia";
+    }
+
+
+    if (
+        texto.includes("dna") ||
+        texto.includes("biologico") ||
+        texto.includes("biologica") ||
+        texto.includes("sangue") ||
+        texto.includes("saliva") ||
+        texto.includes("genetica")
+    ) {
+        return "biologica";
+    }
+
+
+    if (
+        texto.includes("vestigio") ||
+        texto.includes("quimica") ||
+        texto.includes("luminol") ||
+        texto.includes("toxicologia") ||
+        texto.includes("substancia") ||
+        texto.includes("reagente")
+    ) {
+        return "vestigios";
+    }
+
+
+    return "geral";
+}
+
+
+function carregarForense(filtro = "todos") {
 
     const grid =
         document.getElementById("grid-forense");
@@ -563,27 +628,134 @@ function carregarForense() {
         return;
     }
 
-    const casos = obterTodosCasos()
+
+    let casos = obterTodosCasos()
         .filter(caso =>
             String(caso.categoria).toUpperCase() === "PERÍCIA"
         );
 
+
+    if (filtro !== "todos") {
+
+        casos = casos.filter(
+            caso =>
+                identificarTipoForense(caso) === filtro
+        );
+
+    }
+
+
     if (casos.length === 0) {
+
+        const mensagens = {
+
+            papiloscopia: {
+                titulo: "Nenhum arquivo de papiloscopia",
+                texto: "Ainda não existem conteúdos de identificação por impressões digitais nesta categoria."
+            },
+
+            vestigios: {
+                titulo: "Nenhuma análise de vestígios",
+                texto: "Ainda não existem conteúdos de análise química ou vestígios cadastrados nesta categoria."
+            },
+
+            biologica: {
+                titulo: "Nenhuma evidência biológica",
+                texto: "Ainda não existem conteúdos de DNA ou evidências biológicas cadastrados nesta categoria."
+            },
+
+            todos: {
+                titulo: "Nenhum laudo disponível",
+                texto: "O arquivo pericial ainda não possui documentos publicados."
+            }
+
+        };
+
+
+        const mensagem =
+            mensagens[filtro] ||
+            mensagens.todos;
+
 
         grid.innerHTML = `
             <div class="empty-state">
+
                 <i class="fa-solid fa-flask"></i>
-                <h3>Nenhum laudo disponível</h3>
-                <p>O arquivo pericial ainda não possui documentos publicados.</p>
+
+                <h3>
+                    ${escaparHTML(mensagem.titulo)}
+                </h3>
+
+                <p>
+                    ${escaparHTML(mensagem.texto)}
+                </p>
+
             </div>
         `;
 
         return;
     }
 
-    grid.innerHTML = casos
-        .map(criarCardCaso)
-        .join("");
+
+    grid.innerHTML =
+        casos
+            .map(criarCardCaso)
+            .join("");
+}
+
+
+function inicializarFiltrosForenses() {
+
+    const botoes =
+        document.querySelectorAll(
+            "[data-forensic-filter]"
+        );
+
+
+    if (!botoes.length) {
+        return;
+    }
+
+
+    botoes.forEach(botao => {
+
+        botao.addEventListener(
+            "click",
+            evento => {
+
+                evento.preventDefault();
+
+
+                const filtro =
+                    botao.dataset.forensicFilter;
+
+
+                botoes.forEach(item => {
+                    item.classList.remove("active");
+                });
+
+
+                botao.classList.add("active");
+
+
+                carregarForense(filtro);
+
+
+                const grid =
+                    document.getElementById(
+                        "grid-forense"
+                    );
+
+
+                grid?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }
+        );
+
+    });
 }
 /* ==========================================================================
    LIVROS
