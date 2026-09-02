@@ -3326,3 +3326,205 @@ form {
         width: 100%;
     }
 }
+
+/* ==========================================================================
+   LIVROS — LINKS COMERCIAIS / ONDE ENCONTRAR
+   ========================================================================== */
+
+.book-commerce {
+    margin-top: 20px;
+    padding-top: 17px;
+
+    border-top:
+        1px solid
+        rgba(168, 140, 85, 0.18);
+}
+
+
+.book-commerce-heading {
+    margin-bottom: 12px;
+}
+
+
+.book-commerce-heading span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--gold);
+
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+
+    letter-spacing: 0.14em;
+}
+
+
+.book-commerce-heading p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 0.68rem;
+    line-height: 1.6;
+}
+
+
+/* LISTA DE LOJAS */
+
+.book-commerce-links {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+
+/* LINK DE CADA LOJA */
+
+.book-commerce-link {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        auto;
+
+    align-items: center;
+
+    gap: 10px;
+
+    min-height: 48px;
+
+    padding: 10px 12px;
+
+    border:
+        1px solid
+        rgba(168, 140, 85, 0.22);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.025),
+            rgba(255, 255, 255, 0.008)
+        );
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.book-commerce-link:hover {
+    transform: translateY(-1px);
+
+    border-color:
+        rgba(164, 19, 19, 0.55);
+
+    background:
+        rgba(123, 9, 9, 0.08);
+}
+
+
+/* NOME DA LOJA */
+
+.book-commerce-store {
+    display: block;
+
+    color: var(--paper-soft);
+
+    font-family: var(--font-mono);
+    font-size: 0.67rem;
+
+    letter-spacing: 0.04em;
+}
+
+
+/* FORMATO: FÍSICO / DIGITAL ETC */
+
+.book-commerce-link small {
+    padding: 4px 7px;
+
+    color: var(--muted);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+
+    white-space: nowrap;
+}
+
+
+/* TEXTO DA OFERTA */
+
+.book-commerce-link strong {
+    color: var(--gold-light);
+
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+
+.book-commerce-link i {
+    grid-column: 3;
+
+    color: var(--red-light);
+
+    font-size: 0.65rem;
+}
+
+
+/* AVISO DE TRANSPARÊNCIA */
+
+.book-affiliate-disclosure {
+    margin: 11px 0 0;
+
+    color: var(--muted-dark);
+
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+
+    line-height: 1.6;
+}
+
+
+/* ==========================================================================
+   RESPONSIVIDADE
+   ========================================================================== */
+
+@media (max-width: 620px) {
+
+    .book-commerce-link {
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+
+        gap: 7px;
+    }
+
+
+    .book-commerce-link small {
+        grid-column: 1;
+        width: fit-content;
+    }
+
+
+    .book-commerce-link strong {
+        grid-column: 1;
+    }
+
+
+    .book-commerce-link i {
+        grid-column: 2;
+        grid-row: 1 / span 3;
+
+        align-self: center;
+    }
+}
