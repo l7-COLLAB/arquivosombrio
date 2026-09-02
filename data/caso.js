@@ -153,7 +153,7 @@ teorias: [
 
         status: "TÉCNICO / METODOLÓGICO",
 
-        imagem: "imagens/forense/papiloscopia.jpg",
+        imagem: "imagens/forense/papiloscopia.PNG",
 
         resumo:
             "Introdução aos princípios utilizados na identificação papiloscópica e no confronto de impressões digitais.",
