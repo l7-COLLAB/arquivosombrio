@@ -73,7 +73,7 @@ teorias: [
 
         status: "TÉCNICO / METODOLÓGICO",
 
-        imagem: "imagens/forense/luminol.JPN",
+        imagem: "imagens/forense/luminol.JPG",
 
         resumo:
             "Análise introdutória sobre o uso de reagentes quimioluminescentes na localização de possíveis vestígios de sangue em investigações forenses.",
