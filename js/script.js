@@ -2236,7 +2236,48 @@ function abrirFormularioAdmin(tipo, dados = null) {
                             placeholder="CRIMINOLOGIA"
                         >
                     </label>
+<div class="admin-affiliate-section">
 
+    <div class="admin-affiliate-header">
+        <div>
+            <span class="admin-affiliate-eyebrow">
+                LINKS COMERCIAIS
+            </span>
+
+            <h4>
+                Onde encontrar este livro
+            </h4>
+
+            <p>
+                Adicione links de lojas, afiliados ou parceiros.
+                Você pode cadastrar quantas opções quiser.
+            </p>
+        </div>
+    </div>
+
+
+    <div
+        id="admin-affiliate-links"
+        class="admin-affiliate-links"
+    ></div>
+
+
+    <button
+        type="button"
+        id="admin-add-affiliate-link"
+        class="admin-add-affiliate-link"
+    >
+        <i class="fa-solid fa-plus"></i>
+        Adicionar loja / link
+    </button>
+
+
+    <p class="admin-affiliate-hint">
+        Ex.: Amazon, Shopee, Mercado Livre, Kobo,
+        Estante Virtual ou qualquer outra loja parceira.
+    </p>
+
+</div>
                     `
                 }
 
