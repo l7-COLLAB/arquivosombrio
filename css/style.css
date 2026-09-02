@@ -2150,3 +2150,344 @@ form {
     }
 
 }
+
+/* =========================================================
+   FILTROS DOS DOSSIÊS
+   ========================================================= */
+
+.archive-search-panel {
+    margin: 0 0 34px;
+    padding: 22px;
+    border: 1px solid rgba(170, 25, 25, 0.24);
+    background:
+        linear-gradient(
+            180deg,
+            rgba(16, 13, 12, 0.96),
+            rgba(8, 7, 6, 0.96)
+        );
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.24);
+}
+
+
+.archive-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 50px 0 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #090807;
+}
+
+
+.archive-search > i {
+    color: #8f1717;
+    font-size: 0.95rem;
+}
+
+
+.archive-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #eee7dc;
+    font-family: "DM Mono", monospace;
+    font-size: 0.88rem;
+}
+
+
+.archive-search input::placeholder {
+    color: #77716b;
+}
+
+
+.clear-search-button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border: 0;
+    background: transparent;
+    color: #7e7974;
+    cursor: pointer;
+}
+
+
+.clear-search-button:hover {
+    color: #b71c1c;
+}
+
+
+.quick-filters {
+    display: flex;
+    gap: 9px;
+    margin-top: 17px;
+    padding-bottom: 4px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+
+.filter-chip {
+    flex: 0 0 auto;
+    padding: 10px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    background: #0b0a09;
+    color: #aaa39b;
+    font-family: "DM Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.filter-chip:hover {
+    border-color: rgba(170, 25, 25, 0.55);
+    color: #e1d9cf;
+}
+
+
+.filter-chip.active {
+    border-color: #9d1717;
+    background: rgba(130, 15, 15, 0.18);
+    color: #f1e8df;
+}
+
+
+.archive-filter-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+
+.advanced-filter-button,
+.archive-order {
+    min-height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    background: #0c0b0a;
+    color: #b9b1a7;
+    font-family: "DM Mono", monospace;
+    font-size: 0.73rem;
+}
+
+
+.advanced-filter-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 0 15px;
+    cursor: pointer;
+}
+
+
+.advanced-filter-button:hover,
+.advanced-filter-button.active {
+    border-color: #8e1818;
+    color: #eee6dc;
+}
+
+
+.archive-order {
+    max-width: 240px;
+    padding: 0 36px 0 13px;
+    outline: 0;
+}
+
+
+.advanced-filters {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr))
+        auto;
+    gap: 14px;
+    margin-top: 18px;
+    padding: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.015);
+}
+
+
+.advanced-filters[hidden] {
+    display: none;
+}
+
+
+.advanced-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+
+.advanced-filter-field label {
+    color: #817a72;
+    font-family: "DM Mono", monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+}
+
+
+.advanced-filter-field select {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    outline: 0;
+    background: #090807;
+    color: #c9c0b7;
+    font-family: "DM Mono", monospace;
+    font-size: 0.72rem;
+}
+
+
+.reset-filters-button {
+    align-self: end;
+    min-height: 42px;
+    padding: 0 14px;
+    border: 1px solid rgba(157, 23, 23, 0.45);
+    background: transparent;
+    color: #a98f8b;
+    font-family: "DM Mono", monospace;
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+
+
+.reset-filters-button:hover {
+    border-color: #b91c1c;
+    color: #f0dfdc;
+}
+
+
+.archive-results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 18px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+
+.archive-results-bar p {
+    margin: 0;
+    color: #827b74;
+    font-family: "DM Mono", monospace;
+    font-size: 0.69rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+
+.archive-results-bar strong {
+    color: #b71c1c;
+    font-size: 0.9rem;
+}
+
+
+.active-filter-indicator {
+    color: #69635e;
+    font-family: "DM Mono", monospace;
+    font-size: 0.63rem;
+    letter-spacing: 0.12em;
+}
+
+
+.archive-no-results {
+    grid-column: 1 / -1;
+    padding: 52px 22px;
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    text-align: center;
+    color: #817b75;
+}
+
+
+.archive-no-results i {
+    display: block;
+    margin-bottom: 15px;
+    color: #8f1717;
+    font-size: 1.8rem;
+}
+
+
+.archive-no-results strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #d7cec5;
+    font-family: "Cinzel", serif;
+}
+
+
+.archive-no-results p {
+    margin: 0;
+    font-family: "DM Mono", monospace;
+    font-size: 0.72rem;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE DOS FILTROS
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .advanced-filters {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .reset-filters-button {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 620px) {
+
+    .archive-search-panel {
+        margin-bottom: 26px;
+        padding: 15px;
+    }
+
+    .archive-filter-actions {
+        flex-direction: column;
+    }
+
+    .advanced-filter-button,
+    .archive-order {
+        width: 100%;
+        max-width: none;
+    }
+
+    .advanced-filters {
+        grid-template-columns: 1fr;
+        padding: 15px 0 0;
+        background: transparent;
+    }
+
+    .archive-results-bar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .filter-chip {
+        padding: 9px 12px;
+        font-size: 0.68rem;
+    }
+
+}
