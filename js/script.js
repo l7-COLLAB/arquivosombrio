@@ -589,6 +589,305 @@ function carregarForense() {
    LIVROS
    ========================================================================== */
 
+function normalizarLinksAfiliados(links) {
+
+    if (!Array.isArray(links)) {
+        return [];
+    }
+
+    return links
+        .map(link => ({
+            loja: String(link?.loja || "").trim(),
+            formato: String(link?.formato || "").trim(),
+            url: String(link?.url || "").trim(),
+            destaque: String(link?.destaque || "").trim()
+        }))
+        .filter(link =>
+            link.loja ||
+            link.formato ||
+            link.url ||
+            link.destaque
+        );
+}
+
+
+function normalizarURLComercial(url) {
+
+    const valor =
+        String(url || "").trim();
+
+    if (!valor) {
+        return "";
+    }
+
+    try {
+
+        const urlValida =
+            new URL(valor);
+
+        if (
+            urlValida.protocol !== "https:" &&
+            urlValida.protocol !== "http:"
+        ) {
+            return "";
+        }
+
+        return urlValida.href;
+
+    } catch (erro) {
+
+        return "";
+    }
+}
+
+
+function renderizarLinksAfiliadosLivro(livro) {
+
+    const links =
+        normalizarLinksAfiliados(
+            livro.linksAfiliados
+        )
+        .map(link => ({
+            ...link,
+            url: normalizarURLComercial(
+                link.url
+            )
+        }))
+        .filter(link => link.url);
+
+    if (!links.length) {
+        return "";
+    }
+
+    return `
+        <div class="book-commerce">
+
+            <div class="book-commerce-heading">
+
+                <span>
+                    ONDE ENCONTRAR
+                </span>
+
+                <p>
+                    Edições e ofertas em lojas parceiras.
+                </p>
+
+            </div>
+
+            <div class="book-commerce-links">
+
+                ${
+                    links
+                        .map(link => `
+
+                            <a
+                                class="book-commerce-link"
+                                href="${escaparHTML(link.url)}"
+                                target="_blank"
+                                rel="sponsored nofollow noopener noreferrer"
+                            >
+
+                                <span class="book-commerce-store">
+                                    ${escaparHTML(
+                                        link.loja ||
+                                        "Loja parceira"
+                                    )}
+                                </span>
+
+                                ${
+                                    link.formato
+                                        ? `
+                                            <small>
+                                                ${escaparHTML(link.formato)}
+                                            </small>
+                                        `
+                                        : ""
+                                }
+
+                                <strong>
+                                    ${escaparHTML(
+                                        link.destaque ||
+                                        "Consultar oferta"
+                                    )}
+                                </strong>
+
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                            </a>
+
+                        `)
+                        .join("")
+                }
+
+            </div>
+
+            <p class="book-affiliate-disclosure">
+                Alguns links são de afiliados. O Arquivo Sombrio
+                pode receber comissão sem custo adicional para você.
+            </p>
+
+        </div>
+    `;
+}
+
+
+function criarLinhaAfiliado(link = {}) {
+
+    const loja =
+        escaparHTML(link.loja || "");
+
+    const formato =
+        escaparHTML(link.formato || "");
+
+    const url =
+        escaparHTML(link.url || "");
+
+    const destaque =
+        escaparHTML(link.destaque || "");
+
+    return `
+        <div class="admin-affiliate-row">
+
+            <label>
+                Loja
+                <input
+                    type="text"
+                    class="admin-affiliate-store"
+                    value="${loja}"
+                    placeholder="Ex.: Shopee"
+                >
+            </label>
+
+            <label>
+                Formato
+                <input
+                    type="text"
+                    class="admin-affiliate-format"
+                    value="${formato}"
+                    placeholder="Físico, Digital, Audiobook..."
+                >
+            </label>
+
+            <label class="admin-affiliate-url-field">
+                Link
+                <input
+                    type="url"
+                    class="admin-affiliate-url"
+                    value="${url}"
+                    placeholder="https://..."
+                >
+            </label>
+
+            <label>
+                Texto da oferta
+                <input
+                    type="text"
+                    class="admin-affiliate-highlight"
+                    value="${destaque}"
+                    placeholder="Consultar oferta"
+                >
+            </label>
+
+            <button
+                type="button"
+                class="admin-remove-affiliate-link"
+                aria-label="Remover link comercial"
+                title="Remover link"
+            >
+                <i class="fa-solid fa-trash"></i>
+            </button>
+
+        </div>
+    `;
+}
+
+
+function adicionarLinhaAfiliado(
+    container,
+    link = {}
+) {
+
+    if (!container) {
+        return;
+    }
+
+    container.insertAdjacentHTML(
+        "beforeend",
+        criarLinhaAfiliado(link)
+    );
+
+    const linha =
+        container.lastElementChild;
+
+    linha
+        ?.querySelector(
+            ".admin-remove-affiliate-link"
+        )
+        ?.addEventListener(
+            "click",
+            () => linha.remove()
+        );
+}
+
+
+function coletarLinksAfiliadosAdmin() {
+
+    return Array
+        .from(
+            document.querySelectorAll(
+                "#admin-affiliate-links .admin-affiliate-row"
+            )
+        )
+        .map(linha => {
+
+            const loja =
+                linha
+                    .querySelector(
+                        ".admin-affiliate-store"
+                    )
+                    ?.value
+                    .trim() || "";
+
+            const formato =
+                linha
+                    .querySelector(
+                        ".admin-affiliate-format"
+                    )
+                    ?.value
+                    .trim() || "";
+
+            const url =
+                linha
+                    .querySelector(
+                        ".admin-affiliate-url"
+                    )
+                    ?.value
+                    .trim() || "";
+
+            const destaque =
+                linha
+                    .querySelector(
+                        ".admin-affiliate-highlight"
+                    )
+                    ?.value
+                    .trim() || "";
+
+            return {
+                loja,
+                formato,
+                url,
+                destaque
+            };
+        })
+        .filter(link =>
+            link.loja ||
+            link.formato ||
+            link.url ||
+            link.destaque
+        );
+}
+
+
 function obterTodosLivros() {
 
     const personalizados =
@@ -1014,6 +1313,8 @@ function carregarLivros() {
                                                         ""
                                                     )}
                                                 </p>
+                                                
+                                                ${renderizarLinksAfiliadosLivro(livro)}
 
                                             </div>
 
@@ -2330,7 +2631,59 @@ function abrirFormularioAdmin(tipo, dados = null) {
                 }
 
             }
+);
+
+   if (!caso) {
+
+    const containerLinks =
+        document.getElementById(
+            "admin-affiliate-links"
         );
+
+    const botaoAdicionar =
+        document.getElementById(
+            "admin-add-affiliate-link"
+        );
+
+    const linksExistentes =
+        normalizarLinksAfiliados(
+            dados?.linksAfiliados
+        );
+
+    if (linksExistentes.length > 0) {
+
+        linksExistentes.forEach(
+            link => {
+
+                adicionarLinhaAfiliado(
+                    containerLinks,
+                    link
+                );
+
+            }
+        );
+
+    } else {
+
+        adicionarLinhaAfiliado(
+            containerLinks
+        );
+
+    }
+
+    botaoAdicionar
+        ?.addEventListener(
+            "click",
+            () => {
+
+                adicionarLinhaAfiliado(
+                    containerLinks
+                );
+
+            }
+        );
+}
+
 }
 /* ==========================================================================
    SALVAR CASO ADMIN
@@ -2452,7 +2805,10 @@ function salvarLivroAdmin(evento, livroExistente = null) {
 
         tag:
             document.getElementById("admin-book-tag").value.trim() ||
-            "RECOMENDADO"
+            "RECOMENDADO" ,
+       
+       linksAfiliados:
+    coletarLinksAfiliadosAdmin()
     };
 
 
