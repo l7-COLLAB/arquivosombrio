@@ -257,10 +257,6 @@ async function sairAdmin() {
    UTILITÁRIOS
    ========================================================================== */
 
-/**
- * Lê um array do localStorage com segurança.
- * Se houver JSON inválido, retorna array vazio em vez de quebrar o site.
- */
 function lerStorage(chave) {
 
     try {
@@ -287,9 +283,6 @@ function lerStorage(chave) {
 }
 
 
-/**
- * Salva dados no localStorage com tratamento de erro.
- */
 function salvarStorage(chave, dados) {
 
     try {
@@ -317,10 +310,6 @@ function salvarStorage(chave, dados) {
 }
 
 
-/**
- * Escapa caracteres HTML para evitar que dados digitados pelo usuário
- * sejam interpretados como HTML.
- */
 function escaparHTML(valor) {
 
     if (valor === null || valor === undefined) {
@@ -336,9 +325,6 @@ function escaparHTML(valor) {
 }
 
 
-/**
- * Normaliza evidências e listas de texto.
- */
 function normalizarEvidencias(evidencias) {
 
     if (Array.isArray(evidencias)) {
@@ -360,9 +346,6 @@ function normalizarEvidencias(evidencias) {
 }
 
 
-/**
- * Retorna os casos iniciais do arquivo dados/caso.js.
- */
 function obterCasosIniciais() {
 
     if (
@@ -874,8 +857,6 @@ async function processarUploadImagemAdmin({
         inputArquivo.value = "";
     }
 }
-
-
 function inicializarUploadImagemCaso(
     dados = null
 ) {
@@ -1238,7 +1219,7 @@ function obterTodosCasos() {
         new Set(
             casosSupabase.map(
                 caso =>
-                    Number(caso.id)
+                    String(caso.id)
             )
         );
 
@@ -1246,7 +1227,7 @@ function obterTodosCasos() {
         iniciais.filter(
             caso =>
                 !idsSupabase.has(
-                    Number(caso.id)
+                    String(caso.id)
                 )
         );
 
@@ -1616,8 +1597,6 @@ function inicializarFiltrosForenses() {
         }
     );
 }
-
-
 /* ==========================================================================
    LIVROS
    ========================================================================== */
@@ -1788,7 +1767,9 @@ function renderizarLinksAfiliadosLivro(
 
         </div>
     `;
-} 
+}
+
+
 function criarLinhaAfiliado(link = {}) {
 
     const loja =
@@ -2482,8 +2463,6 @@ function carregarLivros() {
 
     renderizarEstantes();
 }
-
-
 /* ==========================================================================
    MENU MOBILE
    ========================================================================== */
@@ -2980,6 +2959,8 @@ function mostrarMensagem(
         6000
     );
 }
+
+
 /* ==========================================================================
    PAINEL ADMINISTRATIVO
    ========================================================================== */
@@ -2987,16 +2968,24 @@ function mostrarMensagem(
 function inicializarAdmin() {
 
     const abrir =
-        document.getElementById("btn-open-admin");
+        document.getElementById(
+            "btn-open-admin"
+        );
 
     const abrirMobile =
-        document.getElementById("mobile-btn-admin");
+        document.getElementById(
+            "mobile-btn-admin"
+        );
 
     const fechar =
-        document.getElementById("close-modal");
+        document.getElementById(
+            "close-modal"
+        );
 
     const formulario =
-        document.getElementById("form-admin-login");
+        document.getElementById(
+            "form-admin-login"
+        );
 
 
     if (abrir) {
@@ -3047,17 +3036,25 @@ function inicializarAdmin() {
 function fecharMenuMobile() {
 
     const sidebar =
-        document.getElementById("sidebar-menu");
+        document.getElementById(
+            "sidebar-menu"
+        );
 
     const overlay =
-        document.getElementById("mobile-overlay");
+        document.getElementById(
+            "mobile-overlay"
+        );
 
     if (sidebar) {
-        sidebar.classList.remove("active");
+        sidebar.classList.remove(
+            "active"
+        );
     }
 
     if (overlay) {
-        overlay.classList.remove("active");
+        overlay.classList.remove(
+            "active"
+        );
     }
 
     document.body.classList.remove(
@@ -3069,7 +3066,9 @@ function fecharMenuMobile() {
 async function abrirPainelAdmin() {
 
     const modal =
-        document.getElementById("modal-admin");
+        document.getElementById(
+            "modal-admin"
+        );
 
     if (!modal) {
         return;
@@ -3079,6 +3078,7 @@ async function abrirPainelAdmin() {
      * Se já houver uma sessão válida no Supabase,
      * não será necessário digitar a senha novamente.
      */
+
     const sessao =
         await obterSessaoAdmin();
 
@@ -3091,13 +3091,19 @@ async function abrirPainelAdmin() {
         return;
     }
 
-    modal.classList.add("active");
+    modal.classList.add(
+        "active"
+    );
 
     const email =
-        document.getElementById("admin-email");
+        document.getElementById(
+            "admin-email"
+        );
 
     const senha =
-        document.getElementById("admin-pass");
+        document.getElementById(
+            "admin-pass"
+        );
 
     setTimeout(
         () => {
@@ -3118,13 +3124,17 @@ async function abrirPainelAdmin() {
 function fecharModalAdmin() {
 
     const modal =
-        document.getElementById("modal-admin");
+        document.getElementById(
+            "modal-admin"
+        );
 
     if (!modal) {
         return;
     }
 
-    modal.classList.remove("active");
+    modal.classList.remove(
+        "active"
+    );
 }
 
 
@@ -3141,13 +3151,17 @@ async function autenticarAdmin(evento) {
 
     const email =
         document
-            .getElementById("admin-email")
+            .getElementById(
+                "admin-email"
+            )
             ?.value
             .trim();
 
     const senha =
         document
-            .getElementById("admin-pass")
+            .getElementById(
+                "admin-pass"
+            )
             ?.value;
 
     if (!email || !senha) {
@@ -3187,10 +3201,11 @@ async function autenticarAdmin(evento) {
             data,
             error
         } =
-            await supabaseClient.auth.signInWithPassword({
-                email,
-                password: senha
-            });
+            await supabaseClient.auth
+                .signInWithPassword({
+                    email,
+                    password: senha
+                });
 
         if (
             error ||
@@ -3234,13 +3249,16 @@ async function autenticarAdmin(evento) {
 
             botao.disabled = false;
 
-            if (textoOriginal !== undefined) {
-                botao.innerHTML = textoOriginal;
+            if (
+                textoOriginal !==
+                undefined
+            ) {
+                botao.innerHTML =
+                    textoOriginal;
             }
         }
     }
 }
-
 
 /* ==========================================================================
    GERENCIADOR ADMINISTRATIVO
@@ -3249,35 +3267,48 @@ async function autenticarAdmin(evento) {
 function renderizarGerenciadorAdmin() {
 
     let painel =
-        document.getElementById("admin-manager");
-
-    /*
-     * Criamos o painel dinamicamente.
-     * Isso evita exigir uma estrutura enorme no index.html.
-     */
+        document.getElementById(
+            "admin-manager"
+        );
 
     if (!painel) {
 
         painel =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        painel.id = "admin-manager";
+        painel.id =
+            "admin-manager";
 
         painel.className =
             "admin-manager-overlay";
 
-        document.body.appendChild(painel);
+        document.body.appendChild(
+            painel
+        );
     }
 
-    const casos =
-        lerStorage(
-            CONFIG.STORAGE_CASOS
-        );
 
+    /*
+     * CASOS:
+     * Agora vêm diretamente do Supabase.
+     */
+    const casos =
+        Array.isArray(casosSupabase)
+            ? casosSupabase
+            : [];
+
+
+    /*
+     * LIVROS:
+     * Continuam no localStorage por enquanto.
+     */
     const livros =
         lerStorage(
             CONFIG.STORAGE_LIVROS
         );
+
 
     painel.innerHTML = `
 
@@ -3291,6 +3322,7 @@ function renderizarGerenciadorAdmin() {
             >
                 &times;
             </button>
+
 
             <div class="admin-heading">
 
@@ -3344,7 +3376,7 @@ function renderizarGerenciadorAdmin() {
             <section class="admin-list-section">
 
                 <h3>
-                    Dossiês personalizados
+                    Dossiês
                 </h3>
 
                 <div class="admin-list">
@@ -3354,7 +3386,7 @@ function renderizarGerenciadorAdmin() {
 
                         ? `
                             <p class="admin-empty">
-                                Nenhum dossiê personalizado.
+                                Nenhum dossiê cadastrado no Supabase.
                             </p>
                           `
 
@@ -3365,11 +3397,17 @@ function renderizarGerenciadorAdmin() {
                                 <div>
 
                                     <strong>
-                                        ${escaparHTML(caso.titulo)}
+                                        ${escaparHTML(
+                                            caso.titulo ||
+                                            "Dossiê sem título"
+                                        )}
                                     </strong>
 
                                     <small>
-                                        ${escaparHTML(caso.categoria)}
+                                        ${escaparHTML(
+                                            caso.categoria ||
+                                            "Sem categoria"
+                                        )}
                                     </small>
 
                                 </div>
@@ -3378,14 +3416,14 @@ function renderizarGerenciadorAdmin() {
 
                                     <button
                                         type="button"
-                                        data-edit-case="${caso.id}"
+                                        data-edit-case="${escaparHTML(caso.id)}"
                                     >
                                         Editar
                                     </button>
 
                                     <button
                                         type="button"
-                                        data-delete-case="${caso.id}"
+                                        data-delete-case="${escaparHTML(caso.id)}"
                                     >
                                         Excluir
                                     </button>
@@ -3426,11 +3464,15 @@ function renderizarGerenciadorAdmin() {
                                 <div>
 
                                     <strong>
-                                        ${escaparHTML(livro.titulo)}
+                                        ${escaparHTML(
+                                            livro.titulo
+                                        )}
                                     </strong>
 
                                     <small>
-                                        ${escaparHTML(livro.autor)}
+                                        ${escaparHTML(
+                                            livro.autor
+                                        )}
                                     </small>
 
                                 </div>
@@ -3466,92 +3508,137 @@ function renderizarGerenciadorAdmin() {
     `;
 
 
-    painel.classList.add("active");
+    painel.classList.add(
+        "active"
+    );
 
 
     document
-        .getElementById("admin-manager-close")
+        .getElementById(
+            "admin-manager-close"
+        )
         ?.addEventListener(
             "click",
-            () => painel.classList.remove("active")
+            () =>
+                painel.classList.remove(
+                    "active"
+                )
         );
 
 
     document
-        .getElementById("admin-new-case")
+        .getElementById(
+            "admin-new-case"
+        )
         ?.addEventListener(
             "click",
-            () => abrirFormularioAdmin("caso")
+            () =>
+                abrirFormularioAdmin(
+                    "caso"
+                )
         );
 
 
     document
-        .getElementById("admin-new-book")
+        .getElementById(
+            "admin-new-book"
+        )
         ?.addEventListener(
             "click",
-            () => abrirFormularioAdmin("livro")
+            () =>
+                abrirFormularioAdmin(
+                    "livro"
+                )
         );
 
 
     document
-        .getElementById("admin-logout")
+        .getElementById(
+            "admin-logout"
+        )
         ?.addEventListener(
             "click",
             sairAdmin
         );
 
 
+    /*
+     * IMPORTANTE:
+     * Não usamos Number() nos IDs dos casos.
+     * Assim o código funciona também se o
+     * Supabase utilizar UUID ou outro formato.
+     */
     painel
-        .querySelectorAll("[data-edit-case]")
+        .querySelectorAll(
+            "[data-edit-case]"
+        )
         .forEach(button => {
 
             button.addEventListener(
                 "click",
-                () => editarCaso(
-                    Number(button.dataset.editCase)
-                )
+                () =>
+                    editarCaso(
+                        button.dataset.editCase
+                    )
             );
 
         });
 
 
     painel
-        .querySelectorAll("[data-delete-case]")
+        .querySelectorAll(
+            "[data-delete-case]"
+        )
         .forEach(button => {
 
             button.addEventListener(
                 "click",
-                () => removerCaso(
-                    Number(button.dataset.deleteCase)
-                )
+                () =>
+                    removerCaso(
+                        button.dataset.deleteCase
+                    )
+            );
+
+        });
+
+
+    /*
+     * Livros ainda utilizam IDs numéricos
+     * porque continuam no localStorage.
+     */
+    painel
+        .querySelectorAll(
+            "[data-edit-book]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () =>
+                    editarLivro(
+                        Number(
+                            button.dataset.editBook
+                        )
+                    )
             );
 
         });
 
 
     painel
-        .querySelectorAll("[data-edit-book]")
+        .querySelectorAll(
+            "[data-delete-book]"
+        )
         .forEach(button => {
 
             button.addEventListener(
                 "click",
-                () => editarLivro(
-                    Number(button.dataset.editBook)
-                )
-            );
-
-        });
-
-
-    painel
-        .querySelectorAll("[data-delete-book]")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => removerLivro(
-                    Number(button.dataset.deleteBook)
-                )
+                () =>
+                    removerLivro(
+                        Number(
+                            button.dataset.deleteBook
+                        )
+                    )
             );
 
         });
@@ -3562,15 +3649,22 @@ function renderizarGerenciadorAdmin() {
    FORMULÁRIOS ADMINISTRATIVOS
    ========================================================================== */
 
-function abrirFormularioAdmin(tipo, dados = null) {
+function abrirFormularioAdmin(
+    tipo,
+    dados = null
+) {
 
     let modal =
-        document.getElementById("admin-form-modal");
+        document.getElementById(
+            "admin-form-modal"
+        );
 
     if (!modal) {
 
         modal =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         modal.id =
             "admin-form-modal";
@@ -3578,12 +3672,15 @@ function abrirFormularioAdmin(tipo, dados = null) {
         modal.className =
             "admin-form-overlay";
 
-        document.body.appendChild(modal);
+        document.body.appendChild(
+            modal
+        );
     }
 
 
     const caso =
         tipo === "caso";
+
 
     modal.innerHTML = `
 
@@ -3597,13 +3694,32 @@ function abrirFormularioAdmin(tipo, dados = null) {
                 &times;
             </button>
 
+
             <span class="admin-eyebrow">
-                ${caso ? "NOVO DOSSIÊ" : "NOVA RECOMENDAÇÃO"}
+
+                ${
+                    caso
+                        ? "DOSSIÊ"
+                        : "RECOMENDAÇÃO"
+                }
+
             </span>
 
+
             <h2>
-                ${dados ? "Editar" : "Cadastrar"}
-                ${caso ? " Dossiê" : " Livro"}
+
+                ${
+                    dados
+                        ? "Editar"
+                        : "Cadastrar"
+                }
+
+                ${
+                    caso
+                        ? " Dossiê"
+                        : " Livro"
+                }
+
             </h2>
 
 
@@ -3612,7 +3728,13 @@ function abrirFormularioAdmin(tipo, dados = null) {
                 <input
                     type="hidden"
                     id="admin-edit-id"
-                    value="${dados ? escaparHTML(dados.id) : ""}"
+                    value="${
+                        dados
+                            ? escaparHTML(
+                                dados.id
+                            )
+                            : ""
+                    }"
                 >
 
 
@@ -3623,74 +3745,159 @@ function abrirFormularioAdmin(tipo, dados = null) {
 
                     <label>
                         Título
+
                         <input
                             type="text"
                             id="admin-title"
-                            value="${dados ? escaparHTML(dados.titulo) : ""}"
+                            value="${
+                                dados
+                                    ? escaparHTML(
+                                        dados.titulo
+                                    )
+                                    : ""
+                            }"
                             required
                         >
+
                     </label>
 
-                    <label>
-                        Categoria
-                        <select id="admin-category">
 
-                            <option value="INVESTIGAÇÃO"
-                                ${dados?.categoria === "INVESTIGAÇÃO" ? "selected" : ""}>
+                    <label>
+
+                        Categoria
+
+                        <select
+                            id="admin-category"
+                        >
+
+                            <option
+                                value="INVESTIGAÇÃO"
+                                ${
+                                    dados?.categoria ===
+                                    "INVESTIGAÇÃO"
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
                                 Investigação
                             </option>
 
-                            <option value="DESAPARECIMENTO"
-                                ${dados?.categoria === "DESAPARECIMENTO" ? "selected" : ""}>
+
+                            <option
+                                value="DESAPARECIMENTO"
+                                ${
+                                    dados?.categoria ===
+                                    "DESAPARECIMENTO"
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
                                 Desaparecimento
                             </option>
 
-                            <option value="MISTÉRIO"
-                                ${dados?.categoria === "MISTÉRIO" ? "selected" : ""}>
+
+                            <option
+                                value="MISTÉRIO"
+                                ${
+                                    dados?.categoria ===
+                                    "MISTÉRIO"
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
                                 Mistério
                             </option>
 
-                            <option value="PERÍCIA"
-                                ${dados?.categoria === "PERÍCIA" ? "selected" : ""}>
+
+                            <option
+                                value="PERÍCIA"
+                                ${
+                                    dados?.categoria ===
+                                    "PERÍCIA"
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
                                 Perícia
                             </option>
 
-                            <option value="LENDA"
-                                ${dados?.categoria === "LENDA" ? "selected" : ""}>
+
+                            <option
+                                value="LENDA"
+                                ${
+                                    dados?.categoria ===
+                                    "LENDA"
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
                                 Lenda
                             </option>
 
                         </select>
+
                     </label>
 
+
                     <label>
+
                         Local
+
                         <input
                             type="text"
                             id="admin-location"
-                            value="${dados ? escaparHTML(dados.local) : ""}"
+                            value="${
+                                dados
+                                    ? escaparHTML(
+                                        dados.local
+                                    )
+                                    : ""
+                            }"
                         >
+
                     </label>
 
+
                     <label>
+
                         Ano / Período
+
                         <input
                             type="text"
                             id="admin-year"
-                            value="${dados ? escaparHTML(dados.ano) : ""}"
+                            value="${
+                                dados
+                                    ? escaparHTML(
+                                        dados.ano
+                                    )
+                                    : ""
+                            }"
                         >
+
                     </label>
 
+
                     <label>
+
                         Status
+
                         <input
                             type="text"
                             id="admin-status"
-                            value="${dados ? escaparHTML(dados.status) : "EM ARQUIVO"}"
+                            value="${
+                                dados
+                                    ? escaparHTML(
+                                        dados.status
+                                    )
+                                    : "EM ARQUIVO"
+                            }"
                         >
+
                     </label>
 
+
                     <div class="admin-upload-section">
+
 
                         <div class="admin-upload-heading">
 
@@ -3705,6 +3912,7 @@ function abrirFormularioAdmin(tipo, dados = null) {
 
                         </div>
 
+
                         <input
                             type="file"
                             id="admin-image-file"
@@ -3712,74 +3920,132 @@ function abrirFormularioAdmin(tipo, dados = null) {
                             hidden
                         >
 
+
                         <button
                             type="button"
                             class="admin-upload-button"
                             id="admin-image-upload-button"
                         >
+
                             <i class="fa-solid fa-cloud-arrow-up"></i>
+
                             Escolher imagem
+
                         </button>
+
 
                         <div
                             class="admin-image-preview"
                             id="admin-image-preview"
                         ></div>
 
+
                         <label>
+
                             URL da imagem
 
                             <input
                                 type="url"
                                 id="admin-image"
-                                value="${dados ? escaparHTML(dados.imagem) : ""}"
+                                value="${
+                                    dados
+                                        ? escaparHTML(
+                                            dados.imagem
+                                        )
+                                        : ""
+                                }"
                                 placeholder="A URL será preenchida automaticamente"
                             >
+
                         </label>
 
                     </div>
 
+
                     <label>
+
                         Resumo
 
                         <textarea
                             id="admin-summary"
                             rows="3"
                             required
-                        >${dados ? escaparHTML(dados.resumo) : ""}</textarea>
+                        >${
+                            dados
+                                ? escaparHTML(
+                                    dados.resumo
+                                )
+                                : ""
+                        }</textarea>
+
                     </label>
 
+
                     <label>
+
                         História / Relatório
 
                         <textarea
                             id="admin-history"
                             rows="8"
                             required
-                        >${dados ? escaparHTML(dados.historia) : ""}</textarea>
+                        >${
+                            dados
+                                ? escaparHTML(
+                                    dados.historia
+                                )
+                                : ""
+                        }</textarea>
+
                     </label>
 
+
                     <label>
+
                         Evidências
 
                         <textarea
                             id="admin-evidence"
                             rows="5"
                             placeholder="Uma evidência por linha"
-                        >${dados ? escaparHTML(normalizarEvidencias(dados.evidencias).join("\n")) : ""}</textarea>
+                        >${
+                            dados
+                                ? escaparHTML(
+                                    normalizarEvidencias(
+                                        dados.evidencias
+                                    ).join("\n")
+                                )
+                                : ""
+                        }</textarea>
+
                     </label>
 
+
                     <label>
+
                         Hipóteses / Linhas de investigação
 
                         <textarea
                             id="admin-theories"
                             rows="5"
                             placeholder="Uma hipótese por linha"
-                        >${dados ? escaparHTML(normalizarEvidencias(dados.teorias).join("\n")) : ""}</textarea>
+                        >${
+                            dados
+                                ? escaparHTML(
+                                    normalizarEvidencias(
+                                        dados.teorias
+                                    ).join("\n")
+                                )
+                                : ""
+                        }</textarea>
+
                     </label>
 
-                    <div class="admin-upload-section admin-documents-section">
+
+                    <div
+                        class="admin-upload-section admin-documents-section"
+                    >
+
 
                         <div class="admin-upload-heading">
 
@@ -3793,6 +4059,7 @@ function abrirFormularioAdmin(tipo, dados = null) {
 
                         </div>
 
+
                         <input
                             type="file"
                             id="admin-document-file"
@@ -3801,22 +4068,31 @@ function abrirFormularioAdmin(tipo, dados = null) {
                             hidden
                         >
 
+
                         <button
                             type="button"
                             class="admin-upload-button"
                             id="admin-document-upload-button"
                         >
+
                             <i class="fa-solid fa-paperclip"></i>
+
                             Anexar documento
+
                         </button>
+
 
                         <div
                             class="admin-documents-list"
                             id="admin-documents-list"
                         ></div>
 
-                        <small class="admin-upload-hint">
-                            Limite configurado no Storage: 20 MB por arquivo.
+
+                        <small
+                            class="admin-upload-hint"
+                        >
+                            Limite configurado no Storage:
+                            20 MB por arquivo.
                         </small>
 
                     </div>
@@ -3825,29 +4101,49 @@ function abrirFormularioAdmin(tipo, dados = null) {
 
                     : `
 
+
                     <label>
+
                         Título
 
                         <input
                             type="text"
                             id="admin-book-title"
-                            value="${dados ? escaparHTML(dados.titulo) : ""}"
+                            value="${
+                                dados
+                                    ? escaparHTML(
+                                        dados.titulo
+                                    )
+                                    : ""
+                            }"
                             required
                         >
+
                     </label>
 
+
                     <label>
+
                         Autor
 
                         <input
                             type="text"
                             id="admin-book-author"
-                            value="${dados ? escaparHTML(dados.autor) : ""}"
+                            value="${
+                                dados
+                                    ? escaparHTML(
+                                        dados.autor
+                                    )
+                                    : ""
+                            }"
                             required
                         >
+
                     </label>
 
+
                     <div class="admin-upload-section">
+
 
                         <div class="admin-upload-heading">
 
@@ -3862,6 +4158,7 @@ function abrirFormularioAdmin(tipo, dados = null) {
 
                         </div>
 
+
                         <input
                             type="file"
                             id="admin-book-cover-file"
@@ -3869,63 +4166,98 @@ function abrirFormularioAdmin(tipo, dados = null) {
                             hidden
                         >
 
+
                         <button
                             type="button"
                             class="admin-upload-button"
                             id="admin-book-cover-upload-button"
                         >
+
                             <i class="fa-solid fa-cloud-arrow-up"></i>
+
                             Escolher capa
+
                         </button>
+
 
                         <div
                             class="admin-image-preview admin-book-cover-preview"
                             id="admin-book-cover-preview"
                         ></div>
 
+
                         <label>
+
                             URL da capa
 
                             <input
                                 type="url"
                                 id="admin-book-cover"
-                                value="${dados ? escaparHTML(dados.capa) : ""}"
+                                value="${
+                                    dados
+                                        ? escaparHTML(
+                                            dados.capa
+                                        )
+                                        : ""
+                                }"
                                 placeholder="A URL será preenchida automaticamente"
                                 required
                             >
+
                         </label>
 
                     </div>
 
+
                     <label>
+
                         Descrição
 
                         <textarea
                             id="admin-book-description"
                             rows="5"
                             required
-                        >${dados ? escaparHTML(dados.descricao) : ""}</textarea>
+                        >${
+                            dados
+                                ? escaparHTML(
+                                    dados.descricao
+                                )
+                                : ""
+                        }</textarea>
+
                     </label>
 
+
                     <label>
+
                         Categoria / Tag
 
                         <input
                             type="text"
                             id="admin-book-tag"
-                            value="${dados ? escaparHTML(dados.tag) : ""}"
+                            value="${
+                                dados
+                                    ? escaparHTML(
+                                        dados.tag
+                                    )
+                                    : ""
+                            }"
                             placeholder="CRIMINOLOGIA"
                         >
+
                     </label>
 
 
                     <div class="admin-affiliate-section">
 
+
                         <div class="admin-affiliate-header">
 
                             <div>
 
-                                <span class="admin-affiliate-eyebrow">
+                                <span
+                                    class="admin-affiliate-eyebrow"
+                                >
                                     LINKS COMERCIAIS
                                 </span>
 
@@ -3934,8 +4266,10 @@ function abrirFormularioAdmin(tipo, dados = null) {
                                 </h4>
 
                                 <p>
-                                    Adicione links de lojas, afiliados ou parceiros.
-                                    Você pode cadastrar quantas opções quiser.
+                                    Adicione links de lojas,
+                                    afiliados ou parceiros.
+                                    Você pode cadastrar quantas
+                                    opções quiser.
                                 </p>
 
                             </div>
@@ -3954,15 +4288,21 @@ function abrirFormularioAdmin(tipo, dados = null) {
                             id="admin-add-affiliate-link"
                             class="admin-add-affiliate-link"
                         >
+
                             <i class="fa-solid fa-plus"></i>
+
                             Adicionar loja / link
+
                         </button>
 
 
                         <p class="admin-affiliate-hint">
-                            Ex.: Amazon, Shopee, Mercado Livre, Kobo,
-                            Estante Virtual ou qualquer outra loja parceira.
+                            Ex.: Amazon, Shopee,
+                            Mercado Livre, Kobo,
+                            Estante Virtual ou qualquer
+                            outra loja parceira.
                         </p>
+
 
                     </div>
 
@@ -3974,8 +4314,11 @@ function abrirFormularioAdmin(tipo, dados = null) {
                     type="submit"
                     class="admin-submit"
                 >
+
                     <i class="fa-solid fa-floppy-disk"></i>
+
                     Salvar
+
                 </button>
 
             </form>
@@ -3984,7 +4327,9 @@ function abrirFormularioAdmin(tipo, dados = null) {
     `;
 
 
-    modal.classList.add("active");
+    modal.classList.add(
+        "active"
+    );
 
 
     if (caso) {
@@ -4082,6 +4427,7 @@ function abrirFormularioAdmin(tipo, dados = null) {
             );
         }
 
+
         botaoAdicionar
             ?.addEventListener(
                 "click",
@@ -4094,166 +4440,307 @@ function abrirFormularioAdmin(tipo, dados = null) {
             );
     }
 }
+
+
 /* ==========================================================================
-   SALVAR CASO ADMIN
+   SALVAR CASO ADMIN — SUPABASE
    ========================================================================== */
 
-function salvarCasoAdmin(
+async function salvarCasoAdmin(
     evento,
     casoExistente = null
 ) {
 
     evento.preventDefault();
 
-    const casos =
-        lerStorage(
-            CONFIG.STORAGE_CASOS
+
+    const formulario =
+        evento.currentTarget;
+
+
+    const botaoSalvar =
+        formulario?.querySelector(
+            'button[type="submit"]'
         );
 
-    const caso = {
 
-        id:
-            casoExistente
-                ? Number(casoExistente.id)
-                : Date.now(),
+    const htmlOriginal =
+        botaoSalvar?.innerHTML;
 
-        titulo:
-            document
-                .getElementById(
-                    "admin-title"
-                )
-                .value
-                .trim(),
 
-        categoria:
-            document
-                .getElementById(
-                    "admin-category"
-                )
-                .value,
+    if (botaoSalvar) {
 
-        local:
-            document
-                .getElementById(
-                    "admin-location"
-                )
-                .value
-                .trim(),
+        botaoSalvar.disabled =
+            true;
 
-        ano:
-            document
-                .getElementById(
-                    "admin-year"
-                )
-                .value
-                .trim(),
+        botaoSalvar.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Salvando...
+        `;
+    }
 
-        status:
-            document
-                .getElementById(
-                    "admin-status"
-                )
-                .value
-                .trim(),
 
-        imagem:
-            document
-                .getElementById(
-                    "admin-image"
-                )
-                .value
-                .trim(),
+    try {
 
-        resumo:
-            document
-                .getElementById(
-                    "admin-summary"
-                )
-                .value
-                .trim(),
+        /*
+         * Garante que apenas um usuário
+         * autenticado consiga gravar dados.
+         */
+        const sessao =
+            await obterSessaoAdmin();
 
-        historia:
-            document
-                .getElementById(
-                    "admin-history"
-                )
-                .value
-                .trim(),
 
-        evidencias:
-            normalizarEvidencias(
+        if (!sessao) {
+
+            throw new Error(
+                "Sua sessão administrativa expirou. Entre novamente."
+            );
+        }
+
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+
+        const caso = {
+
+            titulo:
                 document
                     .getElementById(
-                        "admin-evidence"
+                        "admin-title"
                     )
-                    .value
-            ),
+                    ?.value
+                    .trim() ||
+                "",
 
-        teorias:
-            normalizarEvidencias(
+
+            categoria:
                 document
                     .getElementById(
-                        "admin-theories"
+                        "admin-category"
                     )
-                    .value
-            ),
-
-        documentos:
-            coletarDocumentosAdmin()
-    };
+                    ?.value ||
+                "",
 
 
-    if (casoExistente) {
+            local:
+                document
+                    .getElementById(
+                        "admin-location"
+                    )
+                    ?.value
+                    .trim() ||
+                "",
 
-        const indice =
-            casos.findIndex(
-                item =>
-                    Number(item.id) ===
-                    Number(
+
+            ano:
+                document
+                    .getElementById(
+                        "admin-year"
+                    )
+                    ?.value
+                    .trim() ||
+                "",
+
+
+            status:
+                document
+                    .getElementById(
+                        "admin-status"
+                    )
+                    ?.value
+                    .trim() ||
+                "EM ARQUIVO",
+
+
+            imagem:
+                document
+                    .getElementById(
+                        "admin-image"
+                    )
+                    ?.value
+                    .trim() ||
+                "",
+
+
+            resumo:
+                document
+                    .getElementById(
+                        "admin-summary"
+                    )
+                    ?.value
+                    .trim() ||
+                "",
+
+
+            historia:
+                document
+                    .getElementById(
+                        "admin-history"
+                    )
+                    ?.value
+                    .trim() ||
+                "",
+
+
+            evidencias:
+                normalizarEvidencias(
+                    document
+                        .getElementById(
+                            "admin-evidence"
+                        )
+                        ?.value ||
+                    ""
+                ),
+
+
+            teorias:
+                normalizarEvidencias(
+                    document
+                        .getElementById(
+                            "admin-theories"
+                        )
+                        ?.value ||
+                    ""
+                ),
+
+
+            documentos:
+                coletarDocumentosAdmin()
+        };
+
+
+        if (!caso.titulo) {
+
+            throw new Error(
+                "Informe o título do dossiê."
+            );
+        }
+
+
+        if (!caso.resumo) {
+
+            throw new Error(
+                "Informe o resumo do dossiê."
+            );
+        }
+
+
+        if (!caso.historia) {
+
+            throw new Error(
+                "Informe a história ou relatório do dossiê."
+            );
+        }
+
+
+        let resultado;
+
+
+        /*
+         * EDITAR CASO EXISTENTE
+         */
+        if (
+            casoExistente &&
+            casoExistente.id !==
+                undefined &&
+            casoExistente.id !==
+                null
+        ) {
+
+            resultado =
+                await supabaseClient
+                    .from("Casos")
+                    .update(
+                        caso
+                    )
+                    .eq(
+                        "id",
                         casoExistente.id
                     )
-            );
-
-        if (indice !== -1) {
-
-            casos[indice] =
-                caso;
+                    .select()
+                    .single();
 
         } else {
 
             /*
-             * Se o conteúdo editado não estiver no localStorage,
-             * criamos uma versão personalizada dele.
+             * CRIAR NOVO CASO
              */
-            casos.unshift(
-                caso
-            );
+            resultado =
+                await supabaseClient
+                    .from("Casos")
+                    .insert([
+                        caso
+                    ])
+                    .select()
+                    .single();
         }
 
-    } else {
 
-        casos.unshift(
-            caso
-        );
-    }
+        if (resultado.error) {
+
+            throw resultado.error;
+        }
 
 
-    if (
-        salvarStorage(
-            CONFIG.STORAGE_CASOS,
-            casos
-        )
-    ) {
-
+        /*
+         * Fecha o formulário.
+         */
         fecharFormularioAdmin();
 
-        carregarCasos();
-        carregarForense();
 
+        /*
+         * Busca novamente os registros do banco.
+         */
+        await carregarCasosSupabase();
+
+
+        /*
+         * Atualiza o painel administrativo.
+         */
         renderizarGerenciadorAdmin();
+
+
+        alert(
+            casoExistente
+                ? "Dossiê atualizado com sucesso."
+                : "Dossiê salvo com sucesso."
+        );
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao salvar dossiê no Supabase:",
+            erro
+        );
+
+
+        alert(
+            erro?.message ||
+            "Não foi possível salvar o dossiê."
+        );
+
+
+    } finally {
+
+        if (botaoSalvar) {
+
+            botaoSalvar.disabled =
+                false;
+
+
+            if (
+                htmlOriginal !==
+                undefined
+            ) {
+
+                botaoSalvar.innerHTML =
+                    htmlOriginal;
+            }
+        }
     }
 }
-
 
 /* ==========================================================================
    SALVAR LIVRO ADMIN
@@ -4377,28 +4864,82 @@ function salvarLivroAdmin(
    EDIÇÃO
    ========================================================================== */
 
-function editarCaso(id) {
+async function editarCaso(id) {
 
-    const casos =
-        lerStorage(
-            CONFIG.STORAGE_CASOS
+    try {
+
+        /*
+         * Primeiro tenta encontrar o caso
+         * na lista que já veio do Supabase.
+         */
+        let caso =
+            casosSupabase.find(
+                item =>
+                    String(item.id) ===
+                    String(id)
+            );
+
+
+        /*
+         * Se não estiver carregado em memória,
+         * busca diretamente no banco.
+         */
+        if (!caso) {
+
+            const supabaseClient =
+                await obterClienteSupabase();
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from("Casos")
+                    .select("*")
+                    .eq(
+                        "id",
+                        id
+                    )
+                    .single();
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            caso =
+                data;
+        }
+
+
+        if (!caso) {
+
+            throw new Error(
+                "Dossiê não encontrado."
+            );
+        }
+
+
+        abrirFormularioAdmin(
+            "caso",
+            caso
         );
 
-    const caso =
-        casos.find(
-            item =>
-                Number(item.id) ===
-                Number(id)
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao abrir dossiê para edição:",
+            erro
         );
 
-    if (!caso) {
-        return;
+
+        alert(
+            erro?.message ||
+            "Não foi possível abrir este dossiê."
+        );
     }
-
-    abrirFormularioAdmin(
-        "caso",
-        caso
-    );
 }
 
 
@@ -4431,36 +4972,93 @@ function editarLivro(id) {
    EXCLUSÃO
    ========================================================================== */
 
-function removerCaso(id) {
+async function removerCaso(id) {
 
     const confirmar =
         confirm(
-            "Tem certeza que deseja excluir este dossiê?"
+            "Tem certeza que deseja excluir este dossiê? Esta ação não poderá ser desfeita."
         );
+
 
     if (!confirmar) {
         return;
     }
 
-    const casos =
-        lerStorage(
-            CONFIG.STORAGE_CASOS
-        )
-            .filter(
-                caso =>
-                    Number(caso.id) !==
-                    Number(id)
+
+    try {
+
+        /*
+         * Confirma que existe uma sessão
+         * administrativa válida.
+         */
+        const sessao =
+            await obterSessaoAdmin();
+
+
+        if (!sessao) {
+
+            throw new Error(
+                "Sua sessão administrativa expirou. Entre novamente."
             );
+        }
 
-    salvarStorage(
-        CONFIG.STORAGE_CASOS,
-        casos
-    );
 
-    carregarCasos();
-    carregarForense();
+        const supabaseClient =
+            await obterClienteSupabase();
 
-    renderizarGerenciadorAdmin();
+
+        /*
+         * Remove o registro da tabela Casos.
+         */
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("Casos")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                );
+
+
+        if (error) {
+
+            throw error;
+        }
+
+
+        /*
+         * Atualiza novamente os casos
+         * carregados a partir do banco.
+         */
+        await carregarCasosSupabase();
+
+
+        /*
+         * Atualiza o painel administrativo.
+         */
+        renderizarGerenciadorAdmin();
+
+
+        alert(
+            "Dossiê excluído com sucesso."
+        );
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao excluir dossiê do Supabase:",
+            erro
+        );
+
+
+        alert(
+            erro?.message ||
+            "Não foi possível excluir o dossiê."
+        );
+    }
 }
 
 
@@ -4650,4 +5248,5 @@ window.editarLivro =
 
 
 window.sairAdmin =
-    sairAdmin;
+    sairAdmin; 
+
