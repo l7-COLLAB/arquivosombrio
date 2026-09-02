@@ -1,23 +1,211 @@
 "use strict";
 
 
+/* ==========================================================================
+   SUPABASE — PÁGINA INDIVIDUAL DO DOSSIÊ
+   ========================================================================== */
+
+const CASO_SUPABASE_URL =
+    "https://iuhotznurbyujzbyhizf.supabase.co";
+
+const CASO_SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj";
+
+const CASO_SUPABASE_SDK_URL =
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
+let casoClienteSupabase = null;
+
+let casoPromessaSupabaseSDK = null;
+
+
+/* ==========================================================================
+   INICIALIZAÇÃO
+   ========================================================================== */
+
 document.addEventListener(
     "DOMContentLoaded",
     carregarCaso
 );
 
 
-function lerStorage(chave, fallback = []) {
+/* ==========================================================================
+   SUPABASE
+   ========================================================================== */
+
+function carregarSupabaseCasoSDK() {
+
+    if (
+        window.supabase &&
+        typeof window.supabase.createClient ===
+            "function"
+    ) {
+
+        return Promise.resolve();
+    }
+
+
+    if (casoPromessaSupabaseSDK) {
+
+        return casoPromessaSupabaseSDK;
+    }
+
+
+    casoPromessaSupabaseSDK =
+        new Promise(
+            (resolve, reject) => {
+
+                const scriptExistente =
+                    document.querySelector(
+                        'script[data-caso-supabase="true"]'
+                    );
+
+
+                if (scriptExistente) {
+
+                    scriptExistente.addEventListener(
+                        "load",
+                        resolve,
+                        {
+                            once: true
+                        }
+                    );
+
+                    scriptExistente.addEventListener(
+                        "error",
+                        () =>
+                            reject(
+                                new Error(
+                                    "Não foi possível carregar o Supabase."
+                                )
+                            ),
+                        {
+                            once: true
+                        }
+                    );
+
+                    return;
+                }
+
+
+                const script =
+                    document.createElement(
+                        "script"
+                    );
+
+
+                script.src =
+                    CASO_SUPABASE_SDK_URL;
+
+                script.async =
+                    true;
+
+                script.dataset.casoSupabase =
+                    "true";
+
+
+                script.addEventListener(
+                    "load",
+                    resolve,
+                    {
+                        once: true
+                    }
+                );
+
+
+                script.addEventListener(
+                    "error",
+                    () =>
+                        reject(
+                            new Error(
+                                "Não foi possível carregar o Supabase."
+                            )
+                        ),
+                    {
+                        once: true
+                    }
+                );
+
+
+                document.head.appendChild(
+                    script
+                );
+            }
+        );
+
+
+    return casoPromessaSupabaseSDK;
+}
+
+
+async function obterClienteSupabaseCaso() {
+
+    if (casoClienteSupabase) {
+
+        return casoClienteSupabase;
+    }
+
+
+    await carregarSupabaseCasoSDK();
+
+
+    if (
+        !window.supabase ||
+        typeof window.supabase.createClient !==
+            "function"
+    ) {
+
+        throw new Error(
+            "A biblioteca do Supabase não está disponível."
+        );
+    }
+
+
+    casoClienteSupabase =
+        window.supabase.createClient(
+            CASO_SUPABASE_URL,
+            CASO_SUPABASE_PUBLISHABLE_KEY,
+            {
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true
+                }
+            }
+        );
+
+
+    return casoClienteSupabase;
+}
+
+
+/* ==========================================================================
+   UTILITÁRIOS
+   ========================================================================== */
+
+function lerStorage(
+    chave,
+    fallback = []
+) {
 
     try {
 
-        const valor = localStorage.getItem(chave);
+        const valor =
+            localStorage.getItem(
+                chave
+            );
+
 
         if (!valor) {
+
             return fallback;
         }
 
-        return JSON.parse(valor);
+
+        return JSON.parse(
+            valor
+        );
+
 
     } catch (erro) {
 
@@ -26,6 +214,7 @@ function lerStorage(chave, fallback = []) {
             erro
         );
 
+
         return fallback;
     }
 }
@@ -33,27 +222,54 @@ function lerStorage(chave, fallback = []) {
 
 function escaparHTML(valor) {
 
-    return String(valor ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    return String(
+        valor ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 }
 
 
-function obterTodosCasos() {
+/* ==========================================================================
+   CASOS LOCAIS / ANTIGOS
+   ========================================================================== */
+
+function obterCasosLocais() {
 
     const base =
-        typeof casosArquivo !== "undefined"
+        typeof casosArquivo !==
+            "undefined" &&
+        Array.isArray(
+            casosArquivo
+        )
             ? casosArquivo
             : [];
+
 
     const personalizados =
         lerStorage(
             "arquivo_sombrio_casos",
             []
         );
+
 
     return [
         ...base,
@@ -62,6 +278,10 @@ function obterTodosCasos() {
 }
 
 
+/* ==========================================================================
+   ID DA URL
+   ========================================================================== */
+
 function obterIdDaURL() {
 
     const parametros =
@@ -69,21 +289,88 @@ function obterIdDaURL() {
             window.location.search
         );
 
+
     const id =
-        parametros.get("id");
+        parametros.get(
+            "id"
+        );
+
 
     if (!id) {
+
         return null;
     }
 
-    return String(id);
+
+    return String(
+        id
+    );
 }
 
 
-function carregarCaso() {
+/* ==========================================================================
+   BUSCAR CASO NO SUPABASE
+   ========================================================================== */
+
+async function buscarCasoSupabase(
+    id
+) {
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabaseCaso();
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from(
+                    "Casos"
+                )
+                .select(
+                    "*"
+                )
+                .eq(
+                    "id",
+                    id
+                )
+                .maybeSingle();
+
+
+        if (error) {
+
+            throw error;
+        }
+
+
+        return data || null;
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao buscar o dossiê no Supabase:",
+            erro
+        );
+
+
+        return null;
+    }
+}
+
+
+/* ==========================================================================
+   CARREGAR DOSSIÊ
+   ========================================================================== */
+
+async function carregarCaso() {
 
     const id =
         obterIdDaURL();
+
 
     if (!id) {
 
@@ -93,16 +380,46 @@ function carregarCaso() {
     }
 
 
-    const casos =
-        obterTodosCasos();
+    /*
+     * 1. Tenta buscar o dossiê diretamente
+     *    no Supabase.
+     */
 
-
-    const caso =
-        casos.find(
-            item =>
-                String(item.id) === id
+    let caso =
+        await buscarCasoSupabase(
+            id
         );
 
+
+    /*
+     * 2. Se não estiver no Supabase,
+     *    procura nos casos antigos do site.
+     */
+
+    if (!caso) {
+
+        const casosLocais =
+            obterCasosLocais();
+
+
+        caso =
+            casosLocais.find(
+                item =>
+                    String(
+                        item.id
+                    ) ===
+                    String(
+                        id
+                    )
+            );
+    }
+
+
+    /*
+     * 3. Só mostra "Arquivo não encontrado"
+     *    se o dossiê não existir em nenhuma
+     *    das duas fontes.
+     */
 
     if (!caso) {
 
@@ -112,7 +429,9 @@ function carregarCaso() {
     }
 
 
-    renderizarCaso(caso);
+    renderizarCaso(
+        caso
+    );
 }
 
 
