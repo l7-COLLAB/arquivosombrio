@@ -321,12 +321,10 @@ function renderizarEvidencias(evidencias) {
         return;
     }
 
-
     const lista =
         Array.isArray(evidencias)
             ? evidencias
             : [];
-
 
     if (!lista.length) {
 
@@ -336,7 +334,7 @@ function renderizarEvidencias(evidencias) {
                 <i class="fa-solid fa-folder-open"></i>
 
                 <p>
-                    Nenhuma evidência foi cadastrada neste arquivo.
+                    Nenhuma evidência foi cadastrada.
                 </p>
             </div>
             `;
@@ -344,26 +342,252 @@ function renderizarEvidencias(evidencias) {
         return;
     }
 
-
     container.innerHTML =
         lista
             .map(
-                evidencia =>
-                    `
-                    <div class="evidence-item">
+                function(evidencia, indice) {
 
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                    /*
+                     * Compatibilidade com os casos antigos:
+                     * se a evidência ainda for apenas texto,
+                     * ela continua sendo exibida normalmente.
+                     */
 
-                        <p>
-                            ${escaparHTML(evidencia)}
-                        </p>
+                    if (
+                        typeof evidencia ===
+                        "string"
+                    ) {
 
-                    </div>
-                    `
+                        return `
+                            <div class="evidence-card evidence-card-simple">
+
+                                <div class="evidence-card-header">
+
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                                    <div>
+                                        <span class="evidence-number">
+                                            EVIDÊNCIA ${String(indice + 1).padStart(2, "0")}
+                                        </span>
+
+                                        <h3>
+                                            ${escaparHTML(evidencia)}
+                                        </h3>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        `;
+                    }
+
+
+                    const titulo =
+                        evidencia.titulo ||
+                        "Evidência sem título";
+
+                    const resumo =
+                        evidencia.resumo ||
+                        "";
+
+                    const detalhes =
+                        evidencia.detalhes ||
+                        evidencia.descricao ||
+                        "";
+
+                    const imagem =
+                        evidencia.imagem ||
+                        "";
+
+                    const legenda =
+                        evidencia.legenda ||
+                        "";
+
+                    const fonte =
+                        evidencia.fonte ||
+                        "";
+
+                    return `
+                        <article class="evidence-card">
+
+                            <button
+                                type="button"
+                                class="evidence-toggle"
+                                aria-expanded="false"
+                            >
+
+                                <div class="evidence-card-header">
+
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                                    <div class="evidence-heading">
+
+                                        <span class="evidence-number">
+                                            EVIDÊNCIA ${String(indice + 1).padStart(2, "0")}
+                                        </span>
+
+                                        <h3>
+                                            ${escaparHTML(titulo)}
+                                        </h3>
+
+                                        ${
+                                            resumo
+                                                ? `
+                                                    <p>
+                                                        ${escaparHTML(resumo)}
+                                                    </p>
+                                                `
+                                                : ""
+                                        }
+
+                                    </div>
+
+                                    <span class="evidence-open-label">
+                                        ABRIR
+                                        <i class="fa-solid fa-plus"></i>
+                                    </span>
+
+                                </div>
+
+                            </button>
+
+
+                            <div
+                                class="evidence-details"
+                                hidden
+                            >
+
+                                ${
+                                    imagem
+                                        ? `
+                                            <figure class="evidence-image">
+
+                                                <img
+                                                    src="${escaparHTML(imagem)}"
+                                                    alt="${escaparHTML(titulo)}"
+                                                    loading="lazy"
+                                                >
+
+                                                ${
+                                                    legenda
+                                                        ? `
+                                                            <figcaption>
+                                                                ${escaparHTML(legenda)}
+                                                            </figcaption>
+                                                        `
+                                                        : ""
+                                                }
+
+                                            </figure>
+                                        `
+                                        : ""
+                                }
+
+
+                                ${
+                                    detalhes
+                                        ? `
+                                            <div class="evidence-text">
+                                                <p>
+                                                    ${escaparHTML(detalhes)}
+                                                </p>
+                                            </div>
+                                        `
+                                        : `
+                                            <div class="evidence-text">
+                                                <p>
+                                                    Informações complementares desta evidência ainda não foram cadastradas.
+                                                </p>
+                                            </div>
+                                        `
+                                }
+
+
+                                ${
+                                    fonte
+                                        ? `
+                                            <div class="evidence-source">
+                                                <span>FONTE / REFERÊNCIA</span>
+                                                <p>
+                                                    ${escaparHTML(fonte)}
+                                                </p>
+                                            </div>
+                                        `
+                                        : ""
+                                }
+
+                            </div>
+
+                        </article>
+                    `;
+                }
             )
             .join("");
-}
 
+
+    const botoes =
+        container.querySelectorAll(
+            ".evidence-toggle"
+        );
+
+    botoes.forEach(
+        function(botao) {
+
+            botao.addEventListener(
+                "click",
+                function() {
+
+                    const card =
+                        botao.closest(
+                            ".evidence-card"
+                        );
+
+                    const detalhes =
+                        card.querySelector(
+                            ".evidence-details"
+                        );
+
+                    const aberto =
+                        botao.getAttribute(
+                            "aria-expanded"
+                        ) === "true";
+
+                    botao.setAttribute(
+                        "aria-expanded",
+                        String(!aberto)
+                    );
+
+                    detalhes.hidden =
+                        aberto;
+
+                    const label =
+                        botao.querySelector(
+                            ".evidence-open-label"
+                        );
+
+                    if (label) {
+
+                        label.innerHTML =
+                            aberto
+                                ? `
+                                    ABRIR
+                                    <i class="fa-solid fa-plus"></i>
+                                `
+                                : `
+                                    FECHAR
+                                    <i class="fa-solid fa-minus"></i>
+                                `;
+                    }
+
+                    card.classList.toggle(
+                        "open",
+                        !aberto
+                    );
+                }
+            );
+        }
+    );
+}
 
 function renderizarTeorias(teorias) {
 
