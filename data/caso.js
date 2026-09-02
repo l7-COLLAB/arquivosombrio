@@ -129,12 +129,154 @@ teorias: [
         `,
 
         evidencias: [
-            "Ausência inicial de identificação formal.",
-            "Fragmento de papel associado à expressão 'Tamám Shud'.",
-            "Pertences e roupas examinados durante a investigação.",
-            "Livro associado ao fragmento encontrado posteriormente.",
-            "Diversas hipóteses sobre identidade e causa da morte."
-        ],
+
+    {
+        titulo:
+            "O fragmento com as palavras “Tamám Shud”",
+
+        resumo:
+            "Um pequeno pedaço de papel escondido no bolso da calça tornou-se a pista mais famosa do caso.",
+
+        detalhes:
+            "Durante o exame das roupas do homem, foi encontrado em um pequeno bolso da calça um fragmento de papel com as palavras “Tamám Shud”, expressão persa geralmente traduzida como “terminado” ou “acabado”. Investigadores descobriram que a frase aparecia ao final de determinadas edições de O Rubáiyát de Omar Khayyám. O fragmento parecia ter sido arrancado de um livro, o que levou a polícia a procurar a obra correspondente.",
+
+        imagem:
+            "",
+
+        legenda:
+            "",
+
+        fonte:
+            "Inquérito do Coroner da Austrália do Sul, 1949."
+    },
+
+
+    {
+        titulo:
+            "O exemplar de O Rubáiyát",
+
+        resumo:
+            "Meses depois, um livro relacionado ao fragmento foi entregue à polícia — e trouxe novas pistas.",
+
+        detalhes:
+            "Em julho de 1949, um homem entregou à polícia um exemplar de O Rubáiyát de Omar Khayyám que teria sido encontrado no banco traseiro de seu carro em novembro de 1948. A polícia concluiu que o fragmento “Tamám Shud” correspondia à página arrancada daquele exemplar. No verso do livro havia anotações que pareciam formar uma sequência de letras, além de um número de telefone. Essas anotações alimentaram décadas de especulações sobre códigos, espionagem e mensagens secretas, embora nunca tenha sido demonstrado de forma conclusiva que se tratava de uma cifra.",
+
+        imagem:
+            "",
+
+        legenda:
+            "",
+
+        fonte:
+            "State Records of South Australia — arquivo do inquérito do Somerton Man."
+    },
+
+
+    {
+        titulo:
+            "O número de telefone escrito no livro",
+
+        resumo:
+            "Um dos números anotados no Rubáiyát levou os investigadores até uma mulher que vivia perto de Somerton Beach.",
+
+        detalhes:
+            "Entre as anotações encontradas no exemplar de O Rubáiyát havia um número de telefone que foi rastreado até uma mulher posteriormente associada ao caso pela imprensa e por pesquisadores. A polícia a entrevistou, mas os documentos públicos do primeiro inquérito não registram uma conclusão que estabeleça uma ligação definitiva entre ela e a morte. Essa conexão se tornou uma das partes mais debatidas do mistério ao longo das décadas.",
+
+        imagem:
+            "",
+
+        legenda:
+            "",
+
+        fonte:
+            "State Records of South Australia."
+    },
+
+
+    {
+        titulo:
+            "As roupas e as etiquetas removidas",
+
+        resumo:
+            "Várias peças de roupa apresentavam etiquetas de identificação removidas ou ausentes.",
+
+        detalhes:
+            "A ausência de identificação foi um dos primeiros obstáculos da investigação. Algumas etiquetas das roupas haviam sido removidas, fato que posteriormente ajudou a alimentar teorias de espionagem. Entretanto, nem todas as peças estavam completamente sem marcas: entre os pertences associados ao caso surgiram nomes como “Keane”, que décadas mais tarde ganhariam nova importância nas pesquisas genealógicas que apontaram para Carl “Charles” Webb.",
+
+        imagem:
+            "",
+
+        legenda:
+            "",
+
+        fonte:
+            "Registros do inquérito e investigação genealógica divulgada em 2022."
+    },
+
+
+    {
+        titulo:
+            "A mala deixada na estação ferroviária",
+
+        resumo:
+            "Uma mala localizada na estação de Adelaide forneceu roupas e objetos que a polícia associou ao homem.",
+
+        detalhes:
+            "A investigação localizou uma mala depositada na estação ferroviária de Adelaide antes da morte. Dentro dela havia roupas e outros objetos considerados compatíveis com os pertences do homem encontrado na praia. A mala ajudou a reconstruir parte de seus movimentos, mas não forneceu naquele momento uma identidade definitiva. O caso continuou oficialmente sem nome por décadas.",
+
+        imagem:
+            "",
+
+        legenda:
+            "",
+
+        fonte:
+            "Registros históricos da investigação do Somerton Man."
+    },
+
+
+    {
+        titulo:
+            "A suspeita de envenenamento",
+
+        resumo:
+            "O estado dos órgãos levantou suspeitas de intoxicação, mas nenhum veneno comum foi identificado.",
+
+        detalhes:
+            "O exame post-mortem encontrou alterações internas que fizeram médicos considerar a possibilidade de envenenamento. Testes não identificaram nenhum dos venenos comuns conhecidos na época. No inquérito, o especialista químico declarou que, caso um veneno tivesse provocado a morte, provavelmente seria uma substância incomum ou difícil de detectar. A causa exata da morte permaneceu inconclusiva.",
+
+        imagem:
+            "",
+
+        legenda:
+            "",
+
+        fonte:
+            "Inquérito coronial de 1949, State Records of South Australia."
+    },
+
+
+    {
+        titulo:
+            "A identificação por genealogia genética",
+
+        resumo:
+            "Décadas depois, DNA obtido de fios de cabelo levou pesquisadores até um nome: Carl “Charles” Webb.",
+
+        detalhes:
+            "Em 2022, o pesquisador Derek Abbott e a genealogista forense Colleen Fitzpatrick anunciaram que evidências genéticas e genealógicas apontavam para Carl, conhecido como Charles Webb, um engenheiro e fabricante de instrumentos nascido em Melbourne. O trabalho utilizou DNA obtido de fios de cabelo preservados no molde de gesso produzido após a morte e o comparou com árvores genealógicas e parentes vivos. A descoberta resolveu grande parte do mistério sobre a identidade do homem, embora não tenha explicado de forma conclusiva como ou por que ele morreu.",
+
+        imagem:
+            "",
+
+        legenda:
+            "",
+
+        fonte:
+            "ABC Australia — investigação de Derek Abbott e Colleen Fitzpatrick, 2022."
+    }
+
+],
 
         teorias:
             "O caso foi associado a hipóteses envolvendo identidade desconhecida, possível envenenamento, relações pessoais e espionagem. Algumas interpretações históricas permanecem controversas."
