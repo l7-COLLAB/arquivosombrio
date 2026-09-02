@@ -193,6 +193,115 @@ teorias: [
  * ambientes que trabalhem com CommonJS, sem interferir no funcionamento
  * normal do site.
  */
+/* =========================================================
+   CLASSIFICAÇÃO DOS DOSSIÊS
+   ========================================================= */
+
+const classificacoesCasos = {
+
+    101: {
+        statusFiltro: "nao-solucionado",
+
+        tipos: [
+            "misterio",
+            "morte-inexplicada",
+            "caso-historico"
+        ],
+
+        relacaoFamiliar: [],
+
+        perfilAutor: [
+            "desconhecido"
+        ],
+
+        pais: "Rússia",
+
+        decada: "1950",
+
+        tipoArquivo: "mistério"
+    },
+
+
+    102: {
+        statusFiltro: "educacional",
+
+        tipos: [
+            "pericia",
+            "quimica-forense"
+        ],
+
+        relacaoFamiliar: [],
+
+        perfilAutor: [],
+
+        pais: "",
+
+        decada: "",
+
+        tipoArquivo: "perícia"
+    },
+
+
+    103: {
+        statusFiltro: "nao-solucionado",
+
+        tipos: [
+            "misterio",
+            "morte-inexplicada",
+            "caso-historico"
+        ],
+
+        relacaoFamiliar: [],
+
+        perfilAutor: [
+            "desconhecido"
+        ],
+
+        pais: "Austrália",
+
+        decada: "1940",
+
+        tipoArquivo: "crime-real"
+    },
+
+
+    104: {
+        statusFiltro: "educacional",
+
+        tipos: [
+            "pericia",
+            "identificacao-forense"
+        ],
+
+        relacaoFamiliar: [],
+
+        perfilAutor: [],
+
+        pais: "",
+
+        decada: "",
+
+        tipoArquivo: "perícia"
+    }
+
+};
+
+
+casosArquivo.forEach(function(caso) {
+
+    const classificacao =
+        classificacoesCasos[caso.id];
+
+    if (!classificacao) {
+        return;
+    }
+
+    Object.assign(
+        caso,
+        classificacao
+    );
+
+});
 
 if (typeof module !== "undefined" && module.exports) {
     module.exports = casosArquivo;
