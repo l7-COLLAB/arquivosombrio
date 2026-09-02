@@ -239,37 +239,6 @@ function inicializarFiltrosArquivo() {
     }
 
 
-    /*
-     * Os cards são criados pelo script.js.
-     * Observamos o grid para reaplicar os filtros
-     * quando novos cards forem renderizados.
-     */
-
-    const grid =
-        document.getElementById(
-            "grid-casos"
-        );
-
-
-    if (grid) {
-
-        const observer =
-            new MutationObserver(
-                function() {
-                    aplicarFiltros();
-                }
-            );
-
-        observer.observe(
-            grid,
-            {
-                childList: true
-            }
-        );
-
-    }
-
-
     aplicarFiltros();
 
 }
