@@ -70,7 +70,7 @@ const livrosIniciais = [
 document.addEventListener("DOMContentLoaded", () => {
 
     inicializarMenuMobile();
-   inicializarFiltrosForenses();
+    inicializarFiltrosForenses();
     inicializarNavegacaoInterna();
 
     carregarCasosSupabase();
@@ -377,8 +377,815 @@ function obterCasosIniciais() {
 
 
 /* ==========================================================================
+   UPLOADS — SUPABASE STORAGE
+   ========================================================================== */
+
+const STORAGE_BUCKET_IMAGENS = "imagens";
+const STORAGE_BUCKET_DOCUMENTOS = "documentos";
+
+
+function limparNomeArquivo(nome) {
+
+    const partes =
+        String(nome || "arquivo").split(".");
+
+    const extensao =
+        partes.length > 1
+            ? partes.pop().toLowerCase()
+            : "";
+
+    const base =
+        partes
+            .join(".")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-zA-Z0-9_-]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+            .toLowerCase() || "arquivo";
+
+    return extensao
+        ? `${base}.${extensao}`
+        : base;
+}
+
+
+function criarCaminhoStorage(pasta, arquivo) {
+
+    const nomeSeguro =
+        limparNomeArquivo(arquivo.name);
+
+    const identificador =
+        `${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2, 9)}`;
+
+    return `${pasta}/${identificador}-${nomeSeguro}`;
+}
+
+
+async function exigirSessaoAdminUpload() {
+
+    const sessao =
+        await obterSessaoAdmin();
+
+    if (!sessao) {
+
+        throw new Error(
+            "Sua sessão administrativa expirou. Entre novamente na área restrita."
+        );
+    }
+
+    return sessao;
+}
+
+
+async function enviarArquivoStorage(
+    bucket,
+    pasta,
+    arquivo
+) {
+
+    if (!arquivo) {
+
+        throw new Error(
+            "Nenhum arquivo foi selecionado."
+        );
+    }
+
+    await exigirSessaoAdminUpload();
+
+    const supabaseClient =
+        await obterClienteSupabase();
+
+    const caminho =
+        criarCaminhoStorage(
+            pasta,
+            arquivo
+        );
+
+    const { error } =
+        await supabaseClient.storage
+            .from(bucket)
+            .upload(
+                caminho,
+                arquivo,
+                {
+                    cacheControl: "3600",
+                    upsert: false,
+                    contentType:
+                        arquivo.type ||
+                        undefined
+                }
+            );
+
+    if (error) {
+        throw error;
+    }
+
+    const { data } =
+        supabaseClient.storage
+            .from(bucket)
+            .getPublicUrl(caminho);
+
+    if (!data?.publicUrl) {
+
+        throw new Error(
+            "Não foi possível gerar a URL pública do arquivo."
+        );
+    }
+
+    return {
+        bucket,
+        caminho,
+        url: data.publicUrl,
+        nome: arquivo.name,
+        tipo: arquivo.type || "",
+        tamanho: Number(arquivo.size) || 0
+    };
+}
+
+
+async function excluirArquivoStorage(
+    bucket,
+    caminho
+) {
+
+    if (!bucket || !caminho) {
+        return;
+    }
+
+    await exigirSessaoAdminUpload();
+
+    const supabaseClient =
+        await obterClienteSupabase();
+
+    const { error } =
+        await supabaseClient.storage
+            .from(bucket)
+            .remove([caminho]);
+
+    if (error) {
+        throw error;
+    }
+}
+
+
+function formatarTamanhoArquivo(bytes) {
+
+    const tamanho =
+        Number(bytes) || 0;
+
+    if (tamanho < 1024) {
+        return `${tamanho} B`;
+    }
+
+    if (tamanho < 1024 * 1024) {
+
+        return `${(
+            tamanho / 1024
+        ).toFixed(1)} KB`;
+    }
+
+    return `${(
+        tamanho / (1024 * 1024)
+    ).toFixed(1)} MB`;
+}
+
+
+function normalizarDocumentos(documentos) {
+
+    if (!Array.isArray(documentos)) {
+        return [];
+    }
+
+    return documentos
+        .map(documento => ({
+
+            nome:
+                String(
+                    documento?.nome || ""
+                ).trim(),
+
+            url:
+                String(
+                    documento?.url || ""
+                ).trim(),
+
+            caminho:
+                String(
+                    documento?.caminho || ""
+                ).trim(),
+
+            bucket:
+                String(
+                    documento?.bucket ||
+                    STORAGE_BUCKET_DOCUMENTOS
+                ).trim(),
+
+            tipo:
+                String(
+                    documento?.tipo || ""
+                ).trim(),
+
+            tamanho:
+                Number(
+                    documento?.tamanho
+                ) || 0
+
+        }))
+        .filter(
+            documento =>
+                documento.nome &&
+                documento.url
+        );
+}
+
+
+function criarItemDocumentoAdmin(documento) {
+
+    return `
+        <div
+            class="admin-document-item"
+            data-document-name="${escaparHTML(documento.nome)}"
+            data-document-url="${escaparHTML(documento.url)}"
+            data-document-path="${escaparHTML(documento.caminho)}"
+            data-document-bucket="${escaparHTML(documento.bucket)}"
+            data-document-type="${escaparHTML(documento.tipo)}"
+            data-document-size="${escaparHTML(documento.tamanho)}"
+        >
+
+            <div class="admin-document-info">
+
+                <i class="fa-solid fa-file-lines"></i>
+
+                <div>
+
+                    <strong>
+                        ${escaparHTML(documento.nome)}
+                    </strong>
+
+                    <small>
+                        ${escaparHTML(
+                            documento.tipo ||
+                            "Documento"
+                        )}
+
+                        ${
+                            documento.tamanho
+                                ? ` • ${escaparHTML(
+                                    formatarTamanhoArquivo(
+                                        documento.tamanho
+                                    )
+                                )}`
+                                : ""
+                        }
+                    </small>
+
+                </div>
+
+            </div>
+
+            <a
+                href="${escaparHTML(documento.url)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="admin-document-open"
+            >
+                Abrir
+            </a>
+
+            <button
+                type="button"
+                class="admin-document-remove"
+                title="Remover documento"
+                aria-label="Remover documento"
+            >
+                <i class="fa-solid fa-trash"></i>
+            </button>
+
+        </div>
+    `;
+}
+
+
+function coletarDocumentosAdmin() {
+
+    return Array
+        .from(
+            document.querySelectorAll(
+                "#admin-documents-list .admin-document-item"
+            )
+        )
+        .map(item => ({
+
+            nome:
+                item.dataset.documentName ||
+                "",
+
+            url:
+                item.dataset.documentUrl ||
+                "",
+
+            caminho:
+                item.dataset.documentPath ||
+                "",
+
+            bucket:
+                item.dataset.documentBucket ||
+                STORAGE_BUCKET_DOCUMENTOS,
+
+            tipo:
+                item.dataset.documentType ||
+                "",
+
+            tamanho:
+                Number(
+                    item.dataset.documentSize
+                ) || 0
+
+        }))
+        .filter(
+            documento =>
+                documento.nome &&
+                documento.url
+        );
+}
+
+
+function atualizarPreviewImagemAdmin(
+    url,
+    seletorPreview
+) {
+
+    const preview =
+        document.querySelector(
+            seletorPreview
+        );
+
+    if (!preview) {
+        return;
+    }
+
+    if (!url) {
+
+        preview.innerHTML = `
+            <div class="admin-upload-empty">
+                <i class="fa-regular fa-image"></i>
+                <span>
+                    Nenhuma imagem selecionada
+                </span>
+            </div>
+        `;
+
+        return;
+    }
+
+    preview.innerHTML = `
+        <img
+            src="${escaparHTML(url)}"
+            alt="Pré-visualização da imagem"
+        >
+    `;
+}
+
+
+function definirEstadoUpload(
+    botao,
+    carregando,
+    texto = "Enviando..."
+) {
+
+    if (!botao) {
+        return;
+    }
+
+    if (carregando) {
+
+        botao.dataset.originalHtml =
+            botao.innerHTML;
+
+        botao.disabled = true;
+
+        botao.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            ${escaparHTML(texto)}
+        `;
+
+        return;
+    }
+
+    botao.disabled = false;
+
+    if (botao.dataset.originalHtml) {
+
+        botao.innerHTML =
+            botao.dataset.originalHtml;
+
+        delete botao.dataset.originalHtml;
+    }
+}
+
+
+async function processarUploadImagemAdmin({
+    inputArquivo,
+    inputUrl,
+    preview,
+    pasta,
+    botao
+}) {
+
+    const arquivo =
+        inputArquivo?.files?.[0];
+
+    if (!arquivo) {
+        return;
+    }
+
+    const tiposPermitidos = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/gif"
+    ];
+
+    if (
+        !tiposPermitidos.includes(
+            arquivo.type
+        )
+    ) {
+
+        alert(
+            "Escolha uma imagem JPG, PNG, WEBP ou GIF."
+        );
+
+        inputArquivo.value = "";
+
+        return;
+    }
+
+    try {
+
+        definirEstadoUpload(
+            botao,
+            true,
+            "Enviando imagem..."
+        );
+
+        const resultado =
+            await enviarArquivoStorage(
+                STORAGE_BUCKET_IMAGENS,
+                pasta,
+                arquivo
+            );
+
+        inputUrl.value =
+            resultado.url;
+
+        inputUrl.dataset.storagePath =
+            resultado.caminho;
+
+        inputUrl.dataset.storageBucket =
+            resultado.bucket;
+
+        atualizarPreviewImagemAdmin(
+            resultado.url,
+            preview
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "Falha no upload da imagem.",
+            erro
+        );
+
+        alert(
+            erro?.message ||
+            "Não foi possível enviar a imagem."
+        );
+
+    } finally {
+
+        definirEstadoUpload(
+            botao,
+            false
+        );
+
+        inputArquivo.value = "";
+    }
+}
+
+
+function inicializarUploadImagemCaso(
+    dados = null
+) {
+
+    const inputArquivo =
+        document.getElementById(
+            "admin-image-file"
+        );
+
+    const inputUrl =
+        document.getElementById(
+            "admin-image"
+        );
+
+    const botao =
+        document.getElementById(
+            "admin-image-upload-button"
+        );
+
+    if (
+        !inputArquivo ||
+        !inputUrl ||
+        !botao
+    ) {
+        return;
+    }
+
+    atualizarPreviewImagemAdmin(
+        inputUrl.value,
+        "#admin-image-preview"
+    );
+
+    botao.addEventListener(
+        "click",
+        () => inputArquivo.click()
+    );
+
+    inputArquivo.addEventListener(
+        "change",
+        () =>
+            processarUploadImagemAdmin({
+                inputArquivo,
+                inputUrl,
+                preview:
+                    "#admin-image-preview",
+                pasta: "casos",
+                botao
+            })
+    );
+}
+
+
+function inicializarUploadCapaLivro(
+    dados = null
+) {
+
+    const inputArquivo =
+        document.getElementById(
+            "admin-book-cover-file"
+        );
+
+    const inputUrl =
+        document.getElementById(
+            "admin-book-cover"
+        );
+
+    const botao =
+        document.getElementById(
+            "admin-book-cover-upload-button"
+        );
+
+    if (
+        !inputArquivo ||
+        !inputUrl ||
+        !botao
+    ) {
+        return;
+    }
+
+    atualizarPreviewImagemAdmin(
+        inputUrl.value,
+        "#admin-book-cover-preview"
+    );
+
+    botao.addEventListener(
+        "click",
+        () => inputArquivo.click()
+    );
+
+    inputArquivo.addEventListener(
+        "change",
+        () =>
+            processarUploadImagemAdmin({
+                inputArquivo,
+                inputUrl,
+                preview:
+                    "#admin-book-cover-preview",
+                pasta: "livros",
+                botao
+            })
+    );
+}
+
+
+function inicializarDocumentosCaso(
+    dados = null
+) {
+
+    const input =
+        document.getElementById(
+            "admin-document-file"
+        );
+
+    const botao =
+        document.getElementById(
+            "admin-document-upload-button"
+        );
+
+    const lista =
+        document.getElementById(
+            "admin-documents-list"
+        );
+
+    if (!input || !botao || !lista) {
+        return;
+    }
+
+    const documentosExistentes =
+        normalizarDocumentos(
+            dados?.documentos
+        );
+
+    lista.innerHTML =
+        documentosExistentes
+            .map(
+                criarItemDocumentoAdmin
+            )
+            .join("");
+
+    const configurarRemocao =
+        item => {
+
+            item
+                .querySelector(
+                    ".admin-document-remove"
+                )
+                ?.addEventListener(
+                    "click",
+                    async () => {
+
+                        const nome =
+                            item.dataset
+                                .documentName ||
+                            "este documento";
+
+                        if (
+                            !confirm(
+                                `Remover "${nome}" do dossiê?`
+                            )
+                        ) {
+                            return;
+                        }
+
+                        const caminho =
+                            item.dataset
+                                .documentPath;
+
+                        const bucket =
+                            item.dataset
+                                .documentBucket ||
+                            STORAGE_BUCKET_DOCUMENTOS;
+
+                        try {
+
+                            if (caminho) {
+
+                                await excluirArquivoStorage(
+                                    bucket,
+                                    caminho
+                                );
+                            }
+
+                            item.remove();
+
+                        } catch (erro) {
+
+                            console.error(
+                                "Falha ao remover documento.",
+                                erro
+                            );
+
+                            alert(
+                                "Não foi possível remover o documento."
+                            );
+                        }
+                    }
+                );
+        };
+
+    lista
+        .querySelectorAll(
+            ".admin-document-item"
+        )
+        .forEach(
+            configurarRemocao
+        );
+
+    botao.addEventListener(
+        "click",
+        () => input.click()
+    );
+
+    input.addEventListener(
+        "change",
+        async () => {
+
+            const arquivos =
+                Array.from(
+                    input.files || []
+                );
+
+            if (!arquivos.length) {
+                return;
+            }
+
+            try {
+
+                definirEstadoUpload(
+                    botao,
+                    true,
+                    arquivos.length > 1
+                        ? "Enviando documentos..."
+                        : "Enviando documento..."
+                );
+
+                for (
+                    const arquivo
+                    of arquivos
+                ) {
+
+                    const resultado =
+                        await enviarArquivoStorage(
+                            STORAGE_BUCKET_DOCUMENTOS,
+                            "casos",
+                            arquivo
+                        );
+
+                    const documento = {
+
+                        nome:
+                            resultado.nome,
+
+                        url:
+                            resultado.url,
+
+                        caminho:
+                            resultado.caminho,
+
+                        bucket:
+                            resultado.bucket,
+
+                        tipo:
+                            resultado.tipo,
+
+                        tamanho:
+                            resultado.tamanho
+                    };
+
+                    lista.insertAdjacentHTML(
+                        "beforeend",
+                        criarItemDocumentoAdmin(
+                            documento
+                        )
+                    );
+
+                    configurarRemocao(
+                        lista.lastElementChild
+                    );
+                }
+
+            } catch (erro) {
+
+                console.error(
+                    "Falha no upload de documentos.",
+                    erro
+                );
+
+                alert(
+                    erro?.message ||
+                    "Não foi possível enviar um dos documentos."
+                );
+
+            } finally {
+
+                definirEstadoUpload(
+                    botao,
+                    false
+                );
+
+                input.value = "";
+            }
+        }
+    );
+}
+
+
+/* ==========================================================================
    BANCO DE CASOS
    ========================================================================== */
+
 async function carregarCasosSupabase() {
 
     try {
@@ -393,9 +1200,12 @@ async function carregarCasosSupabase() {
             await supabaseClient
                 .from("Casos")
                 .select("*")
-                .order("created_at", {
-                    ascending: false
-                });
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
 
         if (error) {
             throw error;
@@ -417,6 +1227,8 @@ async function carregarCasosSupabase() {
         );
     }
 }
+
+
 function obterTodosCasos() {
 
     const iniciais =
@@ -425,7 +1237,8 @@ function obterTodosCasos() {
     const idsSupabase =
         new Set(
             casosSupabase.map(
-                caso => Number(caso.id)
+                caso =>
+                    Number(caso.id)
             )
         );
 
@@ -451,7 +1264,10 @@ function obterTodosCasos() {
 function criarCardCaso(caso) {
 
     return `
-        <article class="case-card" data-case-id="${escaparHTML(caso.id)}">
+        <article
+            class="case-card"
+            data-case-id="${escaparHTML(caso.id)}"
+        >
 
             <a
                 href="caso.html?id=${encodeURIComponent(caso.id)}"
@@ -469,7 +1285,10 @@ function criarCardCaso(caso) {
                     >
 
                     <span class="badge status">
-                        ${escaparHTML(caso.status || "EM ARQUIVO")}
+                        ${escaparHTML(
+                            caso.status ||
+                            "EM ARQUIVO"
+                        )}
                     </span>
 
                 </div>
@@ -477,7 +1296,10 @@ function criarCardCaso(caso) {
                 <div class="card-content">
 
                     <span class="badge category">
-                        ${escaparHTML(caso.categoria || "ARQUIVO")}
+                        ${escaparHTML(
+                            caso.categoria ||
+                            "ARQUIVO"
+                        )}
                     </span>
 
                     <h3>
@@ -488,18 +1310,27 @@ function criarCardCaso(caso) {
 
                         <span>
                             <i class="fa-solid fa-location-dot"></i>
-                            ${escaparHTML(caso.local || "Local desconhecido")}
+                            ${escaparHTML(
+                                caso.local ||
+                                "Local desconhecido"
+                            )}
                         </span>
 
                         <span>
                             <i class="fa-solid fa-calendar"></i>
-                            ${escaparHTML(caso.ano || "Data desconhecida")}
+                            ${escaparHTML(
+                                caso.ano ||
+                                "Data desconhecida"
+                            )}
                         </span>
 
                     </div>
 
                     <p class="card-summary">
-                        ${escaparHTML(caso.resumo || "Sem resumo disponível.")}
+                        ${escaparHTML(
+                            caso.resumo ||
+                            "Sem resumo disponível."
+                        )}
                     </p>
 
                     <span class="btn-read-more">
@@ -516,22 +1347,26 @@ function criarCardCaso(caso) {
 }
 
 
-/**
- * Carrega os casos gerais.
- */
 function carregarCasos() {
 
     const grid =
-        document.getElementById("grid-casos");
+        document.getElementById(
+            "grid-casos"
+        );
 
     if (!grid) {
         return;
     }
 
-    const casos = obterTodosCasos()
-        .filter(caso =>
-            String(caso.categoria).toUpperCase() !== "PERÍCIA"
-        );
+    const casos =
+        obterTodosCasos()
+            .filter(
+                caso =>
+                    String(
+                        caso.categoria
+                    ).toUpperCase() !==
+                    "PERÍCIA"
+            );
 
     if (casos.length === 0) {
 
@@ -539,28 +1374,34 @@ function carregarCasos() {
             <div class="empty-state">
                 <i class="fa-solid fa-folder-open"></i>
                 <h3>Acervo vazio</h3>
-                <p>Nenhum dossiê disponível no momento.</p>
+                <p>
+                    Nenhum dossiê disponível no momento.
+                </p>
             </div>
         `;
 
         return;
     }
 
-    grid.innerHTML = casos
-        .map(criarCardCaso)
-        .join("");
+    grid.innerHTML =
+        casos
+            .map(criarCardCaso)
+            .join("");
 }
 
 
-/**
- * Carrega os casos da categoria PERÍCIA.
- */
+/* ==========================================================================
+   PERÍCIA / FILTROS FORENSES
+   ========================================================================== */
 
 function normalizarTextoForense(valor) {
 
     return String(valor || "")
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
         .toLowerCase()
         .trim();
 }
@@ -568,28 +1409,31 @@ function normalizarTextoForense(valor) {
 
 function identificarTipoForense(caso) {
 
-    const texto = normalizarTextoForense(
-        [
-            caso.titulo,
-            caso.resumo,
-            caso.historia,
-            caso.descricao,
-            caso.categoria,
-            caso.tipoForense,
-            caso.tag
-        ].join(" ")
-    );
-
+    const texto =
+        normalizarTextoForense(
+            [
+                caso.titulo,
+                caso.resumo,
+                caso.historia,
+                caso.descricao,
+                caso.categoria,
+                caso.tipoForense,
+                caso.tag
+            ].join(" ")
+        );
 
     if (
         texto.includes("papiloscopia") ||
-        texto.includes("impressao digital") ||
-        texto.includes("impressoes digitais") ||
+        texto.includes(
+            "impressao digital"
+        ) ||
+        texto.includes(
+            "impressoes digitais"
+        ) ||
         texto.includes("datiloscopia")
     ) {
         return "papiloscopia";
     }
-
 
     if (
         texto.includes("dna") ||
@@ -602,7 +1446,6 @@ function identificarTipoForense(caso) {
         return "biologica";
     }
 
-
     if (
         texto.includes("vestigio") ||
         texto.includes("quimica") ||
@@ -614,68 +1457,80 @@ function identificarTipoForense(caso) {
         return "vestigios";
     }
 
-
     return "geral";
 }
 
 
-function carregarForense(filtro = "todos") {
+function carregarForense(
+    filtro = "todos"
+) {
 
     const grid =
-        document.getElementById("grid-forense");
+        document.getElementById(
+            "grid-forense"
+        );
 
     if (!grid) {
         return;
     }
 
-
-    let casos = obterTodosCasos()
-        .filter(caso =>
-            String(caso.categoria).toUpperCase() === "PERÍCIA"
-        );
-
+    let casos =
+        obterTodosCasos()
+            .filter(
+                caso =>
+                    String(
+                        caso.categoria
+                    ).toUpperCase() ===
+                    "PERÍCIA"
+            );
 
     if (filtro !== "todos") {
 
-        casos = casos.filter(
-            caso =>
-                identificarTipoForense(caso) === filtro
-        );
-
+        casos =
+            casos.filter(
+                caso =>
+                    identificarTipoForense(
+                        caso
+                    ) === filtro
+            );
     }
-
 
     if (casos.length === 0) {
 
         const mensagens = {
 
             papiloscopia: {
-                titulo: "Nenhum arquivo de papiloscopia",
-                texto: "Ainda não existem conteúdos de identificação por impressões digitais nesta categoria."
+                titulo:
+                    "Nenhum arquivo de papiloscopia",
+                texto:
+                    "Ainda não existem conteúdos de identificação por impressões digitais nesta categoria."
             },
 
             vestigios: {
-                titulo: "Nenhuma análise de vestígios",
-                texto: "Ainda não existem conteúdos de análise química ou vestígios cadastrados nesta categoria."
+                titulo:
+                    "Nenhuma análise de vestígios",
+                texto:
+                    "Ainda não existem conteúdos de análise química ou vestígios cadastrados nesta categoria."
             },
 
             biologica: {
-                titulo: "Nenhuma evidência biológica",
-                texto: "Ainda não existem conteúdos de DNA ou evidências biológicas cadastrados nesta categoria."
+                titulo:
+                    "Nenhuma evidência biológica",
+                texto:
+                    "Ainda não existem conteúdos de DNA ou evidências biológicas cadastrados nesta categoria."
             },
 
             todos: {
-                titulo: "Nenhum laudo disponível",
-                texto: "O arquivo pericial ainda não possui documentos publicados."
+                titulo:
+                    "Nenhum laudo disponível",
+                texto:
+                    "O arquivo pericial ainda não possui documentos publicados."
             }
-
         };
-
 
         const mensagem =
             mensagens[filtro] ||
             mensagens.todos;
-
 
         grid.innerHTML = `
             <div class="empty-state">
@@ -683,11 +1538,15 @@ function carregarForense(filtro = "todos") {
                 <i class="fa-solid fa-flask"></i>
 
                 <h3>
-                    ${escaparHTML(mensagem.titulo)}
+                    ${escaparHTML(
+                        mensagem.titulo
+                    )}
                 </h3>
 
                 <p>
-                    ${escaparHTML(mensagem.texto)}
+                    ${escaparHTML(
+                        mensagem.texto
+                    )}
                 </p>
 
             </div>
@@ -695,7 +1554,6 @@ function carregarForense(filtro = "todos") {
 
         return;
     }
-
 
     grid.innerHTML =
         casos
@@ -711,52 +1569,55 @@ function inicializarFiltrosForenses() {
             "[data-forensic-filter]"
         );
 
-
     if (!botoes.length) {
         return;
     }
 
+    botoes.forEach(
+        botao => {
 
-    botoes.forEach(botao => {
+            botao.addEventListener(
+                "click",
+                evento => {
 
-        botao.addEventListener(
-            "click",
-            evento => {
+                    evento.preventDefault();
 
-                evento.preventDefault();
+                    const filtro =
+                        botao.dataset
+                            .forensicFilter;
 
-
-                const filtro =
-                    botao.dataset.forensicFilter;
-
-
-                botoes.forEach(item => {
-                    item.classList.remove("active");
-                });
-
-
-                botao.classList.add("active");
-
-
-                carregarForense(filtro);
-
-
-                const grid =
-                    document.getElementById(
-                        "grid-forense"
+                    botoes.forEach(
+                        item => {
+                            item.classList.remove(
+                                "active"
+                            );
+                        }
                     );
 
+                    botao.classList.add(
+                        "active"
+                    );
 
-                grid?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
+                    carregarForense(
+                        filtro
+                    );
 
-            }
-        );
+                    const grid =
+                        document.getElementById(
+                            "grid-forense"
+                        );
 
-    });
+                    grid?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+                }
+            );
+        }
+    );
 }
+
+
 /* ==========================================================================
    LIVROS
    ========================================================================== */
@@ -769,16 +1630,32 @@ function normalizarLinksAfiliados(links) {
 
     return links
         .map(link => ({
-            loja: String(link?.loja || "").trim(),
-            formato: String(link?.formato || "").trim(),
-            url: String(link?.url || "").trim(),
-            destaque: String(link?.destaque || "").trim()
+            loja:
+                String(
+                    link?.loja || ""
+                ).trim(),
+
+            formato:
+                String(
+                    link?.formato || ""
+                ).trim(),
+
+            url:
+                String(
+                    link?.url || ""
+                ).trim(),
+
+            destaque:
+                String(
+                    link?.destaque || ""
+                ).trim()
         }))
-        .filter(link =>
-            link.loja ||
-            link.formato ||
-            link.url ||
-            link.destaque
+        .filter(
+            link =>
+                link.loja ||
+                link.formato ||
+                link.url ||
+                link.destaque
         );
 }
 
@@ -798,8 +1675,10 @@ function normalizarURLComercial(url) {
             new URL(valor);
 
         if (
-            urlValida.protocol !== "https:" &&
-            urlValida.protocol !== "http:"
+            urlValida.protocol !==
+                "https:" &&
+            urlValida.protocol !==
+                "http:"
         ) {
             return "";
         }
@@ -813,19 +1692,24 @@ function normalizarURLComercial(url) {
 }
 
 
-function renderizarLinksAfiliadosLivro(livro) {
+function renderizarLinksAfiliadosLivro(
+    livro
+) {
 
     const links =
         normalizarLinksAfiliados(
             livro.linksAfiliados
         )
-        .map(link => ({
-            ...link,
-            url: normalizarURLComercial(
-                link.url
-            )
-        }))
-        .filter(link => link.url);
+            .map(link => ({
+                ...link,
+                url:
+                    normalizarURLComercial(
+                        link.url
+                    )
+            }))
+            .filter(
+                link => link.url
+            );
 
     if (!links.length) {
         return "";
@@ -850,44 +1734,48 @@ function renderizarLinksAfiliadosLivro(livro) {
 
                 ${
                     links
-                        .map(link => `
+                        .map(
+                            link => `
 
-                            <a
-                                class="book-commerce-link"
-                                href="${escaparHTML(link.url)}"
-                                target="_blank"
-                                rel="sponsored nofollow noopener noreferrer"
-                            >
+                                <a
+                                    class="book-commerce-link"
+                                    href="${escaparHTML(link.url)}"
+                                    target="_blank"
+                                    rel="sponsored nofollow noopener noreferrer"
+                                >
 
-                                <span class="book-commerce-store">
-                                    ${escaparHTML(
-                                        link.loja ||
-                                        "Loja parceira"
-                                    )}
-                                </span>
+                                    <span class="book-commerce-store">
+                                        ${escaparHTML(
+                                            link.loja ||
+                                            "Loja parceira"
+                                        )}
+                                    </span>
 
-                                ${
-                                    link.formato
-                                        ? `
-                                            <small>
-                                                ${escaparHTML(link.formato)}
-                                            </small>
-                                        `
-                                        : ""
-                                }
+                                    ${
+                                        link.formato
+                                            ? `
+                                                <small>
+                                                    ${escaparHTML(
+                                                        link.formato
+                                                    )}
+                                                </small>
+                                            `
+                                            : ""
+                                    }
 
-                                <strong>
-                                    ${escaparHTML(
-                                        link.destaque ||
-                                        "Consultar oferta"
-                                    )}
-                                </strong>
+                                    <strong>
+                                        ${escaparHTML(
+                                            link.destaque ||
+                                            "Consultar oferta"
+                                        )}
+                                    </strong>
 
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
 
-                            </a>
+                                </a>
 
-                        `)
+                            `
+                        )
                         .join("")
                 }
 
@@ -900,9 +1788,7 @@ function renderizarLinksAfiliadosLivro(livro) {
 
         </div>
     `;
-}
-
-
+} 
 function criarLinhaAfiliado(link = {}) {
 
     const loja =
@@ -1063,16 +1949,23 @@ function coletarLinksAfiliadosAdmin() {
 function obterTodosLivros() {
 
     const personalizados =
-        lerStorage(CONFIG.STORAGE_LIVROS);
+        lerStorage(
+            CONFIG.STORAGE_LIVROS
+        );
 
-    const idsPersonalizados = new Set(
-        personalizados.map(livro => Number(livro.id))
-    );
+    const idsPersonalizados =
+        new Set(
+            personalizados.map(
+                livro => Number(livro.id)
+            )
+        );
 
     const iniciaisFiltrados =
         livrosIniciais.filter(
             livro =>
-                !idsPersonalizados.has(Number(livro.id))
+                !idsPersonalizados.has(
+                    Number(livro.id)
+                )
         );
 
     return [
@@ -1100,6 +1993,7 @@ function carregarLivros() {
 
         grid.innerHTML = `
             <div class="empty-state">
+
                 <i class="fa-solid fa-book"></i>
 
                 <h3>
@@ -1109,6 +2003,7 @@ function carregarLivros() {
                 <p>
                     O arquivo ainda não possui livros cadastrados.
                 </p>
+
             </div>
         `;
 
@@ -1144,9 +2039,14 @@ function carregarLivros() {
 
 
         if (
-            categoria.includes("crime real") ||
-            categoria.includes("true crime")
+            categoria.includes(
+                "crime real"
+            ) ||
+            categoria.includes(
+                "true crime"
+            )
         ) {
+
             return {
                 id: "crimes-reais",
                 nome: "Crimes Reais"
@@ -1155,9 +2055,14 @@ function carregarLivros() {
 
 
         if (
-            categoria.includes("terror") ||
-            categoria.includes("horror")
+            categoria.includes(
+                "terror"
+            ) ||
+            categoria.includes(
+                "horror"
+            )
         ) {
+
             return {
                 id: "terror",
                 nome: "Terror"
@@ -1166,8 +2071,11 @@ function carregarLivros() {
 
 
         if (
-            categoria.includes("mister")
+            categoria.includes(
+                "mister"
+            )
         ) {
+
             return {
                 id: "misterios",
                 nome: "Mistérios"
@@ -1176,8 +2084,11 @@ function carregarLivros() {
 
 
         if (
-            categoria.includes("serial")
+            categoria.includes(
+                "serial"
+            )
         ) {
+
             return {
                 id: "serial-killers",
                 nome: "Serial Killers"
@@ -1186,9 +2097,14 @@ function carregarLivros() {
 
 
         if (
-            categoria.includes("forense") ||
-            categoria.includes("pericia")
+            categoria.includes(
+                "forense"
+            ) ||
+            categoria.includes(
+                "pericia"
+            )
         ) {
+
             return {
                 id: "forense",
                 nome: "Ciência Forense"
@@ -1197,31 +2113,52 @@ function carregarLivros() {
 
 
         if (
-            categoria.includes("psicologia") ||
-            categoria.includes("criminologia")
+            categoria.includes(
+                "psicologia"
+            ) ||
+            categoria.includes(
+                "criminologia"
+            )
         ) {
+
             return {
-                id: "psicologia-criminal",
-                nome: "Psicologia Criminal"
+                id:
+                    "psicologia-criminal",
+
+                nome:
+                    "Psicologia Criminal"
             };
         }
 
 
         if (
-            categoria.includes("sem solucao") ||
-            categoria.includes("nao solucionado")
+            categoria.includes(
+                "sem solucao"
+            ) ||
+            categoria.includes(
+                "nao solucionado"
+            )
         ) {
+
             return {
-                id: "casos-sem-solucao",
-                nome: "Casos sem Solução"
+                id:
+                    "casos-sem-solucao",
+
+                nome:
+                    "Casos sem Solução"
             };
         }
 
 
         if (
-            categoria.includes("lenda") ||
-            categoria.includes("folclore")
+            categoria.includes(
+                "lenda"
+            ) ||
+            categoria.includes(
+                "folclore"
+            )
         ) {
+
             return {
                 id: "lendas",
                 nome: "Lendas & Folclore"
@@ -1230,18 +2167,27 @@ function carregarLivros() {
 
 
         if (
-            categoria.includes("arquivo") ||
-            categoria.includes("segredo")
+            categoria.includes(
+                "arquivo"
+            ) ||
+            categoria.includes(
+                "segredo"
+            )
         ) {
+
             return {
-                id: "arquivos-secretos",
-                nome: "Arquivos Secretos"
+                id:
+                    "arquivos-secretos",
+
+                nome:
+                    "Arquivos Secretos"
             };
         }
 
 
         return {
             id: "outros",
+
             nome:
                 categoriaOriginal ||
                 "Outros"
@@ -1367,10 +2313,13 @@ function carregarLivros() {
                     function() {
 
                         const id =
-                            lombada.dataset.categoria;
+                            lombada.dataset
+                                .categoria;
 
                         const categoria =
-                            categorias.get(id);
+                            categorias.get(
+                                id
+                            );
 
                         if (!categoria) {
                             return;
@@ -1400,9 +2349,11 @@ function carregarLivros() {
                         class="books-back-button"
                         id="voltar-estantes"
                     >
+
                         <i class="fa-solid fa-arrow-left"></i>
 
                         VOLTAR ÀS ESTANTES
+
                     </button>
 
 
@@ -1413,11 +2364,14 @@ function carregarLivros() {
                         </span>
 
                         <h3>
-                            ${escaparHTML(categoria.nome)}
+                            ${escaparHTML(
+                                categoria.nome
+                            )}
                         </h3>
 
                         <p>
                             ${categoria.livros.length}
+
                             ${
                                 categoria.livros.length === 1
                                     ? "livro arquivado"
@@ -1443,8 +2397,14 @@ function carregarLivros() {
                                             <div class="book-image">
 
                                                 <img
-                                                    src="${escaparHTML(livro.capa || "")}"
-                                                    alt="${escaparHTML(livro.titulo || "Livro")}"
+                                                    src="${escaparHTML(
+                                                        livro.capa ||
+                                                        ""
+                                                    )}"
+                                                    alt="${escaparHTML(
+                                                        livro.titulo ||
+                                                        "Livro"
+                                                    )}"
                                                     loading="lazy"
                                                     onerror="this.src='https://placehold.co/300x450/111/777?text=Arquivo+Sombrio'"
                                                 >
@@ -1485,8 +2445,10 @@ function carregarLivros() {
                                                         ""
                                                     )}
                                                 </p>
-                                                
-                                                ${renderizarLinksAfiliadosLivro(livro)}
+
+                                                ${renderizarLinksAfiliadosLivro(
+                                                    livro
+                                                )}
 
                                             </div>
 
@@ -1529,39 +2491,61 @@ function carregarLivros() {
 function inicializarMenuMobile() {
 
     const button =
-        document.getElementById("menu-toggle");
+        document.getElementById(
+            "menu-toggle"
+        );
 
     const sidebar =
-        document.getElementById("sidebar-menu");
+        document.getElementById(
+            "sidebar-menu"
+        );
 
     const closeButton =
-        document.getElementById("close-sidebar");
+        document.getElementById(
+            "close-sidebar"
+        );
 
     if (!button || !sidebar) {
         return;
     }
 
     let overlay =
-        document.getElementById("mobile-overlay");
+        document.getElementById(
+            "mobile-overlay"
+        );
 
     if (!overlay) {
 
         overlay =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        overlay.id = "mobile-overlay";
-        overlay.className = "mobile-overlay";
+        overlay.id =
+            "mobile-overlay";
 
-        document.body.appendChild(overlay);
+        overlay.className =
+            "mobile-overlay";
+
+        document.body.appendChild(
+            overlay
+        );
     }
 
 
     function abrir() {
 
-        sidebar.classList.add("active");
-        overlay.classList.add("active");
+        sidebar.classList.add(
+            "active"
+        );
 
-        document.body.classList.add("menu-open");
+        overlay.classList.add(
+            "active"
+        );
+
+        document.body.classList.add(
+            "menu-open"
+        );
 
         button.setAttribute(
             "aria-expanded",
@@ -1572,10 +2556,17 @@ function inicializarMenuMobile() {
 
     function fechar() {
 
-        sidebar.classList.remove("active");
-        overlay.classList.remove("active");
+        sidebar.classList.remove(
+            "active"
+        );
 
-        document.body.classList.remove("menu-open");
+        overlay.classList.remove(
+            "active"
+        );
+
+        document.body.classList.remove(
+            "menu-open"
+        );
 
         button.setAttribute(
             "aria-expanded",
@@ -1584,7 +2575,10 @@ function inicializarMenuMobile() {
     }
 
 
-    button.addEventListener("click", abrir);
+    button.addEventListener(
+        "click",
+        abrir
+    );
 
     if (closeButton) {
 
@@ -1607,17 +2601,18 @@ function inicializarMenuMobile() {
                 "click",
                 fechar
             );
-
         });
 
     document.addEventListener(
         "keydown",
         evento => {
 
-            if (evento.key === "Escape") {
+            if (
+                evento.key ===
+                "Escape"
+            ) {
                 fechar();
             }
-
         }
     );
 }
@@ -1630,7 +2625,9 @@ function inicializarMenuMobile() {
 function inicializarNavegacaoInterna() {
 
     document
-        .querySelectorAll('a[href^="#"]')
+        .querySelectorAll(
+            'a[href^="#"]'
+        )
         .forEach(link => {
 
             link.addEventListener(
@@ -1638,7 +2635,9 @@ function inicializarNavegacaoInterna() {
                 evento => {
 
                     const alvoId =
-                        link.getAttribute("href");
+                        link.getAttribute(
+                            "href"
+                        );
 
                     if (
                         !alvoId ||
@@ -1648,7 +2647,9 @@ function inicializarNavegacaoInterna() {
                     }
 
                     const alvo =
-                        document.querySelector(alvoId);
+                        document.querySelector(
+                            alvoId
+                        );
 
                     if (!alvo) {
                         return;
@@ -1660,10 +2661,8 @@ function inicializarNavegacaoInterna() {
                         behavior: "smooth",
                         block: "start"
                     });
-
                 }
             );
-
         });
 }
 
@@ -1675,7 +2674,9 @@ function inicializarNavegacaoInterna() {
 function inicializarForum() {
 
     const formulario =
-        document.getElementById("form-forum");
+        document.getElementById(
+            "form-forum"
+        );
 
     if (!formulario) {
         return;
@@ -1691,7 +2692,9 @@ function inicializarForum() {
 function carregarComentarios() {
 
     const lista =
-        document.getElementById("lista-comentarios");
+        document.getElementById(
+            "lista-comentarios"
+        );
 
     if (!lista) {
         return;
@@ -1706,39 +2709,58 @@ function carregarComentarios() {
 
         lista.innerHTML = `
             <div class="empty-state">
+
                 <i class="fa-solid fa-comments"></i>
-                <h3>Nenhuma análise publicada</h3>
-                <p>Seja o primeiro pesquisador a registrar uma observação.</p>
+
+                <h3>
+                    Nenhuma análise publicada
+                </h3>
+
+                <p>
+                    Seja o primeiro pesquisador a registrar uma observação.
+                </p>
+
             </div>
         `;
 
         return;
     }
 
-    lista.innerHTML = comentarios.map(comentario => `
+    lista.innerHTML =
+        comentarios
+            .map(
+                comentario => `
 
-        <article class="comment-card">
+                    <article class="comment-card">
 
-            <div class="comment-header">
+                        <div class="comment-header">
 
-                <strong>
-                    <i class="fa-solid fa-user-secret"></i>
-                    ${escaparHTML(comentario.nome)}
-                </strong>
+                            <strong>
+                                <i class="fa-solid fa-user-secret"></i>
+                                ${escaparHTML(
+                                    comentario.nome
+                                )}
+                            </strong>
 
-                <time>
-                    ${escaparHTML(comentario.data)}
-                </time>
+                            <time>
+                                ${escaparHTML(
+                                    comentario.data
+                                )}
+                            </time>
 
-            </div>
+                        </div>
 
-            <p>
-                ${escaparHTML(comentario.mensagem)}
-            </p>
+                        <p>
+                            ${escaparHTML(
+                                comentario.mensagem
+                            )}
+                        </p>
 
-        </article>
+                    </article>
 
-    `).join("");
+                `
+            )
+            .join("");
 }
 
 
@@ -1747,21 +2769,41 @@ function adicionarComentario(evento) {
     evento.preventDefault();
 
     const nome =
-        document.getElementById("forum-nome")?.value.trim();
+        document
+            .getElementById(
+                "forum-nome"
+            )
+            ?.value
+            .trim();
 
     const email =
-        document.getElementById("forum-email")?.value.trim();
+        document
+            .getElementById(
+                "forum-email"
+            )
+            ?.value
+            .trim();
 
     const mensagem =
-        document.getElementById("forum-mensagem")?.value.trim();
+        document
+            .getElementById(
+                "forum-mensagem"
+            )
+            ?.value
+            .trim();
 
-    if (!nome || !email || !mensagem) {
+    if (
+        !nome ||
+        !email ||
+        !mensagem
+    ) {
         return;
     }
 
     const novoComentario = {
 
-        id: Date.now(),
+        id:
+            Date.now(),
 
         nome,
 
@@ -1769,13 +2811,18 @@ function adicionarComentario(evento) {
 
         mensagem,
 
-        data: new Date().toLocaleString(
-            "pt-BR",
-            {
-                dateStyle: "short",
-                timeStyle: "short"
-            }
-        )
+        data:
+            new Date()
+                .toLocaleString(
+                    "pt-BR",
+                    {
+                        dateStyle:
+                            "short",
+
+                        timeStyle:
+                            "short"
+                    }
+                )
     };
 
     const comentarios =
@@ -1783,7 +2830,9 @@ function adicionarComentario(evento) {
             CONFIG.STORAGE_COMENTARIOS
         );
 
-    comentarios.unshift(novoComentario);
+    comentarios.unshift(
+        novoComentario
+    );
 
     if (
         salvarStorage(
@@ -1811,7 +2860,9 @@ function adicionarComentario(evento) {
 function inicializarSugestao() {
 
     const formulario =
-        document.getElementById("form-sugestao");
+        document.getElementById(
+            "form-sugestao"
+        );
 
     if (!formulario) {
         return;
@@ -1829,13 +2880,28 @@ function enviarSugestao(evento) {
     evento.preventDefault();
 
     const nome =
-        document.getElementById("sug-nome")?.value.trim();
+        document
+            .getElementById(
+                "sug-nome"
+            )
+            ?.value
+            .trim();
 
     const titulo =
-        document.getElementById("sug-titulo")?.value.trim();
+        document
+            .getElementById(
+                "sug-titulo"
+            )
+            ?.value
+            .trim();
 
     const descricao =
-        document.getElementById("sug-descricao")?.value.trim() || "";
+        document
+            .getElementById(
+                "sug-descricao"
+            )
+            ?.value
+            .trim() || "";
 
     if (!nome || !titulo) {
         return;
@@ -1848,7 +2914,8 @@ function enviarSugestao(evento) {
 
     sugestoes.unshift({
 
-        id: Date.now(),
+        id:
+            Date.now(),
 
         nome,
 
@@ -1856,9 +2923,11 @@ function enviarSugestao(evento) {
 
         descricao,
 
-        data: new Date().toLocaleString(
-            "pt-BR"
-        )
+        data:
+            new Date()
+                .toLocaleString(
+                    "pt-BR"
+                )
     });
 
     salvarStorage(
@@ -1879,29 +2948,38 @@ function enviarSugestao(evento) {
    MENSAGENS
    ========================================================================== */
 
-function mostrarMensagem(id, texto) {
+function mostrarMensagem(
+    id,
+    texto
+) {
 
     const elemento =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
 
     if (!elemento) {
         return;
     }
 
-    elemento.textContent = texto;
+    elemento.textContent =
+        texto;
 
-    elemento.classList.add("visible");
+    elemento.classList.add(
+        "visible"
+    );
 
-    setTimeout(() => {
+    setTimeout(
+        () => {
 
-        elemento.classList.remove(
-            "visible"
-        );
+            elemento.classList.remove(
+                "visible"
+            );
 
-    }, 6000);
+        },
+        6000
+    );
 }
-
-
 /* ==========================================================================
    PAINEL ADMINISTRATIVO
    ========================================================================== */
@@ -2162,6 +3240,8 @@ async function autenticarAdmin(evento) {
         }
     }
 }
+
+
 /* ==========================================================================
    GERENCIADOR ADMINISTRATIVO
    ========================================================================== */
@@ -2610,18 +3690,58 @@ function abrirFormularioAdmin(tipo, dados = null) {
                         >
                     </label>
 
-                    <label>
-                        Caminho da imagem
+                    <div class="admin-upload-section">
+
+                        <div class="admin-upload-heading">
+
+                            <span class="admin-eyebrow">
+                                IMAGEM DO DOSSIÊ
+                            </span>
+
+                            <p>
+                                Selecione uma imagem do computador.
+                                O arquivo será enviado para o Supabase automaticamente.
+                            </p>
+
+                        </div>
+
                         <input
-                            type="text"
-                            id="admin-image"
-                            value="${dados ? escaparHTML(dados.imagem) : ""}"
-                            placeholder="imagens/misterio/exemplo.jpg"
+                            type="file"
+                            id="admin-image-file"
+                            accept="image/jpeg,image/png,image/webp,image/gif"
+                            hidden
                         >
-                    </label>
+
+                        <button
+                            type="button"
+                            class="admin-upload-button"
+                            id="admin-image-upload-button"
+                        >
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            Escolher imagem
+                        </button>
+
+                        <div
+                            class="admin-image-preview"
+                            id="admin-image-preview"
+                        ></div>
+
+                        <label>
+                            URL da imagem
+
+                            <input
+                                type="url"
+                                id="admin-image"
+                                value="${dados ? escaparHTML(dados.imagem) : ""}"
+                                placeholder="A URL será preenchida automaticamente"
+                            >
+                        </label>
+
+                    </div>
 
                     <label>
                         Resumo
+
                         <textarea
                             id="admin-summary"
                             rows="3"
@@ -2631,6 +3751,7 @@ function abrirFormularioAdmin(tipo, dados = null) {
 
                     <label>
                         História / Relatório
+
                         <textarea
                             id="admin-history"
                             rows="8"
@@ -2640,6 +3761,7 @@ function abrirFormularioAdmin(tipo, dados = null) {
 
                     <label>
                         Evidências
+
                         <textarea
                             id="admin-evidence"
                             rows="5"
@@ -2649,6 +3771,7 @@ function abrirFormularioAdmin(tipo, dados = null) {
 
                     <label>
                         Hipóteses / Linhas de investigação
+
                         <textarea
                             id="admin-theories"
                             rows="5"
@@ -2656,12 +3779,55 @@ function abrirFormularioAdmin(tipo, dados = null) {
                         >${dados ? escaparHTML(normalizarEvidencias(dados.teorias).join("\n")) : ""}</textarea>
                     </label>
 
+                    <div class="admin-upload-section admin-documents-section">
+
+                        <div class="admin-upload-heading">
+
+                            <span class="admin-eyebrow">
+                                DOCUMENTOS DO ARQUIVO
+                            </span>
+
+                            <p>
+                                Anexe PDF, Word, Excel, CSV ou TXT relacionados ao dossiê.
+                            </p>
+
+                        </div>
+
+                        <input
+                            type="file"
+                            id="admin-document-file"
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain"
+                            multiple
+                            hidden
+                        >
+
+                        <button
+                            type="button"
+                            class="admin-upload-button"
+                            id="admin-document-upload-button"
+                        >
+                            <i class="fa-solid fa-paperclip"></i>
+                            Anexar documento
+                        </button>
+
+                        <div
+                            class="admin-documents-list"
+                            id="admin-documents-list"
+                        ></div>
+
+                        <small class="admin-upload-hint">
+                            Limite configurado no Storage: 20 MB por arquivo.
+                        </small>
+
+                    </div>
+
                     `
 
                     : `
 
                     <label>
                         Título
+
                         <input
                             type="text"
                             id="admin-book-title"
@@ -2672,6 +3838,7 @@ function abrirFormularioAdmin(tipo, dados = null) {
 
                     <label>
                         Autor
+
                         <input
                             type="text"
                             id="admin-book-author"
@@ -2680,19 +3847,59 @@ function abrirFormularioAdmin(tipo, dados = null) {
                         >
                     </label>
 
-                    <label>
-                        Caminho da capa
+                    <div class="admin-upload-section">
+
+                        <div class="admin-upload-heading">
+
+                            <span class="admin-eyebrow">
+                                CAPA DO LIVRO
+                            </span>
+
+                            <p>
+                                Selecione a capa do computador.
+                                O arquivo será enviado para o Supabase automaticamente.
+                            </p>
+
+                        </div>
+
                         <input
-                            type="text"
-                            id="admin-book-cover"
-                            value="${dados ? escaparHTML(dados.capa) : ""}"
-                            placeholder="imagens/livros/livro.jpg"
-                            required
+                            type="file"
+                            id="admin-book-cover-file"
+                            accept="image/jpeg,image/png,image/webp,image/gif"
+                            hidden
                         >
-                    </label>
+
+                        <button
+                            type="button"
+                            class="admin-upload-button"
+                            id="admin-book-cover-upload-button"
+                        >
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            Escolher capa
+                        </button>
+
+                        <div
+                            class="admin-image-preview admin-book-cover-preview"
+                            id="admin-book-cover-preview"
+                        ></div>
+
+                        <label>
+                            URL da capa
+
+                            <input
+                                type="url"
+                                id="admin-book-cover"
+                                value="${dados ? escaparHTML(dados.capa) : ""}"
+                                placeholder="A URL será preenchida automaticamente"
+                                required
+                            >
+                        </label>
+
+                    </div>
 
                     <label>
                         Descrição
+
                         <textarea
                             id="admin-book-description"
                             rows="5"
@@ -2702,6 +3909,7 @@ function abrirFormularioAdmin(tipo, dados = null) {
 
                     <label>
                         Categoria / Tag
+
                         <input
                             type="text"
                             id="admin-book-tag"
@@ -2709,48 +3917,55 @@ function abrirFormularioAdmin(tipo, dados = null) {
                             placeholder="CRIMINOLOGIA"
                         >
                     </label>
-<div class="admin-affiliate-section">
-
-    <div class="admin-affiliate-header">
-        <div>
-            <span class="admin-affiliate-eyebrow">
-                LINKS COMERCIAIS
-            </span>
-
-            <h4>
-                Onde encontrar este livro
-            </h4>
-
-            <p>
-                Adicione links de lojas, afiliados ou parceiros.
-                Você pode cadastrar quantas opções quiser.
-            </p>
-        </div>
-    </div>
 
 
-    <div
-        id="admin-affiliate-links"
-        class="admin-affiliate-links"
-    ></div>
+                    <div class="admin-affiliate-section">
+
+                        <div class="admin-affiliate-header">
+
+                            <div>
+
+                                <span class="admin-affiliate-eyebrow">
+                                    LINKS COMERCIAIS
+                                </span>
+
+                                <h4>
+                                    Onde encontrar este livro
+                                </h4>
+
+                                <p>
+                                    Adicione links de lojas, afiliados ou parceiros.
+                                    Você pode cadastrar quantas opções quiser.
+                                </p>
+
+                            </div>
+
+                        </div>
 
 
-    <button
-        type="button"
-        id="admin-add-affiliate-link"
-        class="admin-add-affiliate-link"
-    >
-        <i class="fa-solid fa-plus"></i>
-        Adicionar loja / link
-    </button>
+                        <div
+                            id="admin-affiliate-links"
+                            class="admin-affiliate-links"
+                        ></div>
 
 
-    <p class="admin-affiliate-hint">
-        Ex.: Amazon, Shopee, Mercado Livre, Kobo,
-        Estante Virtual ou qualquer outra loja parceira.
-    </p>
+                        <button
+                            type="button"
+                            id="admin-add-affiliate-link"
+                            class="admin-add-affiliate-link"
+                        >
+                            <i class="fa-solid fa-plus"></i>
+                            Adicionar loja / link
+                        </button>
 
-</div>
+
+                        <p class="admin-affiliate-hint">
+                            Ex.: Amazon, Shopee, Mercado Livre, Kobo,
+                            Estante Virtual ou qualquer outra loja parceira.
+                        </p>
+
+                    </div>
+
                     `
                 }
 
@@ -2772,16 +3987,41 @@ function abrirFormularioAdmin(tipo, dados = null) {
     modal.classList.add("active");
 
 
+    if (caso) {
+
+        inicializarUploadImagemCaso(
+            dados
+        );
+
+        inicializarDocumentosCaso(
+            dados
+        );
+
+    } else {
+
+        inicializarUploadCapaLivro(
+            dados
+        );
+    }
+
+
     document
-        .getElementById("admin-form-close")
+        .getElementById(
+            "admin-form-close"
+        )
         ?.addEventListener(
             "click",
-            () => modal.classList.remove("active")
+            () =>
+                modal.classList.remove(
+                    "active"
+                )
         );
 
 
     document
-        .getElementById("admin-content-form")
+        .getElementById(
+            "admin-content-form"
+        )
         ?.addEventListener(
             "submit",
             evento => {
@@ -2799,114 +4039,167 @@ function abrirFormularioAdmin(tipo, dados = null) {
                         evento,
                         dados
                     );
-
                 }
-
-            }
-);
-
-   if (!caso) {
-
-    const containerLinks =
-        document.getElementById(
-            "admin-affiliate-links"
-        );
-
-    const botaoAdicionar =
-        document.getElementById(
-            "admin-add-affiliate-link"
-        );
-
-    const linksExistentes =
-        normalizarLinksAfiliados(
-            dados?.linksAfiliados
-        );
-
-    if (linksExistentes.length > 0) {
-
-        linksExistentes.forEach(
-            link => {
-
-                adicionarLinhaAfiliado(
-                    containerLinks,
-                    link
-                );
-
             }
         );
 
-    } else {
 
-        adicionarLinhaAfiliado(
-            containerLinks
-        );
+    if (!caso) {
 
+        const containerLinks =
+            document.getElementById(
+                "admin-affiliate-links"
+            );
+
+        const botaoAdicionar =
+            document.getElementById(
+                "admin-add-affiliate-link"
+            );
+
+        const linksExistentes =
+            normalizarLinksAfiliados(
+                dados?.linksAfiliados
+            );
+
+        if (
+            linksExistentes.length > 0
+        ) {
+
+            linksExistentes.forEach(
+                link => {
+
+                    adicionarLinhaAfiliado(
+                        containerLinks,
+                        link
+                    );
+                }
+            );
+
+        } else {
+
+            adicionarLinhaAfiliado(
+                containerLinks
+            );
+        }
+
+        botaoAdicionar
+            ?.addEventListener(
+                "click",
+                () => {
+
+                    adicionarLinhaAfiliado(
+                        containerLinks
+                    );
+                }
+            );
     }
-
-    botaoAdicionar
-        ?.addEventListener(
-            "click",
-            () => {
-
-                adicionarLinhaAfiliado(
-                    containerLinks
-                );
-
-            }
-        );
-}
-
 }
 /* ==========================================================================
    SALVAR CASO ADMIN
    ========================================================================== */
 
-function salvarCasoAdmin(evento, casoExistente = null) {
+function salvarCasoAdmin(
+    evento,
+    casoExistente = null
+) {
 
     evento.preventDefault();
 
     const casos =
-        lerStorage(CONFIG.STORAGE_CASOS);
+        lerStorage(
+            CONFIG.STORAGE_CASOS
+        );
 
     const caso = {
 
-        id: casoExistente
-            ? Number(casoExistente.id)
-            : Date.now(),
+        id:
+            casoExistente
+                ? Number(casoExistente.id)
+                : Date.now(),
 
         titulo:
-            document.getElementById("admin-title").value.trim(),
+            document
+                .getElementById(
+                    "admin-title"
+                )
+                .value
+                .trim(),
 
         categoria:
-            document.getElementById("admin-category").value,
+            document
+                .getElementById(
+                    "admin-category"
+                )
+                .value,
 
         local:
-            document.getElementById("admin-location").value.trim(),
+            document
+                .getElementById(
+                    "admin-location"
+                )
+                .value
+                .trim(),
 
         ano:
-            document.getElementById("admin-year").value.trim(),
+            document
+                .getElementById(
+                    "admin-year"
+                )
+                .value
+                .trim(),
 
         status:
-            document.getElementById("admin-status").value.trim(),
+            document
+                .getElementById(
+                    "admin-status"
+                )
+                .value
+                .trim(),
 
         imagem:
-            document.getElementById("admin-image").value.trim(),
+            document
+                .getElementById(
+                    "admin-image"
+                )
+                .value
+                .trim(),
 
         resumo:
-            document.getElementById("admin-summary").value.trim(),
+            document
+                .getElementById(
+                    "admin-summary"
+                )
+                .value
+                .trim(),
 
         historia:
-            document.getElementById("admin-history").value.trim(),
+            document
+                .getElementById(
+                    "admin-history"
+                )
+                .value
+                .trim(),
 
         evidencias:
             normalizarEvidencias(
-                document.getElementById("admin-evidence").value
+                document
+                    .getElementById(
+                        "admin-evidence"
+                    )
+                    .value
             ),
 
         teorias:
             normalizarEvidencias(
-                document.getElementById("admin-theories").value
-            )
+                document
+                    .getElementById(
+                        "admin-theories"
+                    )
+                    .value
+            ),
+
+        documentos:
+            coletarDocumentosAdmin()
     };
 
 
@@ -2916,16 +4209,32 @@ function salvarCasoAdmin(evento, casoExistente = null) {
             casos.findIndex(
                 item =>
                     Number(item.id) ===
-                    Number(casoExistente.id)
+                    Number(
+                        casoExistente.id
+                    )
             );
 
         if (indice !== -1) {
-            casos[indice] = caso;
+
+            casos[indice] =
+                caso;
+
+        } else {
+
+            /*
+             * Se o conteúdo editado não estiver no localStorage,
+             * criamos uma versão personalizada dele.
+             */
+            casos.unshift(
+                caso
+            );
         }
 
     } else {
 
-        casos.unshift(caso);
+        casos.unshift(
+            caso
+        );
     }
 
 
@@ -2950,37 +4259,70 @@ function salvarCasoAdmin(evento, casoExistente = null) {
    SALVAR LIVRO ADMIN
    ========================================================================== */
 
-function salvarLivroAdmin(evento, livroExistente = null) {
+function salvarLivroAdmin(
+    evento,
+    livroExistente = null
+) {
 
     evento.preventDefault();
 
     const livros =
-        lerStorage(CONFIG.STORAGE_LIVROS);
+        lerStorage(
+            CONFIG.STORAGE_LIVROS
+        );
 
     const livro = {
 
-        id: livroExistente
-            ? Number(livroExistente.id)
-            : Date.now(),
+        id:
+            livroExistente
+                ? Number(
+                    livroExistente.id
+                )
+                : Date.now(),
 
         titulo:
-            document.getElementById("admin-book-title").value.trim(),
+            document
+                .getElementById(
+                    "admin-book-title"
+                )
+                .value
+                .trim(),
 
         autor:
-            document.getElementById("admin-book-author").value.trim(),
+            document
+                .getElementById(
+                    "admin-book-author"
+                )
+                .value
+                .trim(),
 
         capa:
-            document.getElementById("admin-book-cover").value.trim(),
+            document
+                .getElementById(
+                    "admin-book-cover"
+                )
+                .value
+                .trim(),
 
         descricao:
-            document.getElementById("admin-book-description").value.trim(),
+            document
+                .getElementById(
+                    "admin-book-description"
+                )
+                .value
+                .trim(),
 
         tag:
-            document.getElementById("admin-book-tag").value.trim() ||
-            "RECOMENDADO" ,
-       
-       linksAfiliados:
-    coletarLinksAfiliadosAdmin()
+            document
+                .getElementById(
+                    "admin-book-tag"
+                )
+                .value
+                .trim() ||
+            "RECOMENDADO",
+
+        linksAfiliados:
+            coletarLinksAfiliadosAdmin()
     };
 
 
@@ -2990,16 +4332,28 @@ function salvarLivroAdmin(evento, livroExistente = null) {
             livros.findIndex(
                 item =>
                     Number(item.id) ===
-                    Number(livroExistente.id)
+                    Number(
+                        livroExistente.id
+                    )
             );
 
         if (indice !== -1) {
-            livros[indice] = livro;
+
+            livros[indice] =
+                livro;
+
+        } else {
+
+            livros.unshift(
+                livro
+            );
         }
 
     } else {
 
-        livros.unshift(livro);
+        livros.unshift(
+            livro
+        );
     }
 
 
@@ -3026,12 +4380,15 @@ function salvarLivroAdmin(evento, livroExistente = null) {
 function editarCaso(id) {
 
     const casos =
-        lerStorage(CONFIG.STORAGE_CASOS);
+        lerStorage(
+            CONFIG.STORAGE_CASOS
+        );
 
     const caso =
         casos.find(
             item =>
-                Number(item.id) === Number(id)
+                Number(item.id) ===
+                Number(id)
         );
 
     if (!caso) {
@@ -3048,12 +4405,15 @@ function editarCaso(id) {
 function editarLivro(id) {
 
     const livros =
-        lerStorage(CONFIG.STORAGE_LIVROS);
+        lerStorage(
+            CONFIG.STORAGE_LIVROS
+        );
 
     const livro =
         livros.find(
             item =>
-                Number(item.id) === Number(id)
+                Number(item.id) ===
+                Number(id)
         );
 
     if (!livro) {
@@ -3083,10 +4443,13 @@ function removerCaso(id) {
     }
 
     const casos =
-        lerStorage(CONFIG.STORAGE_CASOS)
+        lerStorage(
+            CONFIG.STORAGE_CASOS
+        )
             .filter(
                 caso =>
-                    Number(caso.id) !== Number(id)
+                    Number(caso.id) !==
+                    Number(id)
             );
 
     salvarStorage(
@@ -3113,10 +4476,13 @@ function removerLivro(id) {
     }
 
     const livros =
-        lerStorage(CONFIG.STORAGE_LIVROS)
+        lerStorage(
+            CONFIG.STORAGE_LIVROS
+        )
             .filter(
                 livro =>
-                    Number(livro.id) !== Number(id)
+                    Number(livro.id) !==
+                    Number(id)
             );
 
     salvarStorage(
@@ -3161,38 +4527,50 @@ function inicializarModais() {
         evento => {
 
             if (
-                evento.target.classList.contains(
-                    "modal-overlay"
-                )
+                evento.target
+                    .classList
+                    .contains(
+                        "modal-overlay"
+                    )
             ) {
 
-                evento.target.classList.remove(
-                    "active"
-                );
+                evento.target
+                    .classList
+                    .remove(
+                        "active"
+                    );
             }
 
 
             if (
-                evento.target.classList.contains(
-                    "admin-manager-overlay"
-                )
+                evento.target
+                    .classList
+                    .contains(
+                        "admin-manager-overlay"
+                    )
             ) {
 
-                evento.target.classList.remove(
-                    "active"
-                );
+                evento.target
+                    .classList
+                    .remove(
+                        "active"
+                    );
             }
 
 
             if (
-                evento.target.classList.contains(
-                    "admin-form-overlay"
-                )
+                evento.target
+                    .classList
+                    .contains(
+                        "admin-form-overlay"
+                    )
             ) {
 
-                evento.target.classList.remove(
-                    "active"
-                );
+                evento.target
+                    .classList
+                    .remove(
+                        "active"
+                    );
             }
 
         }
@@ -3203,7 +4581,10 @@ function inicializarModais() {
         "keydown",
         evento => {
 
-            if (evento.key !== "Escape") {
+            if (
+                evento.key !==
+                "Escape"
+            ) {
                 return;
             }
 
@@ -3211,13 +4592,14 @@ function inicializarModais() {
                 .querySelectorAll(
                     ".modal-overlay.active, .admin-manager-overlay.active, .admin-form-overlay.active"
                 )
-                .forEach(modal => {
+                .forEach(
+                    modal => {
 
-                    modal.classList.remove(
-                        "active"
-                    );
-
-                });
+                        modal.classList.remove(
+                            "active"
+                        );
+                    }
+                );
 
         }
     );
@@ -3233,18 +4615,39 @@ function inicializarModais() {
  * antigo ainda possua onclick="..." enquanto fazemos a transição.
  */
 
-window.carregarCasos = carregarCasos;
-window.carregarForense = carregarForense;
-window.carregarLivros = carregarLivros;
-window.carregarComentarios = carregarComentarios;
+window.carregarCasos =
+    carregarCasos;
 
-window.abrirPainelAdmin = abrirPainelAdmin;
-window.fecharAdmin = fecharModalAdmin;
+window.carregarForense =
+    carregarForense;
 
-window.removerCaso = removerCaso;
-window.removerLivro = removerLivro;
+window.carregarLivros =
+    carregarLivros;
 
-window.editarCaso = editarCaso;
-window.editarLivro = editarLivro;
+window.carregarComentarios =
+    carregarComentarios;
 
-window.sairAdmin = sairAdmin;
+
+window.abrirPainelAdmin =
+    abrirPainelAdmin;
+
+window.fecharAdmin =
+    fecharModalAdmin;
+
+
+window.removerCaso =
+    removerCaso;
+
+window.removerLivro =
+    removerLivro;
+
+
+window.editarCaso =
+    editarCaso;
+
+window.editarLivro =
+    editarLivro;
+
+
+window.sairAdmin =
+    sairAdmin;
