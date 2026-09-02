@@ -614,69 +614,438 @@ function obterTodosLivros() {
 function carregarLivros() {
 
     const grid =
-        document.getElementById("grid-livros");
+        document.getElementById(
+            "grid-livros"
+        );
 
     if (!grid) {
         return;
     }
 
-    const livros = obterTodosLivros();
+    const livros =
+        obterTodosLivros();
 
     if (livros.length === 0) {
 
         grid.innerHTML = `
             <div class="empty-state">
                 <i class="fa-solid fa-book"></i>
-                <h3>Nenhuma recomendação</h3>
-                <p>O arquivo ainda não possui livros cadastrados.</p>
+
+                <h3>
+                    Nenhuma recomendação
+                </h3>
+
+                <p>
+                    O arquivo ainda não possui livros cadastrados.
+                </p>
             </div>
         `;
 
         return;
     }
 
-    grid.innerHTML = livros.map(livro => `
 
-        <article class="book-card">
+    function normalizarCategoria(valor) {
 
-            <div class="book-image">
+        return String(valor || "")
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .toLowerCase()
+            .trim();
+    }
 
-                <img
-                    src="${escaparHTML(livro.capa)}"
-                    alt="${escaparHTML(livro.titulo)}"
-                    loading="lazy"
-                    onerror="this.src='https://placehold.co/500x750/111/777?text=Livro';"
-                >
 
-                <span class="book-label">
-                    RECOMENDADO
-                </span>
+    function identificarCategoria(livro) {
+
+        const categoriaOriginal =
+            livro.categoriaLivro ||
+            livro.categoria ||
+            livro.tag ||
+            "";
+
+        const categoria =
+            normalizarCategoria(
+                categoriaOriginal
+            );
+
+
+        if (
+            categoria.includes("crime real") ||
+            categoria.includes("true crime")
+        ) {
+            return {
+                id: "crimes-reais",
+                nome: "Crimes Reais"
+            };
+        }
+
+
+        if (
+            categoria.includes("terror") ||
+            categoria.includes("horror")
+        ) {
+            return {
+                id: "terror",
+                nome: "Terror"
+            };
+        }
+
+
+        if (
+            categoria.includes("mister")
+        ) {
+            return {
+                id: "misterios",
+                nome: "Mistérios"
+            };
+        }
+
+
+        if (
+            categoria.includes("serial")
+        ) {
+            return {
+                id: "serial-killers",
+                nome: "Serial Killers"
+            };
+        }
+
+
+        if (
+            categoria.includes("forense") ||
+            categoria.includes("pericia")
+        ) {
+            return {
+                id: "forense",
+                nome: "Ciência Forense"
+            };
+        }
+
+
+        if (
+            categoria.includes("psicologia") ||
+            categoria.includes("criminologia")
+        ) {
+            return {
+                id: "psicologia-criminal",
+                nome: "Psicologia Criminal"
+            };
+        }
+
+
+        if (
+            categoria.includes("sem solucao") ||
+            categoria.includes("nao solucionado")
+        ) {
+            return {
+                id: "casos-sem-solucao",
+                nome: "Casos sem Solução"
+            };
+        }
+
+
+        if (
+            categoria.includes("lenda") ||
+            categoria.includes("folclore")
+        ) {
+            return {
+                id: "lendas",
+                nome: "Lendas & Folclore"
+            };
+        }
+
+
+        if (
+            categoria.includes("arquivo") ||
+            categoria.includes("segredo")
+        ) {
+            return {
+                id: "arquivos-secretos",
+                nome: "Arquivos Secretos"
+            };
+        }
+
+
+        return {
+            id: "outros",
+            nome:
+                categoriaOriginal ||
+                "Outros"
+        };
+    }
+
+
+    const categorias =
+        new Map();
+
+
+    livros.forEach(
+        function(livro) {
+
+            const categoria =
+                identificarCategoria(
+                    livro
+                );
+
+            if (
+                !categorias.has(
+                    categoria.id
+                )
+            ) {
+
+                categorias.set(
+                    categoria.id,
+                    {
+                        id:
+                            categoria.id,
+
+                        nome:
+                            categoria.nome,
+
+                        livros:
+                            []
+                    }
+                );
+            }
+
+            categorias
+                .get(
+                    categoria.id
+                )
+                .livros
+                .push(
+                    livro
+                );
+        }
+    );
+
+
+    function renderizarEstantes() {
+
+        grid.innerHTML = `
+            <div class="bookshelf-library">
+
+                <div class="bookshelf-intro">
+
+                    <span>
+                        ESCOLHA UMA ESTANTE
+                    </span>
+
+                    <p>
+                        Cada volume foi arquivado de acordo com o tema da investigação.
+                    </p>
+
+                </div>
+
+
+                <div class="bookshelf">
+
+                    ${
+                        Array
+                            .from(
+                                categorias.values()
+                            )
+                            .map(
+                                function(categoria) {
+
+                                    return `
+                                        <button
+                                            type="button"
+                                            class="bookshelf-spine"
+                                            data-categoria="${escaparHTML(categoria.id)}"
+                                        >
+
+                                            <span class="bookshelf-spine-title">
+                                                ${escaparHTML(categoria.nome)}
+                                            </span>
+
+                                            <small>
+                                                ${categoria.livros.length}
+                                            </small>
+
+                                        </button>
+                                    `;
+                                }
+                            )
+                            .join("")
+                    }
+
+                </div>
+
+
+                <div class="bookshelf-base"></div>
 
             </div>
+        `;
 
-            <div class="book-content">
 
-                <span class="book-category">
-                    ${escaparHTML(livro.tag || "LEITURA")}
-                </span>
+        const lombadas =
+            grid.querySelectorAll(
+                ".bookshelf-spine"
+            );
 
-                <h3>
-                    ${escaparHTML(livro.titulo)}
-                </h3>
 
-                <p class="book-author">
-                    ${escaparHTML(livro.autor || "Autor desconhecido")}
-                </p>
+        lombadas.forEach(
+            function(lombada) {
 
-                <p class="book-description">
-                    ${escaparHTML(livro.descricao || "")}
-                </p>
+                lombada.addEventListener(
+                    "click",
+                    function() {
+
+                        const id =
+                            lombada.dataset.categoria;
+
+                        const categoria =
+                            categorias.get(id);
+
+                        if (!categoria) {
+                            return;
+                        }
+
+                        renderizarCategoria(
+                            categoria
+                        );
+                    }
+                );
+            }
+        );
+    }
+
+
+    function renderizarCategoria(
+        categoria
+    ) {
+
+        grid.innerHTML = `
+            <div class="books-category-view">
+
+                <div class="books-category-header">
+
+                    <button
+                        type="button"
+                        class="books-back-button"
+                        id="voltar-estantes"
+                    >
+                        <i class="fa-solid fa-arrow-left"></i>
+
+                        VOLTAR ÀS ESTANTES
+                    </button>
+
+
+                    <div>
+
+                        <span>
+                            ESTANTE SELECIONADA
+                        </span>
+
+                        <h3>
+                            ${escaparHTML(categoria.nome)}
+                        </h3>
+
+                        <p>
+                            ${categoria.livros.length}
+                            ${
+                                categoria.livros.length === 1
+                                    ? "livro arquivado"
+                                    : "livros arquivados"
+                            }
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="books-category-grid">
+
+                    ${
+                        categoria.livros
+                            .map(
+                                function(livro) {
+
+                                    return `
+                                        <article class="book-card">
+
+                                            <div class="book-image">
+
+                                                <img
+                                                    src="${escaparHTML(livro.capa || "")}"
+                                                    alt="${escaparHTML(livro.titulo || "Livro")}"
+                                                    loading="lazy"
+                                                    onerror="this.src='https://placehold.co/300x450/111/777?text=Arquivo+Sombrio'"
+                                                >
+
+                                                <span class="book-label">
+                                                    RECOMENDADO
+                                                </span>
+
+                                            </div>
+
+
+                                            <div class="book-content">
+
+                                                <span class="book-category">
+                                                    ${escaparHTML(
+                                                        livro.tag ||
+                                                        categoria.nome
+                                                    )}
+                                                </span>
+
+                                                <h3>
+                                                    ${escaparHTML(
+                                                        livro.titulo ||
+                                                        "Sem título"
+                                                    )}
+                                                </h3>
+
+                                                <p class="book-author">
+                                                    ${escaparHTML(
+                                                        livro.autor ||
+                                                        "Autor não informado"
+                                                    )}
+                                                </p>
+
+                                                <p class="book-description">
+                                                    ${escaparHTML(
+                                                        livro.descricao ||
+                                                        ""
+                                                    )}
+                                                </p>
+
+                                            </div>
+
+                                        </article>
+                                    `;
+                                }
+                            )
+                            .join("")
+                    }
+
+                </div>
 
             </div>
+        `;
 
-        </article>
 
-    `).join("");
+        const voltar =
+            document.getElementById(
+                "voltar-estantes"
+            );
+
+        if (voltar) {
+
+            voltar.addEventListener(
+                "click",
+                renderizarEstantes
+            );
+        }
+    }
+
+
+    renderizarEstantes();
 }
 
 
