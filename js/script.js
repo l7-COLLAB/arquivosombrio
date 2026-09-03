@@ -3946,12 +3946,25 @@ async function autenticarAdmin(evento) {
         }
 
 
-        formulario.reset();
+        const role =
+    data.session.user
+        ?.app_metadata
+        ?.role;
 
-        fecharModalAdmin();
+if (role !== "admin") {
 
-        abrirPainelAdmin();
+    await supabaseClient.auth.signOut();
 
+    throw new Error(
+        "Este usuário não possui permissão administrativa."
+    );
+}
+
+formulario.reset();
+
+fecharModalAdmin();
+
+abrirPainelAdmin();
 
     } catch (erro) {
 
