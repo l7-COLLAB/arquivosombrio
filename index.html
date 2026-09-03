@@ -1476,103 +1476,160 @@
 
 
 
-                        <form id="form-forum">
+       <!-- AUTENTICAÇÃO DA COMUNIDADE -->
+<div id="forum-auth-area">
+
+    <!-- VISITANTE -->
+    <div id="forum-guest-area">
+
+        <p class="forum-auth-intro">
+            Para publicar análises e participar das discussões,
+            entre na sua conta ou crie um cadastro gratuito.
+        </p>
+
+        <div class="forum-auth-actions">
+
+            <button
+                type="button"
+                class="btn-primary btn-form"
+                id="forum-btn-login"
+            >
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Entrar
+            </button>
+
+            <button
+                type="button"
+                class="btn-secondary btn-form"
+                id="forum-btn-signup"
+            >
+                <i class="fa-solid fa-user-plus"></i>
+                Criar conta
+            </button>
+
+        </div>
+
+    </div>
 
 
-                            <div class="form-row">
+    <!-- USUÁRIO AUTENTICADO -->
+    <div
+        id="forum-user-area"
+        hidden
+    >
+
+        <div class="forum-user-status">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <div>
+                <small>IDENTIFICADO COMO</small>
+                <strong id="forum-user-name">
+                    Investigador
+                </strong>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-secondary btn-form"
+            id="forum-btn-logout"
+        >
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            Sair
+        </button>
+
+    </div>
+
+</div>
 
 
-                                <label for="forum-nome">
-                                    NOME / CODINOME
-                                </label>
+<!-- FORMULÁRIO DE PUBLICAÇÃO -->
+<form
+    id="form-forum"
+    hidden
+>
+
+    <div class="form-row">
+
+        <label for="forum-titulo">
+            TÍTULO DA ANÁLISE
+        </label>
+
+        <input
+            type="text"
+            id="forum-titulo"
+            maxlength="150"
+            placeholder="Ex.: Uma inconsistência na cronologia"
+            required
+        >
+
+    </div>
 
 
-                                <input
-                                    type="text"
-                                    id="forum-nome"
-                                    maxlength="60"
-                                    placeholder="Ex.: Investigador 27"
-                                    autocomplete="name"
-                                    required
-                                >
+    <div class="form-row">
+
+        <label for="forum-categoria">
+            CATEGORIA
+        </label>
+
+        <select
+            id="forum-categoria"
+            required
+        >
+            <option value="discussao">
+                Discussão
+            </option>
+
+            <option value="hipotese">
+                Hipótese
+            </option>
+
+            <option value="evidencia">
+                Evidência
+            </option>
+
+            <option value="duvida">
+                Dúvida
+            </option>
+        </select>
+
+    </div>
 
 
-                            </div>
+    <div class="form-row">
+
+        <label for="forum-mensagem">
+            ANÁLISE
+        </label>
+
+        <textarea
+            id="forum-mensagem"
+            rows="6"
+            maxlength="3000"
+            placeholder="Escreva sua análise, observação ou hipótese..."
+            required
+        ></textarea>
+
+    </div>
 
 
+    <button
+        type="submit"
+        class="btn-primary btn-form"
+    >
+        <i class="fa-solid fa-paper-plane"></i>
+        Publicar Análise
+    </button>
 
-                            <div class="form-row">
+    <p
+        class="form-message"
+        id="comentario-sucesso"
+        aria-live="polite"
+    ></p>
 
-
-                                <label for="forum-email">
-                                    E-MAIL
-                                </label>
-
-
-                                <input
-                                    type="email"
-                                    id="forum-email"
-                                    maxlength="120"
-                                    placeholder="seuemail@exemplo.com"
-                                    autocomplete="email"
-                                    required
-                                >
-
-
-                                <small class="field-note">
-
-                                    O e-mail é usado no registro local e não
-                                    será exibido publicamente.
-
-                                </small>
-
-
-                            </div>
-
-
-
-                            <div class="form-row">
-
-
-                                <label for="forum-mensagem">
-                                    ANÁLISE
-                                </label>
-
-
-                                <textarea
-                                    id="forum-mensagem"
-                                    rows="6"
-                                    maxlength="1500"
-                                    placeholder="Escreva sua análise ou hipótese..."
-                                    required
-                                ></textarea>
-
-
-                            </div>
-
-
-
-                            <button 
-
-                                type="submit"
-                                class="btn-primary btn-form"
-                            >
-
-                                <i class="fa-solid fa-paper-plane"></i>
-                                Publicar Análise
-
-                            </button>
-
-
-                            <p
-                                class="form-message"
-                                id="comentario-sucesso"
-                                aria-live="polite"
-                            ></p>
-
-
-                        </form>
-
+</form>
 
                     </aside>
 
