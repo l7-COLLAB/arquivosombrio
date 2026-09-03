@@ -3829,7 +3829,21 @@ function fecharModalAdmin() {
 }
 
 
-function abrirPainelAdmin() {
+async function abrirPainelAdmin() {
+
+    const sessao =
+        await obterSessaoAdmin();
+
+    if (!sessao) {
+
+        fecharModalAdmin();
+
+        alert(
+            "Acesso administrativo não autorizado."
+        );
+
+        return;
+    }
 
     fecharModalAdmin();
 
