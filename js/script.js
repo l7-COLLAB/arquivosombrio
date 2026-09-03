@@ -200,9 +200,7 @@ async function obterClienteSupabase() {
 
 
 async function obterSessaoAdmin() {
-
     try {
-
         const supabaseClient =
             await obterClienteSupabase();
 
@@ -213,28 +211,44 @@ async function obterSessaoAdmin() {
             await supabaseClient.auth.getSession();
 
         if (error) {
-
             console.warn(
-                "Não foi possível verificar a sessão administrativa.",
+                "Não foi possível verificar a sessão:",
                 error
             );
 
             return null;
         }
 
-        return data?.session || null;
+        const sessao = data?.session;
+
+        if (!sessao?.user) {
+            return null;
+        }
+
+        const usuario = sessao.user;
+
+        const role =
+            usuario.app_metadata?.role;
+
+        if (role !== "admin") {
+            console.warn(
+                "Acesso administrativo negado."
+            );
+
+            return null;
+        }
+
+        return sessao;
 
     } catch (erro) {
-
         console.error(
-            "Falha ao inicializar a autenticação administrativa.",
+            "Falha ao validar a sessão administrativa:",
             erro
         );
 
         return null;
     }
 }
-
 
 async function sairAdmin() {
 
