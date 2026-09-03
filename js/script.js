@@ -3375,28 +3375,393 @@ function inicializarNavegacaoInterna() {
 
 
 /* ==========================================================================
-   FÓRUM
+   FÓRUM — AUTENTICAÇÃO DA COMUNIDADE
    ========================================================================== */
 
-function inicializarForum() {
+async function inicializarForum() {
+
+    const formulario =
+        document.getElementById("form-forum");
+
+    const botaoLogin =
+        document.getElementById("forum-btn-login");
+
+    const botaoCadastro =
+        document.getElementById("forum-btn-signup");
+
+    const botaoSair =
+        document.getElementById("forum-btn-logout");
+
+
+    if (
+        !formulario &&
+        !botaoLogin &&
+        !botaoCadastro
+    ) {
+        return;
+    }
+
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+
+        /* VERIFICAR SESSÃO ATUAL */
+
+        const { data } =
+            await supabaseClient.auth.getSession();
+
+        atualizarInterfaceForum(
+            data?.session || null
+        );
+
+
+        /* OBSERVAR LOGIN / LOGOUT */
+
+        supabaseClient.auth.onAuthStateChange(
+            (_evento, sessao) => {
+
+                atualizarInterfaceForum(
+                    sessao || null
+                );
+
+            }
+        );
+
+
+    } catch (erro) {
+
+        console.error(
+            "Não foi possível inicializar a autenticação do fórum.",
+            erro
+        );
+
+    }
+
+
+    botaoLogin?.addEventListener(
+        "click",
+        entrarForum
+    );
+
+
+    botaoCadastro?.addEventListener(
+        "click",
+        cadastrarForum
+    );
+
+
+    botaoSair?.addEventListener(
+        "click",
+        sairForum
+    );
+
+
+    formulario?.addEventListener(
+        "submit",
+        publicarForum
+    );
+
+
+    await carregarComentarios();
+
+}
+
+
+/* ==========================================================================
+   INTERFACE DO USUÁRIO
+   ========================================================================== */
+
+function atualizarInterfaceForum(sessao) {
+
+    const visitante =
+        document.getElementById(
+            "forum-guest-area"
+        );
+
+    const usuarioArea =
+        document.getElementById(
+            "forum-user-area"
+        );
 
     const formulario =
         document.getElementById(
             "form-forum"
         );
 
-    if (!formulario) {
+    const nome =
+        document.getElementById(
+            "forum-user-name"
+        );
+
+
+    const usuario =
+        sessao?.user || null;
+
+
+    if (!usuario) {
+
+        if (visitante) {
+            visitante.hidden = false;
+        }
+
+        if (usuarioArea) {
+            usuarioArea.hidden = true;
+        }
+
+        if (formulario) {
+            formulario.hidden = true;
+        }
+
         return;
     }
 
-    formulario.addEventListener(
-        "submit",
-        adicionarComentario
-    );
+
+    if (visitante) {
+        visitante.hidden = true;
+    }
+
+    if (usuarioArea) {
+        usuarioArea.hidden = false;
+    }
+
+    if (formulario) {
+        formulario.hidden = false;
+    }
+
+
+    if (nome) {
+
+        nome.textContent =
+            usuario.user_metadata?.display_name ||
+            usuario.user_metadata?.name ||
+            usuario.email?.split("@")[0] ||
+            "Investigador";
+
+    }
+
 }
 
 
-function carregarComentarios() {
+/* ==========================================================================
+   CADASTRO
+   ========================================================================== */
+
+async function cadastrarForum() {
+
+    const nome =
+        prompt(
+            "Escolha seu nome ou codinome no Arquivo Sombrio:"
+        )?.trim();
+
+    if (!nome) {
+        return;
+    }
+
+
+    const email =
+        prompt(
+            "Digite seu e-mail:"
+        )?.trim();
+
+    if (!email) {
+        return;
+    }
+
+
+    const senha =
+        prompt(
+            "Crie uma senha com pelo menos 6 caracteres:"
+        );
+
+
+    if (!senha || senha.length < 6) {
+
+        alert(
+            "A senha precisa ter pelo menos 6 caracteres."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.signUp({
+
+                email,
+                password: senha,
+
+                options: {
+
+                    data: {
+                        display_name: nome
+                    }
+
+                }
+
+            });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (data?.session) {
+
+            alert(
+                "Conta criada. Você já está conectado ao Arquivo Sombrio."
+            );
+
+        } else {
+
+            alert(
+                "Conta criada. Verifique seu e-mail para confirmar o cadastro antes de entrar."
+            );
+
+        }
+
+
+    } catch (erro) {
+
+        console.error(
+            "Falha ao criar conta no fórum.",
+            erro
+        );
+
+        alert(
+            erro?.message ||
+            "Não foi possível criar sua conta."
+        );
+
+    }
+
+}
+
+
+/* ==========================================================================
+   LOGIN
+   ========================================================================== */
+
+async function entrarForum() {
+
+    const email =
+        prompt(
+            "Digite o e-mail da sua conta:"
+        )?.trim();
+
+    if (!email) {
+        return;
+    }
+
+
+    const senha =
+        prompt(
+            "Digite sua senha:"
+        );
+
+
+    if (!senha) {
+        return;
+    }
+
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+
+        const {
+            error
+        } =
+            await supabaseClient.auth
+                .signInWithPassword({
+
+                    email,
+                    password: senha
+
+                });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        alert(
+            "Login realizado com sucesso."
+        );
+
+
+    } catch (erro) {
+
+        console.error(
+            "Falha no login do fórum.",
+            erro
+        );
+
+        alert(
+            erro?.message ||
+            "E-mail ou senha inválidos."
+        );
+
+    }
+
+}
+
+
+/* ==========================================================================
+   LOGOUT
+   ========================================================================== */
+
+async function sairForum() {
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+        const { error } =
+            await supabaseClient.auth.signOut();
+
+        if (error) {
+            throw error;
+        }
+
+
+    } catch (erro) {
+
+        console.error(
+            "Falha ao sair do fórum.",
+            erro
+        );
+
+        alert(
+            "Não foi possível encerrar a sessão."
+        );
+
+    }
+
+}
+
+
+/* ==========================================================================
+   CARREGAR PUBLICAÇÕES
+   ========================================================================== */
+
+async function carregarComentarios() {
 
     const lista =
         document.getElementById(
@@ -3407,91 +3772,183 @@ function carregarComentarios() {
         return;
     }
 
-    const comentarios =
-        lerStorage(
-            CONFIG.STORAGE_COMENTARIOS
-        );
 
-    if (comentarios.length === 0) {
+    try {
 
-        lista.innerHTML = `
-            <div class="empty-state">
+        const supabaseClient =
+            await obterClienteSupabase();
 
-                <i class="fa-solid fa-comments"></i>
 
-                <h3>
-                    Nenhuma análise publicada
-                </h3>
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("forum_posts")
+                .select("*")
+                .order(
+                    "is_pinned",
+                    {
+                        ascending: false
+                    }
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
 
-                <p>
-                    Seja o primeiro pesquisador a registrar uma observação.
-                </p>
 
-            </div>
-        `;
+        if (error) {
+            throw error;
+        }
 
-        return;
-    }
 
-    lista.innerHTML =
-        comentarios
-            .map(
-                comentario => `
+        const publicacoes =
+            Array.isArray(data)
+                ? data
+                : [];
 
-                    <article class="comment-card">
+
+        if (!publicacoes.length) {
+
+            lista.innerHTML = `
+                <div class="empty-state">
+
+                    <i class="fa-solid fa-comments"></i>
+
+                    <h3>
+                        Nenhuma análise publicada
+                    </h3>
+
+                    <p>
+                        Seja o primeiro investigador
+                        a iniciar uma discussão.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        lista.innerHTML =
+            publicacoes
+                .map(publicacao => `
+
+                    <article
+                        class="comment-card"
+                        data-post-id="${escaparHTML(publicacao.id)}"
+                    >
 
                         <div class="comment-header">
 
                             <strong>
                                 <i class="fa-solid fa-user-secret"></i>
+
                                 ${escaparHTML(
-                                    comentario.nome
+                                    publicacao.author_name ||
+                                    "Investigador"
                                 )}
                             </strong>
 
                             <time>
                                 ${escaparHTML(
-                                    comentario.data
+                                    new Date(
+                                        publicacao.created_at
+                                    ).toLocaleString(
+                                        "pt-BR",
+                                        {
+                                            dateStyle: "short",
+                                            timeStyle: "short"
+                                        }
+                                    )
                                 )}
                             </time>
 
                         </div>
 
+                        ${
+                            publicacao.title
+                                ? `
+                                    <h3>
+                                        ${escaparHTML(
+                                            publicacao.title
+                                        )}
+                                    </h3>
+                                `
+                                : ""
+                        }
+
                         <p>
                             ${escaparHTML(
-                                comentario.mensagem
+                                publicacao.content || ""
                             )}
                         </p>
 
                     </article>
 
-                `
-            )
-            .join("");
+                `)
+                .join("");
+
+
+    } catch (erro) {
+
+        console.error(
+            "Falha ao carregar publicações do fórum.",
+            erro
+        );
+
+        lista.innerHTML = `
+            <div class="empty-state">
+
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                <h3>
+                    Não foi possível carregar o fórum
+                </h3>
+
+                <p>
+                    Tente novamente em alguns instantes.
+                </p>
+
+            </div>
+        `;
+
+    }
+
 }
 
 
-function adicionarComentario(evento) {
+/* ==========================================================================
+   PUBLICAR
+   ========================================================================== */
+
+async function publicarForum(evento) {
 
     evento.preventDefault();
 
-    const nome =
+
+    const titulo =
         document
             .getElementById(
-                "forum-nome"
+                "forum-titulo"
             )
             ?.value
             .trim();
 
-    const email =
+
+    const categoria =
         document
             .getElementById(
-                "forum-email"
+                "forum-categoria"
             )
-            ?.value
-            .trim();
+            ?.value;
 
-    const mensagem =
+
+    const conteudo =
         document
             .getElementById(
                 "forum-mensagem"
@@ -3499,64 +3956,112 @@ function adicionarComentario(evento) {
             ?.value
             .trim();
 
+
     if (
-        !nome ||
-        !email ||
-        !mensagem
+        !titulo ||
+        !categoria ||
+        !conteudo
     ) {
+
+        alert(
+            "Preencha todos os campos da publicação."
+        );
+
         return;
     }
 
-    const novoComentario = {
 
-        id:
-            Date.now(),
+    try {
 
-        nome,
+        const supabaseClient =
+            await obterClienteSupabase();
 
-        email,
 
-        mensagem,
+        const {
+            data: sessaoData,
+            error: sessaoErro
+        } =
+            await supabaseClient.auth
+                .getSession();
 
-        data:
-            new Date()
-                .toLocaleString(
-                    "pt-BR",
-                    {
-                        dateStyle:
-                            "short",
 
-                        timeStyle:
-                            "short"
-                    }
-                )
-    };
+        if (sessaoErro) {
+            throw sessaoErro;
+        }
 
-    const comentarios =
-        lerStorage(
-            CONFIG.STORAGE_COMENTARIOS
-        );
 
-    comentarios.unshift(
-        novoComentario
-    );
+        const usuario =
+            sessaoData?.session?.user;
 
-    if (
-        salvarStorage(
-            CONFIG.STORAGE_COMENTARIOS,
-            comentarios
-        )
-    ) {
+
+        if (!usuario) {
+
+            alert(
+                "Entre na sua conta para publicar."
+            );
+
+            atualizarInterfaceForum(null);
+
+            return;
+        }
+
+
+        const nome =
+            usuario.user_metadata?.display_name ||
+            usuario.user_metadata?.name ||
+            usuario.email?.split("@")[0] ||
+            "Investigador";
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("forum_posts")
+                .insert({
+
+                    author_name: nome,
+                    title: titulo,
+                    content: conteudo,
+                    category: categoria,
+                    user_id: usuario.id,
+                    status: "publicado",
+                    is_pinned: false
+
+                });
+
+
+        if (error) {
+            throw error;
+        }
+
 
         evento.target.reset();
 
-        carregarComentarios();
 
         mostrarMensagem(
             "comentario-sucesso",
             "Sua análise foi publicada no arquivo."
         );
+
+
+        await carregarComentarios();
+
+
+    } catch (erro) {
+
+        console.error(
+            "Falha ao publicar no fórum.",
+            erro
+        );
+
+        alert(
+            erro?.message ||
+            "Não foi possível publicar sua análise."
+        );
+
     }
+
 }
 
 
