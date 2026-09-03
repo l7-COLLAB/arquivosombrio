@@ -3705,7 +3705,7 @@ function inicializarAdmin() {
 
     const abrirMobile =
         document.getElementById(
-            "btn-open-admin-mobile"
+            "mobile-btn-admin"
         );
 
     const modal =
