@@ -1,0 +1,2442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Política de Moderação e Denúncias do Arquivo Sombrio."
+    >
+
+    <title>
+        Moderação e Denúncias | Arquivo Sombrio
+    </title>
+
+
+    <!-- GOOGLE FONTS -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Roboto+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- FONT AWESOME -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <style>
+
+        :root {
+
+            --background:
+                #080808;
+
+            --surface:
+                #101010;
+
+            --surface-soft:
+                #151515;
+
+            --border:
+                rgba(255, 255, 255, 0.10);
+
+            --border-strong:
+                rgba(255, 255, 255, 0.18);
+
+            --text:
+                #e7e2d8;
+
+            --text-soft:
+                #aaa49a;
+
+            --text-muted:
+                #777168;
+
+            --accent:
+                #781d1d;
+
+            --accent-light:
+                #a83a32;
+
+            --paper:
+                #c6bba8;
+
+        }
+
+
+        * {
+
+            box-sizing:
+                border-box;
+
+        }
+
+
+        html {
+
+            scroll-behavior:
+                smooth;
+
+        }
+
+
+        body {
+
+            margin:
+                0;
+
+            background:
+                var(--background);
+
+            color:
+                var(--text);
+
+            font-family:
+                "Roboto Mono",
+                monospace;
+
+            line-height:
+                1.8;
+
+        }
+
+
+        a {
+
+            color:
+                inherit;
+
+            text-decoration:
+                none;
+
+        }
+
+
+        /* =========================================
+           CABEÇALHO
+           ========================================= */
+
+        .legal-header {
+
+            border-bottom:
+                1px solid
+                var(--border);
+
+            background:
+                rgba(8, 8, 8, 0.96);
+
+        }
+
+
+        .legal-header-inner {
+
+            width:
+                min(1120px, calc(100% - 40px));
+
+            margin:
+                0 auto;
+
+            min-height:
+                78px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                24px;
+
+        }
+
+
+        .brand {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                13px;
+
+        }
+
+
+        .brand-mark {
+
+            width:
+                38px;
+
+            height:
+                38px;
+
+            border:
+                1px solid
+                var(--border-strong);
+
+            display:
+                grid;
+
+            place-items:
+                center;
+
+            color:
+                var(--accent-light);
+
+        }
+
+
+        .brand-name {
+
+            font-family:
+                "Cinzel",
+                serif;
+
+            font-size:
+                1rem;
+
+            letter-spacing:
+                0.14em;
+
+            text-transform:
+                uppercase;
+
+        }
+
+
+        .back-link {
+
+            color:
+                var(--text-soft);
+
+            font-size:
+                0.78rem;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                0.08em;
+
+            transition:
+                color 0.2s ease;
+
+        }
+
+
+        .back-link:hover {
+
+            color:
+                var(--text);
+
+        }
+
+
+        /* =========================================
+           HERO
+           ========================================= */
+
+        .legal-hero {
+
+            border-bottom:
+                1px solid
+                var(--border);
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(120, 29, 29, 0.10),
+                    transparent
+                );
+
+        }
+
+
+        .legal-hero-inner {
+
+            width:
+                min(960px, calc(100% - 40px));
+
+            margin:
+                0 auto;
+
+            padding:
+                92px 0 72px;
+
+        }
+
+
+        .legal-kicker {
+
+            color:
+                var(--accent-light);
+
+            font-size:
+                0.72rem;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                0.18em;
+
+            margin-bottom:
+                18px;
+
+        }
+
+
+        .legal-title {
+
+            margin:
+                0;
+
+            font-family:
+                "Cinzel",
+                serif;
+
+            font-size:
+                clamp(2.1rem, 6vw, 4.5rem);
+
+            font-weight:
+                500;
+
+            line-height:
+                1.08;
+
+            letter-spacing:
+                0.02em;
+
+        }
+
+
+        .legal-subtitle {
+
+            max-width:
+                760px;
+
+            margin:
+                28px 0 0;
+
+            color:
+                var(--text-soft);
+
+            font-size:
+                0.94rem;
+
+        }
+
+
+        .legal-meta {
+
+            margin-top:
+                34px;
+
+            display:
+                flex;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                12px;
+
+        }
+
+
+        .legal-meta span {
+
+            border:
+                1px solid
+                var(--border);
+
+            padding:
+                8px 12px;
+
+            color:
+                var(--text-muted);
+
+            font-size:
+                0.70rem;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                0.08em;
+
+        }
+
+              /* =========================================
+           CONTEÚDO
+           ========================================= */
+
+        .legal-main {
+
+            width:
+                min(960px, calc(100% - 40px));
+
+            margin:
+                0 auto;
+
+            padding:
+                70px 0 100px;
+
+        }
+
+
+        .legal-intro {
+
+            margin-bottom:
+                58px;
+
+            padding:
+                24px;
+
+            border:
+                1px solid
+                var(--border);
+
+            border-left:
+                3px solid
+                var(--accent);
+
+            background:
+                var(--surface);
+
+            color:
+                var(--text-soft);
+
+            font-size:
+                0.88rem;
+
+        }
+
+
+        .legal-section {
+
+            padding:
+                38px 0;
+
+            border-bottom:
+                1px solid
+                var(--border);
+
+        }
+
+
+        .legal-section:first-of-type {
+
+            padding-top:
+                0;
+
+        }
+
+
+        .legal-section h2 {
+
+            margin:
+                0 0 20px;
+
+            font-family:
+                "Cinzel",
+                serif;
+
+            font-size:
+                clamp(1.2rem, 3vw, 1.65rem);
+
+            font-weight:
+                500;
+
+            line-height:
+                1.4;
+
+            color:
+                var(--paper);
+
+        }
+
+
+        .section-number {
+
+            display:
+                block;
+
+            margin-bottom:
+                8px;
+
+            color:
+                var(--accent-light);
+
+            font-family:
+                "Roboto Mono",
+                monospace;
+
+            font-size:
+                0.68rem;
+
+            letter-spacing:
+                0.14em;
+
+        }
+
+
+        .legal-section p {
+
+            margin:
+                0 0 17px;
+
+            color:
+                var(--text-soft);
+
+            font-size:
+                0.88rem;
+
+        }
+
+
+        .legal-section p:last-child {
+
+            margin-bottom:
+                0;
+
+        }
+
+
+        .legal-section ul {
+
+            margin:
+                18px 0;
+
+            padding-left:
+                24px;
+
+            color:
+                var(--text-soft);
+
+            font-size:
+                0.88rem;
+
+        }
+
+
+        .legal-section li {
+
+            margin-bottom:
+                11px;
+
+        }
+
+
+        .legal-section strong {
+
+            color:
+                var(--text);
+
+            font-weight:
+                500;
+
+        }
+
+
+        .legal-section a {
+
+            color:
+                var(--paper);
+
+            border-bottom:
+                1px dotted
+                var(--text-muted);
+
+        }
+
+
+        .legal-section a:hover {
+
+            color:
+                var(--text);
+
+        }
+
+
+        /* =========================================
+           CAIXAS DE AVISO
+           ========================================= */
+
+        .notice {
+
+            margin:
+                24px 0;
+
+            padding:
+                20px;
+
+            border:
+                1px solid
+                var(--border);
+
+            background:
+                var(--surface-soft);
+
+        }
+
+
+        .notice-title {
+
+            display:
+                block;
+
+            margin-bottom:
+                10px;
+
+            color:
+                var(--accent-light);
+
+            font-size:
+                0.72rem;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                0.12em;
+
+        }
+
+
+        .notice p {
+
+            margin:
+                0;
+
+        }
+
+
+        /* =========================================
+           RODAPÉ
+           ========================================= */
+
+        .legal-footer {
+
+            border-top:
+                1px solid
+                var(--border);
+
+            padding:
+                38px 0;
+
+            color:
+                var(--text-muted);
+
+        }
+
+
+        .legal-footer-inner {
+
+            width:
+                min(960px, calc(100% - 40px));
+
+            margin:
+                0 auto;
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                20px;
+
+            font-size:
+                0.72rem;
+
+        }
+
+
+        .legal-footer-links {
+
+            display:
+                flex;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                18px;
+
+        }
+
+
+        .legal-footer a:hover {
+
+            color:
+                var(--text);
+
+        }
+
+
+        /* =========================================
+           RESPONSIVO
+           ========================================= */
+
+        @media (max-width: 700px) {
+
+            .legal-header-inner {
+
+                width:
+                    min(100% - 28px, 1120px);
+
+                min-height:
+                    68px;
+
+            }
+
+
+            .brand-name {
+
+                font-size:
+                    0.84rem;
+
+            }
+
+
+            .legal-hero-inner,
+            .legal-main,
+            .legal-footer-inner {
+
+                width:
+                    min(100% - 28px, 960px);
+
+            }
+
+
+            .legal-hero-inner {
+
+                padding:
+                    68px 0 54px;
+
+            }
+
+
+            .legal-main {
+
+                padding:
+                    52px 0 72px;
+
+            }
+
+
+            .legal-section {
+
+                padding:
+                    32px 0;
+
+            }
+
+
+            .legal-footer-inner {
+
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         CABEÇALHO
+         ========================================= -->
+
+    <header class="legal-header">
+
+        <div class="legal-header-inner">
+
+            <a
+                href="index.html"
+                class="brand"
+                aria-label="Voltar para a página inicial do Arquivo Sombrio"
+            >
+
+                <span class="brand-mark">
+
+                    <i class="fa-solid fa-fingerprint"></i>
+
+                </span>
+
+                <span class="brand-name">
+                    Arquivo Sombrio
+                </span>
+
+            </a>
+
+
+            <a
+                href="index.html"
+                class="back-link"
+            >
+                ← Voltar ao arquivo
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================
+         APRESENTAÇÃO
+         ========================================= -->
+
+    <section class="legal-hero">
+
+        <div class="legal-hero-inner">
+
+            <div class="legal-kicker">
+                Comunidade · Segurança · Transparência
+            </div>
+
+            <h1 class="legal-title">
+                Moderação e Denúncias
+            </h1>
+
+            <p class="legal-subtitle">
+
+                Esta política explica como o Arquivo Sombrio
+                recebe denúncias, analisa possíveis violações
+                das regras da Comunidade e aplica medidas de
+                moderação.
+
+            </p>
+
+
+            <div class="legal-meta">
+
+                <span>
+                    Versão 1.0
+                </span>
+
+                <span>
+                    Atualizada em 04 de setembro de 2026
+                </span>
+
+                <span>
+                    Comunidade 18+
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <main class="legal-main">
+
+        <div class="legal-intro">
+
+            A moderação do Arquivo Sombrio busca preservar um
+            ambiente adequado para discussão responsável sobre
+            crimes reais, investigações, mistérios, lendas,
+            criminologia e temas relacionados. Denúncias são
+            tratadas como sinais para análise e não constituem,
+            isoladamente, prova de violação.
+
+        </div>
+
+              <!-- =========================================
+             01
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    01
+                </span>
+
+                Objetivo da moderação
+
+            </h2>
+
+            <p>
+
+                A moderação existe para proteger a Comunidade,
+                reduzir abusos e preservar a qualidade das
+                discussões realizadas no Arquivo Sombrio.
+
+            </p>
+
+            <p>
+
+                As decisões de moderação devem considerar o
+                contexto da publicação ou conduta analisada,
+                as regras vigentes da plataforma, a gravidade
+                da situação e, quando aplicável, o histórico
+                de violações relacionadas à conta.
+
+            </p>
+
+            <p>
+
+                A moderação não transforma o Arquivo Sombrio
+                em autoridade policial, judicial, pericial ou
+                investigativa oficial.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             02
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    02
+                </span>
+
+                Regras utilizadas na análise
+
+            </h2>
+
+            <p>
+
+                A análise de conteúdo e comportamento poderá
+                considerar, conforme o caso:
+
+            </p>
+
+            <ul>
+
+                <li>
+                    os
+                    <a href="termos.html">
+                        Termos de Uso
+                    </a>;
+                </li>
+
+                <li>
+                    as
+                    <a href="diretrizes.html">
+                        Diretrizes da Comunidade
+                    </a>;
+                </li>
+
+                <li>
+                    esta Política de Moderação e Denúncias;
+                </li>
+
+                <li>
+                    regras específicas que venham a ser
+                    apresentadas em determinadas funcionalidades
+                    da plataforma;
+                </li>
+
+                <li>
+                    obrigações legais aplicáveis.
+                </li>
+
+            </ul>
+
+            <p>
+
+                Uma medida de moderação poderá ser adotada
+                quando houver violação das regras da plataforma
+                ou quando uma intervenção preventiva for
+                necessária diante de risco relevante, observados
+                o contexto e as informações disponíveis.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             03
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    03
+                </span>
+
+                O que é uma denúncia
+
+            </h2>
+
+            <p>
+
+                Uma denúncia é uma solicitação para que
+                determinado conteúdo, perfil ou comportamento
+                seja analisado pela moderação.
+
+            </p>
+
+            <div class="notice">
+
+                <strong class="notice-title">
+                    Importante
+                </strong>
+
+                <p>
+
+                    O recebimento de uma ou várias denúncias
+                    não significa que uma violação ocorreu.
+                    Denúncias funcionam como sinais para análise
+                    e não como prova automática contra uma conta.
+
+                </p>
+
+            </div>
+
+            <p>
+
+                Sempre que possível, a decisão será baseada no
+                conteúdo disponível, no contexto relevante e
+                nas regras aplicáveis, e não simplesmente na
+                quantidade de denúncias recebidas.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             04
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    04
+                </span>
+
+                O que poderá ser denunciado
+
+            </h2>
+
+            <p>
+
+                Os mecanismos disponibilizados pela plataforma
+                poderão permitir denúncias relacionadas, entre
+                outras situações, a:
+
+            </p>
+
+            <ul>
+
+                <li>
+                    publicações e comentários;
+                </li>
+
+                <li>
+                    perfis e identidades utilizadas na
+                    Comunidade;
+                </li>
+
+                <li>
+                    assédio, ameaças ou perseguição;
+                </li>
+
+                <li>
+                    exposição indevida de dados pessoais;
+                </li>
+
+                <li>
+                    conteúdo gráfico ou sensível publicado
+                    de maneira inadequada;
+                </li>
+
+                <li>
+                    informações deliberadamente fabricadas
+                    ou apresentadas de forma enganosa;
+                </li>
+
+                <li>
+                    falsidade de identidade ou representação
+                    enganosa;
+                </li>
+
+                <li>
+                    spam, golpes, phishing ou links maliciosos;
+                </li>
+
+                <li>
+                    violações de direitos autorais;
+                </li>
+
+                <li>
+                    conteúdo ou comportamento incompatível
+                    com as Diretrizes da Comunidade.
+                </li>
+
+            </ul>
+
+        </section>
+
+
+        <!-- =========================================
+             05
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    05
+                </span>
+
+                Informações fornecidas em uma denúncia
+
+            </h2>
+
+            <p>
+
+                Dependendo das ferramentas disponíveis no
+                momento da denúncia, poderá ser solicitado ao
+                denunciante que indique o conteúdo envolvido,
+                o motivo da denúncia e informações adicionais
+                que auxiliem na compreensão do contexto.
+
+            </p>
+
+            <p>
+
+                O usuário deve fornecer informações de boa-fé
+                e evitar acusações deliberadamente falsas,
+                manipulação de evidências ou utilização do
+                sistema de denúncias como forma de perseguição.
+
+            </p>
+
+            <p>
+
+                Não é necessário publicar dados pessoais,
+                documentos privados ou informações sensíveis
+                na Comunidade para tentar comprovar uma
+                denúncia.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             06
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    06
+                </span>
+
+                Denúncias de boa-fé
+
+            </h2>
+
+            <p>
+
+                Usuários podem denunciar de boa-fé situações
+                que razoavelmente considerem incompatíveis com
+                as regras da plataforma, mesmo que a análise
+                posterior conclua que não houve violação.
+
+            </p>
+
+            <p>
+
+                Uma denúncia que não resulte em medida de
+                moderação não será, por esse motivo isolado,
+                considerada abusiva ou falsa.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             07
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    07
+                </span>
+
+                Abuso do sistema de denúncias
+
+            </h2>
+
+            <p>
+
+                O sistema de denúncias não deve ser utilizado
+                para intimidar participantes, silenciar
+                opiniões legítimas ou tentar provocar
+                artificialmente punições contra outros
+                usuários.
+
+            </p>
+
+            <p>
+
+                Poderão ser consideradas violações, conforme
+                o contexto:
+
+            </p>
+
+            <ul>
+
+                <li>
+                    denúncias deliberadamente falsas;
+                </li>
+
+                <li>
+                    campanhas coordenadas de denúncias
+                    fraudulentas;
+                </li>
+
+                <li>
+                    fabricação ou adulteração de informações
+                    para provocar sanções;
+                </li>
+
+                <li>
+                    uso reiterado da ferramenta para perseguir
+                    uma pessoa;
+                </li>
+
+                <li>
+                    tentativa de manipular a reputação,
+                    moderação ou funcionamento da plataforma.
+                </li>
+
+            </ul>
+
+            <p>
+
+                A existência de denúncias contra uma conta não
+                reduzirá automaticamente sua reputação, nível
+                ou posição dentro da Comunidade.
+
+            </p>
+
+        </section>
+
+              <!-- =========================================
+             08
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    08
+                </span>
+
+                Análise das denúncias
+
+            </h2>
+
+            <p>
+
+                As denúncias poderão ser avaliadas considerando
+                o conteúdo denunciado, o contexto em que foi
+                publicado, as informações disponíveis e as
+                regras vigentes no momento da análise.
+
+            </p>
+
+            <p>
+
+                Quando necessário e tecnicamente possível,
+                conteúdos relacionados também poderão ser
+                considerados para compreender adequadamente
+                uma conversa, publicação ou comportamento.
+
+            </p>
+
+            <p>
+
+                O Arquivo Sombrio não garante que toda denúncia
+                resultará em remoção de conteúdo, restrição de
+                conta ou qualquer outra medida.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             09
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    09
+                </span>
+
+                Critérios considerados
+
+            </h2>
+
+            <p>
+
+                Conforme a situação, a moderação poderá
+                considerar fatores como:
+
+            </p>
+
+            <ul>
+
+                <li>
+                    natureza e gravidade da possível violação;
+                </li>
+
+                <li>
+                    contexto da publicação ou comportamento;
+                </li>
+
+                <li>
+                    existência de risco para outras pessoas;
+                </li>
+
+                <li>
+                    alcance e possíveis impactos do conteúdo;
+                </li>
+
+                <li>
+                    reincidência ou histórico relevante de
+                    violações confirmadas;
+                </li>
+
+                <li>
+                    tentativa de corrigir voluntariamente uma
+                    situação;
+                </li>
+
+                <li>
+                    indícios de manipulação, fraude ou
+                    comportamento coordenado;
+                </li>
+
+                <li>
+                    obrigações legais aplicáveis.
+                </li>
+
+            </ul>
+
+            <p>
+
+                Esses fatores não constituem uma fórmula
+                automática. O peso atribuído a cada elemento
+                poderá variar conforme o caso concreto.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             10
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    10
+                </span>
+
+                Possíveis medidas de moderação
+
+            </h2>
+
+            <p>
+
+                Dependendo da situação e das funcionalidades
+                disponíveis na plataforma, poderão ser
+                adotadas medidas como:
+
+            </p>
+
+            <ul>
+
+                <li>
+                    orientação ou aviso ao usuário;
+                </li>
+
+                <li>
+                    solicitação de correção ou adequação;
+                </li>
+
+                <li>
+                    inclusão ou ajuste de aviso de conteúdo
+                    sensível;
+                </li>
+
+                <li>
+                    limitação de determinadas funcionalidades;
+                </li>
+
+                <li>
+                    remoção ou ocultação de conteúdo;
+                </li>
+
+                <li>
+                    restrição temporária de participação;
+                </li>
+
+                <li>
+                    suspensão temporária da conta;
+                </li>
+
+                <li>
+                    encerramento da conta em situações
+                    justificadas;
+                </li>
+
+                <li>
+                    outras medidas proporcionais e compatíveis
+                    com as regras da plataforma.
+                </li>
+
+            </ul>
+
+            <p>
+
+                Nem todas essas medidas estarão necessariamente
+                disponíveis desde o lançamento ou em todas as
+                áreas do Arquivo Sombrio.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             11
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    11
+                </span>
+
+                Proporcionalidade das medidas
+
+            </h2>
+
+            <p>
+
+                Sempre que adequado, a medida adotada deverá
+                considerar a gravidade da violação, seus
+                possíveis impactos e o contexto disponível.
+
+            </p>
+
+            <p>
+
+                O Arquivo Sombrio não é obrigado a aplicar
+                advertências ou sanções em uma sequência fixa.
+
+            </p>
+
+            <p>
+
+                Uma situação grave poderá justificar uma medida
+                mais restritiva desde a primeira ocorrência,
+                enquanto situações de menor gravidade poderão
+                ser tratadas por medidas menos severas.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             12
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    12
+                </span>
+
+                Medidas preventivas e situações urgentes
+
+            </h2>
+
+            <p>
+
+                Em situações que indiquem risco relevante à
+                segurança de pessoas, à integridade da
+                plataforma ou à preservação de informações,
+                poderão ser adotadas medidas preventivas antes
+                da conclusão de uma análise mais ampla.
+
+            </p>
+
+            <div class="notice">
+
+                <strong class="notice-title">
+                    Medida preventiva
+                </strong>
+
+                <p>
+
+                    Uma restrição preventiva não representa,
+                    por si só, uma conclusão definitiva de que
+                    o usuário praticou uma violação.
+
+                </p>
+
+            </div>
+
+            <p>
+
+                Quando apropriado, a situação poderá ser
+                reavaliada posteriormente com base nas
+                informações disponíveis.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             13
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    13
+                </span>
+
+                Violações reiteradas
+
+            </h2>
+
+            <p>
+
+                Violações confirmadas e repetidas poderão ser
+                consideradas na definição de medidas futuras,
+                especialmente quando demonstrarem padrão de
+                comportamento incompatível com as regras da
+                Comunidade.
+
+            </p>
+
+            <p>
+
+                O histórico relevante deve considerar
+                violações efetivamente analisadas, e não apenas
+                a quantidade bruta de denúncias recebidas
+                contra determinado usuário.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             14
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    14
+                </span>
+
+                Evasão de medidas de moderação
+
+            </h2>
+
+            <p>
+
+                É proibido utilizar contas adicionais,
+                identidades alternativas ou outros meios com
+                a finalidade de contornar restrições,
+                suspensões ou outras medidas legítimas
+                aplicadas pela plataforma.
+
+            </p>
+
+            <p>
+
+                Contas utilizadas para evasão poderão também
+                ser submetidas a medidas de moderação,
+                conforme o contexto e as informações
+                disponíveis.
+
+            </p>
+
+        </section>
+
+              <!-- =========================================
+             15
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    15
+                </span>
+
+                Comunicação sobre medidas
+
+            </h2>
+
+            <p>
+
+                Quando apropriado e tecnicamente possível,
+                o Arquivo Sombrio poderá informar ao usuário
+                sobre medidas aplicadas à sua conta ou ao
+                conteúdo publicado por ela.
+
+            </p>
+
+            <p>
+
+                A comunicação poderá apresentar informações
+                gerais sobre o motivo da medida e as regras
+                relacionadas à decisão.
+
+            </p>
+
+            <p>
+
+                Determinados detalhes poderão não ser
+                fornecidos quando sua divulgação puder
+                comprometer a segurança de pessoas, a
+                privacidade de terceiros, mecanismos de
+                proteção da plataforma ou obrigações legais.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             16
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    16
+                </span>
+
+                Revisão de decisões
+
+            </h2>
+
+            <p>
+
+                Quando houver mecanismo de revisão disponível,
+                o usuário afetado poderá solicitar nova análise
+                de determinada decisão de moderação.
+
+            </p>
+
+            <p>
+
+                A possibilidade de revisão, sua forma e os
+                recursos disponíveis poderão variar conforme
+                o tipo de medida e a estrutura existente na
+                plataforma naquele momento.
+
+            </p>
+
+            <p>
+
+                A solicitação de revisão não garante que a
+                decisão original será alterada.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             17
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    17
+                </span>
+
+                Correção de decisões
+
+            </h2>
+
+            <p>
+
+                Caso uma análise posterior identifique erro,
+                informação relevante anteriormente indisponível
+                ou mudança de contexto capaz de afetar uma
+                decisão, o Arquivo Sombrio poderá corrigir,
+                substituir ou encerrar a medida adotada.
+
+            </p>
+
+            <p>
+
+                A correção de uma decisão anterior não impede
+                nova análise caso surjam posteriormente fatos
+                ou informações diferentes.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             18
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    18
+                </span>
+
+                Contestações relacionadas a casos reais
+
+            </h2>
+
+            <p>
+
+                Pessoas mencionadas em conteúdos do Arquivo
+                Sombrio, seus representantes ou outras partes
+                legitimamente interessadas poderão solicitar
+                análise de possíveis erros factuais, informações
+                desatualizadas, atribuições indevidas ou outras
+                questões relevantes.
+
+            </p>
+
+            <p>
+
+                O recebimento de uma contestação não implica
+                remoção automática do conteúdo. A situação
+                poderá ser analisada considerando fontes,
+                contexto, interesse informativo, direitos das
+                pessoas envolvidas e demais elementos
+                pertinentes.
+
+            </p>
+
+            <p>
+
+                Quando apropriado, poderão ser realizadas
+                correções, atualizações, contextualizações,
+                avisos editoriais ou outras medidas adequadas.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             19
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    19
+                </span>
+
+                Denúncias envolvendo risco imediato
+
+            </h2>
+
+            <p>
+
+                As ferramentas de denúncia e moderação do
+                Arquivo Sombrio não substituem serviços de
+                emergência, autoridades policiais ou outros
+                canais oficiais destinados a situações de
+                risco imediato.
+
+            </p>
+
+            <div class="notice">
+
+                <strong class="notice-title">
+                    Situações urgentes
+                </strong>
+
+                <p>
+
+                    Se houver risco imediato à vida ou à
+                    integridade de alguém, o usuário deve
+                    procurar os serviços de emergência ou as
+                    autoridades competentes da sua localidade,
+                    em vez de depender exclusivamente de uma
+                    denúncia enviada pela plataforma.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             20
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    20
+                </span>
+
+                Privacidade nas denúncias
+
+            </h2>
+
+            <p>
+
+                Informações relacionadas a denúncias e
+                procedimentos de moderação poderão ser tratadas
+                na medida necessária para analisar a situação,
+                proteger usuários, aplicar as regras da
+                plataforma e cumprir obrigações legais.
+
+            </p>
+
+            <p>
+
+                O tratamento de dados pessoais relacionado a
+                essas atividades também está sujeito à
+                <a href="privacidade.html">
+                    Política de Privacidade
+                </a>
+                do Arquivo Sombrio.
+
+            </p>
+
+            <p>
+
+                O Arquivo Sombrio não promete anonimato
+                absoluto ao denunciante. Informações poderão
+                precisar ser preservadas ou divulgadas quando
+                isso for necessário para cumprimento de
+                obrigação legal, exercício regular de direitos
+                ou atendimento de determinação válida de
+                autoridade competente.
+
+            </p>
+
+        </section>
+
+              <!-- =========================================
+             21
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    21
+                </span>
+
+                Registros relacionados à moderação
+
+            </h2>
+
+            <p>
+
+                Quando necessário para segurança, prevenção de
+                abuso, análise de contestações, cumprimento das
+                regras ou exercício regular de direitos, o
+                Arquivo Sombrio poderá manter registros
+                relacionados a denúncias e medidas de
+                moderação.
+
+            </p>
+
+            <p>
+
+                A existência, o conteúdo e o período de
+                conservação desses registros dependerão da
+                finalidade envolvida, das características
+                técnicas da plataforma e das obrigações legais
+                aplicáveis.
+
+            </p>
+
+            <p>
+
+                Esses registros não devem ser mantidos
+                indefinidamente sem finalidade legítima.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             22
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    22
+                </span>
+
+                Moderação e reputação
+
+            </h2>
+
+            <p>
+
+                A quantidade de denúncias recebidas contra um
+                usuário não deverá, isoladamente, determinar
+                sua reputação, nível ou posição na Comunidade.
+
+            </p>
+
+            <p>
+
+                Caso o Arquivo Sombrio implemente sistemas de
+                reputação, poderão ser consideradas violações
+                confirmadas pela moderação, desde que esse
+                tratamento seja compatível com as regras
+                divulgadas para o sistema.
+
+            </p>
+
+            <p>
+
+                Denúncias ainda não analisadas ou denúncias
+                consideradas improcedentes não devem ser
+                tratadas automaticamente como infrações do
+                usuário denunciado.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             23
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    23
+                </span>
+
+                Limites da moderação
+
+            </h2>
+
+            <p>
+
+                Embora o Arquivo Sombrio busque aplicar suas
+                regras de maneira responsável, não é possível
+                garantir que todo conteúdo inadequado seja
+                identificado imediatamente ou que toda análise
+                esteja livre de erros.
+
+            </p>
+
+            <p>
+
+                A disponibilidade e a velocidade das ferramentas
+                de moderação poderão variar conforme a fase de
+                desenvolvimento da plataforma, os recursos
+                técnicos disponíveis e a natureza da situação.
+
+            </p>
+
+            <p>
+
+                Esta política não representa promessa de
+                monitoramento contínuo de todas as atividades
+                realizadas pelos usuários.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             24
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    24
+                </span>
+
+                Automação e ferramentas de apoio
+
+            </h2>
+
+            <p>
+
+                O Arquivo Sombrio poderá utilizar ferramentas
+                técnicas para auxiliar na identificação,
+                organização ou priorização de possíveis
+                violações, quando essas funcionalidades forem
+                implementadas.
+
+            </p>
+
+            <p>
+
+                A utilização de ferramentas automatizadas não
+                significa que toda decisão de moderação será
+                tomada exclusivamente por sistemas
+                automatizados.
+
+            </p>
+
+            <p>
+
+                Quando aplicável, o uso dessas ferramentas
+                deverá observar as regras da plataforma e as
+                obrigações relacionadas à proteção de dados
+                pessoais.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             25
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    25
+                </span>
+
+                Cooperação com autoridades
+
+            </h2>
+
+            <p>
+
+                O Arquivo Sombrio poderá atender solicitações,
+                ordens ou determinações válidas de autoridades
+                competentes quando houver obrigação legal para
+                isso.
+
+            </p>
+
+            <p>
+
+                A plataforma também poderá preservar
+                informações quando isso for legitimamente
+                necessário para cumprimento de obrigação legal,
+                exercício regular de direitos ou proteção de
+                pessoas e da própria plataforma.
+
+            </p>
+
+            <p>
+
+                Esta disposição não significa que toda denúncia
+                recebida pela Comunidade será encaminhada às
+                autoridades.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             26
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    26
+                </span>
+
+                Transparência e evolução da moderação
+
+            </h2>
+
+            <p>
+
+                As ferramentas e procedimentos de moderação
+                poderão evoluir à medida que novas
+                funcionalidades forem adicionadas ao Arquivo
+                Sombrio.
+
+            </p>
+
+            <p>
+
+                O funcionamento efetivo das ferramentas deverá
+                ser compatível com as políticas publicadas e
+                com as informações apresentadas aos usuários.
+
+            </p>
+
+            <p>
+
+                Quando alterações relevantes afetarem esta
+                política, uma nova versão poderá ser publicada
+                com atualização do respectivo registro de
+                versão.
+
+            </p>
+
+        </section>
+
+
+              <!-- =========================================
+             27
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    27
+                </span>
+
+                Relação com as demais políticas
+
+            </h2>
+
+            <p>
+
+                Esta Política de Moderação e Denúncias deve ser
+                interpretada em conjunto com os
+                <a href="termos.html">
+                    Termos de Uso
+                </a>,
+                as
+                <a href="diretrizes.html">
+                    Diretrizes da Comunidade
+                </a>
+                e a
+                <a href="privacidade.html">
+                    Política de Privacidade
+                </a>.
+
+            </p>
+
+            <p>
+
+                Em caso de dúvida sobre uma regra específica da
+                Comunidade, deverão ser consideradas também as
+                disposições do documento correspondente e o
+                contexto da funcionalidade utilizada.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             28
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    28
+                </span>
+
+                Alterações desta política
+
+            </h2>
+
+            <p>
+
+                Esta política poderá ser atualizada para
+                acompanhar alterações nas funcionalidades do
+                Arquivo Sombrio, nos procedimentos de
+                moderação, nas regras da Comunidade ou em
+                requisitos legais aplicáveis.
+
+            </p>
+
+            <p>
+
+                Quando houver alteração relevante, a versão e
+                a data de atualização apresentadas nesta página
+                poderão ser modificadas para permitir a
+                identificação do documento vigente.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             29
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    29
+                </span>
+
+                Contato, denúncias e solicitações
+
+            </h2>
+
+            <p>
+
+                Os canais específicos para denúncias,
+                contestações, solicitações de revisão e outros
+                assuntos relacionados à moderação serão
+                disponibilizados pelo Arquivo Sombrio conforme
+                essas funcionalidades forem implementadas.
+
+            </p>
+
+            <p>
+
+                Para assuntos que exijam contato direto com a
+                administração da plataforma, o endereço oficial
+                será informado antes do lançamento público:
+
+            </p>
+
+            <div class="notice">
+
+                <strong class="notice-title">
+                    Contato oficial
+                </strong>
+
+                <p>
+                    [E-MAIL OFICIAL A DEFINIR ANTES DO LANÇAMENTO]
+                </p>
+
+            </div>
+
+            <p>
+
+                O canal de contato não deve ser utilizado como
+                substituto de serviços de emergência ou de
+                autoridades competentes em situações de risco
+                imediato.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             30
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    30
+                </span>
+
+                Registro e versão da política
+
+            </h2>
+
+            <p>
+
+                <strong>
+                    Documento:
+                </strong>
+                Política de Moderação e Denúncias do Arquivo
+                Sombrio.
+            </p>
+
+            <p>
+
+                <strong>
+                    Versão:
+                </strong>
+                1.0
+            </p>
+
+            <p>
+
+                <strong>
+                    Última atualização:
+                </strong>
+                04 de setembro de 2026.
+            </p>
+
+            <p>
+
+                Versões futuras poderão substituir esta política
+                conforme a evolução da plataforma, mantendo
+                identificação própria de versão e data.
+
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================
+         RODAPÉ
+         ========================================= -->
+
+    <footer class="legal-footer">
+
+        <div class="legal-footer-inner">
+
+            <span>
+                © 2026 Arquivo Sombrio
+            </span>
+
+
+            <div class="legal-footer-links">
+
+                <a href="index.html">
+                    Início
+                </a>
+
+                <a href="termos.html">
+                    Termos de Uso
+                </a>
+
+                <a href="privacidade.html">
+                    Política de Privacidade
+                </a>
+
+                <a href="diretrizes.html">
+                    Diretrizes da Comunidade
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+</body>
+
+</html>
