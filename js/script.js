@@ -27,6 +27,176 @@ let promessaSupabaseSDK = null;
 let casosSupabase = [];
 
 
+/* =========================================================
+   CLOUDFLARE TURNSTILE
+   ========================================================= */
+
+const TURNSTILE_SDK_URL =
+    "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+
+let promessaTurnstileSDK = null;
+
+function carregarTurnstileSDK() {
+
+    if (window.turnstile) {
+        return Promise.resolve(window.turnstile);
+    }
+
+    if (promessaTurnstileSDK) {
+        return promessaTurnstileSDK;
+    }
+
+    promessaTurnstileSDK =
+        new Promise((resolve, reject) => {
+
+            const script =
+                document.createElement("script");
+
+            script.src = TURNSTILE_SDK_URL;
+            script.async = true;
+            script.defer = true;
+
+            script.onload = () => {
+
+                if (window.turnstile) {
+                    resolve(window.turnstile);
+                    return;
+                }
+
+                reject(
+                    new Error(
+                        "Cloudflare Turnstile não foi carregado."
+                    )
+                );
+            };
+
+            script.onerror = () => {
+                reject(
+                    new Error(
+                        "Não foi possível carregar a proteção anti-bot."
+                    )
+                );
+            };
+
+            document.head.appendChild(script);
+
+        });
+
+    return promessaTurnstileSDK;
+}
+
+
+function obterTokenTurnstile() {
+
+    let container = null;
+    let widgetId = null;
+
+    return carregarTurnstileSDK()
+        .then(turnstile => {
+
+            return new Promise((resolve, reject) => {
+
+                container =
+                    document.createElement("div");
+
+                container.id =
+                    "arquivo-sombrio-turnstile";
+
+                container.style.position = "fixed";
+                container.style.left = "50%";
+                container.style.top = "50%";
+                container.style.transform =
+                    "translate(-50%, -50%)";
+
+                container.style.zIndex = "999999";
+                container.style.padding = "20px";
+                container.style.background = "#111";
+                container.style.border =
+                    "1px solid rgba(255,255,255,0.15)";
+
+                document.body.appendChild(container);
+
+                const limpar = () => {
+
+                    if (
+                        widgetId !== null &&
+                        window.turnstile
+                    ) {
+                        try {
+                            window.turnstile.remove(widgetId);
+                        } catch (erro) {
+                            console.warn(erro);
+                        }
+                    }
+
+                    if (container) {
+                        container.remove();
+                        container = null;
+                    }
+                };
+
+                const rejeitar = mensagem => {
+
+                    limpar();
+
+                    reject(
+                        new Error(mensagem)
+                    );
+                };
+
+                widgetId =
+                    turnstile.render(container, {
+
+                        sitekey:
+                            TURNSTILE_SITE_KEY,
+
+                        theme: "dark",
+
+                        language: "pt-BR",
+
+                        callback: token => {
+                            limpar();
+                            resolve(token);
+                        },
+
+                        "error-callback": () => {
+
+                            rejeitar(
+                                "Não foi possível concluir a verificação anti-bot."
+                            );
+
+                            return true;
+                        },
+
+                        "expired-callback": () => {
+
+                            rejeitar(
+                                "A verificação anti-bot expirou. Tente novamente."
+                            );
+                        },
+
+                        "timeout-callback": () => {
+
+                            rejeitar(
+                                "A verificação anti-bot demorou demais. Tente novamente."
+                            );
+                        }
+
+                    });
+
+            });
+
+        })
+        .catch(erro => {
+
+            if (container) {
+                container.remove();
+            }
+
+            throw erro;
+        });
+}
+
 /* ==========================================================================
    CONFIGURAÇÕES
    ========================================================================== */
@@ -3594,7 +3764,9 @@ async function cadastrarForum() {
         const supabaseClient =
             await obterClienteSupabase();
 
-
+const captchaToken =
+    await obterTokenTurnstile();
+       
         const {
             data,
             error
@@ -3605,7 +3777,8 @@ async function cadastrarForum() {
                 password: senha,
 
               options: {
-
+captchaToken,
+                 
     emailRedirectTo:
         "https://l7-collab.github.io/arquivosombrio/",
 
@@ -3686,7 +3859,9 @@ async function entrarForum() {
 
         const supabaseClient =
             await obterClienteSupabase();
-
+       
+const captchaToken =
+    await obterTokenTurnstile();
 
         const {
             error
@@ -3695,7 +3870,12 @@ async function entrarForum() {
                 .signInWithPassword({
 
                     email,
-                    password: senha
+                    password: senha,
+
+                    options: {
+        captchaToken
+    }
+                   
 
                 });
 
@@ -4445,16 +4625,24 @@ async function autenticarAdmin(evento) {
         const supabaseClient =
             await obterClienteSupabase();
 
+       const captchaToken =
+    await obterTokenTurnstile();
+
+
         const {
             data,
             error
         } =
             await supabaseClient
                 .auth
-                .signInWithPassword({
-                    email,
-                    password: senha
-                });
+            .signInWithPassword({
+    email,
+    password: senha,
+
+    options: {
+        captchaToken
+    }
+});
 
 
         if (error) {
