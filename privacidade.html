@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Política de Privacidade do Arquivo Sombrio."
+    >
+
+    <meta
+        name="theme-color"
+        content="#080706"
+    >
+
+    <title>
+        Política de Privacidade — Arquivo Sombrio
+    </title>
+
+    <!-- FONTES -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:wght@400;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- ÍCONES -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- CSS PRINCIPAL -->
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <!-- ESTILOS DA PÁGINA LEGAL -->
+    <style>
+
+        body {
+            background: #080706;
+            color: #d8d1c4;
+        }
+
+        .legal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(5, 5, 4, 0.96);
+        }
+
+        .legal-header-inner {
+            width: min(1120px, calc(100% - 40px));
+            min-height: 78px;
+            margin: 0 auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .legal-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            color: #e7dfd1;
+            text-decoration: none;
+            font-family: "Cinzel", serif;
+            letter-spacing: 0.08em;
+        }
+
+        .legal-logo i {
+            color: #8f1d1d;
+            font-size: 1.35rem;
+        }
+
+        .legal-logo span {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .legal-logo small {
+            margin-top: 5px;
+
+            color: #8d857a;
+            font-family: "DM Mono", monospace;
+            font-size: 0.54rem;
+            letter-spacing: 0.12em;
+        }
+
+        .legal-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 9px 13px;
+
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #c8c0b4;
+            text-decoration: none;
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.67rem;
+            letter-spacing: 0.05em;
+
+            transition:
+                border-color 0.2s ease,
+                color 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .legal-back:hover {
+            color: #ffffff;
+            border-color: rgba(143, 29, 29, 0.8);
+            background: rgba(143, 29, 29, 0.08);
+        }
+
+        .legal-main {
+            width: min(900px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 70px 0 90px;
+        }
+
+        .legal-classification {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+
+            margin-bottom: 22px;
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.61rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .legal-classification span {
+            padding: 6px 9px;
+
+            border: 1px solid rgba(143, 29, 29, 0.45);
+            color: #a99f91;
+            background: rgba(143, 29, 29, 0.06);
+        }
+
+        .legal-eyebrow {
+            margin: 0 0 12px;
+
+            color: #8f1d1d;
+            font-family: "DM Mono", monospace;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+        .legal-title {
+            margin: 0;
+
+            color: #eee6d8;
+            font-family: "Cinzel", serif;
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 600;
+            line-height: 1.08;
+        }
+
+        .legal-intro {
+            max-width: 760px;
+            margin: 25px 0 0;
+
+            color: #aaa194;
+            font-family: "Libre Baskerville", serif;
+            font-size: 0.98rem;
+            line-height: 1.9;
+        }
+
+        .legal-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1px;
+
+            margin: 38px 0 55px;
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .legal-meta-item {
+            padding: 16px 18px;
+            background: #0d0c0b;
+        }
+
+        .legal-meta-item small {
+            display: block;
+            margin-bottom: 6px;
+
+            color: #766f66;
+            font-family: "DM Mono", monospace;
+            font-size: 0.57rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .legal-meta-item strong {
+            color: #d8d1c4;
+            font-family: "DM Mono", monospace;
+            font-size: 0.73rem;
+            font-weight: 400;
+        }
+
+        .legal-section {
+            padding: 34px 0;
+
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .legal-section-number {
+            display: block;
+            margin-bottom: 8px;
+
+            color: #8f1d1d;
+            font-family: "DM Mono", monospace;
+            font-size: 0.59rem;
+            letter-spacing: 0.11em;
+        }
+
+        .legal-section h2 {
+            margin: 0 0 18px;
+
+            color: #e5ddcf;
+            font-family: "Cinzel", serif;
+            font-size: clamp(1.25rem, 3vw, 1.65rem);
+            font-weight: 600;
+        }
+
+        .legal-section h3 {
+            margin: 25px 0 12px;
+
+            color: #c9c0b3;
+            font-family: "Cinzel", serif;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .legal-section p,
+        .legal-section li {
+            color: #aaa194;
+            font-family: "Libre Baskerville", serif;
+            font-size: 0.91rem;
+            line-height: 1.85;
+        }
+
+        .legal-section p {
+            margin: 0 0 15px;
+        }
+
+        .legal-section ul {
+            margin: 13px 0 18px;
+            padding-left: 23px;
+        }
+
+        .legal-section li {
+            margin-bottom: 8px;
+        }
+
+        .legal-section strong {
+            color: #d6cec0;
+        }
+
+        .legal-warning {
+            margin: 22px 0;
+            padding: 17px 18px;
+
+            border-left: 3px solid #8f1d1d;
+            background: rgba(143, 29, 29, 0.07);
+        }
+
+        .legal-warning p {
+            margin: 0;
+        }
+
+        .legal-footer {
+            padding: 30px 20px;
+
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+            color: #746d64;
+            text-align: center;
+            font-family: "DM Mono", monospace;
+            font-size: 0.61rem;
+            letter-spacing: 0.06em;
+        }
+
+        @media (max-width: 600px) {
+
+            .legal-header-inner {
+                width: min(100% - 28px, 1120px);
+                min-height: 68px;
+            }
+
+            .legal-logo small {
+                display: none;
+            }
+
+            .legal-back span {
+                display: none;
+            }
+
+            .legal-main {
+                width: min(100% - 30px, 900px);
+                padding-top: 48px;
+            }
+
+            .legal-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .legal-section {
+                padding: 29px 0;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ================================================================
+         CABEÇALHO
+         ================================================================ -->
+
+    <header class="legal-header">
+
+        <div class="legal-header-inner">
+
+            <a
+                href="index.html"
+                class="legal-logo"
+                aria-label="Voltar para o Arquivo Sombrio"
+            >
+
+                <i class="fa-solid fa-folder-open"></i>
+
+                <span>
+                    ARQUIVO <strong>SOMBRIO</strong>
+
+                    <small>
+                        DOCUMENTAÇÃO & INVESTIGAÇÃO
+                    </small>
+                </span>
+
+            </a>
+
+            <a
+                href="index.html"
+                class="legal-back"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>VOLTAR AO ARQUIVO</span>
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================================================================
+         POLÍTICA DE PRIVACIDADE
+         ================================================================ -->
+
+    <main class="legal-main">
+
+        <div class="legal-classification">
+            <span>DOCUMENTO LEGAL</span>
+            <span>PRIVACIDADE</span>
+            <span>AS-LGPD-001</span>
+        </div>
+
+        <p class="legal-eyebrow">
+            ARQUIVO SOMBRIO • PROTEÇÃO DE DADOS
+        </p>
+
+        <h1 class="legal-title">
+            Política de Privacidade
+        </h1>
+
+        <p class="legal-intro">
+            O Arquivo Sombrio respeita a privacidade de seus usuários
+            e busca tratar dados pessoais de forma transparente,
+            segura e compatível com a legislação brasileira aplicável,
+            especialmente a Lei Geral de Proteção de Dados Pessoais
+            — LGPD (Lei nº 13.709/2018).
+        </p>
+
+        <div class="legal-meta">
+
+            <div class="legal-meta-item">
+                <small>VERSÃO DO DOCUMENTO</small>
+                <strong>1.0</strong>
+            </div>
+
+            <div class="legal-meta-item">
+                <small>ÚLTIMA ATUALIZAÇÃO</small>
+                <strong>04 de setembro de 2026</strong>
+            </div>
+
+        </div>
+
+
+        <!-- 01 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 01
+            </span>
+
+            <h2>
+                A quem esta Política se aplica
+            </h2>
+
+            <p>
+                Esta Política de Privacidade se aplica aos usuários
+                e visitantes do Arquivo Sombrio, incluindo pessoas que:
+            </p>
+
+            <ul>
+                <li>navegam pelo conteúdo público do site;</li>
+                <li>criam ou utilizam uma conta;</li>
+                <li>acessam ou participam da Comunidade;</li>
+                <li>publicam ou interagem com conteúdos;</li>
+                <li>enviam sugestões de casos;</li>
+                <li>utilizam funcionalidades pessoais disponibilizadas pela plataforma.</li>
+            </ul>
+
+            <div class="legal-warning">
+
+                <p>
+                    <strong>Contas e participação na Comunidade são destinadas
+                    exclusivamente a pessoas com 18 anos ou mais.</strong>
+                    O acesso a determinados conteúdos públicos também poderá
+                    estar sujeito a avisos de conteúdo sensível ou outras
+                    medidas de proteção adequadas.
+                </p>
+
+            </div>
+
+            <p>
+                Algumas funcionalidades do Arquivo Sombrio ainda estão
+                em desenvolvimento. Esta Política poderá ser atualizada
+                conforme novos recursos forem implementados.
+            </p>
+
+        </section>
+
+        <!-- 02 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 02
+            </span>
+
+            <h2>
+                Dados pessoais que podemos tratar
+            </h2>
+
+            <p>
+                Os dados tratados pelo Arquivo Sombrio dependem das
+                funcionalidades utilizadas pelo usuário.
+            </p>
+
+            <h3>
+                2.1 Cadastro e autenticação
+            </h3>
+
+            <p>
+                Para criação e utilização de uma conta, poderão ser
+                tratados dados como:
+            </p>
+
+            <ul>
+                <li>nome, pseudônimo ou nome de exibição informado;</li>
+                <li>endereço de e-mail;</li>
+                <li>identificador interno da conta;</li>
+                <li>informações relacionadas à autenticação e à sessão do usuário;</li>
+                <li>data e informações técnicas relacionadas ao cadastro e acesso.</li>
+            </ul>
+
+            <p>
+                As credenciais de autenticação são processadas pela
+                infraestrutura de autenticação utilizada pelo Arquivo
+                Sombrio. A senha não é exibida publicamente nem deve
+                ser compartilhada pelo usuário com terceiros.
+            </p>
+
+            <h3>
+                2.2 Comunidade
+            </h3>
+
+            <p>
+                Quando o usuário participa das áreas comunitárias,
+                poderão ser tratados dados e conteúdos relacionados
+                à sua atividade, incluindo:
+            </p>
+
+            <ul>
+                <li>nome ou pseudônimo de exibição;</li>
+                <li>publicações e comentários;</li>
+                <li>categoria e conteúdo das publicações;</li>
+                <li>identificador da conta responsável pela publicação;</li>
+                <li>datas de criação ou atualização;</li>
+                <li>informações necessárias à moderação e segurança da Comunidade.</li>
+            </ul>
+
+            <p>
+                Conteúdos publicados em espaços identificados como
+                públicos poderão ser visualizados por outros usuários
+                e visitantes do Arquivo Sombrio.
+            </p>
+
+            <h3>
+                2.3 Sugestões de casos
+            </h3>
+
+            <p>
+                Quando o visitante ou usuário utiliza o recurso de
+                sugestão de casos, poderão ser tratados os dados
+                fornecidos voluntariamente no formulário, como:
+            </p>
+
+            <ul>
+                <li>nome informado;</li>
+                <li>título ou identificação do caso sugerido;</li>
+                <li>descrição e demais informações inseridas pelo usuário;</li>
+                <li>data e horário associados ao envio.</li>
+            </ul>
+
+            <h3>
+                2.4 Dados técnicos e de segurança
+            </h3>
+
+            <p>
+                Durante o acesso ao site, determinadas informações
+                técnicas poderão ser processadas pelo Arquivo Sombrio
+                ou pelos serviços tecnológicos utilizados para
+                hospedagem, autenticação, segurança e funcionamento
+                da plataforma.
+            </p>
+
+            <p>
+                Essas informações podem envolver dados técnicos da
+                conexão, navegador, dispositivo, sessão e requisições
+                realizadas aos serviços, conforme necessário para
+                funcionamento, prevenção de abuso e proteção da
+                plataforma.
+            </p>
+
+        </section>
+
+
+        <!-- 03 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 03
+            </span>
+
+            <h2>
+                Para que utilizamos os dados
+            </h2>
+
+            <p>
+                Os dados tratados pelo Arquivo Sombrio poderão ser
+                utilizados para finalidades compatíveis com o
+                funcionamento da plataforma, incluindo:
+            </p>
+
+            <ul>
+                <li>criar e autenticar contas de usuários;</li>
+                <li>manter sessões de acesso;</li>
+                <li>permitir participação na Comunidade;</li>
+                <li>associar publicações e comentários aos respectivos usuários;</li>
+                <li>receber e analisar sugestões de casos;</li>
+                <li>administrar funcionalidades pessoais da plataforma;</li>
+                <li>prevenir spam, abuso, fraude e acessos automatizados indevidos;</li>
+                <li>investigar problemas técnicos e proteger a segurança do site;</li>
+                <li>cumprir obrigações legais ou regulatórias aplicáveis;</li>
+                <li>exercer ou defender direitos quando necessário.</li>
+            </ul>
+
+            <p>
+                O Arquivo Sombrio não comercializa dados pessoais
+                de seus usuários.
+            </p>
+
+        </section>
+
+
+        <!-- 04 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 04
+            </span>
+
+            <h2>
+                Serviços e fornecedores tecnológicos
+            </h2>
+
+            <p>
+                Para disponibilizar suas funcionalidades, o Arquivo
+                Sombrio utiliza serviços de terceiros que podem
+                realizar tratamento técnico de informações necessário
+                à prestação de seus respectivos serviços.
+            </p>
+
+            <h3>
+                Supabase
+            </h3>
+
+            <p>
+                Utilizado na infraestrutura de autenticação,
+                gerenciamento de sessões, banco de dados e outros
+                recursos de backend do Arquivo Sombrio.
+            </p>
+
+            <h3>
+                Cloudflare Turnstile
+            </h3>
+
+            <p>
+                Utilizado como mecanismo de segurança e proteção
+                contra acessos automatizados, spam e abuso em
+                determinadas operações da plataforma.
+            </p>
+
+            <h3>
+                GitHub Pages
+            </h3>
+
+            <p>
+                Utilizado na disponibilização e hospedagem das
+                páginas públicas do site.
+            </p>
+
+            <h3>
+                Google Fonts
+            </h3>
+
+            <p>
+                Utilizado para carregamento de recursos tipográficos
+                empregados na interface do site.
+            </p>
+
+            <h3>
+                Font Awesome e cdnjs
+            </h3>
+
+            <p>
+                Utilizados para disponibilização de ícones e recursos
+                visuais empregados na interface.
+            </p>
+
+            <h3>
+                jsDelivr
+            </h3>
+
+            <p>
+                Utilizado para distribuição de bibliotecas técnicas
+                necessárias ao funcionamento de determinadas
+                funcionalidades do site.
+            </p>
+
+            <p>
+                Esses serviços possuem suas próprias práticas,
+                políticas e infraestruturas de tratamento de dados.
+                O uso desses fornecedores poderá ser alterado conforme
+                a evolução técnica do Arquivo Sombrio.
+            </p>
+
+        </section>
+
+              <!-- 05 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 05
+            </span>
+
+            <h2>
+                Armazenamento local no navegador
+            </h2>
+
+            <p>
+                Algumas funcionalidades do Arquivo Sombrio podem
+                utilizar mecanismos de armazenamento disponibilizados
+                pelo próprio navegador, como o localStorage.
+            </p>
+
+            <p>
+                Esse armazenamento pode ser utilizado, por exemplo,
+                para manter determinadas informações, preferências
+                ou dados relacionados a funcionalidades que ainda
+                funcionam localmente no dispositivo do usuário.
+            </p>
+
+            <p>
+                Informações armazenadas dessa forma permanecem no
+                navegador utilizado até que sejam removidas pelo
+                próprio site, substituídas, excluídas pelo usuário
+                ou apagadas pelas configurações do navegador.
+            </p>
+
+        </section>
+
+
+        <!-- 06 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 06
+            </span>
+
+            <h2>
+                Cookies e tecnologias semelhantes
+            </h2>
+
+            <p>
+                O Arquivo Sombrio poderá utilizar tecnologias
+                necessárias ao funcionamento de autenticação,
+                segurança, armazenamento de preferências e outros
+                recursos essenciais da plataforma.
+            </p>
+
+            <p>
+                Alguns serviços de terceiros integrados ao site
+                também poderão processar informações técnicas ou
+                utilizar mecanismos próprios necessários à prestação
+                de seus serviços.
+            </p>
+
+            <p>
+                Neste estágio do projeto, o Arquivo Sombrio não
+                pretende utilizar cookies publicitários próprios
+                para criação de perfis comportamentais dos usuários.
+            </p>
+
+            <div class="legal-warning">
+
+                <p>
+                    Caso ferramentas de publicidade, análise,
+                    personalização ou outras tecnologias que exijam
+                    consentimento específico sejam adicionadas no
+                    futuro, esta Política e os mecanismos de escolha
+                    disponibilizados ao usuário deverão ser
+                    atualizados.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- 07 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 07
+            </span>
+
+            <h2>
+                Compartilhamento de dados
+            </h2>
+
+            <p>
+                O Arquivo Sombrio não comercializa dados pessoais.
+                Informações poderão, entretanto, ser compartilhadas
+                ou processadas por terceiros quando isso for
+                necessário para o funcionamento e a segurança da
+                plataforma.
+            </p>
+
+            <p>
+                Isso poderá ocorrer, por exemplo:
+            </p>
+
+            <ul>
+                <li>
+                    com fornecedores de infraestrutura, hospedagem,
+                    autenticação, banco de dados e segurança;
+                </li>
+
+                <li>
+                    para cumprimento de obrigação legal ou
+                    regulatória;
+                </li>
+
+                <li>
+                    em resposta a ordem judicial ou requisição
+                    válida de autoridade competente;
+                </li>
+
+                <li>
+                    quando necessário para exercício regular de
+                    direitos;
+                </li>
+
+                <li>
+                    para investigação e prevenção de fraude, abuso,
+                    spam ou incidentes de segurança, dentro dos
+                    limites legalmente aplicáveis.
+                </li>
+            </ul>
+
+            <p>
+                Conteúdos que o próprio usuário decidir publicar em
+                áreas públicas da Comunidade não devem ser tratados
+                como comunicações privadas e poderão ser visualizados
+                por terceiros.
+            </p>
+
+        </section>
+
+
+        <!-- 08 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 08
+            </span>
+
+            <h2>
+                Infraestrutura e transferências internacionais
+            </h2>
+
+            <p>
+                Alguns fornecedores tecnológicos utilizados pelo
+                Arquivo Sombrio operam infraestrutura distribuída
+                internacionalmente.
+            </p>
+
+            <p>
+                Por esse motivo, determinadas informações poderão
+                ser processadas ou armazenadas fora do Brasil,
+                conforme a infraestrutura empregada pelo respectivo
+                fornecedor e observadas as exigências aplicáveis à
+                proteção de dados pessoais.
+            </p>
+
+            <p>
+                O Arquivo Sombrio buscará utilizar fornecedores e
+                mecanismos compatíveis com os requisitos legais
+                aplicáveis às transferências internacionais de
+                dados pessoais.
+            </p>
+
+        </section>
+
+        <!-- 09 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 09
+            </span>
+
+            <h2>
+                Segurança das informações
+            </h2>
+
+            <p>
+                O Arquivo Sombrio busca adotar medidas técnicas e
+                administrativas destinadas a reduzir riscos de
+                acesso não autorizado, alteração, perda, divulgação
+                indevida ou uso inadequado de informações.
+            </p>
+
+            <p>
+                Entre as medidas utilizadas ou previstas estão
+                mecanismos de autenticação, controle de acesso,
+                proteção contra acessos automatizados e regras de
+                autorização aplicadas à infraestrutura da plataforma.
+            </p>
+
+            <p>
+                Apesar das medidas adotadas, nenhum sistema conectado
+                à internet pode oferecer garantia absoluta de
+                segurança. Por esse motivo, os mecanismos de proteção
+                poderão ser revisados e aprimorados conforme a
+                evolução do Arquivo Sombrio.
+            </p>
+
+            <p>
+                O usuário também é responsável por manter suas
+                credenciais de acesso protegidas e não deve
+                compartilhar sua senha com terceiros.
+            </p>
+
+        </section>
+
+
+        <!-- 10 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 10
+            </span>
+
+            <h2>
+                Retenção e exclusão de dados
+            </h2>
+
+            <p>
+                Os dados pessoais serão mantidos pelo período
+                necessário para atender às finalidades para as quais
+                foram tratados, permitir o funcionamento da
+                plataforma, cumprir obrigações legais ou regulatórias
+                e possibilitar o exercício regular de direitos.
+            </p>
+
+            <p>
+                O período de armazenamento poderá variar de acordo
+                com a natureza da informação, a funcionalidade
+                utilizada e as obrigações aplicáveis.
+            </p>
+
+            <p>
+                Quando os dados deixarem de ser necessários, poderão
+                ser excluídos, anonimizados ou mantidos somente nas
+                hipóteses permitidas pela legislação aplicável.
+            </p>
+
+            <p>
+                Informações armazenadas exclusivamente no navegador
+                do usuário também poderão ser removidas por meio das
+                configurações do próprio navegador ou pela limpeza
+                dos dados locais do site.
+            </p>
+
+        </section>
+
+
+        <!-- 11 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 11
+            </span>
+
+            <h2>
+                Direitos do titular dos dados
+            </h2>
+
+            <p>
+                Nos termos da legislação aplicável, o titular poderá
+                solicitar, conforme o caso e observados os requisitos
+                legais:
+            </p>
+
+            <ul>
+                <li>confirmação da existência de tratamento;</li>
+                <li>acesso aos dados pessoais;</li>
+                <li>
+                    correção de dados incompletos, inexatos ou
+                    desatualizados;
+                </li>
+                <li>
+                    anonimização, bloqueio ou eliminação de dados
+                    desnecessários, excessivos ou tratados em
+                    desconformidade com a legislação;
+                </li>
+                <li>
+                    portabilidade dos dados, quando aplicável e
+                    observadas as regras pertinentes;
+                </li>
+                <li>
+                    informação sobre entidades com as quais tenha
+                    ocorrido compartilhamento de dados;
+                </li>
+                <li>
+                    eliminação de dados tratados com base no
+                    consentimento, quando aplicável e ressalvadas
+                    as hipóteses legais de conservação;
+                </li>
+                <li>
+                    revogação do consentimento, quando essa for a
+                    base aplicável ao tratamento;
+                </li>
+                <li>
+                    demais direitos assegurados pela legislação
+                    brasileira de proteção de dados.
+                </li>
+            </ul>
+
+            <p>
+                Para proteger o próprio titular, poderá ser necessário
+                confirmar a identidade do solicitante antes do
+                atendimento de determinadas solicitações.
+            </p>
+
+        </section>
+
+
+        <!-- 12 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 12
+            </span>
+
+            <h2>
+                Exclusão da conta
+            </h2>
+
+            <p>
+                O Arquivo Sombrio pretende disponibilizar mecanismo
+                para que usuários possam solicitar ou realizar a
+                exclusão da própria conta e dos dados associados,
+                observadas as hipóteses legais de conservação.
+            </p>
+
+            <div class="legal-warning">
+
+                <p>
+                    <strong>Funcionalidade em desenvolvimento:</strong>
+                    a ferramenta de exclusão da própria conta ainda
+                    será incorporada à área pessoal do usuário.
+                    Enquanto essa funcionalidade não estiver
+                    disponível, solicitações relacionadas a dados
+                    pessoais deverão ser encaminhadas pelo canal de
+                    privacidade indicado nesta Política.
+                </p>
+
+            </div>
+
+            <p>
+                A exclusão de uma conta não impede a conservação de
+                informações quando necessária para cumprimento de
+                obrigação legal ou regulatória, exercício regular de
+                direitos, prevenção de fraude ou outras hipóteses
+                permitidas pela legislação.
+            </p>
+
+        </section>
+
+        <!-- 13 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 13
+            </span>
+
+            <h2>
+                Conteúdo publicado pelos usuários
+            </h2>
+
+            <p>
+                Ao utilizar áreas públicas da Comunidade, o usuário
+                deve considerar que as informações inseridas em
+                publicações, comentários, perfil público ou outras
+                áreas visíveis poderão ser acessadas por terceiros.
+            </p>
+
+            <p>
+                Por esse motivo, recomendamos que o usuário não
+                publique informações pessoais sensíveis, documentos,
+                endereços, números de telefone, credenciais,
+                informações financeiras ou outros dados que não
+                deseje tornar públicos.
+            </p>
+
+            <p>
+                O Arquivo Sombrio poderá adotar medidas de moderação
+                sobre conteúdos que violem os Termos de Uso, as
+                Diretrizes da Comunidade, direitos de terceiros ou
+                a legislação aplicável.
+            </p>
+
+        </section>
+
+
+        <!-- 14 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 14
+            </span>
+
+            <h2>
+                Idade mínima para contas e Comunidade
+            </h2>
+
+            <p>
+                A criação de conta e a participação na Comunidade do
+                Arquivo Sombrio são destinadas exclusivamente a
+                pessoas com <strong>18 anos ou mais</strong>.
+            </p>
+
+            <p>
+                Ao criar uma conta, o usuário deverá declarar que
+                possui idade igual ou superior a 18 anos e aceitar
+                os documentos e regras aplicáveis à utilização da
+                plataforma.
+            </p>
+
+            <p>
+                O Arquivo Sombrio poderá adotar medidas adicionais
+                relacionadas à aferição de idade quando isso for
+                necessário para atendimento da legislação aplicável,
+                proteção dos usuários ou segurança da plataforma,
+                observando os princípios de necessidade e
+                minimização de dados.
+            </p>
+
+            <div class="legal-warning">
+
+                <p>
+                    <strong>Atenção:</strong> a declaração de idade
+                    não autoriza o fornecimento de informações falsas.
+                    Contas que contrariem as regras de idade da
+                    plataforma poderão estar sujeitas às medidas
+                    previstas nos Termos de Uso e nas Diretrizes da
+                    Comunidade.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- 15 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 15
+            </span>
+
+            <h2>
+                Alterações desta Política
+            </h2>
+
+            <p>
+                Esta Política de Privacidade poderá ser atualizada
+                para refletir mudanças nas funcionalidades do Arquivo
+                Sombrio, em seus fornecedores tecnológicos, em suas
+                práticas de tratamento de dados ou na legislação
+                aplicável.
+            </p>
+
+            <p>
+                Quando houver alteração relevante, a nova versão
+                deverá indicar sua respectiva data de atualização.
+                Quando necessário, também poderão ser adotados
+                mecanismos adicionais de comunicação ou de nova
+                manifestação do usuário.
+            </p>
+
+        </section>
+
+
+        <!-- 16 -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                SEÇÃO 16
+            </span>
+
+            <h2>
+                Contato e solicitações de privacidade
+            </h2>
+
+            <p>
+                Solicitações relacionadas à privacidade, proteção de
+                dados pessoais, correção, acesso ou exclusão de
+                informações poderão ser encaminhadas ao canal oficial
+                de privacidade do Arquivo Sombrio.
+            </p>
+
+            <div class="legal-warning">
+
+                <p>
+                    <strong>Canal de privacidade:</strong><br>
+                    [E-MAIL OFICIAL A DEFINIR ANTES DO LANÇAMENTO]
+                </p>
+
+            </div>
+
+            <p>
+                O canal definitivo de atendimento será informado
+                nesta página antes da conclusão da preparação pública
+                da plataforma.
+            </p>
+
+        </section>
+
+
+        <!-- ENCERRAMENTO -->
+
+        <section class="legal-section">
+
+            <span class="legal-section-number">
+                REGISTRO
+            </span>
+
+            <h2>
+                Documento de privacidade
+            </h2>
+
+            <p>
+                Política de Privacidade do Arquivo Sombrio —
+                versão 1.0, atualizada em 04 de setembro de 2026.
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================================================================
+         RODAPÉ
+         ================================================================ -->
+
+    <footer class="legal-footer">
+
+        ARQUIVO SOMBRIO • POLÍTICA DE PRIVACIDADE • 2026
+
+    </footer>
+
+</body>
+
+</html>      
