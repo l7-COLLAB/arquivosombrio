@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Arquivo Sombrio — dossiês criminais, mistérios, perícia forense, lendas e investigação documental."
+    >
+
+    <meta
+        name="theme-color"
+        content="#080706"
+    >
+
+    <title>
+        Arquivo Sombrio — Dossiês, Mistérios & Perícia
+    </title>
+
+    <!-- FONTES -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:wght@400;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- ÍCONES -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- CSS PRINCIPAL -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- AJUSTES LOCAIS -->
+    <style>
+
+        .nav-menu a {
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.075em;
+        }
+
+        .btn-restricted {
+            font-size: 0.70rem;
+            font-weight: 500;
+            letter-spacing: 0.065em;
+        }
+
+        /*
+         * O JavaScript controla a exibição destes elementos
+         * pelo atributo hidden.
+         */
+        #form-forum[hidden],
+        #forum-user-area[hidden],
+        #forum-guest-area[hidden] {
+            display: none !important;
+        }
+
+        /*
+         * ACESSO À COMUNIDADE
+         * Faixa compacta localizada no início do site.
+         */
+        .community-access {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(5, 5, 4, 0.92);
+        }
+
+        .community-access-inner {
+            min-height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        .community-access-copy {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+
+            color: var(--paper-soft);
+
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.055em;
+            text-transform: uppercase;
+        }
+
+        .community-access-copy i {
+            flex-shrink: 0;
+            color: var(--red-light);
+        }
+
+        #forum-auth-area {
+            flex-shrink: 0;
+        }
+
+        #forum-guest-area,
+        #forum-user-area {
+            margin: 0;
+        }
+
+        /*
+         * O texto explicativo longo não é necessário
+         * nesta versão compacta.
+         */
+        .forum-auth-intro {
+            display: none;
+        }
+
+        .forum-auth-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /*
+         * Evita que os botões de autenticação ocupem
+         * toda a largura da tela.
+         */
+        .community-access .btn-form {
+            width: auto;
+            min-height: 32px;
+            margin: 0;
+            padding: 7px 12px;
+
+            font-size: 0.64rem;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        /*
+         * ESTADO AUTENTICADO
+         */
+        .community-access #forum-user-area {
+            align-items: center;
+            gap: 10px;
+        }
+
+        .community-access #forum-user-area:not([hidden]) {
+            display: flex;
+        }
+
+        .community-access .forum-user-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin: 0;
+        }
+
+        .community-access .forum-user-status > i {
+            color: var(--red-light);
+        }
+
+        .community-access .forum-user-status div {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .community-access .forum-user-status small {
+            font-size: 0.55rem;
+            letter-spacing: 0.06em;
+        }
+
+        .community-access .forum-user-status strong {
+            font-size: 0.68rem;
+        }
+
+        /*
+         * TELAS INTERMEDIÁRIAS
+         */
+        @media (max-width: 1000px) {
+
+            .nav-menu a {
+                font-size: 0.70rem;
+            }
+
+            .btn-restricted {
+                font-size: 0.65rem;
+            }
+
+        }
+
+        /*
+         * MOBILE
+         */
+        @media (max-width: 600px) {
+
+            .community-access-inner {
+                min-height: 43px;
+                gap: 8px;
+            }
+
+            /*
+             * No celular fica apenas o ícone da comunidade
+             * do lado esquerdo.
+             */
+            .community-access-copy span {
+                display: none;
+            }
+
+            .community-access-copy {
+                font-size: 0.72rem;
+            }
+
+            .forum-auth-actions {
+                gap: 6px;
+            }
+
+            .community-access .btn-form {
+                min-height: 30px;
+                padding: 6px 9px;
+                font-size: 0.59rem;
+            }
+
+            .community-access .forum-user-status small {
+                display: none;
+            }
+
+            .community-access .forum-user-status strong {
+                max-width: 110px;
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ================================================================
+         CABEÇALHO
+         ================================================================ -->
+
+    <header class="main-header">
+
+        <div class="container header-content">
+
+            <a
+                href="#inicio"
+                class="logo"
+                aria-label="Arquivo Sombrio - Página inicial"
+            >
+
+                <span class="logo-simbolo">
+                    <i class="fa-solid fa-folder-open"></i>
+                </span>
+
+                <span class="logo-texto">
+                    ARQUIVO
+                    <strong>SOMBRIO</strong>
+                </span>
+
+            </a>
+
+
+            <nav
+                class="nav-menu"
+                aria-label="Navegação principal"
+            >
+
+                <a href="#inicio">
+                    Início
+                </a>
+
+                <a href="#casos">
+                    Dossiês
+                </a>
+
+                <a href="#forense">
+                    Perícia
+                </a>
+
+                <a href="#livros">
+                    Biblioteca
+                </a>
+
+                <a href="#forum">
+                    Fórum
+                </a>
+
+                <a href="#sugestoes">
+                    Sugerir Caso
+                </a>
+
+                <button
+                    type="button"
+                    class="btn-restricted"
+                    id="btn-open-admin"
+                >
+
+                    <i class="fa-solid fa-lock"></i>
+                    Área Restrita
+
+                </button>
+
+            </nav>
+
+
+            <button
+                type="button"
+                class="menu-toggle"
+                id="menu-toggle"
+                aria-label="Abrir menu"
+                aria-expanded="false"
+                aria-controls="sidebar-menu"
+            >
+
+                <i class="fa-solid fa-bars"></i>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================================================================
+         MENU MOBILE
+         ================================================================ -->
+
+    <aside
+        class="sidebar-menu"
+        id="sidebar-menu"
+        aria-label="Menu mobile"
+    >
+
+        <button
+            type="button"
+            class="close-sidebar"
+            id="close-sidebar"
+            aria-label="Fechar menu"
+        >
+            &times;
+        </button>
+
+
+        <div class="sidebar-marca">
+
+            <span>
+                ARQUIVO
+            </span>
+
+            <strong>
+                SOMBRIO
+            </strong>
+
+            <small>
+                DOCUMENTAÇÃO & INVESTIGAÇÃO
+            </small>
+
+        </div>
+
+
+        <nav class="sidebar-links">
+
+            <a href="#inicio">
+
+                <i class="fa-solid fa-house"></i>
+                Início
+
+            </a>
+
+
+            <a href="#casos">
+
+                <i class="fa-solid fa-folder-tree"></i>
+                Dossiês & Casos
+
+            </a>
+
+
+            <a href="#forense">
+
+                <i class="fa-solid fa-microscope"></i>
+                Ciência Forense
+
+            </a>
+
+
+            <a href="#livros">
+
+                <i class="fa-solid fa-book-open"></i>
+                Biblioteca Sombria
+
+            </a>
+
+
+            <a href="#forum">
+
+                <i class="fa-solid fa-comments"></i>
+                Fórum Investigativo
+
+            </a>
+
+
+            <a href="#sugestoes">
+
+                <i class="fa-solid fa-paper-plane"></i>
+                Sugerir um Caso
+
+            </a>
+
+
+            <a
+                href="#"
+                id="mobile-btn-admin"
+                class="sidebar-admin-link"
+            >
+
+                <i class="fa-solid fa-lock"></i>
+                Área Restrita
+
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- ================================================================
+         ACESSO À COMUNIDADE
+         ================================================================ -->
+
+    <div
+        class="community-access"
+        aria-label="Acesso à comunidade"
+    >
+
+        <div class="container community-access-inner">
+
+            <div class="community-access-copy">
+
+                <i class="fa-solid fa-user-secret"></i>
+
+                <span>
+                    Comunidade do Arquivo
+                </span>
+
+            </div>
+
+
+            <!-- ========================================================
+                 AUTENTICAÇÃO DA COMUNIDADE
+                 IDs preservados para o script.js atual
+                 ======================================================== -->
+
+            <div id="forum-auth-area">
+
+
+                <!-- VISITANTE -->
+
+                <div id="forum-guest-area">
+
+                    <p class="forum-auth-intro">
+
+                        Para publicar análises e participar das discussões,
+                        entre na sua conta ou crie um cadastro gratuito.
+
+                    </p>
+
+
+                    <div class="forum-auth-actions">
+
+                        <button
+                            type="button"
+                            class="btn-primary btn-form"
+                            id="forum-btn-login"
+                        >
+
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            Entrar
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="btn-secondary btn-form"
+                            id="forum-btn-signup"
+                        >
+
+                            <i class="fa-solid fa-user-plus"></i>
+                            Criar conta
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- USUÁRIO AUTENTICADO -->
+
+                <div
+                    id="forum-user-area"
+                    hidden
+                >
+
+                    <div class="forum-user-status">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <div>
+
+                            <small>
+                                IDENTIFICADO COMO
+                            </small>
+
+                            <strong id="forum-user-name">
+                                Investigador
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-secondary btn-form"
+                        id="forum-btn-logout"
+                    >
+
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        Sair
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================================
+         CONTEÚDO PRINCIPAL
+         ================================================================ -->
+
+    <main>
+
+
+        <!-- ============================================================
+             HERO
+             ============================================================ -->
+
+        <section
+            class="hero-section"
+            id="inicio"
+        >
+
+            <div class="hero-background-decoration"></div>
+
+
+            <div class="container hero-layout">
+
+
+                <div class="hero-content">
+
+
+                    <div class="hero-classification">
+
+                        <span>
+                            ARQUIVO Nº AS-001
+                        </span>
+
+                        <span>
+                            ACESSO DOCUMENTAL
+                        </span>
+
+                    </div>
+
+
+                    <p class="hero-eyebrow">
+                        CRIMINOLOGIA • MISTÉRIOS • PERÍCIA FORENSE
+                    </p>
+
+
+                    <h1>
+
+                        Onde os casos esquecidos
+
+                        <span>
+                            voltam a ser abertos.
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-description">
+
+                        Dossiês criminais, desaparecimentos, investigações
+                        históricas, ciência forense, lendas e arquivos
+                        obscuros reunidos em uma experiência editorial
+                        inspirada em documentos de investigação.
+
+                    </p>
+
+
+                    <div class="hero-actions">
+
+
+                        <a
+                            href="#casos"
+                            class="btn-primary"
+                        >
+
+                            <i class="fa-solid fa-folder-open"></i>
+                            Explorar Dossiês
+
+                        </a>
+
+
+                        <a
+                            href="#forense"
+                            class="btn-secondary"
+                        >
+
+                            <i class="fa-solid fa-microscope"></i>
+                            Ciência Forense
+
+                        </a>
+
+
+                    </div>
+
+
+                    <div class="hero-warning">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <p>
+
+                            Alguns arquivos abordam crimes reais, mortes,
+                            investigações e temas sensíveis.
+
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <aside class="hero-dossier">
+
+
+                    <div class="dossier-paper">
+
+
+                        <div class="dossier-top">
+
+                            <span>
+                                ARQUIVO SOMBRIO
+                            </span>
+
+                            <strong>
+                                CONFIDENCIAL
+                            </strong>
+
+                        </div>
+
+
+                        <div class="dossier-stamp">
+                            CLASSIFICADO
+                        </div>
+
+
+                        <div class="dossier-lines">
+
+
+                            <div>
+
+                                <small>
+                                    TIPO
+                                </small>
+
+                                <strong>
+                                    DOSSIÊ INVESTIGATIVO
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <small>
+                                    SETOR
+                                </small>
+
+                                <strong>
+                                    ARQUIVO CRIMINAL
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <small>
+                                    STATUS
+                                </small>
+
+                                <strong>
+                                    EM ANÁLISE
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <small>
+                                    ACESSO
+                                </small>
+
+                                <strong>
+                                    PÚBLICO / DOCUMENTAL
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="fingerprint-mark">
+
+                            <i class="fa-solid fa-fingerprint"></i>
+
+                        </div>
+
+
+                        <p class="dossier-code">
+                            AS / INVESTIGAÇÃO / 001
+                        </p>
+
+
+                    </div>
+
+
+                </aside>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ============================================================
+             DOSSIÊS
+             ============================================================ -->
+
+        <section
+            class="content-section cases-section"
+            id="casos"
+        >
+
+
+            <div class="container">
+
+
+                <header class="section-header">
+
+
+                    <div>
+
+                        <span class="section-number">
+                            ARQUIVO 01
+                        </span>
+
+                        <p class="section-eyebrow">
+                            ACERVO INVESTIGATIVO
+                        </p>
+
+                        <h2>
+                            Dossiês Classificados
+                        </h2>
+
+                    </div>
+
+
+                    <p class="section-description">
+
+                        Casos criminais, desaparecimentos, acontecimentos
+                        históricos e investigações que permanecem cercadas
+                        por dúvidas, controvérsias ou elementos incomuns.
+
+                    </p>
+
+
+                </header>
+                
+                                <!-- ========================================================
+                     PESQUISA E FILTROS DOS DOSSIÊS
+                     ======================================================== -->
+
+                <div class="archive-search-panel">
+
+
+                    <!-- PESQUISA -->
+
+                    <div class="archive-search">
+
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+
+                        <input
+                            type="search"
+                            id="busca-casos"
+                            placeholder="Pesquisar um caso..."
+                            autocomplete="off"
+                            aria-label="Pesquisar dossiês"
+                        >
+
+
+                        <button
+                            type="button"
+                            id="limpar-busca"
+                            class="clear-search-button"
+                            aria-label="Limpar pesquisa"
+                        >
+
+                            <i class="fa-solid fa-xmark"></i>
+
+                        </button>
+
+
+                    </div>
+
+
+
+                    <!-- FILTROS PRINCIPAIS -->
+
+                    <div
+                        class="quick-filters"
+                        id="filtros-rapidos"
+                    >
+
+
+                        <button
+                            type="button"
+                            class="filter-chip active"
+                            data-filtro="todos"
+                        >
+                            Todos
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="filter-chip"
+                            data-filtro="solucionado"
+                        >
+                            Solucionados
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="filter-chip"
+                            data-filtro="nao-solucionado"
+                        >
+                            Não solucionados
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="filter-chip"
+                            data-filtro="serial-killer"
+                        >
+                            Serial Killers
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="filter-chip"
+                            data-filtro="crime-familiar"
+                        >
+                            Crimes Familiares
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="filter-chip"
+                            data-filtro="desaparecimento"
+                        >
+                            Desaparecimentos
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="filter-chip"
+                            data-filtro="misterio"
+                        >
+                            Mistérios
+                        </button>
+
+
+                    </div>
+
+
+
+                    <!-- CONTROLES -->
+
+                    <div class="archive-filter-actions">
+
+
+                        <button
+                            type="button"
+                            class="advanced-filter-button"
+                            id="abrir-filtros-avancados"
+                        >
+
+                            <i class="fa-solid fa-sliders"></i>
+
+                            Mais filtros
+
+                            <i
+                                class="fa-solid fa-chevron-down"
+                                id="icone-filtros"
+                            ></i>
+
+                        </button>
+
+
+                        <select
+                            id="ordenar-casos"
+                            class="archive-order"
+                            aria-label="Ordenar dossiês"
+                        >
+
+                            <option value="padrao">
+                                Adicionados recentemente
+                            </option>
+
+                            <option value="az">
+                                Título: A–Z
+                            </option>
+
+                            <option value="za">
+                                Título: Z–A
+                            </option>
+
+                            <option value="recentes">
+                                Ano: mais recentes
+                            </option>
+
+                            <option value="antigos">
+                                Ano: mais antigos
+                            </option>
+
+                        </select>
+
+
+                    </div>
+
+
+
+                    <!-- FILTROS AVANÇADOS -->
+
+                    <div
+                        class="advanced-filters"
+                        id="filtros-avancados"
+                        hidden
+                    >
+
+
+                        <div class="advanced-filter-field">
+
+
+                            <label for="filtro-status">
+                                STATUS
+                            </label>
+
+
+                            <select id="filtro-status">
+
+                                <option value="">
+                                    Todos
+                                </option>
+
+                                <option value="solucionado">
+                                    Solucionado
+                                </option>
+
+                                <option value="nao-solucionado">
+                                    Não solucionado
+                                </option>
+
+                                <option value="em-investigacao">
+                                    Em investigação
+                                </option>
+
+                            </select>
+
+
+                        </div>
+
+
+
+                        <div class="advanced-filter-field">
+
+
+                            <label for="filtro-crime">
+                                TIPO
+                            </label>
+
+
+                            <select id="filtro-crime">
+
+                                <option value="">
+                                    Todos
+                                </option>
+
+                                <option value="homicidio">
+                                    Homicídio
+                                </option>
+
+                                <option value="serial-killer">
+                                    Serial Killer
+                                </option>
+
+                                <option value="desaparecimento">
+                                    Desaparecimento
+                                </option>
+
+                                <option value="crime-familiar">
+                                    Crime Familiar
+                                </option>
+
+                                <option value="matricidio">
+                                    Matricídio
+                                </option>
+
+                                <option value="parricidio">
+                                    Parricídio
+                                </option>
+
+                                <option value="filicidio">
+                                    Filicídio
+                                </option>
+
+                                <option value="misterio">
+                                    Mistério
+                                </option>
+
+                                <option value="morte-inexplicada">
+                                    Morte inexplicada
+                                </option>
+
+                            </select>
+
+
+                        </div>
+
+
+
+                        <div class="advanced-filter-field">
+
+
+                            <label for="filtro-autor">
+                                PERFIL DO AUTOR
+                            </label>
+
+
+                            <select id="filtro-autor">
+
+                                <option value="">
+                                    Todos
+                                </option>
+
+                                <option value="homem">
+                                    Homem
+                                </option>
+
+                                <option value="mulher">
+                                    Mulher
+                                </option>
+
+                                <option value="dupla">
+                                    Dupla
+                                </option>
+
+                                <option value="grupo">
+                                    Grupo
+                                </option>
+
+                                <option value="desconhecido">
+                                    Desconhecido
+                                </option>
+
+                            </select>
+
+
+                        </div>
+
+
+
+                        <div class="advanced-filter-field">
+
+
+                            <label for="filtro-pais">
+                                PAÍS
+                            </label>
+
+
+                            <select id="filtro-pais">
+
+                                <option value="">
+                                    Todos
+                                </option>
+
+                                <option value="Brasil">
+                                    Brasil
+                                </option>
+
+                                <option value="Estados Unidos">
+                                    Estados Unidos
+                                </option>
+
+                                <option value="Austrália">
+                                    Austrália
+                                </option>
+
+                                <option value="Rússia">
+                                    Rússia
+                                </option>
+
+                            </select>
+
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="reset-filters-button"
+                            id="resetar-filtros"
+                        >
+
+                            <i class="fa-solid fa-rotate-left"></i>
+                            Limpar filtros
+
+                        </button>
+
+
+                    </div>
+
+
+
+                    <!-- CONTADOR -->
+
+                    <div class="archive-results-bar">
+
+
+                        <p>
+
+                            <strong id="contador-casos">
+                                0
+                            </strong>
+
+                            <span id="contador-texto">
+                                dossiês encontrados
+                            </span>
+
+                        </p>
+
+
+                        <span
+                            class="active-filter-indicator"
+                            id="filtro-ativo-label"
+                        >
+                            ACERVO COMPLETO
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div
+                    class="casos-grid"
+                    id="grid-casos"
+                >
+
+
+                    <div class="loading-state">
+
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                        <p>
+                            Abrindo arquivos...
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ============================================================
+             FORENSE
+             ============================================================ -->
+
+        <section
+            class="content-section forensic-section"
+            id="forense"
+        >
+
+
+            <div class="container">
+
+
+                <header class="section-header">
+
+
+                    <div>
+
+                        <span class="section-number">
+                            ARQUIVO 02
+                        </span>
+
+                        <p class="section-eyebrow">
+                            LABORATÓRIO
+                        </p>
+
+                        <h2>
+                            Ciência Forense
+                        </h2>
+
+                    </div>
+
+
+                    <p class="section-description">
+
+                        Métodos, vestígios, técnicas e fundamentos utilizados
+                        na investigação científica de cenas, materiais e
+                        evidências.
+
+                    </p>
+
+
+                </header>
+
+
+
+                <div class="forensic-intro">
+
+
+                    <!-- PAPILOSCOPIA -->
+
+                    <a
+                        href="#grid-forense"
+                        class="forensic-intro-item forensic-intro-link"
+                        data-forensic-filter="papiloscopia"
+                    >
+
+
+                        <i class="fa-solid fa-fingerprint"></i>
+
+
+                        <div>
+
+                            <small>
+                                IDENTIFICAÇÃO
+                            </small>
+
+                            <strong>
+                                Papiloscopia
+                            </strong>
+
+                        </div>
+
+
+                    </a>
+
+
+
+                    <!-- ANÁLISE DE VESTÍGIOS -->
+
+                    <a
+                        href="#grid-forense"
+                        class="forensic-intro-item forensic-intro-link"
+                        data-forensic-filter="vestigios"
+                    >
+
+
+                        <i class="fa-solid fa-flask-vial"></i>
+
+
+                        <div>
+
+                            <small>
+                                QUÍMICA
+                            </small>
+
+                            <strong>
+                                Análise de Vestígios
+                            </strong>
+
+                        </div>
+
+
+                    </a>
+
+
+
+                    <!-- EVIDÊNCIA BIOLÓGICA -->
+
+                    <a
+                        href="#grid-forense"
+                        class="forensic-intro-item forensic-intro-link"
+                        data-forensic-filter="biologica"
+                    >
+
+
+                        <i class="fa-solid fa-dna"></i>
+
+
+                        <div>
+
+                            <small>
+                                BIOLOGIA
+                            </small>
+
+                            <strong>
+                                Evidência Biológica
+                            </strong>
+
+                        </div>
+
+
+                    </a>
+
+
+                </div>
+
+
+
+                <div
+                    class="casos-grid forensic-grid"
+                    id="grid-forense"
+                >
+
+
+                    <div class="loading-state">
+
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                        <p>
+                            Consultando laboratório...
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ============================================================
+             BIBLIOTECA
+             ============================================================ -->
+
+        <section
+            class="content-section books-section"
+            id="livros"
+        >
+
+
+            <div class="container">
+
+
+                <header class="section-header">
+
+
+                    <div>
+
+                        <span class="section-number">
+                            ARQUIVO 03
+                        </span>
+
+                        <p class="section-eyebrow">
+                            ESTANTE DO INVESTIGADOR
+                        </p>
+
+                        <h2>
+                            Biblioteca Sombria
+                        </h2>
+
+                    </div>
+
+
+                    <p class="section-description">
+
+                        Leituras sobre criminologia, investigação, perícia,
+                        casos reais, mistérios e folclore selecionadas para
+                        ampliar cada investigação.
+
+                    </p>
+
+
+                </header>
+
+
+
+                <div
+                    class="books-grid"
+                    id="grid-livros"
+                >
+
+
+                    <div class="loading-state">
+
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                        <p>
+                            Consultando estante...
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ============================================================
+             FÓRUM
+             ============================================================ -->
+
+        <section
+            class="content-section forum-section"
+            id="forum"
+        >
+
+
+            <div class="container">
+
+
+                <header class="section-header">
+
+
+                    <div>
+
+                        <span class="section-number">
+                            ARQUIVO 04
+                        </span>
+
+                        <p class="section-eyebrow">
+                            SALA DE ANÁLISE
+                        </p>
+
+                        <h2>
+                            Fórum Investigativo
+                        </h2>
+
+                    </div>
+
+
+                    <p class="section-description">
+
+                        Registre interpretações, observações e hipóteses
+                        relacionadas aos arquivos publicados.
+
+                    </p>
+
+
+                </header>
+
+
+
+                <div class="forum-layout">
+
+
+                    <!-- FORMULÁRIO -->
+
+                    <aside class="forum-form-panel">
+
+
+                        <span class="panel-label">
+                            NOVA ANÁLISE
+                        </span>
+
+
+                        <h3>
+                            Registrar observação
+                        </h3>
+
+
+                        <p>
+
+                            Entre na comunidade para registrar uma leitura,
+                            questionamento ou hipótese relacionada aos arquivos.
+
+                        </p>
+
+
+                        <!-- =================================================
+                             FORMULÁRIO DE PUBLICAÇÃO
+                             Só aparece quando o usuário está autenticado
+                             ================================================= -->
+
+                        <form
+                            id="form-forum"
+                            hidden
+                        >
+
+
+                            <div class="form-row">
+
+
+                                <label for="forum-titulo">
+                                    TÍTULO DA ANÁLISE
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="forum-titulo"
+                                    maxlength="150"
+                                    placeholder="Ex.: Uma inconsistência na cronologia"
+                                    required
+                                >
+
+
+                            </div>
+
+
+
+                            <div class="form-row">
+
+
+                                <label for="forum-categoria">
+                                    CATEGORIA
+                                </label>
+
+
+                                <select
+                                    id="forum-categoria"
+                                    required
+                                >
+
+                                    <option value="discussao">
+                                        Discussão
+                                    </option>
+
+                                    <option value="hipotese">
+                                        Hipótese
+                                    </option>
+
+                                    <option value="evidencia">
+                                        Evidência
+                                    </option>
+
+                                    <option value="duvida">
+                                        Dúvida
+                                    </option>
+
+                                </select>
+
+
+                            </div>
+
+
+
+                            <div class="form-row">
+
+
+                                <label for="forum-mensagem">
+                                    ANÁLISE
+                                </label>
+
+
+                                <textarea
+                                    id="forum-mensagem"
+                                    rows="6"
+                                    maxlength="3000"
+                                    placeholder="Escreva sua análise, observação ou hipótese..."
+                                    required
+                                ></textarea>
+
+
+                            </div>
+
+
+
+                            <button
+                                type="submit"
+                                class="btn-primary btn-form"
+                            >
+
+                                <i class="fa-solid fa-paper-plane"></i>
+                                Publicar Análise
+
+                            </button>
+
+
+                            <p
+                                class="form-message"
+                                id="comentario-sucesso"
+                                aria-live="polite"
+                            ></p>
+
+
+                        </form>
+
+
+                    </aside>
+
+
+
+                    <!-- COMENTÁRIOS -->
+
+                    <div class="forum-discussion">
+
+
+                        <div class="discussion-heading">
+
+
+                            <div>
+
+                                <span class="panel-label">
+                                    REGISTROS
+                                </span>
+
+                                <h3>
+                                    Últimas análises
+                                </h3>
+
+                            </div>
+
+
+                            <i class="fa-solid fa-comments"></i>
+
+
+                        </div>
+
+
+
+                        <div
+                            class="comments-list"
+                            id="lista-comentarios"
+                        >
+
+
+                            <div class="loading-state">
+
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                                <p>
+                                    Consultando registros...
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+        
+                <!-- ============================================================
+             SUGESTÃO
+             ============================================================ -->
+
+        <section
+            class="content-section suggestion-section"
+            id="sugestoes"
+        >
+
+
+            <div class="container suggestion-layout">
+
+
+                <div class="suggestion-copy">
+
+
+                    <span class="section-number">
+                        ARQUIVO 05
+                    </span>
+
+
+                    <p class="section-eyebrow">
+                        NOVA PAUTA
+                    </p>
+
+
+                    <h2>
+                        Existe um caso que deveria estar neste arquivo?
+                    </h2>
+
+
+                    <p>
+
+                        Envie uma sugestão de investigação, mistério, lenda,
+                        crime histórico ou tema de ciência forense para
+                        possível publicação futura.
+
+                    </p>
+
+
+                    <div class="suggestion-note">
+
+
+                        <i class="fa-solid fa-file-circle-question"></i>
+
+
+                        <span>
+
+                            Sugestões ficam armazenadas localmente nesta
+                            versão do projeto.
+
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <form
+                    class="suggestion-form"
+                    id="form-sugestao"
+                >
+
+
+                    <div class="form-row">
+
+
+                        <label for="sug-nome">
+                            SEU NOME
+                        </label>
+
+
+                        <input
+                            type="text"
+                            id="sug-nome"
+                            maxlength="60"
+                            placeholder="Nome ou codinome"
+                            required
+                        >
+
+
+                    </div>
+
+
+
+                    <div class="form-row">
+
+
+                        <label for="sug-titulo">
+                            CASO / TEMA
+                        </label>
+
+
+                        <input
+                            type="text"
+                            id="sug-titulo"
+                            maxlength="150"
+                            placeholder="Nome do caso ou assunto"
+                            required
+                        >
+
+
+                    </div>
+
+
+
+                    <div class="form-row">
+
+
+                        <label for="sug-descricao">
+                            POR QUE DEVEMOS INVESTIGAR?
+                        </label>
+
+
+                        <textarea
+                            id="sug-descricao"
+                            rows="5"
+                            maxlength="1200"
+                            placeholder="Conte brevemente por que este tema seria interessante para o Arquivo Sombrio."
+                        ></textarea>
+
+
+                    </div>
+
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary btn-form"
+                    >
+
+                        <i class="fa-solid fa-folder-plus"></i>
+                        Enviar para o Arquivo
+
+                    </button>
+
+
+
+                    <p
+                        class="form-message"
+                        id="mensagem-sucesso"
+                        aria-live="polite"
+                    ></p>
+
+
+                </form>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ================================================================
+         RODAPÉ
+         ================================================================ -->
+
+    <footer class="main-footer">
+
+
+        <div class="container footer-layout">
+
+
+            <div class="footer-brand">
+
+
+                <div class="footer-logo">
+
+                    ARQUIVO
+                    <strong>SOMBRIO</strong>
+
+                </div>
+
+
+                <p>
+
+                    Investigação documental, criminologia,
+                    ciência forense e arquivos obscuros.
+
+                </p>
+
+
+            </div>
+
+
+
+            <div class="footer-navigation">
+
+
+                <strong>
+                    ARQUIVOS
+                </strong>
+
+
+                <a href="#casos">
+                    Dossiês
+                </a>
+
+
+                <a href="#forense">
+                    Perícia
+                </a>
+
+
+                <a href="#livros">
+                    Biblioteca
+                </a>
+
+
+            </div>
+
+
+
+            <div class="footer-navigation">
+
+
+                <strong>
+                    COMUNIDADE
+                </strong>
+
+
+                <a href="#forum">
+                    Fórum
+                </a>
+
+
+                <a href="#sugestoes">
+                    Sugerir Caso
+                </a>
+
+
+            </div>
+
+
+
+            <div class="footer-seal">
+
+
+                <i class="fa-solid fa-fingerprint"></i>
+
+
+                <span>
+                    AS
+                </span>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="container footer-bottom">
+
+
+            <p>
+                &copy; 2026 Arquivo Sombrio.
+            </p>
+
+
+            <p>
+                Conteúdo documental, educacional e editorial.
+            </p>
+
+
+        </div>
+
+
+    </footer>
+
+
+
+    <!-- ================================================================
+         LOGIN ADMINISTRATIVO
+         ================================================================ -->
+
+    <div
+        class="modal-overlay"
+        id="modal-admin"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="admin-modal-title"
+    >
+
+
+        <div class="modal-card">
+
+
+            <button
+                type="button"
+                class="close-modal"
+                id="close-modal"
+                aria-label="Fechar"
+            >
+
+                &times;
+
+            </button>
+
+
+
+            <span class="modal-label">
+                ACESSO RESTRITO
+            </span>
+
+
+
+            <div class="modal-icon">
+
+                <i class="fa-solid fa-user-shield"></i>
+
+            </div>
+
+
+
+            <h2 id="admin-modal-title">
+                Central de Arquivo
+            </h2>
+
+
+
+            <p>
+
+                Insira a credencial administrativa para acessar
+                as ferramentas de gerenciamento.
+
+            </p>
+
+
+
+            <form id="form-admin-login">
+
+
+                <div class="form-row">
+
+
+                    <label for="admin-email">
+                        E-MAIL ADMINISTRATIVO
+                    </label>
+
+
+                    <input
+                        type="email"
+                        id="admin-email"
+                        placeholder="Digite seu e-mail"
+                        autocomplete="username"
+                        required
+                    >
+
+
+                </div>
+
+
+
+                <div class="form-row">
+
+
+                    <label for="admin-pass">
+                        SENHA
+                    </label>
+
+
+                    <input
+                        type="password"
+                        id="admin-pass"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        required
+                    >
+
+
+                </div>
+
+
+
+                <button
+                    type="submit"
+                    class="btn-primary btn-form"
+                >
+
+                    <i class="fa-solid fa-unlock-keyhole"></i>
+                    Acessar Painel
+
+                </button>
+
+
+
+                <p
+                    id="admin-login-erro"
+                    class="form-message error-message"
+                    aria-live="polite"
+                ></p>
+
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+    
+        <!-- ================================================================
+         JAVASCRIPT
+
+         ORDEM OBRIGATÓRIA:
+         primeiro os dados, depois a lógica.
+         ================================================================ -->
+
+    <script src="data/caso.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/filtros.js"></script>
+
+
+</body>
+
+</html>
