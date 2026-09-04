@@ -3564,6 +3564,10 @@ async function inicializarForum() {
     const botaoSair =
         document.getElementById("forum-btn-logout");
 
+   const botaoExcluirConta =
+    document.getElementById(
+        "forum-btn-delete-account"
+    );
 
     if (
         !formulario &&
