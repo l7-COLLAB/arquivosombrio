@@ -19,6 +19,9 @@ const SUPABASE_PUBLISHABLE_KEY =
 const SUPABASE_SDK_URL =
     "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
+const TURNSTILE_SITE_KEY = "0x4AAAAAAEnNLBi2BDt_aJkF";
+   
+
 let clienteSupabase = null;
 let promessaSupabaseSDK = null;
 let casosSupabase = [];
