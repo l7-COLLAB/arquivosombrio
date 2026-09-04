@@ -3601,13 +3601,16 @@ async function cadastrarForum() {
                 email,
                 password: senha,
 
-                options: {
+              options: {
 
-                    data: {
-                        display_name: nome
-                    }
+    emailRedirectTo:
+        "https://l7-collab.github.io/arquivosombrio/",
 
-                }
+    data: {
+        display_name: nome
+    }
+
+}
 
             });
 
