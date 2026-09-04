@@ -1,0 +1,2427 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Política de Fontes, Direitos Autorais e Uso de Materiais de Terceiros do Arquivo Sombrio."
+    >
+
+    <title>
+        Fontes e Direitos Autorais | Arquivo Sombrio
+    </title>
+
+
+    <!-- GOOGLE FONTS -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Roboto+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- FONT AWESOME -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <style>
+
+        :root {
+
+            --background:
+                #080808;
+
+            --surface:
+                #101010;
+
+            --surface-soft:
+                #151515;
+
+            --border:
+                rgba(255, 255, 255, 0.10);
+
+            --border-strong:
+                rgba(255, 255, 255, 0.18);
+
+            --text:
+                #e7e2d8;
+
+            --text-soft:
+                #aaa49a;
+
+            --text-muted:
+                #777168;
+
+            --accent:
+                #781d1d;
+
+            --accent-light:
+                #a83a32;
+
+            --paper:
+                #c6bba8;
+
+        }
+
+
+        * {
+
+            box-sizing:
+                border-box;
+
+        }
+
+
+        html {
+
+            scroll-behavior:
+                smooth;
+
+        }
+
+
+        body {
+
+            margin:
+                0;
+
+            background:
+                var(--background);
+
+            color:
+                var(--text);
+
+            font-family:
+                "Roboto Mono",
+                monospace;
+
+            line-height:
+                1.8;
+
+        }
+
+
+        a {
+
+            color:
+                inherit;
+
+            text-decoration:
+                none;
+
+        }
+
+
+        /* =========================================
+           CABEÇALHO
+           ========================================= */
+
+        .legal-header {
+
+            border-bottom:
+                1px solid
+                var(--border);
+
+            background:
+                rgba(8, 8, 8, 0.96);
+
+        }
+
+
+        .legal-header-inner {
+
+            width:
+                min(1120px, calc(100% - 40px));
+
+            margin:
+                0 auto;
+
+            min-height:
+                78px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                24px;
+
+        }
+
+
+        .brand {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                13px;
+
+        }
+
+
+        .brand-mark {
+
+            width:
+                38px;
+
+            height:
+                38px;
+
+            border:
+                1px solid
+                var(--border-strong);
+
+            display:
+                grid;
+
+            place-items:
+                center;
+
+            color:
+                var(--accent-light);
+
+        }
+
+
+        .brand-name {
+
+            font-family:
+                "Cinzel",
+                serif;
+
+            font-size:
+                1rem;
+
+            letter-spacing:
+                0.14em;
+
+            text-transform:
+                uppercase;
+
+        }
+
+
+        .back-link {
+
+            color:
+                var(--text-soft);
+
+            font-size:
+                0.78rem;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                0.08em;
+
+            transition:
+                color 0.2s ease;
+
+        }
+
+
+        .back-link:hover {
+
+            color:
+                var(--text);
+
+        }
+
+
+        /* =========================================
+           HERO
+           ========================================= */
+
+        .legal-hero {
+
+            border-bottom:
+                1px solid
+                var(--border);
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(120, 29, 29, 0.10),
+                    transparent
+                );
+
+        }
+
+
+        .legal-hero-inner {
+
+            width:
+                min(960px, calc(100% - 40px));
+
+            margin:
+                0 auto;
+
+            padding:
+                92px 0 72px;
+
+        }
+
+
+        .legal-kicker {
+
+            color:
+                var(--accent-light);
+
+            font-size:
+                0.72rem;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                0.18em;
+
+            margin-bottom:
+                18px;
+
+        }
+
+
+        .legal-title {
+
+            margin:
+                0;
+
+            font-family:
+                "Cinzel",
+                serif;
+
+            font-size:
+                clamp(2.1rem, 6vw, 4.5rem);
+
+            font-weight:
+                500;
+
+            line-height:
+                1.08;
+
+            letter-spacing:
+                0.02em;
+
+        }
+
+
+        .legal-subtitle {
+
+            max-width:
+                760px;
+
+            margin:
+                28px 0 0;
+
+            color:
+                var(--text-soft);
+
+            font-size:
+                0.94rem;
+
+        }
+
+
+        .legal-meta {
+
+            margin-top:
+                34px;
+
+            display:
+                flex;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                12px;
+
+        }
+
+
+        .legal-meta span {
+
+            border:
+                1px solid
+                var(--border);
+
+            padding:
+                8px 12px;
+
+            color:
+                var(--text-muted);
+
+            font-size:
+                0.70rem;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                0.08em;
+
+        }
+
+        /* =========================================
+           CONTEÚDO
+           ========================================= */
+
+        .legal-main {
+
+            width:
+                min(960px, calc(100% - 40px));
+
+            margin:
+                0 auto;
+
+            padding:
+                70px 0 100px;
+
+        }
+
+
+        .legal-intro {
+
+            margin-bottom:
+                58px;
+
+            padding:
+                24px;
+
+            border:
+                1px solid
+                var(--border);
+
+            border-left:
+                3px solid
+                var(--accent);
+
+            background:
+                var(--surface);
+
+            color:
+                var(--text-soft);
+
+            font-size:
+                0.88rem;
+
+        }
+
+
+        .legal-section {
+
+            padding:
+                38px 0;
+
+            border-bottom:
+                1px solid
+                var(--border);
+
+        }
+
+
+        .legal-section:first-of-type {
+
+            padding-top:
+                0;
+
+        }
+
+
+        .legal-section h2 {
+
+            margin:
+                0 0 20px;
+
+            font-family:
+                "Cinzel",
+                serif;
+
+            font-size:
+                clamp(1.2rem, 3vw, 1.65rem);
+
+            font-weight:
+                500;
+
+            line-height:
+                1.4;
+
+            color:
+                var(--paper);
+
+        }
+
+
+        .section-number {
+
+            display:
+                block;
+
+            margin-bottom:
+                8px;
+
+            color:
+                var(--accent-light);
+
+            font-family:
+                "Roboto Mono",
+                monospace;
+
+            font-size:
+                0.68rem;
+
+            letter-spacing:
+                0.14em;
+
+        }
+
+
+        .legal-section p {
+
+            margin:
+                0 0 17px;
+
+            color:
+                var(--text-soft);
+
+            font-size:
+                0.88rem;
+
+        }
+
+
+        .legal-section p:last-child {
+
+            margin-bottom:
+                0;
+
+        }
+
+
+        .legal-section ul {
+
+            margin:
+                18px 0;
+
+            padding-left:
+                24px;
+
+            color:
+                var(--text-soft);
+
+            font-size:
+                0.88rem;
+
+        }
+
+
+        .legal-section li {
+
+            margin-bottom:
+                11px;
+
+        }
+
+
+        .legal-section strong {
+
+            color:
+                var(--text);
+
+            font-weight:
+                500;
+
+        }
+
+
+        .legal-section a {
+
+            color:
+                var(--paper);
+
+            border-bottom:
+                1px dotted
+                var(--text-muted);
+
+        }
+
+
+        .legal-section a:hover {
+
+            color:
+                var(--text);
+
+        }
+
+
+        /* =========================================
+           CAIXAS DE AVISO
+           ========================================= */
+
+        .notice {
+
+            margin:
+                24px 0;
+
+            padding:
+                20px;
+
+            border:
+                1px solid
+                var(--border);
+
+            background:
+                var(--surface-soft);
+
+        }
+
+
+        .notice-title {
+
+            display:
+                block;
+
+            margin-bottom:
+                10px;
+
+            color:
+                var(--accent-light);
+
+            font-size:
+                0.72rem;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                0.12em;
+
+        }
+
+
+        .notice p {
+
+            margin:
+                0;
+
+        }
+
+
+        /* =========================================
+           RODAPÉ
+           ========================================= */
+
+        .legal-footer {
+
+            border-top:
+                1px solid
+                var(--border);
+
+            padding:
+                38px 0;
+
+            color:
+                var(--text-muted);
+
+        }
+
+
+        .legal-footer-inner {
+
+            width:
+                min(960px, calc(100% - 40px));
+
+            margin:
+                0 auto;
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                20px;
+
+            font-size:
+                0.72rem;
+
+        }
+
+
+        .legal-footer-links {
+
+            display:
+                flex;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                18px;
+
+        }
+
+
+        .legal-footer a:hover {
+
+            color:
+                var(--text);
+
+        }
+
+
+        /* =========================================
+           RESPONSIVO
+           ========================================= */
+
+        @media (max-width: 700px) {
+
+            .legal-header-inner {
+
+                width:
+                    min(100% - 28px, 1120px);
+
+                min-height:
+                    68px;
+
+            }
+
+
+            .brand-name {
+
+                font-size:
+                    0.84rem;
+
+            }
+
+
+            .legal-hero-inner,
+            .legal-main,
+            .legal-footer-inner {
+
+                width:
+                    min(100% - 28px, 960px);
+
+            }
+
+
+            .legal-hero-inner {
+
+                padding:
+                    68px 0 54px;
+
+            }
+
+
+            .legal-main {
+
+                padding:
+                    52px 0 72px;
+
+            }
+
+
+            .legal-section {
+
+                padding:
+                    32px 0;
+
+            }
+
+
+            .legal-footer-inner {
+
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         CABEÇALHO
+         ========================================= -->
+
+    <header class="legal-header">
+
+        <div class="legal-header-inner">
+
+            <a
+                href="index.html"
+                class="brand"
+                aria-label="Voltar para a página inicial do Arquivo Sombrio"
+            >
+
+                <span class="brand-mark">
+
+                    <i class="fa-solid fa-fingerprint"></i>
+
+                </span>
+
+                <span class="brand-name">
+                    Arquivo Sombrio
+                </span>
+
+            </a>
+
+
+            <a
+                href="index.html"
+                class="back-link"
+            >
+                ← Voltar ao arquivo
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================
+         APRESENTAÇÃO
+         ========================================= -->
+
+    <section class="legal-hero">
+
+        <div class="legal-hero-inner">
+
+            <div class="legal-kicker">
+                Fontes · Autoria · Documentação
+            </div>
+
+            <h1 class="legal-title">
+                Fontes e Direitos Autorais
+            </h1>
+
+            <p class="legal-subtitle">
+
+                Esta política apresenta os princípios adotados
+                pelo Arquivo Sombrio para utilização de fontes,
+                fotografias, documentos, obras e outros
+                materiais próprios ou de terceiros.
+
+            </p>
+
+
+            <div class="legal-meta">
+
+                <span>
+                    Versão 1.0
+                </span>
+
+                <span>
+                    Atualizada em 04 de setembro de 2026
+                </span>
+
+                <span>
+                    Política Editorial
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <main class="legal-main">
+
+        <div class="legal-intro">
+
+            O Arquivo Sombrio possui finalidade documental,
+            informativa, educacional e editorial. A existência
+            de um material na internet não significa que ele
+            esteja livre de direitos autorais. Sempre que
+            aplicável, o projeto busca identificar fontes,
+            respeitar direitos de terceiros e utilizar materiais
+            de forma compatível com a legislação e com as
+            autorizações ou licenças correspondentes.
+
+        </div>
+
+        <!-- =========================================
+             01
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    01
+                </span>
+
+                Finalidade desta política
+
+            </h2>
+
+            <p>
+
+                Esta política estabelece princípios para a
+                pesquisa, seleção, identificação e utilização
+                de fontes e materiais no Arquivo Sombrio.
+
+            </p>
+
+            <p>
+
+                Ela se aplica especialmente a dossiês,
+                artigos, conteúdos forenses, materiais
+                históricos, publicações da Comunidade e outros
+                conteúdos editoriais disponibilizados pela
+                plataforma.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             02
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    02
+                </span>
+
+                Princípios de pesquisa
+
+            </h2>
+
+            <p>
+
+                Na elaboração de conteúdos documentais e
+                editoriais, o Arquivo Sombrio buscará utilizar
+                fontes adequadas à natureza das informações
+                apresentadas.
+
+            </p>
+
+            <p>
+
+                Sempre que possível, será dada preferência a
+                fontes primárias, documentos oficiais,
+                registros públicos, decisões judiciais,
+                publicações institucionais, trabalhos
+                acadêmicos e veículos jornalísticos
+                identificáveis.
+
+            </p>
+
+            <p>
+
+                A existência de uma fonte não significa que
+                todas as informações nela contidas sejam
+                necessariamente tratadas como fatos
+                incontroversos.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             03
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    03
+                </span>
+
+                Identificação das fontes
+
+            </h2>
+
+            <p>
+
+                Quando pertinente, os conteúdos poderão
+                apresentar referências que permitam ao leitor
+                identificar a origem das principais informações
+                utilizadas na elaboração do material.
+
+            </p>
+
+            <p>
+
+                A forma de apresentação das referências poderá
+                variar conforme o tipo de fonte, o formato do
+                conteúdo e a disponibilidade das informações
+                bibliográficas ou documentais.
+
+            </p>
+
+            <p>
+
+                Links externos poderão ser utilizados como
+                recurso complementar, mas sua disponibilidade
+                futura não é controlada pelo Arquivo Sombrio.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             04
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    04
+                </span>
+
+                Fontes primárias e secundárias
+
+            </h2>
+
+            <p>
+
+                Dependendo do caso analisado, poderão ser
+                utilizadas fontes primárias e secundárias.
+
+            </p>
+
+            <p>
+
+                Entre as fontes primárias podem estar, quando
+                legitimamente acessíveis, documentos oficiais,
+                registros públicos, decisões, relatórios,
+                entrevistas, arquivos históricos e outros
+                materiais diretamente relacionados aos fatos.
+
+            </p>
+
+            <p>
+
+                Fontes secundárias podem incluir livros,
+                artigos acadêmicos, reportagens, documentários,
+                pesquisas e outras análises produzidas a partir
+                de informações preexistentes.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             05
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    05
+                </span>
+
+                Informações divergentes
+
+            </h2>
+
+            <p>
+
+                Casos reais podem possuir versões conflitantes,
+                informações incompletas ou interpretações
+                diferentes entre fontes.
+
+            </p>
+
+            <p>
+
+                Quando uma divergência for relevante para a
+                compreensão do caso, o conteúdo poderá
+                apresentar essa circunstância em vez de tratar
+                uma versão controversa como fato definitivamente
+                estabelecido.
+
+            </p>
+
+            <p>
+
+                Hipóteses, alegações, relatos e conclusões
+                oficiais deverão ser diferenciados sempre que
+                essa distinção for necessária para evitar uma
+                apresentação enganosa.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             06
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    06
+                </span>
+
+                Correções e atualização de fontes
+
+            </h2>
+
+            <p>
+
+                Informações poderão ser corrigidas,
+                complementadas ou atualizadas quando novas
+                fontes relevantes forem identificadas ou quando
+                for constatado erro material no conteúdo.
+
+            </p>
+
+            <p>
+
+                Uma correção poderá incluir alteração do texto,
+                inclusão de contexto, atualização de referência
+                ou outra medida editorial adequada à situação.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             07
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    07
+                </span>
+
+                Citação não transfere direitos autorais
+
+            </h2>
+
+            <p>
+
+                A identificação do autor, fotógrafo, veículo,
+                editora, instituição ou fonte de determinado
+                material não substitui, quando necessária, a
+                autorização ou licença para sua utilização.
+
+            </p>
+
+            <div class="notice">
+
+                <strong class="notice-title">
+                    Atenção
+                </strong>
+
+                <p>
+
+                    Dar crédito a uma obra não significa que ela
+                    se tornou livre para reprodução. A fonte e
+                    a situação jurídica do material devem ser
+                    avaliadas separadamente.
+
+                </p>
+
+            </div>
+
+        </section>
+
+              <!-- =========================================
+             08
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    08
+                </span>
+
+                Direitos autorais
+
+            </h2>
+
+            <p>
+
+                Textos, fotografias, ilustrações, livros,
+                reportagens, vídeos, áudios, documentos e
+                outros materiais podem estar protegidos por
+                direitos autorais mesmo quando encontrados
+                gratuitamente na internet.
+
+            </p>
+
+            <p>
+
+                O Arquivo Sombrio buscará utilizar materiais
+                próprios, devidamente licenciados, autorizados,
+                em domínio público ou cuja utilização possua
+                fundamento jurídico aplicável ao contexto.
+
+            </p>
+
+            <p>
+
+                Nenhuma disposição desta política deve ser
+                interpretada como autorização geral para
+                copiar obras de terceiros.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             09
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    09
+                </span>
+
+                Fotografias e imagens de casos reais
+
+            </h2>
+
+            <p>
+
+                Fotografias relacionadas a casos reais poderão
+                possuir direitos pertencentes a fotógrafos,
+                agências, veículos de imprensa, instituições,
+                arquivos ou outros titulares.
+
+            </p>
+
+            <p>
+
+                Antes da publicação, deverão ser considerados,
+                conforme aplicável, a origem da imagem, sua
+                licença ou autorização, eventual situação de
+                domínio público e outros fundamentos jurídicos
+                relevantes.
+
+            </p>
+
+            <p>
+
+                O fato de uma fotografia ter sido reproduzida
+                em diversos sites ou redes sociais não
+                demonstra, por si só, que sua utilização é
+                livre.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             10
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    10
+                </span>
+
+                Imagens de vítimas e pessoas reais
+
+            </h2>
+
+            <p>
+
+                Além de questões autorais, a publicação de
+                imagens de pessoas reais poderá exigir análise
+                de direitos de personalidade, privacidade,
+                dignidade, contexto informativo e possíveis
+                impactos sobre vítimas, familiares e demais
+                pessoas envolvidas.
+
+            </p>
+
+            <p>
+
+                A disponibilidade pública de uma fotografia
+                não elimina automaticamente esses cuidados.
+
+            </p>
+
+            <p>
+
+                Conteúdos especialmente sensíveis deverão ser
+                avaliados com cautela adicional, inclusive
+                quanto à necessidade editorial de sua
+                utilização.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             11
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    11
+                </span>
+
+                Imagens gráficas, forenses e de autópsia
+
+            </h2>
+
+            <p>
+
+                Fotografias de cenas de crime, autópsias,
+                cadáveres, lesões ou outros materiais gráficos
+                exigem análise especialmente cuidadosa antes
+                de qualquer publicação.
+
+            </p>
+
+            <p>
+
+                Quando utilizadas legitimamente, sua presença
+                deverá possuir finalidade editorial,
+                documental, histórica, educativa ou
+                informativa compatível com o conteúdo.
+
+            </p>
+
+            <p>
+
+                Poderão ser adotados avisos de conteúdo,
+                ocultação inicial da imagem, limitação de
+                visualização ou outras medidas destinadas a
+                reduzir exposição inesperada.
+
+            </p>
+
+            <div class="notice">
+
+                <strong class="notice-title">
+                    Conteúdo sensível
+                </strong>
+
+                <p>
+
+                    Interesse público ou relevância documental
+                    não tornam automaticamente apropriada a
+                    publicação de toda imagem disponível sobre
+                    um caso.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             12
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    12
+                </span>
+
+                Documentos oficiais e registros públicos
+
+            </h2>
+
+            <p>
+
+                A possibilidade de acesso público a um
+                documento não significa necessariamente que
+                todo o seu conteúdo possa ser reproduzido,
+                redistribuído ou exposto sem outras
+                considerações jurídicas.
+
+            </p>
+
+            <p>
+
+                Documentos poderão conter dados pessoais,
+                informações sensíveis, imagens, obras de
+                terceiros ou outros elementos sujeitos a
+                restrições específicas.
+
+            </p>
+
+            <p>
+
+                Quando adequado, o Arquivo Sombrio poderá
+                utilizar apenas trechos, transcrições,
+                referências ou descrições necessárias para a
+                finalidade editorial pretendida.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             13
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    13
+                </span>
+
+                Domínio público
+
+            </h2>
+
+            <p>
+
+                Materiais efetivamente em domínio público
+                poderão ser utilizados conforme as regras
+                aplicáveis, sem que isso elimine a necessidade
+                de verificar outros direitos eventualmente
+                relacionados ao material.
+
+            </p>
+
+            <p>
+
+                A antiguidade de uma obra ou fotografia,
+                isoladamente, não deve ser utilizada como prova
+                suficiente de que ela está em domínio público.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             14
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    14
+                </span>
+
+                Licenças de uso
+
+            </h2>
+
+            <p>
+
+                Materiais disponibilizados sob licenças
+                específicas deverão ser utilizados de acordo
+                com as respectivas condições.
+
+            </p>
+
+            <p>
+
+                Essas condições podem envolver atribuição de
+                autoria, indicação da licença, restrições de
+                modificação, limitações comerciais ou outras
+                exigências.
+
+            </p>
+
+            <p>
+
+                A equipe editorial deverá verificar as
+                condições aplicáveis ao material antes de sua
+                publicação.
+
+            </p>
+
+        </section>
+
+              <!-- =========================================
+             15
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    15
+                </span>
+
+                Livros e obras recomendadas
+
+            </h2>
+
+            <p>
+
+                O Arquivo Sombrio poderá recomendar livros,
+                documentários, filmes, podcasts e outras obras
+                relacionadas aos temas abordados na plataforma.
+
+            </p>
+
+            <p>
+
+                A indicação de uma obra não transfere ao
+                Arquivo Sombrio qualquer direito sobre seu
+                conteúdo, título, capa, marca ou demais
+                elementos protegidos.
+
+            </p>
+
+            <p>
+
+                Imagens de capas, trechos, descrições e outros
+                materiais relacionados às obras deverão ser
+                utilizados somente quando houver fundamento
+                adequado para isso.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             16
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    16
+                </span>
+
+                Trechos de textos e publicações
+
+            </h2>
+
+            <p>
+
+                A utilização de trechos de livros, reportagens,
+                artigos ou outras obras deverá respeitar os
+                limites aplicáveis ao direito de citação e
+                demais regras pertinentes.
+
+            </p>
+
+            <p>
+
+                Sempre que aplicável, a utilização deverá ser
+                limitada ao necessário para a finalidade
+                informativa, crítica, documental ou de estudo,
+                com identificação adequada da obra e de sua
+                autoria.
+
+            </p>
+
+            <p>
+
+                O Arquivo Sombrio não pretende disponibilizar
+                reproduções substanciais de obras de terceiros
+                como substituição ao acesso à publicação
+                original.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             17
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    17
+                </span>
+
+                Notícias e veículos jornalísticos
+
+            </h2>
+
+            <p>
+
+                Reportagens e veículos jornalísticos poderão
+                ser utilizados como fontes para pesquisa e
+                contextualização de casos.
+
+            </p>
+
+            <p>
+
+                O Arquivo Sombrio deverá produzir seus próprios
+                textos editoriais e evitar a reprodução
+                integral ou substancial de matérias de
+                terceiros sem autorização ou outro fundamento
+                jurídico aplicável.
+
+            </p>
+
+            <p>
+
+                Quando pertinente, a fonte jornalística poderá
+                ser identificada para permitir ao leitor
+                localizar a publicação original.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             18
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    18
+                </span>
+
+                Vídeos, áudios e incorporações
+
+            </h2>
+
+            <p>
+
+                Vídeos, áudios, podcasts e outros conteúdos
+                multimídia de terceiros poderão estar sujeitos
+                a direitos autorais, direitos de personalidade
+                e regras próprias das plataformas em que foram
+                publicados.
+
+            </p>
+
+            <p>
+
+                Quando forem utilizadas ferramentas oficiais
+                de incorporação, o conteúdo continuará sujeito
+                às condições da plataforma de origem e às
+                decisões de seus respectivos responsáveis.
+
+            </p>
+
+            <p>
+
+                A possibilidade técnica de incorporar ou
+                compartilhar determinado conteúdo não deve ser
+                interpretada como autorização irrestrita para
+                reutilizá-lo de qualquer forma.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             19
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    19
+                </span>
+
+                Conteúdo de redes sociais
+
+            </h2>
+
+            <p>
+
+                Fotografias, vídeos, textos e outras
+                publicações encontradas em redes sociais não
+                são automaticamente livres para reprodução
+                fora dessas plataformas.
+
+            </p>
+
+            <p>
+
+                Antes de reutilizar esse tipo de material,
+                deverão ser considerados sua autoria, contexto,
+                direitos das pessoas retratadas, regras da
+                plataforma de origem e eventual autorização ou
+                fundamento jurídico aplicável.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             20
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    20
+                </span>
+
+                Links para materiais externos
+
+            </h2>
+
+            <p>
+
+                O Arquivo Sombrio poderá disponibilizar links
+                para documentos, reportagens, páginas
+                institucionais, vídeos, livros e outros
+                materiais hospedados por terceiros.
+
+            </p>
+
+            <p>
+
+                A inclusão de um link não significa que o
+                Arquivo Sombrio controla, hospeda ou assume
+                responsabilidade pelo conteúdo integral do
+                destino externo.
+
+            </p>
+
+            <p>
+
+                Links poderão deixar de funcionar ou ter seu
+                conteúdo alterado pelos respectivos
+                responsáveis sem controle do Arquivo Sombrio.
+
+            </p>
+
+        </section>
+
+              <!-- =========================================
+             21
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    21
+                </span>
+
+                Conteúdo publicado por usuários
+
+            </h2>
+
+            <p>
+
+                Usuários da Comunidade são responsáveis por
+                observar os direitos aplicáveis aos textos,
+                imagens, documentos, links e demais materiais
+                que publicarem.
+
+            </p>
+
+            <p>
+
+                A publicação de conteúdo por um usuário não
+                significa que o Arquivo Sombrio reconhece ou
+                confirma que esse usuário possui todos os
+                direitos necessários sobre o material.
+
+            </p>
+
+            <p>
+
+                Conteúdos que apresentem possível violação de
+                direitos poderão ser analisados conforme os
+                <a href="termos.html">
+                    Termos de Uso
+                </a>,
+                as
+                <a href="diretrizes.html">
+                    Diretrizes da Comunidade
+                </a>
+                e a
+                <a href="moderacao.html">
+                    Política de Moderação e Denúncias
+                </a>.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             22
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    22
+                </span>
+
+                Materiais produzidos com inteligência artificial
+
+            </h2>
+
+            <p>
+
+                O Arquivo Sombrio poderá utilizar ferramentas
+                de inteligência artificial como apoio à
+                produção de determinados materiais, desde que
+                seu uso seja compatível com a finalidade do
+                conteúdo e com as regras aplicáveis.
+
+            </p>
+
+            <p>
+
+                Imagens sintéticas, reconstruções,
+                dramatizações ou outros materiais gerados ou
+                substancialmente modificados não deverão ser
+                apresentados de forma enganosa como fotografias,
+                documentos ou evidências autênticas de um caso
+                real.
+
+            </p>
+
+            <p>
+
+                Quando a natureza sintética ou modificada do
+                material for relevante para sua compreensão,
+                essa circunstância deverá ser indicada de forma
+                adequada ao contexto.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             23
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    23
+                </span>
+
+                Autoria do conteúdo do Arquivo Sombrio
+
+            </h2>
+
+            <p>
+
+                Salvo indicação em contrário, os textos
+                originais, elementos editoriais, organização
+                dos dossiês, identidade visual e demais
+                conteúdos próprios produzidos para o Arquivo
+                Sombrio permanecem sujeitos aos direitos
+                aplicáveis de seus respectivos titulares.
+
+            </p>
+
+            <p>
+
+                A disponibilização pública do site não concede
+                autorização geral para reprodução,
+                redistribuição, republicação ou exploração
+                comercial de seus conteúdos próprios.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             24
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    24
+                </span>
+
+                Solicitações relacionadas a direitos autorais
+
+            </h2>
+
+            <p>
+
+                Titulares de direitos ou seus representantes
+                poderão solicitar análise de materiais que
+                considerem utilizados de maneira inadequada no
+                Arquivo Sombrio.
+
+            </p>
+
+            <p>
+
+                A solicitação deverá, quando possível,
+                identificar de forma suficiente o material
+                questionado, sua localização na plataforma e
+                as informações necessárias para compreender a
+                alegação apresentada.
+
+            </p>
+
+            <p>
+
+                O recebimento de uma solicitação não significa
+                reconhecimento automático de violação. O
+                material e as informações apresentadas poderão
+                ser analisados antes da adoção de medida.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             25
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    25
+                </span>
+
+                Possíveis medidas
+
+            </h2>
+
+            <p>
+
+                Após análise de uma solicitação relacionada a
+                direitos autorais ou outros direitos de
+                terceiros, poderão ser adotadas medidas
+                compatíveis com a situação, incluindo, quando
+                adequado:
+
+            </p>
+
+            <ul>
+
+                <li>
+                    correção ou complementação de crédito;
+                </li>
+
+                <li>
+                    substituição do material;
+                </li>
+
+                <li>
+                    limitação de sua utilização;
+                </li>
+
+                <li>
+                    remoção do conteúdo;
+                </li>
+
+                <li>
+                    solicitação de informações adicionais;
+                </li>
+
+                <li>
+                    manutenção do conteúdo quando houver
+                    fundamento adequado para sua utilização.
+                </li>
+
+            </ul>
+
+            <p>
+
+                A medida aplicável dependerá das circunstâncias
+                e das informações disponíveis em cada caso.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             26
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    26
+                </span>
+
+                Alegações indevidas ou fraudulentas
+
+            </h2>
+
+            <p>
+
+                Solicitações relacionadas a direitos de
+                terceiros devem ser apresentadas de boa-fé.
+
+            </p>
+
+            <p>
+
+                O envio deliberado de informações falsas,
+                documentos adulterados ou alegações
+                fraudulentas poderá ser tratado conforme as
+                regras da plataforma e a legislação aplicável.
+
+            </p>
+
+        </section>
+
+              <!-- =========================================
+             27
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    27
+                </span>
+
+                Direitos de personalidade e direitos autorais
+
+            </h2>
+
+            <p>
+
+                Direitos autorais e direitos de personalidade
+                são questões distintas e poderão exigir
+                análises separadas.
+
+            </p>
+
+            <p>
+
+                A existência de autorização ou fundamento para
+                utilização de uma fotografia, por exemplo, não
+                elimina automaticamente questões relacionadas
+                à imagem, privacidade, honra ou dignidade da
+                pessoa retratada.
+
+            </p>
+
+            <p>
+
+                Da mesma forma, a relevância pública de uma
+                pessoa ou de determinado caso não elimina todos
+                os direitos relacionados ao material utilizado.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             28
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    28
+                </span>
+
+                Pessoas reais, vítimas e familiares
+
+            </h2>
+
+            <p>
+
+                A seleção de fotografias, documentos e outros
+                materiais envolvendo pessoas reais deverá
+                considerar sua relevância para o conteúdo e os
+                possíveis impactos de sua publicação.
+
+            </p>
+
+            <p>
+
+                Atenção especial deverá ser dedicada a vítimas,
+                familiares, crianças e adolescentes, pessoas
+                não públicas e indivíduos cuja exposição não
+                seja necessária para a finalidade editorial
+                pretendida.
+
+            </p>
+
+            <p>
+
+                A cobertura de crimes reais não deve ser
+                utilizada como justificativa automática para
+                exposição desnecessária, humilhação ou
+                exploração de pessoas envolvidas.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             29
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    29
+                </span>
+
+                Responsabilidade editorial
+
+            </h2>
+
+            <p>
+
+                A equipe responsável pelo Arquivo Sombrio deverá
+                avaliar os materiais utilizados de acordo com
+                seu contexto, origem, finalidade e condições de
+                utilização conhecidas.
+
+            </p>
+
+            <p>
+
+                Esta política funciona como orientação
+                editorial e não substitui análise jurídica
+                específica quando a natureza de determinado
+                material exigir avaliação especializada.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             30
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    30
+                </span>
+
+                Relação com outras políticas
+
+            </h2>
+
+            <p>
+
+                Esta política deve ser interpretada em conjunto
+                com os
+                <a href="termos.html">
+                    Termos de Uso
+                </a>,
+                as
+                <a href="diretrizes.html">
+                    Diretrizes da Comunidade
+                </a>,
+                a
+                <a href="moderacao.html">
+                    Política de Moderação e Denúncias
+                </a>
+                e a
+                <a href="privacidade.html">
+                    Política de Privacidade
+                </a>.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             31
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    31
+                </span>
+
+                Contato sobre materiais e direitos
+
+            </h2>
+
+            <p>
+
+                Solicitações relacionadas a autoria, direitos
+                autorais, uso de imagem, correções de crédito
+                ou outros direitos relacionados a materiais
+                publicados poderão ser encaminhadas ao canal
+                oficial do Arquivo Sombrio.
+
+            </p>
+
+            <p>
+
+                O endereço definitivo será informado antes do
+                lançamento público da plataforma:
+
+            </p>
+
+
+            <div class="notice">
+
+                <strong class="notice-title">
+                    Contato oficial
+                </strong>
+
+                <p>
+                    [E-MAIL OFICIAL A DEFINIR ANTES DO LANÇAMENTO]
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             32
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    32
+                </span>
+
+                Alterações desta política
+
+            </h2>
+
+            <p>
+
+                Esta política poderá ser atualizada conforme o
+                Arquivo Sombrio desenvolva novos formatos de
+                conteúdo, ferramentas editoriais ou
+                funcionalidades para usuários.
+
+            </p>
+
+            <p>
+
+                Alterações relevantes deverão ser acompanhadas
+                da atualização da versão e da data apresentadas
+                nesta página.
+
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             33
+             ========================================= -->
+
+        <section class="legal-section">
+
+            <h2>
+
+                <span class="section-number">
+                    33
+                </span>
+
+                Registro e versão da política
+
+            </h2>
+
+            <p>
+
+                <strong>
+                    Documento:
+                </strong>
+                Política de Fontes, Direitos Autorais e Uso de
+                Materiais de Terceiros do Arquivo Sombrio.
+
+            </p>
+
+            <p>
+
+                <strong>
+                    Versão:
+                </strong>
+                1.0
+
+            </p>
+
+            <p>
+
+                <strong>
+                    Última atualização:
+                </strong>
+                04 de setembro de 2026.
+
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================
+         RODAPÉ
+         ========================================= -->
+
+    <footer class="legal-footer">
+
+        <div class="legal-footer-inner">
+
+            <span>
+                © 2026 Arquivo Sombrio
+            </span>
+
+
+            <div class="legal-footer-links">
+
+                <a href="index.html">
+                    Início
+                </a>
+
+                <a href="termos.html">
+                    Termos de Uso
+                </a>
+
+                <a href="privacidade.html">
+                    Política de Privacidade
+                </a>
+
+                <a href="diretrizes.html">
+                    Diretrizes da Comunidade
+                </a>
+
+                <a href="moderacao.html">
+                    Moderação e Denúncias
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+</body>
+
+</html>
