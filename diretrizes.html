@@ -1,0 +1,3274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Diretrizes da Comunidade do Arquivo Sombrio — regras de convivência, publicação, segurança e moderação da comunidade."
+    >
+
+    <meta
+        name="theme-color"
+        content="#080706"
+    >
+
+    <title>
+        Diretrizes da Comunidade | Arquivo Sombrio
+    </title>
+
+
+    <!-- FONTES -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- ÍCONES -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <!-- CSS PRINCIPAL -->
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+
+    <style>
+
+        /* =====================================================
+           DIRETRIZES DA COMUNIDADE
+           ARQUIVO SOMBRIO
+           ===================================================== */
+
+        :root {
+            --legal-bg: #080706;
+            --legal-panel: #0d0b09;
+            --legal-panel-soft: #12100d;
+            --legal-border: rgba(174, 139, 72, 0.24);
+            --legal-border-strong: rgba(174, 139, 72, 0.42);
+            --legal-red: #a20d0d;
+            --legal-red-bright: #c01919;
+            --legal-gold: #b08b48;
+            --legal-paper: #d7c7aa;
+            --legal-muted: #81786b;
+            --legal-text: #b7aa95;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at 82% 8%,
+                    rgba(114, 15, 15, 0.09),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    180deg,
+                    #090806 0%,
+                    #060605 100%
+                );
+            color: var(--legal-text);
+        }
+
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.14;
+            z-index: -1;
+
+            background-image:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(255,255,255,0.012) 4px
+                );
+        }
+
+
+        a {
+            color: inherit;
+        }
+
+
+        .legal-page {
+            min-height: 100vh;
+        }
+
+
+        /* =====================================================
+           CABEÇALHO
+           ===================================================== */
+
+        .legal-header {
+            min-height: 64px;
+            padding: 0 5vw;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+
+            background: rgba(7, 6, 5, 0.96);
+            border-bottom: 1px solid var(--legal-border);
+            backdrop-filter: blur(12px);
+        }
+
+
+        .legal-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+
+            color: #d6c8b1;
+            text-decoration: none;
+
+            font-family: "Cinzel", serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+        }
+
+
+        .legal-brand-mark {
+            width: 34px;
+            height: 34px;
+
+            display: grid;
+            place-items: center;
+
+            border: 1px solid rgba(180, 16, 16, 0.75);
+            color: var(--legal-red-bright);
+            background: #0c0a08;
+        }
+
+
+        .legal-brand strong {
+            color: var(--legal-red-bright);
+            font-weight: 600;
+        }
+
+
+        .legal-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            color: #8e8373;
+            text-decoration: none;
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.66rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+
+            transition:
+                color 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+
+        .legal-back:hover {
+            color: #d4c5ab;
+        }
+
+
+        /* =====================================================
+           HERO
+           ===================================================== */
+
+        .legal-hero {
+            position: relative;
+            overflow: hidden;
+
+            padding: 82px 5vw 72px;
+
+            border-bottom: 1px solid var(--legal-border);
+        }
+
+
+        .legal-hero::after {
+            content: "COMUNIDADE";
+            position: absolute;
+            right: -15px;
+            bottom: -34px;
+
+            font-family: "Cinzel", serif;
+            font-size: clamp(4rem, 12vw, 10rem);
+            font-weight: 800;
+            letter-spacing: 0.04em;
+
+            color: rgba(255,255,255,0.018);
+
+            pointer-events: none;
+            user-select: none;
+        }
+
+
+        .legal-container {
+            width: min(1040px, 100%);
+            margin: 0 auto;
+        }
+
+
+        .legal-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            margin-bottom: 24px;
+        }
+
+
+        .legal-tag {
+            padding: 6px 9px;
+
+            border: 1px solid var(--legal-border);
+
+            color: var(--legal-gold);
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.58rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+
+        .legal-tag.alert {
+            border-color: rgba(169, 14, 14, 0.45);
+            color: #b72323;
+        }
+
+
+        .legal-kicker {
+            margin: 0 0 12px;
+
+            color: var(--legal-red-bright);
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+
+        .legal-title {
+            max-width: 820px;
+            margin: 0;
+
+            color: #e1d4bd;
+
+            font-family: "Cinzel", serif;
+            font-size: clamp(2.3rem, 6vw, 5.4rem);
+            font-weight: 700;
+            line-height: 0.98;
+            letter-spacing: -0.035em;
+        }
+
+
+        .legal-title span {
+            color: var(--legal-red-bright);
+        }
+
+
+        .legal-intro {
+            max-width: 760px;
+            margin: 28px 0 0;
+
+            color: #948877;
+
+            font-family: "Libre Baskerville", serif;
+            font-size: 0.94rem;
+            line-height: 1.9;
+        }
+
+
+        .legal-meta {
+            margin-top: 36px;
+
+            display: grid;
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            border-top: 1px solid var(--legal-border);
+            border-bottom: 1px solid var(--legal-border);
+        }
+
+
+        .legal-meta-item {
+            padding: 16px 18px;
+
+            border-right: 1px solid var(--legal-border);
+        }
+
+
+        .legal-meta-item:last-child {
+            border-right: 0;
+        }
+
+
+        .legal-meta-label {
+            display: block;
+            margin-bottom: 5px;
+
+            color: #665e53;
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.53rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+
+        .legal-meta-value {
+            color: #b7aa94;
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+        }
+
+
+        /* =====================================================
+           AVISO
+           ===================================================== */
+
+        .legal-warning {
+            margin-top: 34px;
+            padding: 20px 22px;
+
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 16px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(135, 11, 11, 0.09),
+                    rgba(135, 11, 11, 0.025)
+                );
+
+            border: 1px solid rgba(154, 18, 18, 0.34);
+            border-left: 3px solid var(--legal-red);
+        }
+
+
+        .legal-warning-icon {
+            padding-top: 2px;
+
+            color: var(--legal-red-bright);
+            font-size: 1rem;
+        }
+
+
+        .legal-warning strong {
+            display: block;
+            margin-bottom: 7px;
+
+            color: #c8b99f;
+
+            font-family: "Cinzel", serif;
+            font-size: 0.76rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+
+        .legal-warning p {
+            margin: 0;
+
+            color: #8f8271;
+
+            font-family: "Libre Baskerville", serif;
+            font-size: 0.78rem;
+            line-height: 1.75;
+        }
+
+
+        /* =====================================================
+           CONTEÚDO
+           ===================================================== */
+
+        .legal-content {
+            padding: 68px 5vw 90px;
+        }
+
+
+        .legal-layout {
+            display: grid;
+            grid-template-columns: 190px minmax(0, 1fr);
+            gap: 52px;
+            align-items: start;
+        }
+
+
+        .legal-index {
+            position: sticky;
+            top: 94px;
+        }
+
+
+        .legal-index-label {
+            margin-bottom: 15px;
+
+            color: var(--legal-gold);
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.56rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+
+        .legal-index-line {
+            width: 42px;
+            height: 1px;
+            margin-bottom: 16px;
+
+            background: var(--legal-red);
+        }
+
+
+        .legal-index p {
+            margin: 0;
+
+            color: #625a50;
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.59rem;
+            line-height: 1.75;
+            letter-spacing: 0.04em;
+        }
+
+
+        .legal-sections {
+            min-width: 0;
+        }
+
+
+        .legal-section {
+            padding: 0 0 48px;
+            margin-bottom: 48px;
+
+            border-bottom: 1px solid var(--legal-border);
+        }
+
+
+        .legal-section:last-child {
+            margin-bottom: 0;
+        }
+
+
+        .legal-section-heading {
+            display: grid;
+            grid-template-columns: 46px minmax(0, 1fr);
+            gap: 16px;
+            align-items: start;
+
+            margin-bottom: 21px;
+        }
+
+
+        .legal-number {
+            padding-top: 5px;
+
+            color: var(--legal-red-bright);
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.63rem;
+            letter-spacing: 0.12em;
+        }
+
+
+        .legal-section h2 {
+            margin: 0;
+
+            color: #d4c5ac;
+
+            font-family: "Cinzel", serif;
+            font-size: clamp(1.15rem, 2vw, 1.55rem);
+            font-weight: 600;
+            line-height: 1.35;
+            letter-spacing: 0.025em;
+        }
+
+
+        .legal-section p {
+            margin: 0 0 17px;
+
+            color: #a09482;
+
+            font-family: "Libre Baskerville", serif;
+            font-size: 0.83rem;
+            line-height: 1.9;
+        }
+
+
+        .legal-section p:last-child {
+            margin-bottom: 0;
+        }
+
+
+        .legal-list {
+            margin: 18px 0;
+            padding: 0;
+
+            list-style: none;
+        }
+
+
+        .legal-list li {
+            position: relative;
+
+            margin-bottom: 12px;
+            padding-left: 24px;
+
+            color: #988c7a;
+
+            font-family: "Libre Baskerville", serif;
+            font-size: 0.81rem;
+            line-height: 1.75;
+        }
+
+
+        .legal-list li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+
+            color: var(--legal-red-bright);
+        }
+
+
+        .legal-note {
+            margin: 22px 0;
+            padding: 17px 19px;
+
+            background: rgba(176, 139, 72, 0.035);
+            border-left: 2px solid rgba(176, 139, 72, 0.55);
+        }
+
+
+        .legal-note p {
+            margin: 0;
+
+            color: #8f8473;
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.65rem;
+            line-height: 1.75;
+        }
+
+
+        .legal-highlight {
+            color: #c5b69d;
+            font-weight: 700;
+        }
+
+
+        .legal-link {
+            color: #b99759;
+            text-decoration: underline;
+            text-decoration-color: rgba(185, 151, 89, 0.38);
+            text-underline-offset: 3px;
+        }
+
+
+        .legal-link:hover {
+            color: #d0ae6e;
+        }
+
+
+        /* =====================================================
+           RODAPÉ
+           ===================================================== */
+
+        .legal-footer {
+            padding: 32px 5vw;
+
+            border-top: 1px solid var(--legal-border);
+            background: rgba(4, 4, 3, 0.72);
+        }
+
+
+        .legal-footer-inner {
+            width: min(1040px, 100%);
+            margin: 0 auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 22px;
+        }
+
+
+        .legal-footer-copy {
+            color: #595248;
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.57rem;
+            letter-spacing: 0.07em;
+        }
+
+
+        .legal-footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+
+        .legal-footer-links a {
+            color: #776d5f;
+            text-decoration: none;
+
+            font-family: "DM Mono", monospace;
+            font-size: 0.57rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+
+        .legal-footer-links a:hover {
+            color: #bda77f;
+        }
+
+
+        /* =====================================================
+           RESPONSIVO
+           ===================================================== */
+
+        @media (max-width: 780px) {
+
+            .legal-header {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+
+            .legal-brand {
+                font-size: 0.72rem;
+                letter-spacing: 0.11em;
+            }
+
+
+            .legal-brand-mark {
+                width: 31px;
+                height: 31px;
+            }
+
+
+            .legal-back span {
+                display: none;
+            }
+
+
+            .legal-hero {
+                padding:
+                    58px 20px
+                    52px;
+            }
+
+
+            .legal-meta {
+                grid-template-columns: 1fr;
+            }
+
+
+            .legal-meta-item {
+                border-right: 0;
+                border-bottom: 1px solid var(--legal-border);
+            }
+
+
+            .legal-meta-item:last-child {
+                border-bottom: 0;
+            }
+
+
+            .legal-content {
+                padding:
+                    48px 20px
+                    65px;
+            }
+
+
+            .legal-layout {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+
+            .legal-index {
+                position: static;
+
+                padding-bottom: 24px;
+
+                border-bottom: 1px solid var(--legal-border);
+            }
+
+
+            .legal-section-heading {
+                grid-template-columns: 38px minmax(0, 1fr);
+                gap: 10px;
+            }
+
+
+            .legal-footer-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+        }
+
+
+        @media (max-width: 420px) {
+
+            .legal-title {
+                font-size: 2.05rem;
+            }
+
+
+            .legal-warning {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="legal-page">
+
+
+    <!-- =====================================================
+         CABEÇALHO
+         ===================================================== -->
+
+    <header class="legal-header">
+
+        <a
+            href="index.html"
+            class="legal-brand"
+            aria-label="Voltar para a página inicial do Arquivo Sombrio"
+        >
+
+            <span class="legal-brand-mark">
+                <i class="fa-solid fa-folder-open"></i>
+            </span>
+
+            <span>
+                ARQUIVO <strong>SOMBRIO</strong>
+            </span>
+
+        </a>
+
+
+        <a
+            href="index.html"
+            class="legal-back"
+        >
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            <span>
+                Voltar ao arquivo
+            </span>
+
+        </a>
+
+    </header>
+
+
+    <main>
+
+
+        <!-- =================================================
+             HERO
+             ================================================= -->
+
+        <section class="legal-hero">
+
+            <div class="legal-container">
+
+                <div class="legal-tags">
+
+                    <span class="legal-tag">
+                        Documento da Comunidade
+                    </span>
+
+                    <span class="legal-tag">
+                        Diretrizes
+                    </span>
+
+                    <span class="legal-tag alert">
+                        18+
+                    </span>
+
+                </div>
+
+
+                <p class="legal-kicker">
+                    ARQUIVO INTERNO // DC-001
+                </p>
+
+
+                <h1 class="legal-title">
+                    DIRETRIZES DA
+                    <span>COMUNIDADE</span>
+                </h1>
+
+
+                <p class="legal-intro">
+                    Estas Diretrizes estabelecem as regras de
+                    convivência, publicação e segurança aplicáveis
+                    aos espaços de participação do Arquivo Sombrio.
+                    O objetivo é permitir discussões sobre casos,
+                    criminologia, perícia, mistérios e temas
+                    relacionados sem transformar investigação em
+                    assédio, exposição indevida ou desinformação.
+                </p>
+
+
+                <div class="legal-meta">
+
+                    <div class="legal-meta-item">
+
+                        <span class="legal-meta-label">
+                            Versão
+                        </span>
+
+                        <span class="legal-meta-value">
+                            1.0
+                        </span>
+
+                    </div>
+
+
+                    <div class="legal-meta-item">
+
+                        <span class="legal-meta-label">
+                            Última atualização
+                        </span>
+
+                        <span class="legal-meta-value">
+                            04 SET 2026
+                        </span>
+
+                    </div>
+
+
+                    <div class="legal-meta-item">
+
+                        <span class="legal-meta-label">
+                            Classificação
+                        </span>
+
+                        <span class="legal-meta-value">
+                            COMUNIDADE 18+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="legal-warning">
+
+                    <div class="legal-warning-icon">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Comunidade destinada a maiores de 18 anos
+                        </strong>
+
+                        <p>
+                            A criação de conta e a participação nos
+                            espaços da Comunidade do Arquivo Sombrio
+                            são destinadas exclusivamente a pessoas
+                            com 18 anos ou mais. Conteúdo público do
+                            site poderá possuir avisos adicionais de
+                            sensibilidade ou classificação conforme
+                            sua natureza.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+              <!-- =================================================
+             CONTEÚDO
+             ================================================= -->
+
+        <section class="legal-content">
+
+            <div class="legal-container">
+
+                <div class="legal-layout">
+
+
+                    <!-- ÍNDICE LATERAL -->
+
+                    <aside class="legal-index">
+
+                        <div class="legal-index-label">
+                            REGISTRO
+                        </div>
+
+                        <div class="legal-index-line"></div>
+
+                        <p>
+                            Regras de convivência,<br>
+                            publicação,<br>
+                            investigação,<br>
+                            segurança<br>
+                            e moderação.
+                        </p>
+
+                    </aside>
+
+
+                    <!-- SEÇÕES -->
+
+                    <div class="legal-sections">
+
+
+                        <!-- =====================================
+                             01
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="finalidade"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    01
+                                </span>
+
+                                <h2>
+                                    Finalidade da Comunidade
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                A Comunidade do Arquivo Sombrio é um
+                                espaço destinado à troca de informações,
+                                hipóteses, referências e opiniões sobre
+                                casos criminais, mistérios, perícia,
+                                criminologia, lendas, acontecimentos
+                                históricos e outros assuntos relacionados
+                                à proposta editorial da plataforma.
+                            </p>
+
+
+                            <p>
+                                A participação deve ocorrer de maneira
+                                responsável, respeitosa e compatível com
+                                a natureza sensível dos temas discutidos.
+                                Interesse por investigação não autoriza
+                                perseguição, exposição indevida,
+                                intimidação ou interferência na vida de
+                                pessoas relacionadas aos casos.
+                            </p>
+
+
+                            <div class="legal-note">
+
+                                <p>
+                                    A Comunidade é um espaço de discussão
+                                    e análise. Ela não substitui
+                                    autoridades policiais, órgãos
+                                    periciais, Poder Judiciário,
+                                    profissionais de saúde, advogados
+                                    ou outros profissionais habilitados.
+                                </p>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             02
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="idade"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    02
+                                </span>
+
+                                <h2>
+                                    Idade mínima
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                A criação de conta e a participação nos
+                                espaços da Comunidade são permitidas
+                                somente a pessoas com
+                                <span class="legal-highlight">
+                                    18 anos ou mais
+                                </span>.
+                            </p>
+
+
+                            <p>
+                                Ao criar uma conta ou participar da
+                                Comunidade, o usuário deverá declarar
+                                que atende ao requisito de idade
+                                aplicável.
+                            </p>
+
+
+                            <p>
+                                O Arquivo Sombrio poderá adotar medidas
+                                adicionais de aferição ou confirmação de
+                                idade quando isso for necessário para
+                                segurança da plataforma, cumprimento de
+                                obrigações legais ou adequação a normas
+                                aplicáveis.
+                            </p>
+
+
+                            <p>
+                                A declaração de idade realizada pelo
+                                usuário não impede a adoção de mecanismos
+                                adicionais quando exigidos ou considerados
+                                adequados à natureza de determinado
+                                recurso ou conteúdo.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             03
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="respeito"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    03
+                                </span>
+
+                                <h2>
+                                    Respeito entre participantes
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Divergências de interpretação são
+                                esperadas em discussões investigativas.
+                                Discordar de uma hipótese, interpretação
+                                ou opinião não autoriza ataques contra
+                                quem a publicou.
+                            </p>
+
+
+                            <p>
+                                Não são permitidas condutas como:
+                            </p>
+
+
+                            <ul class="legal-list">
+
+                                <li>
+                                    ameaças, intimidação ou incentivo
+                                    à violência;
+                                </li>
+
+                                <li>
+                                    perseguição ou assédio direcionado
+                                    a outro participante;
+                                </li>
+
+                                <li>
+                                    humilhações, provocações reiteradas
+                                    ou ataques pessoais;
+                                </li>
+
+                                <li>
+                                    discriminação ou ataques dirigidos
+                                    a pessoas ou grupos com base em
+                                    características protegidas pela
+                                    legislação;
+                                </li>
+
+                                <li>
+                                    incentivo coordenado para que outros
+                                    usuários ataquem, constranjam ou
+                                    persigam determinada pessoa;
+                                </li>
+
+                                <li>
+                                    tentativa de silenciar participantes
+                                    por meio de ameaças, exposição de
+                                    informações pessoais ou intimidação.
+                                </li>
+
+                            </ul>
+
+
+                            <p>
+                                Críticas a ideias, argumentos, fontes e
+                                hipóteses são permitidas. Ataques à
+                                dignidade ou à segurança das pessoas,
+                                não.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             04
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="casos-reais"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    04
+                                </span>
+
+                                <h2>
+                                    Discussões sobre casos reais
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Casos reais frequentemente envolvem
+                                vítimas, familiares, testemunhas,
+                                investigados, suspeitos, acusados,
+                                condenados e outras pessoas que existem
+                                fora da plataforma.
+                            </p>
+
+
+                            <p>
+                                Ao discutir essas situações, os usuários
+                                devem diferenciar, sempre que possível,
+                                fatos documentados, alegações,
+                                interpretações pessoais e hipóteses.
+                            </p>
+
+
+                            <p>
+                                Não é permitido apresentar como fato
+                                comprovado uma acusação criminal contra
+                                determinada pessoa quando essa conclusão
+                                não estiver adequadamente estabelecida.
+                            </p>
+
+
+                            <p>
+                                Expressões como
+                                <span class="legal-highlight">
+                                    “suspeito”, “investigado”,
+                                    “acusado”, “condenado”
+                                </span>
+                                ou equivalentes devem ser utilizadas de
+                                acordo com o contexto conhecido do caso,
+                                evitando transformar suspeitas ou
+                                especulações em afirmações categóricas.
+                            </p>
+
+
+                            <div class="legal-note">
+
+                                <p>
+                                    Uma teoria publicada por um usuário
+                                    continua sendo uma teoria. A
+                                    quantidade de pessoas que concordam
+                                    com ela não a transforma
+                                    automaticamente em fato.
+                                </p>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             05
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="fontes"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    05
+                                </span>
+
+                                <h2>
+                                    Fontes, evidências e informações
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Sempre que uma publicação apresentar
+                                informações factuais relevantes sobre um
+                                caso, recomenda-se que o participante
+                                indique a origem da informação quando
+                                ela estiver disponível.
+                            </p>
+
+
+                            <p>
+                                São especialmente úteis referências como
+                                documentos oficiais, decisões judiciais,
+                                registros públicos legítimos,
+                                reportagens identificáveis, publicações
+                                acadêmicas, livros e outras fontes que
+                                possam ser verificadas.
+                            </p>
+
+
+                            <p>
+                                O usuário não deve fabricar documentos,
+                                adulterar evidências ou apresentar
+                                deliberadamente material falso como se
+                                fosse autêntico.
+                            </p>
+
+
+                            <p>
+                                Conteúdo manipulado, dramatizado,
+                                produzido por inteligência artificial ou
+                                recriado digitalmente não deve ser
+                                apresentado de maneira destinada a
+                                enganar outros participantes sobre sua
+                                autenticidade ou origem.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             06
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="hipoteses"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    06
+                                </span>
+
+                                <h2>
+                                    Hipóteses e teorias investigativas
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                A formulação de hipóteses faz parte das
+                                discussões da Comunidade, mas deve ser
+                                realizada com responsabilidade.
+                            </p>
+
+
+                            <p>
+                                Quando uma conclusão não estiver
+                                comprovada, o participante deve deixar
+                                claro que se trata de hipótese,
+                                interpretação, possibilidade ou opinião.
+                            </p>
+
+
+                            <p>
+                                Teorias não podem ser utilizadas como
+                                justificativa para assediar pessoas,
+                                divulgar informações privadas,
+                                organizar investigações invasivas ou
+                                incentivar usuários a confrontar
+                                indivíduos relacionados a um caso.
+                            </p>
+
+                        </section>
+                        <!-- =====================================
+                             07
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="privacidade"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    07
+                                </span>
+
+                                <h2>
+                                    Privacidade e dados pessoais
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                O interesse investigativo não autoriza
+                                a exposição indiscriminada de dados
+                                pessoais de terceiros.
+                            </p>
+
+
+                            <p>
+                                Não é permitido publicar, solicitar,
+                                organizar ou incentivar a divulgação
+                                indevida de informações pessoais ou
+                                privadas com a finalidade de localizar,
+                                constranger, ameaçar, perseguir ou
+                                expor uma pessoa.
+                            </p>
+
+
+                            <p>
+                                Isso pode incluir, conforme o contexto:
+                            </p>
+
+
+                            <ul class="legal-list">
+
+                                <li>
+                                    endereço residencial ou localização
+                                    privada precisa;
+                                </li>
+
+                                <li>
+                                    números de telefone pessoais;
+                                </li>
+
+                                <li>
+                                    documentos de identificação;
+                                </li>
+
+                                <li>
+                                    credenciais, senhas ou informações
+                                    de autenticação;
+                                </li>
+
+                                <li>
+                                    dados financeiros ou bancários;
+                                </li>
+
+                                <li>
+                                    informações privadas de familiares
+                                    ou pessoas não relacionadas de forma
+                                    relevante ao caso;
+                                </li>
+
+                                <li>
+                                    outros dados cuja divulgação possa
+                                    gerar risco concreto à privacidade
+                                    ou à segurança de alguém.
+                                </li>
+
+                            </ul>
+
+
+                            <p>
+                                A existência de determinada informação
+                                na internet não significa, por si só,
+                                que sua republicação em contexto
+                                investigativo seja apropriada.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             08
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="doxxing"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    08
+                                </span>
+
+                                <h2>
+                                    Doxxing, perseguição e localização
+                                    de pessoas
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                É proibido utilizar a Comunidade para
+                                organizar ou incentivar ações destinadas
+                                a descobrir ou divulgar informações
+                                privadas de uma pessoa com objetivo de
+                                persegui-la, intimidá-la ou submetê-la
+                                a exposição indevida.
+                            </p>
+
+
+                            <p>
+                                Também não é permitido coordenar
+                                participantes para localizar fisicamente
+                                uma pessoa, acompanhar seus deslocamentos
+                                privados ou realizar vigilância invasiva.
+                            </p>
+
+
+                            <p>
+                                A Comunidade não deve ser utilizada para
+                                promover campanhas de investigação
+                                paralela que coloquem usuários,
+                                terceiros ou pessoas relacionadas aos
+                                casos em risco.
+                            </p>
+
+
+                            <div class="legal-note">
+
+                                <p>
+                                    Se uma informação puder contribuir
+                                    legitimamente para uma investigação
+                                    criminal em andamento, o caminho
+                                    adequado pode ser encaminhá-la às
+                                    autoridades competentes, e não
+                                    organizar uma ação coletiva contra
+                                    uma pessoa.
+                                </p>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             09
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="contato-pessoas"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    09
+                                </span>
+
+                                <h2>
+                                    Contato com pessoas relacionadas
+                                    aos casos
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                O Arquivo Sombrio não incentiva usuários
+                                a entrar em contato com vítimas,
+                                familiares, testemunhas, suspeitos,
+                                investigados, autoridades ou outras
+                                pessoas relacionadas a um caso apenas
+                                para obter informações, testar teorias
+                                ou confrontá-las.
+                            </p>
+
+
+                            <p>
+                                É proibido utilizar a plataforma para
+                                coordenar assédio, envio massivo de
+                                mensagens, ligações, visitas ou qualquer
+                                outra forma de pressão direcionada a
+                                essas pessoas.
+                            </p>
+
+
+                            <p>
+                                O fato de alguém possuir perfil público
+                                em rede social não constitui autorização
+                                para submetê-lo a interrogatórios,
+                                acusações, ameaças ou campanhas
+                                coordenadas.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             10
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="vitimas"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    10
+                                </span>
+
+                                <h2>
+                                    Vítimas e familiares
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Discussões sobre crimes e tragédias devem
+                                considerar que vítimas e familiares não
+                                são personagens fictícios e podem sofrer
+                                impactos adicionais com a circulação de
+                                determinadas informações.
+                            </p>
+
+
+                            <p>
+                                Não é permitido utilizar a Comunidade
+                                para ridicularizar vítimas, celebrar seu
+                                sofrimento, incentivar novas agressões
+                                ou promover ataques contra familiares.
+                            </p>
+
+
+                            <p>
+                                Informações sensíveis sem relevância
+                                legítima para a discussão não devem ser
+                                divulgadas apenas por curiosidade,
+                                exposição ou entretenimento.
+                            </p>
+
+
+                            <p>
+                                A análise crítica de versões,
+                                depoimentos ou acontecimentos permanece
+                                permitida, desde que não seja convertida
+                                em perseguição ou abuso.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             11
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="justica"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    11
+                                </span>
+
+                                <h2>
+                                    Interferência em investigações e
+                                    processos
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                A Comunidade não deve ser utilizada para
+                                interferir ilegalmente em investigações,
+                                processos judiciais, preservação de
+                                provas ou atuação de autoridades.
+                            </p>
+
+
+                            <p>
+                                É proibido incentivar participantes a
+                                destruir, ocultar, adulterar ou fabricar
+                                provas, bem como orientar alguém a
+                                impedir deliberadamente uma investigação
+                                legítima.
+                            </p>
+
+
+                            <p>
+                                Também não é permitido utilizar a
+                                plataforma para intimidar testemunhas,
+                                vítimas, jurados, profissionais ou
+                                outras pessoas envolvidas em
+                                procedimentos oficiais.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             12
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="conteudo-sensivel"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    12
+                                </span>
+
+                                <h2>
+                                    Conteúdo sensível
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                O Arquivo Sombrio aborda temas que podem
+                                envolver violência, morte, crimes,
+                                perícia, desaparecimentos e outros
+                                acontecimentos potencialmente
+                                perturbadores.
+                            </p>
+
+
+                            <p>
+                                Quando permitido na plataforma, conteúdo
+                                sensível deve possuir contexto
+                                investigativo, histórico, documental,
+                                educacional ou editorial compatível com
+                                a proposta da Comunidade.
+                            </p>
+
+
+                            <p>
+                                Materiais sensíveis não devem ser
+                                publicados exclusivamente para provocar
+                                choque, humilhação, exploração do
+                                sofrimento ou exposição degradante de
+                                pessoas.
+                            </p>
+
+
+                            <p>
+                                O Arquivo Sombrio poderá aplicar avisos,
+                                ocultação inicial, restrições de
+                                visualização ou remoção conforme a
+                                natureza do material.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             13
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="imagens-graficas"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    13
+                                </span>
+
+                                <h2>
+                                    Imagens gráficas e materiais
+                                    forenses
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Fotografias de cenas de crime,
+                                necropsias, restos mortais, ferimentos
+                                graves ou outros materiais gráficos
+                                exigem tratamento especialmente
+                                cuidadoso.
+                            </p>
+
+
+                            <p>
+                                A possibilidade técnica de publicar um
+                                arquivo não significa que sua publicação
+                                seja automaticamente permitida.
+                            </p>
+
+
+                            <p>
+                                A moderação poderá considerar fatores
+                                como relevância documental, contexto,
+                                dignidade das pessoas retratadas,
+                                intensidade gráfica, origem do material,
+                                direitos envolvidos e riscos associados
+                                à sua divulgação.
+                            </p>
+
+
+                            <div class="legal-note">
+
+                                <p>
+                                    Conteúdo gráfico poderá ser
+                                    restringido ou removido mesmo quando
+                                    relacionado a um caso real, caso sua
+                                    exposição seja considerada
+                                    desnecessária, abusiva ou incompatível
+                                    com as regras da plataforma.
+                                </p>
+
+                            </div>
+
+                        </section>
+
+                                              <!-- =====================================
+                             14
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="conteudo-proibido"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    14
+                                </span>
+
+                                <h2>
+                                    Conteúdos e condutas proibidos
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Além das restrições específicas destas
+                                Diretrizes, não é permitido utilizar a
+                                Comunidade para publicar, promover,
+                                solicitar ou coordenar conteúdo ou
+                                comportamento ilegal, abusivo ou que
+                                coloque outras pessoas em risco.
+                            </p>
+
+
+                            <p>
+                                Entre outras situações incompatíveis com
+                                a Comunidade, estão:
+                            </p>
+
+
+                            <ul class="legal-list">
+
+                                <li>
+                                    ameaças reais ou incentivo à
+                                    violência contra pessoas;
+                                </li>
+
+                                <li>
+                                    assédio, perseguição ou intimidação;
+                                </li>
+
+                                <li>
+                                    divulgação indevida de dados
+                                    pessoais ou privados;
+                                </li>
+
+                                <li>
+                                    incentivo à prática de crimes;
+                                </li>
+
+                                <li>
+                                    instruções destinadas a facilitar
+                                    concretamente a prática de atos
+                                    ilícitos ou a evasão de autoridades;
+                                </li>
+
+                                <li>
+                                    fraude, falsificação deliberada de
+                                    evidências ou tentativa de enganar
+                                    participantes sobre a autenticidade
+                                    de materiais;
+                                </li>
+
+                                <li>
+                                    exploração sexual ou qualquer
+                                    conteúdo sexual envolvendo menores
+                                    de idade;
+                                </li>
+
+                                <li>
+                                    conteúdo destinado a glorificar,
+                                    recrutar ou prestar apoio operacional
+                                    a organizações terroristas ou
+                                    extremistas violentas;
+                                </li>
+
+                                <li>
+                                    spam, golpes, phishing ou tentativas
+                                    de obtenção indevida de credenciais;
+                                </li>
+
+                                <li>
+                                    uso da plataforma para distribuir
+                                    arquivos maliciosos ou comprometer
+                                    dispositivos e contas;
+                                </li>
+
+                                <li>
+                                    qualquer outra utilização que viole
+                                    a legislação aplicável ou coloque
+                                    pessoas em risco relevante.
+                                </li>
+
+                            </ul>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             15
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="violencia"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    15
+                                </span>
+
+                                <h2>
+                                    Ameaças e incentivo à violência
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Não são permitidas ameaças críveis,
+                                manifestações de intenção de causar dano
+                                ou publicações destinadas a incentivar
+                                outras pessoas a cometer violência.
+                            </p>
+
+
+                            <p>
+                                Discussões documentais, históricas,
+                                jornalísticas ou criminológicas sobre
+                                atos violentos podem ocorrer dentro da
+                                proposta do Arquivo Sombrio, desde que
+                                não sejam transformadas em incentivo
+                                para reproduzi-los.
+                            </p>
+
+
+                            <p>
+                                A moderação poderá tratar com prioridade
+                                situações que indiquem risco concreto ou
+                                iminente à segurança de uma pessoa.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             16
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="crimes"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    16
+                                </span>
+
+                                <h2>
+                                    Discussão de métodos criminosos
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                O estudo de crimes pode exigir a
+                                descrição de métodos, comportamentos,
+                                evidências e falhas investigativas.
+                                Esse tipo de discussão deve permanecer
+                                vinculado a contexto informativo,
+                                histórico, preventivo, acadêmico,
+                                jornalístico ou investigativo legítimo.
+                            </p>
+
+
+                            <p>
+                                A Comunidade não pode ser utilizada como
+                                espaço para ensinar, planejar, aperfeiçoar
+                                ou coordenar a execução de crimes.
+                            </p>
+
+
+                            <p>
+                                Também poderão ser removidas publicações
+                                que solicitem instruções operacionais
+                                destinadas a evitar detecção,
+                                responsabilização ou investigação por
+                                autoridades.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             17
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="exploracao"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    17
+                                </span>
+
+                                <h2>
+                                    Exploração sexual e proteção de
+                                    menores
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                É estritamente proibido publicar,
+                                solicitar, compartilhar, armazenar por
+                                meio da plataforma ou direcionar outros
+                                usuários a conteúdo de exploração ou
+                                abuso sexual envolvendo crianças ou
+                                adolescentes.
+                            </p>
+
+
+                            <p>
+                                A proibição também alcança tentativas de
+                                sexualização abusiva de menores ou
+                                utilização da Comunidade para facilitar
+                                contato sexual impróprio, exploração ou
+                                aliciamento.
+                            </p>
+
+
+                            <p>
+                                Conteúdo documental relacionado a crimes
+                                contra menores deverá ser tratado com
+                                cuidado adicional, evitando exposição
+                                desnecessária da identidade, intimidade
+                                ou dignidade das vítimas.
+                            </p>
+
+
+                            <div class="legal-note">
+
+                                <p>
+                                    A regra de participação 18+ da
+                                    Comunidade não reduz a necessidade
+                                    de proteção especial de crianças e
+                                    adolescentes mencionados ou
+                                    relacionados aos casos discutidos.
+                                </p>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             18
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="autolesao"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    18
+                                </span>
+
+                                <h2>
+                                    Suicídio, automutilação e situações
+                                    de risco
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Casos discutidos na plataforma podem
+                                envolver suicídio, automutilação ou
+                                outras situações de grave sofrimento.
+                                Esses assuntos podem ser analisados em
+                                contexto documental, histórico ou
+                                investigativo.
+                            </p>
+
+
+                            <p>
+                                Não é permitido incentivar, celebrar,
+                                pressionar ou orientar uma pessoa a
+                                provocar dano contra si mesma.
+                            </p>
+
+
+                            <p>
+                                Conteúdos que aparentem indicar risco
+                                concreto poderão receber tratamento
+                                prioritário de moderação e outras
+                                medidas compatíveis com os recursos
+                                disponíveis e com a legislação
+                                aplicável.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             19
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="identidade"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    19
+                                </span>
+
+                                <h2>
+                                    Falsidade de identidade e
+                                    representação enganosa
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Não é permitido utilizar uma conta para
+                                se passar de forma enganosa por outra
+                                pessoa, autoridade, instituição,
+                                integrante da equipe do Arquivo Sombrio
+                                ou pessoa diretamente relacionada a um
+                                caso.
+                            </p>
+
+
+                            <p>
+                                Perfis de caráter fictício, satírico ou
+                                temático, quando futuramente admitidos
+                                pela plataforma, deverão ser
+                                identificáveis como tais e não poderão
+                                ser utilizados para fraude ou
+                                manipulação.
+                            </p>
+
+
+                            <p>
+                                O uso de pseudônimo ou nome de
+                                investigador, quando permitido pelo
+                                sistema, não constitui por si só
+                                falsidade de identidade.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             20
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="spam"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    20
+                                </span>
+
+                                <h2>
+                                    Spam, golpes e manipulação da
+                                    plataforma
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Não é permitido utilizar a Comunidade
+                                para distribuição repetitiva e
+                                indiscriminada de publicidade, golpes,
+                                links enganosos, esquemas fraudulentos
+                                ou mensagens sem relação razoável com
+                                os espaços em que forem publicadas.
+                            </p>
+
+
+                            <p>
+                                Também são proibidas tentativas de
+                                manipular artificialmente mecanismos de
+                                reputação, denúncias, interações,
+                                votações, níveis ou outros recursos da
+                                plataforma.
+                            </p>
+
+
+                            <p>
+                                A criação coordenada de contas para
+                                contornar medidas de moderação ou simular
+                                apoio artificial a determinada
+                                publicação poderá resultar em restrições
+                                adicionais.
+                            </p>
+
+                        </section>
+
+                                              <!-- =====================================
+                             21
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="direitos-autorais"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    21
+                                </span>
+
+                                <h2>
+                                    Direitos autorais e materiais de terceiros
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Ao compartilhar textos, fotografias,
+                                documentos, vídeos, ilustrações ou
+                                outros materiais, o participante deve
+                                respeitar direitos autorais, direitos de
+                                imagem e demais direitos aplicáveis.
+                            </p>
+
+
+                            <p>
+                                O fato de determinado conteúdo estar
+                                disponível na internet não significa
+                                necessariamente que sua reprodução
+                                integral ou reutilização seja livre.
+                            </p>
+
+
+                            <p>
+                                Sempre que apropriado, o usuário deve
+                                identificar a fonte e utilizar apenas o
+                                material necessário para contextualizar
+                                a discussão.
+                            </p>
+
+
+                            <p>
+                                O Arquivo Sombrio poderá remover,
+                                restringir ou solicitar ajustes em
+                                materiais quando houver indícios
+                                razoáveis de violação de direitos de
+                                terceiros.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             22
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="links-externos"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    22
+                                </span>
+
+                                <h2>
+                                    Links e arquivos externos
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Links podem ser utilizados para indicar
+                                fontes e materiais relevantes, mas não
+                                devem ser empregados para direcionar
+                                participantes a golpes, arquivos
+                                maliciosos, conteúdo ilegal ou páginas
+                                criadas para coletar indevidamente
+                                informações pessoais.
+                            </p>
+
+
+                            <p>
+                                A presença de um link em uma publicação
+                                de usuário não significa que o Arquivo
+                                Sombrio endosse, controle ou tenha
+                                verificado integralmente o conteúdo do
+                                destino.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             23
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="denuncias"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    23
+                                </span>
+
+                                <h2>
+                                    Denúncias
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Quando os mecanismos correspondentes
+                                estiverem disponíveis, participantes
+                                poderão denunciar publicações,
+                                comentários, perfis ou outras atividades
+                                que aparentem violar estas Diretrizes ou
+                                os Termos de Uso.
+                            </p>
+
+
+                            <p>
+                                Uma denúncia representa um pedido de
+                                análise. Ela não significa
+                                automaticamente que ocorreu uma
+                                violação.
+                            </p>
+
+
+                            <p>
+                                A quantidade de denúncias recebidas
+                                também não determina, isoladamente, a
+                                existência de infração.
+                            </p>
+
+
+                            <p>
+                                Sempre que possível, a análise deverá
+                                considerar o conteúdo denunciado, seu
+                                contexto, histórico relevante e a regra
+                                potencialmente aplicável.
+                            </p>
+
+
+                            <div class="legal-note">
+
+                                <p>
+                                    O sistema de reputação planejado para
+                                    a Comunidade não deverá reduzir a
+                                    reputação de um participante apenas
+                                    porque ele recebeu denúncias.
+                                    Eventuais impactos deverão depender
+                                    de violações efetivamente confirmadas
+                                    pela moderação e das regras do
+                                    sistema vigente.
+                                </p>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             24
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="abuso-denuncias"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    24
+                                </span>
+
+                                <h2>
+                                    Abuso do sistema de denúncias
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                O mecanismo de denúncia não deve ser
+                                utilizado como ferramenta de vingança,
+                                perseguição ou tentativa de remover
+                                opiniões apenas porque existe
+                                discordância.
+                            </p>
+
+
+                            <p>
+                                Campanhas coordenadas de denúncias
+                                falsas, manipulação deliberada do sistema
+                                ou denúncias repetidamente apresentadas
+                                de má-fé poderão constituir violação
+                                destas Diretrizes.
+                            </p>
+
+
+                            <p>
+                                O Arquivo Sombrio poderá adotar medidas
+                                para reduzir abusos e preservar a
+                                integridade dos mecanismos de
+                                moderação.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             25
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="moderacao"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    25
+                                </span>
+
+                                <h2>
+                                    Moderação
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                O Arquivo Sombrio poderá analisar
+                                conteúdos e atividades da Comunidade
+                                para verificar sua compatibilidade com
+                                estas Diretrizes, com os Termos de Uso
+                                e com a legislação aplicável.
+                            </p>
+
+
+                            <p>
+                                Dependendo da natureza e da gravidade da
+                                situação, poderão ser adotadas medidas
+                                como:
+                            </p>
+
+
+                            <ul class="legal-list">
+
+                                <li>
+                                    orientação ou aviso ao usuário;
+                                </li>
+
+                                <li>
+                                    solicitação de edição ou correção
+                                    de conteúdo;
+                                </li>
+
+                                <li>
+                                    aplicação de aviso de conteúdo
+                                    sensível;
+                                </li>
+
+                                <li>
+                                    limitação da visibilidade de
+                                    determinado material;
+                                </li>
+
+                                <li>
+                                    remoção de publicação, comentário
+                                    ou outro conteúdo;
+                                </li>
+
+                                <li>
+                                    restrição temporária de determinadas
+                                    funcionalidades;
+                                </li>
+
+                                <li>
+                                    suspensão temporária da conta;
+                                </li>
+
+                                <li>
+                                    encerramento da conta em situações
+                                    graves ou reiteradas;
+                                </li>
+
+                                <li>
+                                    outras providências necessárias para
+                                    proteção da plataforma, de seus
+                                    usuários ou de terceiros.
+                                </li>
+
+                            </ul>
+
+
+                            <p>
+                                A medida aplicada poderá considerar
+                                fatores como gravidade, contexto,
+                                recorrência, risco gerado, intenção
+                                aparente e histórico relevante de
+                                violações.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             26
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="medidas-urgentes"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    26
+                                </span>
+
+                                <h2>
+                                    Medidas urgentes de segurança
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Em situações que aparentem envolver risco
+                                relevante à segurança de usuários,
+                                terceiros ou da própria plataforma, o
+                                Arquivo Sombrio poderá adotar medidas
+                                preventivas antes da conclusão de uma
+                                análise mais ampla.
+                            </p>
+
+
+                            <p>
+                                Isso poderá incluir ocultação temporária
+                                de conteúdo, limitação de funcionalidades
+                                ou suspensão preventiva de acesso quando
+                                a medida for considerada necessária e
+                                proporcional ao risco identificado.
+                            </p>
+
+
+                            <p>
+                                A adoção de medida preventiva não
+                                significa necessariamente uma conclusão
+                                definitiva sobre a existência de
+                                violação.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             27
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="recorrencia"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    27
+                                </span>
+
+                                <h2>
+                                    Violações reiteradas e evasão de
+                                    medidas
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Violações repetidas poderão resultar em
+                                medidas progressivamente mais
+                                restritivas.
+                            </p>
+
+
+                            <p>
+                                Não é permitido criar ou utilizar outras
+                                contas com a finalidade de contornar
+                                suspensão, bloqueio ou outra medida de
+                                moderação válida aplicada a uma conta.
+                            </p>
+
+
+                            <p>
+                                Contas utilizadas de forma coordenada
+                                para facilitar essa evasão também
+                                poderão ser submetidas a medidas de
+                                proteção e moderação.
+                            </p>
+
+                        </section>
+
+                                              <!-- =====================================
+                             28
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="revisao-moderacao"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    28
+                                </span>
+
+                                <h2>
+                                    Revisão de decisões de moderação
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Quando houver mecanismo disponível para
+                                isso, o usuário poderá solicitar revisão
+                                de determinadas decisões de moderação,
+                                especialmente quando considerar que o
+                                contexto de uma publicação foi
+                                interpretado incorretamente.
+                            </p>
+
+
+                            <p>
+                                A possibilidade de revisão, os prazos e
+                                os procedimentos aplicáveis poderão
+                                variar conforme a natureza da medida e
+                                os recursos disponíveis na plataforma.
+                            </p>
+
+
+                            <p>
+                                Solicitações de revisão não garantem a
+                                reversão da decisão originalmente
+                                adotada.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             29
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="correcoes"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    29
+                                </span>
+
+                                <h2>
+                                    Correções e contestações
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Pessoas mencionadas em conteúdos,
+                                participantes ou terceiros poderão
+                                comunicar possíveis erros factuais,
+                                informações desatualizadas ou outras
+                                questões que justifiquem análise.
+                            </p>
+
+
+                            <p>
+                                Uma solicitação de correção ou
+                                contestação será avaliada de acordo com
+                                o contexto, as informações disponíveis,
+                                as fontes apresentadas e os direitos
+                                envolvidos.
+                            </p>
+
+
+                            <p>
+                                Quando apropriado, poderão ser adotadas
+                                medidas como correção, atualização,
+                                contextualização, inclusão de nota,
+                                restrição ou remoção de conteúdo.
+                            </p>
+
+
+                            <p>
+                                A apresentação de uma contestação não
+                                implica remoção automática do conteúdo
+                                questionado.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             30
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="perfil"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    30
+                                </span>
+
+                                <h2>
+                                    Perfis e identidade na Comunidade
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                O Arquivo Sombrio poderá permitir o uso
+                                de nome, pseudônimo ou identidade de
+                                investigador nos perfis públicos da
+                                Comunidade.
+                            </p>
+
+
+                            <p>
+                                A utilização de pseudônimo não elimina
+                                a responsabilidade do usuário pelas
+                                atividades realizadas por meio de sua
+                                conta.
+                            </p>
+
+
+                            <p>
+                                Informações de perfil não devem ser
+                                utilizadas para enganar outros
+                                participantes sobre qualificações,
+                                vínculos institucionais, identidade ou
+                                participação oficial em investigações.
+                            </p>
+
+
+                            <p>
+                                Selos, níveis, distintivos ou mecanismos
+                                de reputação eventualmente disponibilizados
+                                pela plataforma não representam
+                                certificação profissional, autoridade
+                                policial, habilitação pericial ou
+                                reconhecimento oficial externo, salvo
+                                quando expressamente informado de forma
+                                diferente.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             31
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="reputacao"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    31
+                                </span>
+
+                                <h2>
+                                    Reputação, níveis e contribuições
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                A plataforma poderá implementar sistemas
+                                de níveis, reputação, distintivos ou
+                                reconhecimento de contribuições.
+                            </p>
+
+
+                            <p>
+                                Esses mecanismos poderão considerar
+                                critérios definidos pelo Arquivo
+                                Sombrio e poderão ser ajustados ao longo
+                                do desenvolvimento da Comunidade.
+                            </p>
+
+
+                            <p>
+                                O recebimento de uma denúncia, por si
+                                só, não deverá ser tratado como prova de
+                                infração nem gerar automaticamente
+                                redução de reputação.
+                            </p>
+
+
+                            <p>
+                                Violações confirmadas pela moderação
+                                poderão produzir consequências nos
+                                mecanismos de reputação quando essa
+                                funcionalidade estiver implementada e
+                                conforme as regras então vigentes.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             32
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="responsabilidade"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    32
+                                </span>
+
+                                <h2>
+                                    Responsabilidade pelas publicações
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Cada participante é responsável pelo
+                                conteúdo que decide publicar e pelas
+                                interações realizadas por meio de sua
+                                conta, observadas as responsabilidades
+                                da própria plataforma previstas na
+                                legislação aplicável.
+                            </p>
+
+
+                            <p>
+                                Antes de publicar acusações, documentos,
+                                imagens ou informações sensíveis, o
+                                usuário deve considerar a confiabilidade
+                                da informação, sua relevância para a
+                                discussão e os possíveis impactos sobre
+                                outras pessoas.
+                            </p>
+
+
+                            <p>
+                                A exclusão posterior de uma publicação
+                                não garante que cópias, registros ou
+                                capturas eventualmente realizadas por
+                                terceiros deixem de existir.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             33
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="autoridades"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    33
+                                </span>
+
+                                <h2>
+                                    Autoridades e obrigações legais
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                O Arquivo Sombrio poderá adotar as
+                                providências exigidas pela legislação
+                                aplicável e responder a determinações
+                                válidas de autoridades competentes nos
+                                limites legalmente cabíveis.
+                            </p>
+
+
+                            <p>
+                                A existência de uma denúncia interna na
+                                plataforma não substitui comunicação às
+                                autoridades quando a situação exigir
+                                atendimento policial, médico, judicial
+                                ou outro tipo de intervenção oficial.
+                            </p>
+
+
+                            <div class="legal-note">
+
+                                <p>
+                                    Em situações de emergência ou risco
+                                    imediato, os recursos de denúncia da
+                                    Comunidade não devem ser tratados
+                                    como serviço de emergência.
+                                </p>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             34
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="privacidade-plataforma"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    34
+                                </span>
+
+                                <h2>
+                                    Privacidade e tratamento de dados
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Informações sobre tratamento de dados
+                                pessoais, autenticação, armazenamento
+                                local, fornecedores tecnológicos,
+                                direitos dos titulares e demais práticas
+                                relacionadas à privacidade estão
+                                descritas na
+                                <a
+                                    href="privacidade.html"
+                                    class="legal-link"
+                                >
+                                    Política de Privacidade
+                                </a>
+                                do Arquivo Sombrio.
+                            </p>
+
+
+                            <p>
+                                Estas Diretrizes devem ser interpretadas
+                                em conjunto com a Política de Privacidade
+                                e com os
+                                <a
+                                    href="termos.html"
+                                    class="legal-link"
+                                >
+                                    Termos de Uso
+                                </a>.
+                            </p>
+
+                        </section>
+
+                                              <!-- =====================================
+                             35
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="alteracoes"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    35
+                                </span>
+
+                                <h2>
+                                    Alterações destas Diretrizes
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Estas Diretrizes poderão ser atualizadas
+                                para acompanhar mudanças na Comunidade,
+                                novos recursos, riscos identificados,
+                                práticas de moderação ou alterações
+                                legais e regulatórias.
+                            </p>
+
+
+                            <p>
+                                Quando uma alteração for relevante, o
+                                Arquivo Sombrio poderá apresentar avisos
+                                na plataforma ou utilizar outros meios
+                                adequados para comunicar a atualização.
+                            </p>
+
+
+                            <p>
+                                A versão e a data indicadas neste
+                                documento permitem identificar as regras
+                                publicadas em determinado momento.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             36
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="contato"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    36
+                                </span>
+
+                                <h2>
+                                    Contato, denúncias e solicitações
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Os mecanismos específicos de denúncia,
+                                revisão e contato da Comunidade serão
+                                disponibilizados conforme essas
+                                funcionalidades forem implementadas na
+                                plataforma.
+                            </p>
+
+
+                            <p>
+                                Antes do lançamento público definitivo,
+                                o Arquivo Sombrio deverá disponibilizar
+                                um canal oficial para comunicações
+                                relacionadas à moderação, correções,
+                                direitos e privacidade.
+                            </p>
+
+
+                            <div class="legal-note">
+
+                                <p>
+                                    CANAL OFICIAL:
+                                    [E-MAIL OFICIAL A DEFINIR ANTES DO
+                                    LANÇAMENTO]
+                                </p>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =====================================
+                             37
+                             ===================================== -->
+
+                        <section
+                            class="legal-section"
+                            id="registro-versao"
+                        >
+
+                            <div class="legal-section-heading">
+
+                                <span class="legal-number">
+                                    37
+                                </span>
+
+                                <h2>
+                                    Registro e versão das Diretrizes
+                                </h2>
+
+                            </div>
+
+
+                            <p>
+                                Esta é a versão
+                                <span class="legal-highlight">
+                                    1.0
+                                </span>
+                                das Diretrizes da Comunidade do
+                                Arquivo Sombrio, com atualização
+                                registrada em
+                                <span class="legal-highlight">
+                                    04 de setembro de 2026
+                                </span>.
+                            </p>
+
+
+                            <p>
+                                Versões futuras poderão substituir este
+                                documento conforme a evolução da
+                                plataforma e das regras da Comunidade.
+                            </p>
+
+
+                            <p>
+                                Estas Diretrizes complementam os
+                                <a
+                                    href="termos.html"
+                                    class="legal-link"
+                                >
+                                    Termos de Uso
+                                </a>
+                                e a
+                                <a
+                                    href="privacidade.html"
+                                    class="legal-link"
+                                >
+                                    Política de Privacidade
+                                </a>
+                                do Arquivo Sombrio.
+                            </p>
+
+                        </section>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         RODAPÉ
+         ===================================================== -->
+
+    <footer class="legal-footer">
+
+        <div class="legal-footer-inner">
+
+            <div class="legal-footer-copy">
+                © 2026 ARQUIVO SOMBRIO · DIRETRIZES DA COMUNIDADE v1.0
+            </div>
+
+
+            <div class="legal-footer-links">
+
+                <a href="index.html">
+                    Início
+                </a>
+
+                <a href="termos.html">
+                    Termos de Uso
+                </a>
+
+                <a href="privacidade.html">
+                    Política de Privacidade
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+</div>
+
+</body>
+
+</html>
