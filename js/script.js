@@ -3758,8 +3758,38 @@ async function cadastrarForum() {
         return;
     }
 
+const confirmouMaioridade =
+    confirm(
+        "CONFIRMAÇÃO DE IDADE\n\n" +
+        "A Comunidade do Arquivo Sombrio é destinada exclusivamente a pessoas com 18 anos ou mais.\n\n" +
+        "Você confirma que possui 18 anos ou mais?"
+    );
 
-    try {
+if (!confirmouMaioridade) {
+
+    alert(
+        "Não é possível criar uma conta na Comunidade sem confirmar que você possui 18 anos ou mais."
+    );
+
+    return;
+}
+   
+const aceitouPoliticas =
+    confirm(
+        "TERMOS E POLÍTICAS\n\n" +
+        "Para criar sua conta, você precisa declarar que leu e aceita os Termos de Uso, a Política de Privacidade e as Diretrizes da Comunidade.\n\n" +
+        "Você concorda com esses documentos?"
+    );
+
+if (!aceitouPoliticas) {
+
+    alert(
+        "Para criar uma conta, é necessário aceitar os Termos de Uso, a Política de Privacidade e as Diretrizes da Comunidade."
+    );
+
+    return;
+}
+   try {
 
         const supabaseClient =
             await obterClienteSupabase();
@@ -3782,9 +3812,14 @@ captchaToken,
     emailRedirectTo:
         "https://l7-collab.github.io/arquivosombrio/",
 
-    data: {
-        display_name: nome
-    }
+   data: {
+    display_name: nome,
+    age_18_confirmed: true,
+    legal_acceptance: true,
+    terms_version: "1.0",
+    privacy_version: "1.0",
+    guidelines_version: "1.0",
+    legal_accepted_at: new Date().toISOString()
 
 }
 
