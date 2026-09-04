@@ -182,6 +182,22 @@
         }
 
         /*
+         * LINK LEGAL DO RODAPÉ
+         */
+        .footer-legal-link {
+            color: inherit;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .footer-legal-link:hover,
+        .footer-legal-link:focus-visible {
+            opacity: 0.72;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        /*
          * TELAS INTERMEDIÁRIAS
          */
         @media (max-width: 1000px) {
@@ -564,7 +580,6 @@
 
     <main>
 
-
         <!-- ============================================================
              HERO
              ============================================================ -->
@@ -624,7 +639,6 @@
 
                     <div class="hero-actions">
 
-
                         <a
                             href="#casos"
                             class="btn-primary"
@@ -645,7 +659,6 @@
                             Ciência Forense
 
                         </a>
-
 
                     </div>
 
@@ -817,8 +830,9 @@
 
 
                 </header>
-                
-                                <!-- ========================================================
+
+
+                <!-- ========================================================
                      PESQUISA E FILTROS DOS DOSSIÊS
                      ======================================================== -->
 
@@ -1239,9 +1253,7 @@
 
         </section>
 
-
-
-        <!-- ============================================================
+                <!-- ============================================================
              FORENSE
              ============================================================ -->
 
@@ -1477,8 +1489,6 @@
 
 
         </section>
-
-
 
         <!-- ============================================================
              FÓRUM
@@ -1723,8 +1733,8 @@
 
 
         </section>
-        
-                <!-- ============================================================
+
+        <!-- ============================================================
              SUGESTÃO
              ============================================================ -->
 
@@ -1882,9 +1892,6 @@
 
 
     </main>
-
-
-
     <!-- ================================================================
          RODAPÉ
          ================================================================ -->
@@ -1967,6 +1974,26 @@
 
 
 
+            <div class="footer-navigation">
+
+
+                <strong>
+                    LEGAL
+                </strong>
+
+
+                <a
+                    href="privacidade.html"
+                    class="footer-legal-link"
+                >
+                    Política de Privacidade
+                </a>
+
+
+            </div>
+
+
+
             <div class="footer-seal">
 
 
@@ -2002,9 +2029,6 @@
 
 
     </footer>
-
-
-
     <!-- ================================================================
          LOGIN ADMINISTRATIVO
          ================================================================ -->
@@ -2134,66 +2158,15 @@
 
 
     </div>
-    
-        <!-- ================================================================
+
+
+    <!-- ================================================================
          JAVASCRIPT
 
          ORDEM OBRIGATÓRIA:
          primeiro os dados, depois a lógica.
          ================================================================ -->
-    <!-- ================================================================
-         RODAPÉ LEGAL
-         ================================================================ -->
 
-    <footer
-        style="
-            border-top: 1px solid rgba(255,255,255,0.08);
-            background: #080706;
-            padding: 28px 20px;
-            text-align: center;
-        "
-    >
-
-        <div
-            style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-wrap: wrap;
-                gap: 10px 18px;
-                margin-bottom: 14px;
-            "
-        >
-
-            <a
-                href="privacidade.html"
-                style="
-                    color: #9d9589;
-                    text-decoration: none;
-                    font-family: 'DM Mono', monospace;
-                    font-size: 0.65rem;
-                    letter-spacing: 0.06em;
-                "
-            >
-                POLÍTICA DE PRIVACIDADE
-            </a>
-
-        </div>
-
-        <p
-            style="
-                margin: 0;
-                color: #625d56;
-                font-family: 'DM Mono', monospace;
-                font-size: 0.58rem;
-                letter-spacing: 0.08em;
-            "
-        >
-            © 2026 ARQUIVO SOMBRIO
-        </p>
-
-    </footer>
-    
     <script src="data/caso.js"></script>
     <script src="js/script.js"></script>
     <script src="js/filtros.js"></script>
@@ -2202,3 +2175,4 @@
 </body>
 
 </html>
+    
