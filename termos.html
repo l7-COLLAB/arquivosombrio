@@ -1,0 +1,2599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Termos de Uso do Arquivo Sombrio — regras para acesso, utilização da plataforma e participação na comunidade."
+    >
+
+    <meta
+        name="theme-color"
+        content="#080706"
+    >
+
+    <title>
+        Termos de Uso — Arquivo Sombrio
+    </title>
+
+
+    <!-- FONTES -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:wght@400;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- ÍCONES -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <!-- CSS PRINCIPAL -->
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+
+    <!-- ESTILOS DA PÁGINA LEGAL -->
+
+    <style>
+
+        :root {
+            --legal-bg: #080706;
+            --legal-surface: #100e0c;
+            --legal-surface-soft: #15120f;
+            --legal-border: rgba(255, 255, 255, 0.09);
+            --legal-paper: #d8d0c4;
+            --legal-muted: #928a80;
+            --legal-red: #8f1717;
+            --legal-red-light: #b82b2b;
+            --legal-mono: "DM Mono", monospace;
+            --legal-serif: "Libre Baskerville", serif;
+            --legal-title: "Cinzel", serif;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(
+                    circle at 50% 0%,
+                    rgba(90, 15, 15, 0.10),
+                    transparent 38%
+                ),
+                var(--legal-bg);
+
+            color: var(--legal-paper);
+        }
+
+
+        .legal-page {
+            min-height: 100vh;
+        }
+
+
+        /*
+         * CABEÇALHO
+         */
+
+        .legal-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+
+            border-bottom: 1px solid var(--legal-border);
+
+            background: rgba(8, 7, 6, 0.94);
+            backdrop-filter: blur(12px);
+        }
+
+
+        .legal-header-inner {
+            width: min(1180px, calc(100% - 40px));
+            min-height: 72px;
+            margin: 0 auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+
+        .legal-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+
+            color: #f0e8dc;
+            text-decoration: none;
+
+            font-family: var(--legal-title);
+            font-size: 0.92rem;
+            letter-spacing: 0.08em;
+        }
+
+
+        .legal-logo i {
+            color: var(--legal-red-light);
+        }
+
+
+        .legal-logo strong {
+            color: var(--legal-red-light);
+        }
+
+
+        .legal-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            color: var(--legal-muted);
+            text-decoration: none;
+
+            font-family: var(--legal-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+
+            transition:
+                color 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+
+        .legal-back:hover,
+        .legal-back:focus-visible {
+            color: var(--legal-paper);
+        }
+
+
+        /*
+         * HERO
+         */
+
+        .legal-hero {
+            position: relative;
+            overflow: hidden;
+
+            padding: 100px 0 70px;
+
+            border-bottom: 1px solid var(--legal-border);
+        }
+
+
+        .legal-hero::before {
+            content: "TERMOS";
+            position: absolute;
+            top: 22px;
+            right: -20px;
+
+            color: rgba(255, 255, 255, 0.018);
+
+            font-family: var(--legal-title);
+            font-size: clamp(5rem, 15vw, 13rem);
+            font-weight: 800;
+            line-height: 1;
+
+            pointer-events: none;
+        }
+
+
+        .legal-container {
+            position: relative;
+            z-index: 1;
+
+            width: min(940px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+
+        .legal-classification {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .legal-tag {
+            display: inline-flex;
+            align-items: center;
+
+            min-height: 28px;
+            padding: 5px 10px;
+
+            border: 1px solid rgba(184, 43, 43, 0.35);
+
+            color: #c66060;
+            background: rgba(143, 23, 23, 0.08);
+
+            font-family: var(--legal-mono);
+            font-size: 0.60rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+
+        .legal-eyebrow {
+            margin: 0 0 12px;
+
+            color: var(--legal-red-light);
+
+            font-family: var(--legal-mono);
+            font-size: 0.67rem;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+
+        .legal-hero h1 {
+            max-width: 800px;
+            margin: 0;
+
+            color: #eee6da;
+
+            font-family: var(--legal-title);
+            font-size: clamp(2.2rem, 6vw, 4.7rem);
+            font-weight: 600;
+            line-height: 1.06;
+            letter-spacing: -0.025em;
+        }
+
+
+        .legal-intro {
+            max-width: 760px;
+            margin: 28px 0 0;
+
+            color: #aaa197;
+
+            font-family: var(--legal-serif);
+            font-size: 0.93rem;
+            line-height: 1.9;
+        }
+
+
+        .legal-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+
+            margin-top: 34px;
+            padding-top: 22px;
+
+            border-top: 1px solid var(--legal-border);
+        }
+
+
+        .legal-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+
+        .legal-meta-item small {
+            color: #746d65;
+
+            font-family: var(--legal-mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+
+        .legal-meta-item strong {
+            color: #b9b0a5;
+
+            font-family: var(--legal-mono);
+            font-size: 0.66rem;
+            font-weight: 400;
+        }
+
+
+        /*
+         * CONTEÚDO
+         */
+
+        .legal-content {
+            padding: 72px 0 100px;
+        }
+
+
+        .legal-notice {
+            margin-bottom: 55px;
+            padding: 22px 24px;
+
+            display: flex;
+            gap: 15px;
+
+            border: 1px solid rgba(184, 43, 43, 0.25);
+            border-left: 3px solid var(--legal-red-light);
+
+            background: rgba(143, 23, 23, 0.055);
+        }
+
+
+        .legal-notice i {
+            margin-top: 3px;
+            color: var(--legal-red-light);
+        }
+
+
+        .legal-notice p {
+            margin: 0;
+
+            color: #b7aea3;
+
+            font-family: var(--legal-serif);
+            font-size: 0.83rem;
+            line-height: 1.75;
+        }
+
+
+        .legal-section {
+            padding: 42px 0;
+
+            border-top: 1px solid var(--legal-border);
+        }
+
+
+        .legal-section:first-of-type {
+            border-top: 0;
+        }
+
+
+        .legal-section-number {
+            display: block;
+            margin-bottom: 10px;
+
+            color: var(--legal-red-light);
+
+            font-family: var(--legal-mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.10em;
+        }
+
+
+        .legal-section h2 {
+            margin: 0 0 22px;
+
+            color: #e1d8cc;
+
+            font-family: var(--legal-title);
+            font-size: clamp(1.25rem, 3vw, 1.7rem);
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
+
+        .legal-section h3 {
+            margin: 30px 0 13px;
+
+            color: #c7beb2;
+
+            font-family: var(--legal-title);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+
+        .legal-section p,
+        .legal-section li {
+            color: #aaa197;
+
+            font-family: var(--legal-serif);
+            font-size: 0.84rem;
+            line-height: 1.9;
+        }
+
+
+        .legal-section p {
+            margin: 0 0 17px;
+        }
+
+
+        .legal-section ul {
+            margin: 18px 0;
+            padding-left: 22px;
+        }
+
+
+        .legal-section li {
+            margin-bottom: 9px;
+        }
+
+
+        .legal-section strong {
+            color: #d0c7bb;
+        }
+
+
+        .legal-highlight {
+            margin: 24px 0;
+            padding: 20px;
+
+            border: 1px solid var(--legal-border);
+
+            background: var(--legal-surface);
+        }
+
+
+        .legal-highlight p:last-child {
+            margin-bottom: 0;
+        }
+
+
+        /*
+         * RODAPÉ
+         */
+
+        .legal-footer {
+            padding: 34px 0;
+
+            border-top: 1px solid var(--legal-border);
+
+            background: #060504;
+        }
+
+
+        .legal-footer-inner {
+            width: min(940px, calc(100% - 40px));
+            margin: 0 auto;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+
+        .legal-footer p {
+            margin: 0;
+
+            color: #6f6860;
+
+            font-family: var(--legal-mono);
+            font-size: 0.59rem;
+            line-height: 1.6;
+            letter-spacing: 0.04em;
+        }
+
+
+        .legal-footer a {
+            color: #928a80;
+            text-decoration: none;
+
+            font-family: var(--legal-mono);
+            font-size: 0.60rem;
+        }
+
+
+        .legal-footer a:hover,
+        .legal-footer a:focus-visible {
+            color: #c7beb2;
+        }
+
+
+        /*
+         * RESPONSIVIDADE
+         */
+
+        @media (max-width: 650px) {
+
+            .legal-header-inner {
+                width: min(100% - 28px, 1180px);
+                min-height: 62px;
+            }
+
+
+            .legal-logo {
+                font-size: 0.78rem;
+            }
+
+
+            .legal-back span {
+                display: none;
+            }
+
+
+            .legal-container,
+            .legal-footer-inner {
+                width: min(100% - 30px, 940px);
+            }
+
+
+            .legal-hero {
+                padding: 72px 0 50px;
+            }
+
+
+            .legal-content {
+                padding: 45px 0 70px;
+            }
+
+
+            .legal-section {
+                padding: 34px 0;
+            }
+
+
+            .legal-notice {
+                padding: 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="legal-page">
+
+
+        <!-- ============================================================
+             CABEÇALHO
+             ============================================================ -->
+
+        <header class="legal-header">
+
+            <div class="legal-header-inner">
+
+                <a
+                    href="index.html"
+                    class="legal-logo"
+                    aria-label="Voltar para Arquivo Sombrio"
+                >
+
+                    <i class="fa-solid fa-folder-open"></i>
+
+                    <span>
+                        ARQUIVO <strong>SOMBRIO</strong>
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="index.html"
+                    class="legal-back"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    <span>
+                        Voltar ao arquivo
+                    </span>
+
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- ============================================================
+             APRESENTAÇÃO
+             ============================================================ -->
+
+        <main>
+
+            <section class="legal-hero">
+
+                <div class="legal-container">
+
+                    <div class="legal-classification">
+
+                        <span class="legal-tag">
+                            DOCUMENTO LEGAL
+                        </span>
+
+                        <span class="legal-tag">
+                            TERMOS DE USO
+                        </span>
+
+                        <span class="legal-tag">
+                            VERSÃO 1.0
+                        </span>
+
+                    </div>
+
+
+                    <p class="legal-eyebrow">
+                        ARQUIVO JURÍDICO // TU-001
+                    </p>
+
+
+                    <h1>
+                        Termos de Uso
+                    </h1>
+
+
+                    <p class="legal-intro">
+
+                        Estes Termos estabelecem as regras aplicáveis ao
+                        acesso e à utilização do Arquivo Sombrio, incluindo
+                        seus conteúdos editoriais, recursos de cadastro,
+                        funcionalidades interativas e participação na
+                        Comunidade.
+
+                    </p>
+
+
+                    <div class="legal-meta">
+
+                        <div class="legal-meta-item">
+
+                            <small>
+                                VERSÃO
+                            </small>
+
+                            <strong>
+                                1.0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="legal-meta-item">
+
+                            <small>
+                                ÚLTIMA ATUALIZAÇÃO
+                            </small>
+
+                            <strong>
+                                04 de setembro de 2026
+                            </strong>
+
+                        </div>
+
+
+                        <div class="legal-meta-item">
+
+                            <small>
+                                CLASSIFICAÇÃO
+                            </small>
+
+                            <strong>
+                                ACESSO PÚBLICO
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section class="legal-content">
+
+                <div class="legal-container">
+
+
+                    <div class="legal-notice">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <p>
+
+                            <strong>Importante:</strong>
+                            a criação de conta e a participação na Comunidade
+                            do Arquivo Sombrio são destinadas exclusivamente
+                            a pessoas com 18 anos ou mais. O site aborda crimes
+                            reais, mortes, desaparecimentos, investigação,
+                            perícia e outros temas que podem ser sensíveis.
+
+                        </p>
+
+                    </div>
+
+                    <!-- =================================================
+                         01 — ACEITAÇÃO DOS TERMOS
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 01
+                        </span>
+
+                        <h2>
+                            Aceitação destes Termos
+                        </h2>
+
+                        <p>
+
+                            Ao acessar ou utilizar o Arquivo Sombrio, o usuário
+                            declara estar ciente das regras aplicáveis às
+                            funcionalidades que utilizar e concorda em observar
+                            estes Termos de Uso, a Política de Privacidade e,
+                            quando aplicáveis, as regras específicas da
+                            Comunidade.
+
+                        </p>
+
+                        <p>
+
+                            Determinadas funcionalidades, especialmente criação
+                            de conta, publicação de conteúdo e participação na
+                            Comunidade, poderão exigir manifestação expressa de
+                            concordância com os documentos vigentes.
+
+                        </p>
+
+                        <p>
+
+                            Caso o usuário não concorde com estes Termos, deverá
+                            deixar de utilizar as funcionalidades que dependam
+                            dessa concordância, sem prejuízo dos direitos que
+                            lhe sejam assegurados pela legislação aplicável.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         02 — NATUREZA DO ARQUIVO SOMBRIO
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 02
+                        </span>
+
+                        <h2>
+                            Natureza e finalidade do Arquivo Sombrio
+                        </h2>
+
+                        <p>
+
+                            O Arquivo Sombrio é um projeto de natureza
+                            editorial, documental, informativa e educacional,
+                            dedicado à apresentação e discussão de temas como
+                            crimes reais, investigações, desaparecimentos,
+                            criminologia, ciência forense, acontecimentos
+                            históricos, mistérios, lendas e assuntos
+                            relacionados.
+
+                        </p>
+
+                        <p>
+
+                            Os conteúdos podem reunir informações provenientes
+                            de fontes públicas, documentos, obras, reportagens,
+                            registros históricos e outras referências
+                            identificadas conforme a natureza de cada material.
+
+                        </p>
+
+
+                        <div class="legal-highlight">
+
+                            <p>
+
+                                <strong>
+                                    O conteúdo do Arquivo Sombrio não substitui
+                                    investigação oficial, perícia profissional,
+                                    orientação jurídica, médica, psicológica ou
+                                    qualquer outro serviço profissional
+                                    especializado.
+                                </strong>
+
+                            </p>
+
+                        </div>
+
+
+                        <p>
+
+                            A apresentação de hipóteses, controvérsias,
+                            interpretações históricas ou informações ainda não
+                            definitivamente esclarecidas deverá ser distinguida,
+                            sempre que possível, de fatos documentados e
+                            conclusões oficialmente estabelecidas.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         03 — IDADE MÍNIMA
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 03
+                        </span>
+
+                        <h2>
+                            Idade mínima para contas e Comunidade
+                        </h2>
+
+                        <p>
+
+                            A criação de conta e a participação nas áreas
+                            interativas da Comunidade do Arquivo Sombrio são
+                            permitidas exclusivamente a pessoas com
+                            <strong>18 anos ou mais</strong>.
+
+                        </p>
+
+                        <p>
+
+                            Ao solicitar a criação de uma conta, o usuário
+                            deverá declarar que atende ao requisito de idade
+                            mínima estabelecido nestes Termos.
+
+                        </p>
+
+                        <p>
+
+                            Essa declaração não impede que o Arquivo Sombrio
+                            adote mecanismos adicionais e proporcionais de
+                            aferição de idade quando necessários para
+                            cumprimento da legislação aplicável, proteção dos
+                            usuários ou funcionamento de determinadas
+                            funcionalidades.
+
+                        </p>
+
+                        <p>
+
+                            Caso existam indícios razoáveis de que uma conta
+                            pertence a pessoa que não atende ao requisito de
+                            idade, o acesso a funcionalidades restritas poderá
+                            ser limitado enquanto a situação for analisada,
+                            observados os direitos aplicáveis.
+
+                        </p>
+
+
+                        <div class="legal-highlight">
+
+                            <p>
+
+                                A regra de 18 anos ou mais para criação de
+                                contas não significa, por si só, que todo
+                                conteúdo público do site seja adequado para
+                                todas as faixas etárias. Determinados arquivos
+                                poderão conter avisos específicos sobre temas
+                                sensíveis.
+
+                            </p>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         04 — CONTA DO USUÁRIO
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 04
+                        </span>
+
+                        <h2>
+                            Cadastro, conta e segurança
+                        </h2>
+
+                        <p>
+
+                            Para utilizar determinadas funcionalidades, o
+                            usuário poderá precisar criar uma conta fornecendo
+                            as informações solicitadas no processo de cadastro.
+
+                        </p>
+
+                        <p>
+
+                            O usuário é responsável por fornecer informações
+                            adequadas ao funcionamento da conta e por manter
+                            suas credenciais de acesso protegidas.
+
+                        </p>
+
+                        <p>
+                            O usuário não deverá:
+                        </p>
+
+                        <ul>
+
+                            <li>
+                                compartilhar deliberadamente sua senha ou
+                                credenciais de autenticação com terceiros;
+                            </li>
+
+                            <li>
+                                tentar acessar conta pertencente a outra pessoa
+                                sem autorização;
+                            </li>
+
+                            <li>
+                                utilizar identidade de terceiro de maneira
+                                enganosa ou se passar por outra pessoa;
+                            </li>
+
+                            <li>
+                                utilizar a conta para contornar suspensão,
+                                bloqueio ou outra medida legítima de moderação;
+                            </li>
+
+                            <li>
+                                explorar falhas técnicas, mecanismos de
+                                autenticação ou recursos da plataforma para
+                                obter acesso não autorizado.
+                            </li>
+
+                        </ul>
+
+                        <p>
+
+                            Caso o usuário suspeite de acesso indevido à sua
+                            conta, deverá alterar suas credenciais quando essa
+                            funcionalidade estiver disponível e utilizar o
+                            canal de contato indicado pelo Arquivo Sombrio.
+
+                        </p>
+
+                        <p>
+
+                            O Arquivo Sombrio poderá adotar mecanismos de
+                            segurança, prevenção contra abuso, autenticação e
+                            proteção automatizada compatíveis com os recursos
+                            disponibilizados pela plataforma.
+
+                        </p>
+
+                    </section>
+
+                                      <!-- =================================================
+                         05 — PARTICIPAÇÃO NA COMUNIDADE
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 05
+                        </span>
+
+                        <h2>
+                            Participação na Comunidade
+                        </h2>
+
+                        <p>
+
+                            A Comunidade do Arquivo Sombrio é destinada à
+                            discussão responsável dos temas apresentados no
+                            site, incluindo análises, interpretações,
+                            questionamentos, referências, hipóteses e
+                            contribuições relacionadas aos arquivos
+                            publicados.
+
+                        </p>
+
+                        <p>
+
+                            A participação na Comunidade deverá respeitar estes
+                            Termos, as futuras Diretrizes da Comunidade e a
+                            legislação aplicável.
+
+                        </p>
+
+                        <p>
+                            Espera-se que os participantes:
+                        </p>
+
+                        <ul>
+
+                            <li>
+                                diferenciem, sempre que possível, fatos,
+                                opiniões, hipóteses e especulações;
+                            </li>
+
+                            <li>
+                                indiquem fontes quando apresentarem informações
+                                factuais relevantes que possam ser verificadas;
+                            </li>
+
+                            <li>
+                                mantenham discussões relacionadas ao tema em
+                                análise;
+                            </li>
+
+                            <li>
+                                respeitem outros participantes, vítimas,
+                                familiares e demais pessoas relacionadas aos
+                                casos discutidos;
+                            </li>
+
+                            <li>
+                                evitem apresentar suspeitas ou especulações
+                                como se fossem fatos comprovados.
+                            </li>
+
+                        </ul>
+
+                        <p>
+
+                            Divergências de interpretação são permitidas e
+                            fazem parte da proposta investigativa da
+                            Comunidade, desde que não sejam utilizadas como
+                            justificativa para ataques pessoais, perseguição,
+                            intimidação ou outras condutas abusivas.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         06 — CONTEÚDO DOS USUÁRIOS
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 06
+                        </span>
+
+                        <h2>
+                            Conteúdo publicado pelos usuários
+                        </h2>
+
+                        <p>
+
+                            O usuário permanece responsável pelo conteúdo que
+                            decidir publicar na plataforma, incluindo textos,
+                            comentários, análises, hipóteses, referências e
+                            outros materiais enviados por meio das
+                            funcionalidades disponíveis.
+
+                        </p>
+
+                        <p>
+
+                            Ao publicar conteúdo, o usuário declara que possui
+                            os direitos ou autorizações necessários para
+                            compartilhá-lo e que sua publicação não viola
+                            direitos de terceiros nem a legislação aplicável.
+
+                        </p>
+
+
+                        <h3>
+                            Direitos sobre o conteúdo
+                        </h3>
+
+                        <p>
+
+                            O usuário mantém os direitos que eventualmente
+                            possua sobre o conteúdo original de sua autoria.
+                            A publicação no Arquivo Sombrio não transfere
+                            automaticamente a titularidade desse conteúdo
+                            para a plataforma.
+
+                        </p>
+
+                        <p>
+
+                            Entretanto, ao enviar conteúdo para áreas públicas
+                            ou comunitárias do Arquivo Sombrio, o usuário
+                            concede, na medida necessária ao funcionamento da
+                            plataforma, autorização não exclusiva para
+                            armazenar, reproduzir tecnicamente, exibir,
+                            disponibilizar e realizar adaptações estritamente
+                            necessárias à apresentação, formatação,
+                            acessibilidade, segurança e moderação desse
+                            conteúdo dentro dos serviços do Arquivo Sombrio.
+
+                        </p>
+
+                        <p>
+
+                            Essa autorização não permite que o Arquivo Sombrio
+                            reivindique autoria sobre a contribuição do usuário
+                            nem comercialize isoladamente uma obra original
+                            enviada pelo usuário como se fosse de titularidade
+                            própria.
+
+                        </p>
+
+
+                        <h3>
+                            Permanência e remoção
+                        </h3>
+
+                        <p>
+
+                            Conteúdos poderão permanecer associados às
+                            discussões em que foram publicados enquanto forem
+                            necessários à integridade da conversa, ao
+                            cumprimento de obrigações legais ou à proteção de
+                            direitos, observados os direitos aplicáveis do
+                            usuário e as regras de retenção descritas na
+                            Política de Privacidade.
+
+                        </p>
+
+                        <p>
+
+                            Funcionalidades para edição, exclusão ou solicitação
+                            de remoção poderão variar conforme o tipo de
+                            conteúdo e o estágio de desenvolvimento da
+                            plataforma.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         07 — CONDUTAS E CONTEÚDOS PROIBIDOS
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 07
+                        </span>
+
+                        <h2>
+                            Condutas e conteúdos proibidos
+                        </h2>
+
+                        <p>
+
+                            Não é permitido utilizar o Arquivo Sombrio para
+                            publicar, promover, solicitar ou facilitar conteúdo
+                            ou comportamento que viole a legislação, direitos
+                            de terceiros, estes Termos ou as regras da
+                            Comunidade.
+
+                        </p>
+
+                        <p>
+                            Entre outras situações, são proibidos:
+                        </p>
+
+                        <ul>
+
+                            <li>
+                                ameaças, perseguição, intimidação, assédio ou
+                                incentivo à violência contra pessoas ou grupos;
+                            </li>
+
+                            <li>
+                                divulgação indevida de endereço, telefone,
+                                documentos, dados de contato, localização ou
+                                outras informações pessoais ou sensíveis de
+                                terceiros;
+                            </li>
+
+                            <li>
+                                acusações de autoria de crimes apresentadas
+                                como fatos quando não houver base legítima para
+                                essa afirmação;
+                            </li>
+
+                            <li>
+                                incentivo à perseguição de suspeitos, vítimas,
+                                familiares, testemunhas, profissionais,
+                                participantes da Comunidade ou qualquer outra
+                                pessoa;
+                            </li>
+
+                            <li>
+                                tentativa de organizar ações de vigilância,
+                                confronto, invasão, obtenção ilícita de
+                                informações ou investigação presencial contra
+                                terceiros;
+                            </li>
+
+                            <li>
+                                conteúdo que explore sexualmente crianças ou
+                                adolescentes ou qualquer outro material cuja
+                                posse, produção ou distribuição seja ilícita;
+                            </li>
+
+                            <li>
+                                publicação de imagens ou materiais íntimos sem
+                                autorização;
+                            </li>
+
+                            <li>
+                                conteúdo discriminatório ilícito, incitação à
+                                violência ou ataques direcionados contra
+                                pessoas ou grupos protegidos pela legislação;
+                            </li>
+
+                            <li>
+                                falsificação de identidade, fraude, tentativa
+                                de enganar outros usuários ou manipulação
+                                deliberada de informações com finalidade
+                                abusiva;
+                            </li>
+
+                            <li>
+                                spam, publicidade não autorizada, esquemas
+                                fraudulentos ou divulgação repetitiva de
+                                conteúdo sem relação com a finalidade da
+                                Comunidade;
+                            </li>
+
+                            <li>
+                                links, arquivos, códigos ou instruções
+                                destinados a comprometer contas, dispositivos,
+                                sistemas ou a segurança da plataforma;
+                            </li>
+
+                            <li>
+                                violação de direitos autorais, marcas,
+                                privacidade, imagem, honra ou outros direitos
+                                de terceiros;
+                            </li>
+
+                            <li>
+                                utilização da plataforma para interferir em
+                                investigações oficiais ou incentivar a
+                                destruição, ocultação ou adulteração de
+                                evidências.
+                            </li>
+
+                        </ul>
+
+
+                        <div class="legal-highlight">
+
+                            <p>
+
+                                <strong>
+                                    O Arquivo Sombrio é uma plataforma
+                                    editorial e de discussão. A Comunidade não
+                                    deve ser utilizada para conduzir perseguições
+                                    ou ações contra pessoas relacionadas a casos
+                                    reais.
+                                </strong>
+
+                            </p>
+
+                        </div>
+
+                    </section>
+
+                                      <!-- =================================================
+                         08 — MODERAÇÃO E DENÚNCIAS
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 08
+                        </span>
+
+                        <h2>
+                            Moderação, denúncias e medidas aplicáveis
+                        </h2>
+
+                        <p>
+
+                            O Arquivo Sombrio poderá adotar medidas de
+                            moderação para preservar a segurança da
+                            plataforma, a qualidade das discussões, os
+                            direitos de terceiros e o cumprimento destes
+                            Termos e da legislação aplicável.
+
+                        </p>
+
+                        <p>
+
+                            A existência de ferramentas de moderação não
+                            significa que todo conteúdo publicado pelos
+                            usuários será analisado previamente.
+
+                        </p>
+
+
+                        <h3>
+                            Medidas de moderação
+                        </h3>
+
+                        <p>
+
+                            Conforme a natureza, gravidade, contexto e
+                            recorrência da situação, poderão ser adotadas
+                            medidas como:
+
+                        </p>
+
+                        <ul>
+
+                            <li>
+                                ocultação ou remoção de conteúdo;
+                            </li>
+
+                            <li>
+                                solicitação de correção, esclarecimento ou
+                                indicação de fonte;
+                            </li>
+
+                            <li>
+                                limitação temporária de determinadas
+                                funcionalidades;
+                            </li>
+
+                            <li>
+                                advertência ao usuário;
+                            </li>
+
+                            <li>
+                                suspensão temporária da conta;
+                            </li>
+
+                            <li>
+                                encerramento da conta em situações graves ou
+                                reiteradas;
+                            </li>
+
+                            <li>
+                                preservação de informações quando necessária
+                                para cumprimento de obrigação legal, exercício
+                                regular de direitos ou atendimento de ordem
+                                válida de autoridade competente.
+                            </li>
+
+                        </ul>
+
+                        <p>
+
+                            Sempre que cabível, as medidas serão aplicadas de
+                            maneira proporcional à situação identificada,
+                            considerando o contexto e os riscos envolvidos.
+
+                        </p>
+
+
+                        <h3>
+                            Denúncias
+                        </h3>
+
+                        <p>
+
+                            O Arquivo Sombrio pretende disponibilizar
+                            mecanismos para que usuários e terceiros possam
+                            comunicar conteúdos potencialmente ilegais,
+                            abusivos, falsamente atribuídos, violadores de
+                            direitos ou incompatíveis com as regras da
+                            plataforma.
+
+                        </p>
+
+                        <p>
+
+                            Uma denúncia, por si só, não significa que houve
+                            violação. O conteúdo denunciado poderá ser
+                            analisado antes da adoção de medidas, salvo quando
+                            houver necessidade de atuação imediata em razão da
+                            natureza ou gravidade da situação.
+
+                        </p>
+
+
+                        <div class="legal-highlight">
+
+                            <p>
+
+                                O número de denúncias recebidas contra um
+                                conteúdo ou usuário não será, isoladamente,
+                                considerado prova de violação. Medidas de
+                                moderação deverão considerar o conteúdo, o
+                                contexto e as regras aplicáveis.
+
+                            </p>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         09 — PESSOAS REAIS E CASOS REAIS
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 09
+                        </span>
+
+                        <h2>
+                            Pessoas reais, vítimas, suspeitos e casos reais
+                        </h2>
+
+                        <p>
+
+                            Parte relevante do conteúdo do Arquivo Sombrio
+                            envolve acontecimentos reais e pode mencionar
+                            vítimas, familiares, testemunhas, investigados,
+                            suspeitos, acusados, condenados, absolvidos,
+                            autoridades, profissionais e outras pessoas
+                            relacionadas aos fatos apresentados.
+
+                        </p>
+
+                        <p>
+
+                            O tratamento editorial dessas informações deverá
+                            buscar contextualização, proporcionalidade,
+                            respeito à dignidade das pessoas envolvidas e
+                            distinção entre fatos documentados, alegações,
+                            versões, hipóteses e conclusões oficiais.
+
+                        </p>
+
+
+                        <h3>
+                            Suspeitas e acusações
+                        </h3>
+
+                        <p>
+
+                            A condição de investigado, suspeito ou acusado não
+                            deverá ser apresentada como equivalente a uma
+                            condenação definitiva.
+
+                        </p>
+
+                        <p>
+
+                            Quando relevante para a compreensão do caso, o
+                            Arquivo Sombrio poderá indicar o estágio conhecido
+                            de determinada investigação ou processo e informar
+                            sobre absolvições, arquivamentos, condenações,
+                            revisões, anulações ou outros desfechos relevantes
+                            identificados nas fontes utilizadas.
+
+                        </p>
+
+                        <p>
+
+                            Usuários da Comunidade também não deverão
+                            transformar hipóteses pessoais em acusações
+                            apresentadas como fatos comprovados.
+
+                        </p>
+
+
+                        <h3>
+                            Vítimas e familiares
+                        </h3>
+
+                        <p>
+
+                            Conteúdos sobre vítimas e familiares deverão evitar
+                            exposição desnecessária, humilhação, assédio,
+                            exploração sensacionalista ou divulgação
+                            injustificada de informações pessoais que não sejam
+                            relevantes para a compreensão legítima do caso.
+
+                        </p>
+
+
+                        <h3>
+                            Pessoas não públicas
+                        </h3>
+
+                        <p>
+
+                            A divulgação de informações sobre pessoas que não
+                            possuam atuação pública relacionada ao fato deverá
+                            considerar especialmente a pertinência da
+                            informação, sua origem, o contexto e os possíveis
+                            impactos sobre os direitos da pessoa mencionada.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         10 — CORREÇÕES E CONTESTAÇÕES
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 10
+                        </span>
+
+                        <h2>
+                            Correções, atualizações e contestações
+                        </h2>
+
+                        <p>
+
+                            O Arquivo Sombrio busca apresentar seus conteúdos
+                            com base em fontes consideradas pertinentes para
+                            cada publicação. Ainda assim, informações podem
+                            estar incompletas, tornar-se desatualizadas ou
+                            exigir correção diante de novos documentos,
+                            decisões ou esclarecimentos.
+
+                        </p>
+
+                        <p>
+
+                            Pessoas mencionadas em conteúdos, titulares de
+                            direitos ou outros interessados poderão utilizar
+                            o canal indicado pelo Arquivo Sombrio para
+                            apresentar pedidos de correção, atualização,
+                            esclarecimento ou contestação.
+
+                        </p>
+
+                        <p>
+
+                            A solicitação deverá, sempre que possível,
+                            identificar o conteúdo questionado e indicar de
+                            forma objetiva a informação cuja revisão está
+                            sendo solicitada, acompanhada dos elementos que
+                            permitam sua adequada análise.
+
+                        </p>
+
+                        <p>
+
+                            O recebimento de uma contestação não implica
+                            remoção automática do conteúdo. Cada solicitação
+                            poderá ser analisada considerando sua natureza,
+                            as fontes disponíveis, os direitos envolvidos e
+                            as obrigações legais aplicáveis.
+
+                        </p>
+
+                        <p>
+
+                            Quando uma correção material for considerada
+                            necessária, o Arquivo Sombrio poderá corrigir,
+                            complementar, atualizar, contextualizar ou remover
+                            a informação correspondente, conforme o caso.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         11 — CONTEÚDO SENSÍVEL
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 11
+                        </span>
+
+                        <h2>
+                            Conteúdo sensível e avisos editoriais
+                        </h2>
+
+                        <p>
+
+                            O Arquivo Sombrio aborda temas que podem envolver
+                            violência, morte, desaparecimentos, crimes,
+                            autópsias, perícia, sofrimento humano e outros
+                            assuntos potencialmente perturbadores.
+
+                        </p>
+
+                        <p>
+
+                            Sempre que considerado adequado ao contexto,
+                            determinados conteúdos poderão receber avisos
+                            editoriais, classificação interna ou outras
+                            medidas destinadas a informar previamente o
+                            visitante sobre a natureza do material.
+
+                        </p>
+
+                        <p>
+
+                            A existência de um aviso não elimina a necessidade
+                            de tratamento editorial responsável nem autoriza a
+                            publicação de materiais ilícitos ou de exposição
+                            desnecessária de vítimas.
+
+                        </p>
+
+                        <div class="legal-highlight">
+
+                            <p>
+
+                                Imagens ou documentos de natureza especialmente
+                                gráfica, invasiva ou sensível deverão ser
+                                avaliados individualmente antes da publicação,
+                                considerando sua relevância documental,
+                                direitos das pessoas envolvidas e legislação
+                                aplicável.
+
+                            </p>
+
+                        </div>
+
+                    </section>
+              
+                                  <!-- =================================================
+                         12 — PROPRIEDADE INTELECTUAL
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 12
+                        </span>
+
+                        <h2>
+                            Propriedade intelectual do Arquivo Sombrio
+                        </h2>
+
+                        <p>
+
+                            Salvo quando indicado de forma diferente, os
+                            elementos originais desenvolvidos especificamente
+                            para o Arquivo Sombrio, incluindo textos autorais,
+                            organização editorial, identidade visual, elementos
+                            gráficos, estrutura de apresentação, compilações,
+                            seleções e outros materiais protegidos, permanecem
+                            sujeitos aos direitos de seus respectivos
+                            titulares.
+
+                        </p>
+
+                        <p>
+
+                            O fato de determinado conteúdo estar publicamente
+                            acessível na internet não significa, por si só,
+                            autorização para sua reprodução, redistribuição,
+                            adaptação ou exploração comercial fora das
+                            hipóteses permitidas pela legislação ou de
+                            autorização concedida pelo respectivo titular.
+
+                        </p>
+
+                        <p>
+
+                            Não é permitido apresentar conteúdo original do
+                            Arquivo Sombrio como se fosse de autoria própria,
+                            remover indevidamente informações de autoria ou
+                            utilizar elementos protegidos de maneira que
+                            induza terceiros a acreditar que outro projeto,
+                            produto ou serviço possui vínculo oficial com o
+                            Arquivo Sombrio quando esse vínculo não existir.
+
+                        </p>
+
+
+                        <h3>
+                            Código e componentes do site
+                        </h3>
+
+                        <p>
+
+                            Código-fonte, scripts, folhas de estilo,
+                            componentes, interfaces e demais elementos
+                            técnicos desenvolvidos para o projeto poderão
+                            estar sujeitos à proteção conferida pela
+                            legislação aplicável e às condições de eventuais
+                            licenças de terceiros utilizadas no
+                            desenvolvimento.
+
+                        </p>
+
+                        <p>
+
+                            A possibilidade técnica de visualizar, inspecionar
+                            ou acessar componentes enviados ao navegador não
+                            constitui, por si só, autorização para reproduzir,
+                            redistribuir, sublicenciar ou explorar
+                            comercialmente esses componentes fora das
+                            permissões legais ou de licença aplicável.
+
+                        </p>
+
+
+                        <div class="legal-highlight">
+
+                            <p>
+
+                                <strong>
+                                    Nenhuma disposição destes Termos concede
+                                    automaticamente licença ampla sobre a
+                                    marca, identidade visual, conteúdo autoral
+                                    ou demais ativos do Arquivo Sombrio.
+                                </strong>
+
+                            </p>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         13 — FONTES E MATERIAIS DE TERCEIROS
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 13
+                        </span>
+
+                        <h2>
+                            Fontes, fotografias, documentos e materiais de terceiros
+                        </h2>
+
+                        <p>
+
+                            O Arquivo Sombrio poderá utilizar ou fazer
+                            referência a informações, documentos, imagens,
+                            fotografias, obras, reportagens, registros,
+                            publicações e outros materiais produzidos por
+                            terceiros quando pertinentes à finalidade
+                            editorial ou documental do projeto.
+
+                        </p>
+
+                        <p>
+
+                            Sempre que aplicável, serão observadas a origem do
+                            material, sua finalidade de utilização, os direitos
+                            envolvidos, as limitações legais pertinentes e as
+                            condições específicas de eventual licença ou
+                            autorização.
+
+                        </p>
+
+
+                        <h3>
+                            Indicação de fontes
+                        </h3>
+
+                        <p>
+
+                            A indicação de uma fonte tem como finalidade
+                            permitir contextualização, transparência editorial
+                            e identificação da origem das informações. A
+                            referência a uma fonte não significa que o Arquivo
+                            Sombrio seja proprietário do material original
+                            correspondente.
+
+                        </p>
+
+                        <p>
+
+                            Da mesma forma, citar a origem de uma fotografia,
+                            obra ou documento não substitui eventual
+                            autorização ou fundamento jurídico necessário para
+                            sua utilização quando a legislação assim exigir.
+
+                        </p>
+
+
+                        <h3>
+                            Direitos de terceiros
+                        </h3>
+
+                        <p>
+
+                            Marcas, nomes, fotografias, obras, documentos e
+                            demais materiais pertencentes a terceiros
+                            permanecem sujeitos aos direitos de seus
+                            respectivos titulares.
+
+                        </p>
+
+                        <p>
+
+                            Caso um titular de direitos identifique material
+                            publicado no Arquivo Sombrio que considere
+                            utilizado de maneira indevida, poderá apresentar
+                            solicitação de análise por meio do canal de contato
+                            indicado pela plataforma.
+
+                        </p>
+
+                        <p>
+
+                            Sempre que possível, a solicitação deverá
+                            identificar o material questionado, sua localização
+                            no site, a relação do solicitante com os direitos
+                            alegados e as informações necessárias para análise
+                            adequada do pedido.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         14 — USO DO CONTEÚDO
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 14
+                        </span>
+
+                        <h2>
+                            Utilização do conteúdo do Arquivo Sombrio
+                        </h2>
+
+                        <p>
+
+                            O visitante poderá acessar os conteúdos públicos
+                            disponibilizados pelo Arquivo Sombrio para fins
+                            compatíveis com a natureza do serviço e com a
+                            legislação aplicável.
+
+                        </p>
+
+                        <p>
+
+                            Eventuais utilizações permitidas por lei,
+                            inclusive citações realizadas nos limites
+                            legalmente admitidos, não são afastadas por estes
+                            Termos.
+
+                        </p>
+
+                        <p>
+
+                            Sem autorização ou fundamento jurídico aplicável,
+                            não é permitido:
+
+                        </p>
+
+                        <ul>
+
+                            <li>
+                                reproduzir substancialmente conteúdos autorais
+                                do Arquivo Sombrio para republicação como
+                                conteúdo próprio;
+                            </li>
+
+                            <li>
+                                comercializar cópias de materiais originais do
+                                projeto sem autorização;
+                            </li>
+
+                            <li>
+                                remover ou alterar deliberadamente créditos,
+                                avisos de autoria ou informações de origem com
+                                a finalidade de ocultar a procedência do
+                                material;
+                            </li>
+
+                            <li>
+                                utilizar a identidade visual ou outros
+                                elementos distintivos de forma capaz de gerar
+                                confusão sobre autoria, parceria, patrocínio ou
+                                vínculo oficial;
+                            </li>
+
+                            <li>
+                                copiar sistematicamente o acervo com a
+                                finalidade de criar reprodução substancial do
+                                serviço ou de sua organização editorial,
+                                ressalvadas as hipóteses permitidas pela
+                                legislação.
+                            </li>
+
+                        </ul>
+
+                        <p>
+
+                            Pedidos de autorização para usos que ultrapassem
+                            as permissões legais poderão ser encaminhados ao
+                            canal oficial de contato do Arquivo Sombrio quando
+                            esse canal estiver disponível.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         15 — LINKS E SERVIÇOS DE TERCEIROS
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 15
+                        </span>
+
+                        <h2>
+                            Links e serviços de terceiros
+                        </h2>
+
+                        <p>
+
+                            O Arquivo Sombrio poderá apresentar links,
+                            referências ou integrações com sites, plataformas,
+                            livros, serviços e conteúdos mantidos por
+                            terceiros.
+
+                        </p>
+
+                        <p>
+
+                            Esses serviços poderão possuir seus próprios
+                            termos, políticas, práticas de privacidade e
+                            condições de utilização, que não são controlados
+                            pelo Arquivo Sombrio.
+
+                        </p>
+
+                        <p>
+
+                            A existência de um link ou referência não
+                            representa necessariamente aprovação integral,
+                            parceria, patrocínio ou responsabilidade pelo
+                            conteúdo disponibilizado pelo terceiro, salvo
+                            quando essa relação for expressamente informada.
+
+                        </p>
+
+                        <p>
+
+                            Quando houver relação comercial, publicidade,
+                            parceria ou link de afiliado, o Arquivo Sombrio
+                            deverá buscar identificar essa circunstância de
+                            maneira adequada ao contexto da publicação.
+
+                        </p>
+
+                    </section> 
+
+                                      <!-- =================================================
+                         16 — PRIVACIDADE E DADOS PESSOAIS
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 16
+                        </span>
+
+                        <h2>
+                            Privacidade e proteção de dados pessoais
+                        </h2>
+
+                        <p>
+
+                            O tratamento de dados pessoais relacionado ao
+                            funcionamento do Arquivo Sombrio é descrito com
+                            maior detalhe na Política de Privacidade da
+                            plataforma.
+
+                        </p>
+
+                        <p>
+
+                            A Política de Privacidade apresenta informações
+                            sobre categorias de dados tratados, finalidades,
+                            serviços tecnológicos utilizados, armazenamento
+                            local, segurança, retenção, direitos dos titulares
+                            e canais destinados a solicitações relacionadas
+                            à privacidade.
+
+                        </p>
+
+                        <p>
+
+                            Estes Termos de Uso e a Política de Privacidade
+                            possuem finalidades complementares e deverão ser
+                            interpretados de acordo com a legislação
+                            aplicável.
+
+                        </p>
+
+
+                        <div class="legal-highlight">
+
+                            <p>
+
+                                A Política de Privacidade pode ser consultada
+                                em
+                                <a href="privacidade.html">
+                                    privacidade.html
+                                </a>.
+
+                            </p>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         17 — DISPONIBILIDADE DA PLATAFORMA
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 17
+                        </span>
+
+                        <h2>
+                            Disponibilidade e funcionamento da plataforma
+                        </h2>
+
+                        <p>
+
+                            O Arquivo Sombrio poderá passar por atualizações,
+                            manutenção, alterações técnicas, indisponibilidades
+                            temporárias ou modificações em suas
+                            funcionalidades.
+
+                        </p>
+
+                        <p>
+
+                            Não é garantido que todas as funcionalidades
+                            permaneçam disponíveis de forma ininterrupta ou
+                            sem falhas, especialmente durante períodos de
+                            manutenção, atualização, incidentes técnicos ou
+                            indisponibilidade de serviços de terceiros dos
+                            quais a plataforma dependa.
+
+                        </p>
+
+                        <p>
+
+                            Funcionalidades poderão ser adicionadas,
+                            modificadas, reorganizadas ou descontinuadas
+                            conforme a evolução técnica e editorial do
+                            projeto, observados os direitos dos usuários e as
+                            obrigações legais aplicáveis.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         18 — USO INDEVIDO E SEGURANÇA
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 18
+                        </span>
+
+                        <h2>
+                            Uso indevido e segurança da plataforma
+                        </h2>
+
+                        <p>
+
+                            O usuário não deverá utilizar o Arquivo Sombrio
+                            de maneira destinada a comprometer sua segurança,
+                            disponibilidade, integridade ou funcionamento.
+
+                        </p>
+
+                        <p>
+                            Entre outras condutas, não é permitido:
+                        </p>
+
+                        <ul>
+
+                            <li>
+                                tentar obter acesso não autorizado a contas,
+                                áreas administrativas, bancos de dados,
+                                sistemas ou recursos restritos;
+                            </li>
+
+                            <li>
+                                explorar deliberadamente vulnerabilidades com
+                                finalidade abusiva ou causar prejuízo à
+                                plataforma ou a terceiros;
+                            </li>
+
+                            <li>
+                                introduzir código malicioso, arquivos
+                                prejudiciais ou mecanismos destinados a
+                                comprometer dispositivos, contas ou sistemas;
+                            </li>
+
+                            <li>
+                                interferir deliberadamente no funcionamento
+                                normal dos serviços;
+                            </li>
+
+                            <li>
+                                utilizar mecanismos automatizados de maneira
+                                abusiva, incompatível com a finalidade do
+                                serviço ou capaz de causar sobrecarga,
+                                contornar controles de segurança ou reproduzir
+                                substancialmente o acervo de forma indevida.
+                            </li>
+
+                        </ul>
+
+                        <p>
+
+                            Medidas técnicas de prevenção contra abuso,
+                            autenticação, controle de acesso e proteção
+                            automatizada poderão ser utilizadas para preservar
+                            a segurança do Arquivo Sombrio e de seus usuários.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         19 — SUSPENSÃO E ENCERRAMENTO
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 19
+                        </span>
+
+                        <h2>
+                            Suspensão e encerramento de contas
+                        </h2>
+
+                        <p>
+
+                            Contas poderão ser submetidas a medidas de
+                            moderação quando houver indícios ou constatação de
+                            violação destes Termos, das regras da Comunidade,
+                            de direitos de terceiros ou da legislação
+                            aplicável.
+
+                        </p>
+
+                        <p>
+
+                            Conforme a situação, poderão ser aplicadas
+                            advertências, limitações de funcionalidades,
+                            suspensão temporária ou encerramento da conta,
+                            observados o contexto, a gravidade, a recorrência
+                            e os direitos aplicáveis.
+
+                        </p>
+
+                        <p>
+
+                            Em situações que envolvam risco relevante à
+                            segurança da plataforma ou de terceiros, fraude,
+                            tentativa de acesso indevido ou outras violações
+                            graves, medidas preventivas poderão ser adotadas
+                            enquanto a situação é analisada.
+
+                        </p>
+
+                        <p>
+
+                            Sempre que aplicável e tecnicamente possível,
+                            poderão ser disponibilizados mecanismos para
+                            esclarecimento ou contestação de determinadas
+                            decisões de moderação.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         20 — EXCLUSÃO DA CONTA
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 20
+                        </span>
+
+                        <h2>
+                            Exclusão da conta pelo usuário
+                        </h2>
+
+                        <p>
+
+                            O usuário poderá solicitar a exclusão de sua conta
+                            conforme os mecanismos disponibilizados pelo
+                            Arquivo Sombrio.
+
+                        </p>
+
+                        <p>
+
+                            A funcionalidade de exclusão diretamente pela área
+                            da conta encontra-se em desenvolvimento nesta
+                            versão da plataforma. Enquanto essa funcionalidade
+                            não estiver disponível, solicitações relacionadas
+                            à conta poderão ser encaminhadas pelo canal oficial
+                            de privacidade quando ele for disponibilizado.
+
+                        </p>
+
+                        <p>
+
+                            A exclusão da conta não implica necessariamente a
+                            eliminação imediata de todas as informações
+                            relacionadas ao usuário quando a conservação for
+                            necessária para cumprimento de obrigação legal ou
+                            regulatória, exercício regular de direitos,
+                            prevenção de fraude, segurança ou outra hipótese
+                            permitida pela legislação.
+
+                        </p>
+
+                        <p>
+
+                            O tratamento de dados pessoais após uma solicitação
+                            de exclusão deverá observar a Política de
+                            Privacidade e a legislação aplicável.
+
+                        </p>
+
+                    </section>
+
+                    <!-- =================================================
+                         21 — RESPONSABILIDADES
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 21
+                        </span>
+
+                        <h2>
+                            Responsabilidades e limitações
+                        </h2>
+
+                        <p>
+
+                            O Arquivo Sombrio busca manter seus conteúdos,
+                            funcionalidades e medidas de segurança de maneira
+                            compatível com a natureza e o estágio de
+                            desenvolvimento da plataforma.
+
+                        </p>
+
+                        <p>
+
+                            Entretanto, não é possível garantir que todas as
+                            informações publicadas estejam permanentemente
+                            completas, atualizadas ou livres de erros,
+                            especialmente em casos históricos, investigações
+                            em andamento ou assuntos sobre os quais existam
+                            versões conflitantes.
+
+                        </p>
+
+                        <p>
+
+                            Conteúdos publicados por usuários representam as
+                            manifestações de seus respectivos autores e não
+                            devem ser interpretados automaticamente como
+                            posição editorial, conclusão ou afirmação do
+                            Arquivo Sombrio.
+
+                        </p>
+
+                        <p>
+
+                            O usuário é responsável pelas decisões e condutas
+                            que adotar com base nas informações acessadas,
+                            observada a responsabilidade que a legislação
+                            aplicável atribua a cada parte.
+
+                        </p>
+
+
+                        <div class="legal-highlight">
+
+                            <p>
+
+                                <strong>
+                                    Nenhuma disposição destes Termos pretende
+                                    excluir, limitar ou afastar direitos,
+                                    garantias ou responsabilidades que não
+                                    possam ser validamente excluídos pela
+                                    legislação aplicável.
+                                </strong>
+
+                            </p>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         22 — ALTERAÇÕES DOS TERMOS
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 22
+                        </span>
+
+                        <h2>
+                            Alterações destes Termos
+                        </h2>
+
+                        <p>
+
+                            Estes Termos poderão ser atualizados para refletir
+                            mudanças na plataforma, novas funcionalidades,
+                            alterações nas práticas do Arquivo Sombrio,
+                            requisitos de segurança ou mudanças legais e
+                            regulatórias.
+
+                        </p>
+
+                        <p>
+
+                            Quando houver alteração relevante, a versão e a
+                            data de atualização deste documento deverão ser
+                            modificadas e poderão ser adotadas formas
+                            adicionais de comunicação aos usuários quando
+                            apropriado.
+
+                        </p>
+
+                        <p>
+
+                            Quando uma alteração exigir nova manifestação de
+                            concordância para utilização de determinada
+                            funcionalidade, o Arquivo Sombrio poderá solicitar
+                            nova aceitação antes de permitir a continuidade
+                            do uso dessa funcionalidade.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         23 — LEGISLAÇÃO APLICÁVEL
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 23
+                        </span>
+
+                        <h2>
+                            Legislação aplicável
+                        </h2>
+
+                        <p>
+
+                            Estes Termos serão interpretados de acordo com a
+                            legislação brasileira aplicável, considerando a
+                            natureza de cada relação e os direitos assegurados
+                            aos usuários.
+
+                        </p>
+
+                        <p>
+
+                            Nenhuma disposição destes Termos deverá ser
+                            interpretada de forma a restringir direitos
+                            assegurados por normas de aplicação obrigatória,
+                            inclusive direitos relacionados à proteção de
+                            dados pessoais e, quando aplicável, à proteção do
+                            consumidor.
+
+                        </p>
+
+                        <p>
+
+                            Eventuais controvérsias deverão observar as regras
+                            legais de competência aplicáveis ao caso concreto,
+                            sem imposição contratual de foro que afaste direito
+                            legalmente assegurado ao usuário.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         24 — CONTATO
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 24
+                        </span>
+
+                        <h2>
+                            Contato, solicitações e comunicações
+                        </h2>
+
+                        <p>
+
+                            Solicitações relacionadas a estes Termos,
+                            privacidade, direitos autorais, correções,
+                            contestações, denúncias ou outras questões
+                            relacionadas ao Arquivo Sombrio poderão ser
+                            encaminhadas pelo canal oficial de contato da
+                            plataforma.
+
+                        </p>
+
+
+                        <div class="legal-highlight">
+
+                            <p>
+
+                                <strong>
+                                    Canal oficial:
+                                </strong>
+
+                                [E-MAIL OFICIAL A DEFINIR ANTES DO LANÇAMENTO]
+
+                            </p>
+
+                        </div>
+
+
+                        <p>
+
+                            O endereço acima deverá ser substituído pelo canal
+                            oficial antes do lançamento público definitivo das
+                            funcionalidades que dependam desse meio de
+                            comunicação.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         25 — REGISTRO DO DOCUMENTO
+                         ================================================= -->
+
+                    <section class="legal-section">
+
+                        <span class="legal-section-number">
+                            SEÇÃO 25
+                        </span>
+
+                        <h2>
+                            Registro e versão destes Termos
+                        </h2>
+
+                        <p>
+
+                            Este documento corresponde à
+                            <strong>Versão 1.0 dos Termos de Uso</strong>
+                            do Arquivo Sombrio, com última atualização em
+                            <strong>04 de setembro de 2026</strong>.
+
+                        </p>
+
+                        <p>
+
+                            Versões futuras poderão substituir esta versão
+                            conforme a evolução da plataforma e das regras
+                            aplicáveis.
+
+                        </p>
+
+                    </section>
+
+                                  </div>
+
+            </section>
+
+        </main>
+
+
+        <!-- ============================================================
+             RODAPÉ LEGAL
+             ============================================================ -->
+
+        <footer class="legal-footer">
+
+            <div class="legal-footer-inner">
+
+                <p>
+                    © 2026 Arquivo Sombrio.
+                    Documento legal — Termos de Uso v1.0.
+                </p>
+
+
+                <div>
+
+                    <a href="index.html">
+                        Início
+                    </a>
+
+                    &nbsp;&nbsp;•&nbsp;&nbsp;
+
+                    <a href="privacidade.html">
+                        Política de Privacidade
+                    </a>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+
+    </div>
+
+</body>
+
+</html>
