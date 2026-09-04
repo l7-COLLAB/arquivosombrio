@@ -19,8 +19,9 @@ const SUPABASE_PUBLISHABLE_KEY =
 const SUPABASE_SDK_URL =
     "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
-const TURNSTILE_SITE_KEY = "0x4AAAAAAEnNLBi2BDt_aJkF";
-   
+const TURNSTILE_SITE_KEY =
+    "0x4AAAAAAEnNLBi2BDt_aJkF";
+
 
 let clienteSupabase = null;
 let promessaSupabaseSDK = null;
@@ -36,10 +37,13 @@ const TURNSTILE_SDK_URL =
 
 let promessaTurnstileSDK = null;
 
+
 function carregarTurnstileSDK() {
 
     if (window.turnstile) {
-        return Promise.resolve(window.turnstile);
+        return Promise.resolve(
+            window.turnstile
+        );
     }
 
     if (promessaTurnstileSDK) {
@@ -47,40 +51,53 @@ function carregarTurnstileSDK() {
     }
 
     promessaTurnstileSDK =
-        new Promise((resolve, reject) => {
+        new Promise(
+            (resolve, reject) => {
 
-            const script =
-                document.createElement("script");
+                const script =
+                    document.createElement(
+                        "script"
+                    );
 
-            script.src = TURNSTILE_SDK_URL;
-            script.async = true;
-            script.defer = true;
+                script.src =
+                    TURNSTILE_SDK_URL;
 
-            script.onload = () => {
+                script.async = true;
+                script.defer = true;
 
-                if (window.turnstile) {
-                    resolve(window.turnstile);
-                    return;
-                }
+                script.onload = () => {
 
-                reject(
-                    new Error(
-                        "Cloudflare Turnstile não foi carregado."
-                    )
+                    if (window.turnstile) {
+
+                        resolve(
+                            window.turnstile
+                        );
+
+                        return;
+                    }
+
+                    reject(
+                        new Error(
+                            "Cloudflare Turnstile não foi carregado."
+                        )
+                    );
+                };
+
+                script.onerror = () => {
+
+                    reject(
+                        new Error(
+                            "Não foi possível carregar a proteção anti-bot."
+                        )
+                    );
+                };
+
+                document.head.appendChild(
+                    script
                 );
-            };
 
-            script.onerror = () => {
-                reject(
-                    new Error(
-                        "Não foi possível carregar a proteção anti-bot."
-                    )
-                );
-            };
-
-            document.head.appendChild(script);
-
-        });
+            }
+        );
 
     return promessaTurnstileSDK;
 }
@@ -92,120 +109,185 @@ function obterTokenTurnstile() {
     let widgetId = null;
 
     return carregarTurnstileSDK()
-        .then(turnstile => {
+        .then(
+            turnstile => {
 
-            return new Promise((resolve, reject) => {
+                return new Promise(
+                    (resolve, reject) => {
 
-                container =
-                    document.createElement("div");
+                        container =
+                            document.createElement(
+                                "div"
+                            );
 
-                container.id =
-                    "arquivo-sombrio-turnstile";
+                        container.id =
+                            "arquivo-sombrio-turnstile";
 
-                container.style.position = "fixed";
-                container.style.left = "50%";
-                container.style.top = "50%";
-                container.style.transform =
-                    "translate(-50%, -50%)";
+                        container.style.position =
+                            "fixed";
 
-                container.style.zIndex = "999999";
-                container.style.padding = "20px";
-                container.style.background = "#111";
-                container.style.border =
-                    "1px solid rgba(255,255,255,0.15)";
+                        container.style.left =
+                            "50%";
 
-                document.body.appendChild(container);
+                        container.style.top =
+                            "50%";
 
-                const limpar = () => {
+                        container.style.transform =
+                            "translate(-50%, -50%)";
 
-                    if (
-                        widgetId !== null &&
-                        window.turnstile
-                    ) {
-                        try {
-                            window.turnstile.remove(widgetId);
-                        } catch (erro) {
-                            console.warn(erro);
-                        }
+                        container.style.zIndex =
+                            "999999";
+
+                        container.style.padding =
+                            "20px";
+
+                        container.style.background =
+                            "#111";
+
+                        container.style.border =
+                            "1px solid rgba(255,255,255,0.15)";
+
+                        document.body.appendChild(
+                            container
+                        );
+
+
+                        const limpar = () => {
+
+                            if (
+                                widgetId !== null &&
+                                window.turnstile
+                            ) {
+
+                                try {
+
+                                    window.turnstile.remove(
+                                        widgetId
+                                    );
+
+                                } catch (erro) {
+
+                                    console.warn(
+                                        erro
+                                    );
+
+                                }
+                            }
+
+                            if (container) {
+
+                                container.remove();
+                                container = null;
+
+                            }
+                        };
+
+
+                        const rejeitar =
+                            mensagem => {
+
+                                limpar();
+
+                                reject(
+                                    new Error(
+                                        mensagem
+                                    )
+                                );
+                            };
+
+
+                        widgetId =
+                            turnstile.render(
+                                container,
+                                {
+
+                                    sitekey:
+                                        TURNSTILE_SITE_KEY,
+
+                                    theme:
+                                        "dark",
+
+                                    language:
+                                        "pt-BR",
+
+                                    callback:
+                                        token => {
+
+                                            limpar();
+
+                                            resolve(
+                                                token
+                                            );
+                                        },
+
+                                    "error-callback":
+                                        () => {
+
+                                            rejeitar(
+                                                "Não foi possível concluir a verificação anti-bot."
+                                            );
+
+                                            return true;
+                                        },
+
+                                    "expired-callback":
+                                        () => {
+
+                                            rejeitar(
+                                                "A verificação anti-bot expirou. Tente novamente."
+                                            );
+                                        },
+
+                                    "timeout-callback":
+                                        () => {
+
+                                            rejeitar(
+                                                "A verificação anti-bot demorou demais. Tente novamente."
+                                            );
+                                        }
+
+                                }
+                            );
+
                     }
+                );
 
-                    if (container) {
-                        container.remove();
-                        container = null;
-                    }
-                };
-
-                const rejeitar = mensagem => {
-
-                    limpar();
-
-                    reject(
-                        new Error(mensagem)
-                    );
-                };
-
-                widgetId =
-                    turnstile.render(container, {
-
-                        sitekey:
-                            TURNSTILE_SITE_KEY,
-
-                        theme: "dark",
-
-                        language: "pt-BR",
-
-                        callback: token => {
-                            limpar();
-                            resolve(token);
-                        },
-
-                        "error-callback": () => {
-
-                            rejeitar(
-                                "Não foi possível concluir a verificação anti-bot."
-                            );
-
-                            return true;
-                        },
-
-                        "expired-callback": () => {
-
-                            rejeitar(
-                                "A verificação anti-bot expirou. Tente novamente."
-                            );
-                        },
-
-                        "timeout-callback": () => {
-
-                            rejeitar(
-                                "A verificação anti-bot demorou demais. Tente novamente."
-                            );
-                        }
-
-                    });
-
-            });
-
-        })
-        .catch(erro => {
-
-            if (container) {
-                container.remove();
             }
+        )
+        .catch(
+            erro => {
 
-            throw erro;
-        });
+                if (container) {
+
+                    container.remove();
+
+                }
+
+                throw erro;
+
+            }
+        );
 }
+
 
 /* ==========================================================================
    CONFIGURAÇÕES
    ========================================================================== */
 
 const CONFIG = {
-    STORAGE_CASOS: "arquivo_sombrio_casos",
-    STORAGE_LIVROS: "arquivo_sombrio_livros",
-    STORAGE_COMENTARIOS: "arquivo_sombrio_comentarios",
-    STORAGE_SUGESTOES: "arquivo_sombrio_sugestoes"
+
+    STORAGE_CASOS:
+        "arquivo_sombrio_casos",
+
+    STORAGE_LIVROS:
+        "arquivo_sombrio_livros",
+
+    STORAGE_COMENTARIOS:
+        "arquivo_sombrio_comentarios",
+
+    STORAGE_SUGESTOES:
+        "arquivo_sombrio_sugestoes"
+
 };
 
 
@@ -214,33 +296,73 @@ const CONFIG = {
    ========================================================================== */
 
 const livrosIniciais = [
+
     {
+
         id: 1,
-        titulo: "Casos de Rotina: Perícia Forense em Ação",
-        autor: "Dr. A. Forense",
-        ano: 2024,
-        editora: "Arquivo Sombrio",
-        capa: "imagens/livros/pericia.jpg",
+
+        titulo:
+            "Casos de Rotina: Perícia Forense em Ação",
+
+        autor:
+            "Dr. A. Forense",
+
+        ano:
+            2024,
+
+        editora:
+            "Arquivo Sombrio",
+
+        capa:
+            "imagens/livros/pericia.jpg",
+
         descricao:
             "Uma introdução aos métodos científicos utilizados na análise de vestígios e cenas de crime.",
-        tag: "PERÍCIA & CRIMINOLOGIA",
-        recomendado: true,
-        criadoEm: "2026-01-01T12:00:00.000Z"
+
+        tag:
+            "PERÍCIA & CRIMINOLOGIA",
+
+        recomendado:
+            true,
+
+        criadoEm:
+            "2026-01-01T12:00:00.000Z"
+
     },
 
     {
+
         id: 2,
-        titulo: "Compêndio de Lendas Urbanas e Mitos",
-        autor: "H. P. Silva",
-        ano: 2023,
-        editora: "Arquivo Sombrio",
-        capa: "imagens/livros/lendas.jpg",
+
+        titulo:
+            "Compêndio de Lendas Urbanas e Mitos",
+
+        autor:
+            "H. P. Silva",
+
+        ano:
+            2023,
+
+        editora:
+            "Arquivo Sombrio",
+
+        capa:
+            "imagens/livros/lendas.jpg",
+
         descricao:
             "Uma compilação sobre a origem histórica de mitos, lendas urbanas e folclore obscuro.",
-        tag: "FOLCLORE & MISTÉRIOS",
-        recomendado: true,
-        criadoEm: "2026-01-02T12:00:00.000Z"
+
+        tag:
+            "FOLCLORE & MISTÉRIOS",
+
+        recomendado:
+            true,
+
+        criadoEm:
+            "2026-01-02T12:00:00.000Z"
+
     }
+
 ];
 
 
@@ -248,22 +370,30 @@ const livrosIniciais = [
    INICIALIZAÇÃO
    ========================================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    inicializarMenuMobile();
-    inicializarFiltrosForenses();
-    inicializarNavegacaoInterna();
+        inicializarMenuMobile();
 
-    carregarCasosSupabase();
-    carregarLivros();
+        inicializarFiltrosForenses();
 
-    inicializarForum();
-    inicializarSugestao();
-    inicializarAdmin();
+        inicializarNavegacaoInterna();
 
-    inicializarModais();
+        carregarCasosSupabase();
 
-});
+        carregarLivros();
+
+        inicializarForum();
+
+        inicializarSugestao();
+
+        inicializarAdmin();
+
+        inicializarModais();
+
+    }
+);
 
 
 /* ==========================================================================
@@ -274,153 +404,257 @@ function carregarSupabaseSDK() {
 
     if (
         window.supabase &&
-        typeof window.supabase.createClient === "function"
+        typeof window.supabase.createClient ===
+            "function"
     ) {
+
         return Promise.resolve();
+
     }
+
 
     if (promessaSupabaseSDK) {
+
         return promessaSupabaseSDK;
+
     }
 
-    promessaSupabaseSDK = new Promise((resolve, reject) => {
 
-        const scriptExistente =
-            document.querySelector(
-                'script[data-arquivo-sombrio-supabase="true"]'
-            );
+    promessaSupabaseSDK =
+        new Promise(
+            (resolve, reject) => {
 
-        if (scriptExistente) {
+                const scriptExistente =
+                    document.querySelector(
+                        'script[data-arquivo-sombrio-supabase="true"]'
+                    );
 
-            scriptExistente.addEventListener(
-                "load",
-                () => resolve(),
-                { once: true }
-            );
 
-            scriptExistente.addEventListener(
-                "error",
-                () => reject(
-                    new Error("Falha ao carregar o Supabase.")
-                ),
-                { once: true }
-            );
+                if (scriptExistente) {
 
-            return;
-        }
+                    scriptExistente
+                        .addEventListener(
+                            "load",
+                            () => resolve(),
+                            {
+                                once: true
+                            }
+                        );
 
-        const script =
-            document.createElement("script");
+                    scriptExistente
+                        .addEventListener(
+                            "error",
+                            () =>
+                                reject(
+                                    new Error(
+                                        "Falha ao carregar o Supabase."
+                                    )
+                                ),
+                            {
+                                once: true
+                            }
+                        );
 
-        script.src = SUPABASE_SDK_URL;
-        script.async = true;
-        script.dataset.arquivoSombrioSupabase = "true";
+                    return;
+                }
 
-        script.addEventListener(
-            "load",
-            () => resolve(),
-            { once: true }
+
+                const script =
+                    document.createElement(
+                        "script"
+                    );
+
+
+                script.src =
+                    SUPABASE_SDK_URL;
+
+                script.async =
+                    true;
+
+                script.dataset
+                    .arquivoSombrioSupabase =
+                    "true";
+
+
+                script.addEventListener(
+                    "load",
+                    () => resolve(),
+                    {
+                        once: true
+                    }
+                );
+
+
+                script.addEventListener(
+                    "error",
+                    () =>
+                        reject(
+                            new Error(
+                                "Falha ao carregar o Supabase."
+                            )
+                        ),
+                    {
+                        once: true
+                    }
+                );
+
+
+                document.head.appendChild(
+                    script
+                );
+
+            }
         );
 
-        script.addEventListener(
-            "error",
-            () => reject(
-                new Error("Falha ao carregar o Supabase.")
-            ),
-            { once: true }
-        );
-
-        document.head.appendChild(script);
-    });
 
     return promessaSupabaseSDK;
 }
 
 
+/* ==========================================================================
+   OBTER CLIENTE SUPABASE
+   ========================================================================== */
+
 async function obterClienteSupabase() {
 
     if (clienteSupabase) {
+
         return clienteSupabase;
+
     }
+
 
     await carregarSupabaseSDK();
 
+
     if (
         !window.supabase ||
-        typeof window.supabase.createClient !== "function"
+        typeof window.supabase.createClient !==
+            "function"
     ) {
+
         throw new Error(
             "A biblioteca do Supabase não ficou disponível."
         );
+
     }
+
 
     clienteSupabase =
         window.supabase.createClient(
             SUPABASE_URL,
             SUPABASE_PUBLISHABLE_KEY,
             {
+
                 auth: {
-                    persistSession: true,
-                    autoRefreshToken: true,
-                    detectSessionInUrl: true
+
+                    persistSession:
+                        true,
+
+                    autoRefreshToken:
+                        true,
+
+                    detectSessionInUrl:
+                        true
+
                 }
+
             }
         );
+
 
     return clienteSupabase;
 }
 
 
+/* ==========================================================================
+   OBTER SESSÃO ADMINISTRATIVA
+   ========================================================================== */
+
 async function obterSessaoAdmin() {
+
     try {
+
         const supabaseClient =
             await obterClienteSupabase();
+
 
         const {
             data,
             error
         } =
-            await supabaseClient.auth.getSession();
+            await supabaseClient
+                .auth
+                .getSession();
+
 
         if (error) {
+
             console.warn(
                 "Não foi possível verificar a sessão:",
                 error
             );
 
             return null;
+
         }
 
-        const sessao = data?.session;
+
+        const sessao =
+            data?.session;
+
 
         if (!sessao?.user) {
+
             return null;
+
         }
 
-        const usuario = sessao.user;
+
+        const usuario =
+            sessao.user;
+
 
         const role =
-            usuario.app_metadata?.role;
+            usuario
+                .app_metadata
+                ?.role;
 
-        if (role !== "admin") {
+
+        if (
+            role !==
+            "admin"
+        ) {
+
             console.warn(
                 "Acesso administrativo negado."
             );
 
             return null;
+
         }
+
 
         return sessao;
 
+
     } catch (erro) {
+
         console.error(
             "Falha ao validar a sessão administrativa:",
             erro
         );
 
         return null;
+
     }
+
 }
+
+
+/* ==========================================================================
+   SAIR DA ÁREA ADMINISTRATIVA
+   ========================================================================== */
 
 async function sairAdmin() {
 
@@ -429,7 +663,11 @@ async function sairAdmin() {
         const supabaseClient =
             await obterClienteSupabase();
 
-        await supabaseClient.auth.signOut();
+
+        await supabaseClient
+            .auth
+            .signOut();
+
 
     } catch (erro) {
 
@@ -437,13 +675,21 @@ async function sairAdmin() {
             "Não foi possível encerrar a sessão no Supabase.",
             erro
         );
+
     }
 
+
     document
-        .getElementById("admin-manager")
-        ?.classList.remove("active");
+        .getElementById(
+            "admin-manager"
+        )
+        ?.classList.remove(
+            "active"
+        );
+
 
     fecharFormularioAdmin();
+
 }
 
 
@@ -455,15 +701,31 @@ function lerStorage(chave) {
 
     try {
 
-        const valor = localStorage.getItem(chave);
+        const valor =
+            localStorage.getItem(
+                chave
+            );
+
 
         if (!valor) {
+
             return [];
+
         }
 
-        const dados = JSON.parse(valor);
 
-        return Array.isArray(dados) ? dados : [];
+        const dados =
+            JSON.parse(
+                valor
+            );
+
+
+        return Array.isArray(
+            dados
+        )
+            ? dados
+            : [];
+
 
     } catch (erro) {
 
@@ -472,21 +734,31 @@ function lerStorage(chave) {
             erro
         );
 
+
         return [];
+
     }
+
 }
 
 
-function salvarStorage(chave, dados) {
+function salvarStorage(
+    chave,
+    dados
+) {
 
     try {
 
         localStorage.setItem(
             chave,
-            JSON.stringify(dados)
+            JSON.stringify(
+                dados
+            )
         );
 
+
         return true;
+
 
     } catch (erro) {
 
@@ -495,61 +767,124 @@ function salvarStorage(chave, dados) {
             erro
         );
 
+
         alert(
             "Não foi possível salvar os dados neste navegador."
         );
 
+
         return false;
+
     }
+
 }
 
 
 function escaparHTML(valor) {
 
-    if (valor === null || valor === undefined) {
+    if (
+        valor === null ||
+        valor === undefined
+    ) {
+
         return "";
+
     }
 
-    return String(valor)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+    return String(
+        valor
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
 }
 
 
-function normalizarEvidencias(evidencias) {
+function normalizarEvidencias(
+    evidencias
+) {
 
-    if (Array.isArray(evidencias)) {
+    if (
+        Array.isArray(
+            evidencias
+        )
+    ) {
 
         return evidencias
-            .map(item => String(item).trim())
-            .filter(Boolean);
+            .map(
+                item =>
+                    String(
+                        item
+                    ).trim()
+            )
+            .filter(
+                Boolean
+            );
+
     }
 
-    if (typeof evidencias === "string") {
+
+    if (
+        typeof evidencias ===
+        "string"
+    ) {
 
         return evidencias
-            .split("\n")
-            .map(item => item.trim())
-            .filter(Boolean);
+            .split(
+                "\n"
+            )
+            .map(
+                item =>
+                    item.trim()
+            )
+            .filter(
+                Boolean
+            );
+
     }
+
 
     return [];
+
 }
 
 
 function obterCasosIniciais() {
 
     if (
-        typeof casosArquivo !== "undefined" &&
-        Array.isArray(casosArquivo)
+        typeof casosArquivo !==
+            "undefined" &&
+        Array.isArray(
+            casosArquivo
+        )
     ) {
+
         return casosArquivo;
+
     }
 
+
     return [];
+
 }
 
 
@@ -557,46 +892,84 @@ function obterCasosIniciais() {
    UPLOADS — SUPABASE STORAGE
    ========================================================================== */
 
-const STORAGE_BUCKET_IMAGENS = "imagens";
-const STORAGE_BUCKET_DOCUMENTOS = "documentos";
+const STORAGE_BUCKET_IMAGENS =
+    "imagens";
+
+const STORAGE_BUCKET_DOCUMENTOS =
+    "documentos";
 
 
-function limparNomeArquivo(nome) {
+function limparNomeArquivo(
+    nome
+) {
 
     const partes =
-        String(nome || "arquivo").split(".");
+        String(
+            nome ||
+            "arquivo"
+        ).split(
+            "."
+        );
+
 
     const extensao =
         partes.length > 1
-            ? partes.pop().toLowerCase()
+            ? partes
+                .pop()
+                .toLowerCase()
             : "";
+
 
     const base =
         partes
-            .join(".")
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-zA-Z0-9_-]+/g, "-")
-            .replace(/^-+|-+$/g, "")
-            .toLowerCase() || "arquivo";
+            .join(
+                "."
+            )
+            .normalize(
+                "NFD"
+            )
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .replace(
+                /[^a-zA-Z0-9_-]+/g,
+                "-"
+            )
+            .replace(
+                /^-+|-+$/g,
+                ""
+            )
+            .toLowerCase() ||
+        "arquivo";
+
 
     return extensao
         ? `${base}.${extensao}`
         : base;
+
 }
 
 
-function criarCaminhoStorage(pasta, arquivo) {
+function criarCaminhoStorage(
+    pasta,
+    arquivo
+) {
 
     const nomeSeguro =
-        limparNomeArquivo(arquivo.name);
+        limparNomeArquivo(
+            arquivo.name
+        );
+
 
     const identificador =
         `${Date.now()}-${Math.random()
             .toString(36)
             .slice(2, 9)}`;
 
+
     return `${pasta}/${identificador}-${nomeSeguro}`;
+
 }
 
 
@@ -605,17 +978,19 @@ async function exigirSessaoAdminUpload() {
     const sessao =
         await obterSessaoAdmin();
 
+
     if (!sessao) {
 
         throw new Error(
             "Sua sessão administrativa expirou. Entre novamente na área restrita."
         );
+
     }
 
+
     return sessao;
+
 }
-
-
 async function enviarArquivoStorage(
     bucket,
     pasta,
@@ -790,7 +1165,6 @@ function criarItemDocumentoAdmin(documento) {
             data-document-type="${escaparHTML(documento.tipo)}"
             data-document-size="${escaparHTML(documento.tamanho)}"
         >
-
             <div class="admin-document-info">
 
                 <i class="fa-solid fa-file-lines"></i>
@@ -806,7 +1180,6 @@ function criarItemDocumentoAdmin(documento) {
                             documento.tipo ||
                             "Documento"
                         )}
-
                         ${
                             documento.tamanho
                                 ? ` • ${escaparHTML(
@@ -1064,6 +1437,8 @@ async function processarUploadImagemAdmin({
         inputArquivo.value = "";
     }
 }
+
+
 function inicializarUploadImagemCaso(
     dados = null
 ) {
@@ -1098,24 +1473,50 @@ function inicializarUploadImagemCaso(
 
     botao.addEventListener(
         "click",
-        () => inputArquivo.click()
+        () => {
+
+            inputArquivo.click();
+
+        }
     );
 
     inputArquivo.addEventListener(
         "change",
-        () =>
-            processarUploadImagemAdmin({
+        async () => {
+
+            await processarUploadImagemAdmin({
                 inputArquivo,
                 inputUrl,
                 preview:
                     "#admin-image-preview",
-                pasta: "casos",
+                pasta:
+                    "casos/capas",
                 botao
-            })
+            });
+
+        }
     );
+
+    inputUrl.addEventListener(
+        "input",
+        () => {
+
+            atualizarPreviewImagemAdmin(
+                inputUrl.value.trim(),
+                "#admin-image-preview"
+            );
+
+        }
+    );
+
+    if (dados?.imagem) {
+
+        atualizarPreviewImagemAdmin(
+            dados.imagem,
+            "#admin-image-preview"
+        );
+    }
 }
-
-
 function inicializarUploadCapaLivro(
     dados = null
 ) {
@@ -1593,8 +1994,6 @@ function normalizarTextoForense(valor) {
         .toLowerCase()
         .trim();
 }
-
-
 function identificarTipoForense(caso) {
 
     const texto =
@@ -1978,6 +2377,7 @@ function renderizarLinksAfiliadosLivro(
     `;
 }
 
+
 function criarLinhaAfiliado(link = {}) {
 
     const loja =
@@ -2175,8 +2575,6 @@ function normalizarTextoLivro(valor) {
         .toLowerCase()
         .trim();
 }
-
-
 function obterDataLivro(livro) {
 
     const valor =
@@ -3139,15 +3537,13 @@ function carregarLivros() {
                                 Number(
                                     a.ano || 0
                                 ) ||
-                                Number
-                                    .MAX_SAFE_INTEGER;
+                                Number.MAX_SAFE_INTEGER;
 
                             const anoB =
                                 Number(
                                     b.ano || 0
                                 ) ||
-                                Number
-                                    .MAX_SAFE_INTEGER;
+                                Number.MAX_SAFE_INTEGER;
 
                             return anoA - anoB;
                         }
@@ -3564,10 +3960,11 @@ async function inicializarForum() {
     const botaoSair =
         document.getElementById("forum-btn-logout");
 
-   const botaoExcluirConta =
-    document.getElementById(
-        "forum-btn-delete-account"
-    );
+    const botaoExcluirConta =
+        document.getElementById(
+            "forum-btn-delete-account"
+        );
+
 
     if (
         !formulario &&
@@ -3633,11 +4030,12 @@ async function inicializarForum() {
         "click",
         sairForum
     );
-   
-   botaoExcluirConta?.addEventListener(
-    "click",
-    excluirPropriaConta
-);
+
+
+    botaoExcluirConta?.addEventListener(
+        "click",
+        excluirPropriaConta
+    );
 
 
     formulario?.addEventListener(
@@ -3724,8 +4122,6 @@ function atualizarInterfaceForum(sessao) {
     }
 
 }
-
-
 /* ==========================================================================
    CADASTRO
    ========================================================================== */
@@ -3767,45 +4163,53 @@ async function cadastrarForum() {
         return;
     }
 
-const confirmouMaioridade =
-    confirm(
-        "CONFIRMAÇÃO DE IDADE\n\n" +
-        "A Comunidade do Arquivo Sombrio é destinada exclusivamente a pessoas com 18 anos ou mais.\n\n" +
-        "Você confirma que possui 18 anos ou mais?"
-    );
 
-if (!confirmouMaioridade) {
+    const confirmouMaioridade =
+        confirm(
+            "CONFIRMAÇÃO DE IDADE\n\n" +
+            "A Comunidade do Arquivo Sombrio é destinada exclusivamente a pessoas com 18 anos ou mais.\n\n" +
+            "Você confirma que possui 18 anos ou mais?"
+        );
 
-    alert(
-        "Não é possível criar uma conta na Comunidade sem confirmar que você possui 18 anos ou mais."
-    );
 
-    return;
-}
-   
-const aceitouPoliticas =
-    confirm(
-        "TERMOS E POLÍTICAS\n\n" +
-        "Para criar sua conta, você precisa declarar que leu e aceita os Termos de Uso, a Política de Privacidade e as Diretrizes da Comunidade.\n\n" +
-        "Você concorda com esses documentos?"
-    );
+    if (!confirmouMaioridade) {
 
-if (!aceitouPoliticas) {
+        alert(
+            "Não é possível criar uma conta na Comunidade sem confirmar que você possui 18 anos ou mais."
+        );
 
-    alert(
-        "Para criar uma conta, é necessário aceitar os Termos de Uso, a Política de Privacidade e as Diretrizes da Comunidade."
-    );
+        return;
+    }
 
-    return;
-}
-   try {
+
+    const aceitouPoliticas =
+        confirm(
+            "TERMOS E POLÍTICAS\n\n" +
+            "Para criar sua conta, você precisa declarar que leu e aceita os Termos de Uso, a Política de Privacidade e as Diretrizes da Comunidade.\n\n" +
+            "Você concorda com esses documentos?"
+        );
+
+
+    if (!aceitouPoliticas) {
+
+        alert(
+            "Para criar uma conta, é necessário aceitar os Termos de Uso, a Política de Privacidade e as Diretrizes da Comunidade."
+        );
+
+        return;
+    }
+
+
+    try {
 
         const supabaseClient =
             await obterClienteSupabase();
 
-const captchaToken =
-    await obterTokenTurnstile();
-       
+
+        const captchaToken =
+            await obterTokenTurnstile();
+
+
         const {
             data,
             error
@@ -3813,24 +4217,42 @@ const captchaToken =
             await supabaseClient.auth.signUp({
 
                 email,
+
                 password: senha,
 
-              options: {
-captchaToken,
-                 
-    emailRedirectTo:
-        "https://l7-collab.github.io/arquivosombrio/",
+                options: {
 
-   data: {
-    display_name: nome,
-    age_18_confirmed: true,
-    legal_acceptance: true,
-    terms_version: "1.0",
-    privacy_version: "1.0",
-    guidelines_version: "1.0",
-    legal_accepted_at: new Date().toISOString()
+                    captchaToken,
 
-}
+                    emailRedirectTo:
+                        "https://l7-collab.github.io/arquivosombrio/",
+
+                    data: {
+
+                        display_name:
+                            nome,
+
+                        age_18_confirmed:
+                            true,
+
+                        legal_acceptance:
+                            true,
+
+                        terms_version:
+                            "1.0",
+
+                        privacy_version:
+                            "1.0",
+
+                        guidelines_version:
+                            "1.0",
+
+                        legal_accepted_at:
+                            new Date().toISOString()
+
+                    }
+
+                }
 
             });
 
@@ -3851,7 +4273,6 @@ captchaToken,
             alert(
                 "Conta criada. Verifique seu e-mail para confirmar o cadastro antes de entrar."
             );
-
         }
 
 
@@ -3903,9 +4324,11 @@ async function entrarForum() {
 
         const supabaseClient =
             await obterClienteSupabase();
-       
-const captchaToken =
-    await obterTokenTurnstile();
+
+
+        const captchaToken =
+            await obterTokenTurnstile();
+
 
         const {
             error
@@ -3914,12 +4337,15 @@ const captchaToken =
                 .signInWithPassword({
 
                     email,
-                    password: senha,
+
+                    password:
+                        senha,
 
                     options: {
-        captchaToken
-    }
-                   
+
+                        captchaToken
+
+                    }
 
                 });
 
@@ -3962,8 +4388,13 @@ async function sairForum() {
         const supabaseClient =
             await obterClienteSupabase();
 
-        const { error } =
-            await supabaseClient.auth.signOut();
+
+        const {
+            error
+        } =
+            await supabaseClient.auth
+                .signOut();
+
 
         if (error) {
             throw error;
@@ -3986,6 +4417,192 @@ async function sairForum() {
 }
 
 
+/* ==========================================================================
+   EXCLUSÃO DA PRÓPRIA CONTA
+   ========================================================================== */
+
+async function excluirPropriaConta() {
+
+    const primeiraConfirmacao =
+        confirm(
+            "ATENÇÃO, INVESTIGADOR:\n\n" +
+            "Esta ação é permanente. Sua conta e os dados associados " +
+            "a ela serão excluídos do Arquivo Sombrio.\n\n" +
+            "Deseja realmente prosseguir?"
+        );
+
+
+    if (!primeiraConfirmacao) {
+        return;
+    }
+
+
+    const confirmacaoFinal =
+        prompt(
+            "Para confirmar a exclusão permanente, digite EXCLUIR:"
+        );
+
+
+    if (
+        String(
+            confirmacaoFinal || ""
+        )
+            .trim()
+            .toUpperCase() !==
+        "EXCLUIR"
+    ) {
+
+        alert(
+            "Exclusão cancelada. A palavra de confirmação não foi informada corretamente."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+
+        const {
+            data: sessaoData,
+            error: erroSessao
+        } =
+            await supabaseClient.auth
+                .getSession();
+
+
+        if (erroSessao) {
+            throw erroSessao;
+        }
+
+
+        const session =
+            sessaoData?.session;
+
+
+        if (
+            !session?.user ||
+            !session?.access_token
+        ) {
+
+            alert(
+                "Sua sessão expirou. Entre novamente antes de excluir a conta."
+            );
+
+            return;
+        }
+
+
+        const urlEdgeFunction =
+            `${SUPABASE_URL}/functions/v1/delete-own-account`;
+
+
+        const resposta =
+            await fetch(
+                urlEdgeFunction,
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            `Bearer ${session.access_token}`
+
+                    },
+
+                    body:
+                        JSON.stringify({})
+
+                }
+            );
+
+
+        let dadosResposta =
+            null;
+
+
+        try {
+
+            dadosResposta =
+                await resposta.json();
+
+        } catch (erroJson) {
+
+            console.warn(
+                "A Edge Function retornou uma resposta sem JSON.",
+                erroJson
+            );
+
+        }
+
+
+        if (!resposta.ok) {
+
+            throw new Error(
+                dadosResposta?.error ||
+                "Não foi possível excluir a conta."
+            );
+        }
+
+
+        if (!dadosResposta?.success) {
+
+            throw new Error(
+                dadosResposta?.error ||
+                "O servidor não confirmou a exclusão da conta."
+            );
+        }
+
+
+        try {
+
+            await supabaseClient.auth
+                .signOut({
+                    scope: "local"
+                });
+
+        } catch (erroLogout) {
+
+            console.warn(
+                "A conta foi excluída, mas não foi possível limpar completamente a sessão local.",
+                erroLogout
+            );
+
+        }
+
+
+        alert(
+            "Sua conta foi excluída permanentemente do Arquivo Sombrio."
+        );
+
+
+        window.location.href =
+            "index.html";
+
+
+    } catch (erro) {
+
+        console.error(
+            "Falha ao excluir a conta:",
+            erro
+        );
+
+
+        alert(
+            "Não foi possível excluir sua conta. Nenhuma nova tentativa será realizada automaticamente."
+        );
+
+    }
+
+}
 /* ==========================================================================
    CARREGAR PUBLICAÇÕES
    ========================================================================== */
@@ -4443,7 +5060,6 @@ function mostrarMensagem(
 /* ==========================================================================
    PAINEL ADMINISTRATIVO
    ========================================================================== */
-
 function inicializarAdmin() {
 
     const abrir =
@@ -4669,8 +5285,8 @@ async function autenticarAdmin(evento) {
         const supabaseClient =
             await obterClienteSupabase();
 
-       const captchaToken =
-    await obterTokenTurnstile();
+        const captchaToken =
+            await obterTokenTurnstile();
 
 
         const {
@@ -4679,14 +5295,14 @@ async function autenticarAdmin(evento) {
         } =
             await supabaseClient
                 .auth
-            .signInWithPassword({
-    email,
-    password: senha,
+                .signInWithPassword({
+                    email,
+                    password: senha,
 
-    options: {
-        captchaToken
-    }
-});
+                    options: {
+                        captchaToken
+                    }
+                });
 
 
         if (error) {
@@ -4703,24 +5319,27 @@ async function autenticarAdmin(evento) {
 
 
         const role =
-    data.session.user
-        ?.app_metadata
-        ?.role;
+            data.session.user
+                ?.app_metadata
+                ?.role;
 
-if (role !== "admin") {
 
-    await supabaseClient.auth.signOut();
+        if (role !== "admin") {
 
-    throw new Error(
-        "Este usuário não possui permissão administrativa."
-    );
-}
+            await supabaseClient.auth.signOut();
 
-formulario.reset();
+            throw new Error(
+                "Este usuário não possui permissão administrativa."
+            );
+        }
 
-fecharModalAdmin();
 
-abrirPainelAdmin();
+        formulario.reset();
+
+        fecharModalAdmin();
+
+        abrirPainelAdmin();
+
 
     } catch (erro) {
 
@@ -4757,6 +5376,7 @@ abrirPainelAdmin();
         }
     }
 }
+
 
 /* ==========================================================================
    GERENCIADOR ADMINISTRATIVO
@@ -5141,10 +5761,11 @@ function renderizarGerenciadorAdmin() {
 
         });
 }
+
+
 /* ==========================================================================
    FORMULÁRIOS ADMINISTRATIVOS
    ========================================================================== */
-
 function abrirFormularioAdmin(
     tipo,
     dados = null
@@ -5177,7 +5798,6 @@ function abrirFormularioAdmin(
     const caso =
         tipo === "caso";
 
-
     modal.innerHTML = `
 
         <div class="admin-form-card">
@@ -5203,7 +5823,6 @@ function abrirFormularioAdmin(
 
 
             <h2>
-
                 ${
                     dados
                         ? "Editar"
@@ -5594,9 +6213,7 @@ function abrirFormularioAdmin(
                     </div>
 
                     `
-
-                    : `
-
+                                      : `
 
                     <label>
 
@@ -5967,10 +6584,12 @@ function abrirFormularioAdmin(
                 "admin-add-affiliate-link"
             );
 
+
         const linksExistentes =
             normalizarLinksAfiliados(
                 dados?.linksAfiliados
             );
+
 
         if (
             linksExistentes.length > 0
@@ -6007,10 +6626,10 @@ function abrirFormularioAdmin(
     }
 }
 
+
 /* ==========================================================================
    SALVAR CASO ADMIN — SUPABASE
    ========================================================================== */
-
 async function salvarCasoAdmin(
     evento,
     casoExistente = null
@@ -6049,7 +6668,6 @@ async function salvarCasoAdmin(
 
 
         if (!sessao) {
-
             throw new Error(
                 "Sua sessão administrativa expirou. Entre novamente."
             );
@@ -6071,7 +6689,6 @@ async function salvarCasoAdmin(
                     .trim() ||
                 "",
 
-
             categoria:
                 document
                     .getElementById(
@@ -6089,7 +6706,6 @@ async function salvarCasoAdmin(
                     ?.value
                     .trim() ||
                 "",
-
 
             ano:
                 document
@@ -6110,7 +6726,6 @@ async function salvarCasoAdmin(
                     .trim() ||
                 "EM ARQUIVO",
 
-
             imagem:
                 document
                     .getElementById(
@@ -6129,7 +6744,6 @@ async function salvarCasoAdmin(
                     ?.value
                     .trim() ||
                 "",
-
 
             historia:
                 document
@@ -6150,7 +6764,6 @@ async function salvarCasoAdmin(
                         ?.value ||
                     ""
                 ),
-
 
             teorias:
                 normalizarEvidencias(
@@ -6174,7 +6787,6 @@ async function salvarCasoAdmin(
                 "Informe o título do dossiê."
             );
         }
-
 
         if (!caso.resumo) {
 
@@ -6239,7 +6851,6 @@ async function salvarCasoAdmin(
 
         renderizarGerenciadorAdmin();
 
-
         alert(
             casoExistente
                 ? "Dossiê atualizado com sucesso."
@@ -6268,7 +6879,6 @@ async function salvarCasoAdmin(
             botaoSalvar.disabled =
                 false;
 
-
             if (
                 htmlOriginal !==
                 undefined
@@ -6285,14 +6895,12 @@ async function salvarCasoAdmin(
 /* ==========================================================================
    SALVAR LIVRO ADMIN
    ========================================================================== */
-
 function salvarLivroAdmin(
     evento,
     livroExistente = null
 ) {
 
     evento.preventDefault();
-
 
     const livros =
         lerStorage(
@@ -6481,6 +7089,7 @@ function salvarLivroAdmin(
 
         linksAfiliados:
             coletarLinksAfiliadosAdmin()
+
     };
 
 
@@ -6784,7 +7393,6 @@ function fecharFormularioAdmin() {
 /* ==========================================================================
    MODAIS
    ========================================================================== */
-
 function inicializarModais() {
 
     document.addEventListener(
@@ -6914,3 +7522,4 @@ window.editarLivro =
 
 window.sairAdmin =
     sairAdmin;
+
