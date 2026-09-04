@@ -3633,6 +3633,11 @@ async function inicializarForum() {
         "click",
         sairForum
     );
+   
+   botaoExcluirConta?.addEventListener(
+    "click",
+    excluirPropriaConta
+);
 
 
     formulario?.addEventListener(
