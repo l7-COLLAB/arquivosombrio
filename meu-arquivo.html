@@ -1,0 +1,3440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Meu Arquivo — área pessoal de investigação do Arquivo Sombrio."
+    >
+
+    <meta
+        name="theme-color"
+        content="#080706"
+    >
+
+    <title>
+        Meu Arquivo — Arquivo Sombrio
+    </title>
+
+
+    <!-- =========================================================
+         FONTES
+         ========================================================= -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:wght@400;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =========================================================
+         ÍCONES
+         ========================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <!-- =========================================================
+         CSS
+         ========================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/meu-arquivo.css"
+    >
+
+</head>
+
+
+<body class="meu-arquivo-page">
+
+
+    <!-- =========================================================
+         CABEÇALHO
+         ========================================================= -->
+
+    <header class="main-header">
+
+        <div class="container header-content">
+
+
+            <!-- LOGOTIPO -->
+
+            <a
+                href="index.html"
+                class="logo"
+                aria-label="Arquivo Sombrio - Página inicial"
+            >
+
+                <span class="logo-simbolo">
+
+                    <i class="fa-solid fa-folder-open"></i>
+
+                </span>
+
+                <span class="logo-texto">
+
+                    ARQUIVO
+
+                    <strong>
+                        SOMBRIO
+                    </strong>
+
+                </span>
+
+            </a>
+
+
+            <!-- NAVEGAÇÃO DESKTOP -->
+
+            <nav
+                class="nav-menu"
+                aria-label="Navegação principal"
+            >
+
+                <a href="index.html">
+                    Início
+                </a>
+
+                <a href="index.html#casos">
+                    Dossiês
+                </a>
+
+                <a href="index.html#forense">
+                    Perícia
+                </a>
+
+                <a href="index.html#livros">
+                    Biblioteca
+                </a>
+
+                <a href="index.html#forum">
+                    Fórum
+                </a>
+
+                <a
+                    href="meu-arquivo.html"
+                    class="nav-meu-arquivo active"
+                    aria-current="page"
+                >
+
+                    <i class="fa-solid fa-user-secret"></i>
+
+                    Meu Arquivo
+
+                </a>
+
+            </nav>
+
+
+            <!-- MENU MOBILE -->
+
+            <button
+                type="button"
+                class="menu-toggle"
+                id="menu-toggle"
+                aria-label="Abrir menu"
+                aria-expanded="false"
+                aria-controls="sidebar-menu"
+            >
+
+                <i class="fa-solid fa-bars"></i>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         MENU LATERAL MOBILE
+         ========================================================= -->
+
+    <aside
+        class="sidebar-menu"
+        id="sidebar-menu"
+        aria-label="Menu mobile"
+    >
+
+        <button
+            type="button"
+            class="close-sidebar"
+            id="close-sidebar"
+            aria-label="Fechar menu"
+        >
+
+            &times;
+
+        </button>
+
+
+        <div class="sidebar-marca">
+
+            <span>
+                ARQUIVO
+            </span>
+
+            <strong>
+                SOMBRIO
+            </strong>
+
+            <small>
+                DOCUMENTAÇÃO & INVESTIGAÇÃO
+            </small>
+
+        </div>
+
+
+        <nav class="sidebar-links">
+
+            <a href="index.html">
+
+                <i class="fa-solid fa-house"></i>
+
+                Início
+
+            </a>
+
+
+            <a href="index.html#casos">
+
+                <i class="fa-solid fa-folder-tree"></i>
+
+                Dossiês & Casos
+
+            </a>
+
+
+            <a href="index.html#forense">
+
+                <i class="fa-solid fa-microscope"></i>
+
+                Ciência Forense
+
+            </a>
+
+
+            <a href="index.html#livros">
+
+                <i class="fa-solid fa-book-open"></i>
+
+                Biblioteca Sombria
+
+            </a>
+
+
+            <a href="index.html#forum">
+
+                <i class="fa-solid fa-comments"></i>
+
+                Fórum Investigativo
+
+            </a>
+
+
+            <a
+                href="meu-arquivo.html"
+                class="sidebar-meu-arquivo active"
+                aria-current="page"
+            >
+
+                <i class="fa-solid fa-user-secret"></i>
+
+                Meu Arquivo
+
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- =========================================================
+         FUNDO DO MENU MOBILE
+         ========================================================= -->
+
+    <div
+        class="sidebar-overlay"
+        id="sidebar-overlay"
+        hidden
+    ></div>
+
+
+    <!-- =========================================================
+         CONTEÚDO PRINCIPAL
+         ========================================================= -->
+
+    <main class="arquivo-pessoal">
+
+
+        <!-- =====================================================
+             ABERTURA DO ARQUIVO PESSOAL
+             ===================================================== -->
+
+        <section class="arquivo-hero">
+
+            <div class="container arquivo-hero-layout">
+
+
+                <div class="arquivo-hero-content">
+
+
+                    <div class="arquivo-classificacao">
+
+                        <span>
+                            ARQUIVO PESSOAL
+                        </span>
+
+                        <span>
+                            ACESSO RESTRITO
+                        </span>
+
+                    </div>
+
+
+                    <p class="arquivo-eyebrow">
+
+                        <i class="fa-solid fa-fingerprint"></i>
+
+                        IDENTIFICAÇÃO DO INVESTIGADOR
+
+                    </p>
+
+
+                    <h1>
+
+                        Meu
+
+                        <span>
+                            Arquivo
+                        </span>
+
+                    </h1>
+
+
+                    <p class="arquivo-hero-description">
+
+                        Seu espaço particular para reunir dossiês,
+                        evidências, anotações, teorias e investigações.
+
+                    </p>
+
+
+                    <div class="arquivo-status">
+
+                        <span class="arquivo-status-indicator"></span>
+
+                        <span>
+                            SESSÃO SOB VERIFICAÇÃO
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     CARIMBO DECORATIVO
+                     ============================================= -->
+
+                <div
+                    class="arquivo-hero-stamp"
+                    aria-hidden="true"
+                >
+
+                    <i class="fa-solid fa-fingerprint"></i>
+
+                    <strong>
+                        CONFIDENCIAL
+                    </strong>
+
+                    <span>
+                        ACESSO INDIVIDUAL
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </section>
+        
+                <!-- =====================================================
+             PAINEL PRINCIPAL DO INVESTIGADOR
+             ===================================================== -->
+
+        <section class="arquivo-dashboard">
+
+            <div class="container">
+
+
+                <!-- =============================================
+                     CREDENCIAL DO INVESTIGADOR
+                     ============================================= -->
+
+                <section
+                    class="investigador-card"
+                    id="credencial"
+                >
+
+                    <div class="investigador-card-header">
+
+                        <div class="document-label">
+
+                            <span>
+                                IDENTIFICAÇÃO
+                            </span>
+
+                            <strong>
+                                AS-PERFIL
+                            </strong>
+
+                        </div>
+
+
+                        <span class="document-security">
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            REGISTRO PESSOAL
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="investigador-card-body">
+
+
+                        <!-- FOTO / AVATAR -->
+
+                        <div class="investigador-avatar-area">
+
+                            <div
+                                class="investigador-avatar"
+                                id="investigador-avatar"
+                            >
+
+                                <i class="fa-solid fa-user-secret"></i>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="avatar-edit-button"
+                                id="alterar-avatar"
+                            >
+
+                                <i class="fa-solid fa-camera"></i>
+
+                                Alterar identificação
+
+                            </button>
+
+                        </div>
+
+
+                        <!-- DADOS DO PERFIL -->
+
+                        <div class="investigador-info">
+
+
+                            <p class="investigador-label">
+                                INVESTIGADOR
+                            </p>
+
+
+                            <h2 id="investigador-nome">
+
+                                Carregando identificação...
+
+                            </h2>
+
+
+                            <p
+                                class="investigador-usuario"
+                                id="investigador-usuario"
+                            >
+
+                                @investigador
+
+                            </p>
+
+
+                            <p
+                                class="investigador-bio"
+                                id="investigador-bio"
+                            >
+
+                                Nenhuma anotação biográfica registrada.
+
+                            </p>
+
+
+                            <div class="investigador-meta">
+
+
+                                <div>
+
+                                    <span>
+                                        REGISTRO
+                                    </span>
+
+                                    <strong id="investigador-registro">
+                                        —
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        NÍVEL DE ACESSO
+                                    </span>
+
+                                    <strong>
+                                        INVESTIGADOR
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        STATUS
+                                    </span>
+
+                                    <strong class="status-ativo">
+
+                                        <i class="fa-solid fa-circle"></i>
+
+                                        ATIVO
+
+                                    </strong>
+
+                                </div>
+
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="editar-perfil"
+                            >
+
+                                <i class="fa-solid fa-pen-to-square"></i>
+
+                                Editar credencial
+
+                            </button>
+
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     RESUMO DO ARQUIVO
+                     ============================================= -->
+
+                <section
+                    class="arquivo-resumo"
+                    aria-labelledby="resumo-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                REGISTRO DE ATIVIDADE
+                            </p>
+
+                            <h2 id="resumo-title">
+                                Estado do Arquivo
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+                            REF. AS-08
+                        </span>
+
+                    </div>
+
+
+                    <div class="arquivo-resumo-grid">
+
+
+                        <article class="resumo-card">
+
+                            <div class="resumo-icon">
+
+                                <i class="fa-solid fa-folder-open"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong id="total-dossies">
+                                    0
+                                </strong>
+
+                                <span>
+                                    Dossiês arquivados
+                                </span>
+
+                            </div>
+
+                        </article>
+
+
+                        <article class="resumo-card">
+
+                            <div class="resumo-icon">
+
+                                <i class="fa-solid fa-eye"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong id="total-observacao">
+                                    0
+                                </strong>
+
+                                <span>
+                                    Casos em observação
+                                </span>
+
+                            </div>
+
+                        </article>
+
+
+                        <article class="resumo-card">
+
+                            <div class="resumo-icon">
+
+                                <i class="fa-solid fa-thumbtack"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong id="total-murais">
+                                    0
+                                </strong>
+
+                                <span>
+                                    Murais ativos
+                                </span>
+
+                            </div>
+
+                        </article>
+
+
+                        <article class="resumo-card">
+
+                            <div class="resumo-icon">
+
+                                <i class="fa-solid fa-note-sticky"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong id="total-anotacoes">
+                                    0
+                                </strong>
+
+                                <span>
+                                    Anotações privadas
+                                </span>
+
+                            </div>
+
+                        </article>
+
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     NAVEGAÇÃO DO ARQUIVO PESSOAL
+                     ============================================= -->
+
+                <section
+                    class="arquivo-setores"
+                    aria-labelledby="setores-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                DIRETÓRIO INTERNO
+                            </p>
+
+                            <h2 id="setores-title">
+                                Setores do Meu Arquivo
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+                            ACESSO AUTORIZADO
+                        </span>
+
+                    </div>
+
+
+                    <div class="arquivo-setores-grid">
+
+
+                        <!-- MEUS DOSSIÊS -->
+
+                        <a
+                            href="#meus-dossies"
+                            class="setor-card"
+                        >
+
+                            <span class="setor-number">
+                                01
+                            </span>
+
+                            <div class="setor-icon">
+
+                                <i class="fa-solid fa-folder-tree"></i>
+
+                            </div>
+
+                            <div class="setor-content">
+
+                                <h3>
+                                    Meus Dossiês
+                                </h3>
+
+                                <p>
+                                    Casos arquivados para consulta
+                                    e investigação posterior.
+                                </p>
+
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right setor-arrow"></i>
+
+                        </a>
+
+
+                        <!-- FAVORITOS -->
+
+                        <a
+                            href="#favoritos"
+                            class="setor-card"
+                        >
+
+                            <span class="setor-number">
+                                02
+                            </span>
+
+                            <div class="setor-icon">
+
+                                <i class="fa-solid fa-bookmark"></i>
+
+                            </div>
+
+                            <div class="setor-content">
+
+                                <h3>
+                                    Favoritos
+                                </h3>
+
+                                <p>
+                                    Conteúdos marcados para
+                                    acesso rápido.
+                                </p>
+
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right setor-arrow"></i>
+
+                        </a>
+
+
+                        <!-- CASOS EM OBSERVAÇÃO -->
+
+                        <a
+                            href="#observacao"
+                            class="setor-card"
+                        >
+
+                            <span class="setor-number">
+                                03
+                            </span>
+
+                            <div class="setor-icon">
+
+                                <i class="fa-solid fa-eye"></i>
+
+                            </div>
+
+                            <div class="setor-content">
+
+                                <h3>
+                                    Casos em Observação
+                                </h3>
+
+                                <p>
+                                    Investigações acompanhadas
+                                    de perto por você.
+                                </p>
+
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right setor-arrow"></i>
+
+                        </a>
+
+
+                        <!-- MURAL -->
+
+                        <a
+                            href="#mural-investigacao"
+                            class="setor-card setor-card-destaque"
+                        >
+
+                            <span class="setor-number">
+                                04
+                            </span>
+
+                            <div class="setor-icon">
+
+                                <i class="fa-solid fa-thumbtack"></i>
+
+                            </div>
+
+                            <div class="setor-content">
+
+                                <span class="setor-tag">
+                                    SALA DE INVESTIGAÇÃO
+                                </span>
+
+                                <h3>
+                                    Mural de Investigação
+                                </h3>
+
+                                <p>
+                                    Organize evidências, pessoas,
+                                    pistas e conexões em seus
+                                    próprios murais.
+                                </p>
+
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right setor-arrow"></i>
+
+                        </a>
+
+
+                        <!-- CADERNO -->
+
+                        <a
+                            href="#caderno"
+                            class="setor-card"
+                        >
+
+                            <span class="setor-number">
+                                05
+                            </span>
+
+                            <div class="setor-icon">
+
+                                <i class="fa-solid fa-book"></i>
+
+                            </div>
+
+                            <div class="setor-content">
+
+                                <h3>
+                                    Caderno do Investigador
+                                </h3>
+
+                                <p>
+                                    Registre observações privadas
+                                    durante suas investigações.
+                                </p>
+
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right setor-arrow"></i>
+
+                        </a>
+
+
+                        <!-- TEORIAS -->
+
+                        <a
+                            href="#teorias"
+                            class="setor-card"
+                        >
+
+                            <span class="setor-number">
+                                06
+                            </span>
+
+                            <div class="setor-icon">
+
+                                <i class="fa-solid fa-diagram-project"></i>
+
+                            </div>
+
+                            <div class="setor-content">
+
+                                <h3>
+                                    Minhas Teorias
+                                </h3>
+
+                                <p>
+                                    Hipóteses pessoais separadas
+                                    dos fatos documentados.
+                                </p>
+
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right setor-arrow"></i>
+
+                        </a>
+
+
+                    </div>
+
+                </section>
+                
+                                <!-- =============================================
+                     MURAL DE INVESTIGAÇÃO
+                     ============================================= -->
+
+                <section
+                    class="mural-section"
+                    id="mural-investigacao"
+                    aria-labelledby="mural-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                SALA DE INVESTIGAÇÃO
+                            </p>
+
+                            <h2 id="mural-title">
+                                Mural de Investigação
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+                            SETOR 04
+                        </span>
+
+                    </div>
+
+
+                    <div class="mural-intro">
+
+                        <div class="mural-intro-text">
+
+                            <p>
+                                Construa seus próprios painéis de investigação.
+                                Reúna pessoas, acontecimentos, documentos,
+                                evidências e anotações em um único lugar.
+                            </p>
+
+                            <div class="mural-privacy">
+
+                                <i class="fa-solid fa-lock"></i>
+
+                                <span>
+                                    Seus murais são privados por padrão.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="arquivo-button arquivo-button-primary"
+                            id="criar-mural"
+                        >
+
+                            <i class="fa-solid fa-plus"></i>
+
+                            Criar novo mural
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         PRÉVIA VISUAL DO MURAL
+                         ========================================= -->
+
+                    <div class="mural-board-preview">
+
+                        <div class="mural-board-header">
+
+                            <div>
+
+                                <span>
+                                    QUADRO DE EVIDÊNCIAS
+                                </span>
+
+                                <strong>
+                                    INVESTIGAÇÃO PARTICULAR
+                                </strong>
+
+                            </div>
+
+                            <span class="mural-board-status">
+
+                                <i class="fa-solid fa-eye-slash"></i>
+
+                                PRIVADO
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="mural-board">
+
+
+                            <!-- FIOS DECORATIVOS -->
+
+                            <div
+                                class="evidence-thread thread-one"
+                                aria-hidden="true"
+                            ></div>
+
+                            <div
+                                class="evidence-thread thread-two"
+                                aria-hidden="true"
+                            ></div>
+
+                            <div
+                                class="evidence-thread thread-three"
+                                aria-hidden="true"
+                            ></div>
+
+
+                            <!-- CARTÃO 1 -->
+
+                            <article class="evidence-card evidence-photo">
+
+                                <span class="evidence-pin"></span>
+
+                                <div class="evidence-placeholder">
+
+                                    <i class="fa-solid fa-image"></i>
+
+                                </div>
+
+                                <strong>
+                                    FOTOGRAFIA
+                                </strong>
+
+                                <small>
+                                    Evidência visual
+                                </small>
+
+                            </article>
+
+
+                            <!-- CARTÃO 2 -->
+
+                            <article class="evidence-card evidence-person">
+
+                                <span class="evidence-pin"></span>
+
+                                <div class="evidence-person-icon">
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                </div>
+
+                                <strong>
+                                    PESSOA
+                                </strong>
+
+                                <small>
+                                    Relação desconhecida
+                                </small>
+
+                                <span class="evidence-tag tag-suspeita">
+                                    SUSPEITA
+                                </span>
+
+                            </article>
+
+
+                            <!-- POST-IT -->
+
+                            <article class="investigation-note">
+
+                                <span class="evidence-pin"></span>
+
+                                <strong>
+                                    ANOTAÇÃO
+                                </strong>
+
+                                <p>
+                                    Qual é a ligação entre
+                                    estes elementos?
+                                </p>
+
+                            </article>
+
+
+                            <!-- DOCUMENTO -->
+
+                            <article class="evidence-card evidence-document">
+
+                                <span class="evidence-pin"></span>
+
+                                <i class="fa-solid fa-file-lines"></i>
+
+                                <strong>
+                                    DOCUMENTO
+                                </strong>
+
+                                <small>
+                                    Registro anexado
+                                </small>
+
+                                <span class="evidence-tag tag-confirmado">
+                                    CONFIRMADO
+                                </span>
+
+                            </article>
+
+
+                        </div>
+
+
+                        <div class="mural-board-footer">
+
+                            <span>
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                                Esta é uma prévia. Seus murais aparecerão aqui.
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- LISTA DE MURAIS -->
+
+                    <div
+                        class="mural-list"
+                        id="lista-murais"
+                    >
+
+                        <div class="arquivo-empty-state">
+
+                            <i class="fa-solid fa-thumbtack"></i>
+
+                            <h3>
+                                Nenhum mural aberto
+                            </h3>
+
+                            <p>
+                                Quando você iniciar uma investigação,
+                                seus quadros serão registrados aqui.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     ÁREA DE INVESTIGAÇÃO PRIVADA
+                     ============================================= -->
+
+                <section
+                    class="investigacao-privada"
+                    aria-labelledby="investigacao-privada-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                REGISTROS PARTICULARES
+                            </p>
+
+                            <h2 id="investigacao-privada-title">
+                                Arquivos de Investigação
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            PRIVADO
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="investigacao-grid">
+
+
+                        <!-- =====================================
+                             CADERNO DO INVESTIGADOR
+                             ===================================== -->
+
+                        <article
+                            class="investigacao-card"
+                            id="caderno"
+                        >
+
+                            <div class="investigacao-card-top">
+
+                                <span class="investigacao-number">
+                                    05
+                                </span>
+
+                                <i class="fa-solid fa-book"></i>
+
+                            </div>
+
+
+                            <p class="investigacao-type">
+                                ANOTAÇÕES PESSOAIS
+                            </p>
+
+
+                            <h3>
+                                Caderno do Investigador
+                            </h3>
+
+
+                            <p>
+                                Registre observações, perguntas,
+                                detalhes e informações que deseja
+                                consultar posteriormente.
+                            </p>
+
+
+                            <div class="investigacao-card-meta">
+
+                                <span>
+
+                                    <i class="fa-solid fa-lock"></i>
+
+                                    Somente você
+
+                                </span>
+
+                                <span id="contador-caderno">
+                                    0 registros
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="abrir-caderno"
+                            >
+
+                                <i class="fa-solid fa-book-open"></i>
+
+                                Abrir caderno
+
+                            </button>
+
+                        </article>
+
+
+                        <!-- =====================================
+                             MINHAS TEORIAS
+                             ===================================== -->
+
+                        <article
+                            class="investigacao-card"
+                            id="teorias"
+                        >
+
+                            <div class="investigacao-card-top">
+
+                                <span class="investigacao-number">
+                                    06
+                                </span>
+
+                                <i class="fa-solid fa-diagram-project"></i>
+
+                            </div>
+
+
+                            <p class="investigacao-type">
+                                HIPÓTESES PESSOAIS
+                            </p>
+
+
+                            <h3>
+                                Minhas Teorias
+                            </h3>
+
+
+                            <p>
+                                Organize hipóteses sobre os casos
+                                sem misturá-las aos fatos documentados
+                                pelo Arquivo Sombrio.
+                            </p>
+
+
+                            <div class="investigacao-card-meta">
+
+                                <span>
+
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                    Não confirmado
+
+                                </span>
+
+                                <span id="contador-teorias">
+                                    0 teorias
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="abrir-teorias"
+                            >
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                                Consultar teorias
+
+                            </button>
+
+                        </article>
+
+
+                        <!-- =====================================
+                             EVIDÊNCIAS SALVAS
+                             ===================================== -->
+
+                        <article
+                            class="investigacao-card"
+                            id="evidencias"
+                        >
+
+                            <div class="investigacao-card-top">
+
+                                <span class="investigacao-number">
+                                    07
+                                </span>
+
+                                <i class="fa-solid fa-box-archive"></i>
+
+                            </div>
+
+
+                            <p class="investigacao-type">
+                                MATERIAL ARQUIVADO
+                            </p>
+
+
+                            <h3>
+                                Evidências Salvas
+                            </h3>
+
+
+                            <p>
+                                Reúna fotografias, documentos,
+                                trechos e outros elementos encontrados
+                                nos dossiês.
+                            </p>
+
+
+                            <div class="investigacao-card-meta">
+
+                                <span>
+
+                                    <i class="fa-solid fa-paperclip"></i>
+
+                                    Material salvo
+
+                                </span>
+
+                                <span id="contador-evidencias">
+                                    0 itens
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="abrir-evidencias"
+                            >
+
+                                <i class="fa-solid fa-folder-open"></i>
+
+                                Examinar evidências
+
+                            </button>
+
+                        </article>
+
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     LEGENDA DE CLASSIFICAÇÃO DAS EVIDÊNCIAS
+                     ============================================= -->
+
+                <section
+                    class="evidence-legend"
+                    aria-labelledby="evidence-legend-title"
+                >
+
+                    <div class="evidence-legend-header">
+
+                        <i class="fa-solid fa-tags"></i>
+
+                        <div>
+
+                            <small>
+                                PROTOCOLO DE INVESTIGAÇÃO
+                            </small>
+
+                            <h3 id="evidence-legend-title">
+                                Classificação das Evidências
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="evidence-legend-items">
+
+                        <span class="legend-item tag-confirmado">
+                            CONFIRMADO
+                        </span>
+
+                        <span class="legend-item tag-pista">
+                            PISTA
+                        </span>
+
+                        <span class="legend-item tag-suspeita">
+                            SUSPEITA
+                        </span>
+
+                        <span class="legend-item tag-descartado">
+                            DESCARTADO
+                        </span>
+
+                        <span class="legend-item tag-sem-explicacao">
+                            SEM EXPLICAÇÃO
+                        </span>
+
+                    </div>
+
+
+                    <p class="evidence-legend-warning">
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+                        Classificações e teorias criadas pelo usuário
+                        representam anotações pessoais e não constituem
+                        conclusões factuais do Arquivo Sombrio.
+
+                    </p>
+
+                </section>
+                
+                                <!-- =============================================
+                     COLEÇÃO PESSOAL
+                     ============================================= -->
+
+                <section
+                    class="colecao-pessoal"
+                    aria-labelledby="colecao-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                ACERVO PARTICULAR
+                            </p>
+
+                            <h2 id="colecao-title">
+                                Coleção do Investigador
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+                            SETORES 01–03
+                        </span>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         MEUS DOSSIÊS
+                         ========================================= -->
+
+                    <article
+                        class="colecao-bloco"
+                        id="meus-dossies"
+                    >
+
+                        <div class="colecao-bloco-header">
+
+                            <div class="colecao-title-group">
+
+                                <span class="colecao-number">
+                                    01
+                                </span>
+
+                                <div>
+
+                                    <p>
+                                        ARQUIVOS SALVOS
+                                    </p>
+
+                                    <h3>
+                                        Meus Dossiês
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+
+                            <a
+                                href="index.html#casos"
+                                class="arquivo-text-link"
+                            >
+
+                                Explorar dossiês
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+
+                        <div
+                            class="colecao-conteudo"
+                            id="lista-meus-dossies"
+                        >
+
+                            <div class="arquivo-empty-state">
+
+                                <i class="fa-solid fa-folder-open"></i>
+
+                                <h4>
+                                    Nenhum dossiê arquivado
+                                </h4>
+
+                                <p>
+                                    Os casos que você salvar aparecerão
+                                    nesta seção para consulta posterior.
+                                </p>
+
+                                <a
+                                    href="index.html#casos"
+                                    class="arquivo-button arquivo-button-secondary"
+                                >
+
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                                    Examinar casos
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- =========================================
+                         FAVORITOS
+                         ========================================= -->
+
+                    <article
+                        class="colecao-bloco"
+                        id="favoritos"
+                    >
+
+                        <div class="colecao-bloco-header">
+
+                            <div class="colecao-title-group">
+
+                                <span class="colecao-number">
+                                    02
+                                </span>
+
+                                <div>
+
+                                    <p>
+                                        MARCADORES PESSOAIS
+                                    </p>
+
+                                    <h3>
+                                        Favoritos
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+
+                            <span class="colecao-counter">
+
+                                <i class="fa-solid fa-bookmark"></i>
+
+                                <strong id="total-favoritos">
+                                    0
+                                </strong>
+
+                                ITENS
+
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="colecao-conteudo"
+                            id="lista-favoritos"
+                        >
+
+                            <div class="arquivo-empty-state">
+
+                                <i class="fa-regular fa-bookmark"></i>
+
+                                <h4>
+                                    Nenhum item marcado
+                                </h4>
+
+                                <p>
+                                    Artigos, documentos e outros conteúdos
+                                    favoritos serão reunidos aqui.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- =========================================
+                         CASOS EM OBSERVAÇÃO
+                         ========================================= -->
+
+                    <article
+                        class="colecao-bloco observacao-bloco"
+                        id="observacao"
+                    >
+
+                        <div class="colecao-bloco-header">
+
+                            <div class="colecao-title-group">
+
+                                <span class="colecao-number">
+                                    03
+                                </span>
+
+                                <div>
+
+                                    <p>
+                                        MONITORAMENTO
+                                    </p>
+
+                                    <h3>
+                                        Casos em Observação
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+
+                            <span class="observacao-status">
+
+                                <span class="observacao-pulse"></span>
+
+                                MONITORAMENTO ATIVO
+
+                            </span>
+
+                        </div>
+
+
+                        <p class="colecao-description">
+
+                            Mantenha determinados casos sob observação.
+                            Futuramente, atualizações relevantes desses
+                            dossiês poderão gerar alertas no seu arquivo.
+
+                        </p>
+
+
+                        <div
+                            class="colecao-conteudo"
+                            id="lista-observacao"
+                        >
+
+                            <div class="arquivo-empty-state">
+
+                                <i class="fa-solid fa-eye"></i>
+
+                                <h4>
+                                    Nenhum caso sob observação
+                                </h4>
+
+                                <p>
+                                    Quando você decidir acompanhar um caso,
+                                    ele será registrado neste setor.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+                <!-- =============================================
+                     MARCADORES E COLEÇÕES
+                     ============================================= -->
+
+                <section
+                    class="marcadores-section"
+                    id="marcadores"
+                    aria-labelledby="marcadores-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                CLASSIFICAÇÃO PARTICULAR
+                            </p>
+
+                            <h2 id="marcadores-title">
+                                Marcadores
+                            </h2>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="arquivo-button arquivo-button-secondary"
+                            id="criar-marcador"
+                        >
+
+                            <i class="fa-solid fa-plus"></i>
+
+                            Novo marcador
+
+                        </button>
+
+                    </div>
+
+
+                    <p class="marcadores-description">
+
+                        Crie suas próprias categorias para organizar
+                        dossiês e materiais de investigação.
+
+                    </p>
+
+
+                    <div
+                        class="marcadores-list"
+                        id="lista-marcadores"
+                    >
+
+                        <div class="marcador-placeholder">
+
+                            <i class="fa-solid fa-tag"></i>
+
+                            <span>
+                                Nenhum marcador criado
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     HISTÓRICO DE INVESTIGAÇÃO
+                     ============================================= -->
+
+                <section
+                    class="historico-section"
+                    id="historico"
+                    aria-labelledby="historico-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                RASTRO DE CONSULTA
+                            </p>
+
+                            <h2 id="historico-title">
+                                Histórico de Investigação
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+                            REGISTRO PESSOAL
+                        </span>
+
+                    </div>
+
+
+                    <div class="historico-document">
+
+                        <div class="historico-document-top">
+
+                            <div>
+
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                                <span>
+                                    ÚLTIMOS ARQUIVOS CONSULTADOS
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="historico-clear"
+                                id="limpar-historico"
+                            >
+
+                                <i class="fa-solid fa-eraser"></i>
+
+                                Limpar histórico
+
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="historico-list"
+                            id="lista-historico"
+                        >
+
+                            <div class="arquivo-empty-state">
+
+                                <i class="fa-solid fa-clock"></i>
+
+                                <h4>
+                                    Nenhuma atividade registrada
+                                </h4>
+
+                                <p>
+                                    Os dossiês consultados recentemente
+                                    poderão aparecer aqui para facilitar
+                                    o retorno à investigação.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     LINHA DO TEMPO PESSOAL
+                     ============================================= -->
+
+                <section
+                    class="timeline-section"
+                    id="linha-do-tempo"
+                    aria-labelledby="timeline-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                RECONSTRUÇÃO CRONOLÓGICA
+                            </p>
+
+                            <h2 id="timeline-title">
+                                Linha do Tempo
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+                            CRONOLOGIA
+                        </span>
+
+                    </div>
+
+
+                    <div class="timeline-intro">
+
+                        <div>
+
+                            <i class="fa-solid fa-timeline"></i>
+
+                        </div>
+
+
+                        <p>
+                            Organize acontecimentos importantes dos casos
+                            em ordem cronológica para visualizar relações,
+                            intervalos e possíveis conexões.
+                        </p>
+
+
+                        <button
+                            type="button"
+                            class="arquivo-button arquivo-button-secondary"
+                            id="nova-linha-tempo"
+                        >
+
+                            <i class="fa-solid fa-plus"></i>
+
+                            Criar linha do tempo
+
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        class="timeline-empty"
+                        id="lista-linhas-tempo"
+                    >
+
+                        <div class="timeline-line">
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                        </div>
+
+
+                        <p>
+                            Nenhuma cronologia criada.
+                        </p>
+
+                    </div>
+
+                </section>
+                
+                                <!-- =============================================
+                     ATIVIDADE NA COMUNIDADE
+                     ============================================= -->
+
+                <section
+                    class="comunidade-arquivo"
+                    id="atividade-comunidade"
+                    aria-labelledby="comunidade-arquivo-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                REGISTROS DA COMUNIDADE
+                            </p>
+
+                            <h2 id="comunidade-arquivo-title">
+                                Atividade Investigativa
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+                            COMUNIDADE
+                        </span>
+
+                    </div>
+
+
+                    <div class="comunidade-arquivo-grid">
+
+
+                        <!-- =====================================
+                             MINHAS PUBLICAÇÕES
+                             ===================================== -->
+
+                        <article
+                            class="comunidade-card"
+                            id="minhas-publicacoes"
+                        >
+
+                            <div class="comunidade-card-icon">
+
+                                <i class="fa-solid fa-file-pen"></i>
+
+                            </div>
+
+
+                            <div class="comunidade-card-content">
+
+                                <p class="comunidade-card-code">
+                                    REG. COM-01
+                                </p>
+
+                                <h3>
+                                    Minhas Publicações
+                                </h3>
+
+                                <p>
+                                    Consulte tópicos, discussões e
+                                    investigações que você publicou
+                                    na comunidade.
+                                </p>
+
+                                <span class="comunidade-count">
+
+                                    <strong id="total-publicacoes">
+                                        0
+                                    </strong>
+
+                                    publicações
+
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="abrir-publicacoes"
+                            >
+
+                                Consultar registros
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </button>
+
+                        </article>
+
+
+                        <!-- =====================================
+                             MEUS COMENTÁRIOS
+                             ===================================== -->
+
+                        <article
+                            class="comunidade-card"
+                            id="meus-comentarios"
+                        >
+
+                            <div class="comunidade-card-icon">
+
+                                <i class="fa-solid fa-comments"></i>
+
+                            </div>
+
+
+                            <div class="comunidade-card-content">
+
+                                <p class="comunidade-card-code">
+                                    REG. COM-02
+                                </p>
+
+                                <h3>
+                                    Registros de Interrogatório
+                                </h3>
+
+                                <p>
+                                    Reúna comentários e respostas
+                                    deixados por você nos dossiês
+                                    e discussões.
+                                </p>
+
+                                <span class="comunidade-count">
+
+                                    <strong id="total-comentarios">
+                                        0
+                                    </strong>
+
+                                    registros
+
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="abrir-comentarios"
+                            >
+
+                                Consultar registros
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </button>
+
+                        </article>
+
+
+                        <!-- =====================================
+                             INVESTIGADORES SEGUIDOS
+                             ===================================== -->
+
+                        <article
+                            class="comunidade-card"
+                            id="investigadores-seguidos"
+                        >
+
+                            <div class="comunidade-card-icon">
+
+                                <i class="fa-solid fa-user-group"></i>
+
+                            </div>
+
+
+                            <div class="comunidade-card-content">
+
+                                <p class="comunidade-card-code">
+                                    REG. COM-03
+                                </p>
+
+                                <h3>
+                                    Investigadores Seguidos
+                                </h3>
+
+                                <p>
+                                    Acompanhe membros da comunidade
+                                    cujas publicações e teorias despertam
+                                    seu interesse.
+                                </p>
+
+                                <span class="comunidade-count">
+
+                                    <strong id="total-seguidos">
+                                        0
+                                    </strong>
+
+                                    investigadores
+
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="abrir-seguidos"
+                            >
+
+                                Ver investigadores
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </button>
+
+                        </article>
+
+
+                        <!-- =====================================
+                             BLOQUEADOS
+                             ===================================== -->
+
+                        <article
+                            class="comunidade-card"
+                            id="bloqueados"
+                        >
+
+                            <div class="comunidade-card-icon">
+
+                                <i class="fa-solid fa-user-slash"></i>
+
+                            </div>
+
+
+                            <div class="comunidade-card-content">
+
+                                <p class="comunidade-card-code">
+                                    REG. COM-04
+                                </p>
+
+                                <h3>
+                                    Lista de Bloqueados
+                                </h3>
+
+                                <p>
+                                    Consulte e gerencie investigadores
+                                    que você decidiu bloquear.
+                                </p>
+
+                                <span class="comunidade-count">
+
+                                    <strong id="total-bloqueados">
+                                        0
+                                    </strong>
+
+                                    bloqueados
+
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="abrir-bloqueados"
+                            >
+
+                                Gerenciar bloqueios
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </button>
+
+                        </article>
+
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     ALERTAS DO ARQUIVO
+                     ============================================= -->
+
+                <section
+                    class="alertas-section"
+                    id="alertas"
+                    aria-labelledby="alertas-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                CENTRAL DE COMUNICAÇÕES
+                            </p>
+
+                            <h2 id="alertas-title">
+                                Alertas do Arquivo
+                            </h2>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="arquivo-text-button"
+                            id="marcar-alertas-lidos"
+                        >
+
+                            <i class="fa-solid fa-check-double"></i>
+
+                            Marcar como lidos
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="alertas-panel">
+
+                        <div class="alertas-panel-header">
+
+                            <div>
+
+                                <span class="alertas-signal">
+
+                                    <i class="fa-solid fa-satellite-dish"></i>
+
+                                </span>
+
+                                <div>
+
+                                    <small>
+                                        CANAL INTERNO
+                                    </small>
+
+                                    <strong>
+                                        TRANSMISSÕES RECEBIDAS
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <span class="alertas-counter">
+
+                                <strong id="total-alertas">
+                                    0
+                                </strong>
+
+                                NOVOS
+
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="alertas-list"
+                            id="lista-alertas"
+                        >
+
+                            <div class="arquivo-empty-state">
+
+                                <i class="fa-regular fa-bell"></i>
+
+                                <h4>
+                                    Nenhuma transmissão recebida
+                                </h4>
+
+                                <p>
+                                    Respostas, menções e atualizações
+                                    importantes poderão aparecer aqui.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     CASOS ENVIADOS
+                     ============================================= -->
+
+                <section
+                    class="casos-enviados-section"
+                    id="casos-enviados"
+                    aria-labelledby="casos-enviados-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                PROTOCOLOS ENCAMINHADOS
+                            </p>
+
+                            <h2 id="casos-enviados-title">
+                                Casos Enviados
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+                            SUGESTÕES
+                        </span>
+
+                    </div>
+
+
+                    <div class="casos-enviados-document">
+
+                        <div class="casos-enviados-info">
+
+                            <div class="casos-enviados-icon">
+
+                                <i class="fa-solid fa-envelope-open-text"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h3>
+                                    Acompanhe seus protocolos
+                                </h3>
+
+                                <p>
+                                    Sugestões de novos casos enviadas
+                                    por você poderão ser acompanhadas
+                                    neste setor do arquivo.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="casos-enviados-list"
+                            id="lista-casos-enviados"
+                        >
+
+                            <div class="arquivo-empty-state">
+
+                                <i class="fa-solid fa-file-circle-question"></i>
+
+                                <h4>
+                                    Nenhum protocolo localizado
+                                </h4>
+
+                                <p>
+                                    Você ainda não possui sugestões
+                                    vinculadas ao seu arquivo pessoal.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="index.html#sugira"
+                            class="arquivo-button arquivo-button-secondary"
+                        >
+
+                            <i class="fa-solid fa-paper-plane"></i>
+
+                            Sugerir um caso
+
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     COMPARTILHAMENTO DE TEORIAS
+                     ============================================= -->
+
+                <section
+                    class="compartilhar-teoria-section"
+                    id="compartilhar-teoria"
+                >
+
+                    <div class="compartilhar-teoria-content">
+
+                        <div class="compartilhar-teoria-symbol">
+
+                            <i class="fa-solid fa-share-nodes"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="section-kicker">
+                                RECURSO DA COMUNIDADE
+                            </p>
+
+                            <h2>
+                                Compartilhar uma investigação
+                            </h2>
+
+                            <p>
+                                Futuramente, você poderá transformar
+                                uma teoria pessoal em uma publicação
+                                para discussão com outros investigadores.
+                            </p>
+
+                            <span class="future-feature">
+
+                                <i class="fa-solid fa-lock"></i>
+
+                                RECURSO EM PREPARAÇÃO
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="compartilhar-warning">
+
+                        <i class="fa-solid fa-scale-balanced"></i>
+
+                        <p>
+                            Teorias sobre casos reais deverão ser
+                            identificadas claramente como hipóteses
+                            do usuário e estarão sujeitas às regras
+                            da comunidade e de moderação.
+                        </p>
+
+                    </div>
+
+                </section>
+                
+                                <!-- =============================================
+                     SALA DE SEGURANÇA
+                     ============================================= -->
+
+                <section
+                    class="seguranca-section"
+                    id="seguranca"
+                    aria-labelledby="seguranca-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                CONTROLE DE ACESSO
+                            </p>
+
+                            <h2 id="seguranca-title">
+                                Sala de Segurança
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            ÁREA PROTEGIDA
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="seguranca-panel">
+
+
+                        <!-- =====================================
+                             IDENTIDADE DA CONTA
+                             ===================================== -->
+
+                        <article class="seguranca-item">
+
+                            <div class="seguranca-item-icon">
+
+                                <i class="fa-solid fa-at"></i>
+
+                            </div>
+
+
+                            <div class="seguranca-item-content">
+
+                                <span class="seguranca-label">
+                                    IDENTIFICAÇÃO DE ACESSO
+                                </span>
+
+                                <h3>
+                                    E-mail da conta
+                                </h3>
+
+                                <p id="seguranca-email">
+                                    Carregando registro...
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="alterar-email"
+                            >
+
+                                Alterar e-mail
+
+                            </button>
+
+                        </article>
+
+
+                        <!-- =====================================
+                             ALTERAR SENHA
+                             ===================================== -->
+
+                        <article class="seguranca-item">
+
+                            <div class="seguranca-item-icon">
+
+                                <i class="fa-solid fa-key"></i>
+
+                            </div>
+
+
+                            <div class="seguranca-item-content">
+
+                                <span class="seguranca-label">
+                                    CREDENCIAL DE ACESSO
+                                </span>
+
+                                <h3>
+                                    Senha
+                                </h3>
+
+                                <p>
+                                    Atualize sua senha de acesso
+                                    ao Arquivo Sombrio.
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="alterar-senha"
+                            >
+
+                                <i class="fa-solid fa-pen"></i>
+
+                                Mudar senha
+
+                            </button>
+
+                        </article>
+
+
+                        <!-- =====================================
+                             SESSÃO
+                             ===================================== -->
+
+                        <article class="seguranca-item">
+
+                            <div class="seguranca-item-icon">
+
+                                <i class="fa-solid fa-right-from-bracket"></i>
+
+                            </div>
+
+
+                            <div class="seguranca-item-content">
+
+                                <span class="seguranca-label">
+                                    SESSÃO ATUAL
+                                </span>
+
+                                <h3>
+                                    Encerrar sessão
+                                </h3>
+
+                                <p>
+                                    Finalize o acesso desta conta
+                                    neste dispositivo.
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="arquivo-logout"
+                            >
+
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+                                Sair do Arquivo
+
+                            </button>
+
+                        </article>
+
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     PROTOCOLO DO ARQUIVO
+                     ============================================= -->
+
+                <section
+                    class="preferencias-section"
+                    id="preferencias"
+                    aria-labelledby="preferencias-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                CONFIGURAÇÕES PESSOAIS
+                            </p>
+
+                            <h2 id="preferencias-title">
+                                Protocolo do Arquivo
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+                            PREFERÊNCIAS
+                        </span>
+
+                    </div>
+
+
+                    <div class="preferencias-grid">
+
+
+                        <!-- NOTIFICAÇÕES -->
+
+                        <article class="preferencia-card">
+
+                            <div class="preferencia-card-header">
+
+                                <i class="fa-solid fa-bell"></i>
+
+                                <div>
+
+                                    <small>
+                                        PROTOCOLO 01
+                                    </small>
+
+                                    <h3>
+                                        Notificações
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+
+                            <p>
+                                Escolha quais movimentações do Arquivo
+                                poderão gerar alertas para sua conta.
+                            </p>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="configurar-notificacoes"
+                            >
+
+                                Configurar
+
+                                <i class="fa-solid fa-chevron-right"></i>
+
+                            </button>
+
+                        </article>
+
+
+                        <!-- PRIVACIDADE -->
+
+                        <article class="preferencia-card">
+
+                            <div class="preferencia-card-header">
+
+                                <i class="fa-solid fa-user-shield"></i>
+
+                                <div>
+
+                                    <small>
+                                        PROTOCOLO 02
+                                    </small>
+
+                                    <h3>
+                                        Privacidade
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+
+                            <p>
+                                Controle a visibilidade das informações
+                                vinculadas ao seu perfil na comunidade.
+                            </p>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="configurar-privacidade"
+                            >
+
+                                Configurar
+
+                                <i class="fa-solid fa-chevron-right"></i>
+
+                            </button>
+
+                        </article>
+
+
+                        <!-- PREFERÊNCIAS -->
+
+                        <article class="preferencia-card">
+
+                            <div class="preferencia-card-header">
+
+                                <i class="fa-solid fa-sliders"></i>
+
+                                <div>
+
+                                    <small>
+                                        PROTOCOLO 03
+                                    </small>
+
+                                    <h3>
+                                        Preferências
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+
+                            <p>
+                                Ajuste opções pessoais relacionadas
+                                à experiência dentro do seu arquivo.
+                            </p>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-button arquivo-button-secondary"
+                                id="configurar-preferencias"
+                            >
+
+                                Ajustar
+
+                                <i class="fa-solid fa-chevron-right"></i>
+
+                            </button>
+
+                        </article>
+
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     DOCUMENTOS LEGAIS
+                     ============================================= -->
+
+                <section
+                    class="legal-account-section"
+                    id="documentos-legais"
+                    aria-labelledby="legal-account-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                DOCUMENTAÇÃO
+                            </p>
+
+                            <h2 id="legal-account-title">
+                                Termos e Registros
+                            </h2>
+
+                        </div>
+
+                        <span class="section-code">
+                            LEGAL
+                        </span>
+
+                    </div>
+
+
+                    <div class="legal-account-links">
+
+                        <a href="index.html#privacidade">
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            <span>
+                                Política de Privacidade
+                            </span>
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+
+                        <a href="index.html#termos">
+
+                            <i class="fa-solid fa-file-contract"></i>
+
+                            <span>
+                                Termos de Uso
+                            </span>
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+
+                        <a href="index.html#diretrizes">
+
+                            <i class="fa-solid fa-scale-balanced"></i>
+
+                            <span>
+                                Diretrizes da Comunidade
+                            </span>
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     ZONA DE ENCERRAMENTO
+                     ============================================= -->
+
+                <section
+                    class="encerrar-arquivo-section"
+                    id="encerrar-arquivo"
+                    aria-labelledby="encerrar-arquivo-title"
+                >
+
+                    <div class="encerrar-arquivo-document">
+
+                        <div class="encerrar-arquivo-warning">
+
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        </div>
+
+
+                        <div class="encerrar-arquivo-content">
+
+                            <p class="encerrar-code">
+                                PROTOCOLO DE DESTRUIÇÃO
+                            </p>
+
+
+                            <h2 id="encerrar-arquivo-title">
+                                Encerrar Arquivo
+                            </h2>
+
+
+                            <p>
+                                Solicite a exclusão permanente da sua
+                                conta e dos dados vinculados ao seu
+                                registro, conforme as regras aplicáveis.
+                            </p>
+
+
+                            <div class="encerrar-alert">
+
+                                <strong>
+                                    ATENÇÃO
+                                </strong>
+
+                                <span>
+                                    Esta operação é permanente e não
+                                    poderá ser desfeita após a confirmação.
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="arquivo-danger-button"
+                                id="excluir-conta-arquivo"
+                            >
+
+                                <i class="fa-solid fa-user-xmark"></i>
+
+                                Solicitar exclusão da conta
+
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="encerrar-stamp"
+                            aria-hidden="true"
+                        >
+
+                            <span>
+                                DESTRUIÇÃO
+                            </span>
+
+                            <strong>
+                                PERMANENTE
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+                
+                                <!-- =============================================
+                     AVISO DE PRIVACIDADE DO ARQUIVO
+                     ============================================= -->
+
+                <aside class="arquivo-privacy-note">
+
+                    <div class="arquivo-privacy-icon">
+
+                        <i class="fa-solid fa-fingerprint"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            REGISTRO CONFIDENCIAL
+                        </small>
+
+                        <h3>
+                            Seu arquivo pertence a você
+                        </h3>
+
+                        <p>
+                            Anotações, teorias, murais e demais registros
+                            pessoais desta área serão tratados como conteúdo
+                            privado, salvo quando você escolher explicitamente
+                            compartilhar uma informação com a comunidade.
+                        </p>
+
+                    </div>
+
+                </aside>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         ACESSO NÃO AUTORIZADO
+         ========================================================= -->
+
+    <div
+        class="arquivo-auth-wall"
+        id="arquivo-auth-wall"
+        hidden
+    >
+
+        <div class="arquivo-auth-document">
+
+
+            <div class="arquivo-auth-symbol">
+
+                <i class="fa-solid fa-lock"></i>
+
+            </div>
+
+
+            <p class="arquivo-auth-code">
+                ACESSO NEGADO / AS-401
+            </p>
+
+
+            <h2>
+                Arquivo Restrito
+            </h2>
+
+
+            <p>
+                Esta área contém registros pessoais do investigador.
+                Identifique-se para acessar seu arquivo.
+            </p>
+
+
+            <div class="arquivo-auth-actions">
+
+                <a
+                    href="index.html"
+                    class="arquivo-button arquivo-button-primary"
+                >
+
+                    <i class="fa-solid fa-right-to-bracket"></i>
+
+                    Ir para identificação
+
+                </a>
+
+
+                <a
+                    href="index.html"
+                    class="arquivo-button arquivo-button-secondary"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Voltar ao início
+
+                </a>
+
+            </div>
+
+
+            <div
+                class="arquivo-auth-stamp"
+                aria-hidden="true"
+            >
+
+                NÃO AUTORIZADO
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         RODAPÉ
+         ========================================================= -->
+
+    <footer class="main-footer">
+
+        <div class="container">
+
+
+            <div class="footer-grid">
+
+
+                <div class="footer-brand">
+
+                    <div class="logo footer-logo">
+
+                        <span class="logo-simbolo">
+
+                            <i class="fa-solid fa-folder-open"></i>
+
+                        </span>
+
+                        <span class="logo-texto">
+
+                            ARQUIVO
+
+                            <strong>
+                                SOMBRIO
+                            </strong>
+
+                        </span>
+
+                    </div>
+
+
+                    <p>
+                        Dossiês, investigação documental,
+                        ciência forense e mistérios.
+                    </p>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <h3>
+                        ARQUIVO
+                    </h3>
+
+                    <a href="index.html">
+                        Início
+                    </a>
+
+                    <a href="index.html#casos">
+                        Dossiês
+                    </a>
+
+                    <a href="index.html#forense">
+                        Ciência Forense
+                    </a>
+
+                    <a href="index.html#livros">
+                        Biblioteca
+                    </a>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <h3>
+                        INVESTIGADOR
+                    </h3>
+
+                    <a href="#credencial">
+                        Credencial
+                    </a>
+
+                    <a href="#mural-investigacao">
+                        Mural
+                    </a>
+
+                    <a href="#meus-dossies">
+                        Meus Dossiês
+                    </a>
+
+                    <a href="#seguranca">
+                        Segurança
+                    </a>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <h3>
+                        COMUNIDADE
+                    </h3>
+
+                    <a href="index.html#forum">
+                        Fórum
+                    </a>
+
+                    <a href="#minhas-publicacoes">
+                        Minhas Publicações
+                    </a>
+
+                    <a href="#alertas">
+                        Alertas
+                    </a>
+
+                    <a href="#bloqueados">
+                        Bloqueados
+                    </a>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © <span id="arquivo-current-year"></span>
+                    Arquivo Sombrio.
+                </p>
+
+
+                <p>
+                    DOCUMENTAÇÃO • INVESTIGAÇÃO • MEMÓRIA
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================================================
+         MODAL BASE DO MEU ARQUIVO
+         ========================================================= -->
+
+    <div
+        class="arquivo-modal"
+        id="arquivo-modal"
+        hidden
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="arquivo-modal-title"
+    >
+
+        <div
+            class="arquivo-modal-backdrop"
+            data-close-arquivo-modal
+        ></div>
+
+
+        <div class="arquivo-modal-document">
+
+
+            <button
+                type="button"
+                class="arquivo-modal-close"
+                id="arquivo-modal-close"
+                aria-label="Fechar"
+            >
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+
+            <div class="arquivo-modal-header">
+
+                <span>
+                    ARQUIVO SOMBRIO
+                </span>
+
+                <small>
+                    REGISTRO PARTICULAR
+                </small>
+
+            </div>
+
+
+            <div
+                class="arquivo-modal-content"
+                id="arquivo-modal-content"
+            >
+
+                <h2 id="arquivo-modal-title">
+                    Registro
+                </h2>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SCRIPTS
+         ========================================================= -->
+
+    <script>
+
+        const arquivoYear =
+            document.getElementById(
+                "arquivo-current-year"
+            );
+
+        if (arquivoYear) {
+
+            arquivoYear.textContent =
+                new Date().getFullYear();
+
+        }
+
+    </script>
+
+
+    <script src="js/script.js"></script>
+
+    <script src="js/meu-arquivo.js"></script>
+
+
+</body>
+
+</html>
+
