@@ -609,7 +609,7 @@ function preencherAvatarUsuario(
 async function carregarDadosMeuArquivo() {
 
     const supabase =
-        obterSupabaseMeuArquivo();
+    await obterSupabaseMeuArquivo();
 
 
     const usuario =
@@ -2510,8 +2510,7 @@ async function salvarEdicaoPerfil(
 
 
     const supabase =
-        obterSupabaseMeuArquivo();
-
+    await obterSupabaseMeuArquivo();
 
     if (!supabase) {
         return;
