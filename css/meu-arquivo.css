@@ -1,0 +1,5542 @@
+/* =========================================================
+   ARQUIVO SOMBRIO
+   MEU ARQUIVO — ÁREA PESSOAL DO INVESTIGADOR
+   ========================================================= */
+
+
+/* =========================================================
+   VARIÁVEIS DA PÁGINA
+   ========================================================= */
+
+.meu-arquivo-page {
+    --arquivo-bg: #080706;
+    --arquivo-bg-soft: #0d0b0a;
+    --arquivo-surface: #12100e;
+    --arquivo-surface-2: #181512;
+    --arquivo-paper: #d8d0bd;
+    --arquivo-paper-dark: #b9ae96;
+
+    --arquivo-text: #e8e1d3;
+    --arquivo-text-soft: #aaa294;
+    --arquivo-text-dark: #181411;
+
+    --arquivo-red: #7f1717;
+    --arquivo-red-dark: #4b0c0c;
+    --arquivo-red-light: #a92a25;
+
+    --arquivo-border: rgba(216, 208, 189, 0.14);
+    --arquivo-border-strong: rgba(216, 208, 189, 0.28);
+
+    --arquivo-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+
+    background:
+        radial-gradient(
+            circle at 15% 8%,
+            rgba(127, 23, 23, 0.09),
+            transparent 28rem
+        ),
+        #080706;
+
+    color: var(--arquivo-text);
+}
+
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+.meu-arquivo-page *,
+.meu-arquivo-page *::before,
+.meu-arquivo-page *::after {
+    box-sizing: border-box;
+}
+
+
+.meu-arquivo-page {
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+
+.meu-arquivo-page button,
+.meu-arquivo-page a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+.meu-arquivo-page button {
+    font: inherit;
+}
+
+
+.arquivo-pessoal {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+
+.arquivo-pessoal::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.025;
+
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0,
+            transparent 3px,
+            rgba(255, 255, 255, 0.6) 4px
+        );
+
+    z-index: 0;
+}
+
+
+.arquivo-pessoal > * {
+    position: relative;
+    z-index: 1;
+}
+
+
+/* =========================================================
+   BOTÕES GERAIS
+   ========================================================= */
+
+.arquivo-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+
+    min-height: 46px;
+    padding: 0.8rem 1.15rem;
+
+    border: 1px solid transparent;
+    border-radius: 2px;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    text-decoration: none;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.arquivo-button:active {
+    transform: scale(0.98);
+}
+
+
+.arquivo-button-primary {
+    color: #f3ede2;
+    background: var(--arquivo-red);
+    border-color: var(--arquivo-red-light);
+}
+
+
+.arquivo-button-primary:hover {
+    background: var(--arquivo-red-light);
+}
+
+
+.arquivo-button-secondary {
+    color: var(--arquivo-text);
+    background: rgba(255, 255, 255, 0.025);
+    border-color: var(--arquivo-border-strong);
+}
+
+
+.arquivo-button-secondary:hover {
+    border-color: rgba(169, 42, 37, 0.65);
+    background: rgba(127, 23, 23, 0.09);
+}
+
+
+/* =========================================================
+   CABEÇALHO — AJUSTES DA ÁREA PESSOAL
+   ========================================================= */
+
+.meu-arquivo-page .main-header {
+    border-bottom: 1px solid rgba(127, 23, 23, 0.32);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+
+.nav-meu-arquivo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+
+.nav-meu-arquivo.active {
+    color: #d5c7ad;
+}
+
+
+.nav-meu-arquivo.active::after {
+    transform: scaleX(1);
+}
+
+
+/* =========================================================
+   HERO — ABERTURA DO ARQUIVO
+   ========================================================= */
+
+.arquivo-hero {
+    position: relative;
+    min-height: 470px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 7rem 0 4.5rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(8, 7, 6, 0.98) 0%,
+            rgba(8, 7, 6, 0.94) 52%,
+            rgba(8, 7, 6, 0.75) 100%
+        ),
+        radial-gradient(
+            circle at 80% 45%,
+            rgba(127, 23, 23, 0.17),
+            transparent 34rem
+        );
+}
+
+
+.arquivo-hero::before {
+    content: "CONFIDENCIAL";
+
+    position: absolute;
+    right: -1rem;
+    bottom: -1.4rem;
+
+    font-family: "Cinzel", serif;
+    font-size: clamp(4.5rem, 12vw, 10rem);
+    font-weight: 800;
+    letter-spacing: 0.03em;
+
+    color: rgba(255, 255, 255, 0.018);
+
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+
+.arquivo-hero::after {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    right: 8%;
+
+    width: 1px;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            transparent,
+            rgba(127, 23, 23, 0.5),
+            transparent
+        );
+
+    opacity: 0.55;
+}
+
+
+.arquivo-hero-layout {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4rem;
+
+    width: 100%;
+}
+
+
+.arquivo-hero-content {
+    max-width: 760px;
+}
+
+
+.arquivo-classificacao {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    margin-bottom: 1.4rem;
+}
+
+
+.arquivo-classificacao span {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 27px;
+    padding: 0.35rem 0.65rem;
+
+    border: 1px solid rgba(127, 23, 23, 0.6);
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+
+    color: #c6bba7;
+
+    background: rgba(127, 23, 23, 0.08);
+}
+
+
+.arquivo-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    margin: 0 0 0.85rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+
+    color: #8f8779;
+}
+
+
+.arquivo-eyebrow i {
+    color: var(--arquivo-red-light);
+}
+
+
+.arquivo-hero h1 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: clamp(3.2rem, 7vw, 6.4rem);
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+
+    color: #eee8dc;
+}
+
+
+.arquivo-hero h1 span {
+    display: block;
+
+    margin-top: 0.15em;
+
+    font-weight: 700;
+    color: #8e211e;
+}
+
+
+.arquivo-hero-description {
+    max-width: 610px;
+
+    margin: 1.6rem 0 0;
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.98rem;
+    line-height: 1.85;
+
+    color: #aaa194;
+}
+
+
+.arquivo-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+
+    margin-top: 1.7rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.13em;
+
+    color: #777064;
+}
+
+
+.arquivo-status-indicator {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #8d2420;
+
+    box-shadow:
+        0 0 0 4px rgba(141, 36, 32, 0.1),
+        0 0 16px rgba(141, 36, 32, 0.6);
+}
+
+
+/* =========================================================
+   CARIMBO DO HERO
+   ========================================================= */
+
+.arquivo-hero-stamp {
+    width: 205px;
+    height: 205px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+
+    border: 3px double rgba(127, 23, 23, 0.48);
+    border-radius: 50%;
+
+    color: rgba(151, 39, 34, 0.6);
+
+    transform: rotate(-9deg);
+
+    text-align: center;
+
+    opacity: 0.82;
+}
+
+
+.arquivo-hero-stamp i {
+    margin-bottom: 0.35rem;
+    font-size: 2.5rem;
+}
+
+
+.arquivo-hero-stamp strong {
+    font-family: "Cinzel", serif;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+}
+
+
+.arquivo-hero-stamp span {
+    max-width: 130px;
+
+    padding-top: 0.45rem;
+
+    border-top: 1px solid currentColor;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.13em;
+}
+
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.arquivo-dashboard {
+    padding: 4rem 0 6rem;
+}
+
+
+.arquivo-dashboard > .container {
+    display: flex;
+    flex-direction: column;
+    gap: 4.5rem;
+}
+
+
+/* =========================================================
+   TÍTULOS DAS SEÇÕES
+   ========================================================= */
+
+.section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+
+    margin-bottom: 1.6rem;
+    padding-bottom: 1rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+}
+
+
+.section-heading h2 {
+    margin: 0.2rem 0 0;
+
+    font-family: "Cinzel", serif;
+    font-size: clamp(1.45rem, 3vw, 2.1rem);
+    font-weight: 600;
+
+    color: #e3dccf;
+}
+
+
+.section-kicker {
+    margin: 0;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+
+    color: #7e766a;
+}
+
+
+.section-code {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.13em;
+
+    color: #736c61;
+}
+
+/* =========================================================
+   CREDENCIAL DO INVESTIGADOR
+   ========================================================= */
+
+.investigador-card {
+    position: relative;
+
+    overflow: hidden;
+
+    border: 1px solid var(--arquivo-border-strong);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.025),
+            transparent 45%
+        ),
+        var(--arquivo-surface);
+
+    box-shadow: var(--arquivo-shadow);
+}
+
+
+.investigador-card::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 4px;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--arquivo-red-light),
+            var(--arquivo-red-dark)
+        );
+}
+
+
+.investigador-card::after {
+    content: "AS-PERFIL";
+
+    position: absolute;
+    right: 1.5rem;
+    bottom: -0.8rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 4.5rem;
+    font-weight: 500;
+    letter-spacing: -0.08em;
+
+    color: rgba(255, 255, 255, 0.018);
+
+    pointer-events: none;
+}
+
+
+.investigador-card-header {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    min-height: 58px;
+
+    padding: 0.8rem 1.5rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+
+    background: rgba(0, 0, 0, 0.16);
+}
+
+
+.document-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+}
+
+
+.document-label span {
+    color: #80786c;
+}
+
+
+.document-label strong {
+    color: #a62c27;
+}
+
+
+.document-security {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.53rem;
+    letter-spacing: 0.1em;
+
+    color: #756e63;
+}
+
+
+.document-security i {
+    color: #8d2420;
+}
+
+
+/* =========================================================
+   CORPO DA CREDENCIAL
+   ========================================================= */
+
+.investigador-card-body {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: 2.5rem;
+
+    padding: 2rem;
+}
+
+
+/* =========================================================
+   AVATAR
+   ========================================================= */
+
+.investigador-avatar-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+
+.investigador-avatar {
+    position: relative;
+
+    width: 175px;
+    height: 205px;
+
+    display: grid;
+    place-items: center;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(216, 208, 189, 0.23);
+
+    background:
+        linear-gradient(
+            145deg,
+            #191613,
+            #0a0908
+        );
+
+    box-shadow:
+        inset 0 0 0 6px rgba(0, 0, 0, 0.18),
+        0 16px 35px rgba(0, 0, 0, 0.32);
+}
+
+
+.investigador-avatar::before {
+    content: "IDENTIFICAÇÃO";
+
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+
+    padding: 0.45rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.46rem;
+    letter-spacing: 0.15em;
+    text-align: center;
+
+    color: #8f877a;
+
+    background: rgba(0, 0, 0, 0.72);
+
+    z-index: 2;
+}
+
+
+.investigador-avatar i {
+    font-size: 4.7rem;
+    color: #514a42;
+}
+
+
+.investigador-avatar img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    filter:
+        grayscale(22%)
+        contrast(1.05)
+        brightness(0.82);
+}
+
+
+.avatar-edit-button {
+    width: 175px;
+
+    padding: 0.6rem 0.7rem;
+
+    border: 0;
+    border-bottom: 1px solid var(--arquivo-border);
+
+    color: #837b70;
+    background: transparent;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.avatar-edit-button:hover {
+    color: #c8bdab;
+    border-color: var(--arquivo-red-light);
+}
+
+
+/* =========================================================
+   INFORMAÇÕES DO INVESTIGADOR
+   ========================================================= */
+
+.investigador-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+
+.investigador-label {
+    margin: 0 0 0.35rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.17em;
+
+    color: #777064;
+}
+
+
+.investigador-info h2 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: clamp(1.7rem, 4vw, 2.7rem);
+    font-weight: 600;
+    line-height: 1.15;
+
+    color: #e8e0d3;
+}
+
+
+.investigador-usuario {
+    margin: 0.45rem 0 0;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.68rem;
+
+    color: #942722;
+}
+
+
+.investigador-bio {
+    max-width: 680px;
+
+    margin: 1.25rem 0 0;
+
+    color: #9b9285;
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.82rem;
+    line-height: 1.75;
+}
+
+
+/* =========================================================
+   METADADOS DA CREDENCIAL
+   ========================================================= */
+
+.investigador-meta {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    margin: 1.6rem 0;
+
+    border-top: 1px solid var(--arquivo-border);
+    border-bottom: 1px solid var(--arquivo-border);
+}
+
+
+.investigador-meta > div {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    padding: 0.9rem 1rem;
+}
+
+
+.investigador-meta > div:first-child {
+    padding-left: 0;
+}
+
+
+.investigador-meta > div + div {
+    border-left: 1px solid var(--arquivo-border);
+}
+
+
+.investigador-meta span {
+    font-family: "DM Mono", monospace;
+    font-size: 0.48rem;
+    letter-spacing: 0.12em;
+
+    color: #625c53;
+}
+
+
+.investigador-meta strong {
+    overflow: hidden;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.63rem;
+    font-weight: 500;
+
+    color: #bdb3a2;
+
+    text-overflow: ellipsis;
+}
+
+
+.status-ativo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+
+.status-ativo i {
+    font-size: 0.38rem;
+    color: #728064;
+
+    text-shadow: 0 0 8px rgba(114, 128, 100, 0.45);
+}
+
+
+/* =========================================================
+   ESTADO DO ARQUIVO
+   ========================================================= */
+
+.arquivo-resumo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+
+.resumo-card {
+    position: relative;
+
+    min-width: 0;
+    min-height: 120px;
+
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 1.25rem;
+
+    border: 1px solid var(--arquivo-border);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.018),
+            transparent
+        ),
+        #0d0b0a;
+
+    transition:
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+.resumo-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(127, 23, 23, 0.5);
+}
+
+
+.resumo-icon {
+    flex: 0 0 auto;
+
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(127, 23, 23, 0.36);
+
+    color: #9c2924;
+    background: rgba(127, 23, 23, 0.07);
+
+    font-size: 0.95rem;
+}
+
+
+.resumo-card > div:last-child {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.resumo-card strong {
+    font-family: "Cinzel", serif;
+    font-size: 1.65rem;
+    font-weight: 600;
+    line-height: 1;
+
+    color: #ded6c8;
+}
+
+
+.resumo-card span {
+    margin-top: 0.45rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.52rem;
+    line-height: 1.45;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    color: #716a60;
+}
+
+
+/* =========================================================
+   SETORES DO MEU ARQUIVO
+   ========================================================= */
+
+.arquivo-setores-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+
+.setor-card {
+    position: relative;
+
+    min-width: 0;
+    min-height: 205px;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 1.4rem;
+
+    overflow: hidden;
+
+    border: 1px solid var(--arquivo-border);
+
+    background:
+        linear-gradient(
+            145deg,
+            #12100e,
+            #0b0a09
+        );
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.setor-card:hover {
+    transform: translateY(-4px);
+
+    border-color: rgba(127, 23, 23, 0.5);
+
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.28);
+}
+
+
+.setor-number {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+
+    color: #4f4942;
+}
+
+
+.setor-icon {
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    margin-bottom: 1.1rem;
+
+    border: 1px solid rgba(127, 23, 23, 0.34);
+
+    color: #982722;
+    background: rgba(127, 23, 23, 0.065);
+}
+
+
+.setor-content {
+    flex: 1;
+}
+
+
+.setor-content h3 {
+    margin: 0 0 0.65rem;
+
+    font-family: "Cinzel", serif;
+    font-size: 1rem;
+    font-weight: 600;
+
+    color: #d9d1c3;
+}
+
+
+.setor-content p {
+    margin: 0;
+
+    color: #81796d;
+
+    font-size: 0.72rem;
+    line-height: 1.7;
+}
+
+
+.setor-arrow {
+    align-self: flex-end;
+
+    margin-top: 1rem;
+
+    color: #5f5850;
+
+    font-size: 0.72rem;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.setor-card:hover .setor-arrow {
+    color: #9e2a25;
+    transform: translateX(3px);
+}
+
+
+/* =========================================================
+   SETOR EM DESTAQUE — MURAL
+   ========================================================= */
+
+.setor-card-destaque {
+    border-color: rgba(127, 23, 23, 0.42);
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(127, 23, 23, 0.14),
+            transparent 55%
+        ),
+        linear-gradient(
+            145deg,
+            #15110f,
+            #0b0908
+        );
+}
+
+
+.setor-card-destaque::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--arquivo-red-dark),
+            var(--arquivo-red-light),
+            transparent
+        );
+}
+
+
+.setor-tag {
+    display: inline-block;
+
+    margin-bottom: 0.45rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.45rem;
+    letter-spacing: 0.11em;
+
+    color: #9b2a25;
+}
+
+/* =========================================================
+   MURAL DE INVESTIGAÇÃO
+   ========================================================= */
+
+.mural-section {
+    position: relative;
+}
+
+
+.mural-intro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+
+    margin-bottom: 1.5rem;
+}
+
+
+.mural-intro-text {
+    max-width: 720px;
+}
+
+
+.mural-intro-text > p {
+    margin: 0;
+
+    color: #91887c;
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.82rem;
+    line-height: 1.8;
+}
+
+
+.mural-privacy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    margin-top: 0.8rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.53rem;
+    letter-spacing: 0.08em;
+
+    color: #6f685e;
+}
+
+
+.mural-privacy i {
+    color: #8f2823;
+}
+
+
+/* =========================================================
+   QUADRO PRINCIPAL
+   ========================================================= */
+
+.mural-board-preview {
+    position: relative;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(116, 86, 57, 0.38);
+
+    background: #0b0907;
+
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.42);
+}
+
+
+.mural-board-header {
+    min-height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    padding: 0.9rem 1.3rem;
+
+    border-bottom: 1px solid rgba(177, 146, 105, 0.18);
+
+    background:
+        linear-gradient(
+            180deg,
+            #17120e,
+            #100d0a
+        );
+}
+
+
+.mural-board-header > div:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+
+.mural-board-header span,
+.mural-board-header strong {
+    font-family: "DM Mono", monospace;
+}
+
+
+.mural-board-header > div:first-child span {
+    font-size: 0.5rem;
+    letter-spacing: 0.14em;
+
+    color: #6e6255;
+}
+
+
+.mural-board-header > div:first-child strong {
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+
+    color: #b5a58f;
+}
+
+
+.mural-board-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    padding: 0.4rem 0.6rem;
+
+    border: 1px solid rgba(127, 23, 23, 0.35);
+
+    color: #8e8171 !important;
+
+    font-size: 0.5rem !important;
+    letter-spacing: 0.1em;
+
+    background: rgba(127, 23, 23, 0.06);
+}
+
+
+/* =========================================================
+   SUPERFÍCIE DO QUADRO
+   ========================================================= */
+
+.mural-board {
+    position: relative;
+
+    min-height: 510px;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 20% 30%,
+            rgba(255, 255, 255, 0.025),
+            transparent 18rem
+        ),
+        radial-gradient(
+            circle at 78% 65%,
+            rgba(0, 0, 0, 0.22),
+            transparent 20rem
+        ),
+        repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.008) 0,
+            rgba(255, 255, 255, 0.008) 1px,
+            transparent 1px,
+            transparent 7px
+        ),
+        #33251a;
+
+    box-shadow:
+        inset 0 0 90px rgba(0, 0, 0, 0.6);
+}
+
+
+.mural-board::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        repeating-radial-gradient(
+            circle at 25% 40%,
+            rgba(255, 255, 255, 0.015) 0,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px,
+            transparent 5px
+        );
+
+    opacity: 0.65;
+}
+
+
+/* =========================================================
+   CARTÕES DE EVIDÊNCIA
+   ========================================================= */
+
+.evidence-card,
+.investigation-note {
+    position: absolute;
+    z-index: 4;
+
+    box-shadow:
+        0 12px 25px rgba(0, 0, 0, 0.38);
+}
+
+
+.evidence-card {
+    width: 165px;
+
+    padding: 0.8rem;
+
+    color: #201a15;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.15),
+            transparent 50%
+        ),
+        #c9bea9;
+
+    border: 1px solid rgba(0, 0, 0, 0.22);
+}
+
+
+.evidence-card::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    border: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+
+.evidence-card strong {
+    display: block;
+
+    margin-top: 0.65rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.09em;
+}
+
+
+.evidence-card small {
+    display: block;
+
+    margin-top: 0.25rem;
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.55rem;
+
+    color: #62594d;
+}
+
+
+/* =========================================================
+   POSIÇÃO DOS ELEMENTOS DO MURAL
+   ========================================================= */
+
+.evidence-photo {
+    top: 62px;
+    left: 8%;
+
+    transform: rotate(-4deg);
+}
+
+
+.evidence-person {
+    top: 190px;
+    left: 39%;
+
+    transform: rotate(2.5deg);
+}
+
+
+.investigation-note {
+    top: 65px;
+    right: 11%;
+
+    width: 180px;
+    min-height: 155px;
+
+    padding: 1.15rem;
+
+    color: #292016;
+
+    background:
+        linear-gradient(
+            145deg,
+            #c8b46f,
+            #a99558
+        );
+
+    transform: rotate(4deg);
+}
+
+
+.evidence-document {
+    right: 15%;
+    bottom: 48px;
+
+    transform: rotate(-2deg);
+}
+
+
+/* =========================================================
+   FOTOGRAFIA
+   ========================================================= */
+
+.evidence-placeholder {
+    height: 110px;
+
+    display: grid;
+    place-items: center;
+
+    border: 6px solid #e0d8c8;
+
+    color: #665e53;
+
+    background:
+        linear-gradient(
+            145deg,
+            #756f67,
+            #36322e
+        );
+
+    box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.28);
+}
+
+
+.evidence-placeholder i {
+    color: rgba(235, 227, 211, 0.42);
+    font-size: 1.5rem;
+}
+
+
+/* =========================================================
+   CARTÃO DE PESSOA
+   ========================================================= */
+
+.evidence-person-icon {
+    height: 92px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(0, 0, 0, 0.18);
+
+    background:
+        linear-gradient(
+            145deg,
+            #797168,
+            #413c36
+        );
+}
+
+
+.evidence-person-icon i {
+    font-size: 2.6rem;
+    color: rgba(222, 213, 196, 0.48);
+}
+
+
+/* =========================================================
+   DOCUMENTO
+   ========================================================= */
+
+.evidence-document > i {
+    display: grid;
+    place-items: center;
+
+    height: 90px;
+
+    border: 1px dashed rgba(0, 0, 0, 0.28);
+
+    color: #574d41;
+
+    font-size: 2rem;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 12px,
+            rgba(0, 0, 0, 0.05) 13px
+        );
+}
+
+
+/* =========================================================
+   POST-IT
+   ========================================================= */
+
+.investigation-note strong {
+    display: block;
+
+    margin-bottom: 0.7rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.1em;
+}
+
+
+.investigation-note p {
+    margin: 0;
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.78rem;
+    line-height: 1.55;
+
+    color: #33291d;
+}
+
+
+/* =========================================================
+   ALFINETES
+   ========================================================= */
+
+.evidence-pin {
+    position: absolute;
+    z-index: 8;
+
+    top: -7px;
+    left: 50%;
+
+    width: 14px;
+    height: 14px;
+
+    border: 2px solid rgba(45, 4, 4, 0.7);
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            #c94a43,
+            #720e0b 58%,
+            #310504
+        );
+
+    box-shadow:
+        0 3px 5px rgba(0, 0, 0, 0.45);
+
+    transform: translateX(-50%);
+}
+
+
+/* =========================================================
+   ETIQUETAS DAS EVIDÊNCIAS
+   ========================================================= */
+
+.evidence-tag {
+    display: inline-block;
+
+    margin-top: 0.7rem;
+    padding: 0.25rem 0.4rem;
+
+    border: 1px solid currentColor;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.43rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+}
+
+
+.tag-confirmado {
+    color: #4e5c3f;
+}
+
+
+.tag-pista {
+    color: #8a6c30;
+}
+
+
+.tag-suspeita {
+    color: #81201c;
+}
+
+
+.tag-descartado {
+    color: #605c56;
+}
+
+
+.tag-sem-explicacao {
+    color: #614c71;
+}
+
+
+/* =========================================================
+   FIOS VERMELHOS
+   ========================================================= */
+
+.evidence-thread {
+    position: absolute;
+    z-index: 2;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #4d0807,
+            #9b211c,
+            #590b09
+        );
+
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.4);
+
+    transform-origin: left center;
+
+    pointer-events: none;
+}
+
+
+.thread-one {
+    top: 155px;
+    left: 20%;
+
+    width: 30%;
+
+    transform: rotate(15deg);
+}
+
+
+.thread-two {
+    top: 270px;
+    left: 48%;
+
+    width: 30%;
+
+    transform: rotate(-24deg);
+}
+
+
+.thread-three {
+    top: 135px;
+    left: 22%;
+
+    width: 58%;
+
+    transform: rotate(-2deg);
+}
+
+
+/* =========================================================
+   RODAPÉ DO QUADRO
+   ========================================================= */
+
+.mural-board-footer {
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0.7rem 1.3rem;
+
+    border-top: 1px solid rgba(177, 146, 105, 0.14);
+
+    background: #100d0a;
+}
+
+
+.mural-board-footer span {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+
+    color: #665d52;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.05em;
+}
+
+
+.mural-board-footer i {
+    color: #8c2924;
+}
+
+
+/* =========================================================
+   LISTA DE MURAIS
+   ========================================================= */
+
+.mural-list {
+    margin-top: 1rem;
+}
+
+
+/* =========================================================
+   ESTADO VAZIO
+   ========================================================= */
+
+.arquivo-empty-state {
+    min-height: 180px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 2rem;
+
+    border: 1px dashed var(--arquivo-border);
+
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.012);
+}
+
+
+.arquivo-empty-state > i {
+    margin-bottom: 0.85rem;
+
+    color: #5e5750;
+
+    font-size: 1.45rem;
+}
+
+
+.arquivo-empty-state h3,
+.arquivo-empty-state h4 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    color: #a99f91;
+}
+
+
+.arquivo-empty-state p {
+    max-width: 500px;
+
+    margin: 0.65rem auto 0;
+
+    color: #6c655c;
+
+    font-size: 0.68rem;
+    line-height: 1.7;
+}
+
+
+.arquivo-empty-state .arquivo-button {
+    margin-top: 1rem;
+}
+/* =========================================================
+   ÁREA DE INVESTIGAÇÃO PRIVADA
+   ========================================================= */
+
+.investigacao-privada {
+    position: relative;
+}
+
+
+.investigacao-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+
+/* =========================================================
+   CARTÕES DE INVESTIGAÇÃO
+   ========================================================= */
+
+.investigacao-card {
+    position: relative;
+
+    min-width: 0;
+    min-height: 330px;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 1.5rem;
+
+    overflow: hidden;
+
+    border: 1px solid var(--arquivo-border);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.022),
+            transparent 48%
+        ),
+        #100e0c;
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.investigacao-card::before {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--arquivo-red-dark),
+            rgba(127, 23, 23, 0.7),
+            transparent
+        );
+}
+
+
+.investigacao-card:hover {
+    transform: translateY(-4px);
+
+    border-color: rgba(127, 23, 23, 0.45);
+
+    box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.28);
+}
+
+
+/* =========================================================
+   CABEÇALHO DOS CARTÕES
+   ========================================================= */
+
+.investigacao-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 1.4rem;
+}
+
+
+.investigacao-number {
+    font-family: "DM Mono", monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+
+    color: #5f5850;
+}
+
+
+.investigacao-card-top > i {
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(127, 23, 23, 0.34);
+
+    color: #982722;
+
+    background: rgba(127, 23, 23, 0.07);
+}
+
+
+.investigacao-type {
+    margin: 0 0 0.5rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.14em;
+
+    color: #746c62;
+}
+
+
+.investigacao-card h3 {
+    margin: 0 0 0.8rem;
+
+    font-family: "Cinzel", serif;
+    font-size: 1.08rem;
+    font-weight: 600;
+    line-height: 1.35;
+
+    color: #d9d1c4;
+}
+
+
+.investigacao-card > p:not(.investigacao-type) {
+    flex: 1;
+
+    margin: 0;
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.72rem;
+    line-height: 1.75;
+
+    color: #81796e;
+}
+
+
+/* =========================================================
+   METADADOS DOS CARTÕES
+   ========================================================= */
+
+.investigacao-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+
+    margin: 1.3rem 0 1rem;
+    padding-top: 0.9rem;
+
+    border-top: 1px solid var(--arquivo-border);
+}
+
+
+.investigacao-card-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.48rem;
+    letter-spacing: 0.04em;
+
+    color: #665f56;
+}
+
+
+.investigacao-card-meta i {
+    color: #84221e;
+}
+
+
+.investigacao-card .arquivo-button {
+    width: 100%;
+}
+
+
+/* =========================================================
+   LEGENDA / PROTOCOLO DE EVIDÊNCIAS
+   ========================================================= */
+
+.evidence-legend {
+    position: relative;
+
+    padding: 1.4rem 1.5rem;
+
+    border: 1px solid var(--arquivo-border);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(127, 23, 23, 0.055),
+            transparent 50%
+        ),
+        #0c0a09;
+}
+
+
+.evidence-legend-header {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+
+    margin-bottom: 1.2rem;
+}
+
+
+.evidence-legend-header > i {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(127, 23, 23, 0.34);
+
+    color: #922722;
+
+    background: rgba(127, 23, 23, 0.065);
+}
+
+
+.evidence-legend-header small {
+    display: block;
+
+    margin-bottom: 0.25rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.48rem;
+    letter-spacing: 0.13em;
+
+    color: #6c655b;
+}
+
+
+.evidence-legend-header h3 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 1rem;
+    font-weight: 600;
+
+    color: #cfc6b7;
+}
+
+
+/* =========================================================
+   ETIQUETAS DA LEGENDA
+   ========================================================= */
+
+.evidence-legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 29px;
+    padding: 0.4rem 0.65rem;
+
+    border: 1px solid currentColor;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.48rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+
+    background: rgba(0, 0, 0, 0.18);
+}
+
+
+.evidence-legend-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+
+    margin: 1.2rem 0 0;
+    padding-top: 1rem;
+
+    border-top: 1px solid var(--arquivo-border);
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.64rem;
+    line-height: 1.7;
+
+    color: #777066;
+}
+
+
+.evidence-legend-warning i {
+    flex: 0 0 auto;
+
+    margin-top: 0.18rem;
+
+    color: #8d2924;
+}
+
+
+/* =========================================================
+   COLEÇÃO PESSOAL
+   ========================================================= */
+
+.colecao-pessoal {
+    position: relative;
+}
+
+
+.colecao-bloco {
+    position: relative;
+
+    margin-top: 1rem;
+
+    border: 1px solid var(--arquivo-border);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.016),
+            transparent
+        ),
+        #0d0b0a;
+
+    overflow: hidden;
+}
+
+
+.colecao-bloco + .colecao-bloco {
+    margin-top: 1rem;
+}
+
+
+.colecao-bloco-header {
+    min-height: 78px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+
+    padding: 1rem 1.25rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+
+    background: rgba(255, 255, 255, 0.012);
+}
+
+
+.colecao-title-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+
+.colecao-number {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(127, 23, 23, 0.38);
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.56rem;
+
+    color: #972722;
+
+    background: rgba(127, 23, 23, 0.06);
+}
+
+
+.colecao-title-group p {
+    margin: 0 0 0.2rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.47rem;
+    letter-spacing: 0.12em;
+
+    color: #686158;
+}
+
+
+.colecao-title-group h3 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 1rem;
+    font-weight: 600;
+
+    color: #d0c7b8;
+}
+
+
+.arquivo-text-link,
+.arquivo-text-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    border: 0;
+
+    color: #8d8478;
+    background: transparent;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.05em;
+
+    text-decoration: none;
+
+    transition: color 0.2s ease;
+}
+
+
+.arquivo-text-link:hover,
+.arquivo-text-button:hover {
+    color: #b92f29;
+}
+
+
+.colecao-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.48rem;
+    letter-spacing: 0.08em;
+
+    color: #6f685e;
+}
+
+
+.colecao-counter i {
+    color: #8d2722;
+}
+
+
+.colecao-counter strong {
+    color: #b1a697;
+}
+
+
+.colecao-conteudo {
+    padding: 1rem;
+}
+
+
+/* =========================================================
+   CASOS EM OBSERVAÇÃO
+   ========================================================= */
+
+.observacao-bloco {
+    border-color: rgba(127, 23, 23, 0.25);
+}
+
+
+.observacao-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.46rem;
+    letter-spacing: 0.08em;
+
+    color: #756e64;
+}
+
+
+.observacao-pulse {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #8d2722;
+
+    box-shadow:
+        0 0 0 4px rgba(141, 39, 34, 0.09),
+        0 0 12px rgba(141, 39, 34, 0.45);
+}
+
+
+.colecao-description {
+    margin: 0;
+    padding: 1.15rem 1.25rem 0;
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.7rem;
+    line-height: 1.75;
+
+    color: #7e766b;
+}
+
+/* =========================================================
+   MARCADORES
+   ========================================================= */
+
+.marcadores-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+
+.marcadores-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+
+.marcadores-lista {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
+
+.marcador-card {
+    position: relative;
+
+    min-height: 135px;
+    padding: 1.15rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    border: 1px solid var(--arquivo-border);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(127, 23, 23, 0.055),
+            transparent 55%
+        ),
+        #0f0d0b;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.marcador-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(127, 23, 23, 0.45);
+}
+
+
+.marcador-card::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 3px;
+    height: 100%;
+
+    background: var(--arquivo-red-dark);
+}
+
+
+.marcador-card h4 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+
+    color: #cfc6b8;
+}
+
+
+.marcador-card p {
+    margin: 0.5rem 0 0;
+
+    font-size: 0.64rem;
+    line-height: 1.6;
+
+    color: #746c62;
+}
+
+
+.marcador-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+
+    margin-top: 1rem;
+    padding-top: 0.7rem;
+
+    border-top: 1px solid var(--arquivo-border);
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.46rem;
+
+    color: #655e55;
+}
+
+
+/* =========================================================
+   HISTÓRICO DE INVESTIGAÇÃO
+   ========================================================= */
+
+.historico-lista {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    padding-left: 1.2rem;
+}
+
+
+.historico-lista::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 5px;
+
+    width: 1px;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--arquivo-red-dark),
+            rgba(127, 23, 23, 0.18),
+            transparent
+        );
+}
+
+
+.historico-item {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+
+    padding: 0.95rem 0 0.95rem 1rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+}
+
+
+.historico-item::before {
+    content: "";
+
+    position: absolute;
+    top: 1.25rem;
+    left: -1.19rem;
+
+    width: 9px;
+    height: 9px;
+
+    border: 2px solid #0d0b0a;
+    border-radius: 50%;
+
+    background: #85211d;
+}
+
+
+.historico-item:last-child {
+    border-bottom: 0;
+}
+
+
+.historico-item h4 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+
+    color: #c1b7a8;
+}
+
+
+.historico-item p {
+    margin: 0.35rem 0 0;
+
+    font-size: 0.62rem;
+    line-height: 1.6;
+
+    color: #71695f;
+}
+
+
+.historico-data {
+    align-self: start;
+
+    white-space: nowrap;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.46rem;
+    letter-spacing: 0.05em;
+
+    color: #5f5850;
+}
+
+
+/* =========================================================
+   LINHA DO TEMPO
+   ========================================================= */
+
+.timeline-area {
+    position: relative;
+}
+
+
+.timeline-list {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    padding: 0.5rem 0 0.5rem 2rem;
+}
+
+
+.timeline-list::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 8px;
+
+    width: 1px;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent,
+            rgba(127, 23, 23, 0.7) 8%,
+            rgba(127, 23, 23, 0.3) 90%,
+            transparent
+        );
+}
+
+
+.timeline-item {
+    position: relative;
+
+    padding: 0 0 1.7rem 1.2rem;
+}
+
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+
+.timeline-item::before {
+    content: "";
+
+    position: absolute;
+    top: 0.3rem;
+    left: -1.75rem;
+
+    width: 13px;
+    height: 13px;
+
+    border: 3px solid #0d0b0a;
+    border-radius: 50%;
+
+    background: #8c2520;
+
+    box-shadow:
+        0 0 0 1px rgba(140, 37, 32, 0.4);
+}
+
+
+.timeline-date {
+    display: inline-block;
+
+    margin-bottom: 0.45rem;
+    padding: 0.25rem 0.45rem;
+
+    border: 1px solid rgba(127, 23, 23, 0.32);
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.46rem;
+    letter-spacing: 0.07em;
+
+    color: #9b7f70;
+
+    background: rgba(127, 23, 23, 0.05);
+}
+
+
+.timeline-item h4 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+
+    color: #cfc5b6;
+}
+
+
+.timeline-item p {
+    max-width: 760px;
+
+    margin: 0.45rem 0 0;
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.66rem;
+    line-height: 1.7;
+
+    color: #776f64;
+}
+
+
+/* =========================================================
+   AÇÕES DE COLEÇÃO
+   ========================================================= */
+
+.colecao-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+
+.colecao-mini-button {
+    min-height: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+
+    padding: 0.45rem 0.7rem;
+
+    border: 1px solid var(--arquivo-border);
+
+    color: #8d8477;
+    background: rgba(255, 255, 255, 0.015);
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.48rem;
+    letter-spacing: 0.05em;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.colecao-mini-button:hover {
+    color: #c4b9a7;
+
+    border-color: rgba(127, 23, 23, 0.5);
+
+    background: rgba(127, 23, 23, 0.06);
+}
+
+
+/* =========================================================
+   CONTÊINERES DINÂMICOS
+   ========================================================= */
+
+#lista-meus-dossies,
+#lista-favoritos,
+#lista-observacao,
+#lista-marcadores,
+#lista-historico,
+#lista-linhas-tempo {
+    min-width: 0;
+}
+
+
+/* =========================================================
+   CARTÃO GENÉRICO DE ITEM SALVO
+   Usado posteriormente pelo JavaScript
+   ========================================================= */
+
+.arquivo-item-card {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 0.9rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+
+    background: rgba(255, 255, 255, 0.008);
+
+    transition: background 0.2s ease;
+}
+
+
+.arquivo-item-card:last-child {
+    border-bottom: 0;
+}
+
+
+.arquivo-item-card:hover {
+    background: rgba(127, 23, 23, 0.035);
+}
+
+
+.arquivo-item-thumb {
+    width: 90px;
+    height: 68px;
+
+    overflow: hidden;
+
+    border: 1px solid var(--arquivo-border);
+
+    background: #090807;
+}
+
+
+.arquivo-item-thumb img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    filter:
+        grayscale(30%)
+        brightness(0.72);
+}
+
+
+.arquivo-item-info {
+    min-width: 0;
+}
+
+
+.arquivo-item-info small {
+    display: block;
+
+    margin-bottom: 0.25rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.44rem;
+    letter-spacing: 0.08em;
+
+    color: #7e302c;
+}
+
+
+.arquivo-item-info h4 {
+    margin: 0;
+
+    overflow: hidden;
+
+    font-family: "Cinzel", serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+
+    color: #c9c0b1;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+.arquivo-item-info p {
+    margin: 0.3rem 0 0;
+
+    font-size: 0.58rem;
+
+    color: #6c655c;
+}
+
+
+.arquivo-item-action {
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid var(--arquivo-border);
+
+    color: #756d63;
+    background: transparent;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.arquivo-item-action:hover {
+    color: #a82c27;
+    border-color: rgba(168, 44, 39, 0.5);
+}
+
+/* =========================================================
+   ATIVIDADE NA COMUNIDADE
+   ========================================================= */
+
+.comunidade-pessoal {
+    position: relative;
+}
+
+
+.comunidade-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+
+/* =========================================================
+   CARTÕES DA COMUNIDADE
+   ========================================================= */
+
+.comunidade-card {
+    position: relative;
+
+    min-width: 0;
+    min-height: 230px;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 1.35rem;
+
+    overflow: hidden;
+
+    border: 1px solid var(--arquivo-border);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.018),
+            transparent 50%
+        ),
+        #0f0d0b;
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.comunidade-card:hover {
+    transform: translateY(-3px);
+
+    border-color: rgba(127, 23, 23, 0.42);
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.25);
+}
+
+
+.comunidade-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+
+    margin-bottom: 1.1rem;
+}
+
+
+.comunidade-card-icon {
+    width: 43px;
+    height: 43px;
+
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(127, 23, 23, 0.35);
+
+    color: #992823;
+    background: rgba(127, 23, 23, 0.065);
+}
+
+
+.comunidade-card-code {
+    font-family: "DM Mono", monospace;
+    font-size: 0.47rem;
+    letter-spacing: 0.1em;
+
+    color: #5e574f;
+}
+
+
+.comunidade-card h3 {
+    margin: 0 0 0.65rem;
+
+    font-family: "Cinzel", serif;
+    font-size: 1rem;
+    font-weight: 600;
+
+    color: #d1c8b9;
+}
+
+
+.comunidade-card > p {
+    flex: 1;
+
+    margin: 0;
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.68rem;
+    line-height: 1.7;
+
+    color: #7b7368;
+}
+
+
+/* =========================================================
+   CONTADORES
+   ========================================================= */
+
+.comunidade-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    margin-top: 1.2rem;
+    padding-top: 0.9rem;
+
+    border-top: 1px solid var(--arquivo-border);
+}
+
+
+.comunidade-count {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+}
+
+
+.comunidade-count strong {
+    font-family: "Cinzel", serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+
+    color: #cfc6b7;
+}
+
+
+.comunidade-count span {
+    font-family: "DM Mono", monospace;
+    font-size: 0.44rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    color: #625b53;
+}
+
+
+/* =========================================================
+   PUBLICAÇÕES E COMENTÁRIOS
+   ========================================================= */
+
+#minhas-publicacoes,
+#meus-comentarios,
+#investigadores-seguidos,
+#bloqueados {
+    scroll-margin-top: 100px;
+}
+
+
+.comunidade-open-button {
+    width: 35px;
+    height: 35px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid var(--arquivo-border);
+
+    color: #756e64;
+    background: transparent;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.comunidade-open-button:hover {
+    color: #ad302a;
+
+    border-color: rgba(173, 48, 42, 0.45);
+
+    background: rgba(127, 23, 23, 0.055);
+}
+
+
+/* =========================================================
+   INVESTIGADORES SEGUIDOS
+   ========================================================= */
+
+.investigador-mini-list {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.investigador-mini {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
+    padding: 0.75rem 0;
+
+    border-bottom: 1px solid var(--arquivo-border);
+}
+
+
+.investigador-mini:last-child {
+    border-bottom: 0;
+}
+
+
+.investigador-mini-avatar {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    overflow: hidden;
+
+    border: 1px solid var(--arquivo-border);
+
+    color: #6f675d;
+    background: #0a0908;
+}
+
+
+.investigador-mini-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.investigador-mini-info {
+    min-width: 0;
+    flex: 1;
+}
+
+
+.investigador-mini-info strong {
+    display: block;
+
+    overflow: hidden;
+
+    font-family: "Cinzel", serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+
+    color: #bfb5a6;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+.investigador-mini-info span {
+    display: block;
+
+    margin-top: 0.15rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.45rem;
+
+    color: #655e56;
+}
+
+
+/* =========================================================
+   BLOQUEADOS
+   ========================================================= */
+
+.bloqueados-card {
+    opacity: 0.88;
+}
+
+
+.bloqueados-card .comunidade-card-icon {
+    color: #756c63;
+
+    border-color: rgba(216, 208, 189, 0.15);
+
+    background: rgba(255, 255, 255, 0.02);
+}
+
+
+/* =========================================================
+   ALERTAS DO ARQUIVO
+   ========================================================= */
+
+.alertas-bloco {
+    position: relative;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(127, 23, 23, 0.27);
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(127, 23, 23, 0.06),
+            transparent 45%
+        ),
+        #0d0b0a;
+}
+
+
+.alertas-header {
+    min-height: 76px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    padding: 1rem 1.25rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+}
+
+
+.alertas-title {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+
+.alertas-title > i {
+    width: 40px;
+    height: 40px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(127, 23, 23, 0.35);
+
+    color: #9d2b26;
+
+    background: rgba(127, 23, 23, 0.065);
+}
+
+
+.alertas-title small {
+    display: block;
+
+    margin-bottom: 0.2rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.45rem;
+    letter-spacing: 0.12em;
+
+    color: #655e55;
+}
+
+
+.alertas-title h3 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    color: #cdc4b5;
+}
+
+
+.alertas-total {
+    min-width: 30px;
+    height: 30px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(127, 23, 23, 0.42);
+    border-radius: 50%;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.52rem;
+
+    color: #c2b7a6;
+    background: rgba(127, 23, 23, 0.12);
+}
+
+
+.alertas-lista {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.alerta-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.9rem;
+
+    padding: 0.9rem 1.2rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+}
+
+
+.alerta-item:last-child {
+    border-bottom: 0;
+}
+
+
+.alerta-item-nao-lido {
+    background: rgba(127, 23, 23, 0.045);
+}
+
+
+.alerta-indicator {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #8f2722;
+}
+
+
+.alerta-item:not(.alerta-item-nao-lido) .alerta-indicator {
+    background: #4d4943;
+}
+
+
+.alerta-content {
+    min-width: 0;
+}
+
+
+.alerta-content strong {
+    display: block;
+
+    font-family: "Cinzel", serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+
+    color: #bcb2a3;
+}
+
+
+.alerta-content p {
+    margin: 0.25rem 0 0;
+
+    font-size: 0.58rem;
+    line-height: 1.55;
+
+    color: #70685e;
+}
+
+
+.alerta-data {
+    white-space: nowrap;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.43rem;
+
+    color: #5d564e;
+}
+
+
+/* =========================================================
+   CASOS ENVIADOS
+   ========================================================= */
+
+.casos-enviados-lista {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.caso-enviado-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 1rem 1.2rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+}
+
+
+.caso-enviado-item:last-child {
+    border-bottom: 0;
+}
+
+
+.caso-enviado-item h4 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+
+    color: #bdb3a4;
+}
+
+
+.caso-enviado-item p {
+    margin: 0.3rem 0 0;
+
+    font-size: 0.57rem;
+
+    color: #696158;
+}
+
+
+.sugestao-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0.35rem 0.55rem;
+
+    border: 1px solid var(--arquivo-border);
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.43rem;
+    letter-spacing: 0.06em;
+
+    color: #857c70;
+}
+
+
+.sugestao-status-analise {
+    color: #a08857;
+    border-color: rgba(160, 136, 87, 0.32);
+}
+
+
+.sugestao-status-aprovado {
+    color: #768568;
+    border-color: rgba(118, 133, 104, 0.32);
+}
+
+
+.sugestao-status-recusado {
+    color: #8d5551;
+    border-color: rgba(141, 85, 81, 0.32);
+}
+
+
+/* =========================================================
+   COMPARTILHAR TEORIA — RECURSO FUTURO
+   ========================================================= */
+
+.compartilhar-teoria-card {
+    position: relative;
+
+    padding: 1.5rem;
+
+    overflow: hidden;
+
+    border: 1px dashed rgba(127, 23, 23, 0.32);
+
+    background:
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(127, 23, 23, 0.09),
+            transparent 20rem
+        ),
+        #0b0a09;
+}
+
+
+.compartilhar-teoria-card::after {
+    content: "EM BREVE";
+
+    position: absolute;
+    right: -0.2rem;
+    bottom: -0.7rem;
+
+    font-family: "Cinzel", serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+
+    color: rgba(255, 255, 255, 0.018);
+
+    pointer-events: none;
+}
+
+
+.compartilhar-teoria-card h3 {
+    margin: 0 0 0.6rem;
+
+    font-family: "Cinzel", serif;
+    font-size: 1rem;
+    font-weight: 600;
+
+    color: #c7bdad;
+}
+
+
+.compartilhar-teoria-card p {
+    max-width: 720px;
+
+    margin: 0;
+
+    font-size: 0.66rem;
+    line-height: 1.7;
+
+    color: #71695f;
+}
+
+/* =========================================================
+   SALA DE SEGURANÇA
+   ========================================================= */
+
+.seguranca-section {
+    position: relative;
+}
+
+
+.seguranca-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+
+.seguranca-card {
+    position: relative;
+
+    min-width: 0;
+    padding: 1.4rem;
+
+    border: 1px solid var(--arquivo-border);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.018),
+            transparent
+        ),
+        #0e0c0a;
+}
+
+
+.seguranca-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+}
+
+
+.seguranca-card-icon {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(127, 23, 23, 0.36);
+
+    color: #9a2924;
+    background: rgba(127, 23, 23, 0.065);
+}
+
+
+.seguranca-card-header small {
+    display: block;
+
+    margin-bottom: 0.2rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.45rem;
+    letter-spacing: 0.12em;
+
+    color: #655e55;
+}
+
+
+.seguranca-card-header h3 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 1rem;
+    font-weight: 600;
+
+    color: #d0c7b8;
+}
+
+
+/* =========================================================
+   E-MAIL DA CONTA
+   ========================================================= */
+
+.seguranca-email {
+    margin-bottom: 1rem;
+    padding: 0.9rem;
+
+    border: 1px solid var(--arquivo-border);
+
+    background: rgba(255, 255, 255, 0.012);
+}
+
+
+.seguranca-email span {
+    display: block;
+
+    margin-bottom: 0.3rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.45rem;
+    letter-spacing: 0.09em;
+
+    color: #625b52;
+}
+
+
+.seguranca-email strong {
+    display: block;
+
+    overflow: hidden;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.65rem;
+    font-weight: 400;
+
+    color: #b9af9f;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   AÇÕES DE SEGURANÇA
+   ========================================================= */
+
+.seguranca-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+
+.seguranca-action {
+    width: 100%;
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    padding: 0.75rem 0.9rem;
+
+    border: 1px solid var(--arquivo-border);
+
+    color: #91887c;
+    background: transparent;
+
+    text-align: left;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.seguranca-action > span {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.55rem;
+}
+
+
+.seguranca-action > span i {
+    width: 16px;
+    color: #85241f;
+}
+
+
+.seguranca-action > i {
+    font-size: 0.6rem;
+    color: #5e574f;
+}
+
+
+.seguranca-action:hover {
+    color: #c8bdab;
+
+    border-color: rgba(127, 23, 23, 0.45);
+
+    background: rgba(127, 23, 23, 0.045);
+}
+
+
+/* =========================================================
+   PROTOCOLO DO ARQUIVO
+   ========================================================= */
+
+.preferencias-lista {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.preferencia-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    padding: 0.9rem 0;
+
+    border-bottom: 1px solid var(--arquivo-border);
+}
+
+
+.preferencia-item:last-child {
+    border-bottom: 0;
+}
+
+
+.preferencia-info {
+    min-width: 0;
+}
+
+
+.preferencia-info strong {
+    display: block;
+
+    font-family: "Cinzel", serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+
+    color: #bfb5a5;
+}
+
+
+.preferencia-info span {
+    display: block;
+
+    margin-top: 0.25rem;
+
+    font-size: 0.58rem;
+    line-height: 1.5;
+
+    color: #6c655c;
+}
+
+
+.preferencia-button {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid var(--arquivo-border);
+
+    color: #777066;
+    background: transparent;
+}
+
+
+.preferencia-button:hover {
+    color: #a92c27;
+    border-color: rgba(169, 44, 39, 0.45);
+}
+
+
+/* =========================================================
+   DOCUMENTOS LEGAIS
+   ========================================================= */
+
+.documentos-legais {
+    margin-top: 1rem;
+
+    border: 1px solid var(--arquivo-border);
+
+    background: #0c0a09;
+}
+
+
+.documentos-legais-header {
+    padding: 1rem 1.2rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+}
+
+
+.documentos-legais-header small {
+    display: block;
+
+    margin-bottom: 0.2rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.44rem;
+    letter-spacing: 0.12em;
+
+    color: #625b52;
+}
+
+
+.documentos-legais-header h3 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+
+    color: #c7bdad;
+}
+
+
+.documentos-legais-lista {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.documento-legal-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    min-height: 52px;
+    padding: 0.75rem 1.2rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+
+    color: #81796e;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.documento-legal-link:last-child {
+    border-bottom: 0;
+}
+
+
+.documento-legal-link span {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.53rem;
+}
+
+
+.documento-legal-link span i {
+    width: 15px;
+    color: #81231f;
+}
+
+
+.documento-legal-link > i {
+    font-size: 0.55rem;
+    color: #5e574f;
+}
+
+
+.documento-legal-link:hover {
+    color: #bfb5a5;
+    background: rgba(127, 23, 23, 0.04);
+}
+
+
+/* =========================================================
+   ENCERRAR ARQUIVO — ZONA CRÍTICA
+   ========================================================= */
+
+.encerrar-arquivo {
+    position: relative;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(151, 35, 30, 0.48);
+
+    background:
+        radial-gradient(
+            circle at 90% 50%,
+            rgba(127, 23, 23, 0.12),
+            transparent 35%
+        ),
+        #0d0908;
+}
+
+
+.encerrar-arquivo::before {
+    content: "ACESSO REVOGADO";
+
+    position: absolute;
+    right: -0.5rem;
+    bottom: -0.8rem;
+
+    font-family: "Cinzel", serif;
+    font-size: clamp(2.2rem, 6vw, 5rem);
+    font-weight: 700;
+
+    color: rgba(151, 35, 30, 0.035);
+
+    pointer-events: none;
+}
+
+
+.encerrar-arquivo-content {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 2rem;
+
+    padding: 1.5rem;
+}
+
+
+.encerrar-arquivo-copy {
+    max-width: 760px;
+}
+
+
+.encerrar-arquivo-copy small {
+    display: block;
+
+    margin-bottom: 0.45rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.46rem;
+    letter-spacing: 0.13em;
+
+    color: #8b302b;
+}
+
+
+.encerrar-arquivo-copy h3 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+
+    color: #d0c5b5;
+}
+
+
+.encerrar-arquivo-copy p {
+    margin: 0.65rem 0 0;
+
+    font-size: 0.65rem;
+    line-height: 1.7;
+
+    color: #786d63;
+}
+
+
+/* =========================================================
+   BOTÃO DE EXCLUSÃO
+   ========================================================= */
+
+.arquivo-button-danger {
+    flex: 0 0 auto;
+
+    min-height: 48px;
+    padding: 0.8rem 1rem;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+
+    border: 1px solid #8c211d;
+
+    color: #d4b7b3;
+    background: rgba(127, 23, 23, 0.09);
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.53rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.arquivo-button-danger:hover {
+    color: #fff;
+
+    border-color: #b53630;
+
+    background: #791713;
+}
+
+
+.arquivo-button-danger i {
+    font-size: 0.7rem;
+}
+
+
+/* =========================================================
+   AVISO DE PRIVACIDADE
+   ========================================================= */
+
+.arquivo-privacy-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+
+    border-left: 2px solid rgba(127, 23, 23, 0.48);
+
+    color: #71695f;
+    background: rgba(127, 23, 23, 0.025);
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.61rem;
+    line-height: 1.7;
+}
+
+
+.arquivo-privacy-note i {
+    flex: 0 0 auto;
+
+    margin-top: 0.15rem;
+
+    color: #8f2924;
+}
+
+/* =========================================================
+   MODAL DO MEU ARQUIVO
+   ========================================================= */
+
+.arquivo-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1.25rem;
+}
+
+
+.arquivo-modal[hidden] {
+    display: none !important;
+}
+
+
+.arquivo-modal-backdrop {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.82);
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+
+.arquivo-modal-dialog {
+    position: relative;
+    z-index: 2;
+
+    width: min(100%, 620px);
+    max-height: min(82vh, 760px);
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(127, 23, 23, 0.45);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.025),
+            transparent 45%
+        ),
+        #100d0b;
+
+    box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.75);
+}
+
+
+.arquivo-modal-dialog::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--arquivo-red-dark),
+            var(--arquivo-red-light),
+            transparent
+        );
+}
+
+
+.arquivo-modal-header {
+    min-height: 66px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    padding: 1rem 1.2rem;
+
+    border-bottom: 1px solid var(--arquivo-border);
+
+    background: rgba(0, 0, 0, 0.16);
+}
+
+
+.arquivo-modal-header > div {
+    min-width: 0;
+}
+
+
+.arquivo-modal-header small {
+    display: block;
+
+    margin-bottom: 0.25rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.44rem;
+    letter-spacing: 0.13em;
+
+    color: #6d655b;
+}
+
+
+.arquivo-modal-title {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 1rem;
+    font-weight: 600;
+
+    color: #d6cdbf;
+}
+
+
+.arquivo-modal-close {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid var(--arquivo-border);
+
+    color: #837a6f;
+    background: transparent;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.arquivo-modal-close:hover {
+    color: #d3c6b5;
+
+    border-color: rgba(127, 23, 23, 0.5);
+
+    background: rgba(127, 23, 23, 0.07);
+}
+
+
+.arquivo-modal-content {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    padding: 1.3rem;
+
+    color: #91887c;
+}
+
+
+.arquivo-modal-content::-webkit-scrollbar {
+    width: 5px;
+}
+
+
+.arquivo-modal-content::-webkit-scrollbar-thumb {
+    background: #4d1714;
+}
+
+
+/* =========================================================
+   FORMULÁRIOS DENTRO DO MODAL
+   ========================================================= */
+
+.arquivo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+
+.arquivo-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+
+.arquivo-field label {
+    font-family: "DM Mono", monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+
+    color: #756d63;
+}
+
+
+.arquivo-field input,
+.arquivo-field textarea,
+.arquivo-field select {
+    width: 100%;
+
+    border: 1px solid var(--arquivo-border);
+    border-radius: 0;
+
+    outline: none;
+
+    padding: 0.8rem 0.9rem;
+
+    color: #d1c8ba;
+    background: #090807;
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.75rem;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.arquivo-field input {
+    min-height: 46px;
+}
+
+
+.arquivo-field textarea {
+    min-height: 130px;
+    resize: vertical;
+
+    line-height: 1.65;
+}
+
+
+.arquivo-field input:focus,
+.arquivo-field textarea:focus,
+.arquivo-field select:focus {
+    border-color: rgba(169, 42, 37, 0.7);
+
+    box-shadow:
+        0 0 0 2px rgba(127, 23, 23, 0.08);
+}
+
+
+.arquivo-field input::placeholder,
+.arquivo-field textarea::placeholder {
+    color: #4f4942;
+}
+
+
+.arquivo-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+
+    padding-top: 0.5rem;
+}
+
+
+/* =========================================================
+   BLOQUEIO PARA USUÁRIO NÃO AUTENTICADO
+   ========================================================= */
+
+.arquivo-auth-wall {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1.25rem;
+
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(127, 23, 23, 0.11),
+            transparent 24rem
+        ),
+        rgba(6, 5, 4, 0.97);
+}
+
+
+.arquivo-auth-wall[hidden] {
+    display: none !important;
+}
+
+
+.arquivo-auth-card {
+    position: relative;
+
+    width: min(100%, 520px);
+
+    padding: 2.3rem 1.8rem;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(127, 23, 23, 0.42);
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.022),
+            transparent
+        ),
+        #0e0c0a;
+
+    box-shadow:
+        0 28px 80px rgba(0, 0, 0, 0.7);
+}
+
+
+.arquivo-auth-card::before {
+    content: "RESTRITO";
+
+    position: absolute;
+    left: 50%;
+    bottom: -0.5rem;
+
+    transform: translateX(-50%);
+
+    font-family: "Cinzel", serif;
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+
+    color: rgba(255, 255, 255, 0.018);
+
+    pointer-events: none;
+}
+
+
+.arquivo-auth-icon {
+    width: 68px;
+    height: 68px;
+
+    display: grid;
+    place-items: center;
+
+    margin: 0 auto 1.3rem;
+
+    border: 1px solid rgba(127, 23, 23, 0.5);
+    border-radius: 50%;
+
+    color: #9e2b26;
+    background: rgba(127, 23, 23, 0.07);
+
+    font-size: 1.25rem;
+}
+
+
+.arquivo-auth-card small {
+    display: block;
+
+    margin-bottom: 0.55rem;
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.15em;
+
+    color: #7b312c;
+}
+
+
+.arquivo-auth-card h2 {
+    margin: 0;
+
+    font-family: "Cinzel", serif;
+    font-size: 1.55rem;
+    font-weight: 600;
+
+    color: #ded5c7;
+}
+
+
+.arquivo-auth-card p {
+    max-width: 400px;
+
+    margin: 0.9rem auto 0;
+
+    font-family: "Libre Baskerville", serif;
+    font-size: 0.72rem;
+    line-height: 1.75;
+
+    color: #81786d;
+}
+
+
+.arquivo-auth-actions {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+
+    margin-top: 1.5rem;
+}
+
+
+/* =========================================================
+   CARREGAMENTO
+   ========================================================= */
+
+.arquivo-loading {
+    min-height: 150px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+
+    padding: 2rem;
+
+    color: #70685e;
+}
+
+
+.arquivo-loading-spinner {
+    width: 28px;
+    height: 28px;
+
+    border: 2px solid rgba(216, 208, 189, 0.1);
+    border-top-color: #8f2823;
+    border-radius: 50%;
+
+    animation: arquivo-spin 0.85s linear infinite;
+}
+
+
+.arquivo-loading span {
+    font-family: "DM Mono", monospace;
+    font-size: 0.48rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+
+@keyframes arquivo-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   ESTADOS DE ERRO E SUCESSO
+   ========================================================= */
+
+.arquivo-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+
+    padding: 0.85rem 0.95rem;
+
+    border: 1px solid var(--arquivo-border);
+
+    font-size: 0.64rem;
+    line-height: 1.6;
+}
+
+
+.arquivo-message i {
+    flex: 0 0 auto;
+
+    margin-top: 0.15rem;
+}
+
+
+.arquivo-message-error {
+    color: #b88984;
+
+    border-color: rgba(153, 45, 39, 0.35);
+    background: rgba(127, 23, 23, 0.055);
+}
+
+
+.arquivo-message-error i {
+    color: #a72d27;
+}
+
+
+.arquivo-message-success {
+    color: #8e9a81;
+
+    border-color: rgba(110, 129, 91, 0.3);
+    background: rgba(110, 129, 91, 0.04);
+}
+
+
+.arquivo-message-success i {
+    color: #778b66;
+}
+
+
+/* =========================================================
+   CONTEÚDO TEMPORARIAMENTE INDISPONÍVEL
+   ========================================================= */
+
+.arquivo-disabled {
+    position: relative;
+
+    opacity: 0.55;
+
+    pointer-events: none;
+    user-select: none;
+}
+
+
+.arquivo-disabled::after {
+    content: "INDISPONÍVEL";
+
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+
+    padding: 0.25rem 0.4rem;
+
+    border: 1px solid rgba(127, 23, 23, 0.3);
+
+    font-family: "DM Mono", monospace;
+    font-size: 0.4rem;
+    letter-spacing: 0.08em;
+
+    color: #8e3b36;
+    background: #0b0908;
+}
+
+/* =========================================================
+   RESPONSIVIDADE — TABLETS
+   ========================================================= */
+
+@media (max-width: 1050px) {
+
+    .arquivo-hero-layout {
+        grid-template-columns: minmax(0, 1fr) 160px;
+        gap: 2rem;
+    }
+
+    .arquivo-hero-stamp {
+        width: 155px;
+        height: 155px;
+    }
+
+    .arquivo-resumo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .arquivo-setores-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .investigacao-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .investigacao-card:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .marcadores-lista {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — CELULARES / IPHONE
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    /* -----------------------------------------------------
+       ESTRUTURA GERAL
+       ----------------------------------------------------- */
+
+    .meu-arquivo-page .container {
+        width: min(calc(100% - 28px), var(--container));
+    }
+
+    .arquivo-dashboard {
+        padding: 2.8rem 0 4rem;
+    }
+
+    .arquivo-dashboard > .container {
+        gap: 3.2rem;
+    }
+
+
+    /* -----------------------------------------------------
+       HERO
+       ----------------------------------------------------- */
+
+    .arquivo-hero {
+        min-height: auto;
+        padding: 4.5rem 0 3.2rem;
+    }
+
+    .arquivo-hero-layout {
+        display: block;
+    }
+
+    .arquivo-hero-content {
+        max-width: none;
+    }
+
+    .arquivo-hero h1 {
+        font-size: clamp(2.55rem, 14vw, 4.2rem);
+        line-height: 0.98;
+    }
+
+    .arquivo-hero-description {
+        margin-top: 1.25rem;
+
+        font-size: 0.82rem;
+        line-height: 1.75;
+    }
+
+    .arquivo-classificacao {
+        gap: 0.4rem;
+    }
+
+    .arquivo-classificacao span {
+        font-size: 0.5rem;
+    }
+
+    .arquivo-hero-stamp {
+        display: none;
+    }
+
+    .arquivo-hero::before {
+        right: auto;
+        left: 0;
+        bottom: 0;
+
+        font-size: 4.4rem;
+    }
+
+    .arquivo-hero::after {
+        right: 14px;
+    }
+
+
+    /* -----------------------------------------------------
+       TÍTULOS DAS SEÇÕES
+       ----------------------------------------------------- */
+
+    .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.65rem;
+
+        margin-bottom: 1.2rem;
+    }
+
+    .section-heading h2 {
+        font-size: 1.35rem;
+    }
+
+    .section-code {
+        font-size: 0.48rem;
+    }
+
+
+    /* -----------------------------------------------------
+       CREDENCIAL DO INVESTIGADOR
+       ----------------------------------------------------- */
+
+    .investigador-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+
+        padding: 0.85rem 1rem;
+    }
+
+    .document-security {
+        font-size: 0.46rem;
+    }
+
+    .investigador-card-body {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+
+        padding: 1.3rem 1rem;
+    }
+
+    .investigador-avatar {
+        width: 145px;
+        height: 170px;
+    }
+
+    .avatar-edit-button {
+        width: 145px;
+    }
+
+    .investigador-info {
+        width: 100%;
+    }
+
+    .investigador-info h2 {
+        font-size: 1.6rem;
+    }
+
+    .investigador-bio {
+        font-size: 0.72rem;
+    }
+
+    .investigador-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .investigador-meta > div {
+        padding: 0.75rem 0;
+    }
+
+    .investigador-meta > div + div {
+        border-left: 0;
+        border-top: 1px solid var(--arquivo-border);
+    }
+
+
+    /* -----------------------------------------------------
+       RESUMO
+       ----------------------------------------------------- */
+
+    .arquivo-resumo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.7rem;
+    }
+
+    .resumo-card {
+        min-height: 105px;
+
+        flex-direction: column;
+        align-items: flex-start;
+
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+
+    .resumo-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .resumo-card strong {
+        font-size: 1.35rem;
+    }
+
+    .resumo-card span {
+        font-size: 0.45rem;
+    }
+
+
+    /* -----------------------------------------------------
+       SETORES
+       ----------------------------------------------------- */
+
+    .arquivo-setores-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .setor-card {
+        min-height: 180px;
+    }
+
+
+    /* -----------------------------------------------------
+       MURAL DE INVESTIGAÇÃO
+       ----------------------------------------------------- */
+
+    .mural-intro {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .mural-intro .arquivo-button {
+        width: 100%;
+    }
+
+    .mural-board-header {
+        align-items: flex-start;
+        flex-direction: column;
+
+        padding: 0.85rem 1rem;
+    }
+
+    .mural-board {
+        min-height: 500px;
+    }
+
+    .evidence-card {
+        width: 125px;
+        padding: 0.6rem;
+    }
+
+    .evidence-placeholder {
+        height: 78px;
+    }
+
+    .evidence-person-icon {
+        height: 68px;
+    }
+
+    .evidence-document > i {
+        height: 65px;
+    }
+
+    .evidence-photo {
+        top: 55px;
+        left: 5%;
+    }
+
+    .evidence-person {
+        top: 225px;
+        left: 9%;
+    }
+
+    .investigation-note {
+        top: 68px;
+        right: 5%;
+
+        width: 135px;
+        min-height: 135px;
+
+        padding: 0.85rem;
+    }
+
+    .investigation-note p {
+        font-size: 0.63rem;
+    }
+
+    .evidence-document {
+        right: 7%;
+        bottom: 50px;
+    }
+
+    .thread-one {
+        top: 150px;
+        left: 28%;
+
+        width: 45%;
+
+        transform: rotate(18deg);
+    }
+
+    .thread-two {
+        top: 295px;
+        left: 30%;
+
+        width: 45%;
+
+        transform: rotate(-14deg);
+    }
+
+    .thread-three {
+        top: 175px;
+        left: 28%;
+
+        width: 50%;
+
+        transform: rotate(30deg);
+    }
+
+    .mural-board-footer {
+        padding: 0.7rem 0.9rem;
+    }
+
+
+    /* -----------------------------------------------------
+       INVESTIGAÇÃO PRIVADA
+       ----------------------------------------------------- */
+
+    .investigacao-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .investigacao-card,
+    .investigacao-card:last-child {
+        grid-column: auto;
+
+        min-height: 280px;
+    }
+
+    .evidence-legend {
+        padding: 1.1rem;
+    }
+
+    .evidence-legend-items {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .legend-item {
+        justify-content: flex-start;
+    }
+
+
+    /* -----------------------------------------------------
+       COLEÇÕES
+       ----------------------------------------------------- */
+
+    .colecao-bloco-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.8rem;
+
+        min-height: auto;
+    }
+
+    .colecao-title-group {
+        width: 100%;
+    }
+
+    .colecao-actions {
+        width: 100%;
+    }
+
+    .colecao-mini-button {
+        flex: 1;
+    }
+
+    .marcadores-lista {
+        grid-template-columns: 1fr;
+    }
+
+    .arquivo-item-card {
+        grid-template-columns: 70px minmax(0, 1fr) auto;
+        gap: 0.7rem;
+    }
+
+    .arquivo-item-thumb {
+        width: 70px;
+        height: 58px;
+    }
+
+
+    /* -----------------------------------------------------
+       HISTÓRICO
+       ----------------------------------------------------- */
+
+    .historico-item {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+
+    .historico-data {
+        white-space: normal;
+    }
+
+
+    /* -----------------------------------------------------
+       LINHA DO TEMPO
+       ----------------------------------------------------- */
+
+    .timeline-list {
+        padding-left: 1.5rem;
+    }
+
+    .timeline-item {
+        padding-left: 0.8rem;
+    }
+
+    .timeline-item::before {
+        left: -1.3rem;
+    }
+
+
+    /* -----------------------------------------------------
+       COMUNIDADE
+       ----------------------------------------------------- */
+
+    .comunidade-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .comunidade-card {
+        min-height: 210px;
+    }
+
+    .alertas-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .alerta-item {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .alerta-data {
+        grid-column: 2;
+
+        white-space: normal;
+    }
+
+    .caso-enviado-item {
+        align-items: flex-start;
+        grid-template-columns: 1fr;
+    }
+
+
+    /* -----------------------------------------------------
+       SEGURANÇA
+       ----------------------------------------------------- */
+
+    .seguranca-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .encerrar-arquivo-content {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+
+    .arquivo-button-danger {
+        width: 100%;
+    }
+
+
+    /* -----------------------------------------------------
+       MODAL
+       ----------------------------------------------------- */
+
+    .arquivo-modal {
+        align-items: flex-end;
+
+        padding: 0;
+    }
+
+    .arquivo-modal-dialog {
+        width: 100%;
+        max-height: 88dvh;
+
+        border-right: 0;
+        border-bottom: 0;
+        border-left: 0;
+    }
+
+    .arquivo-modal-header {
+        padding:
+            1rem
+            max(1rem, env(safe-area-inset-right))
+            1rem
+            max(1rem, env(safe-area-inset-left));
+    }
+
+    .arquivo-modal-content {
+        padding:
+            1rem
+            max(1rem, env(safe-area-inset-right))
+            max(1.2rem, env(safe-area-inset-bottom))
+            max(1rem, env(safe-area-inset-left));
+    }
+
+    .arquivo-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .arquivo-form-actions .arquivo-button {
+        width: 100%;
+    }
+
+
+    /* -----------------------------------------------------
+       BLOQUEIO DE AUTENTICAÇÃO
+       ----------------------------------------------------- */
+
+    .arquivo-auth-wall {
+        padding:
+            max(1rem, env(safe-area-inset-top))
+            max(1rem, env(safe-area-inset-right))
+            max(1rem, env(safe-area-inset-bottom))
+            max(1rem, env(safe-area-inset-left));
+    }
+
+    .arquivo-auth-card {
+        padding: 2rem 1.2rem;
+    }
+
+    .arquivo-auth-card h2 {
+        font-size: 1.3rem;
+    }
+
+    .arquivo-auth-actions {
+        flex-direction: column;
+    }
+
+    .arquivo-auth-actions .arquivo-button {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   IPHONES / TELAS PEQUENAS
+   ========================================================= */
+
+@media (max-width: 390px) {
+
+    .meu-arquivo-page .container {
+        width: calc(100% - 22px);
+    }
+
+    .arquivo-hero h1 {
+        font-size: 2.45rem;
+    }
+
+    .arquivo-eyebrow {
+        font-size: 0.58rem;
+    }
+
+    .arquivo-resumo-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.55rem;
+    }
+
+    .resumo-card {
+        padding: 0.85rem;
+    }
+
+    .setor-card,
+    .investigacao-card,
+    .comunidade-card,
+    .seguranca-card {
+        padding: 1.1rem;
+    }
+
+    .mural-board {
+        min-height: 470px;
+    }
+
+    .evidence-card {
+        width: 115px;
+    }
+
+    .investigation-note {
+        width: 122px;
+    }
+
+    .arquivo-item-card {
+        grid-template-columns: 58px minmax(0, 1fr) auto;
+    }
+
+    .arquivo-item-thumb {
+        width: 58px;
+        height: 54px;
+    }
+
+    .arquivo-item-info h4 {
+        font-size: 0.72rem;
+    }
+}
+
+/* =========================================================
+   ARQUIVO SOMBRIO
+   MEU ARQUIVO — ACABAMENTO FINAL
+   ========================================================= */
+
+
+/* =========================================================
+   ÂNCORAS E NAVEGAÇÃO INTERNA
+   ========================================================= */
+
+#credencial,
+#meus-dossies,
+#favoritos,
+#observacao,
+#marcadores,
+#historico,
+#mural-investigacao,
+#caderno,
+#teorias,
+#evidencias,
+#linha-do-tempo,
+#atividade-comunidade,
+#alertas,
+#casos-enviados,
+#seguranca,
+#preferencias,
+#documentos-legais,
+#encerrar-arquivo {
+    scroll-margin-top: 100px;
+}
+
+
+/* =========================================================
+   FOCO VISÍVEL — ACESSIBILIDADE
+   ========================================================= */
+
+.meu-arquivo-page a:focus-visible,
+.meu-arquivo-page button:focus-visible,
+.meu-arquivo-page input:focus-visible,
+.meu-arquivo-page textarea:focus-visible,
+.meu-arquivo-page select:focus-visible {
+    outline: 2px solid rgba(169, 42, 37, 0.9);
+    outline-offset: 3px;
+}
+
+
+.meu-arquivo-page a:focus:not(:focus-visible),
+.meu-arquivo-page button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+
+/* =========================================================
+   SELEÇÃO DE TEXTO
+   ========================================================= */
+
+.meu-arquivo-page ::selection {
+    color: #f0e9dd;
+    background: rgba(127, 23, 23, 0.72);
+}
+
+
+/* =========================================================
+   ESTADOS DE BOTÕES
+   ========================================================= */
+
+.meu-arquivo-page button:disabled,
+.meu-arquivo-page .arquivo-button:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.42;
+
+    transform: none;
+}
+
+
+.meu-arquivo-page button[aria-busy="true"] {
+    cursor: wait;
+    opacity: 0.68;
+}
+
+
+/* =========================================================
+   ANIMAÇÃO DE ENTRADA
+   ========================================================= */
+
+@keyframes arquivo-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.arquivo-dashboard > .container > section {
+    animation:
+        arquivo-reveal
+        0.5s
+        ease
+        both;
+}
+
+
+/* =========================================================
+   PULSO DOS INDICADORES
+   ========================================================= */
+
+@keyframes arquivo-pulse {
+    0%,
+    100% {
+        box-shadow:
+            0 0 0 4px rgba(141, 36, 32, 0.08),
+            0 0 10px rgba(141, 36, 32, 0.28);
+    }
+
+    50% {
+        box-shadow:
+            0 0 0 6px rgba(141, 36, 32, 0.04),
+            0 0 18px rgba(141, 36, 32, 0.52);
+    }
+}
+
+
+.arquivo-status-indicator,
+.observacao-pulse {
+    animation:
+        arquivo-pulse
+        2.6s
+        ease-in-out
+        infinite;
+}
+
+
+/* =========================================================
+   EFEITO DE DOCUMENTO
+   ========================================================= */
+
+.investigador-card,
+.mural-board-preview,
+.colecao-bloco,
+.seguranca-card,
+.documentos-legais {
+    isolation: isolate;
+}
+
+
+.investigador-card::selection,
+.mural-board-preview::selection {
+    background: rgba(127, 23, 23, 0.55);
+}
+
+
+/* =========================================================
+   MELHORIAS PARA DISPOSITIVOS TOUCH
+   ========================================================= */
+
+@media (hover: none) and (pointer: coarse) {
+
+    .setor-card:hover,
+    .resumo-card:hover,
+    .investigacao-card:hover,
+    .comunidade-card:hover,
+    .marcador-card:hover {
+        transform: none;
+    }
+
+    .arquivo-button,
+    .seguranca-action,
+    .documento-legal-link,
+    .comunidade-open-button,
+    .preferencia-button,
+    .arquivo-item-action {
+        touch-action: manipulation;
+    }
+
+    .arquivo-button:active,
+    .seguranca-action:active,
+    .documento-legal-link:active,
+    .comunidade-open-button:active,
+    .preferencia-button:active,
+    .arquivo-item-action:active {
+        opacity: 0.72;
+    }
+}
+
+
+/* =========================================================
+   SAFE AREA — IPHONES COM NOTCH / DYNAMIC ISLAND
+   ========================================================= */
+
+@supports (
+    padding-top: env(safe-area-inset-top)
+) {
+
+    .arquivo-auth-wall {
+        padding-top:
+            max(
+                1.25rem,
+                env(safe-area-inset-top)
+            );
+
+        padding-bottom:
+            max(
+                1.25rem,
+                env(safe-area-inset-bottom)
+            );
+    }
+
+    .arquivo-modal-content {
+        padding-bottom:
+            max(
+                1.3rem,
+                env(safe-area-inset-bottom)
+            );
+    }
+}
+
+
+/* =========================================================
+   TELAS MUITO ESTREITAS
+   ========================================================= */
+
+@media (max-width: 340px) {
+
+    .arquivo-hero h1 {
+        font-size: 2.1rem;
+    }
+
+    .arquivo-classificacao span {
+        padding: 0.3rem 0.45rem;
+
+        font-size: 0.45rem;
+    }
+
+    .arquivo-resumo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .resumo-card {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .document-label {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .evidence-card {
+        width: 105px;
+    }
+
+    .investigation-note {
+        width: 112px;
+        padding: 0.7rem;
+    }
+
+    .investigation-note p {
+        font-size: 0.57rem;
+    }
+
+    .arquivo-item-card {
+        grid-template-columns: 1fr;
+    }
+
+    .arquivo-item-thumb {
+        width: 100%;
+        height: 120px;
+    }
+
+    .arquivo-item-action {
+        justify-self: end;
+    }
+}
+
+
+/* =========================================================
+   REDUZIR MOVIMENTO
+   Respeita a configuração de acessibilidade do dispositivo
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .meu-arquivo-page *,
+    .meu-arquivo-page *::before,
+    .meu-arquivo-page *::after {
+        scroll-behavior: auto !important;
+
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+/* =========================================================
+   IMPRESSÃO
+   ========================================================= */
+
+@media print {
+
+    .meu-arquivo-page {
+        background: #fff;
+        color: #111;
+    }
+
+    .meu-arquivo-page .main-header,
+    .meu-arquivo-page .sidebar-menu,
+    .meu-arquivo-page .mobile-overlay,
+    .arquivo-auth-wall,
+    .arquivo-modal,
+    .arquivo-button,
+    .avatar-edit-button,
+    .arquivo-button-danger {
+        display: none !important;
+    }
+
+    .arquivo-dashboard {
+        padding: 0;
+    }
+
+    .investigador-card,
+    .colecao-bloco,
+    .seguranca-card {
+        break-inside: avoid;
+
+        box-shadow: none;
+    }
+}
+
+
+/* =========================================================
+   FIM — MEU ARQUIVO
+   ========================================================= */
