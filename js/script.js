@@ -1987,21 +1987,21 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
                     <div class="admin-content-block-options">
                         <label>
                             Alinhamento
-                            <select data-block-align>
-                                <option value="centro">Centro</option>
-                                <option value="esquerda">Esquerda</option>
-                                <option value="direita">Direita</option>
-                                <option value="total">Largura total</option>
-                            </select>
+                          <select data-block-align>
+    <option value="centro" ${dados.alinhamento === "centro" || !dados.alinhamento ? "selected" : ""}>Centro</option>
+    <option value="esquerda" ${dados.alinhamento === "esquerda" ? "selected" : ""}>Esquerda</option>
+    <option value="direita" ${dados.alinhamento === "direita" ? "selected" : ""}>Direita</option>
+    <option value="total" ${dados.alinhamento === "total" ? "selected" : ""}>Largura total</option>
+</select>
                         </label>
 
                         <label>
                             Tamanho
                             <select data-block-size>
-                                <option value="medio">Médio</option>
-                                <option value="pequeno">Pequeno</option>
-                                <option value="grande">Grande</option>
-                            </select>
+    <option value="medio" ${dados.tamanho === "medio" || !dados.tamanho ? "selected" : ""}>Médio</option>
+    <option value="pequeno" ${dados.tamanho === "pequeno" ? "selected" : ""}>Pequeno</option>
+    <option value="grande" ${dados.tamanho === "grande" ? "selected" : ""}>Grande</option>
+</select>
                         </label>
                     </div>
                 `
