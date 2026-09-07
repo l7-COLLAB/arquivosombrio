@@ -1420,34 +1420,98 @@ function coletarDocumentosAdmin() {
                 "#admin-documents-list .admin-document-item"
             )
         )
-        .map(item => ({
+        .map(item => {
 
-            nome:
-                item.dataset.documentName ||
-                "",
+            const campoLegenda =
+                item.querySelector(
+                    ".admin-document-caption"
+                );
 
-            url:
-                item.dataset.documentUrl ||
-                "",
+            const campoFonte =
+                item.querySelector(
+                    ".admin-document-source"
+                );
 
-            caminho:
-                item.dataset.documentPath ||
-                "",
+            const campoCredito =
+                item.querySelector(
+                    ".admin-document-credit"
+                );
 
-            bucket:
-                item.dataset.documentBucket ||
-                STORAGE_BUCKET_DOCUMENTOS,
+            const campoLink =
+                item.querySelector(
+                    ".admin-document-link"
+                );
 
-            tipo:
-                item.dataset.documentType ||
-                "",
+            const campoSensivel =
+                item.querySelector(
+                    ".admin-document-sensitive"
+                );
 
-            tamanho:
-                Number(
-                    item.dataset.documentSize
-                ) || 0
+            const campoCategoriaSensivel =
+                item.querySelector(
+                    ".admin-document-sensitive-category"
+                );
 
-        }))
+
+            return {
+
+                nome:
+                    item.dataset.documentName ||
+                    "",
+
+                url:
+                    item.dataset.documentUrl ||
+                    "",
+
+                caminho:
+                    item.dataset.documentPath ||
+                    "",
+
+                bucket:
+                    item.dataset.documentBucket ||
+                    STORAGE_BUCKET_DOCUMENTOS,
+
+                tipo:
+                    item.dataset.documentType ||
+                    "",
+
+                tamanho:
+                    Number(
+                        item.dataset.documentSize
+                    ) || 0,
+
+                legenda:
+                    campoLegenda?.value.trim() ||
+                    "",
+
+                fonte:
+                    campoFonte?.value.trim() ||
+                    "",
+
+                credito:
+                    campoCredito?.value.trim() ||
+                    "",
+
+                link:
+                    campoLink?.value.trim() ||
+                    "",
+
+                sensivel:
+                    Boolean(
+                        campoSensivel?.checked
+                    ),
+
+                categoria_sensivel:
+                    campoSensivel?.checked
+                        ? (
+                            campoCategoriaSensivel
+                                ?.value || ""
+                        )
+                        : ""
+
+            };
+
+        })
         .filter(
             documento =>
                 documento.nome &&
