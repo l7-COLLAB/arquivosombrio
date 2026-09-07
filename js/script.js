@@ -1894,6 +1894,230 @@ function inicializarUploadCapaLivro(
     );
 }
 
+function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
+    const bloco = document.createElement("div");
+
+    bloco.className = "admin-content-block";
+    bloco.dataset.contentBlock = "";
+    bloco.dataset.blockType = tipo;
+
+    let titulo = "Parágrafo";
+    let placeholder = "Escreva o conteúdo deste parágrafo...";
+
+    if (tipo === "subtitulo") {
+        titulo = "Subtítulo";
+        placeholder = "Digite o subtítulo...";
+    }
+
+    if (tipo === "imagem") {
+        titulo = "Imagem";
+        placeholder = "Cole a URL da imagem...";
+    }
+
+    if (tipo === "documento") {
+        titulo = "Documento";
+        placeholder = "Cole a URL do documento...";
+    }
+
+    bloco.innerHTML = `
+        <div class="admin-content-block-header">
+            <strong>${titulo}</strong>
+
+            <div class="admin-content-block-actions">
+                <button
+                    type="button"
+                    data-block-up
+                    aria-label="Mover para cima"
+                >
+                    ↑
+                </button>
+
+                <button
+                    type="button"
+                    data-block-down
+                    aria-label="Mover para baixo"
+                >
+                    ↓
+                </button>
+
+                <button
+                    type="button"
+                    data-block-remove
+                    aria-label="Excluir bloco"
+                >
+                    ×
+                </button>
+            </div>
+        </div>
+
+        <textarea
+            data-block-content
+            rows="${tipo === "paragrafo" ? "6" : "3"}"
+            placeholder="${placeholder}"
+        >${escaparHTML(dados.conteudo || "")}</textarea>
+
+        ${
+            tipo === "imagem"
+                ? `
+                    <div class="admin-content-block-options">
+                        <label>
+                            Alinhamento
+                            <select data-block-align>
+                                <option value="centro">Centro</option>
+                                <option value="esquerda">Esquerda</option>
+                                <option value="direita">Direita</option>
+                                <option value="total">Largura total</option>
+                            </select>
+                        </label>
+
+                        <label>
+                            Tamanho
+                            <select data-block-size>
+                                <option value="medio">Médio</option>
+                                <option value="pequeno">Pequeno</option>
+                                <option value="grande">Grande</option>
+                            </select>
+                        </label>
+                    </div>
+                `
+                : ""
+        }
+    `;
+
+    return bloco;
+}
+function configurarBlocoConteudoAdmin(bloco) {
+    if (!bloco) return;
+
+    const botaoSubir =
+        bloco.querySelector("[data-block-up]");
+
+    const botaoDescer =
+        bloco.querySelector("[data-block-down]");
+
+    const botaoRemover =
+        bloco.querySelector("[data-block-remove]");
+
+    botaoSubir?.addEventListener(
+        "click",
+        () => {
+            const anterior =
+                bloco.previousElementSibling;
+
+            if (anterior) {
+                bloco.parentElement.insertBefore(
+                    bloco,
+                    anterior
+                );
+            }
+        }
+    );
+
+    botaoDescer?.addEventListener(
+        "click",
+        () => {
+            const proximo =
+                bloco.nextElementSibling;
+
+            if (proximo) {
+                bloco.parentElement.insertBefore(
+                    proximo,
+                    bloco
+                );
+            }
+        }
+    );
+
+    botaoRemover?.addEventListener(
+        "click",
+        () => {
+            bloco.remove();
+        }
+    );
+}
+function inicializarEditorConteudoAdmin(dados = null) {
+    const editor =
+        document.getElementById(
+            "admin-content-blocks"
+        );
+
+    if (!editor) return;
+
+    const botoesAdicionar =
+        document.querySelectorAll(
+            "[data-add-content-block]"
+        );
+
+    const adicionarBloco = (
+        tipo,
+        dadosBloco = {}
+    ) => {
+        const bloco =
+            criarBlocoConteudoAdmin(
+                tipo,
+                dadosBloco
+            );
+
+        editor.appendChild(bloco);
+
+        configurarBlocoConteudoAdmin(
+            bloco
+        );
+
+        return bloco;
+    };
+
+    botoesAdicionar.forEach(botao => {
+        botao.addEventListener(
+            "click",
+            () => {
+                adicionarBloco(
+                    botao.dataset.addContentBlock
+                );
+            }
+        );
+    });
+
+    const blocosExistentes =
+        Array.isArray(
+            dados?.conteudo_blocos
+        )
+            ? dados.conteudo_blocos
+            : [];
+
+    if (blocosExistentes.length) {
+        blocosExistentes
+            .slice()
+            .sort(
+                (a, b) =>
+                    (a.ordem ?? 0) -
+                    (b.ordem ?? 0)
+            )
+            .forEach(dadosBloco => {
+                adicionarBloco(
+                    dadosBloco.tipo ||
+                        "paragrafo",
+                    dadosBloco
+                );
+            });
+
+        return;
+    }
+
+    const historiaAntiga =
+        dados?.historia?.trim() || "";
+
+    if (historiaAntiga) {
+        adicionarBloco(
+            "paragrafo",
+            {
+                conteudo:
+                    historiaAntiga
+            }
+        );
+    }
+}
+
 
 function inicializarDocumentosCaso(
     dados = null
@@ -6968,6 +7192,9 @@ function abrirFormularioAdmin(
         inicializarDocumentosCaso(
             dados
         );
+inicializarEditorConteudoAdmin(
+    dados
+);
 
     } else {
 
