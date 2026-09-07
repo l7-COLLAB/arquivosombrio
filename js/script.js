@@ -6503,6 +6503,61 @@ function abrirFormularioAdmin(
 
                     </label>
 
+<div class="admin-content-editor">
+    <div class="admin-content-editor-header">
+        <div>
+            <strong>Editor do dossiê</strong>
+            <small>
+                Organize textos, subtítulos, imagens e documentos
+                na ordem em que deverão aparecer.
+            </small>
+        </div>
+    </div>
+
+    <div
+        id="admin-content-blocks"
+        class="admin-content-blocks"
+    ></div>
+
+    <div class="admin-content-toolbar">
+        <button
+            type="button"
+            class="admin-secondary-button"
+            data-add-content-block="paragrafo"
+        >
+            + Parágrafo
+        </button>
+
+        <button
+            type="button"
+            class="admin-secondary-button"
+            data-add-content-block="subtitulo"
+        >
+            + Subtítulo
+        </button>
+
+        <button
+            type="button"
+            class="admin-secondary-button"
+            data-add-content-block="imagem"
+        >
+            + Imagem
+        </button>
+
+        <button
+            type="button"
+            class="admin-secondary-button"
+            data-add-content-block="documento"
+        >
+            + Documento
+        </button>
+    </div>
+
+    <p class="admin-field-help">
+        Os blocos podem ser reorganizados para definir exatamente
+        onde cada elemento aparecerá no dossiê.
+    </p>
+</div>
 
                     <label>
 
