@@ -1209,31 +1209,37 @@ function normalizarDocumentos(documentos) {
 
 function criarItemDocumentoAdmin(documento) {
 
+    const sensivel =
+        documento?.sensivel === true ||
+        documento?.sensivel === "true";
+
+    const categoriaSensivel =
+        String(
+            documento?.categoria_sensivel || ""
+        ).trim();
+
     return `
         <div
             class="admin-document-item"
-            data-document-name="${escaparHTML(documento.nome)}"
-            data-document-url="${escaparHTML(documento.url)}"
-            data-document-path="${escaparHTML(documento.caminho)}"
-            data-document-bucket="${escaparHTML(documento.bucket)}"
-            data-document-type="${escaparHTML(documento.tipo)}"
-            data-document-size="${escaparHTML(documento.tamanho)}"
+            data-document-name="${escaparHTML(documento.nome || "")}"
+            data-document-url="${escaparHTML(documento.url || "")}"
+            data-document-path="${escaparHTML(documento.caminho || "")}"
+            data-document-bucket="${escaparHTML(documento.bucket || STORAGE_BUCKET_DOCUMENTOS)}"
+            data-document-type="${escaparHTML(documento.tipo || "")}"
+            data-document-size="${Number(documento.tamanho) || 0}"
         >
+
             <div class="admin-document-info">
 
                 <i class="fa-solid fa-file-lines"></i>
 
                 <div>
-
                     <strong>
-                        ${escaparHTML(documento.nome)}
+                        ${escaparHTML(documento.nome || "Documento")}
                     </strong>
 
                     <small>
-                        ${escaparHTML(
-                            documento.tipo ||
-                            "Documento"
-                        )}
+                        ${escaparHTML(documento.tipo || "Documento")}
                         ${
                             documento.tamanho
                                 ? ` • ${escaparHTML(
@@ -1244,28 +1250,162 @@ function criarItemDocumentoAdmin(documento) {
                                 : ""
                         }
                     </small>
+                </div>
+
+            </div>
+
+
+            <div class="admin-document-metadata">
+
+                <label>
+                    Legenda
+                    <input
+                        type="text"
+                        class="admin-document-caption"
+                        value="${escaparHTML(documento.legenda || "")}"
+                        placeholder="Ex.: Tribunal durante o julgamento de Lizzie Borden"
+                    >
+                </label>
+
+
+                <label>
+                    Fonte
+                    <input
+                        type="text"
+                        class="admin-document-source"
+                        value="${escaparHTML(documento.fonte || "")}"
+                        placeholder="Ex.: Library of Congress"
+                    >
+                </label>
+
+
+                <label>
+                    Crédito
+                    <input
+                        type="text"
+                        class="admin-document-credit"
+                        value="${escaparHTML(documento.credito || "")}"
+                        placeholder="Fotógrafo, arquivo ou instituição"
+                    >
+                </label>
+
+
+                <label>
+                    Link da fonte
+                    <input
+                        type="url"
+                        class="admin-document-link"
+                        value="${escaparHTML(documento.link || "")}"
+                        placeholder="https://..."
+                        inputmode="url"
+                    >
+                </label>
+
+
+                <div class="admin-sensitive-control">
+
+                    <label class="admin-sensitive-checkbox">
+
+                        <input
+                            type="checkbox"
+                            class="admin-document-sensitive"
+                            ${sensivel ? "checked" : ""}
+                        >
+
+                        <span>
+                            Esta imagem contém conteúdo sensível
+                        </span>
+
+                    </label>
+
+
+                    <label
+                        class="admin-sensitive-category-wrap"
+                        ${sensivel ? "" : 'style="display:none;"'}
+                    >
+                        Tipo de conteúdo sensível
+
+                        <select class="admin-document-sensitive-category">
+
+                            <option
+                                value=""
+                                ${!categoriaSensivel ? "selected" : ""}
+                            >
+                                Selecione
+                            </option>
+
+                            <option
+                                value="cena_crime"
+                                ${categoriaSensivel === "cena_crime" ? "selected" : ""}
+                            >
+                                Cena de crime
+                            </option>
+
+                            <option
+                                value="autopsia"
+                                ${categoriaSensivel === "autopsia" ? "selected" : ""}
+                            >
+                                Autópsia
+                            </option>
+
+                            <option
+                                value="cadaver"
+                                ${categoriaSensivel === "cadaver" ? "selected" : ""}
+                            >
+                                Cadáver
+                            </option>
+
+                            <option
+                                value="ferimento"
+                                ${categoriaSensivel === "ferimento" ? "selected" : ""}
+                            >
+                                Ferimento
+                            </option>
+
+                            <option
+                                value="conteudo_medico"
+                                ${categoriaSensivel === "conteudo_medico" ? "selected" : ""}
+                            >
+                                Conteúdo médico
+                            </option>
+
+                            <option
+                                value="outro"
+                                ${categoriaSensivel === "outro" ? "selected" : ""}
+                            >
+                                Outro
+                            </option>
+
+                        </select>
+
+                    </label>
 
                 </div>
 
             </div>
 
-            <a
-                href="${escaparHTML(documento.url)}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="admin-document-open"
-            >
-                Abrir
-            </a>
 
-            <button
-                type="button"
-                class="admin-document-remove"
-                title="Remover documento"
-                aria-label="Remover documento"
-            >
-                <i class="fa-solid fa-trash"></i>
-            </button>
+            <div class="admin-document-actions">
+
+                <a
+                    href="${escaparHTML(documento.url || "#")}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="admin-document-open"
+                >
+                    Abrir
+                </a>
+
+                <button
+                    type="button"
+                    class="admin-document-remove"
+                    title="Remover documento"
+                    aria-label="Remover documento"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+
+            </div>
 
         </div>
     `;
