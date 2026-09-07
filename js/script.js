@@ -1862,6 +1862,65 @@ function inicializarDocumentosCaso(
             )
             .join("");
 
+const configurarConteudoSensivel = item => {
+
+    const checkbox =
+        item.querySelector(
+            ".admin-document-sensitive"
+        );
+
+    const categoriaWrap =
+        item.querySelector(
+            ".admin-sensitive-category-wrap"
+        );
+
+    const categoria =
+        item.querySelector(
+            ".admin-document-sensitive-category"
+        );
+
+    if (
+        !checkbox ||
+        !categoriaWrap
+    ) {
+        return;
+    }
+
+    const atualizarEstado = () => {
+
+        if (checkbox.checked) {
+
+            categoriaWrap.style.display = "";
+
+        } else {
+
+            categoriaWrap.style.display = "none";
+
+            if (categoria) {
+                categoria.value = "";
+            }
+
+        }
+
+    };
+
+    checkbox.addEventListener(
+        "change",
+        atualizarEstado
+    );
+
+    atualizarEstado();
+};
+
+
+lista
+    .querySelectorAll(
+        ".admin-document-item"
+    )
+    .forEach(
+        configurarConteudoSensivel
+    );
+
     const configurarRemocao =
         item => {
 
