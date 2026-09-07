@@ -1545,7 +1545,7 @@ function coletarBlocosConteudoAdmin() {
         ];
     }
 
-    return Array.from(
+    const blocos = Array.from(
         editor.querySelectorAll(
             "[data-content-block]"
         )
@@ -1586,6 +1586,31 @@ function coletarBlocosConteudoAdmin() {
             };
         })
         .filter(bloco => bloco.conteudo);
+if (blocos.length) {
+    return blocos;
+}
+
+const historia =
+    document
+        .getElementById(
+            "admin-history"
+        )
+        ?.value
+        .trim() || "";
+
+if (!historia) {
+    return [];
+}
+
+return [
+    {
+        ordem: 0,
+        tipo: "paragrafo",
+        conteudo: historia,
+        alinhamento: "",
+        tamanho: ""
+    }
+];
 }
 
 function atualizarPreviewImagemAdmin(
