@@ -2057,6 +2057,10 @@ lista
                         )
                     );
 
+configurarConteudoSensivel(
+    lista.lastElementChild
+);
+
                     configurarRemocao(
                         lista.lastElementChild
                     );
