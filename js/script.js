@@ -1519,6 +1519,74 @@ function coletarDocumentosAdmin() {
         );
 }
 
+function coletarBlocosConteudoAdmin() {
+    const editor = document.getElementById(
+        "admin-content-blocks"
+    );
+
+    if (!editor) {
+        const historia =
+            document
+                .getElementById(
+                    "admin-history"
+                )
+                ?.value
+                .trim() || "";
+
+        if (!historia) {
+            return [];
+        }
+
+        return [
+            {
+                tipo: "paragrafo",
+                conteudo: historia
+            }
+        ];
+    }
+
+    return Array.from(
+        editor.querySelectorAll(
+            "[data-content-block]"
+        )
+    )
+        .map((bloco, indice) => {
+            const tipo =
+                bloco.dataset.blockType ||
+                "paragrafo";
+
+            const conteudo =
+                bloco.querySelector(
+                    "[data-block-content]"
+                )
+                    ?.value
+                    ?.trim() ||
+                "";
+
+            const alinhamento =
+                bloco.querySelector(
+                    "[data-block-align]"
+                )
+                    ?.value ||
+                "";
+
+            const tamanho =
+                bloco.querySelector(
+                    "[data-block-size]"
+                )
+                    ?.value ||
+                "";
+
+            return {
+                ordem: indice,
+                tipo,
+                conteudo,
+                alinhamento,
+                tamanho
+            };
+        })
+        .filter(bloco => bloco.conteudo);
+}
 
 function atualizarPreviewImagemAdmin(
     url,
@@ -7075,6 +7143,8 @@ async function salvarCasoAdmin(
                     .trim() ||
                 "",
 
+conteudo_blocos:
+    coletarBlocosConteudoAdmin(),
 
             evidencias:
                 normalizarEvidencias(
