@@ -7494,12 +7494,34 @@ conteudo_blocos:
         }
 
 
-        if (!caso.historia) {
+        if (
+    !caso.historia &&
+    Array.isArray(caso.conteudo_blocos) &&
+    caso.conteudo_blocos.length
+) {
+    caso.historia =
+        caso.conteudo_blocos
+            .filter(bloco =>
+                bloco.tipo === "paragrafo" ||
+                bloco.tipo === "subtitulo"
+            )
+            .map(bloco => bloco.conteudo)
+            .filter(Boolean)
+            .join("\n\n")
+            .trim();
+}
 
-            throw new Error(
-                "Informe a história ou relatório do dossiê."
-            );
-        }
+if (
+    !caso.historia &&
+    (
+        !Array.isArray(caso.conteudo_blocos) ||
+        !caso.conteudo_blocos.length
+    )
+) {
+    throw new Error(
+        "Adicione conteúdo à história ou ao editor do dossiê."
+    );
+}
 
 
         let resultado;
