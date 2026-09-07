@@ -4559,4 +4559,425 @@ select:focus-visible {
         width: 100%;
     }
 
+} 
+/* ==========================================================================
+   EDITOR ESTRUTURADO DE DOSSIÊS
+   ========================================================================== */
+
+.admin-content-editor {
+    margin-top: 18px;
+    padding: 18px;
+
+    background: rgba(255, 255, 255, 0.018);
+
+    border: 1px solid var(--border);
 }
+
+.admin-content-editor-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.admin-content-editor-header strong {
+    display: block;
+
+    color: var(--paper);
+
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+}
+
+.admin-content-editor-header small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 0.64rem;
+    line-height: 1.6;
+}
+
+.admin-content-blocks {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.admin-content-block {
+    padding: 14px;
+
+    background: rgba(0, 0, 0, 0.24);
+
+    border: 1px solid var(--border);
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.admin-content-block:focus-within {
+    border-color: rgba(168, 140, 85, 0.45);
+
+    background: rgba(0, 0, 0, 0.34);
+}
+
+.admin-content-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 10px;
+}
+
+.admin-content-block-header strong {
+    color: var(--gold);
+
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.admin-content-block-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+}
+
+.admin-content-block-actions button {
+    width: 32px;
+    height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    color: var(--paper-soft);
+
+    background: transparent;
+
+    border: 1px solid var(--border);
+
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+
+.admin-content-block-actions button:hover {
+    color: var(--paper);
+
+    border-color: var(--gold);
+}
+
+.admin-content-block-actions [data-block-remove]:hover {
+    color: #fff;
+
+    background: rgba(123, 9, 9, 0.25);
+
+    border-color: var(--red-light);
+}
+
+.admin-content-block textarea {
+    width: 100%;
+
+    min-height: 82px;
+
+    padding: 11px 12px;
+
+    color: var(--paper);
+
+    background: #090807;
+
+    border: 1px solid var(--border);
+
+    outline: none;
+    resize: vertical;
+
+    line-height: 1.65;
+}
+
+.admin-content-block textarea:focus {
+    border-color: var(--gold);
+}
+
+.admin-content-block-options {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    margin-top: 12px;
+}
+
+.admin-content-block-options label {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+    color: var(--muted);
+
+    font-family: var(--font-mono);
+    font-size: 0.54rem;
+
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.admin-content-block-options select {
+    width: 100%;
+
+    min-height: 40px;
+
+    padding: 8px 10px;
+
+    color: var(--paper-soft);
+
+    background: #090807;
+
+    border: 1px solid var(--border);
+
+    outline: none;
+}
+
+.admin-content-block-options select:focus {
+    border-color: var(--gold);
+}
+
+.admin-content-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 15px;
+    padding-top: 15px;
+
+    border-top: 1px solid var(--border);
+}
+
+.admin-content-toolbar .admin-secondary-button {
+    flex: 0 1 auto;
+}
+
+.admin-field-help {
+    margin-top: 11px;
+
+    color: var(--muted);
+
+    font-size: 0.61rem;
+    line-height: 1.6;
+}
+
+
+/* ==========================================================================
+   METADADOS DOS DOCUMENTOS DO DOSSIÊ
+   ========================================================================== */
+
+.admin-document-metadata {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    grid-column: 1 / -1;
+
+    width: 100%;
+
+    margin-top: 10px;
+}
+
+.admin-document-metadata input {
+    width: 100%;
+
+    min-width: 0;
+    min-height: 40px;
+
+    padding: 9px 10px;
+
+    color: var(--paper);
+
+    background: #090807;
+
+    border: 1px solid var(--border);
+
+    outline: none;
+
+    font-size: 0.68rem;
+}
+
+.admin-document-metadata input::placeholder {
+    color: var(--muted);
+}
+
+.admin-document-metadata input:focus {
+    border-color: var(--gold);
+}
+
+
+/* ==========================================================================
+   CONTROLE DE CONTEÚDO SENSÍVEL
+   ========================================================================== */
+
+.admin-sensitive-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    gap: 12px;
+
+    grid-column: 1 / -1;
+
+    width: 100%;
+
+    margin-top: 10px;
+    padding: 12px;
+
+    background: rgba(123, 9, 9, 0.07);
+
+    border: 1px solid rgba(164, 19, 19, 0.25);
+}
+
+.admin-sensitive-control > label {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color: var(--paper-soft);
+
+    font-family: var(--font-mono);
+    font-size: 0.61rem;
+
+    cursor: pointer;
+}
+
+.admin-sensitive-control input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+
+    margin: 0;
+
+    accent-color: var(--red-light);
+}
+
+.admin-sensitive-category-wrap {
+    flex: 1 1 210px;
+}
+
+.admin-sensitive-category-wrap select {
+    width: 100%;
+
+    min-height: 38px;
+
+    padding: 7px 10px;
+
+    color: var(--paper-soft);
+
+    background: #090807;
+
+    border: 1px solid var(--border);
+
+    outline: none;
+
+    font-size: 0.65rem;
+}
+
+.admin-sensitive-category-wrap select:focus {
+    border-color: var(--gold);
+}
+
+
+/* ==========================================================================
+   RESPONSIVIDADE DO EDITOR DE DOSSIÊS
+   ========================================================================== */
+
+@media (max-width: 760px) {
+
+    .admin-content-editor {
+        padding: 14px;
+    }
+
+    .admin-content-block {
+        padding: 12px;
+    }
+
+    .admin-content-block-options,
+    .admin-document-metadata {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-content-toolbar {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-content-toolbar .admin-secondary-button {
+        width: 100%;
+    }
+
+    .admin-sensitive-control {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-sensitive-category-wrap {
+        flex-basis: auto;
+
+        width: 100%;
+    }
+}
+
+@media (max-width: 430px) {
+
+    .admin-content-editor {
+        padding: 11px;
+    }
+
+    .admin-content-block {
+        padding: 10px;
+    }
+
+    .admin-content-block-header {
+        align-items: flex-start;
+    }
+
+    .admin-content-block-actions {
+        flex-shrink: 0;
+    }
+
+    .admin-content-block-actions button {
+        width: 30px;
+        height: 30px;
+    }
+
+    .admin-content-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-sensitive-control {
+        padding: 10px;
+    }
+}
+
