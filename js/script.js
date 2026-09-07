@@ -1110,41 +1110,95 @@ function normalizarDocumentos(documentos) {
         return [];
     }
 
+    const categoriasSensiveisPermitidas = [
+        "",
+        "cena_crime",
+        "autopsia",
+        "cadaver",
+        "ferimento",
+        "conteudo_medico",
+        "outro"
+    ];
+
     return documentos
-        .map(documento => ({
+        .map(documento => {
 
-            nome:
+            const categoriaSensivel =
                 String(
-                    documento?.nome || ""
-                ).trim(),
+                    documento?.categoria_sensivel ||
+                    ""
+                )
+                    .trim()
+                    .toLowerCase();
 
-            url:
-                String(
-                    documento?.url || ""
-                ).trim(),
+            return {
 
-            caminho:
-                String(
-                    documento?.caminho || ""
-                ).trim(),
+                nome:
+                    String(
+                        documento?.nome || ""
+                    ).trim(),
 
-            bucket:
-                String(
-                    documento?.bucket ||
-                    STORAGE_BUCKET_DOCUMENTOS
-                ).trim(),
+                url:
+                    String(
+                        documento?.url || ""
+                    ).trim(),
 
-            tipo:
-                String(
-                    documento?.tipo || ""
-                ).trim(),
+                caminho:
+                    String(
+                        documento?.caminho || ""
+                    ).trim(),
 
-            tamanho:
-                Number(
-                    documento?.tamanho
-                ) || 0
+                bucket:
+                    String(
+                        documento?.bucket ||
+                        STORAGE_BUCKET_DOCUMENTOS
+                    ).trim(),
 
-        }))
+                tipo:
+                    String(
+                        documento?.tipo || ""
+                    ).trim(),
+
+                tamanho:
+                    Number(
+                        documento?.tamanho
+                    ) || 0,
+
+                legenda:
+                    String(
+                        documento?.legenda || ""
+                    ).trim(),
+
+                fonte:
+                    String(
+                        documento?.fonte || ""
+                    ).trim(),
+
+                credito:
+                    String(
+                        documento?.credito || ""
+                    ).trim(),
+
+                link:
+                    String(
+                        documento?.link || ""
+                    ).trim(),
+
+                sensivel:
+                    documento?.sensivel === true ||
+                    documento?.sensivel === "true",
+
+                categoria_sensivel:
+                    categoriasSensiveisPermitidas
+                        .includes(
+                            categoriaSensivel
+                        )
+                        ? categoriaSensivel
+                        : "outro"
+
+            };
+
+        })
         .filter(
             documento =>
                 documento.nome &&
