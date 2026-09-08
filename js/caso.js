@@ -1167,6 +1167,7 @@ function inicializarModoLeitura() {
     botao.textContent = "Modo de leitura";
     barra.append(botao);
     secao.prepend(barra);
+    configurarPreferenciasLeitura(barra);
 
     function alternar(ativo) {
         // Mantém o parágrafo visível como referência ao mudar a largura.
@@ -1185,5 +1186,105 @@ function inicializarModoLeitura() {
     document.addEventListener("keydown", evento => {
         if (evento.key === "Escape" && document.body.classList.contains("case-reading")) alternar(false);
     });
+}
+
+
+/* Preferências locais de leitura. */
+function validarPreferenciasLeitura(valor) {
+    const p = valor && typeof valor === "object" ? valor : {};
+    return {
+        tema: ["arquivo", "papel"].includes(p.tema) ? p.tema : "arquivo",
+        fonte: ["baskerville", "georgia", "arial", "verdana"].includes(p.fonte) ? p.fonte : "baskerville",
+        tamanho: Number.isFinite(p.tamanho) ? Math.min(30, Math.max(16, Math.round(p.tamanho))) : 18,
+        espaco: [1.5, 1.8, 2.1].includes(p.espaco) ? p.espaco : 1.8
+    };
+}
+function configurarPreferenciasLeitura(barra) {
+    const chave = "arquivo_sombrio_preferencias_leitura_v1";
+    let preferencias;
+    try { preferencias = validarPreferenciasLeitura(JSON.parse(localStorage.getItem(chave))); }
+    catch { preferencias = validarPreferenciasLeitura(null); }
+
+    const painel = document.createElement("details");
+    painel.className = "case-reader-settings";
+    painel.innerHTML = `
+        <summary>Ajustar leitura</summary>
+        <div class="case-reader-controls">
+            <label>Tema
+                <select data-reader-theme>
+                    <option value="arquivo">Arquivo escuro</option>
+                    <option value="papel">Papel antigo</option>
+                </select>
+            </label>
+            <label>Fonte
+                <select data-reader-font>
+                    <option value="baskerville">Libre Baskerville</option>
+                    <option value="georgia">Georgia</option>
+                    <option value="arial">Arial</option>
+                    <option value="verdana">Verdana</option>
+                </select>
+            </label>
+            <div>
+                <span>Tamanho da letra</span>
+                <div class="case-reader-size">
+                    <button type="button" data-reader-smaller aria-label="Diminuir tamanho da letra">A−</button>
+                    <output data-reader-size aria-live="polite"></output>
+                    <button type="button" data-reader-larger aria-label="Aumentar tamanho da letra">A+</button>
+                </div>
+            </div>
+            <label>Espaçamento entre linhas
+                <select data-reader-spacing>
+                    <option value="1.5">Compacto</option>
+                    <option value="1.8">Normal</option>
+                    <option value="2.1">Amplo</option>
+                </select>
+            </label>
+            <button type="button" data-reader-reset>Restaurar padrão</button>
+            <small data-reader-save-status role="status">Preferências salvas neste navegador.</small>
+        </div>
+    `;
+    barra.append(painel);
+    const tema = painel.querySelector("[data-reader-theme]");
+    const fonte = painel.querySelector("[data-reader-font]");
+    const espaco = painel.querySelector("[data-reader-spacing]");
+    const menor = painel.querySelector("[data-reader-smaller]");
+    const maior = painel.querySelector("[data-reader-larger]");
+    const tamanho = painel.querySelector("[data-reader-size]");
+    const familias = {
+        baskerville: '"Libre Baskerville", Georgia, serif',
+        georgia: 'Georgia, "Times New Roman", serif',
+        arial: 'Arial, Helvetica, sans-serif',
+        verdana: 'Verdana, Geneva, sans-serif'
+    };
+    function aplicar(salvar = false) {
+        preferencias = validarPreferenciasLeitura(preferencias);
+        document.body.dataset.readerTheme = preferencias.tema;
+        document.body.style.setProperty("--reader-font", familias[preferencias.fonte]);
+        document.body.style.setProperty("--reader-size", preferencias.tamanho + "px");
+        document.body.style.setProperty("--reader-spacing", String(preferencias.espaco));
+        tema.value = preferencias.tema;
+        fonte.value = preferencias.fonte;
+        espaco.value = String(preferencias.espaco);
+        tamanho.textContent = preferencias.tamanho + " px";
+        menor.disabled = preferencias.tamanho <= 16;
+        maior.disabled = preferencias.tamanho >= 30;
+        if (salvar) {
+            try {
+                localStorage.setItem(chave, JSON.stringify(preferencias));
+                painel.querySelector("[data-reader-save-status]").textContent = "Preferências salvas neste navegador.";
+            } catch {
+                painel.querySelector("[data-reader-save-status]").textContent = "Ajustes aplicados nesta página. O navegador não permitiu salvar.";
+            }
+        }
+    }
+    tema.addEventListener("change", () => { preferencias.tema = tema.value; aplicar(true); });
+    fonte.addEventListener("change", () => { preferencias.fonte = fonte.value; aplicar(true); });
+    espaco.addEventListener("change", () => { preferencias.espaco = Number(espaco.value); aplicar(true); });
+    menor.addEventListener("click", () => { preferencias.tamanho -= 1; aplicar(true); });
+    maior.addEventListener("click", () => { preferencias.tamanho += 1; aplicar(true); });
+    painel.querySelector("[data-reader-reset]").addEventListener("click", () => {
+        preferencias = validarPreferenciasLeitura(null); aplicar(true);
+    });
+    aplicar();
 }
 
