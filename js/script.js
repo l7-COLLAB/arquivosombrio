@@ -2020,10 +2020,11 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
         campos.className = "admin-image-metadata";
         campos.style.cssText = "display:grid;gap:16px;margin-top:16px";
         campos.innerHTML = `
-            <label>Pesquisar trecho por número ou texto
-                <input type="search" data-block-position-search placeholder="Ex.: 25 ou quarto de hóspedes" autocomplete="off">
+            <label>Pesquisar uma frase no histórico
+                <input type="search" data-block-position-search placeholder="Digite ou cole a frase que deseja encontrar..." autocomplete="off">
             </label>
             <small data-block-position-results role="status" aria-live="polite"></small>
+            <div data-block-phrase-results style="display:grid;gap:12px;max-height:360px;overflow:auto"></div>
             <label>Posição no histórico
                 <select data-block-position></select>
             </label>
@@ -2045,6 +2046,7 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
         const seletor = campos.querySelector("[data-block-position]");
         const buscaPosicao = campos.querySelector("[data-block-position-search]");
         const resultadoBusca = campos.querySelector("[data-block-position-results]");
+        const listaBusca = campos.querySelector("[data-block-phrase-results]");
         const atualizar = () => {
             const atual = seletor.value || dados.posicao || "fim";
             const textosEditor = Array.from(document.querySelectorAll("#admin-content-blocks [data-content-block]"))
@@ -2060,12 +2062,8 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
             const opcoes = [["fim", "No final do histórico"], ["inicio", "No início do histórico"]];
             const todasOpcoes = new Map(opcoes);
             trechos.forEach((texto, i) => {
-                const resumo = texto.replace(/\s+/g, " ").slice(0, 90);
-                const antes = ["antes-" + i, "Antes do trecho " + (i + 1) + ": " + resumo];
-                const apos = ["apos-" + i, "Depois do trecho " + (i + 1) + ": " + resumo];
-                todasOpcoes.set(...antes);
-                todasOpcoes.set(...apos);
-                if (correspondentes.includes(i)) opcoes.push(antes, apos);
+                todasOpcoes.set("antes-" + i, "Antes do trecho " + (i + 1));
+                todasOpcoes.set("apos-" + i, "Depois do trecho " + (i + 1));
             });
             if (!opcoes.some(([valor]) => valor === atual)) {
                 opcoes.push([atual, todasOpcoes.has(atual)
@@ -2080,8 +2078,45 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
             }));
             seletor.value = atual;
             resultadoBusca.textContent = consulta
-                ? (correspondentes.length ? correspondentes.length + " trecho(s) encontrado(s). Escolha Antes ou Depois na lista." : "Nenhum trecho encontrado. A posição atual foi mantida.")
-                : "Pesquise pelo número do trecho ou por palavras do texto. A numeração corresponde aos trechos, não às linhas do código.";
+                ? (correspondentes.length ? correspondentes.length + " resultado(s). Escolha onde inserir a imagem." : "Nenhuma frase encontrada.")
+                : "Digite uma frase. O número do trecho aparecerá ao lado de cada resultado.";
+            listaBusca.replaceChildren();
+            if (consulta) correspondentes.forEach(i => {
+                const resultado = document.createElement("div");
+                resultado.style.cssText = "padding:14px;border:1px solid #75613f;background:rgba(166,140,85,.06)";
+                const linha = document.createElement("div");
+                linha.style.cssText = "display:flex;align-items:flex-start;gap:14px";
+                const numero = document.createElement("strong");
+                numero.textContent = "Trecho " + (i + 1);
+                numero.style.cssText = "flex:0 0 auto;color:#bba16d";
+                const frase = document.createElement("span");
+                frase.textContent = trechos[i];
+                frase.style.cssText = "min-width:0;overflow-wrap:anywhere;white-space:pre-line";
+                linha.append(numero, frase);
+                const acoes = document.createElement("div");
+                acoes.style.cssText = "display:flex;flex-wrap:wrap;gap:10px;margin-top:12px";
+                [["antes", "Inserir antes"], ["apos", "Inserir depois"]].forEach(([valor, rotulo]) => {
+                    const botao = document.createElement("button");
+                    botao.type = "button";
+                    botao.className = "admin-secondary-button";
+                    botao.textContent = rotulo;
+                    botao.addEventListener("click", () => {
+                        const posicao = valor + "-" + i;
+                        if (!Array.from(seletor.options).some(o => o.value === posicao)) {
+                            const opcao = document.createElement("option");
+                            opcao.value = posicao;
+                            opcao.textContent = todasOpcoes.get(posicao);
+                            seletor.append(opcao);
+                        }
+                        seletor.value = posicao;
+                        seletor.dispatchEvent(new Event("change", {bubbles:true}));
+                        resultadoBusca.textContent = "Imagem posicionada: " + todasOpcoes.get(posicao) + ". Clique em Salvar para confirmar.";
+                    });
+                    acoes.append(botao);
+                });
+                resultado.append(linha, acoes);
+                listaBusca.append(resultado);
+            });
         };
         atualizar();
         seletor.addEventListener("focus", atualizar);
@@ -8358,10 +8393,8 @@ function filtrarTrechosImagemAdmin(trechos, consulta) {
     const normalizar = valor => String(valor || "").normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
     const termo = normalizar(consulta);
-    const numero = /^(?:(?:trecho|linha)\s*|#\s*)?(\d+)$/.exec(termo);
     return trechos.reduce((indices, texto, i) => {
-        if (!termo || (numero ? i + 1 === Number(numero[1]) : normalizar(texto).includes(termo))) indices.push(i);
+        if (!termo || normalizar(texto).includes(termo)) indices.push(i);
         return indices;
     }, []);
 }
-
