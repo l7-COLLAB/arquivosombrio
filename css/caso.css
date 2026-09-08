@@ -891,3 +891,61 @@
 .case-image-note { margin-top: 10px; padding: 12px; border-left: 2px solid #a68c55; background: rgba(166,140,85,.08); white-space: pre-line; }
 .case-image-source { margin-top: 8px; }
 .case-image-source a { color: inherit; text-decoration: underline; }
+
+
+/* MODO DE LEITURA IMERSIVA */
+.case-reader-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    width: min(100% - 32px, 1200px);
+    margin: 0 auto 28px;
+}
+.case-reader-toggle {
+    min-height: 44px;
+    padding: 12px 18px;
+    border: 1px solid #a18a61;
+    border-radius: 3px;
+    background: #191511;
+    color: #eee5d7;
+    font: inherit;
+    font-size: 15px;
+    cursor: pointer;
+}
+.case-reader-toggle:hover { background: #30261c; }
+.case-reader-toggle:focus-visible { outline: 3px solid #d8ba7d; outline-offset: 4px; }
+body.case-reading { background: #100e0b; }
+body.case-reading .main-header,
+body.case-reading .case-hero,
+body.case-reading .case-sidebar { display: none; }
+body.case-reading .case-content-section { padding-top: 0; }
+body.case-reading .case-reader-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 20px;
+    margin-bottom: 32px;
+    background: #100e0b;
+    border-bottom: 1px solid #40352a;
+}
+body.case-reading .case-layout {
+    display: block;
+    width: calc(100% - 40px);
+    max-width: 760px;
+    margin-inline: auto;
+    padding-inline: 0;
+}
+body.case-reading .case-history { font-size: 18px; line-height: 1.9; }
+body.case-reading .case-main-content { overflow-wrap: anywhere; }
+body.case-reading .case-main-content img { max-width: 100%; height: auto; }
+body.case-reading .case-content-image { box-sizing: border-box; }
+@media (max-width: 600px) {
+    body.case-reading .case-history { font-size: 17px; }
+    body.case-reading .case-reader-toolbar { padding: 10px 16px; }
+    body.case-reading .case-layout { width: calc(100% - 32px); }
+}
+@media print {
+    .case-reader-toolbar { display: none !important; }
+}
+
