@@ -2017,6 +2017,64 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
 
     if (tipo === "imagem") {
         const campos = document.createElement("div");
+        const campoUrlImagem = bloco.querySelector("[data-block-content]");
+        const uploadArea = document.createElement("div");
+        uploadArea.style.cssText = "display:grid;gap:12px;margin:16px 0";
+        uploadArea.innerHTML = `
+            <input type="file" data-block-image-file accept="image/jpeg,image/png,image/webp" hidden>
+            <button type="button" class="admin-upload-button" data-block-image-upload>
+                Enviar imagem do computador
+            </button>
+            <small data-block-image-status role="status" aria-live="polite">
+                JPG, PNG ou WEBP, até 10 MB. A URL será preenchida após o envio.
+            </small>
+        `;
+        campoUrlImagem.before(uploadArea);
+        const inputImagem = uploadArea.querySelector("[data-block-image-file]");
+        const botaoUpload = uploadArea.querySelector("[data-block-image-upload]");
+        const statusUpload = uploadArea.querySelector("[data-block-image-status]");
+        botaoUpload.addEventListener("click", () => inputImagem.click());
+        inputImagem.addEventListener("change", async () => {
+            const arquivo = inputImagem.files?.[0];
+            if (!arquivo) return;
+            if (!["image/jpeg", "image/png", "image/webp"].includes(arquivo.type) || arquivo.size > 10 * 1024 * 1024) {
+                statusUpload.textContent = "Escolha uma imagem JPG, PNG ou WEBP de até 10 MB.";
+                inputImagem.value = "";
+                return;
+            }
+            const formulario = bloco.closest("form");
+            const botaoSalvar = formulario?.querySelector('button[type="submit"]');
+            const anteriores = [
+                [botaoUpload, botaoUpload.disabled],
+                [campoUrlImagem, campoUrlImagem.readOnly]
+            ];
+            formulario.dataset.uploadsImagens = String(Number(formulario.dataset.uploadsImagens || 0) + 1);
+            if (Number(formulario.dataset.uploadsImagens) === 1 && botaoSalvar) {
+                formulario.dataset.salvarAntesUpload = String(botaoSalvar.disabled);
+            }
+            botaoUpload.disabled = true;
+            campoUrlImagem.readOnly = true;
+            if (botaoSalvar) botaoSalvar.disabled = true;
+            statusUpload.textContent = "Enviando imagem...";
+            try {
+                const resultado = await enviarArquivoStorage(
+                    STORAGE_BUCKET_IMAGENS, "casos/conteudo", arquivo
+                );
+                campoUrlImagem.value = resultado.url;
+                campoUrlImagem.dispatchEvent(new Event("input", { bubbles: true }));
+                statusUpload.textContent = "Imagem enviada. Clique em Salvar para confirmar no dossiê.";
+            } catch (erro) {
+                statusUpload.textContent = erro?.message || "Falha no envio. Tente novamente.";
+            } finally {
+                botaoUpload.disabled = anteriores[0][1];
+                campoUrlImagem.readOnly = anteriores[1][1];
+                formulario.dataset.uploadsImagens = String(Math.max(0, Number(formulario.dataset.uploadsImagens || 1) - 1));
+                if (botaoSalvar && Number(formulario.dataset.uploadsImagens) === 0) {
+                    botaoSalvar.disabled = formulario.dataset.salvarAntesUpload === "true";
+                }
+                inputImagem.value = "";
+            }
+        });
         campos.className = "admin-image-metadata";
         campos.style.cssText = "display:grid;gap:16px;margin-top:16px";
         campos.innerHTML = `
@@ -7477,6 +7535,10 @@ async function salvarCasoAdmin(
 ) {
 
     evento.preventDefault();
+    if (Number(document.getElementById("admin-content-form")?.dataset.uploadsImagens || 0) > 0) {
+        alert("Aguarde o envio das imagens terminar antes de salvar.");
+        return;
+    }
 
     const formulario =
         evento.currentTarget;
