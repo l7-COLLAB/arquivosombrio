@@ -31,6 +31,51 @@
     --container: 1220px;
 }
 
+/* ==========================================================================
+   FÓRUM — CONVITE DE ACESSO PARA VISITANTES
+   ========================================================================== */
+
+#forum-guest-prompt[hidden] {
+    display: none !important;
+}
+
+.forum-guest-prompt {
+    margin-top: 26px;
+    padding: 22px;
+    border: 1px solid rgba(160, 126, 61, 0.38);
+    background: rgba(7, 6, 5, 0.52);
+}
+
+.forum-guest-prompt p {
+    margin: 0;
+    color: var(--paper-soft);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.forum-guest-prompt-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.forum-guest-prompt-actions .btn-form {
+    width: auto;
+    min-width: 150px;
+    margin: 0;
+}
+
+@media (max-width: 560px) {
+    .forum-guest-prompt-actions {
+        flex-direction: column;
+    }
+
+    .forum-guest-prompt-actions .btn-form {
+        width: 100%;
+    }
+}
+
 
 /* ==========================================================================
    RESET
@@ -4980,4 +5025,3 @@ select:focus-visible {
         padding: 10px;
     }
 }
-
