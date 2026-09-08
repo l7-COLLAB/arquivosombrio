@@ -1168,6 +1168,7 @@ function inicializarModoLeitura() {
     barra.append(botao);
     secao.prepend(barra);
     configurarPreferenciasLeitura(barra);
+    configurarPaginasLeitura(barra);
 
     function alternar(ativo) {
         // Mantém o parágrafo visível como referência ao mudar a largura.
@@ -1286,5 +1287,112 @@ function configurarPreferenciasLeitura(barra) {
         preferencias = validarPreferenciasLeitura(null); aplicar(true);
     });
     aplicar();
+}
+
+
+
+/* Páginas de leitura: usa o conteúdo original, incluindo imagens e créditos. */
+function calcularPaginaLeitura(total, pagina) {
+    return Math.min(Math.max(0, Math.trunc(pagina) || 0), Math.max(0, total - 1));
+}
+function configurarPaginasLeitura(barra) {
+    const artigo = document.querySelector(".case-main-content");
+    if (!artigo || document.getElementById("reader-page-mode")) return;
+    const janela = document.createElement("div");
+    janela.className = "reader-page-window";
+    artigo.before(janela);
+    janela.append(artigo);
+    const controles = document.createElement("div");
+    controles.className = "reader-page-controls";
+    controles.innerHTML = `
+        <label>Formato
+            <select id="reader-page-mode">
+                <option value="scroll">Rolagem contínua</option>
+                <option value="pages">Páginas de livro</option>
+            </select>
+        </label>
+        <div class="reader-page-navigation" hidden>
+            <button type="button" data-page-prev aria-label="Página anterior">← Anterior</button>
+            <output data-page-count aria-live="polite" aria-atomic="true">Página 1 de 1</output>
+            <button type="button" data-page-next aria-label="Próxima página">Próxima →</button>
+        </div>
+    `;
+    barra.append(controles);
+    const seletor = controles.querySelector("select");
+    const nav = controles.querySelector(".reader-page-navigation");
+    const anterior = controles.querySelector("[data-page-prev]");
+    const proxima = controles.querySelector("[data-page-next]");
+    const contador = controles.querySelector("[data-page-count]");
+    let pagina = 0, total = 1, largura = 0, agendado = false;
+    let estavaAtivo = false;
+    const ativo = () => document.body.classList.contains("case-reading") && seletor.value === "pages";
+    function mostrar(destino) {
+        pagina = calcularPaginaLeitura(total, destino);
+        janela.scrollLeft = pagina * largura;
+        contador.textContent = "Página " + (pagina + 1) + " de " + total;
+        anterior.disabled = pagina === 0;
+        proxima.disabled = pagina === total - 1;
+    }
+    function recalcular() {
+        agendado = false;
+        const ligar = ativo();
+        const proporcao = total > 1 ? pagina / (total - 1) : 0;
+        if (document.body.classList.contains("case-paginated") !== ligar) {
+            document.body.classList.toggle("case-paginated", ligar);
+        }
+        nav.hidden = !ligar;
+        if (!ligar) {
+            janela.scrollLeft = 0;
+            estavaAtivo = false;
+            return;
+        }
+        largura = janela.clientWidth;
+        if (!largura) return;
+        // Reserva espaço para a barra, inclusive quando os ajustes estão abertos.
+        const altura = Math.max(240, window.innerHeight - barra.getBoundingClientRect().height - 70);
+        artigo.style.setProperty("--reader-page-height", altura + "px");
+        artigo.style.setProperty("--reader-page-width", largura + "px");
+        total = Math.max(1, Math.ceil((artigo.scrollWidth - 1) / largura));
+        mostrar(estavaAtivo ? Math.round(proporcao * (total - 1)) : 0);
+        if (!estavaAtivo) barra.scrollIntoView({block:"start", behavior:"instant"});
+        estavaAtivo = true;
+    }
+    function agendar() {
+        if (agendado) return;
+        agendado = true;
+        requestAnimationFrame(recalcular);
+    }
+    seletor.addEventListener("change", () => {
+        const sairPaginas = estavaAtivo && seletor.value === "scroll";
+        recalcular();
+        if (sairPaginas) artigo.scrollIntoView({block:"start", behavior:"instant"});
+    });
+    anterior.addEventListener("click", () => mostrar(pagina - 1));
+    proxima.addEventListener("click", () => mostrar(pagina + 1));
+    document.addEventListener("keydown", evento => {
+        if (!ativo() || evento.altKey || evento.ctrlKey || evento.metaKey || evento.shiftKey) return;
+        if (evento.target.closest?.("input,textarea,select,button,summary,a,[contenteditable]")) return;
+        if (evento.key === "ArrowRight" || evento.key === "ArrowLeft") {
+            evento.preventDefault();
+            mostrar(pagina + (evento.key === "ArrowRight" ? 1 : -1));
+        }
+    });
+    artigo.addEventListener("focusin", evento => {
+        if (!ativo() || !largura) return;
+        const x = evento.target.getBoundingClientRect().left - janela.getBoundingClientRect().left + janela.scrollLeft;
+        mostrar(Math.floor(x / largura));
+    });
+    window.addEventListener("resize", agendar);
+    artigo.addEventListener("load", agendar, true);
+    artigo.addEventListener("click", agendar);
+    new MutationObserver(agendar).observe(document.body, {attributes:true, attributeFilter:["class","style"]});
+    new MutationObserver(agendar).observe(artigo, {childList:true, subtree:true});
+    if (window.ResizeObserver) {
+        const observador = new ResizeObserver(agendar);
+        observador.observe(janela);
+        observador.observe(barra);
+    }
+    if (document.fonts?.ready) document.fonts.ready.then(agendar);
+    agendar();
 }
 
