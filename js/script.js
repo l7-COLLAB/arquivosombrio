@@ -4595,6 +4595,12 @@ async function inicializarForum() {
     const botaoCadastro =
         document.getElementById("forum-btn-signup");
 
+    const botaoLoginNoForum =
+        document.getElementById("forum-inline-login");
+
+    const botaoCadastroNoForum =
+        document.getElementById("forum-inline-signup");
+
     const botaoSair =
         document.getElementById("forum-btn-logout");
 
@@ -4664,6 +4670,18 @@ async function inicializarForum() {
     );
 
 
+    botaoLoginNoForum?.addEventListener(
+        "click",
+        entrarForum
+    );
+
+
+    botaoCadastroNoForum?.addEventListener(
+        "click",
+        cadastrarForum
+    );
+
+
     botaoSair?.addEventListener(
         "click",
         sairForum
@@ -4708,6 +4726,11 @@ function atualizarInterfaceForum(sessao) {
             "form-forum"
         );
 
+    const conviteVisitante =
+        document.getElementById(
+            "forum-guest-prompt"
+        );
+
     const nome =
         document.getElementById(
             "forum-user-name"
@@ -4732,6 +4755,10 @@ function atualizarInterfaceForum(sessao) {
             formulario.hidden = true;
         }
 
+        if (conviteVisitante) {
+            conviteVisitante.hidden = false;
+        }
+
         return;
     }
 
@@ -4746,6 +4773,10 @@ function atualizarInterfaceForum(sessao) {
 
     if (formulario) {
         formulario.hidden = false;
+    }
+
+    if (conviteVisitante) {
+        conviteVisitante.hidden = true;
     }
 
 
@@ -8242,4 +8273,3 @@ window.editarLivro =
 
 window.sairAdmin =
     sairAdmin;
-
