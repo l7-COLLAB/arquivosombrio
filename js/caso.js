@@ -1066,149 +1066,85 @@ function normalizarUrlImagemDossie(urlOriginal) {
 
 
 function renderizarBlocosConteudo(caso) {
-
-    const historia =
-        document.getElementById(
-            "caso-historia"
-        );
-
-    const blocos =
-        Array.isArray(
-            caso?.conteudo_blocos
-        )
-            ? caso.conteudo_blocos
-                .slice()
-                .sort(
-                    (a, b) =>
-                        (Number(a?.ordem) || 0) -
-                        (Number(b?.ordem) || 0)
-                )
-            : [];
-
-    if (
-        !historia ||
-        !blocos.length
-    ) {
-        return;
+    const historia = document.getElementById("caso-historia");
+    const blocos = Array.isArray(caso?.conteudo_blocos)
+        ? caso.conteudo_blocos.filter(Boolean).slice().sort((a,b) => (Number(a.ordem)||0)-(Number(b.ordem)||0)) : [];
+    if (!historia || !blocos.length) return;
+    const urlSegura = valor => {
+        try {
+            const url = new URL(String(valor || "").trim(), document.baseURI);
+            return ["https:", "http:"].includes(url.protocol) ? url.href : "";
+        } catch { return ""; }
+    };
+    const texto = (tag, valor, classe) => {
+        const el = document.createElement(tag);
+        el.textContent = String(valor || "");
+        if (classe) el.className = classe;
+        return el;
+    };
+    const posicionadas = [];
+    const usaTextoBlocos = blocos.some(b => ["paragrafo","subtitulo"].includes(b.tipo) && String(b.conteudo || "").trim());
+    // Sem blocos de texto, preserva integralmente o histórico antigo.
+    if (usaTextoBlocos) historia.replaceChildren();
+    for (const bloco of blocos) {
+        const conteudo = String(bloco.conteudo || "").trim();
+        if (!conteudo) continue;
+        if (bloco.tipo === "paragrafo") {
+            conteudo.split(/\n\s*\n/).filter(t => t.trim()).forEach(t => historia.append(texto("p",t.trim())));
+        } else if (bloco.tipo === "subtitulo") {
+            historia.append(texto("h3",conteudo,"case-content-subtitle"));
+        } else if (bloco.tipo === "imagem") {
+            const url = urlSegura(normalizarUrlImagemDossie(conteudo));
+            if (!url) continue;
+            const figura = document.createElement("figure");
+            const alinhamento = ["centro","esquerda","direita","total"].includes(bloco.alinhamento) ? bloco.alinhamento : "centro";
+            const tamanho = ["pequeno","medio","grande"].includes(bloco.tamanho) ? bloco.tamanho : "medio";
+            figura.className = "case-content-image case-content-image--" + alinhamento + " case-content-image--" + tamanho;
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = bloco.legenda || "Imagem documental do dossiê " + (caso.titulo || "");
+            img.loading = "lazy";
+            img.referrerPolicy = "no-referrer";
+            figura.append(img);
+            const legenda = document.createElement("figcaption");
+            if (bloco.legenda) legenda.append(texto("div",bloco.legenda,"case-image-caption"));
+            if (bloco.observacao) legenda.append(texto("div",bloco.observacao,"case-image-note"));
+            const link = bloco.link_fonte ? urlSegura(bloco.link_fonte) : "";
+            if (bloco.fonte || link) {
+                const fonte = texto("div","Fonte: ","case-image-source");
+                if (link) {
+                    const a = texto("a",bloco.fonte || "Consultar fonte");
+                    a.href = link; a.target = "_blank"; a.rel = "noopener noreferrer";
+                    fonte.append(a);
+                } else fonte.append(document.createTextNode(bloco.fonte));
+                legenda.append(fonte);
+            }
+            if (legenda.childNodes.length) figura.append(legenda);
+            if (bloco.posicao) posicionadas.push({figura, posicao: bloco.posicao});
+            else historia.append(figura);
+        } else if (bloco.tipo === "documento") {
+            const url = urlSegura(conteudo);
+            if (url) {
+                const a = texto("a","Abrir documento");
+                a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+                const p = document.createElement("p"); p.append(a); historia.append(p);
+            }
+        }
     }
-
-    const blocosTexto =
-        blocos.filter(
-            bloco =>
-                bloco?.tipo === "paragrafo" ||
-                bloco?.tipo === "subtitulo"
-        );
-
-    const montarBloco =
-        function(bloco, indice) {
-
-            const tipo =
-                String(
-                    bloco?.tipo || ""
-                ).toLowerCase();
-
-            const conteudo =
-                String(
-                    bloco?.conteudo || ""
-                ).trim();
-
-            if (!conteudo) {
-                return "";
-            }
-
-            if (tipo === "paragrafo") {
-
-                return `
-                    <p>
-                        ${escaparHTML(conteudo)}
-                    </p>
-                `;
-            }
-
-            if (tipo === "subtitulo") {
-
-                return `
-                    <h3 class="case-content-subtitle">
-                        ${escaparHTML(conteudo)}
-                    </h3>
-                `;
-            }
-
-            if (tipo === "imagem") {
-
-                const urlImagem =
-                    normalizarUrlImagemDossie(
-                        conteudo
-                    );
-
-                const alinhamento =
-                    [
-                        "esquerda",
-                        "centro",
-                        "direita",
-                        "total"
-                    ].includes(
-                        bloco.alinhamento
-                    )
-                        ? bloco.alinhamento
-                        : "centro";
-
-                const tamanho =
-                    [
-                        "pequeno",
-                        "medio",
-                        "grande"
-                    ].includes(
-                        bloco.tamanho
-                    )
-                        ? bloco.tamanho
-                        : "medio";
-
-                return `
-                    <figure
-                        class="
-                            case-content-image
-                            case-content-image--${alinhamento}
-                            case-content-image--${tamanho}
-                        "
-                    >
-                        <img
-                            src="${escaparHTML(urlImagem)}"
-                            alt="Imagem documental ${indice + 1} do dossiê ${escaparHTML(caso.titulo || "Arquivo Sombrio")}"
-                            loading="lazy"
-                            referrerpolicy="no-referrer"
-                        >
-                    </figure>
-                `;
-            }
-
-            return "";
-        };
-
-    const htmlBlocos =
-        blocos
-            .map(montarBloco)
-            .filter(Boolean)
-            .join("");
-
-    if (!htmlBlocos) {
-        return;
-    }
-
-    if (blocosTexto.length) {
-
-        historia.innerHTML =
-            htmlBlocos;
-
-        return;
-    }
-
-    historia.insertAdjacentHTML(
-        "beforeend",
-        `
-            <div class="case-content-media">
-                ${htmlBlocos}
-            </div>
-        `
-    );
+    const trechos = Array.from(historia.children).filter(el => ["P","H3"].includes(el.tagName));
+    const depois = new Map();
+    let ultimoInicio = null;
+    posicionadas.forEach(({figura,posicao}) => {
+        const match = /^(antes|apos)-(\d+)$/.exec(posicao);
+        const alvo = match ? trechos[Number(match[2])] : null;
+        if (posicao === "inicio") {
+            if (ultimoInicio) ultimoInicio.after(figura); else historia.prepend(figura);
+            ultimoInicio = figura;
+        } else if (alvo && match[1] === "antes") {
+            alvo.before(figura);
+        } else if (alvo) {
+            (depois.get(alvo) || alvo).after(figura);
+            depois.set(alvo, figura);
+        } else historia.append(figura);
+    });
 }
