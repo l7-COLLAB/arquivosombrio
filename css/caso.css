@@ -949,3 +949,72 @@ body.case-reading .case-content-image { box-sizing: border-box; }
     .case-reader-toolbar { display: none !important; }
 }
 
+
+/* CONTROLES DO MODO DE LEITURA */
+.case-reader-settings { display: none; }
+body.case-reading {
+    --reader-bg: #100e0b;
+    --reader-fg: #e9dfcf;
+    --reader-card: #201a14;
+    --reader-border: #776344;
+    --reader-link: #e4c48b;
+    background: var(--reader-bg);
+}
+body.case-reading[data-reader-theme="papel"] {
+    --reader-bg: #f0e5cf;
+    --reader-fg: #30271e;
+    --reader-card: #e5d6b9;
+    --reader-border: #86724e;
+    --reader-link: #753019;
+    --paper: #30271e;
+    --paper-soft: #30271e;
+    --muted: #574b3b;
+    --border: #b2a184;
+    --bg-card: #e5d6b9;
+}
+body.case-reading .case-reader-toolbar {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: start;
+    background: var(--reader-bg); color: var(--reader-fg);
+    border-color: var(--reader-border);
+}
+body.case-reading .case-reader-settings { display: block; }
+body.case-reading .case-reader-settings summary { cursor: pointer; padding: 12px; min-height: 44px; box-sizing: border-box; }
+body.case-reading .case-reader-controls {
+    display: grid; gap: 16px; padding: 16px;
+    width: min(340px, calc(100vw - 64px));
+    max-height: 55vh; overflow-y: auto;
+    background: var(--reader-card); border: 1px solid var(--reader-border);
+    font: 15px/1.5 Arial, sans-serif;
+}
+body.case-reading .case-reader-controls label { display: grid; gap: 6px; }
+body.case-reading .case-reader-controls select,
+body.case-reading .case-reader-controls button,
+body.case-reading .case-reader-toggle {
+    color: var(--reader-fg); background: var(--reader-card);
+    border: 1px solid var(--reader-border);
+    min-height: 44px; padding: 8px 12px; font: 15px/1.4 Arial, sans-serif;
+}
+body.case-reading .case-reader-controls select { width: 100%; }
+body.case-reading .case-reader-size { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
+body.case-reading .case-reader-controls button:disabled { opacity: .45; cursor: default; }
+body.case-reading .case-reader-controls :focus-visible,
+body.case-reading .case-reader-settings summary:focus-visible { outline: 3px solid var(--reader-link); outline-offset: 3px; }
+body.case-reading .case-main-content,
+body.case-reading .case-history,
+body.case-reading .case-history p,
+body.case-reading .evidence-text p,
+body.case-reading .theory-item p,
+body.case-reading .evidence-item p {
+    font-family: var(--reader-font);
+    font-size: var(--reader-size);
+    line-height: var(--reader-spacing);
+    color: var(--reader-fg);
+}
+body.case-reading .case-main-content h2,
+body.case-reading .case-main-content h3 { color: var(--reader-fg); }
+body.case-reading .case-main-content a { color: var(--reader-link); }
+body.case-reading .case-main-content figcaption { color: var(--reader-fg); font-family: var(--reader-font); font-size: .9em; }
+body.case-reading .evidence-card,
+body.case-reading .evidence-item,
+body.case-reading .theory-item { background: var(--reader-card); border-color: var(--reader-border); color: var(--reader-fg); }
+
