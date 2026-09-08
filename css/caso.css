@@ -884,3 +884,10 @@
         max-width: 100%;
     }
 }
+.case-content-image { width: 100%; box-sizing: border-box; }
+.case-content-image img { filter: none; }
+.case-content-image figcaption { margin-top: 12px; font-size: .85rem; line-height: 1.6; overflow-wrap: anywhere; }
+.case-image-caption { font-weight: 600; white-space: pre-line; }
+.case-image-note { margin-top: 10px; padding: 12px; border-left: 2px solid #a68c55; background: rgba(166,140,85,.08); white-space: pre-line; }
+.case-image-source { margin-top: 8px; }
+.case-image-source a { color: inherit; text-decoration: underline; }
