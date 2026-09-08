@@ -781,3 +781,106 @@
         font-size: 0.86rem;
     }
 }
+
+
+/* ==========================================================================
+   IMAGENS INSERIDAS PELO EDITOR DO DOSSIÊ
+   ========================================================================== */
+
+.case-content-media {
+    display: flow-root;
+
+    margin-top: 2.25rem;
+}
+
+
+.case-content-subtitle {
+    margin:
+        2.25rem
+        0
+        1rem;
+
+    color:
+        var(
+            --paper,
+            #eee5d7
+        );
+
+    font-family:
+        "Cinzel",
+        serif;
+
+    line-height: 1.35;
+}
+
+
+.case-content-image {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+
+.case-content-image img {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    border:
+        1px solid
+        rgba(
+            177,
+            145,
+            82,
+            0.35
+        );
+
+    background: #090909;
+
+    filter:
+        sepia(0.12)
+        contrast(1.04);
+}
+
+
+.case-content-image--pequeno {
+    max-width: 360px;
+}
+
+
+.case-content-image--medio {
+    max-width: 620px;
+}
+
+
+.case-content-image--grande,
+.case-content-image--total {
+    max-width: 100%;
+}
+
+
+.case-content-image--esquerda {
+    margin-right: auto;
+}
+
+
+.case-content-image--centro,
+.case-content-image--total {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+
+.case-content-image--direita {
+    margin-left: auto;
+}
+
+
+@media (max-width: 700px) {
+
+    .case-content-image--pequeno,
+    .case-content-image--medio,
+    .case-content-image--grande {
+        max-width: 100%;
+    }
+}
