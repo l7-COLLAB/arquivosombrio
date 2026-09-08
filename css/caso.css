@@ -1018,3 +1018,52 @@ body.case-reading .evidence-card,
 body.case-reading .evidence-item,
 body.case-reading .theory-item { background: var(--reader-card); border-color: var(--reader-border); color: var(--reader-fg); }
 
+
+
+/* PÁGINAS DE LIVRO E ALTERNATIVA DE ROLAGEM */
+.reader-page-window { min-width: 0; }
+.reader-page-controls { display: none; }
+body.case-reading .reader-page-controls {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+    font: 14px/1.5 Arial, sans-serif;
+}
+.reader-page-controls label { display:flex; align-items:center; gap:8px; }
+.reader-page-controls select, .reader-page-controls button {
+    min-height:44px; padding:8px 12px;
+    border:1px solid var(--reader-border, #776344);
+    background:var(--reader-card, #201a14); color:var(--reader-fg, #e9dfcf);
+    font:inherit;
+}
+.reader-page-navigation { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+.reader-page-navigation[hidden] { display:none; }
+.reader-page-navigation button:disabled { opacity:.45; }
+.reader-page-controls :focus-visible { outline:3px solid var(--reader-link, #e4c48b); outline-offset:3px; }
+body.case-paginated .reader-page-window { overflow:hidden; width:100%; }
+body.case-paginated .case-main-content {
+    height:var(--reader-page-height, 65vh);
+    column-width:var(--reader-page-width);
+    column-gap:0;
+    column-fill:auto;
+    width:100%;
+}
+body.case-paginated .case-block { margin-bottom:32px; break-inside:auto; }
+body.case-paginated .case-block-heading { break-inside:avoid; break-after:avoid; }
+body.case-paginated .case-history p { orphans:2; widows:2; }
+body.case-paginated .case-history figure { break-inside:avoid; margin-block:16px; }
+body.case-paginated .case-history img {
+    max-height:calc(var(--reader-page-height) * .55);
+    object-fit:contain; width:auto; max-width:100%; margin-inline:auto;
+}
+body.case-paginated .evidence-list,
+body.case-paginated .theory-list { display:block; }
+body.case-paginated .evidence-card,
+body.case-paginated .theory-item { margin-bottom:12px; }
+@media (max-width:600px) {
+    body.case-reading .case-reader-toolbar { gap:8px; }
+    body.case-reading .reader-page-controls { width:100%; }
+    .reader-page-navigation { gap:8px; justify-content:space-between; width:100%; }
+}
+@media print {
+    body.case-paginated .reader-page-window { overflow:visible; }
+    body.case-paginated .case-main-content { height:auto; columns:auto; }
+}
