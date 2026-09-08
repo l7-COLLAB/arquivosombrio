@@ -1582,7 +1582,12 @@ function coletarBlocosConteudoAdmin() {
                 tipo,
                 conteudo,
                 alinhamento,
-                tamanho
+                tamanho,
+                legenda: bloco.querySelector("[data-block-caption]")?.value.trim() || "",
+                observacao: bloco.querySelector("[data-block-note]")?.value.trim() || "",
+                fonte: bloco.querySelector("[data-block-source]")?.value.trim() || "",
+                link_fonte: bloco.querySelector("[data-block-source-link]")?.value.trim() || "",
+                posicao: bloco.querySelector("[data-block-position]")?.value || "fim"
             };
         })
         .filter(bloco => bloco.conteudo);
@@ -2008,6 +2013,62 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
                 : ""
         }
     `;
+
+
+    if (tipo === "imagem") {
+        const campos = document.createElement("div");
+        campos.className = "admin-image-metadata";
+        campos.style.cssText = "display:grid;gap:16px;margin-top:16px";
+        campos.innerHTML = `
+            <label>Posição no histórico
+                <select data-block-position></select>
+            </label>
+            <small>Os trechos são separados por linhas em branco na História / Relatório. Revise a posição se alterar esse texto.</small>
+            <label>Nome / legenda
+                <input type="text" data-block-caption value="${escaparHTML(dados.legenda || "")}">
+            </label>
+            <label>Observação da imagem
+                <textarea rows="3" data-block-note>${escaparHTML(dados.observacao || "")}</textarea>
+            </label>
+            <label>Fonte / crédito
+                <input type="text" data-block-source value="${escaparHTML(dados.fonte || "")}">
+            </label>
+            <label>Link da fonte
+                <input type="url" data-block-source-link value="${escaparHTML(dados.link_fonte || "")}" placeholder="https://...">
+            </label>
+        `;
+        bloco.appendChild(campos);
+        const seletor = campos.querySelector("[data-block-position]");
+        const atualizar = () => {
+            const atual = seletor.value || dados.posicao || "fim";
+            const textosEditor = Array.from(document.querySelectorAll("#admin-content-blocks [data-content-block]"))
+                .filter(el => ["paragrafo", "subtitulo"].includes(el.dataset.blockType))
+                .map(el => ({ tipo: el.dataset.blockType, conteudo: el.querySelector("[data-block-content]")?.value.trim() || "" }))
+                .filter(el => el.conteudo);
+            const trechos = textosEditor.length
+                ? textosEditor.flatMap(el => el.tipo === "subtitulo" ? [el.conteudo] : el.conteudo.split(/\n\s*\n/).map(t => t.trim()).filter(Boolean))
+                : String(document.getElementById("admin-history")?.value || "")
+                    .split(/\n\s*\n/).map(t => t.trim()).filter(Boolean);
+            const opcoes = [["fim", "No final do histórico"], ["inicio", "No início do histórico"]];
+            trechos.forEach((texto, i) => {
+                const resumo = texto.replace(/\s+/g, " ").slice(0, 90);
+                opcoes.push(["antes-" + i, "Antes do trecho " + (i + 1) + ": " + resumo]);
+                opcoes.push(["apos-" + i, "Depois do trecho " + (i + 1) + ": " + resumo]);
+            });
+            if (!opcoes.some(([valor]) => valor === atual)) {
+                opcoes.push([atual, "Posição anterior indisponível: revise antes de salvar"]);
+            }
+            seletor.replaceChildren(...opcoes.map(([valor, texto]) => {
+                const opcao = document.createElement("option");
+                opcao.value = valor;
+                opcao.textContent = texto;
+                return opcao;
+            }));
+            seletor.value = atual;
+        };
+        atualizar();
+        seletor.addEventListener("focus", atualizar);
+    }
 
     return bloco;
 }
