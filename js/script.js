@@ -2020,6 +2020,10 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
         campos.className = "admin-image-metadata";
         campos.style.cssText = "display:grid;gap:16px;margin-top:16px";
         campos.innerHTML = `
+            <label>Pesquisar trecho por número ou texto
+                <input type="search" data-block-position-search placeholder="Ex.: 25 ou quarto de hóspedes" autocomplete="off">
+            </label>
+            <small data-block-position-results role="status" aria-live="polite"></small>
             <label>Posição no histórico
                 <select data-block-position></select>
             </label>
@@ -2039,6 +2043,8 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
         `;
         bloco.appendChild(campos);
         const seletor = campos.querySelector("[data-block-position]");
+        const buscaPosicao = campos.querySelector("[data-block-position-search]");
+        const resultadoBusca = campos.querySelector("[data-block-position-results]");
         const atualizar = () => {
             const atual = seletor.value || dados.posicao || "fim";
             const textosEditor = Array.from(document.querySelectorAll("#admin-content-blocks [data-content-block]"))
@@ -2049,14 +2055,22 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
                 ? textosEditor.flatMap(el => el.tipo === "subtitulo" ? [el.conteudo] : el.conteudo.split(/\n\s*\n/).map(t => t.trim()).filter(Boolean))
                 : String(document.getElementById("admin-history")?.value || "")
                     .split(/\n\s*\n/).map(t => t.trim()).filter(Boolean);
+            const consulta = buscaPosicao.value.trim();
+            const correspondentes = filtrarTrechosImagemAdmin(trechos, consulta);
             const opcoes = [["fim", "No final do histórico"], ["inicio", "No início do histórico"]];
+            const todasOpcoes = new Map(opcoes);
             trechos.forEach((texto, i) => {
                 const resumo = texto.replace(/\s+/g, " ").slice(0, 90);
-                opcoes.push(["antes-" + i, "Antes do trecho " + (i + 1) + ": " + resumo]);
-                opcoes.push(["apos-" + i, "Depois do trecho " + (i + 1) + ": " + resumo]);
+                const antes = ["antes-" + i, "Antes do trecho " + (i + 1) + ": " + resumo];
+                const apos = ["apos-" + i, "Depois do trecho " + (i + 1) + ": " + resumo];
+                todasOpcoes.set(...antes);
+                todasOpcoes.set(...apos);
+                if (correspondentes.includes(i)) opcoes.push(antes, apos);
             });
             if (!opcoes.some(([valor]) => valor === atual)) {
-                opcoes.push([atual, "Posição anterior indisponível: revise antes de salvar"]);
+                opcoes.push([atual, todasOpcoes.has(atual)
+                    ? "Posição atual: " + todasOpcoes.get(atual)
+                    : "Posição anterior indisponível: revise antes de salvar"]);
             }
             seletor.replaceChildren(...opcoes.map(([valor, texto]) => {
                 const opcao = document.createElement("option");
@@ -2065,9 +2079,13 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
                 return opcao;
             }));
             seletor.value = atual;
+            resultadoBusca.textContent = consulta
+                ? (correspondentes.length ? correspondentes.length + " trecho(s) encontrado(s). Escolha Antes ou Depois na lista." : "Nenhum trecho encontrado. A posição atual foi mantida.")
+                : "Pesquise pelo número do trecho ou por palavras do texto. A numeração corresponde aos trechos, não às linhas do código.";
         };
         atualizar();
         seletor.addEventListener("focus", atualizar);
+        buscaPosicao.addEventListener("input", atualizar);
     }
 
     return bloco;
@@ -8334,3 +8352,16 @@ window.editarLivro =
 
 window.sairAdmin =
     sairAdmin;
+
+/* Busca para posicionar imagens: número exato do trecho ou texto completo. */
+function filtrarTrechosImagemAdmin(trechos, consulta) {
+    const normalizar = valor => String(valor || "").normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    const termo = normalizar(consulta);
+    const numero = /^(?:(?:trecho|linha)\s*|#\s*)?(\d+)$/.exec(termo);
+    return trechos.reduce((indices, texto, i) => {
+        if (!termo || (numero ? i + 1 === Number(numero[1]) : normalizar(texto).includes(termo))) indices.push(i);
+        return indices;
+    }, []);
+}
+
