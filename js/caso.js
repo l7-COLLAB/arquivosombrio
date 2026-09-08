@@ -507,6 +507,8 @@ function renderizarCaso(caso) {
 
     renderizarTeorias(caso.teorias);
 
+    renderizarBlocosConteudo(caso);
+
 
     document.title =
         `${caso.titulo} — Arquivo Sombrio`;
@@ -998,4 +1000,215 @@ function mostrarNaoEncontrado() {
 
     document.title =
         "Arquivo não encontrado — Arquivo Sombrio";
+}
+
+
+/* ==========================================================================
+   BLOCOS VISUAIS DO DOSSIÊ
+   ========================================================================== */
+
+function normalizarUrlImagemDossie(urlOriginal) {
+
+    const url =
+        String(urlOriginal || "")
+            .trim();
+
+    if (!url) {
+        return "";
+    }
+
+    const marcadorWikimedia =
+        "/wiki/File:";
+
+    const posicaoArquivo =
+        url.indexOf(marcadorWikimedia);
+
+    if (
+        url.includes("commons.wikimedia.org") &&
+        posicaoArquivo !== -1
+    ) {
+
+        const trechoArquivo =
+            url.slice(
+                posicaoArquivo +
+                marcadorWikimedia.length
+            );
+
+        let nomeArquivo;
+
+        try {
+
+            nomeArquivo =
+                decodeURIComponent(
+                    trechoArquivo
+                        .split("#")[0]
+                        .split("?")[0]
+                );
+
+        } catch (erro) {
+
+            nomeArquivo =
+                trechoArquivo
+                    .split("#")[0]
+                    .split("?")[0];
+        }
+
+        return (
+            "https://commons.wikimedia.org/wiki/" +
+            "Special:Redirect/file/" +
+            encodeURIComponent(nomeArquivo) +
+            "?width=1400"
+        );
+    }
+
+    return url;
+}
+
+
+function renderizarBlocosConteudo(caso) {
+
+    const historia =
+        document.getElementById(
+            "caso-historia"
+        );
+
+    const blocos =
+        Array.isArray(
+            caso?.conteudo_blocos
+        )
+            ? caso.conteudo_blocos
+                .slice()
+                .sort(
+                    (a, b) =>
+                        (Number(a?.ordem) || 0) -
+                        (Number(b?.ordem) || 0)
+                )
+            : [];
+
+    if (
+        !historia ||
+        !blocos.length
+    ) {
+        return;
+    }
+
+    const blocosTexto =
+        blocos.filter(
+            bloco =>
+                bloco?.tipo === "paragrafo" ||
+                bloco?.tipo === "subtitulo"
+        );
+
+    const montarBloco =
+        function(bloco, indice) {
+
+            const tipo =
+                String(
+                    bloco?.tipo || ""
+                ).toLowerCase();
+
+            const conteudo =
+                String(
+                    bloco?.conteudo || ""
+                ).trim();
+
+            if (!conteudo) {
+                return "";
+            }
+
+            if (tipo === "paragrafo") {
+
+                return `
+                    <p>
+                        ${escaparHTML(conteudo)}
+                    </p>
+                `;
+            }
+
+            if (tipo === "subtitulo") {
+
+                return `
+                    <h3 class="case-content-subtitle">
+                        ${escaparHTML(conteudo)}
+                    </h3>
+                `;
+            }
+
+            if (tipo === "imagem") {
+
+                const urlImagem =
+                    normalizarUrlImagemDossie(
+                        conteudo
+                    );
+
+                const alinhamento =
+                    [
+                        "esquerda",
+                        "centro",
+                        "direita",
+                        "total"
+                    ].includes(
+                        bloco.alinhamento
+                    )
+                        ? bloco.alinhamento
+                        : "centro";
+
+                const tamanho =
+                    [
+                        "pequeno",
+                        "medio",
+                        "grande"
+                    ].includes(
+                        bloco.tamanho
+                    )
+                        ? bloco.tamanho
+                        : "medio";
+
+                return `
+                    <figure
+                        class="
+                            case-content-image
+                            case-content-image--${alinhamento}
+                            case-content-image--${tamanho}
+                        "
+                    >
+                        <img
+                            src="${escaparHTML(urlImagem)}"
+                            alt="Imagem documental ${indice + 1} do dossiê ${escaparHTML(caso.titulo || "Arquivo Sombrio")}"
+                            loading="lazy"
+                            referrerpolicy="no-referrer"
+                        >
+                    </figure>
+                `;
+            }
+
+            return "";
+        };
+
+    const htmlBlocos =
+        blocos
+            .map(montarBloco)
+            .filter(Boolean)
+            .join("");
+
+    if (!htmlBlocos) {
+        return;
+    }
+
+    if (blocosTexto.length) {
+
+        historia.innerHTML =
+            htmlBlocos;
+
+        return;
+    }
+
+    historia.insertAdjacentHTML(
+        "beforeend",
+        `
+            <div class="case-content-media">
+                ${htmlBlocos}
+            </div>
+        `
+    );
 }
