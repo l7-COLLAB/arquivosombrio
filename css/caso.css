@@ -1606,12 +1606,13 @@ body[data-reader-theme="papel"]
 
     padding: 30px 38px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #d8c39a,
-            #c9ad78
-        );
+   background:
+    linear-gradient(
+        120deg,
+        #cbb78b 0%,
+        #e0cda2 45%,
+        #bda477 100%
+    );
 
     color:#2b2117;
 
@@ -1644,14 +1645,15 @@ body[data-reader-theme="papel"]
 
     position:absolute;
 
-    inset:12px;
+    inset:15px;
 
-    border:1px solid rgba(70,45,15,.35);
+    border-left:1px solid rgba(70,45,15,.25);
 
-    pointer-events:none;
+    border-top:1px solid rgba(70,45,15,.18);
+
+    opacity:.6;
 
 }
-
 
 .dossie-summary::after {
 
@@ -1662,15 +1664,23 @@ body[data-reader-theme="papel"]
     inset:0;
 
     background:
+
         radial-gradient(
-            circle at 20% 30%,
-            rgba(80,50,15,.12),
-            transparent 25%
+            circle at 15% 20%,
+            rgba(80,45,10,.18),
+            transparent 18%
         ),
+
         radial-gradient(
-            circle at 80% 70%,
-            rgba(80,50,15,.10),
-            transparent 25%
+            circle at 80% 80%,
+            rgba(80,45,10,.12),
+            transparent 22%
+        ),
+
+        radial-gradient(
+            circle at 60% 40%,
+            rgba(255,255,255,.15),
+            transparent 15%
         );
 
     pointer-events:none;
