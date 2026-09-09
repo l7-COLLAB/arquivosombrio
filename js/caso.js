@@ -1155,38 +1155,15 @@ function renderizarBlocosConteudo(caso) {
 /* Modo de leitura: altera o layout sem copiar ou substituir o conteúdo. */
 function inicializarModoLeitura() {
     const secao = document.querySelector(".case-content-section");
-    if (!secao || document.getElementById("case-reader-toggle")) return;
+    if (!secao || document.querySelector(".case-reader-toolbar")) return;
 
     const barra = document.createElement("div");
     barra.className = "case-reader-toolbar";
-    const botao = document.createElement("button");
-    botao.id = "case-reader-toggle";
-    botao.type = "button";
-    botao.className = "case-reader-toggle";
-    botao.setAttribute("aria-pressed", "false");
-    botao.textContent = "Modo de leitura";
-    barra.append(botao);
+   
     secao.prepend(barra);
+   document.body.classList.add("case-reading");
     configurarPreferenciasLeitura(barra);
     configurarPaginasLeitura(barra);
-
-    function alternar(ativo) {
-        // Mantém o parágrafo visível como referência ao mudar a largura.
-        const itens = Array.from(secao.querySelectorAll(".case-history > p, .case-history > h3, .case-history > figure, .case-block-heading"));
-        const ancora = itens.find(el => el.getBoundingClientRect().bottom > 80);
-        const topo = ancora ? ancora.getBoundingClientRect().top : 0;
-        document.body.classList.toggle("case-reading", ativo);
-        botao.setAttribute("aria-pressed", String(ativo));
-        botao.textContent = ativo ? "Sair do modo de leitura" : "Modo de leitura";
-        if (ancora) {
-            window.scrollBy({top: ancora.getBoundingClientRect().top - topo, behavior: "instant"});
-        }
-        botao.focus({preventScroll:true});
-    }
-    botao.addEventListener("click", () => alternar(!document.body.classList.contains("case-reading")));
-    document.addEventListener("keydown", evento => {
-        if (evento.key === "Escape" && document.body.classList.contains("case-reading")) alternar(false);
-    });
 }
 
 
