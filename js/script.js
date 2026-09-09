@@ -6315,13 +6315,13 @@ function renderizarGerenciadorAdmin() {
 
 
     /*
-     * LIVROS:
-     * Continuam no localStorage por enquanto.
-     */
-    const livros =
-        lerStorage(
-            CONFIG.STORAGE_LIVROS
-        );
+ * LIVROS:
+ * Agora vêm diretamente do Supabase.
+ */
+const livros =
+    Array.isArray(livrosSupabase)
+        ? livrosSupabase
+        : [];
 
 
     painel.innerHTML = `
