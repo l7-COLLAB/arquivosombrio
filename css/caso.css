@@ -33,6 +33,57 @@
 .case-top-nav a:hover {
     color: var(--red-light);
 }
+/* ==========================================================
+   SUMÁRIO - TEMA PAPEL ANTIGO
+   ========================================================== */
+
+body[data-reader-theme="papel"] .dossie-summary {
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(245,236,210,.95),
+            rgba(220,202,160,.95)
+        );
+
+    color:#2b2117;
+
+    border:
+        1px solid rgba(90,60,25,.35);
+
+    box-shadow:
+        0 15px 35px rgba(80,50,20,.25),
+        inset 0 0 25px rgba(100,70,30,.15);
+
+}
+
+
+/* título no papel */
+
+body[data-reader-theme="papel"] .dossie-summary-title {
+
+    color:#5a3b1e;
+
+}
+
+
+/* links no papel */
+
+body[data-reader-theme="papel"] .dossie-summary a {
+
+    color:#3b2818;
+
+    border-bottom:
+        1px solid rgba(90,60,25,.18);
+
+}
+
+
+body[data-reader-theme="papel"] .dossie-summary a:hover {
+
+    color:#8b1e1e;
+
+}
 
 
 /* ==========================================================================
