@@ -1154,40 +1154,169 @@ function renderizarBlocosConteudo(caso) {
 
 /* Modo de leitura: altera o layout sem copiar ou substituir o conteúdo. */
 function inicializarModoLeitura() {
-    const secao = document.querySelector(".case-content-section");
-    if (!secao || document.querySelector(".case-reader-toolbar")) return;
 
-    const barra = document.createElement("div");
-    barra.className = "case-reader-toolbar";
+    const secao =
+        document.querySelector(
+            ".case-content-section"
+        );
 
-   const voltar = document.createElement("a");
+    if (
+        !secao ||
+        document.querySelector(
+            ".case-reader-toolbar"
+        )
+    ) {
+        return;
+    }
 
-voltar.href = "index.html";
-voltar.className = "case-reader-back";
-
-voltar.innerHTML = `
-    <i class="fa-solid fa-arrow-left"></i>
-    <span>Voltar ao Arquivo</span>
-`;
-
-barra.append(voltar);
-   
-    secao.prepend(barra);
-   document.body.classList.add("case-reading");
-    configurarPreferenciasLeitura(barra);
-    configurarPaginasLeitura(barra);
-}
+    document.body.classList.add(
+        "case-reading"
+    );
 
 
-/* Preferências locais de leitura. */
-function validarPreferenciasLeitura(valor) {
-    const p = valor && typeof valor === "object" ? valor : {};
-    return {
-        tema: ["arquivo", "papel"].includes(p.tema) ? p.tema : "arquivo",
-        fonte: ["baskerville", "georgia", "arial", "verdana"].includes(p.fonte) ? p.fonte : "baskerville",
-        tamanho: Number.isFinite(p.tamanho) ? Math.min(30, Math.max(16, Math.round(p.tamanho))) : 18,
-        espaco: [1.5, 1.8, 2.1].includes(p.espaco) ? p.espaco : 1.8
-    };
+    const barra =
+        document.createElement(
+            "div"
+        );
+
+    barra.className =
+        "case-reader-toolbar";
+
+
+    barra.innerHTML = `
+
+        <div class="case-reader-toolbar-inner">
+
+            <a
+                href="index.html"
+                class="case-reader-back"
+                aria-label="Voltar ao Arquivo"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+
+                <span>
+                    Voltar
+                </span>
+            </a>
+
+
+            <div class="case-reader-actions">
+
+                <button
+                    type="button"
+                    class="case-reader-action"
+                    data-reader-text
+                    aria-label="Ajustar texto"
+                    title="Ajustar texto"
+                >
+                    <span class="reader-aa">
+                        Aa
+                    </span>
+
+                    <small>
+                        Texto
+                    </small>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="case-reader-action"
+                    data-reader-theme-button
+                    aria-label="Alterar tema"
+                    title="Tema"
+                >
+                    <i class="fa-regular fa-moon"></i>
+
+                    <small>
+                        Tema
+                    </small>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="case-reader-action"
+                    data-reader-font-button
+                    aria-label="Escolher fonte"
+                    title="Fonte"
+                >
+                    <i class="fa-solid fa-font"></i>
+
+                    <small>
+                        Fonte
+                    </small>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="case-reader-action"
+                    data-reader-lines-button
+                    aria-label="Ajustar espaçamento entre linhas"
+                    title="Linhas"
+                >
+                    <i class="fa-solid fa-align-left"></i>
+
+                    <small>
+                        Linhas
+                    </small>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="case-reader-action"
+                    data-reader-format-button
+                    aria-label="Alterar formato de leitura"
+                    title="Formato"
+                >
+                    <i class="fa-regular fa-file-lines"></i>
+
+                    <small>
+                        Formato
+                    </small>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="case-reader-action"
+                    data-reader-underline
+                    aria-label="Sublinhar trecho selecionado"
+                    title="Sublinhar"
+                >
+                    <i class="fa-solid fa-underline"></i>
+
+                    <small>
+                        Sublinhar
+                    </small>
+                </button>
+
+            </div>
+
+        </div>
+
+        <div
+            class="case-reader-popovers"
+            data-reader-popovers
+        ></div>
+
+    `;
+
+
+    secao.prepend(
+        barra
+    );
+
+
+    configurarPreferenciasLeitura(
+        barra
+    );
+
+    configurarPaginasLeitura(
+        barra
+    );
 }
 function configurarPreferenciasLeitura(barra) {
     const chave = "arquivo_sombrio_preferencias_leitura_v1";
