@@ -3041,10 +3041,15 @@ alert("sumário carregou");
         </div>
 
 
-        <nav>
-            ${
-                secoes.map(
-                    secao => `
+      <nav>
+
+    <ul>
+
+        ${
+            secoes.map(
+                secao => `
+
+                <li>
 
                     <a
                         href="#${secao.id}"
@@ -3053,10 +3058,15 @@ alert("sumário carregou");
                         ${secao.titulo}
                     </a>
 
-                    `
-                ).join("")
-            }
-        </nav>
+                </li>
+
+                `
+            ).join("")
+        }
+
+    </ul>
+
+</nav>
 
     `;
 
