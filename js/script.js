@@ -6630,10 +6630,8 @@ const livros =
                 "click",
                 () =>
                     editarLivro(
-                        Number(
-                            button.dataset.editBook
-                        )
-                    )
+    button.dataset.editBook
+)
             );
 
         });
@@ -6648,11 +6646,9 @@ const livros =
             button.addEventListener(
                 "click",
                 () =>
-                    removerLivro(
-                        Number(
-                            button.dataset.deleteBook
-                        )
-                    )
+                   removerLivro(
+    button.dataset.deleteBook
+)
             );
 
         });
