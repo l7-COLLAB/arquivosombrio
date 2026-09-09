@@ -3400,34 +3400,34 @@ async function carregarLivrosSupabase() {
     }
 }
 
+
 function obterTodosLivros() {
 
-    const personalizados =
-        lerStorage(
-            CONFIG.STORAGE_LIVROS
-        );
-
-    const idsPersonalizados =
+    const idsSupabase =
         new Set(
-            personalizados.map(
-                livro => Number(livro.id)
+            livrosSupabase.map(
+                livro =>
+                    String(
+                        livro.id
+                    )
             )
         );
 
     const iniciaisFiltrados =
         livrosIniciais.filter(
             livro =>
-                !idsPersonalizados.has(
-                    Number(livro.id)
+                !idsSupabase.has(
+                    String(
+                        livro.id
+                    )
                 )
         );
 
     return [
-        ...personalizados,
+        ...livrosSupabase,
         ...iniciaisFiltrados
     ];
 }
-
 
 function normalizarTextoLivro(valor) {
 
