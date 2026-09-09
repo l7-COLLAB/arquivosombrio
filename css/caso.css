@@ -1591,9 +1591,6 @@ body[data-reader-theme="papel"]
 }
 
 /* ==========================================================
-   SUMÁRIO DO ARQUIVO — PERGAMINHO ANTIGO
-   ========================================================== */
-/* ==========================================================
    SUMÁRIO DO ARQUIVO - DOCUMENTO ANTIGO
    ========================================================== */
 
@@ -1652,6 +1649,8 @@ body[data-reader-theme="papel"]
     border-top:1px solid rgba(70,45,15,.18);
 
     opacity:.6;
+
+    pointer-events:none;
 
 }
 
@@ -1748,4 +1747,17 @@ body[data-reader-theme="papel"]
 
 }
 
+/* CORREÇÃO DOS LINKS DO SUMÁRIO NO CELULAR */
 
+.dossie-summary nav,
+.dossie-summary ul,
+.dossie-summary li,
+.dossie-summary a {
+    position: relative;
+    z-index: 2;
+}
+
+.dossie-summary a {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
