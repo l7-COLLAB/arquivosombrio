@@ -3344,6 +3344,61 @@ function coletarLinksAfiliadosAdmin() {
         );
 }
 
+async function carregarLivrosSupabase() {
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("livros")
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        livrosSupabase =
+            Array.isArray(data)
+                ? data.map(
+                    livro => ({
+                        ...livro,
+
+                        linksAfiliados:
+                            Array.isArray(
+                                livro.links_afiliados
+                            )
+                                ? livro.links_afiliados
+                                : []
+                    })
+                )
+                : [];
+
+        carregarLivros();
+
+    } catch (erro) {
+
+        console.error(
+            "Não foi possível carregar os livros do Supabase:",
+            erro
+        );
+
+        livrosSupabase = [];
+
+        carregarLivros();
+    }
+}
 
 function obterTodosLivros() {
 
