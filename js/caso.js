@@ -1159,6 +1159,18 @@ function inicializarModoLeitura() {
 
     const barra = document.createElement("div");
     barra.className = "case-reader-toolbar";
+
+   const voltar = document.createElement("a");
+
+voltar.href = "index.html";
+voltar.className = "case-reader-back";
+
+voltar.innerHTML = `
+    <i class="fa-solid fa-arrow-left"></i>
+    <span>Voltar ao Arquivo</span>
+`;
+
+barra.append(voltar);
    
     secao.prepend(barra);
    document.body.classList.add("case-reading");
