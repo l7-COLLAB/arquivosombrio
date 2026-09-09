@@ -1318,183 +1318,524 @@ function inicializarModoLeitura() {
         barra
     );
 }
+
 function configurarPreferenciasLeitura(barra) {
-    const chave = "arquivo_sombrio_preferencias_leitura_v1";
+
+    const chave =
+        "arquivo_sombrio_preferencias_leitura_v1";
+
     let preferencias;
-    try { preferencias = validarPreferenciasLeitura(JSON.parse(localStorage.getItem(chave))); }
-    catch { preferencias = validarPreferenciasLeitura(null); }
 
-    const painel = document.createElement("details");
-    painel.className = "case-reader-settings";
-  painel.innerHTML = `
-    <summary>
-        <span class="reader-summary-icon">Aa</span>
-        <span class="reader-summary-text">Leitura</span>
-    </summary>
+    try {
 
-    <div class="case-reader-controls">
+        preferencias =
+            validarPreferenciasLeitura(
+                JSON.parse(
+                    localStorage.getItem(
+                        chave
+                    )
+                )
+            );
 
-        <div class="reader-control-group">
-            <span class="reader-control-title">
-                Tema
-            </span>
+    } catch {
 
-            <select data-reader-theme>
-                <option value="arquivo">
-                    Escuro
-                </option>
-
-                <option value="papel">
-                    Papel antigo
-                </option>
-            </select>
-        </div>
+        preferencias =
+            validarPreferenciasLeitura(
+                null
+            );
+    }
 
 
-        <div class="reader-control-group">
-            <span class="reader-control-title">
-                Fonte
-            </span>
+    const areaPopovers =
+        barra.querySelector(
+            "[data-reader-popovers]"
+        );
 
-            <select data-reader-font>
-                <option value="baskerville">
-                    Baskerville
-                </option>
+    const botaoTexto =
+        barra.querySelector(
+            "[data-reader-text]"
+        );
 
-                <option value="georgia">
-                    Georgia
-                </option>
+    const botaoTema =
+        barra.querySelector(
+            "[data-reader-theme-button]"
+        );
 
-                <option value="arial">
-                    Arial
-                </option>
+    const botaoFonte =
+        barra.querySelector(
+            "[data-reader-font-button]"
+        );
 
-                <option value="verdana">
-                    Verdana
-                </option>
-            </select>
-        </div>
-
-
-        <div class="reader-control-group">
-
-            <span class="reader-control-title">
-                Tamanho
-            </span>
-
-            <div class="case-reader-size">
-
-                <button
-                    type="button"
-                    data-reader-smaller
-                    aria-label="Diminuir tamanho da letra"
-                >
-                    A−
-                </button>
-
-                <output
-                    data-reader-size
-                    aria-live="polite"
-                ></output>
-
-                <button
-                    type="button"
-                    data-reader-larger
-                    aria-label="Aumentar tamanho da letra"
-                >
-                    A+
-                </button>
-
-            </div>
-
-        </div>
+    const botaoLinhas =
+        barra.querySelector(
+            "[data-reader-lines-button]"
+        );
 
 
-        <div class="reader-control-group">
-
-            <span class="reader-control-title">
-                Linhas
-            </span>
-
-            <select data-reader-spacing>
-                <option value="1.5">
-                    Compacto
-                </option>
-
-                <option value="1.8">
-                    Normal
-                </option>
-
-                <option value="2.1">
-                    Amplo
-                </option>
-            </select>
-
-        </div>
+    if (
+        !areaPopovers ||
+        !botaoTexto ||
+        !botaoTema ||
+        !botaoFonte ||
+        !botaoLinhas
+    ) {
+        return;
+    }
 
 
-        <button
-            type="button"
-            class="reader-reset-button"
-            data-reader-reset
-        >
-            Restaurar padrão
-        </button>
-
-        <small
-            data-reader-save-status
-            role="status"
-            class="reader-save-status"
-        ></small>
-
-    </div>
-`;
-    barra.append(painel);
-    const tema = painel.querySelector("[data-reader-theme]");
-    const fonte = painel.querySelector("[data-reader-font]");
-    const espaco = painel.querySelector("[data-reader-spacing]");
-    const menor = painel.querySelector("[data-reader-smaller]");
-    const maior = painel.querySelector("[data-reader-larger]");
-    const tamanho = painel.querySelector("[data-reader-size]");
     const familias = {
-        baskerville: '"Libre Baskerville", Georgia, serif',
-        georgia: 'Georgia, "Times New Roman", serif',
-        arial: 'Arial, Helvetica, sans-serif',
-        verdana: 'Verdana, Geneva, sans-serif'
+
+        baskerville:
+            '"Libre Baskerville", Georgia, serif',
+
+        georgia:
+            'Georgia, "Times New Roman", serif',
+
+        arial:
+            'Arial, Helvetica, sans-serif',
+
+        verdana:
+            'Verdana, Geneva, sans-serif'
+
     };
-    function aplicar(salvar = false) {
-        preferencias = validarPreferenciasLeitura(preferencias);
-        document.body.dataset.readerTheme = preferencias.tema;
-        document.body.style.setProperty("--reader-font", familias[preferencias.fonte]);
-        document.body.style.setProperty("--reader-size", preferencias.tamanho + "px");
-        document.body.style.setProperty("--reader-spacing", String(preferencias.espaco));
-        tema.value = preferencias.tema;
-        fonte.value = preferencias.fonte;
-        espaco.value = String(preferencias.espaco);
-        tamanho.textContent = preferencias.tamanho + " px";
-        menor.disabled = preferencias.tamanho <= 16;
-        maior.disabled = preferencias.tamanho >= 30;
-        if (salvar) {
-            try {
-                localStorage.setItem(chave, JSON.stringify(preferencias));
-                painel.querySelector("[data-reader-save-status]").textContent = "Preferências salvas neste navegador.";
-            } catch {
-                painel.querySelector("[data-reader-save-status]").textContent = "Ajustes aplicados nesta página. O navegador não permitiu salvar.";
-            }
+
+
+    function salvarPreferencias() {
+
+        try {
+
+            localStorage.setItem(
+                chave,
+                JSON.stringify(
+                    preferencias
+                )
+            );
+
+        } catch (erro) {
+
+            console.warn(
+                "Não foi possível salvar as preferências de leitura.",
+                erro
+            );
         }
     }
-    tema.addEventListener("change", () => { preferencias.tema = tema.value; aplicar(true); });
-    fonte.addEventListener("change", () => { preferencias.fonte = fonte.value; aplicar(true); });
-    espaco.addEventListener("change", () => { preferencias.espaco = Number(espaco.value); aplicar(true); });
-    menor.addEventListener("click", () => { preferencias.tamanho -= 1; aplicar(true); });
-    maior.addEventListener("click", () => { preferencias.tamanho += 1; aplicar(true); });
-    painel.querySelector("[data-reader-reset]").addEventListener("click", () => {
-        preferencias = validarPreferenciasLeitura(null); aplicar(true);
-    });
-    aplicar();
+
+
+    function aplicarPreferencias(
+        salvar = false
+    ) {
+
+        preferencias =
+            validarPreferenciasLeitura(
+                preferencias
+            );
+
+        document.body.dataset.readerTheme =
+            preferencias.tema;
+
+        document.body.style.setProperty(
+            "--reader-font",
+            familias[
+                preferencias.fonte
+            ]
+        );
+
+        document.body.style.setProperty(
+            "--reader-size",
+            preferencias.tamanho +
+                "px"
+        );
+
+        document.body.style.setProperty(
+            "--reader-spacing",
+            String(
+                preferencias.espaco
+            )
+        );
+
+        if (salvar) {
+            salvarPreferencias();
+        }
+    }
+
+
+    function fecharPopover() {
+
+        areaPopovers.innerHTML =
+            "";
+
+        areaPopovers.classList.remove(
+            "active"
+        );
+
+        barra
+            .querySelectorAll(
+                ".case-reader-action.active"
+            )
+            .forEach(
+                botao =>
+                    botao.classList.remove(
+                        "active"
+                    )
+            );
+    }
+
+
+    function abrirPopover(
+        botao,
+        conteudo
+    ) {
+
+        const jaAberto =
+            botao.classList.contains(
+                "active"
+            );
+
+        fecharPopover();
+
+        if (jaAberto) {
+            return;
+        }
+
+        botao.classList.add(
+            "active"
+        );
+
+        areaPopovers.classList.add(
+            "active"
+        );
+
+        areaPopovers.innerHTML =
+            conteudo;
+    }
+
+
+    botaoTexto.addEventListener(
+        "click",
+        () => {
+
+            abrirPopover(
+                botaoTexto,
+                `
+                <div class="reader-popover">
+                    <strong>
+                        Tamanho do texto
+                    </strong>
+
+                    <div class="reader-size-control">
+
+                        <button
+                            type="button"
+                            data-reader-smaller-new
+                            aria-label="Diminuir texto"
+                        >
+                            A−
+                        </button>
+
+                        <span
+                            data-reader-size-new
+                        >
+                            ${preferencias.tamanho}px
+                        </span>
+
+                        <button
+                            type="button"
+                            data-reader-larger-new
+                            aria-label="Aumentar texto"
+                        >
+                            A+
+                        </button>
+
+                    </div>
+                </div>
+                `
+            );
+
+
+            const menor =
+                areaPopovers.querySelector(
+                    "[data-reader-smaller-new]"
+                );
+
+            const maior =
+                areaPopovers.querySelector(
+                    "[data-reader-larger-new]"
+                );
+
+            const tamanho =
+                areaPopovers.querySelector(
+                    "[data-reader-size-new]"
+                );
+
+
+            const atualizar =
+                () => {
+
+                    tamanho.textContent =
+                        preferencias.tamanho +
+                        "px";
+
+                    menor.disabled =
+                        preferencias.tamanho <=
+                        16;
+
+                    maior.disabled =
+                        preferencias.tamanho >=
+                        30;
+                };
+
+
+            menor.addEventListener(
+                "click",
+                () => {
+
+                    preferencias.tamanho -=
+                        1;
+
+                    aplicarPreferencias(
+                        true
+                    );
+
+                    atualizar();
+                }
+            );
+
+
+            maior.addEventListener(
+                "click",
+                () => {
+
+                    preferencias.tamanho +=
+                        1;
+
+                    aplicarPreferencias(
+                        true
+                    );
+
+                    atualizar();
+                }
+            );
+
+
+            atualizar();
+        }
+    );
+
+
+    botaoTema.addEventListener(
+        "click",
+        () => {
+
+            abrirPopover(
+                botaoTema,
+                `
+                <div class="reader-popover">
+                    <strong>
+                        Tema
+                    </strong>
+
+                    <button
+                        type="button"
+                        data-theme-option="arquivo"
+                    >
+                        Escuro
+                    </button>
+
+                    <button
+                        type="button"
+                        data-theme-option="papel"
+                    >
+                        Papel antigo
+                    </button>
+                </div>
+                `
+            );
+
+
+            areaPopovers
+                .querySelectorAll(
+                    "[data-theme-option]"
+                )
+                .forEach(
+                    opcao => {
+
+                        opcao.addEventListener(
+                            "click",
+                            () => {
+
+                                preferencias.tema =
+                                    opcao.dataset
+                                        .themeOption;
+
+                                aplicarPreferencias(
+                                    true
+                                );
+
+                                fecharPopover();
+                            }
+                        );
+                    }
+                );
+        }
+    );
+
+
+    botaoFonte.addEventListener(
+        "click",
+        () => {
+
+            abrirPopover(
+                botaoFonte,
+                `
+                <div class="reader-popover">
+                    <strong>
+                        Fonte
+                    </strong>
+
+                    <button
+                        type="button"
+                        data-font-option="baskerville"
+                    >
+                        Baskerville
+                    </button>
+
+                    <button
+                        type="button"
+                        data-font-option="georgia"
+                    >
+                        Georgia
+                    </button>
+
+                    <button
+                        type="button"
+                        data-font-option="arial"
+                    >
+                        Arial
+                    </button>
+
+                    <button
+                        type="button"
+                        data-font-option="verdana"
+                    >
+                        Verdana
+                    </button>
+                </div>
+                `
+            );
+
+
+            areaPopovers
+                .querySelectorAll(
+                    "[data-font-option]"
+                )
+                .forEach(
+                    opcao => {
+
+                        opcao.addEventListener(
+                            "click",
+                            () => {
+
+                                preferencias.fonte =
+                                    opcao.dataset
+                                        .fontOption;
+
+                                aplicarPreferencias(
+                                    true
+                                );
+
+                                fecharPopover();
+                            }
+                        );
+                    }
+                );
+        }
+    );
+
+
+    botaoLinhas.addEventListener(
+        "click",
+        () => {
+
+            abrirPopover(
+                botaoLinhas,
+                `
+                <div class="reader-popover">
+                    <strong>
+                        Espaçamento
+                    </strong>
+
+                    <button
+                        type="button"
+                        data-spacing-option="1.5"
+                    >
+                        Compacto
+                    </button>
+
+                    <button
+                        type="button"
+                        data-spacing-option="1.8"
+                    >
+                        Normal
+                    </button>
+
+                    <button
+                        type="button"
+                        data-spacing-option="2.1"
+                    >
+                        Amplo
+                    </button>
+                </div>
+                `
+            );
+
+
+            areaPopovers
+                .querySelectorAll(
+                    "[data-spacing-option]"
+                )
+                .forEach(
+                    opcao => {
+
+                        opcao.addEventListener(
+                            "click",
+                            () => {
+
+                                preferencias.espaco =
+                                    Number(
+                                        opcao.dataset
+                                            .spacingOption
+                                    );
+
+                                aplicarPreferencias(
+                                    true
+                                );
+
+                                fecharPopover();
+                            }
+                        );
+                    }
+                );
+        }
+    );
+
+
+    document.addEventListener(
+        "click",
+        evento => {
+
+            if (
+                !barra.contains(
+                    evento.target
+                )
+            ) {
+                fecharPopover();
+            }
+        }
+    );
+
+
+    aplicarPreferencias();
 }
-
-
 
 /* Páginas de leitura: usa o conteúdo original, incluindo imagens e créditos. */
 function calcularPaginaLeitura(total, pagina) {
