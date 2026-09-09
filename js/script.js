@@ -382,7 +382,7 @@ document.addEventListener(
 
         carregarCasosSupabase();
 
-        carregarLivros();
+        carregarLivrosSupabase();
 
         inicializarForum();
 
