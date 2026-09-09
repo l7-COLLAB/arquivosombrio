@@ -1595,44 +1595,29 @@ body[data-reader-theme="papel"]
    ========================================================== */
 
 .dossie-summary {
-
     position: relative;
 
-   width: min(300px, 85%);
- margin: 20px auto 35px;
+    width: min(320px, 90%);
+    min-height: 230px;
 
-    padding: 30px 38px;
+    margin: 25px auto 40px;
 
-   background:
-    linear-gradient(
-        120deg,
-        #cbb78b 0%,
-        #e0cda2 45%,
-        #bda477 100%
-    );
+    padding: 52px 44px 46px;
 
-    color:#2b2117;
+    background:
+        url("../img/sumario-pergaminho.png")
+        center / 100% 100%
+        no-repeat;
 
-    border:1px solid rgba(60,40,15,.5);
+    color: #2b2117;
 
-    box-shadow:
-        0 18px 35px rgba(0,0,0,.35),
-        inset 0 0 45px rgba(80,50,15,.25);
+    border: 0;
+    box-shadow: none;
 
     font-family:
         "Baskerville",
         Georgia,
         serif;
-
-    clip-path:
-        polygon(
-            3% 2%,
-            96% 0,
-            100% 96%,
-            4% 100%,
-            0 6%
-        );
-
 }
 
 
