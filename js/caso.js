@@ -1906,104 +1906,458 @@ function configurarPreferenciasLeitura(barra) {
 function calcularPaginaLeitura(total, pagina) {
     return Math.min(Math.max(0, Math.trunc(pagina) || 0), Math.max(0, total - 1));
 }
+
 function configurarPaginasLeitura(barra) {
-    const artigo = document.querySelector(".case-main-content");
-    if (!artigo || document.getElementById("reader-page-mode")) return;
-    const janela = document.createElement("div");
-    janela.className = "reader-page-window";
-    artigo.before(janela);
-    janela.append(artigo);
-    const controles = document.createElement("div");
-    controles.className = "reader-page-controls";
-    controles.innerHTML = `
-        <label>Formato
-            <select id="reader-page-mode">
-                <option value="scroll">Rolagem contínua</option>
-                <option value="pages">Páginas de livro</option>
-            </select>
-        </label>
-        <div class="reader-page-navigation" hidden>
-            <button type="button" data-page-prev aria-label="Página anterior">← Anterior</button>
-            <output data-page-count aria-live="polite" aria-atomic="true">Página 1 de 1</output>
-            <button type="button" data-page-next aria-label="Próxima página">Próxima →</button>
-        </div>
-    `;
-    barra.append(controles);
-    const seletor = controles.querySelector("select");
-    const nav = controles.querySelector(".reader-page-navigation");
-    const anterior = controles.querySelector("[data-page-prev]");
-    const proxima = controles.querySelector("[data-page-next]");
-    const contador = controles.querySelector("[data-page-count]");
-    let pagina = 0, total = 1, largura = 0, agendado = false;
-    let estavaAtivo = false;
-    const ativo = () => document.body.classList.contains("case-reading") && seletor.value === "pages";
-    function mostrar(destino) {
-        pagina = calcularPaginaLeitura(total, destino);
-        janela.scrollLeft = pagina * largura;
-        contador.textContent = "Página " + (pagina + 1) + " de " + total;
-        anterior.disabled = pagina === 0;
-        proxima.disabled = pagina === total - 1;
+
+    const artigo =
+        document.querySelector(
+            ".case-main-content"
+        );
+
+    const botaoFormato =
+        barra.querySelector(
+            "[data-reader-format-button]"
+        );
+
+    const areaPopovers =
+        barra.querySelector(
+            "[data-reader-popovers]"
+        );
+
+    if (
+        !artigo ||
+        !botaoFormato ||
+        !areaPopovers
+    ) {
+        return;
     }
+
+
+    const janela =
+        document.createElement(
+            "div"
+        );
+
+    janela.className =
+        "reader-page-window";
+
+    artigo.before(
+        janela
+    );
+
+    janela.append(
+        artigo
+    );
+
+
+    const navegacao =
+        document.createElement(
+            "div"
+        );
+
+    navegacao.className =
+        "reader-page-navigation";
+
+    navegacao.hidden =
+        true;
+
+    navegacao.innerHTML = `
+
+        <button
+            type="button"
+            data-page-prev
+            aria-label="Página anterior"
+        >
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <output
+            data-page-count
+            aria-live="polite"
+        >
+            1 / 1
+        </output>
+
+        <button
+            type="button"
+            data-page-next
+            aria-label="Próxima página"
+        >
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+    `;
+
+    barra.append(
+        navegacao
+    );
+
+
+    const anterior =
+        navegacao.querySelector(
+            "[data-page-prev]"
+        );
+
+    const proxima =
+        navegacao.querySelector(
+            "[data-page-next]"
+        );
+
+    const contador =
+        navegacao.querySelector(
+            "[data-page-count]"
+        );
+
+
+    let modo =
+        "scroll";
+
+    let pagina =
+        0;
+
+    let total =
+        1;
+
+    let largura =
+        0;
+
+    let agendado =
+        false;
+
+
+    function paginasAtivas() {
+
+        return (
+            document.body
+                .classList
+                .contains(
+                    "case-reading"
+                ) &&
+            modo ===
+                "pages"
+        );
+    }
+
+
+    function mostrarPagina(
+        destino
+    ) {
+
+        pagina =
+            calcularPaginaLeitura(
+                total,
+                destino
+            );
+
+        janela.scrollLeft =
+            pagina *
+            largura;
+
+        contador.textContent =
+            `${pagina + 1} / ${total}`;
+
+        anterior.disabled =
+            pagina === 0;
+
+        proxima.disabled =
+            pagina ===
+            total - 1;
+    }
+
+
     function recalcular() {
-        agendado = false;
-        const ligar = ativo();
-        const proporcao = total > 1 ? pagina / (total - 1) : 0;
-        if (document.body.classList.contains("case-paginated") !== ligar) {
-            document.body.classList.toggle("case-paginated", ligar);
-        }
-        nav.hidden = !ligar;
-        if (!ligar) {
-            janela.scrollLeft = 0;
-            estavaAtivo = false;
+
+        agendado =
+            false;
+
+        const ativo =
+            paginasAtivas();
+
+        document.body
+            .classList
+            .toggle(
+                "case-paginated",
+                ativo
+            );
+
+        navegacao.hidden =
+            !ativo;
+
+        if (!ativo) {
+
+            janela.scrollLeft =
+                0;
+
+            artigo.style.removeProperty(
+                "--reader-page-height"
+            );
+
+            artigo.style.removeProperty(
+                "--reader-page-width"
+            );
+
             return;
         }
-        largura = janela.clientWidth;
-        if (!largura) return;
-        // Reserva espaço para a barra, inclusive quando os ajustes estão abertos.
-        const altura = Math.max(240, window.innerHeight - barra.getBoundingClientRect().height - 70);
-        artigo.style.setProperty("--reader-page-height", altura + "px");
-        artigo.style.setProperty("--reader-page-width", largura + "px");
-        total = Math.max(1, Math.ceil((artigo.scrollWidth - 1) / largura));
-        mostrar(estavaAtivo ? Math.round(proporcao * (total - 1)) : 0);
-        if (!estavaAtivo) barra.scrollIntoView({block:"start", behavior:"instant"});
-        estavaAtivo = true;
-    }
-    function agendar() {
-        if (agendado) return;
-        agendado = true;
-        requestAnimationFrame(recalcular);
-    }
-    seletor.addEventListener("change", () => {
-        const sairPaginas = estavaAtivo && seletor.value === "scroll";
-        recalcular();
-        if (sairPaginas) artigo.scrollIntoView({block:"start", behavior:"instant"});
-    });
-    anterior.addEventListener("click", () => mostrar(pagina - 1));
-    proxima.addEventListener("click", () => mostrar(pagina + 1));
-    document.addEventListener("keydown", evento => {
-        if (!ativo() || evento.altKey || evento.ctrlKey || evento.metaKey || evento.shiftKey) return;
-        if (evento.target.closest?.("input,textarea,select,button,summary,a,[contenteditable]")) return;
-        if (evento.key === "ArrowRight" || evento.key === "ArrowLeft") {
-            evento.preventDefault();
-            mostrar(pagina + (evento.key === "ArrowRight" ? 1 : -1));
-        }
-    });
-    artigo.addEventListener("focusin", evento => {
-        if (!ativo() || !largura) return;
-        const x = evento.target.getBoundingClientRect().left - janela.getBoundingClientRect().left + janela.scrollLeft;
-        mostrar(Math.floor(x / largura));
-    });
-    window.addEventListener("resize", agendar);
-    artigo.addEventListener("load", agendar, true);
-    artigo.addEventListener("click", agendar);
-    new MutationObserver(agendar).observe(document.body, {attributes:true, attributeFilter:["class","style"]});
-    new MutationObserver(agendar).observe(artigo, {childList:true, subtree:true});
-    if (window.ResizeObserver) {
-        const observador = new ResizeObserver(agendar);
-        observador.observe(janela);
-        observador.observe(barra);
-    }
-    if (document.fonts?.ready) document.fonts.ready.then(agendar);
-    agendar();
-}
 
+
+        largura =
+            janela.clientWidth;
+
+        if (!largura) {
+            return;
+        }
+
+
+        const altura =
+            Math.max(
+                260,
+                window.innerHeight -
+                barra.getBoundingClientRect()
+                    .height -
+                40
+            );
+
+
+        artigo.style.setProperty(
+            "--reader-page-height",
+            altura + "px"
+        );
+
+        artigo.style.setProperty(
+            "--reader-page-width",
+            largura + "px"
+        );
+
+
+        total =
+            Math.max(
+                1,
+                Math.ceil(
+                    (
+                        artigo.scrollWidth -
+                        1
+                    ) /
+                    largura
+                )
+            );
+
+
+        mostrarPagina(
+            pagina
+        );
+    }
+
+
+    function agendar() {
+
+        if (agendado) {
+            return;
+        }
+
+        agendado =
+            true;
+
+        requestAnimationFrame(
+            recalcular
+        );
+    }
+
+
+    function fecharMenuFormato() {
+
+        areaPopovers.innerHTML =
+            "";
+
+        areaPopovers.classList.remove(
+            "active"
+        );
+
+        botaoFormato.classList.remove(
+            "active"
+        );
+    }
+
+
+    botaoFormato.addEventListener(
+        "click",
+        () => {
+
+            const aberto =
+                botaoFormato
+                    .classList
+                    .contains(
+                        "active"
+                    );
+
+            areaPopovers.innerHTML =
+                "";
+
+            barra
+                .querySelectorAll(
+                    ".case-reader-action.active"
+                )
+                .forEach(
+                    botao =>
+                        botao.classList.remove(
+                            "active"
+                        )
+                );
+
+            if (aberto) {
+
+                areaPopovers
+                    .classList
+                    .remove(
+                        "active"
+                    );
+
+                return;
+            }
+
+
+            botaoFormato.classList.add(
+                "active"
+            );
+
+            areaPopovers.classList.add(
+                "active"
+            );
+
+
+            areaPopovers.innerHTML = `
+
+                <div class="reader-popover">
+
+                    <strong>
+                        Formato de leitura
+                    </strong>
+
+                    <button
+                        type="button"
+                        data-format-option="scroll"
+                    >
+                        <i class="fa-solid fa-bars"></i>
+
+                        Rolagem contínua
+                    </button>
+
+                    <button
+                        type="button"
+                        data-format-option="pages"
+                    >
+                        <i class="fa-regular fa-file"></i>
+
+                        Páginas de livro
+                    </button>
+
+                </div>
+
+            `;
+
+
+            areaPopovers
+                .querySelectorAll(
+                    "[data-format-option]"
+                )
+                .forEach(
+                    opcao => {
+
+                        opcao.addEventListener(
+                            "click",
+                            () => {
+
+                                modo =
+                                    opcao.dataset
+                                        .formatOption;
+
+                                pagina =
+                                    0;
+
+                                fecharMenuFormato();
+
+                                recalcular();
+                            }
+                        );
+                    }
+                );
+        }
+    );
+
+
+    anterior.addEventListener(
+        "click",
+        () =>
+            mostrarPagina(
+                pagina - 1
+            )
+    );
+
+
+    proxima.addEventListener(
+        "click",
+        () =>
+            mostrarPagina(
+                pagina + 1
+            )
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        evento => {
+
+            if (
+                !paginasAtivas() ||
+                evento.altKey ||
+                evento.ctrlKey ||
+                evento.metaKey ||
+                evento.shiftKey
+            ) {
+                return;
+            }
+
+            if (
+                evento.target.closest?.(
+                    "input, textarea, select, button, a, [contenteditable]"
+                )
+            ) {
+                return;
+            }
+
+
+            if (
+                evento.key ===
+                "ArrowLeft"
+            ) {
+
+                evento.preventDefault();
+
+                mostrarPagina(
+                    pagina - 1
+                );
+            }
+
+
+            if (
+                evento.key ===
+                "ArrowRight"
+            ) {
+
+                evento.preventDefault();
+
+                mostrarPagina(
+                    pagina + 1
+                );
+            }
+        }
+    );
+
+
+    window.addEventListener(
+        "resize",
+        agendar
+    );
+
+
+    recalcular();
+}
