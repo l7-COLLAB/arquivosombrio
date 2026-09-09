@@ -1539,3 +1539,53 @@ body[data-reader-theme="papel"]
 .reader-underline-status {
     color: #3e3328;
 }
+/* ==========================================================================
+   AJUSTE MOBILE — TODOS OS ÍCONES VISÍVEIS
+   ========================================================================== */
+
+@media (max-width: 700px) {
+
+    .case-reader-toolbar-inner {
+        padding: 0 4px;
+        gap: 2px;
+    }
+
+    .case-reader-back {
+        width: 34px;
+        min-width: 34px;
+    }
+
+    .case-reader-actions {
+        display: grid;
+
+        grid-template-columns:
+            repeat(6, minmax(0, 1fr));
+
+        flex: 1;
+
+        gap: 0;
+
+        overflow: visible;
+    }
+
+    .case-reader-action {
+        width: 100%;
+        min-width: 0;
+
+        min-height: 52px;
+
+        padding:
+            6px 2px;
+    }
+
+    .case-reader-action i,
+    .reader-aa {
+        font-size: 0.95rem;
+    }
+
+    .case-reader-action small {
+        font-size: 0.42rem;
+
+        white-space: nowrap;
+    }
+}
