@@ -1323,6 +1323,7 @@ function inicializarModoLeitura(casoId) {
     barra,
     casoId
 );
+   configurarSumarioDossie();
 }
 
 /* ==========================================================================
@@ -2967,4 +2968,140 @@ function configurarSublinhadoLeitura(
                 ?.removeAllRanges();
         }
     );
+}
+
+/* ==========================================================================
+   SUMÁRIO DO DOSSIÊ — PERGAMINHO
+   ========================================================================== */
+
+function configurarSumarioDossie() {
+
+    const artigo =
+        document.querySelector(
+            ".case-main-content"
+        );
+
+
+    if (!artigo) {
+        return;
+    }
+
+
+    if (
+        document.querySelector(
+            ".dossie-summary"
+        )
+    ) {
+        return;
+    }
+
+
+    const secoes =
+        [
+            {
+                id:
+                    "historico",
+
+                titulo:
+                    "Histórico do Caso"
+            },
+
+            {
+                id:
+                    "evidencias",
+
+                titulo:
+                    "Evidências & Vestígios"
+            },
+
+            {
+                id:
+                    "teorias",
+
+                titulo:
+                    "Teorias"
+            }
+        ];
+
+
+    const sumario =
+        document.createElement(
+            "aside"
+        );
+
+
+    sumario.className =
+        "dossie-summary";
+
+
+    sumario.innerHTML = `
+
+        <div class="dossie-summary-title">
+            SUMÁRIO DO ARQUIVO
+        </div>
+
+
+        <nav>
+            ${
+                secoes.map(
+                    secao => `
+
+                    <a
+                        href="#${secao.id}"
+                        data-summary-target="${secao.id}"
+                    >
+                        ${secao.titulo}
+                    </a>
+
+                    `
+                ).join("")
+            }
+        </nav>
+
+    `;
+
+
+    artigo.before(
+        sumario
+    );
+
+
+    sumario
+        .querySelectorAll(
+            "a"
+        )
+        .forEach(
+            link => {
+
+                link.addEventListener(
+                    "click",
+                    evento => {
+
+                        evento.preventDefault();
+
+
+                        const destino =
+                            document.getElementById(
+                                link.dataset.summaryTarget
+                            );
+
+
+                        if (destino) {
+
+                            destino.scrollIntoView(
+                                {
+                                    behavior:
+                                        "smooth",
+
+                                    block:
+                                        "start"
+                                }
+                            );
+                        }
+                    }
+                );
+
+            }
+        );
+
 }
