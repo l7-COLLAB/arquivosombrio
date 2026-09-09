@@ -26,7 +26,7 @@ const TURNSTILE_SITE_KEY =
 let clienteSupabase = null;
 let promessaSupabaseSDK = null;
 let casosSupabase = [];
-
+let livrosSupabase = [];
 
 /* =========================================================
    CLOUDFLARE TURNSTILE
