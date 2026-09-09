@@ -1601,9 +1601,8 @@ body[data-reader-theme="papel"]
 
     position: relative;
 
-    width: min(380px, 90%);
-
-    margin: 35px auto 55px;
+   width: min(300px, 85%);
+ margin: 20px auto 35px;
 
     padding: 30px 38px;
 
@@ -1720,22 +1719,13 @@ body[data-reader-theme="papel"]
 
     text-decoration:none;
 
-    font-size:18px;
+    font-size:16px;
 
     display:block;
 
 }
 
 
-.dossie-summary a::before {
-
-    content:"0";
-
-    margin-right:12px;
-
-    color:#7a211c;
-
-}
 
 
 .dossie-summary a:hover {
