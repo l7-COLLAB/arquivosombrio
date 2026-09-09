@@ -1319,6 +1319,71 @@ function inicializarModoLeitura() {
     );
 }
 
+/* ==========================================================================
+   VALIDAÇÃO DAS PREFERÊNCIAS DE LEITURA
+   ========================================================================== */
+
+function validarPreferenciasLeitura(valor) {
+
+    const preferencias =
+        valor &&
+        typeof valor === "object"
+            ? valor
+            : {};
+
+    return {
+
+        tema:
+            [
+                "arquivo",
+                "papel"
+            ].includes(
+                preferencias.tema
+            )
+                ? preferencias.tema
+                : "arquivo",
+
+        fonte:
+            [
+                "baskerville",
+                "georgia",
+                "arial",
+                "verdana"
+            ].includes(
+                preferencias.fonte
+            )
+                ? preferencias.fonte
+                : "baskerville",
+
+        tamanho:
+            Number.isFinite(
+                preferencias.tamanho
+            )
+                ? Math.min(
+                    30,
+                    Math.max(
+                        16,
+                        Math.round(
+                            preferencias.tamanho
+                        )
+                    )
+                )
+                : 18,
+
+        espaco:
+            [
+                1.5,
+                1.8,
+                2.1
+            ].includes(
+                preferencias.espaco
+            )
+                ? preferencias.espaco
+                : 1.8
+
+    };
+}
+
 function configurarPreferenciasLeitura(barra) {
 
     const chave =
