@@ -1652,7 +1652,7 @@ body[data-reader-theme="papel"]
     min-height: 230px;
 
     margin: 25px auto 40px;
-    padding: 52px 44px 46px;
+  padding: 38px 44px 34px;
 
    background:
     linear-gradient(
@@ -1695,6 +1695,11 @@ box-shadow:
 
     margin-bottom:22px;
 
+   border-bottom:
+    1px solid rgba(120,90,40,.25);
+
+padding-bottom:12px;
+   
 }
 
 
