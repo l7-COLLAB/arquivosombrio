@@ -437,7 +437,7 @@ async function carregarCaso() {
 
 function renderizarCaso(caso) {
 
-    inicializarModoLeitura();
+  inicializarModoLeitura(caso.id);
 
     preencherTexto(
         "caso-titulo",
@@ -510,7 +510,8 @@ function renderizarCaso(caso) {
     renderizarTeorias(caso.teorias);
 
     renderizarBlocosConteudo(caso);
-
+   
+restaurarSublinhadosLeitura(caso.id);
 
     document.title =
         `${caso.titulo} — Arquivo Sombrio`;
@@ -1153,7 +1154,7 @@ function renderizarBlocosConteudo(caso) {
 
 
 /* Modo de leitura: altera o layout sem copiar ou substituir o conteúdo. */
-function inicializarModoLeitura() {
+function inicializarModoLeitura(casoId) {
 
     const secao =
         document.querySelector(
@@ -1317,6 +1318,11 @@ function inicializarModoLeitura() {
     configurarPaginasLeitura(
         barra
     );
+
+   configurarSublinhadoLeitura(
+    barra,
+    casoId
+);
 }
 
 /* ==========================================================================
@@ -2360,4 +2366,605 @@ function configurarPaginasLeitura(barra) {
 
 
     recalcular();
+}
+
+/* ==========================================================================
+   SUBLINHADOS DO MODO DE LEITURA
+   ========================================================================== */
+
+let ultimaSelecaoLeitura = null;
+
+
+function chaveSublinhadosLeitura(casoId) {
+
+    return (
+        "arquivo_sombrio_sublinhados_" +
+        String(casoId)
+    );
+}
+
+
+function lerSublinhadosLeitura(casoId) {
+
+    try {
+
+        const dados =
+            JSON.parse(
+                localStorage.getItem(
+                    chaveSublinhadosLeitura(
+                        casoId
+                    )
+                )
+            );
+
+        return Array.isArray(dados)
+            ? dados
+            : [];
+
+    } catch {
+
+        return [];
+    }
+}
+
+
+function salvarSublinhadosLeitura(
+    casoId,
+    lista
+) {
+
+    try {
+
+        localStorage.setItem(
+            chaveSublinhadosLeitura(
+                casoId
+            ),
+            JSON.stringify(lista)
+        );
+
+    } catch (erro) {
+
+        console.warn(
+            "Não foi possível salvar os sublinhados.",
+            erro
+        );
+    }
+}
+
+
+function normalizarSublinhadosLeitura(
+    lista
+) {
+
+    const ordenados =
+        lista
+            .filter(
+                item =>
+                    Number.isFinite(
+                        item.inicio
+                    ) &&
+                    Number.isFinite(
+                        item.fim
+                    ) &&
+                    item.fim >
+                        item.inicio
+            )
+            .sort(
+                (a, b) =>
+                    a.inicio -
+                    b.inicio
+            );
+
+
+    const resultado = [];
+
+
+    ordenados.forEach(
+        item => {
+
+            const ultimo =
+                resultado[
+                    resultado.length - 1
+                ];
+
+            if (
+                ultimo &&
+                item.inicio <=
+                    ultimo.fim
+            ) {
+
+                ultimo.fim =
+                    Math.max(
+                        ultimo.fim,
+                        item.fim
+                    );
+
+                return;
+            }
+
+
+            resultado.push({
+                inicio:
+                    item.inicio,
+
+                fim:
+                    item.fim
+            });
+        }
+    );
+
+
+    return resultado;
+}
+
+
+function obterIntervaloSelecaoLeitura() {
+
+    const artigo =
+        document.querySelector(
+            ".case-main-content"
+        );
+
+    const selecao =
+        window.getSelection();
+
+    if (
+        !artigo ||
+        !selecao ||
+        selecao.rangeCount === 0 ||
+        selecao.isCollapsed
+    ) {
+        return null;
+    }
+
+
+    const range =
+        selecao.getRangeAt(0);
+
+
+    const inicioElemento =
+        range.startContainer.nodeType ===
+        Node.TEXT_NODE
+            ? range.startContainer.parentNode
+            : range.startContainer;
+
+    const fimElemento =
+        range.endContainer.nodeType ===
+        Node.TEXT_NODE
+            ? range.endContainer.parentNode
+            : range.endContainer;
+
+
+    if (
+        !artigo.contains(
+            inicioElemento
+        ) ||
+        !artigo.contains(
+            fimElemento
+        )
+    ) {
+        return null;
+    }
+
+
+    const antes =
+        document.createRange();
+
+    antes.selectNodeContents(
+        artigo
+    );
+
+    antes.setEnd(
+        range.startContainer,
+        range.startOffset
+    );
+
+
+    const inicio =
+        antes.toString().length;
+
+    const texto =
+        range.toString();
+
+
+    if (!texto.trim()) {
+        return null;
+    }
+
+
+    return {
+        inicio,
+
+        fim:
+            inicio +
+            texto.length
+    };
+}
+
+
+function removerMarcacoesVisuaisLeitura() {
+
+    const artigo =
+        document.querySelector(
+            ".case-main-content"
+        );
+
+    if (!artigo) {
+        return;
+    }
+
+
+    artigo
+        .querySelectorAll(
+            "mark.reader-underline"
+        )
+        .forEach(
+            marca => {
+
+                const pai =
+                    marca.parentNode;
+
+                while (
+                    marca.firstChild
+                ) {
+
+                    pai.insertBefore(
+                        marca.firstChild,
+                        marca
+                    );
+                }
+
+                marca.remove();
+
+                pai.normalize();
+            }
+        );
+}
+
+
+function aplicarIntervaloSublinhado(
+    inicio,
+    fim
+) {
+
+    const artigo =
+        document.querySelector(
+            ".case-main-content"
+        );
+
+    if (!artigo) {
+        return;
+    }
+
+
+    const walker =
+        document.createTreeWalker(
+            artigo,
+            NodeFilter.SHOW_TEXT
+        );
+
+
+    const partes = [];
+
+    let no;
+    let posicao = 0;
+
+
+    while (
+        (
+            no =
+                walker.nextNode()
+        )
+    ) {
+
+        const tamanho =
+            no.nodeValue.length;
+
+        const inicioNo =
+            posicao;
+
+        const fimNo =
+            posicao +
+            tamanho;
+
+
+        if (
+            fim > inicioNo &&
+            inicio < fimNo
+        ) {
+
+            partes.push({
+                no,
+
+                inicio:
+                    Math.max(
+                        0,
+                        inicio -
+                        inicioNo
+                    ),
+
+                fim:
+                    Math.min(
+                        tamanho,
+                        fim -
+                        inicioNo
+                    )
+            });
+        }
+
+
+        posicao =
+            fimNo;
+    }
+
+
+    partes
+        .reverse()
+        .forEach(
+            parte => {
+
+                if (
+                    parte.fim <=
+                    parte.inicio
+                ) {
+                    return;
+                }
+
+
+                const range =
+                    document.createRange();
+
+                range.setStart(
+                    parte.no,
+                    parte.inicio
+                );
+
+                range.setEnd(
+                    parte.no,
+                    parte.fim
+                );
+
+
+                const marca =
+                    document.createElement(
+                        "mark"
+                    );
+
+                marca.className =
+                    "reader-underline";
+
+
+                try {
+
+                    range.surroundContents(
+                        marca
+                    );
+
+                } catch {
+
+                    /* Ignora apenas trechos
+                       que o navegador não
+                       consegue envolver. */
+                }
+            }
+        );
+}
+
+
+function restaurarSublinhadosLeitura(
+    casoId
+) {
+
+    removerMarcacoesVisuaisLeitura();
+
+
+    const lista =
+        normalizarSublinhadosLeitura(
+            lerSublinhadosLeitura(
+                casoId
+            )
+        );
+
+
+    lista.forEach(
+        item => {
+
+            aplicarIntervaloSublinhado(
+                item.inicio,
+                item.fim
+            );
+        }
+    );
+}
+
+
+function mostrarStatusSublinhado(
+    barra,
+    mensagem
+) {
+
+    const area =
+        barra.querySelector(
+            "[data-reader-popovers]"
+        );
+
+    if (!area) {
+        return;
+    }
+
+
+    area.classList.add(
+        "active"
+    );
+
+    area.innerHTML = `
+        <div class="reader-popover reader-underline-status">
+            ${mensagem}
+        </div>
+    `;
+
+
+    window.setTimeout(
+        () => {
+
+            if (
+                area.querySelector(
+                    ".reader-underline-status"
+                )
+            ) {
+
+                area.innerHTML =
+                    "";
+
+                area.classList.remove(
+                    "active"
+                );
+            }
+        },
+        1400
+    );
+}
+
+
+function configurarSublinhadoLeitura(
+    barra,
+    casoId
+) {
+
+    const botao =
+        barra.querySelector(
+            "[data-reader-underline]"
+        );
+
+    if (!botao) {
+        return;
+    }
+
+
+    document.addEventListener(
+        "selectionchange",
+        () => {
+
+            const intervalo =
+                obterIntervaloSelecaoLeitura();
+
+            if (intervalo) {
+
+                ultimaSelecaoLeitura =
+                    intervalo;
+            }
+        }
+    );
+
+
+    botao.addEventListener(
+        "click",
+        () => {
+
+            const intervalo =
+                obterIntervaloSelecaoLeitura() ||
+                ultimaSelecaoLeitura;
+
+
+            if (!intervalo) {
+
+                mostrarStatusSublinhado(
+                    barra,
+                    "Selecione um trecho do texto primeiro."
+                );
+
+                return;
+            }
+
+
+            let lista =
+                lerSublinhadosLeitura(
+                    casoId
+                );
+
+
+            const sobreposto =
+                lista.some(
+                    item =>
+                        intervalo.inicio <
+                            item.fim &&
+                        intervalo.fim >
+                            item.inicio
+                );
+
+
+            if (sobreposto) {
+
+                lista =
+                    lista.filter(
+                        item =>
+                            !(
+                                intervalo.inicio <
+                                    item.fim &&
+                                intervalo.fim >
+                                    item.inicio
+                            )
+                    );
+
+
+                salvarSublinhadosLeitura(
+                    casoId,
+                    lista
+                );
+
+
+                restaurarSublinhadosLeitura(
+                    casoId
+                );
+
+
+                mostrarStatusSublinhado(
+                    barra,
+                    "Sublinhado removido."
+                );
+
+            } else {
+
+                lista.push({
+                    inicio:
+                        intervalo.inicio,
+
+                    fim:
+                        intervalo.fim
+                });
+
+
+                lista =
+                    normalizarSublinhadosLeitura(
+                        lista
+                    );
+
+
+                salvarSublinhadosLeitura(
+                    casoId,
+                    lista
+                );
+
+
+                restaurarSublinhadosLeitura(
+                    casoId
+                );
+
+
+                mostrarStatusSublinhado(
+                    barra,
+                    "Trecho sublinhado."
+                );
+            }
+
+
+            ultimaSelecaoLeitura =
+                null;
+
+
+            window
+                .getSelection()
+                ?.removeAllRanges();
+        }
+    );
 }
