@@ -1702,3 +1702,115 @@ body[data-reader-theme="papel"]
     color:#7b1e18;
 
 }
+
+/* ==========================================================
+   DETALHES DE PERGAMINHO ENVELHECIDO
+   ========================================================== */
+
+.dossie-summary {
+
+    overflow:hidden;
+
+}
+
+
+/* manchas antigas */
+
+.dossie-summary::after {
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        radial-gradient(
+            circle at 20% 30%,
+            rgba(90,60,20,.15),
+            transparent 22%
+        ),
+
+        radial-gradient(
+            circle at 80% 70%,
+            rgba(70,40,15,.12),
+            transparent 20%
+        );
+
+    pointer-events:none;
+
+}
+
+
+/* cantos desgastados */
+
+.dossie-summary {
+
+    clip-path:
+        polygon(
+            2% 0,
+            98% 1%,
+            100% 97%,
+            96% 100%,
+            3% 98%,
+            0 4%
+        );
+
+}
+
+
+/* aparência documental */
+
+.dossie-summary-title {
+
+    font-family:
+        "Cinzel",
+        "Baskerville",
+        serif;
+
+    color:#4b321c;
+
+}
+
+
+/* itens */
+
+.dossie-summary li {
+
+    position:relative;
+
+    padding-left:18px;
+
+}
+
+
+.dossie-summary li::before {
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    top:50%;
+
+    width:6px;
+
+    height:6px;
+
+    transform:translateY(-50%);
+
+    background:#7b1e18;
+
+    border-radius:50%;
+
+}
+
+
+/* hover mais documental */
+
+.dossie-summary a:hover {
+
+    letter-spacing:.3px;
+
+}
