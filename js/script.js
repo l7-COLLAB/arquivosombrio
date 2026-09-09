@@ -7877,18 +7877,13 @@ if (
 /* ==========================================================================
    SALVAR LIVRO ADMIN
    ========================================================================== */
-function salvarLivroAdmin(
+
+async function salvarLivroAdmin(
     evento,
     livroExistente = null
 ) {
 
     evento.preventDefault();
-
-    const livros =
-        lerStorage(
-            CONFIG.STORAGE_LIVROS
-        );
-
 
     const titulo =
         document
@@ -7899,7 +7894,6 @@ function salvarLivroAdmin(
             .trim() ||
         "";
 
-
     const autor =
         document
             .getElementById(
@@ -7908,7 +7902,6 @@ function salvarLivroAdmin(
             ?.value
             .trim() ||
         "";
-
 
     const capa =
         document
@@ -7919,7 +7912,6 @@ function salvarLivroAdmin(
             .trim() ||
         "";
 
-
     const descricao =
         document
             .getElementById(
@@ -7928,7 +7920,6 @@ function salvarLivroAdmin(
             ?.value
             .trim() ||
         "";
-
 
     const tag =
         document
@@ -7939,7 +7930,6 @@ function salvarLivroAdmin(
             .trim() ||
         "RECOMENDADO";
 
-
     const anoValor =
         document
             .getElementById(
@@ -7948,7 +7938,6 @@ function salvarLivroAdmin(
             ?.value
             .trim() ||
         "";
-
 
     const editora =
         document
@@ -7959,7 +7948,6 @@ function salvarLivroAdmin(
             .trim() ||
         "";
 
-
     const recomendado =
         Boolean(
             document
@@ -7969,49 +7957,35 @@ function salvarLivroAdmin(
                 ?.checked
         );
 
-
     if (!titulo) {
-
         alert(
             "Informe o título do livro."
         );
-
         return;
     }
 
-
     if (!autor) {
-
         alert(
             "Informe o autor do livro."
         );
-
         return;
     }
 
-
     if (!capa) {
-
         alert(
             "Adicione uma capa para o livro."
         );
-
         return;
     }
 
-
     if (!descricao) {
-
         alert(
             "Informe uma descrição para o livro."
         );
-
         return;
     }
 
-
     let ano = null;
-
 
     if (anoValor) {
 
@@ -8019,7 +7993,6 @@ function salvarLivroAdmin(
             Number(
                 anoValor
             );
-
 
         if (
             !Number.isInteger(ano) ||
@@ -8035,21 +8008,7 @@ function salvarLivroAdmin(
         }
     }
 
-
-    const criadoEm =
-        livroExistente?.criadoEm ||
-        livroExistente?.created_at ||
-        new Date().toISOString();
-
-
     const livro = {
-
-        id:
-            livroExistente
-                ? Number(
-                    livroExistente.id
-                )
-                : Date.now(),
 
         titulo,
 
@@ -8067,62 +8026,81 @@ function salvarLivroAdmin(
 
         recomendado,
 
-        criadoEm,
-
-        linksAfiliados:
+        links_afiliados:
             coletarLinksAfiliadosAdmin()
 
     };
 
+    try {
 
-    if (livroExistente) {
+        const sessao =
+            await obterSessaoAdmin();
 
-        const indice =
-            livros.findIndex(
-                item =>
-                    Number(item.id) ===
-                    Number(
-                        livroExistente.id
-                    )
-            );
+        if (!sessao) {
 
-
-        if (indice !== -1) {
-
-            livros[indice] =
-                livro;
-
-        } else {
-
-            livros.unshift(
-                livro
+            throw new Error(
+                "Sua sessão administrativa expirou. Entre novamente."
             );
         }
 
+        const supabaseClient =
+            await obterClienteSupabase();
 
-    } else {
+        let consulta;
 
-        livros.unshift(
-            livro
-        );
-    }
+        if (livroExistente?.id) {
 
+            consulta =
+                supabaseClient
+                    .from("livros")
+                    .update(livro)
+                    .eq(
+                        "id",
+                        livroExistente.id
+                    );
 
-    if (
-        salvarStorage(
-            CONFIG.STORAGE_LIVROS,
-            livros
-        )
-    ) {
+        } else {
+
+            consulta =
+                supabaseClient
+                    .from("livros")
+                    .insert(livro);
+        }
+
+        const {
+            error
+        } =
+            await consulta;
+
+        if (error) {
+            throw error;
+        }
 
         fecharFormularioAdmin();
 
-        carregarLivros();
+        await carregarLivrosSupabase();
 
         renderizarGerenciadorAdmin();
+
+        alert(
+            livroExistente
+                ? "Livro atualizado com sucesso."
+                : "Livro cadastrado com sucesso."
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao salvar livro no Supabase:",
+            erro
+        );
+
+        alert(
+            erro?.message ||
+            "Não foi possível salvar o livro."
+        );
     }
 }
-
 
 /* ==========================================================================
    EDIÇÃO
