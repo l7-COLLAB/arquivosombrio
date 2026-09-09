@@ -8175,36 +8175,78 @@ async function editarCaso(id) {
 }
 
 
-function editarLivro(id) {
+async function editarLivro(id) {
 
-    const livros =
-        lerStorage(
-            CONFIG.STORAGE_LIVROS
+    try {
+
+        let livro =
+            livrosSupabase.find(
+                item =>
+                    String(item.id) ===
+                    String(id)
+            );
+
+        if (!livro) {
+
+            const supabaseClient =
+                await obterClienteSupabase();
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from("livros")
+                    .select("*")
+                    .eq(
+                        "id",
+                        id
+                    )
+                    .single();
+
+            if (error) {
+                throw error;
+            }
+
+            livro =
+                data
+                    ? {
+                        ...data,
+
+                        linksAfiliados:
+                            Array.isArray(
+                                data.links_afiliados
+                            )
+                                ? data.links_afiliados
+                                : []
+                    }
+                    : null;
+        }
+
+        if (!livro) {
+
+            throw new Error(
+                "Livro não encontrado."
+            );
+        }
+
+        abrirFormularioAdmin(
+            "livro",
+            livro
         );
 
+    } catch (erro) {
 
-    const livro =
-        livros.find(
-            item =>
-                Number(item.id) ===
-                Number(id)
+        console.error(
+            "Erro ao abrir livro para edição:",
+            erro
         );
-
-
-    if (!livro) {
 
         alert(
-            "Livro não encontrado."
+            erro?.message ||
+            "Não foi possível abrir este livro."
         );
-
-        return;
     }
-
-
-    abrirFormularioAdmin(
-        "livro",
-        livro
-    );
 }
 
 
