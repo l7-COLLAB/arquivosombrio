@@ -2975,7 +2975,7 @@ function configurarSublinhadoLeitura(
    ========================================================================== */
 
 function configurarSumarioDossie() {
-alert("sumário carregou");
+
     const artigo =
         document.querySelector(
             ".case-main-content"
