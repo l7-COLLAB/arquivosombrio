@@ -8292,41 +8292,7 @@ async function removerCaso(id) {
 }
 
 
-function removerLivro(id) {
 
-    const confirmar =
-        confirm(
-            "Tem certeza que deseja excluir este livro?"
-        );
-
-
-    if (!confirmar) {
-
-        return;
-    }
-
-
-    const livros =
-        lerStorage(
-            CONFIG.STORAGE_LIVROS
-        )
-            .filter(
-                livro =>
-                    Number(livro.id) !==
-                    Number(id)
-            );
-
-
-    salvarStorage(
-        CONFIG.STORAGE_LIVROS,
-        livros
-    );
-
-
-    carregarLivros();
-
-    renderizarGerenciadorAdmin();
-}
 
 
 /* ==========================================================================
@@ -8348,7 +8314,68 @@ function fecharFormularioAdmin() {
         );
     }
 }
+async function removerLivro(id) {
 
+    const confirmar =
+        confirm(
+            "Tem certeza que deseja excluir este livro? Esta ação não poderá ser desfeita."
+        );
+
+    if (!confirmar) {
+        return;
+    }
+
+    try {
+
+        const sessao =
+            await obterSessaoAdmin();
+
+        if (!sessao) {
+
+            throw new Error(
+                "Sua sessão administrativa expirou. Entre novamente."
+            );
+        }
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("livros")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        await carregarLivrosSupabase();
+
+        renderizarGerenciadorAdmin();
+
+        alert(
+            "Livro excluído com sucesso."
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao excluir livro do Supabase:",
+            erro
+        );
+
+        alert(
+            erro?.message ||
+            "Não foi possível excluir o livro."
+        );
+    }
+}
 
 /* ==========================================================================
    MODAIS
