@@ -1501,3 +1501,41 @@ body[data-reader-theme="papel"]
         margin-bottom: 8px;
     }
 }
+
+/* ==========================================================================
+   SUBLINHADOS DO LEITOR
+   ========================================================================== */
+
+.reader-underline {
+    color: inherit;
+    background: transparent;
+
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: #a88a55;
+    text-underline-offset: 4px;
+
+    text-decoration-skip-ink: auto;
+}
+
+
+body[data-reader-theme="papel"]
+.reader-underline {
+    text-decoration-color: #8b552c;
+}
+
+
+.reader-underline-status {
+    text-align: center;
+
+    color: var(--paper-soft);
+
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+}
+
+
+body[data-reader-theme="papel"]
+.reader-underline-status {
+    color: #3e3328;
+}
