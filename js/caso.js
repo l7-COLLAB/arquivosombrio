@@ -1197,42 +1197,129 @@ function configurarPreferenciasLeitura(barra) {
 
     const painel = document.createElement("details");
     painel.className = "case-reader-settings";
-    painel.innerHTML = `
-        <summary>Ajustar leitura</summary>
-        <div class="case-reader-controls">
-            <label>Tema
-                <select data-reader-theme>
-                    <option value="arquivo">Arquivo escuro</option>
-                    <option value="papel">Papel antigo</option>
-                </select>
-            </label>
-            <label>Fonte
-                <select data-reader-font>
-                    <option value="baskerville">Libre Baskerville</option>
-                    <option value="georgia">Georgia</option>
-                    <option value="arial">Arial</option>
-                    <option value="verdana">Verdana</option>
-                </select>
-            </label>
-            <div>
-                <span>Tamanho da letra</span>
-                <div class="case-reader-size">
-                    <button type="button" data-reader-smaller aria-label="Diminuir tamanho da letra">A−</button>
-                    <output data-reader-size aria-live="polite"></output>
-                    <button type="button" data-reader-larger aria-label="Aumentar tamanho da letra">A+</button>
-                </div>
-            </div>
-            <label>Espaçamento entre linhas
-                <select data-reader-spacing>
-                    <option value="1.5">Compacto</option>
-                    <option value="1.8">Normal</option>
-                    <option value="2.1">Amplo</option>
-                </select>
-            </label>
-            <button type="button" data-reader-reset>Restaurar padrão</button>
-            <small data-reader-save-status role="status">Preferências salvas neste navegador.</small>
+  painel.innerHTML = `
+    <summary>
+        <span class="reader-summary-icon">Aa</span>
+        <span class="reader-summary-text">Leitura</span>
+    </summary>
+
+    <div class="case-reader-controls">
+
+        <div class="reader-control-group">
+            <span class="reader-control-title">
+                Tema
+            </span>
+
+            <select data-reader-theme>
+                <option value="arquivo">
+                    Escuro
+                </option>
+
+                <option value="papel">
+                    Papel antigo
+                </option>
+            </select>
         </div>
-    `;
+
+
+        <div class="reader-control-group">
+            <span class="reader-control-title">
+                Fonte
+            </span>
+
+            <select data-reader-font>
+                <option value="baskerville">
+                    Baskerville
+                </option>
+
+                <option value="georgia">
+                    Georgia
+                </option>
+
+                <option value="arial">
+                    Arial
+                </option>
+
+                <option value="verdana">
+                    Verdana
+                </option>
+            </select>
+        </div>
+
+
+        <div class="reader-control-group">
+
+            <span class="reader-control-title">
+                Tamanho
+            </span>
+
+            <div class="case-reader-size">
+
+                <button
+                    type="button"
+                    data-reader-smaller
+                    aria-label="Diminuir tamanho da letra"
+                >
+                    A−
+                </button>
+
+                <output
+                    data-reader-size
+                    aria-live="polite"
+                ></output>
+
+                <button
+                    type="button"
+                    data-reader-larger
+                    aria-label="Aumentar tamanho da letra"
+                >
+                    A+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="reader-control-group">
+
+            <span class="reader-control-title">
+                Linhas
+            </span>
+
+            <select data-reader-spacing>
+                <option value="1.5">
+                    Compacto
+                </option>
+
+                <option value="1.8">
+                    Normal
+                </option>
+
+                <option value="2.1">
+                    Amplo
+                </option>
+            </select>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="reader-reset-button"
+            data-reader-reset
+        >
+            Restaurar padrão
+        </button>
+
+        <small
+            data-reader-save-status
+            role="status"
+            class="reader-save-status"
+        ></small>
+
+    </div>
+`;
     barra.append(painel);
     const tema = painel.querySelector("[data-reader-theme]");
     const fonte = painel.querySelector("[data-reader-font]");
