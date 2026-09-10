@@ -584,11 +584,11 @@ button {
 }
 
 .btn-primary {
-    border: 1px solid var(--red);
-
-    color: white;
+    color: #fff;
 
     background: var(--red);
+
+    border: 1px solid var(--red);
 }
 
 .btn-primary:hover {
@@ -596,736 +596,582 @@ button {
 }
 
 .btn-secondary {
-    border: 1px solid var(--border);
-
-    color: var(--paper);
+    color: var(--paper-soft);
 
     background: transparent;
+
+    border: 1px solid var(--border);
 }
 
 .btn-secondary:hover {
+    color: var(--paper);
+
     border-color: var(--gold);
 }
 
-.hero-meta {
-    display: grid;
+.hero-warning {
+    display: flex;
+    align-items: flex-start;
 
-    grid-template-columns:
-        repeat(3, 1fr);
+    gap: 11px;
 
-    gap: 12px;
+    max-width: 560px;
 
-    margin-top: 35px;
-}
+    margin-top: 30px;
 
-.hero-meta div {
-    padding: 14px;
+    padding-top: 18px;
 
-    background: rgba(255, 255, 255, 0.018);
-
-    border: 1px solid var(--border);
-}
-
-.hero-meta span {
-    display: block;
+    border-top: 1px solid var(--border);
 
     color: var(--muted);
 
-    font-family: var(--font-mono);
-    font-size: 0.5rem;
-
-    letter-spacing: 0.11em;
+    font-size: 0.7rem;
 }
 
-.hero-meta strong {
-    display: block;
+.hero-warning i {
+    margin-top: 4px;
 
-    margin-top: 5px;
-
-    color: var(--paper);
-
-    font-size: 0.8rem;
+    color: var(--gold);
 }
 
-.case-file-card {
+
+/* ==========================================================================
+   DOSSIÊ DO HERO
+   ========================================================================== */
+
+.hero-dossier {
+    display: flex;
+    justify-content: center;
+}
+
+.dossier-paper {
     position: relative;
 
-    max-width: 410px;
+    width: min(100%, 360px);
 
-    margin-left: auto;
+    min-height: 460px;
 
     padding: 30px;
 
+    color: #26201c;
+
     background:
         linear-gradient(
-            rgba(21, 18, 16, 0.96),
-            rgba(12, 10, 9, 0.98)
-        );
+            rgba(255, 255, 255, 0.12),
+            rgba(0, 0, 0, 0.03)
+        ),
+        #cbbfae;
 
-    border: 1px solid var(--border-strong);
-
-    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5);
+    box-shadow:
+        0 35px 70px rgba(0, 0, 0, 0.45);
 
     transform: rotate(2deg);
 }
 
-.case-stamp {
+.dossier-paper::before {
+    content: "";
+
     position: absolute;
+    inset: 0;
 
-    top: 24px;
-    right: 24px;
+    opacity: 0.13;
 
-    padding: 7px 10px;
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
-    border: 1px solid var(--red-light);
+    pointer-events: none;
+}
 
-    color: var(--red-light);
+.dossier-top {
+    position: relative;
+
+    display: flex;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.35);
 
     font-family: var(--font-mono);
-    font-size: 0.54rem;
+    font-size: 0.55rem;
+}
 
-    letter-spacing: 0.13em;
+.dossier-top strong {
+    color: #710b0b;
+}
+
+.dossier-stamp {
+    position: relative;
+
+    width: fit-content;
+
+    margin: 35px auto;
+
+    padding: 8px 12px;
+
+    border: 3px solid rgba(113, 11, 11, 0.7);
+
+    color: rgba(113, 11, 11, 0.75);
+
+    font-family: var(--font-display);
+    font-weight: 700;
+
+    letter-spacing: 0.09em;
 
     transform: rotate(-8deg);
 }
 
-.case-number {
-    color: var(--gold);
+.dossier-lines {
+    position: relative;
 
-    font-family: var(--font-mono);
-    font-size: 0.58rem;
-
-    letter-spacing: 0.15em;
-}
-
-.case-file-card h3 {
-    margin: 14px 0 12px;
-
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-
-    line-height: 1.35;
-}
-
-.case-file-card p {
-    color: var(--paper-soft);
-
-    font-size: 0.82rem;
-
-    line-height: 1.8;
-}
-
-.case-lines {
     display: flex;
     flex-direction: column;
 
-    gap: 10px;
-
-    margin-top: 22px;
+    gap: 16px;
 }
 
-.case-lines span {
-    height: 1px;
+.dossier-lines div {
+    display: flex;
+    flex-direction: column;
 
-    background:
-        linear-gradient(
-            90deg,
-            var(--border-strong),
-            transparent
-        );
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.18);
 }
 
-.case-note {
-    margin-top: 22px;
-    padding-top: 18px;
+.dossier-lines small {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+}
 
-    border-top: 1px dashed var(--border);
-
-    color: var(--muted);
+.dossier-lines strong {
+    margin-top: 3px;
 
     font-family: var(--font-mono);
-    font-size: 0.56rem;
+    font-size: 0.68rem;
+}
 
-    line-height: 1.7;
+.fingerprint-mark {
+    position: absolute;
+
+    right: 25px;
+    bottom: 35px;
+
+    color: rgba(0, 0, 0, 0.18);
+
+    font-size: 5rem;
+}
+
+.dossier-code {
+    position: absolute;
+
+    left: 30px;
+    bottom: 30px;
+
+    font-family: var(--font-mono);
+    font-size: 0.48rem;
 }
 
 
 /* ==========================================================================
-   FAIXA EDITORIAL
+   FAIXA
    ========================================================================== */
 
-.editorial-strip {
-    border-bottom: 1px solid var(--border);
+.archive-strip {
+    background: #050504;
 
-    background: var(--bg-soft);
+    border-bottom: 1px solid var(--border);
 }
 
-.editorial-strip-track {
-    min-height: 53px;
+.archive-strip-content {
+    min-height: 54px;
 
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 
-    gap: 24px;
+    gap: 25px;
+
+    overflow-x: auto;
+}
+
+.archive-strip-content span {
+    flex-shrink: 0;
 
     color: var(--muted);
 
     font-family: var(--font-mono);
-    font-size: 0.56rem;
+    font-size: 0.57rem;
 
-    letter-spacing: 0.13em;
+    letter-spacing: 0.08em;
 }
 
-.editorial-strip-track i {
+.archive-strip-content i {
+    margin-right: 6px;
+
     color: var(--red-light);
-
-    font-size: 0.42rem;
 }
-
-
 /* ==========================================================================
    SEÇÕES
    ========================================================================== */
 
-section {
-    padding-block: 90px;
+.content-section {
+    padding: 95px 0;
+
+    border-bottom: 1px solid var(--border);
 }
 
-.section-heading {
-    max-width: 770px;
+.forensic-section {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(123, 9, 9, 0.035),
+            transparent
+        );
+}
+
+.books-section {
+    background: #0a0908;
+}
+
+.forum-section {
+    background:
+        linear-gradient(
+            160deg,
+            #0e0c0b,
+            #080706
+        );
+}
+
+.suggestion-section {
+    background:
+        radial-gradient(
+            circle at 20% 50%,
+            rgba(123, 9, 9, 0.1),
+            transparent 40%
+        );
+}
+
+.section-header {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(280px, 0.65fr);
+
+    gap: 70px;
+
+    align-items: end;
 
     margin-bottom: 42px;
+
+    padding-bottom: 25px;
+
+    border-bottom: 1px solid var(--border);
 }
 
-.section-heading h2 {
-    margin: 11px 0 14px;
+.section-number {
+    display: inline-block;
+
+    margin-bottom: 10px;
+
+    color: var(--red-light);
+
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+
+    letter-spacing: 0.12em;
+}
+
+.section-header h2,
+.suggestion-copy h2 {
+    margin-top: 8px;
 
     font-family: var(--font-display);
-    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-size: clamp(2rem, 4vw, 3.1rem);
 
     line-height: 1.15;
 }
 
-.section-heading p {
-    color: var(--paper-soft);
+.section-description {
+    color: var(--muted);
 
-    font-size: 0.88rem;
+    font-size: 0.83rem;
 
     line-height: 1.85;
 }
 
 
 /* ==========================================================================
-   DOSSIÊS
+   CASOS
    ========================================================================== */
 
-.dossiers-section {
-    background:
-        linear-gradient(
-            rgba(255, 255, 255, 0.008),
-            transparent
-        );
-}
-
-.dossier-grid {
+.casos-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(3, minmax(0, 1fr));
+        repeat(
+            auto-fit,
+            minmax(280px, 1fr)
+        );
 
-    gap: 22px;
+    gap: 24px;
 }
 
-.dossier-card {
-    position: relative;
+.case-card {
+    min-width: 0;
 
-    min-height: 340px;
-
-    overflow: hidden;
+    background:
+        linear-gradient(
+            145deg,
+            var(--bg-card-2),
+            var(--bg-soft)
+        );
 
     border: 1px solid var(--border);
 
-    background: var(--bg-card);
+    overflow: hidden;
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
-.dossier-card-image {
+.case-card:hover {
+    transform: translateY(-6px);
+
+    border-color: var(--border-strong);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.case-card-link {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+}
+
+.card-image {
+    position: relative;
+
+    height: 230px;
+
+    overflow: hidden;
+
+    background: #050505;
+}
+
+.card-image::after {
+    content: "";
+
     position: absolute;
     inset: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent 35%,
+            rgba(0, 0, 0, 0.7)
+        );
+
+    pointer-events: none;
 }
 
-.dossier-card-image img {
-    width: 100%;
+.card-image img {
     height: 100%;
 
     object-fit: cover;
 
     filter:
-        grayscale(1)
-        contrast(1.08)
-        brightness(0.46);
+        grayscale(25%)
+        brightness(0.72)
+        contrast(1.08);
 
     transition:
         transform 0.5s ease,
         filter 0.5s ease;
 }
 
-.dossier-card:hover
-.dossier-card-image img {
+.case-card:hover .card-image img {
     transform: scale(1.05);
 
     filter:
-        grayscale(0.72)
-        contrast(1.05)
-        brightness(0.55);
+        grayscale(0%)
+        brightness(0.82)
+        contrast(1.08);
 }
 
-.dossier-card-overlay {
-    position: absolute;
-    inset: 0;
+.badge {
+    display: inline-flex;
+    align-items: center;
 
-    background:
-        linear-gradient(
-            to top,
-            rgba(7, 6, 5, 0.98) 10%,
-            rgba(7, 6, 5, 0.62) 55%,
-            rgba(7, 6, 5, 0.2)
-        );
-}
-
-.dossier-card-content {
-    position: relative;
-
-    min-height: 340px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-
-    padding: 24px;
-
-    z-index: 2;
-}
-
-.dossier-label {
     width: fit-content;
 
-    margin-bottom: auto;
+    padding: 6px 9px;
 
-    padding: 6px 8px;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
 
-    border: 1px solid var(--red);
+    letter-spacing: 0.08em;
+}
+
+.badge.status {
+    position: absolute;
+
+    z-index: 2;
+
+    right: 13px;
+    top: 13px;
 
     color: var(--paper);
 
-    background: rgba(123, 9, 9, 0.22);
+    background: rgba(0, 0, 0, 0.75);
 
-    font-family: var(--font-mono);
-    font-size: 0.52rem;
-
-    text-transform: uppercase;
-    letter-spacing: 0.09em;
+    border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
-.dossier-card h3 {
-    margin-bottom: 9px;
+.badge.category {
+    margin-bottom: 13px;
+
+    color: #fff;
+
+    background: var(--red);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+
+    padding: 22px;
+}
+
+.card-content h3 {
+    margin-bottom: 11px;
 
     font-family: var(--font-display);
-    font-size: 1.14rem;
+    font-size: 1.08rem;
 
     line-height: 1.35;
 }
 
-.dossier-card p {
-    color: var(--paper-soft);
-
-    font-size: 0.75rem;
-
-    line-height: 1.7;
-}
-
-.dossier-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 15px;
-
-    margin-top: 18px;
-    padding-top: 13px;
-
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
-
-    color: var(--muted);
-
-    font-family: var(--font-mono);
-    font-size: 0.52rem;
-}
-
-.dossier-card-footer a {
-    color: var(--gold-light);
-}
-
-
-/* ==========================================================================
-   CIÊNCIA FORENSE
-   ========================================================================== */
-
-.forensic-section {
-    border-block: 1px solid var(--border);
-
-    background: var(--bg-soft);
-}
-
-.forensic-layout {
-    display: grid;
-
-    grid-template-columns:
-        0.9fr
-        1.1fr;
-
-    gap: 65px;
-
-    align-items: center;
-}
-
-.forensic-visual {
-    min-height: 430px;
-
-    display: grid;
-    place-items: center;
-
-    position: relative;
-
-    border: 1px solid var(--border);
-
-    background:
-        radial-gradient(
-            circle at center,
-            rgba(123, 9, 9, 0.12),
-            transparent 62%
-        ),
-        #0b0908;
-}
-
-.fingerprint {
-    width: 210px;
-    height: 260px;
-
-    border-radius: 46% 46% 42% 42%;
-
-    opacity: 0.58;
-
-    background:
-        repeating-radial-gradient(
-            ellipse at center,
-            transparent 0 8px,
-            rgba(196, 170, 112, 0.45) 9px 10px,
-            transparent 11px 16px
-        );
-
-    transform: rotate(-8deg);
-}
-
-.forensic-tag {
-    position: absolute;
-
-    left: 20px;
-    bottom: 18px;
-
-    color: var(--muted);
-
-    font-family: var(--font-mono);
-    font-size: 0.54rem;
-
-    letter-spacing: 0.1em;
-}
-
-.forensic-content h2 {
-    margin: 11px 0 18px;
-
-    font-family: var(--font-display);
-    font-size: clamp(1.9rem, 4vw, 3rem);
-}
-
-.forensic-content > p {
-    color: var(--paper-soft);
-
-    font-size: 0.88rem;
-
-    line-height: 1.9;
-}
-
-.forensic-list {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 12px;
-
-    margin-top: 26px;
-}
-
-.forensic-list div {
-    display: flex;
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 14px;
-
-    border: 1px solid var(--border);
-
-    color: var(--paper-soft);
-
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-}
-
-.forensic-list i {
-    color: var(--red-light);
-}
-
-
-/* ==========================================================================
-   BIBLIOTECA
-   ========================================================================== */
-
-.library-section {
-    background:
-        linear-gradient(
-            to bottom,
-            transparent,
-            rgba(168, 140, 85, 0.025),
-            transparent
-        );
-}
-
-.library-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-
-    gap: 18px;
-}
-
-.book-card {
-    min-height: 330px;
-
+.card-meta {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 
-    padding: 24px 20px;
+    gap: 5px;
 
-    border: 1px solid var(--border);
+    margin-bottom: 14px;
 
-    background:
-        linear-gradient(
-            90deg,
-            rgba(123, 9, 9, 0.2),
-            transparent 10%
-        ),
-        var(--bg-card);
+    color: var(--muted-dark);
 
-    transition:
-        transform 0.3s ease,
-        border-color 0.3s ease;
+    font-family: var(--font-mono);
+    font-size: 0.57rem;
 }
 
-.book-card:hover {
-    transform: translateY(-6px);
-
-    border-color: var(--gold);
-}
-
-.book-icon {
-    width: 44px;
-    height: 44px;
-
-    display: grid;
-    place-items: center;
-
-    border: 1px solid var(--red);
+.card-meta i {
+    width: 15px;
 
     color: var(--red-light);
 }
 
-.book-card h3 {
-    margin: 35px 0 12px;
+.card-summary {
+    flex: 1;
 
-    font-family: var(--font-display);
-    font-size: 1rem;
+    margin-bottom: 20px;
 
-    line-height: 1.45;
-}
+    color: var(--muted);
 
-.book-card p {
-    color: var(--paper-soft);
-
-    font-size: 0.72rem;
+    font-size: 0.78rem;
 
     line-height: 1.75;
 }
 
-.book-meta {
-    margin-top: 22px;
+.btn-read-more {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
     padding-top: 14px;
+
+    color: var(--paper-soft);
 
     border-top: 1px solid var(--border);
 
-    color: var(--muted);
-
     font-family: var(--font-mono);
-    font-size: 0.53rem;
+    font-size: 0.61rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.07em;
+}
+
+.btn-read-more i {
+    color: var(--red-light);
 }
 
 
 /* ==========================================================================
-   IMAGENS HISTÓRICAS
-   ========================================================================== */
-
-.history-section {
-    background: var(--bg-soft);
-
-    border-block: 1px solid var(--border);
-}
-
-.history-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
-    gap: 20px;
-}
-
-.history-card {
-    border: 1px solid var(--border);
-
-    background: var(--bg-card);
-
-    overflow: hidden;
-}
-
-.history-card-image {
-    height: 230px;
-
-    overflow: hidden;
-}
-
-.history-card-image img {
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-    filter:
-        grayscale(1)
-        sepia(0.12)
-        contrast(1.05);
-
-    transition:
-        transform 0.5s ease,
-        filter 0.5s ease;
-}
-
-.history-card:hover
-.history-card-image img {
-    transform: scale(1.05);
-
-    filter:
-        grayscale(0.65)
-        sepia(0.08);
-}
-
-.history-card-content {
-    padding: 20px;
-}
-
-.history-card-content span {
-    color: var(--gold);
-
-    font-family: var(--font-mono);
-    font-size: 0.52rem;
-
-    letter-spacing: 0.09em;
-}
-
-.history-card-content h3 {
-    margin: 9px 0 9px;
-
-    font-family: var(--font-display);
-    font-size: 1rem;
-}
-
-.history-card-content p {
-    color: var(--paper-soft);
-
-    font-size: 0.72rem;
-
-    line-height: 1.7;
-}
-
-
-/* ==========================================================================
-   INTRODUÇÃO FORENSE
+   PERÍCIA
    ========================================================================== */
 
 .forensic-intro {
     display: grid;
 
     grid-template-columns:
-        repeat(3, minmax(0, 1fr));
+        repeat(3, 1fr);
 
-    gap: 14px;
+    gap: 15px;
 
-    margin-top: 32px;
+    margin-bottom: 32px;
 }
 
 .forensic-intro-item {
-    display: grid;
-
-    grid-template-columns:
-        42px 1fr;
-
-    gap: 12px;
-
+    display: flex;
     align-items: center;
 
-    padding: 16px;
+    gap: 14px;
+
+    padding: 18px;
+
+    background: var(--bg-soft);
 
     border: 1px solid var(--border);
-
-    background: rgba(255, 255, 255, 0.012);
 }
 
 .forensic-intro-item > i {
-    color: var(--red-light);
+    color: var(--gold);
 
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
 
 .forensic-intro-item small {
     display: block;
 
-    color: var(--muted);
+    color: var(--muted-dark);
 
     font-family: var(--font-mono);
-    font-size: 0.48rem;
+    font-size: 0.51rem;
 }
 
 .forensic-intro-item strong {
     display: block;
 
-    margin-top: 4px;
+    margin-top: 2px;
 
     color: var(--paper-soft);
 
+    font-family: var(--font-mono);
     font-size: 0.66rem;
 }
+
 
 /* ==========================================================================
    LIVROS
@@ -1551,7 +1397,6 @@ section {
     word-break: break-word;
 }
 
-
 /* ==========================================================================
    FORMULÁRIOS
    ========================================================================== */
@@ -1700,8 +1545,6 @@ form {
 
     border: 1px solid var(--border);
 }
-
-
 /* ==========================================================================
    ESTADOS
    ========================================================================== */
@@ -2441,7 +2284,6 @@ form {
 
     border-color: var(--red);
 }
-
 
 /* ==========================================================================
    ESTANTE SOMBRIA — CATEGORIAS
@@ -3234,7 +3076,6 @@ form {
         );
 }
 
-
 .admin-affiliate-hint {
     display: block;
 
@@ -3675,7 +3516,6 @@ form {
         0.08em;
 }
 
-
 /* ==========================================================================
    RODAPÉ
    ========================================================================== */
@@ -3913,7 +3753,6 @@ form {
         border-color 0.22s ease,
         background 0.22s ease;
 }
-
 
 .forensic-intro-link:hover {
     transform: translateY(-3px);
@@ -4461,9 +4300,8 @@ select:focus-visible {
    FIM
    ========================================================================== */
 
-
 /* ==========================================================================
-   FILTROS DA BIBOTECA
+   FILTROS DA BIBLIOTECA
    ========================================================================== */
 
 .books-filter-panel {
@@ -4484,7 +4322,6 @@ select:focus-visible {
     align-items: center;
     margin-bottom: 18px;
 }
-
 
 .books-filter-search > i {
     position: absolute;
@@ -4724,6 +4561,7 @@ select:focus-visible {
 
 }
 
+
 @media (max-width: 650px) {
 
     .books-filter-panel {
@@ -4755,6 +4593,7 @@ select:focus-visible {
 
 }
 
+
 @media (max-width: 430px) {
 
     .books-filter-panel {
@@ -4769,9 +4608,7 @@ select:focus-visible {
         width: 100%;
     }
 
-}
-
-
+} 
 /* ==========================================================================
    EDITOR ESTRUTURADO DE DOSSIÊS
    ========================================================================== */
@@ -4972,7 +4809,6 @@ select:focus-visible {
 .admin-content-block-options select:focus {
     border-color: var(--gold);
 }
-
 
 .admin-content-toolbar {
     display: flex;
@@ -5388,7 +5224,6 @@ select:focus-visible {
         transform 0.16s ease;
 }
 
-
 #admin-content-form .admin-content-block-actions button {
     width: 42px;
     min-width: 42px;
@@ -5492,11 +5327,7 @@ select:focus-visible {
 #admin-content-form .admin-content-block textarea:invalid:not(:placeholder-shown),
 #admin-content-form .admin-content-block select:invalid {
     border-color: var(--editor-danger);
-    background-image: linear-gradient(
-        90deg,
-        rgba(184, 59, 59, 0.08),
-        transparent 42%
-    );
+    background-image: linear-gradient(90deg, rgba(184, 59, 59, 0.08), transparent 42%);
 }
 
 #admin-content-form .admin-content-block input:disabled,
