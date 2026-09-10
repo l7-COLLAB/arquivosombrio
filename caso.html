@@ -11,7 +11,37 @@
 
     <meta
         name="description"
-        content="Dossiê do Arquivo Sombrio"
+        content="Consulte um dossiê investigativo do Arquivo Sombrio."
+    >
+
+    <meta
+        name="robots"
+        content="index, follow"
+    >
+
+    <meta
+        property="og:type"
+        content="article"
+    >
+
+    <meta
+        property="og:site_name"
+        content="Arquivo Sombrio"
+    >
+
+    <meta
+        property="og:title"
+        content="Dossiê — Arquivo Sombrio"
+    >
+
+    <meta
+        property="og:description"
+        content="Consulte um dossiê investigativo do Arquivo Sombrio."
+    >
+
+    <meta
+        name="twitter:card"
+        content="summary_large_image"
     >
 
     <title>Dossiê — Arquivo Sombrio</title>
@@ -51,7 +81,6 @@
 
 <body class="case-page">
 
-
     <header class="main-header">
 
         <div class="container header-content">
@@ -59,9 +88,13 @@
             <a
                 href="index.html"
                 class="logo"
+                aria-label="Arquivo Sombrio — página inicial"
             >
 
-                <span class="logo-simbolo">
+                <span
+                    class="logo-simbolo"
+                    aria-hidden="true"
+                >
                     <i class="fa-solid fa-folder-open"></i>
                 </span>
 
@@ -73,10 +106,17 @@
             </a>
 
 
-            <nav class="case-top-nav">
+            <nav
+                class="case-top-nav"
+                aria-label="Navegação do dossiê"
+            >
 
                 <a href="index.html">
-                    <i class="fa-solid fa-arrow-left"></i>
+                    <i
+                        class="fa-solid fa-arrow-left"
+                        aria-hidden="true"
+                    ></i>
+
                     Voltar ao Arquivo
                 </a>
 
@@ -87,14 +127,34 @@
     </header>
 
 
-    <main>
+    <noscript>
+
+        <div
+            class="container"
+            role="alert"
+        >
+            Ative o JavaScript para abrir este dossiê.
+        </div>
+
+    </noscript>
 
 
-        <section class="case-hero">
+    <main
+        id="conteudo-principal"
+        tabindex="-1"
+    >
+
+        <section
+            class="case-hero"
+            aria-labelledby="caso-titulo"
+        >
 
             <div class="container">
 
-                <div class="case-classification-row">
+                <div
+                    class="case-classification-row"
+                    aria-label="Classificação do arquivo"
+                >
 
                     <span id="caso-categoria">
                         ARQUIVO
@@ -109,7 +169,6 @@
 
                 <div class="case-hero-grid">
 
-
                     <div class="case-hero-content">
 
                         <p class="case-eyebrow">
@@ -117,13 +176,17 @@
                         </p>
 
                         <h1 id="caso-titulo">
-                            Carregando arquivo...
+                            Abrindo arquivo...
                         </h1>
 
 
-                        <div class="case-meta">
+                        <div
+                            class="case-meta"
+                            aria-label="Informações principais do dossiê"
+                        >
 
                             <div>
+
                                 <small>
                                     LOCAL
                                 </small>
@@ -131,9 +194,12 @@
                                 <strong id="caso-local">
                                     —
                                 </strong>
+
                             </div>
 
+
                             <div>
+
                                 <small>
                                     ANO
                                 </small>
@@ -141,9 +207,12 @@
                                 <strong id="caso-ano">
                                     —
                                 </strong>
+
                             </div>
 
+
                             <div>
+
                                 <small>
                                     SITUAÇÃO
                                 </small>
@@ -151,6 +220,7 @@
                                 <strong id="caso-status-meta">
                                     —
                                 </strong>
+
                             </div>
 
                         </div>
@@ -166,20 +236,19 @@
                     </div>
 
 
-                    <div class="case-image-frame">
+                    <figure class="case-image-frame">
 
                         <img
                             id="caso-imagem"
-                            src=""
                             alt=""
+                            decoding="async"
                         >
 
-                        <div class="case-photo-label">
+                        <figcaption class="case-photo-label">
                             REGISTRO FOTOGRÁFICO
-                        </div>
+                        </figcaption>
 
-                    </div>
-
+                    </figure>
 
                 </div>
 
@@ -188,18 +257,28 @@
         </section>
 
 
-        <section class="case-content-section">
+        <section
+            class="case-content-section"
+            aria-label="Leitura do dossiê"
+        >
+
+            <!--
+                A barra de leitura, os menus, o sumário e a navegação
+                entre páginas são criados pelo js/caso.js neste ponto.
+            -->
 
             <div class="container case-layout">
 
+                <article
+                    class="case-main-content"
+                    aria-labelledby="titulo-conteudo-dossie"
+                >
 
-                <article class="case-main-content">
-
-
-                   <section
-    class="case-block"
-    id="historico"
->
+                    <section
+                        class="case-block"
+                        id="historico"
+                        aria-labelledby="titulo-conteudo-dossie"
+                    >
 
                         <div class="case-block-heading">
 
@@ -207,29 +286,47 @@
                                 DOCUMENTO 01
                             </span>
 
-                            <h2>
+                            <h2 id="titulo-conteudo-dossie">
                                 Histórico do Caso
                             </h2>
 
                         </div>
 
 
+                        <!--
+                            Contêiner narrativo único. O caso.js insere aqui
+                            todos os blocos na ordem salva no Supabase.
+                            No fallback, este mesmo elemento recebe a história
+                            de dossiês antigos.
+                        -->
+
                         <div
                             class="case-history"
                             id="caso-historia"
+                            aria-live="polite"
+                            aria-atomic="false"
                         >
-                            <p>
-                                Abrindo documento...
+
+                            <p role="status">
+                                Abrindo arquivo...
                             </p>
+
                         </div>
 
                     </section>
 
 
-                  <section
-    class="case-block"
-    id="evidencias"
->
+                    <!--
+                        Pontos de renderização do formato antigo.
+                        O caso.js aplica hidden a estas seções quando
+                        conteudo_blocos é utilizado.
+                    -->
+
+                    <section
+                        class="case-block"
+                        id="evidencias"
+                        aria-labelledby="titulo-evidencias"
+                    >
 
                         <div class="case-block-heading">
 
@@ -237,8 +334,8 @@
                                 DOCUMENTO 02
                             </span>
 
-                            <h2>
-                                Evidências & Vestígios
+                            <h2 id="titulo-evidencias">
+                                Evidências &amp; Vestígios
                             </h2>
 
                         </div>
@@ -252,10 +349,11 @@
                     </section>
 
 
-                   <section
-    class="case-block"
-    id="teorias"
->
+                    <section
+                        class="case-block"
+                        id="teorias"
+                        aria-labelledby="titulo-teorias"
+                    >
 
                         <div class="case-block-heading">
 
@@ -263,7 +361,7 @@
                                 DOCUMENTO 03
                             </span>
 
-                            <h2>
+                            <h2 id="titulo-teorias">
                                 Teorias
                             </h2>
 
@@ -277,12 +375,13 @@
 
                     </section>
 
-
                 </article>
 
 
-                <aside class="case-sidebar">
-
+                <aside
+                    class="case-sidebar"
+                    aria-label="Ficha do arquivo"
+                >
 
                     <div class="case-file-card">
 
@@ -356,7 +455,10 @@
                         </div>
 
 
-                        <div class="case-file-stamp">
+                        <div
+                            class="case-file-stamp"
+                            aria-label="Arquivo classificado"
+                        >
                             ARQUIVO
                             <strong>CLASSIFICADO</strong>
                         </div>
@@ -368,13 +470,15 @@
                         href="index.html#casos"
                         class="case-back-button"
                     >
-                        <i class="fa-solid fa-folder-open"></i>
+                        <i
+                            class="fa-solid fa-folder-open"
+                            aria-hidden="true"
+                        ></i>
+
                         Voltar aos Dossiês
                     </a>
 
-
                 </aside>
-
 
             </div>
 
@@ -384,27 +488,32 @@
         <section
             class="case-not-found"
             id="caso-nao-encontrado"
+            role="alert"
+            aria-labelledby="titulo-arquivo-nao-encontrado"
         >
 
             <div class="container">
 
                 <div class="case-not-found-card">
 
-                    <i class="fa-solid fa-folder-xmark"></i>
+                    <i
+                        class="fa-solid fa-folder-xmark"
+                        aria-hidden="true"
+                    ></i>
 
-                    <h1>
+                    <h2 id="titulo-arquivo-nao-encontrado">
                         Arquivo não encontrado
-                    </h1>
+                    </h2>
 
                     <p>
                         O dossiê solicitado não existe ou não está disponível.
                     </p>
 
                     <a
-                        href="index.html"
+                        href="index.html#casos"
                         class="btn-primary"
                     >
-                        Voltar ao Arquivo
+                        Voltar aos Dossiês
                     </a>
 
                 </div>
@@ -413,14 +522,20 @@
 
         </section>
 
-
     </main>
 
 
-  <script src="data/caso.js"></script>
-<script src="js/caso.js"></script>
+    <script
+        src="data/caso.js"
+        defer
+    ></script>
 
+    <script
+        src="js/caso.js"
+        defer
+    ></script>
 
 </body>
 
 </html>
+
