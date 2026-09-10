@@ -27,6 +27,7 @@ let clienteSupabase = null;
 let promessaSupabaseSDK = null;
 let casosSupabase = [];
 let livrosSupabase = [];
+let periciasSupabase = [];
 
 /* =========================================================
    CLOUDFLARE TURNSTILE
@@ -381,6 +382,8 @@ document.addEventListener(
         inicializarNavegacaoInterna();
 
         carregarCasosSupabase();
+
+        carregarPericiasSupabase();
 
         carregarLivrosSupabase();
 
@@ -991,6 +994,8 @@ async function exigirSessaoAdminUpload() {
     return sessao;
 
 }
+
+
 async function enviarArquivoStorage(
     bucket,
     pasta,
@@ -1089,7 +1094,8 @@ function formatarTamanhoArquivo(bytes) {
 
     if (tamanho < 1024) {
         return `${tamanho} B`;
-    }
+
+       }
 
     if (tamanho < 1024 * 1024) {
 
@@ -1519,103 +1525,261 @@ function coletarDocumentosAdmin() {
         );
 }
 
-function coletarBlocosConteudoAdmin() {
-    const editor = document.getElementById(
-        "admin-content-blocks"
-    );
+function criarIdentificadorBlocoAdmin() {
 
-    if (!editor) {
-        const historia =
-            document
-                .getElementById(
-                    "admin-history"
-                )
-                ?.value
-                .trim() || "";
-
-        if (!historia) {
-            return [];
-        }
-
-        return [
-            {
-                tipo: "paragrafo",
-                conteudo: historia
-            }
-        ];
+    if (window.crypto?.randomUUID) {
+        return window.crypto.randomUUID();
     }
 
-    const blocos = Array.from(
-        editor.querySelectorAll(
-            "[data-content-block]"
+    return `bloco-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 10)}`;
+}
+
+
+function normalizarDadosBlocoAdmin(bloco = {}) {
+
+    const dadosNovos =
+        bloco?.dados &&
+        typeof bloco.dados === "object" &&
+        !Array.isArray(bloco.dados)
+            ? bloco.dados
+            : {};
+
+    return {
+        ...dadosNovos,
+        texto:
+            dadosNovos.texto ??
+            bloco.conteudo ??
+            "",
+        url:
+            dadosNovos.url ??
+            bloco.conteudo ??
+            "",
+        titulo:
+            dadosNovos.titulo ??
+            bloco.titulo ??
+            bloco.legenda ??
+            "",
+        legenda:
+            dadosNovos.legenda ??
+            bloco.legenda ??
+            "",
+        descricao:
+            dadosNovos.descricao ??
+            bloco.observacao ??
+            "",
+        fonte:
+            dadosNovos.fonte ??
+            bloco.fonte ??
+            "",
+        credito:
+            dadosNovos.credito ??
+            bloco.credito ??
+            "",
+        link_fonte:
+            dadosNovos.link_fonte ??
+            bloco.link_fonte ??
+            "",
+        texto_alternativo:
+            dadosNovos.texto_alternativo ??
+            bloco.texto_alternativo ??
+            "",
+        sensivel:
+            dadosNovos.sensivel === true ||
+            bloco.sensivel === true,
+        categoria_sensivel:
+            dadosNovos.categoria_sensivel ??
+            bloco.categoria_sensivel ??
+            "",
+        alinhamento:
+            dadosNovos.alinhamento ??
+            bloco.alinhamento ??
+            "centro",
+        tamanho:
+            dadosNovos.tamanho ??
+            bloco.tamanho ??
+            "medio",
+        acao:
+            dadosNovos.acao ??
+            bloco.acao ??
+            "abrir",
+        itens:
+            Array.isArray(dadosNovos.itens)
+                ? dadosNovos.itens
+                : []
+    };
+}
+
+
+function separarItensBlocoAdmin(texto, limite = null) {
+
+    const itens =
+        String(texto || "")
+            .split(/\n\s*\n/)
+            .map(item => item.trim())
+            .filter(Boolean);
+
+    return Number.isInteger(limite)
+        ? itens.slice(0, limite)
+        : itens;
+}
+
+
+function validarUrlVideoAdmin(url) {
+
+    if (!url) {
+        return false;
+    }
+
+    try {
+
+        const endereco =
+            new URL(url);
+
+        const dominio =
+            endereco.hostname
+                .replace(/^www\./, "")
+                .toLowerCase();
+
+        return [
+            "youtube.com",
+            "m.youtube.com",
+            "youtu.be",
+            "vimeo.com",
+            "player.vimeo.com"
+        ].includes(dominio);
+
+    } catch (erro) {
+        return false;
+    }
+}
+
+
+function coletarBlocosConteudoAdmin() {
+
+    const editor =
+        document.getElementById(
+            "admin-content-blocks"
+        );
+
+    if (!editor) {
+        return [];
+    }
+
+    return Array
+        .from(
+            editor.querySelectorAll(
+                "[data-content-block]"
+            )
         )
-    )
         .map((bloco, indice) => {
+
             const tipo =
                 bloco.dataset.blockType ||
                 "paragrafo";
 
-            const conteudo =
-                bloco.querySelector(
-                    "[data-block-content]"
-                )
+            const ler = seletor =>
+                bloco
+                    .querySelector(seletor)
                     ?.value
-                    ?.trim() ||
-                "";
+                    ?.trim() || "";
 
-            const alinhamento =
-                bloco.querySelector(
-                    "[data-block-align]"
-                )
-                    ?.value ||
-                "";
+            const dados = {};
 
-            const tamanho =
-                bloco.querySelector(
-                    "[data-block-size]"
-                )
-                    ?.value ||
-                "";
+            if (
+                tipo === "subtitulo" ||
+                tipo === "paragrafo" ||
+                tipo === "situacao_oficial" ||
+                tipo === "fontes"
+            ) {
+                dados.texto =
+                    ler("[data-block-content]");
+            }
+
+            if (
+                tipo === "cronologia" ||
+                tipo === "evidencias" ||
+                tipo === "hipoteses"
+            ) {
+
+                const limite =
+                    tipo === "evidencias"
+                        ? 5
+                        : null;
+
+                dados.itens =
+                    separarItensBlocoAdmin(
+                        ler("[data-block-content]"),
+                        limite
+                    );
+            }
+
+            if (tipo === "imagem") {
+                Object.assign(dados, {
+                    url: ler("[data-block-content]"),
+                    legenda: ler("[data-block-caption]"),
+                    descricao: ler("[data-block-note]"),
+                    fonte: ler("[data-block-source]"),
+                    credito: ler("[data-block-credit]"),
+                    link_fonte: ler("[data-block-source-link]"),
+                    texto_alternativo: ler("[data-block-alt]"),
+                    sensivel: Boolean(
+                        bloco.querySelector(
+                            "[data-block-sensitive]"
+                        )?.checked
+                    ),
+                    categoria_sensivel:
+                        ler("[data-block-sensitive-category]"),
+                    alinhamento:
+                        ler("[data-block-align]") ||
+                        "centro",
+                    tamanho:
+                        ler("[data-block-size]") ||
+                        "medio"
+                });
+            }
+
+            if (tipo === "documento") {
+                Object.assign(dados, {
+                    url: ler("[data-block-content]"),
+                    titulo: ler("[data-block-title]"),
+                    descricao: ler("[data-block-description]"),
+                    fonte: ler("[data-block-source]"),
+                    link_original: ler("[data-block-original-link]"),
+                    acao:
+                        ler("[data-block-action]") ||
+                        "abrir"
+                });
+            }
+
+            if (tipo === "video") {
+                Object.assign(dados, {
+                    url: ler("[data-block-content]"),
+                    titulo: ler("[data-block-title]")
+                });
+            }
 
             return {
-                ordem: indice,
+                id:
+                    bloco.dataset.blockId ||
+                    criarIdentificadorBlocoAdmin(),
                 tipo,
-                conteudo,
-                alinhamento,
-                tamanho,
-                legenda: bloco.querySelector("[data-block-caption]")?.value.trim() || "",
-                observacao: bloco.querySelector("[data-block-note]")?.value.trim() || "",
-                fonte: bloco.querySelector("[data-block-source]")?.value.trim() || "",
-                link_fonte: bloco.querySelector("[data-block-source-link]")?.value.trim() || "",
-                posicao: bloco.querySelector("[data-block-position]")?.value || "fim"
+                ordem: indice + 1,
+                dados
             };
         })
-        .filter(bloco => bloco.conteudo);
-if (blocos.length) {
-    return blocos;
-}
+        .filter(bloco => {
 
-const historia =
-    document
-        .getElementById(
-            "admin-history"
-        )
-        ?.value
-        .trim() || "";
+            if (Array.isArray(bloco.dados.itens)) {
+                return bloco.dados.itens.length > 0;
+            }
 
-if (!historia) {
-    return [];
-}
-
-return [
-    {
-        ordem: 0,
-        tipo: "paragrafo",
-        conteudo: historia,
-        alinhamento: "",
-        tamanho: ""
-    }
-];
+            return Boolean(
+                bloco.dados.texto ||
+                bloco.dados.url
+            );
+        });
 }
 
 function atualizarPreviewImagemAdmin(
@@ -1796,7 +1960,8 @@ async function processarUploadImagemAdmin({
 
 
 function inicializarUploadImagemCaso(
-    dados = null
+    dados = null,
+    pasta = "casos/capas"
 ) {
 
     const inputArquivo =
@@ -1845,8 +2010,7 @@ function inicializarUploadImagemCaso(
                 inputUrl,
                 preview:
                     "#admin-image-preview",
-                pasta:
-                    "casos/capas",
+                pasta,
                 botao
             });
 
@@ -2045,7 +2209,7 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
             const formulario = bloco.closest("form");
             const botaoSalvar = formulario?.querySelector('button[type="submit"]');
             const anteriores = [
-                [botaoUpload, botaoUpload.disabled],
+                [botaoUploadUpload, botaoUpload.disabled],
                 [campoUrlImagem, campoUrlImagem.readOnly]
             ];
             formulario.dataset.uploadsImagens = String(Number(formulario.dataset.uploadsImagens || 0) + 1);
@@ -2232,7 +2396,7 @@ function configurarBlocoConteudoAdmin(bloco) {
         }
     );
 }
-function inicializarEditorConteudoAdmin(dados = null) {
+function inicializarEditorConteudoAdminLegado(dados = null) {
     const editor =
         document.getElementById(
             "admin-content-blocks"
@@ -2310,6 +2474,562 @@ function inicializarEditorConteudoAdmin(dados = null) {
             {
                 conteudo:
                     historiaAntiga
+            }
+        );
+    }
+
+    const evidenciasAntigas =
+        normalizarEvidencias(
+            dados?.evidencias
+        );
+
+    if (evidenciasAntigas.length) {
+        adicionarBloco(
+            "evidencias",
+            {
+                dados: {
+                    itens:
+                        evidenciasAntigas.slice(0, 5)
+                }
+            }
+        );
+    }
+
+    const hipotesesAntigas =
+        normalizarEvidencias(
+            dados?.teorias
+        );
+
+    if (hipotesesAntigas.length) {
+        adicionarBloco(
+            "hipoteses",
+            {
+                dados: {
+                    itens: hipotesesAntigas
+                }
+            }
+        );
+    }
+}
+
+
+function obterConfiguracaoTipoBlocoAdmin(tipo) {
+
+    const configuracoes = {
+        subtitulo: ["Subtítulo", "Digite o subtítulo...", 3],
+        paragrafo: ["Parágrafo", "Escreva o conteúdo do parágrafo...", 7],
+        imagem: ["Imagem", "Cole a URL da imagem ou faça o upload...", 3],
+        documento: ["Documento ou anexo", "Cole a URL do documento ou faça o upload...", 3],
+        video: ["Vídeo ou incorporação", "Cole um link válido do YouTube...", 3],
+        cronologia: ["Cronologia", "Digite um acontecimento por bloco de texto, separando cada item com uma linha em branco...", 7],
+        evidencias: ["Evidências", "Digite uma evidência por bloco de texto, separando cada item com uma linha em branco. Limite de cinco...", 7],
+        hipoteses: ["Hipóteses e controvérsias", "Digite uma hipótese ou controvérsia por bloco de texto, separando cada item com uma linha em branco...", 7],
+        situacao_oficial: ["Situação oficial", "Descreva a situação oficial atual do caso...", 6],
+        fontes: ["Fontes", "Informe as fontes utilizadas, preferencialmente uma por linha...", 7]
+    };
+
+    return configuracoes[tipo] ||
+        configuracoes.paragrafo;
+}
+
+
+function criarCamposExtrasBlocoAdmin(tipo, dados) {
+
+    if (tipo === "imagem") {
+        return `
+            <div class="admin-content-block-options">
+                <label>
+                    Alinhamento
+                    <select data-block-align>
+                        <option value="centro" ${dados.alinhamento === "centro" ? "selected" : ""}>Centro</option>
+                        <option value="esquerda" ${dados.alinhamento === "esquerda" ? "selected" : ""}>Esquerda</option>
+                        <option value="direita" ${dados.alinhamento === "direita" ? "selected" : ""}>Direita</option>
+                        <option value="total" ${dados.alinhamento === "total" ? "selected" : ""}>Largura total</option>
+                    </select>
+                </label>
+
+                <label>
+                    Tamanho
+                    <select data-block-size>
+                        <option value="pequeno" ${dados.tamanho === "pequeno" ? "selected" : ""}>Pequeno</option>
+                        <option value="medio" ${dados.tamanho === "medio" ? "selected" : ""}>Médio</option>
+                        <option value="grande" ${dados.tamanho === "grande" ? "selected" : ""}>Grande</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="admin-image-metadata">
+                <label>
+                    Legenda
+                    <input type="text" data-block-caption value="${escaparHTML(dados.legenda)}">
+                </label>
+
+                <label>
+                    Descrição ou observação
+                    <textarea rows="3" data-block-note>${escaparHTML(dados.descricao)}</textarea>
+                </label>
+
+                <label>
+                    Fonte
+                    <input type="text" data-block-source value="${escaparHTML(dados.fonte)}">
+                </label>
+
+                <label>
+                    Crédito
+                    <input type="text" data-block-credit value="${escaparHTML(dados.credito)}">
+                </label>
+
+                <label>
+                    Link da fonte
+                    <input type="url" data-block-source-link value="${escaparHTML(dados.link_fonte)}" placeholder="https://...">
+                </label>
+
+                <label>
+                    Texto alternativo
+                    <input type="text" data-block-alt value="${escaparHTML(dados.texto_alternativo)}" placeholder="Descreva objetivamente o conteúdo da imagem">
+                </label>
+
+                <label class="admin-sensitive-checkbox">
+                    <input type="checkbox" data-block-sensitive ${dados.sensivel ? "checked" : ""}>
+                    <span>Esta imagem contém conteúdo sensível</span>
+                </label>
+
+                <label data-block-sensitive-category-wrap ${dados.sensivel ? "" : 'style="display:none"'}>
+                    Tipo de conteúdo sensível
+                    <select data-block-sensitive-category>
+                        <option value="">Selecione</option>
+                        <option value="cena_crime" ${dados.categoria_sensivel === "cena_crime" ? "selected" : ""}>Cena de crime</option>
+                        <option value="autopsia" ${dados.categoria_sensivel === "autopsia" ? "selected" : ""}>Autópsia</option>
+                        <option value="cadaver" ${dados.categoria_sensivel === "cadaver" ? "selected" : ""}>Cadáver</option>
+                        <option value="ferimento" ${dados.categoria_sensivel === "ferimento" ? "selected" : ""}>Ferimento</option>
+                        <option value="conteudo_medico" ${dados.categoria_sensivel === "conteudo_medico" ? "selected" : ""}>Conteúdo médico</option>
+                        <option value="outro" ${dados.categoria_sensivel === "outro" ? "selected" : ""}>Outro</option>
+                    </select>
+                </label>
+            </div>
+        `;
+    }
+
+    if (tipo === "documento") {
+        return `
+            <div class="admin-document-metadata">
+                <label>
+                    Título do documento
+                    <input type="text" data-block-title value="${escaparHTML(dados.titulo)}">
+                </label>
+
+                <label>
+                    Descrição
+                    <textarea rows="3" data-block-description>${escaparHTML(dados.descricao)}</textarea>
+                </label>
+
+                <label>
+                    Fonte
+                    <input type="text" data-block-source value="${escaparHTML(dados.fonte)}">
+                </label>
+
+                <label>
+                    Link original
+                    <input type="url" data-block-original-link value="${escaparHTML(dados.link_original || dados.link_fonte)}" placeholder="https://...">
+                </label>
+
+                <label>
+                    Ação oferecida ao leitor
+                    <select data-block-action>
+                        <option value="abrir" ${dados.acao === "abrir" ? "selected" : ""}>Abrir</option>
+                        <option value="baixar" ${dados.acao === "baixar" ? "selected" : ""}>Baixar</option>
+                    </select>
+                </label>
+            </div>
+        `;
+    }
+
+    if (tipo === "video") {
+        return `
+            <label>
+                Título do vídeo
+                <input type="text" data-block-title value="${escaparHTML(dados.titulo)}">
+            </label>
+            <small>
+                Somente links validados serão incorporados. Não cole códigos HTML ou iframe.
+            </small>
+        `;
+    }
+
+    return "";
+}
+
+
+function criarBlocoNarrativoAdmin(tipo = "paragrafo", blocoSalvo = {}) {
+
+    const tiposPermitidos = [
+        "subtitulo",
+        "paragrafo",
+        "imagem",
+        "documento",
+        "video",
+        "cronologia",
+        "evidencias",
+        "hipoteses",
+        "situacao_oficial",
+        "fontes"
+    ];
+
+    const tipoSeguro =
+        tiposPermitidos.includes(tipo)
+            ? tipo
+            : "paragrafo";
+
+    const dados =
+        normalizarDadosBlocoAdmin(
+            blocoSalvo
+        );
+
+    const [titulo, placeholder, linhas] =
+        obterConfiguracaoTipoBlocoAdmin(
+            tipoSeguro
+        );
+
+    const textoItens =
+        dados.itens.length
+            ? dados.itens.join("\n\n")
+            : dados.texto;
+
+    const valorPrincipal =
+        ["imagem", "documento", "video"]
+            .includes(tipoSeguro)
+                ? dados.url
+                : textoItens;
+
+    const bloco =
+        document.createElement("div");
+
+    bloco.className =
+        "admin-content-block";
+
+    bloco.dataset.contentBlock = "";
+    bloco.dataset.blockType = tipoSeguro;
+    bloco.dataset.blockId =
+
+               blocoSalvo.id ||
+        criarIdentificadorBlocoAdmin();
+
+    bloco.innerHTML = `
+        <div class="admin-content-block-header">
+            <strong>${escaparHTML(titulo)}</strong>
+
+            <div class="admin-content-block-actions">
+                <button type="button" data-block-up aria-label="Mover para cima">↑</button>
+                <button type="button" data-block-down aria-label="Mover para baixo">↓</button>
+                <button type="button" data-block-remove aria-label="Excluir bloco">×</button>
+            </div>
+        </div>
+
+        ${
+            tipoSeguro === "imagem" ||
+            tipoSeguro === "documento"
+                ? `
+                    <input
+                        type="file"
+                        data-block-file
+                        ${tipoSeguro === "imagem" ? 'accept="image/jpeg,image/png,image/webp"' : 'accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt"'}
+                        hidden
+                    >
+                    <button type="button" class="admin-upload-button" data-block-upload>
+                        ${tipoSeguro === "imagem" ? "Enviar imagem" : "Enviar documento"}
+                    </button>
+                    <small data-block-upload-status role="status" aria-live="polite"></small>
+                `
+                : ""
+        }
+
+        <label>
+            ${["imagem", "documento", "video"].includes(tipoSeguro) ? "URL" : "Conteúdo"}
+            <textarea
+                data-block-content
+                rows="${linhas}"
+                placeholder="${escaparHTML(placeholder)}"
+            >${escaparHTML(valorPrincipal)}</textarea>
+        </label>
+
+        ${criarCamposExtrasBlocoAdmin(tipoSeguro, dados)}
+    `;
+
+    return bloco;
+}
+
+
+function configurarUploadBlocoNarrativoAdmin(bloco) {
+
+    const tipo =
+        bloco.dataset.blockType;
+
+    if (![
+        "imagem",
+        "documento"
+    ].includes(tipo)) {
+        return;
+    }
+
+    const input =
+        bloco.querySelector("[data-block-file]");
+
+    const botao =
+        bloco.querySelector("[data-block-upload]");
+
+    const status =
+        bloco.querySelector("[data-block-upload-status]");
+
+    const campoUrl =
+        bloco.querySelector("[data-block-content]");
+
+    botao?.addEventListener(
+        "click",
+        () => input?.click()
+    );
+
+    input?.addEventListener(
+        "change",
+        async () => {
+
+            const arquivo = input.files?.[0];
+
+            if (!arquivo) {
+                return;
+            }
+
+            if (
+                tipo === "imagem" &&
+                !["image/jpeg", "image/png", "image/webp"]
+                    .includes(arquivo.type)
+            ) {
+                status.textContent =
+                    "Escolha uma imagem JPG, PNG ou WEBP.";
+                input.value = "";
+                return;
+            }
+
+            const limite =
+                tipo === "imagem"
+                    ? 10 * 1024 * 1024
+                    : 20 * 1024 * 1024;
+
+            if (arquivo.size > limite) {
+                status.textContent =
+                    `O arquivo deve ter no máximo ${tipo === "imagem" ? "10" : "20"} MB.`;
+                input.value = "";
+                return;
+            }
+
+            const formulario =
+                bloco.closest("form");
+
+            formulario.dataset.uploadsImagens =
+                String(
+                    Number(
+                        formulario.dataset.uploadsImagens || 0
+                    ) + 1
+                );
+
+            definirEstadoUpload(
+                botao,
+                true,
+                "Enviando..."
+            );
+
+            try {
+
+                const resultado =
+                    await enviarArquivoStorage(
+                        tipo === "imagem"
+                            ? STORAGE_BUCKET_IMAGENS
+                            : STORAGE_BUCKET_DOCUMENTOS,
+                        tipo === "imagem"
+                            ? "casos/conteudo"
+                            : "casos/documentos",
+                        arquivo
+                    );
+
+                campoUrl.value =
+                    resultado.url;
+
+                status.textContent =
+                    "Arquivo enviado. Salve o dossiê para confirmar.";
+
+            } catch (erro) {
+
+                status.textContent =
+                    erro?.message ||
+                    "Não foi possível enviar o arquivo.";
+
+            } finally {
+
+                definirEstadoUpload(
+                    botao,
+                    false
+                );
+
+                formulario.dataset.uploadsImagens =
+                    String(
+                        Math.max(
+                            0,
+                            Number(
+                                formulario.dataset.uploadsImagens || 1
+                            ) - 1
+                        )
+                    );
+
+                input.value = "";
+            }
+        }
+    );
+}
+
+
+function configurarBlocoNarrativoAdmin(bloco) {
+
+    configurarBlocoConteudoAdmin(
+        bloco
+    );
+
+    configurarUploadBlocoNarrativoAdmin(
+        bloco
+    );
+
+    const checkboxSensivel =
+        bloco.querySelector(
+            "[data-block-sensitive]"
+        );
+
+    const categoriaSensivel =
+        bloco.querySelector(
+            "[data-block-sensitive-category-wrap]"
+        );
+
+    checkboxSensivel?.addEventListener(
+        "change",
+        () => {
+            categoriaSensivel.style.display =
+                checkboxSensivel.checked
+                    ? ""
+                    : "none";
+        }
+    );
+}
+
+
+function inicializarEditorConteudoAdmin(dados = null) {
+
+    const editor =
+        document.getElementById(
+            "admin-content-blocks"
+        );
+
+    if (!editor) {
+        return;
+    }
+
+    const adicionarBloco = (
+        tipo,
+        dadosBloco = {}
+    ) => {
+
+        const bloco =
+            criarBlocoNarrativoAdmin(
+                tipo,
+                dadosBloco
+            );
+
+        editor.appendChild(bloco);
+
+        configurarBlocoNarrativoAdmin(
+            bloco
+        );
+    };
+
+    document
+        .querySelectorAll(
+            "[data-add-content-block]"
+        )
+        .forEach(botao => {
+            botao.addEventListener(
+                "click",
+                () =>
+                    adicionarBloco(
+                        botao.dataset.addContentBlock
+                    )
+            );
+        });
+
+    const blocosExistentes =
+        Array.isArray(dados?.conteudo_blocos)
+            ? dados.conteudo_blocos
+            : [];
+
+    if (blocosExistentes.length) {
+
+        blocosExistentes
+            .slice()
+            .sort(
+                (a, b) =>
+                    Number(a.ordem || 0) -
+                    Number(b.ordem || 0)
+            )
+            .forEach(bloco => {
+                adicionarBloco(
+                    bloco.tipo ||
+                    "paragrafo",
+                    bloco
+                );
+            });
+
+        return;
+    }
+
+    const historiaAntiga =
+        String(dados?.historia || "")
+            .trim();
+
+    if (historiaAntiga) {
+        adicionarBloco(
+            "paragrafo",
+            {
+                dados: {
+                    texto: historiaAntiga
+                }
+            }
+        );
+    }
+
+    const evidenciasAntigas =
+        normalizarEvidencias(
+            dados?.evidencias
+        );
+
+    if (evidenciasAntigas.length) {
+        adicionarBloco(
+            "evidencias",
+            {
+                dados: {
+                    itens:
+                        evidenciasAntigas.slice(0, 5)
+                }
+            }
+        );
+    }
+
+    const hipotesesAntigas =
+        normalizarEvidencias(
+            dados?.teorias
+        );
+
+    if (hipotesesAntigas.length) {
+        adicionarBloco(
+            "hipoteses",
+            {
+                dados: {
+                    itens: hipotesesAntigas
+                }
             }
         );
     }
@@ -2624,6 +3344,56 @@ async function carregarCasosSupabase() {
             "Não foi possível carregar os casos do Supabase.",
             erro
         );
+    }
+}
+
+
+/* ==========================================================================
+   BANCO DE PERÍCIAS
+   ========================================================================== */
+
+async function carregarPericiasSupabase() {
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("pericias")
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        periciasSupabase =
+            Array.isArray(data)
+                ? data
+                : [];
+
+    } catch (erro) {
+
+        /*
+         * A tabela será criada na próxima etapa do projeto.
+         * Até lá, a falha fica isolada e não impede o restante do site.
+         */
+        console.warn(
+            "A área de perícias aguarda a configuração da tabela no Supabase.",
+            erro
+        );
+
+        periciasSupabase = [];
     }
 }
 
@@ -3969,11 +4739,7 @@ function carregarLivros() {
 
                         <button
                             type="button"
-                            id="books-clear-search"
-                            aria-label="Limpar pesquisa"
-                            title="Limpar pesquisa"
-                        >
-                            <i class="fa-solid fa-xmark"></i>
+
                         </button>
 
                     </div>
@@ -4950,7 +5716,8 @@ function atualizarInterfaceForum(sessao) {
 
     const formulario =
         document.getElementById(
-            "form-forum"
+
+                   "form-forum"
         );
 
     const conviteVisitante =
@@ -6323,6 +7090,11 @@ const livros =
         ? livrosSupabase
         : [];
 
+const pericias =
+    Array.isArray(periciasSupabase)
+        ? periciasSupabase
+        : [];
+
 
     painel.innerHTML = `
 
@@ -6466,6 +7238,73 @@ const livros =
             <section class="admin-list-section">
 
                 <h3>
+                    Ciência Forense
+                </h3>
+
+                <div class="admin-list">
+
+                    ${
+                        pericias.length === 0
+
+                        ? `
+                            <p class="admin-empty">
+                                Nenhum conteúdo pericial cadastrado.
+                            </p>
+                          `
+
+                        : pericias.map(pericia => `
+
+                            <div class="admin-item">
+
+                                <div>
+
+                                    <strong>
+                                        ${escaparHTML(
+                                            pericia.titulo ||
+                                            "Perícia sem título"
+                                        )}
+                                    </strong>
+
+                                    <small>
+                                        ${escaparHTML(
+                                            pericia.categoria ||
+                                            "Sem categoria"
+                                        )}
+                                    </small>
+
+                                </div>
+
+                                <div class="admin-item-buttons">
+
+                                    <button
+                                        type="button"
+                                        data-edit-forensic="${escaparHTML(pericia.id)}"
+                                    >
+                                        Editar
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        data-delete-forensic="${escaparHTML(pericia.id)}"
+                                    >
+                                        Excluir
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        `).join("")
+                    }
+
+                </div>
+
+            </section>
+
+
+            <section class="admin-list-section">
+
+                <h3>
                     Livros personalizados
                 </h3>
 
@@ -6574,7 +7413,17 @@ const livros =
                 )
         );
 
-
+document
+.getElementById(
+    "admin-new-forensic"
+)
+?.addEventListener(
+    "click",
+    () => 
+        abrirFormularioAdmin(
+            "pericia"
+        )
+);
     document
         .getElementById(
             "admin-logout"
@@ -6661,6 +7510,38 @@ const livros =
             );
 
         });
+
+
+    painel
+        .querySelectorAll(
+            "[data-edit-forensic]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () =>
+                    editarPericia(
+                        button.dataset.editForensic
+                    )
+            );
+        });
+
+
+    painel
+        .querySelectorAll(
+            "[data-delete-forensic]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () =>
+                    removerPericia(
+                        button.dataset.deleteForensic
+                    )
+            );
+        });
 }
 
 
@@ -6698,7 +7579,12 @@ function abrirFormularioAdmin(
 
     const caso =
         tipo === "caso";
+   
+const pericia =
+    tipo === "pericia";
 
+const livro =
+    tipo === "livro";
     modal.innerHTML = `
 
         <div class="admin-form-card">
@@ -6717,7 +7603,9 @@ function abrirFormularioAdmin(
                 ${
                     caso
                         ? "DOSSIÊ"
-                        : "RECOMENDAÇÃO"
+                        : pericia
+                            ? "CIÊNCIA FORENSE"
+                            : "RECOMENDAÇÃO"
                 }
 
             </span>
@@ -6733,7 +7621,9 @@ function abrirFormularioAdmin(
                 ${
                     caso
                         ? " Dossiê"
-                        : " Livro"
+                        : pericia
+                            ? " Perícia"
+                            : " Livro"
                 }
 
             </h2>
@@ -6997,23 +7887,16 @@ function abrirFormularioAdmin(
                     </label>
 
 
-                    <label>
-
-                        História / Relatório
-
-                        <textarea
-                            id="admin-history"
-                            rows="8"
-                            required
-                        >${
-                            dados
-                                ? escaparHTML(
-                                    dados.historia
-                                )
-                                : ""
-                        }</textarea>
-
-                    </label>
+                    <textarea
+                        id="admin-history"
+                        hidden
+                    >${
+                        dados
+                            ? escaparHTML(
+                                dados.historia
+                            )
+                            : ""
+                    }</textarea>
 
 <div class="admin-content-editor">
     <div class="admin-content-editor-header">
@@ -7063,54 +7946,58 @@ function abrirFormularioAdmin(
         >
             + Documento
         </button>
+
+
+              <button type="button" class="admin-secondary-button" data-add-content-block="video">
+            + Vídeo
+        </button>
+
+        <button type="button" class="admin-secondary-button" data-add-content-block="cronologia">
+            + Cronologia
+        </button>
+
+        <button type="button" class="admin-secondary-button" data-add-content-block="evidencias">
+            + Evidências
+        </button>
+
+        <button type="button" class="admin-secondary-button" data-add-content-block="hipoteses">
+            + Hipóteses
+        </button>
+
+        <button type="button" class="admin-secondary-button" data-add-content-block="situacao_oficial">
+            + Situação oficial
+        </button>
+
+        <button type="button" class="admin-secondary-button" data-add-content-block="fontes">
+            + Fontes
+        </button>
     </div>
 
     <p class="admin-field-help">
-        Os blocos podem ser reorganizados para definir exatamente
-        onde cada elemento aparecerá no dossiê.
+        Use as setas para definir exatamente onde cada elemento aparecerá.
+        Evidências aceitam até cinco itens, separados por uma linha em branco.
     </p>
 </div>
 
-                    <label>
+                    <textarea id="admin-evidence" hidden>${
+                        dados
+                            ? escaparHTML(
+                                normalizarEvidencias(
+                                    dados.evidencias
+                                ).join("\n")
+                            )
+                            : ""
+                    }</textarea>
 
-                        Evidências
-
-                        <textarea
-                            id="admin-evidence"
-                            rows="5"
-                            placeholder="Uma evidência por linha"
-                        >${
-                            dados
-                                ? escaparHTML(
-                                    normalizarEvidencias(
-                                        dados.evidencias
-                                    ).join("\n")
-                                )
-                                : ""
-                        }</textarea>
-
-                    </label>
-
-
-                    <label>
-
-                        Hipóteses / Linhas de investigação
-
-                        <textarea
-                            id="admin-theories"
-                            rows="5"
-                            placeholder="Uma hipótese por linha"
-                        >${
-                            dados
-                                ? escaparHTML(
-                                    normalizarEvidencias(
-                                        dados.teorias
-                                    ).join("\n")
-                                )
-                                : ""
-                        }</textarea>
-
-                    </label>
+                    <textarea id="admin-theories" hidden>${
+                        dados
+                            ? escaparHTML(
+                                normalizarEvidencias(
+                                    dados.teorias
+                                ).join("\n")
+                            )
+                            : ""
+                    }</textarea>
 
 
                     <div
@@ -7169,7 +8056,137 @@ function abrirFormularioAdmin(
                     </div>
 
                     `
-                                      : `
+
+                    : pericia
+
+                    ? `
+
+                    <label>
+                        Título
+                        <input
+                            type="text"
+                            id="admin-forensic-title"
+                            value="${dados ? escaparHTML(dados.titulo || "") : ""}"
+                            required
+                        >
+                    </label>
+
+                    <label>
+                        Categoria
+                        <select id="admin-forensic-category" required>
+                            ${[
+                                "DNA Forense",
+                                "Balística",
+                                "Medicina Legal",
+                                "Entomologia Forense",
+                                "Toxicologia",
+                                "Psicologia Criminal",
+                                "Impressões Digitais",
+                                "Técnicas de Investigação"
+                            ].map(categoria => `
+                                <option
+                                    value="${escaparHTML(categoria)}"
+                                    ${dados?.categoria === categoria ? "selected" : ""}
+                                >
+                                    ${escaparHTML(categoria)}
+                                </option>
+                            `).join("")}
+                        </select>
+                    </label>
+
+                    <label>
+                        Resumo
+                        <textarea
+                            id="admin-forensic-summary"
+                            rows="4"
+                            required
+                        >${dados ? escaparHTML(dados.resumo || "") : ""}</textarea>
+                    </label>
+
+                    <div class="admin-upload-section">
+                        <div class="admin-upload-heading">
+                            <span class="admin-eyebrow">
+                                IMAGEM PRINCIPAL
+                            </span>
+                            <p>
+                                Selecione uma imagem do computador.
+                                O arquivo será enviado para o Supabase automaticamente.
+                            </p>
+                        </div>
+
+                        <input
+                            type="file"
+                            id="admin-image-file"
+                            accept="image/jpeg,image/png,image/webp"
+                            hidden
+                        >
+
+                        <button
+                            type="button"
+                            class="admin-upload-button"
+                            id="admin-image-upload-button"
+                        >
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            Escolher imagem
+                        </button>
+
+                        <div
+                            class="admin-image-preview"
+                            id="admin-image-preview"
+                        ></div>
+
+                        <label>
+                            URL da imagem
+                            <input
+                                type="url"
+                                id="admin-image"
+                                value="${dados ? escaparHTML(dados.imagem || "") : ""}"
+                                placeholder="A URL será preenchida automaticamente"
+                            >
+                        </label>
+
+                        <label>
+                            Legenda
+                            <input
+                                type="text"
+                                id="admin-forensic-image-caption"
+                                value="${dados ? escaparHTML(dados.legenda_imagem || "") : ""}"
+                            >
+                        </label>
+
+                        <label>
+                            Fonte da imagem
+                            <input
+                                type="text"
+                                id="admin-forensic-image-source"
+                                value="${dados ? escaparHTML(dados.fonte_imagem || "") : ""}"
+                                placeholder="Instituição, arquivo ou endereço da fonte"
+                            >
+                        </label>
+                    </div>
+
+                    ${[
+                        ["introduction", "Introdução", "introducao", 7],
+                        ["operation", "Como funciona", "como_funciona", 7],
+                        ["history", "História da técnica", "historia_tecnica", 7],
+                        ["real-cases", "Aplicação em casos reais", "aplicacao_casos_reais", 7],
+                        ["limitations", "Limitações e controvérsias", "limitacoes_controversias", 7],
+                        ["curiosities", "Curiosidades", "curiosidades", 5],
+                        ["sources", "Fontes", "fontes", 6],
+                        ["related-cases", "Casos relacionados", "casos_relacionados", 5]
+                    ].map(([id, rotulo, campo, linhas]) => `
+                        <label>
+                            ${rotulo}
+                            <textarea
+                                id="admin-forensic-${id}"
+                                rows="${linhas}"
+                            >${dados ? escaparHTML(dados[campo] || "") : ""}</textarea>
+                        </label>
+                    `).join("")}
+
+                    `
+
+                    : `
 
                     <label>
 
@@ -7471,18 +8488,25 @@ function abrirFormularioAdmin(
     );
 
 
-    if (caso) {
+    if (caso || pericia) {
 
         inicializarUploadImagemCaso(
-            dados
+            dados,
+            pericia
+                ? "pericias/capas"
+                : "casos/capas"
         );
 
-        inicializarDocumentosCaso(
-            dados
-        );
-inicializarEditorConteudoAdmin(
-    dados
-);
+        if (caso) {
+
+            inicializarDocumentosCaso(
+                dados
+            );
+
+            inicializarEditorConteudoAdmin(
+                dados
+            );
+        }
 
     } else {
 
@@ -7520,6 +8544,13 @@ inicializarEditorConteudoAdmin(
                         dados
                     );
 
+                } else if (pericia) {
+
+                    salvarPericiaAdmin(
+                        evento,
+                        dados
+                    );
+
                 } else {
 
                     salvarLivroAdmin(
@@ -7531,7 +8562,7 @@ inicializarEditorConteudoAdmin(
         );
 
 
-    if (!caso) {
+    if (livro) {
 
         const containerLinks =
             document.getElementById(
@@ -7745,6 +8776,80 @@ conteudo_blocos:
                 coletarDocumentosAdmin()
         };
 
+           const blocosNarrativos =
+            Array.isArray(caso.conteudo_blocos)
+                ? caso.conteudo_blocos
+                : [];
+
+        const videosInvalidos =
+            blocosNarrativos.filter(
+                bloco =>
+                    bloco.tipo === "video" &&
+                    !validarUrlVideoAdmin(
+                        bloco.dados?.url
+                    )
+            );
+
+        if (videosInvalidos.length) {
+            throw new Error(
+                "Revise os blocos de vídeo. São aceitos links válidos do YouTube ou Vimeo, sem códigos HTML."
+            );
+        }
+
+        const textoNarrativo =
+            blocosNarrativos
+                .filter(bloco =>
+                    bloco.tipo === "paragrafo" ||
+                    bloco.tipo === "subtitulo"
+                )
+                .map(bloco =>
+                    bloco.dados?.texto || ""
+                )
+                .filter(Boolean)
+                .join("\n\n")
+                .trim();
+
+        if (textoNarrativo) {
+            caso.historia = textoNarrativo;
+        }
+
+        const evidenciasDosBlocos =
+            blocosNarrativos
+                .filter(
+                    bloco =>
+                        bloco.tipo === "evidencias"
+                )
+                .flatMap(
+                    bloco =>
+                        Array.isArray(bloco.dados?.itens)
+                            ? bloco.dados.itens
+                            : []
+                )
+                .slice(0, 5);
+
+        if (evidenciasDosBlocos.length) {
+            caso.evidencias =
+                evidenciasDosBlocos;
+        }
+
+        const hipotesesDosBlocos =
+            blocosNarrativos
+                .filter(
+                    bloco =>
+                        bloco.tipo === "hipoteses"
+                )
+                .flatMap(
+                    bloco =>
+                        Array.isArray(bloco.dados?.itens)
+                            ? bloco.dados.itens
+                            : []
+                );
+
+        if (hipotesesDosBlocos.length) {
+            caso.teorias =
+                hipotesesDosBlocos;
+        }
+
 
         if (!caso.titulo) {
 
@@ -7760,23 +8865,6 @@ conteudo_blocos:
             );
         }
 
-
-        if (
-    !caso.historia &&
-    Array.isArray(caso.conteudo_blocos) &&
-    caso.conteudo_blocos.length
-) {
-    caso.historia =
-        caso.conteudo_blocos
-            .filter(bloco =>
-                bloco.tipo === "paragrafo" ||
-                bloco.tipo === "subtitulo"
-            )
-            .map(bloco => bloco.conteudo)
-            .filter(Boolean)
-            .join("\n\n")
-            .trim();
-}
 
 if (
     !caso.historia &&
@@ -7873,6 +8961,177 @@ if (
 
                 botaoSalvar.innerHTML =
                     htmlOriginal;
+            }
+        }
+    }
+}
+
+
+/* ==========================================================================
+   SALVAR PERÍCIA ADMIN — SUPABASE
+   ========================================================================== */
+
+async function salvarPericiaAdmin(
+    evento,
+    periciaExistente = null
+) {
+
+    evento.preventDefault();
+
+    const formulario =
+        evento.currentTarget;
+
+    const botaoSalvar =
+        formulario?.querySelector(
+            'button[type="submit"]'
+        );
+
+    const htmlOriginal =
+        botaoSalvar?.innerHTML;
+
+    if (botaoSalvar) {
+
+        botaoSalvar.disabled = true;
+
+        botaoSalvar.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Salvando...
+        `;
+    }
+
+    const valor = id =>
+        document
+            .getElementById(id)
+            ?.value
+            .trim() || "";
+
+    try {
+
+        const sessao =
+            await obterSessaoAdmin();
+
+        if (!sessao) {
+            throw new Error(
+                "Sua sessão administrativa expirou. Entre novamente."
+            );
+        }
+
+        const pericia = {
+            titulo:
+                valor("admin-forensic-title"),
+            categoria:
+                valor("admin-forensic-category"),
+            resumo:
+                valor("admin-forensic-summary"),
+            imagem:
+                valor("admin-image"),
+            legenda_imagem:
+                valor("admin-forensic-image-caption"),
+            fonte_imagem:
+                valor("admin-forensic-image-source"),
+            introducao:
+                valor("admin-forensic-introduction"),
+            como_funciona:
+                valor("admin-forensic-operation"),
+            historia_tecnica:
+                valor("admin-forensic-history"),
+            aplicacao_casos_reais:
+                valor("admin-forensic-real-cases"),
+            limitacoes_controversias:
+                valor("admin-forensic-limitations"),
+            curiosidades:
+                valor("admin-forensic-curiosities"),
+            fontes:
+                valor("admin-forensic-sources"),
+            casos_relacionados:
+                valor("admin-forensic-related-cases")
+        };
+
+        if (!pericia.titulo) {
+            throw new Error(
+                "Informe o título da perícia."
+            );
+        }
+
+        if (!pericia.categoria) {
+            throw new Error(
+                "Selecione a categoria da perícia."
+            );
+        }
+
+        if (!pericia.resumo) {
+            throw new Error(
+                "Informe o resumo da perícia."
+            );
+        }
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+        let resultado;
+
+        if (
+            periciaExistente?.id !== undefined &&
+            periciaExistente?.id !== null
+        ) {
+
+            resultado =
+                await supabaseClient
+                    .from("pericias")
+                    .update(pericia)
+                    .eq(
+                        "id",
+                        periciaExistente.id
+                    )
+                    .select()
+                    .single();
+
+        } else {
+
+            resultado =
+                await supabaseClient
+                    .from("pericias")
+                    .insert([pericia])
+                    .select()
+                    .single();
+        }
+
+        if (resultado.error) {
+            throw resultado.error;
+        }
+
+        fecharFormularioAdmin();
+
+        await carregarPericiasSupabase();
+
+        renderizarGerenciadorAdmin();
+
+        alert(
+            periciaExistente
+                ? "Perícia atualizada com sucesso."
+                : "Perícia cadastrada com sucesso."
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao salvar perícia no Supabase:",
+            erro
+        );
+
+        alert(
+            erro?.message ||
+            "Não foi possível salvar a perícia. Verifique se a tabela pericias já foi criada no Supabase."
+        );
+
+    } finally {
+
+        if (botaoSalvar) {
+
+            botaoSalvar.disabled = false;
+
+            if (htmlOriginal !== undefined) {
+                botaoSalvar.innerHTML = htmlOriginal;
             }
         }
     }
@@ -8259,6 +9518,68 @@ async function editarLivro(id) {
 }
 
 
+async function editarPericia(id) {
+
+    try {
+
+        let pericia =
+            periciasSupabase.find(
+                item =>
+                    String(item.id) ===
+                    String(id)
+            );
+
+        if (!pericia) {
+
+            const supabaseClient =
+                await obterClienteSupabase();
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from("pericias")
+                    .select("*")
+                    .eq(
+                        "id",
+                        id
+                    )
+                    .single();
+
+            if (error) {
+                throw error;
+            }
+
+            pericia = data;
+        }
+
+        if (!pericia) {
+            throw new Error(
+                "Perícia não encontrada."
+            );
+        }
+
+        abrirFormularioAdmin(
+            "pericia",
+            pericia
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao abrir perícia para edição:",
+            erro
+        );
+
+        alert(
+            erro?.message ||
+            "Não foi possível abrir esta perícia."
+        );
+    }
+}
+
+
 /* ==========================================================================
    EXCLUSÃO
    ========================================================================== */
@@ -8334,6 +9655,69 @@ async function removerCaso(id) {
         alert(
             erro?.message ||
             "Não foi possível excluir o dossiê."
+        );
+    }
+}
+
+
+async function removerPericia(id) {
+
+    const confirmar =
+        confirm(
+            "Tem certeza que deseja excluir esta perícia? Esta ação não poderá ser desfeita."
+        );
+
+    if (!confirmar) {
+        return;
+    }
+
+    try {
+
+        const sessao =
+            await obterSessaoAdmin();
+
+        if (!sessao) {
+            throw new Error(
+                "Sua sessão administrativa expirou. Entre novamente."
+            );
+        }
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("pericias")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        await carregarPericiasSupabase();
+
+        renderizarGerenciadorAdmin();
+
+        alert(
+            "Perícia excluída com sucesso."
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao excluir perícia do Supabase:",
+            erro
+        );
+
+        alert(
+            erro?.message ||
+            "Não foi possível excluir a perícia."
         );
     }
 }
@@ -8546,12 +9930,18 @@ window.removerCaso =
 window.removerLivro =
     removerLivro;
 
+window.removerPericia =
+    removerPericia;
+
 
 window.editarCaso =
     editarCaso;
 
 window.editarLivro =
     editarLivro;
+
+window.editarPericia =
+    editarPericia;
 
 
 window.sairAdmin =
@@ -8567,3 +9957,4 @@ function filtrarTrechosImagemAdmin(trechos, consulta) {
         return indices;
     }, []);
 }
+
