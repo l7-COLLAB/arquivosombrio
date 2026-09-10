@@ -6366,6 +6366,15 @@ const livros =
                     Novo Dossiê
                 </button>
 
+<button
+    type="button"
+    class="admin-action-button"
+    id="admin-new-forensic"
+>
+    <i class="fa-solid fa-microscope"></i>
+    Nova Perícia
+</button>
+
                 <button
                     type="button"
                     class="admin-action-button"
