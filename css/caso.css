@@ -1763,3 +1763,874 @@ padding-bottom:12px;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
 }
+
+/* ==========================================================================
+   CONTEÚDO NARRATIVO POR BLOCOS
+   ========================================================================== */
+
+/* 1. Contêiner */
+
+.case-page #caso-historia[data-content-format="blocks"] {
+    --case-block-surface: rgba(21, 18, 16, 0.78);
+    --case-block-surface-soft: rgba(255, 255, 255, 0.025);
+    --case-block-border: rgba(166, 140, 85, 0.28);
+    --case-block-border-strong: rgba(164, 19, 19, 0.48);
+    --case-block-accent: var(--gold, #a88c55);
+    --case-block-danger: #d67b7b;
+    --case-block-text: var(--paper-soft, #d9d0c3);
+    --case-block-muted: var(--muted, #81786d);
+
+    display: flow-root;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    color: var(--case-block-text);
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] > * {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] > * + * {
+    margin-top: clamp(1.25rem, 3vw, 2rem);
+}
+
+
+/* 2. Subtítulos e parágrafos */
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-subtitle {
+    margin: clamp(2.6rem, 7vw, 4.5rem) 0 1rem;
+    padding: 0 0 0.75rem;
+    border-bottom: 1px solid var(--case-block-border);
+    color: var(--paper, #eee5d7);
+    font-family: var(--font-display, "Cinzel", Georgia, serif);
+    font-size: clamp(1.25rem, 2.8vw, 1.75rem);
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0.015em;
+    scroll-margin-top: 6rem;
+    break-after: avoid;
+    page-break-after: avoid;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-subtitle:first-child {
+    margin-top: 0;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-paragraph {
+    max-width: 72ch;
+    margin-right: auto;
+    margin-left: auto;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    white-space: pre-line;
+    orphans: 3;
+    widows: 3;
+}
+
+
+/* 3. Imagens */
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image {
+    display: block;
+    width: 100%;
+    margin-block: clamp(1.75rem, 4vw, 2.75rem);
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image-frame {
+    position: relative;
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    overflow: clip;
+    border: 1px solid var(--case-block-border);
+    background: #090807;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: min(78vh, 900px);
+    object-fit: contain;
+    border: 0;
+    background: #090807;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image figcaption {
+    display: grid;
+    gap: 0.42rem;
+    margin-top: 0.75rem;
+    color: var(--case-block-muted);
+    font-family: var(--font-body, "Libre Baskerville", Georgia, serif);
+    font-size: 0.82em;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-image-caption {
+    color: var(--case-block-text);
+    font-weight: 700;
+    white-space: pre-line;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-image-note {
+    margin-top: 0.2rem;
+    padding: 0.75rem 0.9rem;
+    border-left: 2px solid var(--case-block-accent);
+    background: rgba(166, 140, 85, 0.07);
+    white-space: pre-line;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-image-credit,
+.case-page #caso-historia[data-content-format="blocks"] .case-image-source {
+    font-family: var(--font-mono, "DM Mono", monospace);
+    font-size: 0.84em;
+}
+
+
+/* 4. Conteúdo sensível */
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image--sensitive .case-content-image-frame {
+    min-height: clamp(250px, 48vw, 520px);
+    isolation: isolate;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image--sensitive img {
+    min-height: inherit;
+    object-fit: cover;
+    filter: blur(32px) brightness(0.22) saturate(0.35);
+    transform: scale(1.12);
+    transition: filter 0.25s ease, transform 0.25s ease;
+    user-select: none;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-sensitive-warning {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.85rem;
+    padding: clamp(1.25rem, 5vw, 2.5rem);
+    overflow-y: auto;
+    background: linear-gradient(
+        rgba(9, 7, 7, 0.9),
+        rgba(20, 10, 10, 0.94)
+    );
+    color: #f1e8dc;
+    text-align: center;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-sensitive-warning strong {
+    color: #fff3e5;
+    font-family: var(--font-display, "Cinzel", Georgia, serif);
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
+    letter-spacing: 0.04em;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-sensitive-warning p {
+    max-width: 52ch;
+    margin: 0;
+    color: #d9cec0;
+    font-size: 0.9em;
+    line-height: 1.65;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-sensitive-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.65rem;
+    width: 100%;
+    margin-top: 0.35rem;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-sensitive-toggle,
+.case-page #caso-historia[data-content-format="blocks"] .case-sensitive-terms {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1rem;
+    border-radius: 2px;
+    font-family: var(--font-mono, "DM Mono", monospace);
+    font-size: 0.76rem;
+    line-height: 1.35;
+    text-align: center;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-sensitive-toggle {
+    border: 1px solid rgba(214, 123, 123, 0.72);
+    background: #551616;
+    color: #fff4e8;
+    cursor: pointer;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-sensitive-terms {
+    border: 1px solid rgba(238, 229, 215, 0.3);
+    color: #eee5d7;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image--sensitive.is-revealed img {
+    filter: none;
+    transform: none;
+    user-select: auto;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image--sensitive.is-revealed .case-sensitive-warning {
+    position: static;
+    min-height: 0;
+    padding: 0.75rem;
+    background: #191310;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image--sensitive.is-revealed .case-sensitive-warning strong,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image--sensitive.is-revealed .case-sensitive-warning p,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image--sensitive.is-revealed .case-sensitive-terms {
+    display: none;
+}
+
+
+/* 5. Documentos */
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-document {
+    display: grid;
+    gap: 0.75rem;
+    padding: clamp(1.15rem, 3vw, 1.65rem);
+    border: 1px solid var(--case-block-border);
+    border-left: 3px solid var(--case-block-accent);
+    background:
+        linear-gradient(135deg, rgba(166, 140, 85, 0.07), transparent 45%),
+        var(--case-block-surface);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.14);
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-document-label,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card-label,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-official-label {
+    color: var(--case-block-accent);
+    font-family: var(--font-mono, "DM Mono", monospace);
+    font-size: 0.65rem;
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-document h3 {
+    margin: 0;
+    color: var(--paper, #eee5d7);
+    font-family: var(--font-display, "Cinzel", Georgia, serif);
+    font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+    line-height: 1.4;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-document p,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-document small {
+    margin: 0;
+    color: inherit;
+    white-space: pre-line;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-document small {
+    color: var(--case-block-muted);
+    font-family: var(--font-mono, "DM Mono", monospace);
+    font-size: 0.72em;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-document-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.25rem;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-document-button,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-document-source {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.68rem 0.9rem;
+    border: 1px solid var(--case-block-border);
+    font-family: var(--font-mono, "DM Mono", monospace);
+    font-size: 0.72rem;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-document-button {
+    border-color: var(--case-block-border-strong);
+    background: rgba(123, 9, 9, 0.18);
+}
+
+
+/* 6. Vídeos */
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-video {
+    display: grid;
+    gap: 0.8rem;
+    width: 100%;
+    margin-block: clamp(1.75rem, 4vw, 2.75rem);
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-video h3 {
+    margin: 0;
+    color: var(--paper, #eee5d7);
+    font-family: var(--font-display, "Cinzel", Georgia, serif);
+    font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+    line-height: 1.4;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-video-frame {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: clip;
+    border: 1px solid var(--case-block-border);
+    background: #070707;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-video-frame iframe {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-video figcaption {
+    color: var(--case-block-muted);
+    font-size: 0.82em;
+    line-height: 1.65;
+    white-space: pre-line;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-video-link {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    min-height: 44px;
+    max-width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--case-block-border);
+}
+
+
+/* 7. Cronologia */
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-timeline {
+    padding: clamp(1.1rem, 3vw, 1.6rem);
+    border: 1px solid var(--case-block-border);
+    background: var(--case-block-surface-soft);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-timeline h3,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-evidence > h3,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-hypotheses > h3,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-sources > h3 {
+    margin: 0 0 1.1rem;
+    color: var(--paper, #eee5d7);
+    font-family: var(--font-display, "Cinzel", Georgia, serif);
+    font-size: clamp(1.1rem, 2.6vw, 1.45rem);
+    line-height: 1.4;
+    break-after: avoid;
+    page-break-after: avoid;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-timeline ol {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-timeline li {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(7.5rem, 0.35fr) minmax(0, 1fr);
+    gap: 1rem;
+    min-width: 0;
+    padding: 0.15rem 0 1.35rem 1.5rem;
+    border-left: 1px solid var(--case-block-border);
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-timeline li::before {
+    position: absolute;
+    top: 0.35rem;
+    left: -0.36rem;
+    width: 0.65rem;
+    height: 0.65rem;
+    border: 2px solid var(--case-block-accent);
+    border-radius: 50%;
+    background: #100e0c;
+    content: "";
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-timeline li:last-child {
+    padding-bottom: 0;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-timeline time {
+    color: var(--case-block-accent);
+    font-family: var(--font-mono, "DM Mono", monospace);
+    font-size: 0.76em;
+    font-weight: 500;
+    line-height: 1.55;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-timeline p {
+    margin: 0;
+    color: inherit;
+    white-space: pre-line;
+}
+
+
+/* 8 e 9. Evidências, hipóteses e controvérsias */
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-evidence,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-hypotheses {
+    min-width: 0;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    width: 100%;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card {
+    display: grid;
+    align-content: start;
+    gap: 0.7rem;
+    min-width: 0;
+    padding: clamp(1rem, 2.6vw, 1.35rem);
+    border: 1px solid var(--case-block-border);
+    background: var(--case-block-surface);
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card--evidence {
+    border-top: 2px solid var(--case-block-accent);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card--hypothesis {
+    border-left: 3px double var(--case-block-border-strong);
+    background:
+        linear-gradient(135deg, rgba(123, 9, 9, 0.055), transparent 50%),
+        var(--case-block-surface);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card h4 {
+    margin: 0;
+    color: var(--paper, #eee5d7);
+    font-family: var(--font-display, "Cinzel", Georgia, serif);
+    font-size: 1rem;
+    line-height: 1.45;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card p,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card small {
+    margin: 0;
+    color: inherit;
+    white-space: pre-line;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card small {
+    color: var(--case-block-muted);
+    font-family: var(--font-mono, "DM Mono", monospace);
+    font-size: 0.72em;
+}
+
+
+/* 10. Situação oficial */
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-official-status {
+    display: grid;
+    gap: 0.8rem;
+    padding: clamp(1.15rem, 3vw, 1.75rem);
+    border: 1px solid var(--case-block-border-strong);
+    border-top: 3px solid var(--red, #7b0909);
+    background:
+        linear-gradient(135deg, rgba(123, 9, 9, 0.12), transparent 48%),
+        var(--case-block-surface);
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-official-status h3 {
+    margin: 0;
+    color: var(--paper, #eee5d7);
+    font-family: var(--font-display, "Cinzel", Georgia, serif);
+    font-size: clamp(1.1rem, 2.8vw, 1.5rem);
+    line-height: 1.4;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-official-status p,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-official-status small {
+    margin: 0;
+    color: inherit;
+    white-space: pre-line;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-official-status small {
+    color: var(--case-block-muted);
+    font-family: var(--font-mono, "DM Mono", monospace);
+    font-size: 0.72em;
+}
+
+
+/* 11. Fontes */
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-sources {
+    padding: clamp(1.1rem, 3vw, 1.6rem);
+    border-top: 1px solid var(--case-block-border);
+    border-bottom: 1px solid var(--case-block-border);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-sources ol {
+    display: grid;
+    gap: 0.8rem;
+    margin: 0;
+    padding-left: 1.55rem;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-sources li {
+    min-width: 0;
+    padding: 0.8rem 0.85rem;
+    border-left: 1px solid var(--case-block-border);
+    background: var(--case-block-surface-soft);
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-sources li::marker {
+    color: var(--case-block-accent);
+    font-family: var(--font-mono, "DM Mono", monospace);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-sources strong,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-sources span,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-sources small {
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-sources strong {
+    color: var(--paper, #eee5d7);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-sources small {
+    color: var(--case-block-muted);
+    font-family: var(--font-mono, "DM Mono", monospace);
+    font-size: 0.72em;
+}
+
+
+/* 12. Links e estados */
+
+.case-page #caso-historia[data-content-format="blocks"] a {
+    color: var(--gold-light, #c4aa70);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] a:visited {
+    color: #bda68e;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] a:hover {
+    color: var(--paper, #eee5d7);
+    text-decoration-thickness: 2px;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] a:active {
+    color: var(--red-light, #a41313);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] a:focus-visible,
+.case-page #caso-historia[data-content-format="blocks"] button:focus-visible {
+    outline: 3px solid var(--gold-light, #c4aa70);
+    outline-offset: 3px;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card-link,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-official-link,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-source-link {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    min-height: 44px;
+    max-width: 100%;
+    margin-top: 0.15rem;
+    font-family: var(--font-mono, "DM Mono", monospace);
+    font-size: 0.72rem;
+    line-height: 1.45;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-media-error,
+.case-page #caso-historia[data-content-format="blocks"] .case-content-image--error .case-content-image-frame {
+    border: 1px dashed rgba(214, 123, 123, 0.72);
+    background: rgba(123, 9, 9, 0.1);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-media-error {
+    display: grid;
+    place-items: center;
+    min-height: 120px;
+    margin: 0;
+    padding: 1rem;
+    color: var(--case-block-danger);
+    font-family: var(--font-mono, "DM Mono", monospace);
+    font-size: 0.76em;
+    line-height: 1.6;
+    text-align: center;
+}
+
+
+/* 13. Tema papel antigo */
+
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] {
+    --case-block-surface: rgba(229, 214, 185, 0.82);
+    --case-block-surface-soft: rgba(91, 62, 35, 0.055);
+    --case-block-border: rgba(81, 60, 38, 0.3);
+    --case-block-border-strong: rgba(117, 48, 25, 0.48);
+    --case-block-accent: #76532d;
+    --case-block-danger: #7d2525;
+    --case-block-text: var(--reader-fg, #30271e);
+    --case-block-muted: #62513e;
+    color: var(--case-block-text);
+}
+
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-subtitle,
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-document h3,
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-video h3,
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-timeline h3,
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-evidence > h3,
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-hypotheses > h3,
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-card h4,
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-official-status h3,
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-sources > h3,
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-sources strong {
+    color: #30271e;
+}
+
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-document,
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-card,
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-official-status {
+    box-shadow: 0 8px 20px rgba(80, 50, 20, 0.1);
+}
+
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-timeline li::before {
+    background: #eadfc9;
+}
+
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] a {
+    color: #753019;
+}
+
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] a:visited {
+    color: #6d4b3a;
+}
+
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] a:hover {
+    color: #3b2115;
+}
+
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-sensitive-warning {
+    background: linear-gradient(rgba(48, 30, 24, 0.95), rgba(68, 35, 30, 0.96));
+    color: #fff4e8;
+}
+
+body[data-reader-theme="papel"] #caso-historia[data-content-format="blocks"] .case-content-media-error {
+    color: #762626;
+    background: rgba(117, 48, 25, 0.08);
+}
+
+
+/* 14. Modo de leitura e modo página */
+
+body.case-reading #caso-historia[data-content-format="blocks"] {
+    color: var(--reader-fg);
+    font-family: var(--reader-font);
+    font-size: var(--reader-size);
+    line-height: var(--reader-spacing);
+}
+
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-subtitle {
+    break-inside: avoid;
+    break-after: avoid;
+    page-break-inside: avoid;
+    page-break-after: avoid;
+}
+
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-image,
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-document,
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-video,
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-timeline li,
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-card,
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-official-status,
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-sources li {
+    max-width: 100%;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-image img {
+    max-height: calc(var(--reader-page-height, 65vh) * 0.58);
+}
+
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-video-frame {
+    max-height: calc(var(--reader-page-height, 65vh) * 0.56);
+}
+
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-card-list {
+    display: block;
+}
+
+body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-card + .case-content-card {
+    margin-top: 0.9rem;
+}
+
+
+/* 15. Responsividade */
+
+@media (max-width: 768px) {
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-card-list {
+        grid-template-columns: 1fr;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-timeline li {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-document-actions {
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 480px) {
+    .case-page #caso-historia[data-content-format="blocks"] > * + * {
+        margin-top: 1.15rem;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-subtitle {
+        margin-top: 2.35rem;
+        scroll-margin-top: 5rem;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-document,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-timeline,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-card,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-official-status,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-sources {
+        padding: 1rem;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-document-actions,
+    .case-page #caso-historia[data-content-format="blocks"] .case-sensitive-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-document-button,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-document-source,
+    .case-page #caso-historia[data-content-format="blocks"] .case-sensitive-toggle,
+    .case-page #caso-historia[data-content-format="blocks"] .case-sensitive-terms {
+        width: 100%;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-timeline li {
+        padding-left: 1.1rem;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-image--sensitive .case-content-image-frame {
+        min-height: 280px;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-sensitive-warning {
+        padding: 1rem;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-video-link,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-card-link,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-official-link,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-source-link {
+        width: 100%;
+    }
+}
+
+@media (max-width: 350px) {
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-document,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-timeline,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-card,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-official-status,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-sources {
+        padding: 0.85rem;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-sources ol {
+        padding-left: 1.25rem;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-sensitive-warning p {
+        font-size: 0.82em;
+    }
+}
+
+
+/* 16. Acessibilidade */
+
+@media (prefers-reduced-motion: reduce) {
+    .case-page #caso-historia[data-content-format="blocks"] *,
+    .case-page #caso-historia[data-content-format="blocks"] *::before,
+    .case-page #caso-historia[data-content-format="blocks"] *::after {
+        scroll-behavior: auto;
+        transition-duration: 0.01ms;
+        animation-duration: 0.01ms;
+        animation-iteration-count: 1;
+    }
+}
+
+@media (forced-colors: active) {
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-document,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-card,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-official-status,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-timeline,
+    .case-page #caso-historia[data-content-format="blocks"] .case-content-sources {
+        border: 1px solid CanvasText;
+    }
+
+    .case-page #caso-historia[data-content-format="blocks"] .case-sensitive-toggle {
+        border: 2px solid ButtonText;
+    }
+}
+
