@@ -325,6 +325,8 @@
                     type="button"
                     class="btn-restricted"
                     id="btn-open-admin"
+                    aria-controls="modal-admin"
+                    aria-haspopup="dialog"
                 >
 
                     <i class="fa-solid fa-lock"></i>
@@ -444,6 +446,8 @@
                 href="#"
                 id="mobile-btn-admin"
                 class="sidebar-admin-link"
+                aria-controls="modal-admin"
+                aria-haspopup="dialog"
             >
 
                 <i class="fa-solid fa-lock"></i>
@@ -2117,6 +2121,7 @@
         role="dialog"
         aria-modal="true"
         aria-labelledby="admin-modal-title"
+        aria-describedby="admin-modal-description"
     >
 
 
@@ -2156,7 +2161,7 @@
 
 
 
-            <p>
+            <p id="admin-modal-description">
 
                 Insira a credencial administrativa para acessar
                 as ferramentas de gerenciamento.
@@ -2225,7 +2230,8 @@
                 <p
                     id="admin-login-erro"
                     class="form-message error-message"
-                    aria-live="polite"
+                    role="alert"
+                    aria-live="assertive"
                 ></p>
 
 
@@ -2245,9 +2251,9 @@
          primeiro os dados, depois a lógica.
          ================================================================ -->
 
-    <script src="data/caso.js"></script>
-    <script src="js/script.js"></script>
-    <script src="js/filtros.js"></script>
+    <script src="data/caso.js" defer></script>
+    <script src="js/script.js" defer></script>
+    <script src="js/filtros.js" defer></script>
 
 
 </body>
