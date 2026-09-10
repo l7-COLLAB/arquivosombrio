@@ -2087,6 +2087,7 @@ function inicializarUploadCapaLivro(
             })
     );
 }
+let blocoInsercaoSelecionadoAdmin = null;
 
 function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
     const bloco = document.createElement("div");
@@ -2324,6 +2325,10 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
                     botao.textContent = rotulo;
                     botao.addEventListener("click", () => {
                         const posicao = valor + "-" + i;
+                      blocoInsercaoSelecionadoAdmin = {
+    modo: valor,
+    indice: i
+};
                         if (!Array.from(seletor.options).some(o => o.value === posicao)) {
                             const opcao = document.createElement("option");
                             opcao.value = posicao;
@@ -2419,8 +2424,35 @@ function inicializarEditorConteudoAdminLegado(dados = null) {
                 dadosBloco
             );
 
-        editor.appendChild(bloco);
+    if (
+    blocoInsercaoSelecionadoAdmin &&
+    editor.children[blocoInsercaoSelecionadoAdmin.indice]
+) {
 
+    const alvo =
+        editor.children[
+            blocoInsercaoSelecionadoAdmin.indice
+        ];
+
+    if (
+        blocoInsercaoSelecionadoAdmin.modo === "apos"
+    ) {
+
+        alvo.after(bloco);
+
+    } else {
+
+        alvo.before(bloco);
+
+    }
+
+    blocoInsercaoSelecionadoAdmin = null;
+
+} else {
+
+    editor.appendChild(bloco);
+
+}
         configurarBlocoConteudoAdmin(
             bloco
         );
