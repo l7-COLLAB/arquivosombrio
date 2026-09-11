@@ -4046,39 +4046,61 @@ function configurarPaginasLeitura(barra) {
         }
 
 
-        const alturaVisivel =
-            window.visualViewport?.height ||
-            window.innerHeight;
+      const alturaVisivel =
+    window.visualViewport?.height ||
+    window.innerHeight;
 
-        const altura =
-            Math.max(
-                260,
-                alturaVisivel -
-                    barra.getBoundingClientRect()
-                        .height -
-                40
-            );
+const alturaDisponivel =
+    alturaVisivel -
+    barra.getBoundingClientRect()
+        .height -
+    54;
+
+const celular =
+    window.matchMedia(
+        "(max-width: 600px)"
+    ).matches;
+
+const alturaMaxima =
+    celular
+        ? 720
+        : 820;
+
+const alturaFolha =
+    Math.max(
+        420,
+        Math.min(
+            alturaDisponivel,
+            alturaMaxima
+        )
+    );
+
+const alturaConteudo =
+    Math.max(
+        380,
+        alturaFolha - 36
+    );
 
 
-        janela.style.height =
-            altura + "px";
+janela.style.height =
+    alturaFolha + "px";
 
-        janela.style.maxHeight =
-            altura + "px";
+janela.style.maxHeight =
+    alturaFolha + "px";
 
-        janela.style.overflow =
-            "hidden";
+janela.style.overflow =
+    "hidden";
 
 
-        artigo.style.setProperty(
-            "--reader-page-height",
-            altura + "px"
-        );
+artigo.style.setProperty(
+    "--reader-page-height",
+    alturaConteudo + "px"
+);
 
-        artigo.style.setProperty(
-            "--reader-page-width",
-            largura + "px"
-        );
+artigo.style.setProperty(
+    "--reader-page-width",
+    largura + "px"
+);
 
 
         total =
