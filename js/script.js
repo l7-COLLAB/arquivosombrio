@@ -7947,16 +7947,23 @@ const livro =
                     </label>
 
 
-                    <textarea
-                        id="admin-history"
-                        hidden
-                    >${
-                        dados
-                            ? escaparHTML(
-                                dados.historia
-                            )
-                            : ""
-                    }</textarea>
+                   <label>
+
+    História / Relatório
+
+    <textarea
+        id="admin-history"
+        rows="24"
+        required
+    >${
+        dados
+            ? escaparHTML(
+                dados.historia
+            )
+            : ""
+    }</textarea>
+
+</label>
 
 <div class="admin-content-editor">
     <div class="admin-content-editor-header">
