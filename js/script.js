@@ -9289,9 +9289,15 @@ conteudo_blocos:
                     bloco.tipo === "paragrafo" ||
                     bloco.tipo === "subtitulo"
                 )
-                .map(bloco =>
-                    bloco.dados?.texto || ""
-                )
+.map(bloco => {
+
+    const texto =
+        bloco.dados?.texto || "";
+
+    return bloco.tipo === "subtitulo"
+        ? `## ${texto}`
+        : texto;
+})
                 .filter(Boolean)
                 .join("\n\n")
                 .trim();
