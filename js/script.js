@@ -8030,15 +8030,29 @@ const livro =
 
 </label>
 
-                    <textarea id="admin-theories" hidden>${
-                        dados
-                            ? escaparHTML(
-                                normalizarEvidencias(
-                                    dados.teorias
-                                ).join("\n")
-                            )
-                            : ""
-                    }</textarea>
+                  <label>
+
+    Hipóteses e controvérsias
+
+    <textarea
+        id="admin-theories"
+        rows="12"
+        placeholder="Digite uma hipótese ou controvérsia por bloco de texto. Separe cada item com uma linha em branco."
+    >${
+        dados
+            ? escaparHTML(
+                normalizarEvidencias(
+                    dados.teorias
+                ).join("\n\n")
+            )
+            : ""
+    }</textarea>
+
+    <small>
+        Separe cada hipótese ou controvérsia com uma linha em branco.
+    </small>
+
+</label>
 
 
                     <div
