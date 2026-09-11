@@ -7898,11 +7898,10 @@ const livro =
                             required
                         >${
                             dados
-                                ? escapar
-                                ? escaparHTML(
-                                    dados.resumo
-                                )
-                                : ""
+    ? escaparHTML(
+        dados.resumo
+    )
+    : ""
                         }</textarea>
 
                     </label>
