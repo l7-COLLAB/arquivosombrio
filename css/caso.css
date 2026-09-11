@@ -2634,3 +2634,172 @@ body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-c
     }
 }
 
+/* ==========================================================
+   PAGINAÇÃO COMPACTA DO SUMÁRIO
+   ========================================================== */
+
+.dossie-summary {
+    min-height: 0;
+    padding: 28px 32px 24px;
+}
+
+.dossie-summary-title {
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+}
+
+.dossie-summary li {
+    margin: 4px 0;
+}
+
+.dossie-summary a {
+    padding: 12px 0;
+    font-size: 0.96rem;
+    line-height: 1.4;
+}
+
+.dossie-summary-pagination {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 18px;
+    padding-top: 16px;
+
+    border-top:
+        1px solid
+        rgba(180, 140, 70, 0.25);
+}
+
+.dossie-summary-page-button {
+    min-height: 36px;
+    padding: 8px 10px;
+
+    border:
+        1px solid
+        rgba(180, 140, 70, 0.35);
+
+    background:
+        rgba(180, 140, 70, 0.07);
+
+    color: #d8c6a0;
+
+    font-family:
+        "DM Mono",
+        monospace;
+
+    font-size: 0.61rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.dossie-summary-page-button:first-child {
+    justify-self: start;
+}
+
+.dossie-summary-page-button:last-child {
+    justify-self: end;
+}
+
+.dossie-summary-page-button:hover:not(:disabled) {
+    border-color:
+        rgba(181, 42, 42, 0.85);
+
+    background:
+        rgba(181, 42, 42, 0.12);
+
+    color: #ffffff;
+}
+
+.dossie-summary-page-button:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+}
+
+.dossie-summary-page-indicator {
+    color: #b89b64;
+
+    font-family:
+        "DM Mono",
+        monospace;
+
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+
+    white-space: nowrap;
+}
+
+body[data-reader-theme="papel"]
+.dossie-summary-page-button {
+    border-color:
+        rgba(103, 75, 37, 0.35);
+
+    background:
+        rgba(103, 75, 37, 0.05);
+
+    color: #4c321b;
+}
+
+body[data-reader-theme="papel"]
+.dossie-summary-page-button:hover:not(:disabled) {
+    border-color: #8f1d1d;
+    background:
+        rgba(143, 29, 29, 0.08);
+    color: #8f1d1d;
+}
+
+body[data-reader-theme="papel"]
+.dossie-summary-page-indicator {
+    color: #75562f;
+}
+
+@media (max-width: 600px) {
+
+    .dossie-summary {
+        width:
+            min(
+                330px,
+                calc(100% - 28px)
+            );
+
+        padding:
+            24px 24px 20px;
+
+        margin:
+            20px auto 30px;
+    }
+
+    .dossie-summary a {
+        padding: 10px 0;
+        font-size: 0.91rem;
+    }
+
+    .dossie-summary-pagination {
+        gap: 7px;
+    }
+
+    .dossie-summary-page-button {
+        min-height: 34px;
+        padding: 7px 8px;
+        font-size: 0.55rem;
+    }
+
+    .dossie-summary-page-indicator {
+        font-size: 0.58rem;
+    }
+}
+
