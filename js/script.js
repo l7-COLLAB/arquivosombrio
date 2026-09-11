@@ -3021,80 +3021,40 @@ function inicializarEditorConteudoAdmin(dados = null) {
             );
         });
 
-    const blocosExistentes =
-        Array.isArray(dados?.conteudo_blocos)
-            ? dados.conteudo_blocos
-            : [];
+  
+const blocosExistentes =
+    Array.isArray(
+        dados?.conteudo_blocos
+    )
+        ? dados.conteudo_blocos
+        : [];
 
-    if (blocosExistentes.length) {
+const tiposPermitidosNoEditor = [
+    "imagem",
+    "documento",
+    "video"
+];
 
-        blocosExistentes
-            .slice()
-            .sort(
-                (a, b) =>
-                    Number(a.ordem || 0) -
-                    Number(b.ordem || 0)
-            )
-            .forEach(bloco => {
-                adicionarBloco(
-                    bloco.tipo ||
-                    "paragrafo",
-                    bloco
-                );
-            });
-
-        return;
-    }
-
-    const historiaAntiga =
-        String(dados?.historia || "")
-            .trim();
-
-    if (historiaAntiga) {
+blocosExistentes
+    .slice()
+    .sort(
+        (a, b) =>
+            Number(a.ordem || 0) -
+            Number(b.ordem || 0)
+    )
+    .filter(bloco =>
+        tiposPermitidosNoEditor.includes(
+            bloco.tipo
+        )
+    )
+    .forEach(bloco => {
         adicionarBloco(
-            "paragrafo",
-            {
-                dados: {
-                    texto: historiaAntiga
-                }
-            }
+            bloco.tipo,
+            bloco
         );
-    }
+    });
 
-    const evidenciasAntigas =
-        normalizarEvidencias(
-            dados?.evidencias
-        );
-
-    if (evidenciasAntigas.length) {
-        adicionarBloco(
-            "evidencias",
-            {
-                dados: {
-                    itens:
-                        evidenciasAntigas.slice(0, 5)
-                }
-            }
-        );
-    }
-
-    const hipotesesAntigas =
-        normalizarEvidencias(
-            dados?.teorias
-        );
-
-    if (hipotesesAntigas.length) {
-        adicionarBloco(
-            "hipoteses",
-            {
-                dados: {
-                    itens: hipotesesAntigas
-                }
-            }
-        );
-    }
-}
-
+   }
 
 function inicializarDocumentosCaso(
     dados = null
