@@ -2213,7 +2213,6 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
     [botaoUpload, botaoUpload.disabled],
     [campoUrlImagem, campoUrlImagem.readOnly]
 ];
-            ];
             formulario.dataset.uploadsImagens = String(Number(formulario.dataset.uploadsImagens || 0) + 1);
             if (Number(formulario.dataset.uploadsImagens) === 1 && botaoSalvar) {
                 formulario.dataset.salvarAntesUpload = String(botaoSalvar.disabled);
