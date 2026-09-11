@@ -2210,8 +2210,9 @@ function criarBlocoConteudoAdmin(tipo = "paragrafo", dados = {}) {
             const formulario = bloco.closest("form");
             const botaoSalvar = formulario?.querySelector('button[type="submit"]');
             const anteriores = [
-                [botaoUploadUpload, botaoUpload.disabled],
-                [campoUrlImagem, campoUrlImagem.readOnly]
+    [botaoUpload, botaoUpload.disabled],
+    [campoUrlImagem, campoUrlImagem.readOnly]
+];
             ];
             formulario.dataset.uploadsImagens = String(Number(formulario.dataset.uploadsImagens || 0) + 1);
             if (Number(formulario.dataset.uploadsImagens) === 1 && botaoSalvar) {
