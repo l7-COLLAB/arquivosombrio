@@ -3810,6 +3810,154 @@ function mostrarStatusSublinhado(
     );
 }
 
+function calcularPaginaLeitura(
+    total,
+    pagina
+) {
+
+    return Math.min(
+        Math.max(
+            0,
+            Math.trunc(pagina) || 0
+        ),
+        Math.max(
+            0,
+            total - 1
+        )
+    );
+}
+
+
+function configurarPaginasLeitura(barra) {
+
+    const artigo =
+        document.querySelector(
+            ".case-main-content"
+        );
+
+    const botaoFormato =
+        barra.querySelector(
+            "[data-reader-format-button]"
+        );
+
+    const areaPopovers =
+        barra.querySelector(
+            "[data-reader-popovers]"
+        );
+
+    if (
+        !artigo ||
+        !botaoFormato ||
+        !areaPopovers
+    ) {
+        return;
+    }
+
+
+    const janela =
+        document.createElement(
+            "div"
+        );
+
+    janela.className =
+        "reader-page-window";
+
+    artigo.before(
+        janela
+    );
+
+    janela.append(
+        artigo
+    );
+
+
+    const navegacao =
+        document.createElement(
+            "div"
+        );
+
+    navegacao.className =
+        "reader-page-navigation";
+
+    navegacao.hidden =
+        true;
+
+    navegacao.innerHTML = `
+
+        <button
+            type="button"
+            data-page-prev
+            aria-label="Página anterior"
+        >
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <output
+            data-page-count
+            aria-live="polite"
+        >
+            1 / 1
+        </output>
+
+        <button
+            type="button"
+            data-page-next
+            aria-label="Próxima página"
+        >
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+    `;
+
+    barra.append(
+        navegacao
+    );
+
+
+    const anterior =
+        navegacao.querySelector(
+            "[data-page-prev]"
+        );
+
+    const proxima =
+        navegacao.querySelector(
+            "[data-page-next]"
+        );
+
+    const contador =
+        navegacao.querySelector(
+            "[data-page-count]"
+        );
+
+
+    let modo =
+        "scroll";
+
+    let pagina =
+        0;
+
+    let total =
+        1;
+
+    let largura =
+        0;
+
+    let agendado =
+        false;
+
+
+    function paginasAtivas() {
+
+        return (
+            document.body
+                .classList
+                .contains(
+                    "case-reading"
+                ) &&
+            modo ===
+                "pages"
+        );
+    }
 
 function configurarSublinhadoLeitura(
     barra,
