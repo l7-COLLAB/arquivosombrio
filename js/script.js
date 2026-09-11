@@ -2927,9 +2927,7 @@ function configurarBlocoNarrativoAdmin(bloco) {
     configurarUploadBlocoNarrativoAdmin(
         bloco
     );
-configurarLocalizadorImagemNarrativoAdmin(
-    bloco
-);
+   
     const checkboxSensivel =
         bloco.querySelector(
             "[data-block-sensitive]"
