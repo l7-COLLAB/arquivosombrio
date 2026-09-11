@@ -7996,6 +7996,42 @@ const livro =
 
 </label>
 
+<label>
+
+    Fontes
+
+    <textarea
+        id="admin-sources"
+        rows="12"
+        placeholder="Informe uma fonte por linha ou bloco de texto."
+    >${
+        dados &&
+        Array.isArray(
+            dados.conteudo_blocos
+        )
+            ? escaparHTML(
+                dados.conteudo_blocos
+                    .filter(
+                        bloco =>
+                            bloco.tipo ===
+                            "fontes"
+                    )
+                    .map(
+                        bloco =>
+                            bloco.dados?.texto || ""
+                    )
+                    .filter(Boolean)
+                    .join("\n\n")
+            )
+            : ""
+    }</textarea>
+
+    <small>
+        Inclua o nome da fonte e o link correspondente sempre que estiver disponível.
+    </small>
+
+</label>
+
 <div class="admin-content-editor">
     <div class="admin-content-editor-header">
         <div>
