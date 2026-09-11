@@ -4904,3 +4904,122 @@ function configurarSumarioDossie() {
 
     renderizarPagina();
 }
+
+/* =========================================================
+   BOTÃO FLUTUANTE — VOLTAR AO TOPO
+   ========================================================= */
+
+function inicializarBotaoVoltarTopo() {
+
+    if (
+        document.querySelector(
+            "[data-back-to-top]"
+        )
+    ) {
+        return;
+    }
+
+    const botao =
+        document.createElement(
+            "button"
+        );
+
+    botao.type =
+        "button";
+
+    botao.className =
+        "case-back-to-top";
+
+    botao.dataset.backToTop =
+        "";
+
+    botao.setAttribute(
+        "aria-label",
+        "Voltar ao início do dossiê"
+    );
+
+    botao.setAttribute(
+        "title",
+        "Voltar ao topo"
+    );
+
+    botao.innerHTML = `
+        <span aria-hidden="true">
+            ↑
+        </span>
+    `;
+
+    document.body.appendChild(
+        botao
+    );
+
+    const atualizarVisibilidade = () => {
+
+        const deveMostrar =
+            window.scrollY > 700;
+
+        botao.classList.toggle(
+            "is-visible",
+            deveMostrar
+        );
+
+        botao.tabIndex =
+            deveMostrar
+                ? 0
+                : -1;
+
+        botao.setAttribute(
+            "aria-hidden",
+            deveMostrar
+                ? "false"
+                : "true"
+        );
+    };
+
+    botao.addEventListener(
+        "click",
+        () => {
+
+            window.scrollTo({
+                top: 0,
+
+                behavior:
+                    window.matchMedia(
+                        "(prefers-reduced-motion: reduce)"
+                    ).matches
+                        ? "auto"
+                        : "smooth"
+            });
+        }
+    );
+
+    window.addEventListener(
+        "scroll",
+        atualizarVisibilidade,
+        {
+            passive: true
+        }
+    );
+
+    atualizarVisibilidade();
+}
+
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        inicializarBotaoVoltarTopo,
+        {
+            once: true
+        }
+    );
+
+} else {
+
+    inicializarBotaoVoltarTopo();
+}
+
