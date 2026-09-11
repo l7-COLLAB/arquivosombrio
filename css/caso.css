@@ -2947,3 +2947,62 @@ body[data-reader-theme="papel"]
     }
 }
 
+/* CORREÇÃO DO PREENCHIMENTO DAS PÁGINAS DE LIVRO */
+
+body.case-paginated {
+    overflow: hidden;
+}
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+> * + * {
+    margin-top: 1rem;
+}
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-subtitle {
+    margin-top: 1.25rem;
+    margin-bottom: 0.65rem;
+    padding-bottom: 0.45rem;
+}
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-image {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+}
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-image-frame {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-document,
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-video,
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-official-status {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+}
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-paragraph {
+    margin-top: 0;
+    margin-bottom: 0.7em;
+    orphans: 2;
+    widows: 2;
+}
