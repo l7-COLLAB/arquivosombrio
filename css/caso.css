@@ -2946,3 +2946,97 @@ body[data-reader-theme="papel"]
             visibility 0.01ms;
     }
 }
+
+/* =========================================================
+   PÁGINAS DE LIVRO — ALTURA FIXA E MELHOR APROVEITAMENTO
+========================================================= */
+
+body.case-paginated {
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+body.case-paginated .reader-page-window {
+    width: 100%;
+    overflow: hidden !important;
+    overscroll-behavior: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+body.case-paginated .reader-page-window::-webkit-scrollbar,
+body.case-paginated .case-main-content::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+body.case-paginated .case-main-content {
+    height: var(--reader-page-height) !important;
+    max-height: var(--reader-page-height) !important;
+    overflow: visible !important;
+    column-width: var(--reader-page-width);
+    column-gap: 0;
+    column-fill: auto;
+}
+
+
+/* Reduz os espaços entre os elementos */
+
+body.case-paginated .case-block {
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+body.case-paginated .case-history p,
+body.case-paginated #caso-historia p {
+    margin-top: 0;
+    margin-bottom: 0.75em;
+}
+
+body.case-paginated .case-block-heading,
+body.case-paginated .case-content-subtitle {
+    margin-top: 0.9em;
+    margin-bottom: 0.45em;
+    padding-bottom: 0.3em;
+}
+
+body.case-paginated .case-history figure {
+    margin-top: 10px;
+    margin-bottom: 12px;
+}
+
+body.case-paginated .case-history img {
+    max-height: calc(
+        var(--reader-page-height) * 0.48
+    );
+    object-fit: contain;
+}
+
+
+/* Ajuste específico para celular */
+
+@media (max-width: 768px) {
+
+    body.case-paginated .case-main-content {
+        padding-top: 14px;
+        padding-right: 28px;
+        padding-bottom: 14px;
+        padding-left: 28px;
+    }
+
+    body.case-paginated .case-block {
+        margin-bottom: 12px;
+    }
+
+    body.case-paginated .case-history p,
+    body.case-paginated #caso-historia p {
+        margin-bottom: 0.65em;
+    }
+
+    body.case-paginated .case-block-heading,
+    body.case-paginated .case-content-subtitle {
+        margin-top: 0.7em;
+        margin-bottom: 0.35em;
+    }
+}
