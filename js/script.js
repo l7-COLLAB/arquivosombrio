@@ -1663,123 +1663,443 @@ function coletarBlocosConteudoAdmin() {
             "admin-content-blocks"
         );
 
-    if (!editor) {
-        return [];
+    const lerCampo = id =>
+        document
+            .getElementById(id)
+            ?.value
+            ?.trim() || "";
+
+    const criarBloco = (
+        tipo,
+        dados
+    ) => ({
+        id:
+            criarIdentificadorBlocoAdmin(),
+        tipo,
+        ordem: 0,
+        dados
+    });
+
+    const historia =
+        lerCampo(
+            "admin-history"
+        );
+
+    const cronologia =
+        separarItensBlocoAdmin(
+            lerCampo(
+                "admin-chronology"
+            )
+        );
+
+    const evidencias =
+        separarItensBlocoAdmin(
+            lerCampo(
+                "admin-evidence"
+            ),
+            5
+        );
+
+    const hipoteses =
+        separarItensBlocoAdmin(
+            lerCampo(
+                "admin-theories"
+            )
+        );
+
+    const situacaoOficial =
+        lerCampo(
+            "admin-official-status"
+        );
+
+    const fontes =
+        lerCampo(
+            "admin-sources"
+        );
+
+    /*
+     * A História permanece em uma única caixa na administração.
+     * Internamente, os trechos são separados somente no momento
+     * de salvar para permitir imagens entre os parágrafos.
+     *
+     * Para criar um subtítulo dentro da História, escreva:
+     * ## Nome do subtítulo
+     */
+    const blocosHistoria =
+        historia
+            .split(/\n\s*\n/)
+            .map(trecho =>
+                trecho.trim()
+            )
+            .filter(Boolean)
+            .map(trecho => {
+
+                const ehSubtitulo =
+                    trecho.startsWith(
+                        "## "
+                    );
+
+                const texto =
+                    ehSubtitulo
+                        ? trecho
+                            .replace(
+                                /^##\s+/,
+                                ""
+                            )
+                            .trim()
+                        : trecho;
+
+                return criarBloco(
+                    ehSubtitulo
+                        ? "subtitulo"
+                        : "paragrafo",
+                    {
+                        texto
+                    }
+                );
+            });
+
+    const blocosMidia =
+        editor
+            ? Array
+                .from(
+                    editor.querySelectorAll(
+                        "[data-content-block]"
+                    )
+                )
+                .map(bloco => {
+
+                    const tipo =
+                        bloco.dataset.blockType;
+
+                    if (
+                        ![
+                            "imagem",
+                            "documento",
+                            "video"
+                        ].includes(tipo)
+                    ) {
+                        return null;
+                    }
+
+                    const ler = seletor =>
+                        bloco
+                            .querySelector(
+                                seletor
+                            )
+                            ?.value
+                            ?.trim() || "";
+
+                    const dados = {};
+
+                    if (tipo === "imagem") {
+
+                        Object.assign(
+                            dados,
+                            {
+                                url:
+                                    ler(
+                                        "[data-block-content]"
+                                    ),
+
+                                legenda:
+                                    ler(
+                                        "[data-block-caption]"
+                                    ),
+
+                                descricao:
+                                    ler(
+                                        "[data-block-note]"
+                                    ),
+
+                                fonte:
+                                    ler(
+                                        "[data-block-source]"
+                                    ),
+
+                                credito:
+                                    ler(
+                                        "[data-block-credit]"
+                                    ),
+
+                                link_fonte:
+                                    ler(
+                                        "[data-block-source-link]"
+                                    ),
+
+                                texto_alternativo:
+                                    ler(
+                                        "[data-block-alt]"
+                                    ),
+
+                                sensivel:
+                                    Boolean(
+                                        bloco.querySelector(
+                                            "[data-block-sensitive]"
+                                        )?.checked
+                                    ),
+
+                                categoria_sensivel:
+                                    ler(
+                                        "[data-block-sensitive-category]"
+                                    ),
+
+                                alinhamento:
+                                    ler(
+                                        "[data-block-align]"
+                                    ) ||
+                                    "centro",
+
+                                tamanho:
+                                    ler(
+                                        "[data-block-size]"
+                                    ) ||
+                                    "medio",
+
+                                posicao:
+                                    bloco.dataset
+                                        .insertPosition ||
+                                    ""
+                            }
+                        );
+                    }
+
+                    if (tipo === "documento") {
+
+                        Object.assign(
+                            dados,
+                            {
+                                url:
+                                    ler(
+                                        "[data-block-content]"
+                                    ),
+
+                                titulo:
+                                    ler(
+                                        "[data-block-title]"
+                                    ),
+
+                                descricao:
+                                    ler(
+                                        "[data-block-description]"
+                                    ),
+
+                                fonte:
+                                    ler(
+                                        "[data-block-source]"
+                                    ),
+
+                                link_original:
+                                    ler(
+                                        "[data-block-original-link]"
+                                    ),
+
+                                acao:
+                                    ler(
+                                        "[data-block-action]"
+                                    ) ||
+                                    "abrir",
+
+                                posicao:
+                                    bloco.dataset
+                                        .insertPosition ||
+                                    ""
+                            }
+                        );
+                    }
+
+                    if (tipo === "video") {
+
+                        Object.assign(
+                            dados,
+                            {
+                                url:
+                                    ler(
+                                        "[data-block-content]"
+                                    ),
+
+                                titulo:
+                                    ler(
+                                        "[data-block-title]"
+                                    ),
+
+                                posicao:
+                                    bloco.dataset
+                                        .insertPosition ||
+                                    ""
+                            }
+                        );
+                    }
+
+                    if (!dados.url) {
+                        return null;
+                    }
+
+                    return {
+                        id:
+                            bloco.dataset.blockId ||
+                            criarIdentificadorBlocoAdmin(),
+
+                        tipo,
+
+                        ordem: 0,
+
+                        dados
+                    };
+                })
+                .filter(Boolean)
+            : [];
+
+    const conteudoNarrativo = [
+        ...blocosHistoria
+    ];
+
+    /*
+     * Insere imagens, documentos e vídeos no ponto escolhido.
+     * Formato da posição:
+     * antes-0
+     * apos-0
+     */
+    blocosMidia.forEach(
+        blocoMidia => {
+
+            const posicao =
+                blocoMidia.dados
+                    .posicao || "";
+
+            const correspondencia =
+                posicao.match(
+                    /^(antes|apos)-(\d+)$/
+                );
+
+            if (!correspondencia) {
+
+                conteudoNarrativo.push(
+                    blocoMidia
+                );
+
+                return;
+            }
+
+            const modo =
+                correspondencia[1];
+
+            const indiceTrecho =
+                Number(
+                    correspondencia[2]
+                );
+
+            const blocoAlvo =
+                blocosHistoria[
+                    indiceTrecho
+                ];
+
+            if (!blocoAlvo) {
+
+                conteudoNarrativo.push(
+                    blocoMidia
+                );
+
+                return;
+            }
+
+            const indiceAlvo =
+                conteudoNarrativo.indexOf(
+                    blocoAlvo
+                );
+
+            if (indiceAlvo === -1) {
+
+                conteudoNarrativo.push(
+                    blocoMidia
+                );
+
+                return;
+            }
+
+            conteudoNarrativo.splice(
+                modo === "apos"
+                    ? indiceAlvo + 1
+                    : indiceAlvo,
+                0,
+                blocoMidia
+            );
+        }
+    );
+
+    if (cronologia.length) {
+
+        conteudoNarrativo.push(
+            criarBloco(
+                "cronologia",
+                {
+                    itens:
+                        cronologia
+                }
+            )
+        );
     }
 
-    return Array
-        .from(
-            editor.querySelectorAll(
-                "[data-content-block]"
+    if (evidencias.length) {
+
+        conteudoNarrativo.push(
+            criarBloco(
+                "evidencias",
+                {
+                    itens:
+                        evidencias
+                }
             )
-        )
-        .map((bloco, indice) => {
+        );
+    }
 
-            const tipo =
-                bloco.dataset.blockType ||
-                "paragrafo";
+    if (hipoteses.length) {
 
-            const ler = seletor =>
-                bloco
-                    .querySelector(seletor)
-                    ?.value
-                    ?.trim() || "";
+        conteudoNarrativo.push(
+            criarBloco(
+                "hipoteses",
+                {
+                    itens:
+                        hipoteses
+                }
+            )
+        );
+    }
 
-            const dados = {};
+    if (situacaoOficial) {
 
-            if (
-                tipo === "subtitulo" ||
-                tipo === "paragrafo" ||
-                tipo === "situacao_oficial" ||
-                tipo === "fontes"
-            ) {
-                dados.texto =
-                    ler("[data-block-content]");
-            }
+        conteudoNarrativo.push(
+            criarBloco(
+                "situacao_oficial",
+                {
+                    texto:
+                        situacaoOficial
+                }
+            )
+        );
+    }
 
-            if (
-                tipo === "cronologia" ||
-                tipo === "evidencias" ||
-                tipo === "hipoteses"
-            ) {
+    if (fontes) {
 
-                const limite =
-                    tipo === "evidencias"
-                        ? 5
-                        : null;
+        conteudoNarrativo.push(
+            criarBloco(
+                "fontes",
+                {
+                    texto:
+                        fontes
+                }
+            )
+        );
+    }
 
-                dados.itens =
-                    separarItensBlocoAdmin(
-                        ler("[data-block-content]"),
-                        limite
-                    );
-            }
-
-            if (tipo === "imagem") {
-                Object.assign(dados, {
-                    url: ler("[data-block-content]"),
-                    legenda: ler("[data-block-caption]"),
-                    descricao: ler("[data-block-note]"),
-                    fonte: ler("[data-block-source]"),
-                    credito: ler("[data-block-credit]"),
-                    link_fonte: ler("[data-block-source-link]"),
-                    texto_alternativo: ler("[data-block-alt]"),
-                    sensivel: Boolean(
-                        bloco.querySelector(
-                            "[data-block-sensitive]"
-                        )?.checked
-                    ),
-                    categoria_sensivel:
-                        ler("[data-block-sensitive-category]"),
-                    alinhamento:
-                        ler("[data-block-align]") ||
-                        "centro",
-                    tamanho:
-                        ler("[data-block-size]") ||
-                        "medio"
-                });
-            }
-
-            if (tipo === "documento") {
-                Object.assign(dados, {
-                    url: ler("[data-block-content]"),
-                    titulo: ler("[data-block-title]"),
-                    descricao: ler("[data-block-description]"),
-                    fonte: ler("[data-block-source]"),
-                    link_original: ler("[data-block-original-link]"),
-                    acao:
-                        ler("[data-block-action]") ||
-                        "abrir"
-                });
-            }
-
-            if (tipo === "video") {
-                Object.assign(dados, {
-                    url: ler("[data-block-content]"),
-                    titulo: ler("[data-block-title]")
-                });
-            }
-
-            return {
-                id:
-                    bloco.dataset.blockId ||
-                    criarIdentificadorBlocoAdmin(),
-                tipo,
-                ordem: indice + 1,
-                dados
-            };
-        })
-        .filter(bloco => {
-
-            if (Array.isArray(bloco.dados.itens)) {
-                return bloco.dados.itens.length > 0;
-            }
-
-            return Boolean(
-                bloco.dados.texto ||
-                bloco.dados.url
-            );
-        });
+    return conteudoNarrativo
+        .map(
+            (bloco, indice) => ({
+                ...bloco,
+                ordem:
+                    indice + 1
+            })
+        );
 }
 
 function atualizarPreviewImagemAdmin(
