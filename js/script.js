@@ -7894,10 +7894,11 @@ const livro =
 
                         <textarea
                             id="admin-summary"
-                            rows="3"
+                            rows="4"
                             required
                         >${
                             dados
+                                ? escapar
                                 ? escaparHTML(
                                     dados.resumo
                                 )
@@ -7907,259 +7908,248 @@ const livro =
                     </label>
 
 
-                   <label>
+                    <label>
 
-    História / Relatório
+                        História / Relatório
 
-    <textarea
-        id="admin-history"
-        rows="24"
-        required
-    >${
-        dados
-            ? escaparHTML(
-                dados.historia
-            )
-            : ""
-    }</textarea>
+                        <textarea
+                            id="admin-history"
+                            rows="24"
+                            required
+                            placeholder="Escreva toda a narrativa do dossiê nesta caixa. Separe os parágrafos com uma linha em branco."
+                        >${
+                            dados
+                                ? escaparHTML(
+                                    dados.historia
+                                )
+                                : ""
+                        }</textarea>
 
-</label>
+                        <small>
+                            Mantenha toda a narrativa nesta única caixa. Separe os parágrafos e subtítulos com uma linha em branco.
+                        </small>
 
-<label>
+                    </label>
 
-    Cronologia
 
-    <textarea
-        id="admin-chronology"
-        rows="12"
-        placeholder="Digite um acontecimento por bloco de texto. Separe cada acontecimento com uma linha em branco."
-    >${
-        dados &&
-        Array.isArray(
-            dados.conteudo_blocos
-        )
-            ? escaparHTML(
-                dados.conteudo_blocos
-                    .filter(
-                        bloco =>
-                            bloco.tipo ===
-                            "cronologia"
-                    )
-                    .flatMap(
-                        bloco =>
+                    <div class="admin-content-editor">
+
+                        <div class="admin-content-editor-header">
+
+                            <div>
+
+                                <strong>
+                                    Imagens, documentos e vídeos
+                                </strong>
+
+                                <small>
+                                    Adicione somente os materiais que deverão aparecer durante a leitura do dossiê.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            id="admin-content-blocks"
+                            class="admin-content-blocks"
+                        ></div>
+
+                        <div class="admin-content-toolbar">
+
+                            <button
+                                type="button"
+                                class="admin-secondary-button"
+                                data-add-content-block="imagem"
+                            >
+                                + Imagem
+                            </button>
+
+                            <button
+                                type="button"
+                                class="admin-secondary-button"
+                                data-add-content-block="documento"
+                            >
+                                + Documento
+                            </button>
+
+                            <button
+                                type="button"
+                                class="admin-secondary-button"
+                                data-add-content-block="video"
+                            >
+                                + Vídeo
+                            </button>
+
+                        </div>
+
+                        <p class="admin-field-help">
+                            O posicionamento de cada material dentro da História será definido pelo localizador de trechos.
+                        </p>
+
+                    </div>
+
+
+                    <label>
+
+                        Cronologia
+
+                        <textarea
+                            id="admin-chronology"
+                            rows="12"
+                            placeholder="Digite um acontecimento por bloco de texto. Separe cada acontecimento com uma linha em branco."
+                        >${
+                            dados &&
                             Array.isArray(
-                                bloco.dados?.itens
+                                dados.conteudo_blocos
                             )
-                                ? bloco.dados.itens
-                                : []
-                    )
-                    .join("\n\n")
-            )
-            : ""
-    }</textarea>
+                                ? escaparHTML(
+                                    dados.conteudo_blocos
+                                        .filter(
+                                            bloco =>
+                                                bloco.tipo ===
+                                                "cronologia"
+                                        )
+                                        .flatMap(
+                                            bloco =>
+                                                Array.isArray(
+                                                    bloco.dados?.itens
+                                                )
+                                                    ? bloco.dados.itens
+                                                    : []
+                                        )
+                                        .join("\n\n")
+                                )
+                                : ""
+                        }</textarea>
 
-    <small>
-        Separe cada acontecimento com uma linha em branco.
-    </small>
+                        <small>
+                            Separe cada acontecimento com uma linha em branco.
+                        </small>
 
-</label>
-
-<label>
-
-    Situação oficial
-
-    <textarea
-        id="admin-official-status"
-        rows="8"
-        placeholder="Descreva a situação oficial e atual do caso."
-    >${
-        dados &&
-        Array.isArray(
-            dados.conteudo_blocos
-        )
-            ? escaparHTML(
-                dados.conteudo_blocos
-                    .filter(
-                        bloco =>
-                            bloco.tipo ===
-                            "situacao_oficial"
-                    )
-                    .map(
-                        bloco =>
-                            bloco.dados?.texto || ""
-                    )
-                    .filter(Boolean)
-                    .join("\n\n")
-            )
-            : ""
-    }</textarea>
-
-</label>
-
-<label>
-
-    Fontes
-
-    <textarea
-        id="admin-sources"
-        rows="12"
-        placeholder="Informe uma fonte por linha ou bloco de texto."
-    >${
-        dados &&
-        Array.isArray(
-            dados.conteudo_blocos
-        )
-            ? escaparHTML(
-                dados.conteudo_blocos
-                    .filter(
-                        bloco =>
-                            bloco.tipo ===
-                            "fontes"
-                    )
-                    .map(
-                        bloco =>
-                            bloco.dados?.texto || ""
-                    )
-                    .filter(Boolean)
-                    .join("\n\n")
-            )
-            : ""
-    }</textarea>
-
-    <small>
-        Inclua o nome da fonte e o link correspondente sempre que estiver disponível.
-    </small>
-
-</label>
-
-<div class="admin-content-editor">
-    <div class="admin-content-editor-header">
-        <div>
-            <strong>Editor do dossiê</strong>
-            <small>
-                Organize textos, subtítulos, imagens e documentos
-                na ordem em que deverão aparecer.
-            </small>
-        </div>
-    </div>
-
-    <div
-        id="admin-content-blocks"
-        class="admin-content-blocks"
-    ></div>
-
-    <div class="admin-content-toolbar">
-        <button
-            type="button"
-            class="admin-secondary-button"
-            data-add-content-block="paragrafo"
-        >
-            + Parágrafo
-        </button>
-
-        <button
-            type="button"
-            class="admin-secondary-button"
-            data-add-content-block="subtitulo"
-        >
-            + Subtítulo
-        </button>
-
-        <button
-            type="button"
-            class="admin-secondary-button"
-            data-add-content-block="imagem"
-        >
-            + Imagem
-        </button>
-
-        <button
-            type="button"
-            class="admin-secondary-button"
-            data-add-content-block="documento"
-        >
-            + Documento
-        </button>
+                    </label>
 
 
-              <button type="button" class="admin-secondary-button" data-add-content-block="video">
-            + Vídeo
-        </button>
+                    <label>
 
-        <button type="button" class="admin-secondary-button" data-add-content-block="cronologia">
-            + Cronologia
-        </button>
+                        Evidências
 
-        <button type="button" class="admin-secondary-button" data-add-content-block="evidencias">
-            + Evidências
-        </button>
+                        <textarea
+                            id="admin-evidence"
+                            rows="12"
+                            placeholder="Digite uma evidência por bloco de texto. Separe cada evidência com uma linha em branco."
+                        >${
+                            dados
+                                ? escaparHTML(
+                                    normalizarEvidencias(
+                                        dados.evidencias
+                                    ).join("\n\n")
+                                )
+                                : ""
+                        }</textarea>
 
-        <button type="button" class="admin-secondary-button" data-add-content-block="hipoteses">
-            + Hipóteses
-        </button>
+                        <small>
+                            Limite de cinco evidências. Separe cada evidência com uma linha em branco.
+                        </small>
 
-        <button type="button" class="admin-secondary-button" data-add-content-block="situacao_oficial">
-            + Situação oficial
-        </button>
+                    </label>
 
-        <button type="button" class="admin-secondary-button" data-add-content-block="fontes">
-            + Fontes
-        </button>
-    </div>
 
-    <p class="admin-field-help">
-        Use as setas para definir exatamente onde cada elemento aparecerá.
-        Evidências aceitam até cinco itens, separados por uma linha em branco.
-    </p>
-</div>
+                    <label>
 
-                  <label>
+                        Hipóteses e controvérsias
 
-    Evidências
+                        <textarea
+                            id="admin-theories"
+                            rows="14"
+                            placeholder="Digite uma hipótese ou controvérsia por bloco de texto. Separe cada item com uma linha em branco."
+                        >${
+                            dados
+                                ? escaparHTML(
+                                    normalizarEvidencias(
+                                        dados.teorias
+                                    ).join("\n\n")
+                                )
+                                : ""
+                        }</textarea>
 
-    <textarea
-        id="admin-evidence"
-        rows="10"
-        placeholder="Digite uma evidência por bloco de texto. Separe cada evidência com uma linha em branco."
-    >${
-        dados
-            ? escaparHTML(
-                normalizarEvidencias(
-                    dados.evidencias
-                ).join("\n\n")
-            )
-            : ""
-    }</textarea>
+                        <small>
+                            Separe cada hipótese ou controvérsia com uma linha em branco.
+                        </small>
 
-    <small>
-        Limite de cinco evidências. Separe cada uma com uma linha em branco.
-    </small>
+                    </label>
 
-</label>
 
-                  <label>
+                    <label>
 
-    Hipóteses e controvérsias
+                        Situação oficial
 
-    <textarea
-        id="admin-theories"
-        rows="12"
-        placeholder="Digite uma hipótese ou controvérsia por bloco de texto. Separe cada item com uma linha em branco."
-    >${
-        dados
-            ? escaparHTML(
-                normalizarEvidencias(
-                    dados.teorias
-                ).join("\n\n")
-            )
-            : ""
-    }</textarea>
+                        <textarea
+                            id="admin-official-status"
+                            rows="8"
+                            placeholder="Descreva a situação oficial e atual do caso."
+                        >${
+                            dados &&
+                            Array.isArray(
+                                dados.conteudo_blocos
+                            )
+                                ? escaparHTML(
+                                    dados.conteudo_blocos
+                                        .filter(
+                                            bloco =>
+                                                bloco.tipo ===
+                                                "situacao_oficial"
+                                        )
+                                        .map(
+                                            bloco =>
+                                                bloco.dados?.texto ||
+                                                ""
+                                        )
+                                        .filter(Boolean)
+                                        .join("\n\n")
+                                )
+                                : ""
+                        }</textarea>
 
-    <small>
-        Separe cada hipótese ou controvérsia com uma linha em branco.
-    </small>
+                    </label>
 
-</label>
+
+                    <label>
+
+                        Fontes
+
+                        <textarea
+                            id="admin-sources"
+                            rows="14"
+                            placeholder="Informe as fontes utilizadas, preferencialmente uma por linha."
+                        >${
+                            dados &&
+                            Array.isArray(
+                                dados.conteudo_blocos
+                            )
+                                ? escaparHTML(
+                                    dados.conteudo_blocos
+                                        .filter(
+                                            bloco =>
+                                                bloco.tipo ===
+                                                "fontes"
+                                        )
+                                        .map(
+                                            bloco =>
+                                                bloco.dados?.texto ||
+                                                ""
+                                        )
+                                        .filter(Boolean)
+                                        .join("\n\n")
+                                )
+                                : ""
+                        }</textarea>
+
+                        <small>
+                            Inclua o nome da fonte e o link correspondente sempre que estiver disponível.
+                        </small>
+
+                    </label>
 
 
                     <div
