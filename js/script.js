@@ -1600,6 +1600,12 @@ function normalizarDadosBlocoAdmin(bloco = {}) {
             dadosNovos.tamanho ??
             bloco.tamanho ??
             "medio",
+
+       posicao:
+    dadosNovos.posicao ??
+    bloco.posicao ??
+    "",
+       
         acao:
             dadosNovos.acao ??
             bloco.acao ??
