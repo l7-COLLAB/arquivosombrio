@@ -7964,6 +7964,38 @@ const livro =
 
 </label>
 
+<label>
+
+    Situação oficial
+
+    <textarea
+        id="admin-official-status"
+        rows="8"
+        placeholder="Descreva a situação oficial e atual do caso."
+    >${
+        dados &&
+        Array.isArray(
+            dados.conteudo_blocos
+        )
+            ? escaparHTML(
+                dados.conteudo_blocos
+                    .filter(
+                        bloco =>
+                            bloco.tipo ===
+                            "situacao_oficial"
+                    )
+                    .map(
+                        bloco =>
+                            bloco.dados?.texto || ""
+                    )
+                    .filter(Boolean)
+                    .join("\n\n")
+            )
+            : ""
+    }</textarea>
+
+</label>
+
 <div class="admin-content-editor">
     <div class="admin-content-editor-header">
         <div>
