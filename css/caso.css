@@ -2705,39 +2705,114 @@ body.case-reading #caso-historia[data-content-format="blocks"] {
     line-height: var(--reader-spacing);
 }
 
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-subtitle {
+/* DISTRIBUIÇÃO DOS MATERIAIS NAS PÁGINAS */
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-subtitle {
+    margin-top: 1.2rem;
+    margin-bottom: 0.65rem;
+    padding-bottom: 0.45rem;
+
     break-inside: avoid;
     break-after: avoid;
+
     page-break-inside: avoid;
     page-break-after: avoid;
 }
 
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-image,
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-document,
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-video,
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-timeline li,
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-card,
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-official-status,
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-sources li {
-    max-width: 100%;
+
+/* A imagem e seus créditos podem ocupar páginas diferentes */
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-image {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+
+    break-inside: auto;
+    page-break-inside: auto;
+}
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-image-frame {
     break-inside: avoid;
     page-break-inside: avoid;
 }
 
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-image img {
-    max-height: calc(var(--reader-page-height, 65vh) * 0.58);
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-image img {
+    max-height:
+        calc(
+            var(--reader-page-height, 70vh) *
+            0.48
+        );
 }
 
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-video-frame {
-    max-height: calc(var(--reader-page-height, 65vh) * 0.56);
+
+/* Vídeos e documentos não reservam uma folha inteira */
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-document,
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-video,
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-official-status {
+    break-inside: auto;
+    page-break-inside: auto;
 }
 
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-card-list {
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-video-frame {
+    max-height:
+        calc(
+            var(--reader-page-height, 70vh) *
+            0.48
+        );
+
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+
+/* Elementos pequenos permanecem inteiros */
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-timeline li,
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-card,
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-sources li {
+    max-width: 100%;
+
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-card-list {
     display: block;
 }
 
-body.case-paginated #caso-historia[data-content-format="blocks"] .case-content-card + .case-content-card {
-    margin-top: 0.9rem;
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+.case-content-card +
+.case-content-card {
+    margin-top: 0.75rem;
 }
 
 
