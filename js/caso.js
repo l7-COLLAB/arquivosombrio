@@ -4217,16 +4217,25 @@ function configurarPaginasLeitura(barra) {
                             "click",
                             () => {
 
-                                modo =
-                                    opcao.dataset
-                                        .formatOption;
+                               modo =
+    opcao.dataset
+        .formatOption;
 
-                                pagina =
-                                    0;
+pagina =
+    0;
 
-                                fecharMenuFormato();
+fecharMenuFormato();
 
-                                recalcular();
+if (modo === "pages") {
+
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "auto"
+    });
+}
+
+recalcular();
                             }
                         );
                     }
