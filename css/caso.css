@@ -1070,54 +1070,275 @@ body.case-reading .evidence-item,
 body.case-reading .theory-item { background: var(--reader-card); border-color: var(--reader-border); color: var(--reader-fg); }
 
 
+/* =========================================================
+   LEITOR EM PÁGINAS
+========================================================= */
 
-/* PÁGINAS DE LIVRO E ALTERNATIVA DE ROLAGEM */
-.reader-page-window { min-width: 0; }
-.reader-page-controls { display: none; }
+.reader-page-window {
+    min-width: 0;
+}
+
+.reader-page-controls {
+    display: none;
+}
+
 body.case-reading .reader-page-controls {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
     font: 14px/1.5 Arial, sans-serif;
 }
-.reader-page-controls label { display:flex; align-items:center; gap:8px; }
-.reader-page-controls select, .reader-page-controls button {
-    min-height:44px; padding:8px 12px;
-    border:1px solid var(--reader-border, #776344);
-    background:var(--reader-card, #201a14); color:var(--reader-fg, #e9dfcf);
-    font:inherit;
+
+.reader-page-controls label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
-.reader-page-navigation { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
-.reader-page-navigation[hidden] { display:none; }
-.reader-page-navigation button:disabled { opacity:.45; }
-.reader-page-controls :focus-visible { outline:3px solid var(--reader-link, #e4c48b); outline-offset:3px; }
-body.case-paginated .reader-page-window { overflow:hidden; width:100%; }
+
+.reader-page-controls select,
+.reader-page-controls button {
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid
+        var(--reader-border, #776344);
+    background:
+        var(--reader-card, #201a14);
+    color:
+        var(--reader-fg, #e9dfcf);
+    font: inherit;
+}
+
+.reader-page-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.reader-page-navigation[hidden] {
+    display: none;
+}
+
+.reader-page-navigation button:disabled {
+    opacity: 0.45;
+}
+
+.reader-page-controls :focus-visible {
+    outline: 3px solid
+        var(--reader-link, #e4c48b);
+    outline-offset: 3px;
+}
+
+
+/* Estrutura da folha */
+
+body.case-paginated {
+    overflow: hidden;
+}
+
+body.case-paginated .case-content-section {
+    padding: 22px 0;
+}
+
+body.case-paginated .case-layout {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+body.case-paginated .reader-page-window {
+    position: relative;
+    box-sizing: border-box;
+
+    width: min(
+        720px,
+        calc(100vw - 32px)
+    );
+
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        var(--reader-border, #776344);
+
+    border-radius: 3px;
+
+    background:
+        var(--reader-bg, #100e0b);
+
+    box-shadow:
+        0 18px 45px
+        rgba(0, 0, 0, 0.24);
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+body.case-paginated
+.reader-page-window::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+
+/* Colunas que formam as páginas */
+
 body.case-paginated .case-main-content {
-    height:var(--reader-page-height, 65vh);
-    column-width:var(--reader-page-width);
-    column-gap:0;
-    column-fill:auto;
-    width:100%;
+    box-sizing: border-box;
+
+    width: 100%;
+    height:
+        var(--reader-page-height, 70vh);
+
+    margin: 0;
+    padding: 0;
+
+    overflow: visible;
+
+    column-width:
+        var(--reader-page-width);
+
+    column-gap: 0;
+    column-fill: auto;
 }
-body.case-paginated .case-block { margin-bottom:32px; break-inside:auto; }
-body.case-paginated .case-block-heading { break-inside:avoid; break-after:avoid; }
-body.case-paginated .case-history p { orphans:2; widows:2; }
-body.case-paginated .case-history figure { break-inside:avoid; margin-block:16px; }
+
+
+/* Margens internas do conteúdo */
+
+body.case-paginated
+.case-main-content > .case-block {
+    box-sizing: border-box;
+    padding-right: 44px;
+    padding-left: 44px;
+}
+
+body.case-paginated
+#caso-historia[data-content-format="blocks"]
+> * {
+    box-sizing: border-box;
+    padding-right: 44px;
+    padding-left: 44px;
+}
+
+body.case-paginated .case-block {
+    margin-bottom: 24px;
+    break-inside: auto;
+}
+
+body.case-paginated .case-block-heading {
+    break-inside: avoid;
+    break-after: avoid;
+}
+
+body.case-paginated .case-history p {
+    orphans: 2;
+    widows: 2;
+}
+
+body.case-paginated .case-history figure {
+    margin-top: 14px;
+    margin-bottom: 14px;
+}
+
 body.case-paginated .case-history img {
-    max-height:calc(var(--reader-page-height) * .55);
-    object-fit:contain; width:auto; max-width:100%; margin-inline:auto;
+    display: block;
+
+    width: auto;
+    max-width: 100%;
+
+    max-height:
+        calc(
+            var(--reader-page-height) *
+            0.52
+        );
+
+    margin-right: auto;
+    margin-left: auto;
+
+    object-fit: contain;
 }
+
 body.case-paginated .evidence-list,
-body.case-paginated .theory-list { display:block; }
+body.case-paginated .theory-list {
+    display: block;
+}
+
 body.case-paginated .evidence-card,
-body.case-paginated .theory-item { margin-bottom:12px; }
-@media (max-width:600px) {
-    body.case-reading .case-reader-toolbar { gap:8px; }
-    body.case-reading .reader-page-controls { width:100%; }
-    .reader-page-navigation { gap:8px; justify-content:space-between; width:100%; }
+body.case-paginated .theory-item {
+    margin-bottom: 12px;
 }
+
+
+/* Celular */
+
+@media (max-width: 600px) {
+
+    body.case-reading
+    .case-reader-toolbar {
+        gap: 8px;
+    }
+
+    body.case-reading
+    .reader-page-controls {
+        width: 100%;
+    }
+
+    .reader-page-navigation {
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    body.case-paginated
+    .reader-page-window {
+        width:
+            calc(100vw - 20px);
+
+        border-radius: 8px;
+    }
+
+    body.case-paginated
+    .case-main-content > .case-block {
+        padding-right: 22px;
+        padding-left: 22px;
+    }
+
+    body.case-paginated
+    #caso-historia[data-content-format="blocks"]
+    > * {
+        padding-right: 22px;
+        padding-left: 22px;
+    }
+}
+
+
+/* Impressão */
+
 @media print {
-    body.case-paginated .reader-page-window { overflow:visible; }
-    body.case-paginated .case-main-content { height:auto; columns:auto; }
+
+    body.case-paginated {
+        overflow: visible;
+    }
+
+    body.case-paginated
+    .reader-page-window {
+        width: 100%;
+        overflow: visible;
+        border: 0;
+        box-shadow: none;
+    }
+
+    body.case-paginated
+    .case-main-content {
+        height: auto;
+        columns: auto;
+    }
 }
+
 /* ==========================================================================
    BARRA FIXA DO MODO LEITURA
    ========================================================================== */
