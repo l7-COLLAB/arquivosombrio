@@ -3256,7 +3256,7 @@ body.case-paginated
     page-break-before: auto;
 }
 
-/* NO MODO LIVRO, O SUMÁRIO NÃO EMPURRA A FOLHA */
+/* SUMÁRIO COMO PRIMEIRA PÁGINA DO MODO LIVRO */
 
 body.case-paginated
 .reader-page-window > .dossie-summary {
@@ -3264,6 +3264,40 @@ body.case-paginated
 }
 
 body.case-paginated
+.reader-page-window.reader-show-summary
+> .dossie-summary {
+    position: absolute;
+    inset: 18px 32px;
+    z-index: 2;
+
+    display: block !important;
+
+    width: auto;
+    max-width: 520px;
+    max-height: calc(100% - 36px);
+
+    margin: 0 auto;
+
+    overflow: hidden;
+}
+
+body.case-paginated
+.reader-page-window.reader-show-summary
+> .case-main-content {
+    visibility: hidden;
+}
+
+body.case-paginated
 .reader-page-window > .case-main-content {
     margin-top: 0 !important;
+}
+
+@media (max-width: 600px) {
+
+    body.case-paginated
+    .reader-page-window.reader-show-summary
+    > .dossie-summary {
+        inset: 16px 14px;
+        max-height: calc(100% - 32px);
+    }
 }
