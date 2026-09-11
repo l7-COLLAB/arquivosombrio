@@ -2836,7 +2836,523 @@ function validarPreferenciasLeitura(valor) {
 
     };
 }
+function configurarPreferenciasLeitura(barra) {
 
+    const chave =
+        "arquivo_sombrio_preferencias_leitura_v2";
+
+    let preferencias;
+
+    try {
+
+        preferencias =
+            validarPreferenciasLeitura(
+                JSON.parse(
+                    localStorage.getItem(
+                        chave
+                    )
+                )
+            );
+
+    } catch {
+
+        preferencias =
+            validarPreferenciasLeitura(
+                null
+            );
+    }
+
+
+    const areaPopovers =
+        barra.querySelector(
+            "[data-reader-popovers]"
+        );
+
+    const botaoTexto =
+        barra.querySelector(
+            "[data-reader-text]"
+        );
+
+    const botaoTema =
+        barra.querySelector(
+            "[data-reader-theme-button]"
+        );
+
+    const botaoFonte =
+        barra.querySelector(
+            "[data-reader-font-button]"
+        );
+
+    const botaoLinhas =
+        barra.querySelector(
+            "[data-reader-lines-button]"
+        );
+
+
+    if (
+        !areaPopovers ||
+        !botaoTexto ||
+        !botaoTema ||
+        !botaoFonte ||
+        !botaoLinhas
+    ) {
+        return;
+    }
+
+
+    const familias = {
+
+        baskerville:
+            '"Libre Baskerville", Georgia, serif',
+
+        georgia:
+            'Georgia, "Times New Roman", serif',
+
+        arial:
+            'Arial, Helvetica, sans-serif',
+
+        verdana:
+            'Verdana, Geneva, sans-serif'
+
+    };
+
+
+    function salvarPreferencias() {
+
+        try {
+
+            localStorage.setItem(
+                chave,
+                JSON.stringify(
+                    preferencias
+                )
+            );
+
+        } catch (erro) {
+
+            console.warn(
+                "Não foi possível salvar as preferências de leitura.",
+                erro
+            );
+        }
+    }
+
+
+    function aplicarPreferencias(
+        salvar = false
+    ) {
+
+        preferencias =
+            validarPreferenciasLeitura(
+                preferencias
+            );
+
+        document.body.dataset.readerTheme =
+            preferencias.tema;
+
+        document.body.style.setProperty(
+            "--reader-font",
+            familias[
+                preferencias.fonte
+            ]
+        );
+
+        document.body.style.setProperty(
+            "--reader-size",
+            preferencias.tamanho +
+                "px"
+        );
+
+        document.body.style.setProperty(
+            "--reader-spacing",
+            String(
+                preferencias.espaco
+            )
+        );
+
+        if (salvar) {
+            salvarPreferencias();
+        }
+    }
+
+    function fecharPopover() {
+
+        areaPopovers.innerHTML =
+            "";
+
+        areaPopovers.classList.remove(
+            "active"
+        );
+
+        barra
+            .querySelectorAll(
+                ".case-reader-action.active"
+            )
+            .forEach(
+                botao =>
+                    botao.classList.remove(
+                        "active"
+                    )
+            );
+    }
+
+
+    function abrirPopover(
+        botao,
+        conteudo
+    ) {
+
+        const jaAberto =
+            botao.classList.contains(
+                "active"
+            );
+
+        fecharPopover();
+
+        if (jaAberto) {
+            return;
+        }
+
+        botao.classList.add(
+            "active"
+        );
+
+        areaPopovers.classList.add(
+            "active"
+        );
+
+        areaPopovers.innerHTML =
+            conteudo;
+    }
+
+
+    botaoTexto.addEventListener(
+        "click",
+        () => {
+
+            abrirPopover(
+                botaoTexto,
+                `
+                <div class="reader-popover">
+                    <strong>
+                        Tamanho do texto
+                    </strong>
+
+                    <div class="reader-size-control">
+
+                        <button
+                            type="button"
+                            data-reader-smaller-new
+                            aria-label="Diminuir texto"
+                        >
+                            A−
+                        </button>
+
+                        <span
+                            data-reader-size-new
+                        >
+                            ${preferencias.tamanho}px
+                        </span>
+
+                        <button
+                            type="button"
+                            data-reader-larger-new
+                            aria-label="Aumentar texto"
+                        >
+                            A+
+                        </button>
+
+                    </div>
+                </div>
+                `
+            );
+
+
+            const menor =
+                areaPopovers.querySelector(
+                    "[data-reader-smaller-new]"
+                );
+
+            const maior =
+                areaPopovers.querySelector(
+                    "[data-reader-larger-new]"
+                );
+
+            const tamanho =
+                areaPopovers.querySelector(
+                    "[data-reader-size-new]"
+                );
+
+
+            const atualizar =
+                () => {
+
+                    tamanho.textContent =
+                        preferencias.tamanho +
+                        "px";
+
+                    menor.disabled =
+                        preferencias.tamanho <=
+                        16;
+
+                    maior.disabled =
+                        preferencias.tamanho >=
+                        30;
+                };
+
+
+            menor.addEventListener(
+                "click",
+                () => {
+
+                    preferencias.tamanho -=
+                        1;
+
+                    aplicarPreferencias(
+                        true
+                    );
+
+                    atualizar();
+                }
+            );
+
+
+            maior.addEventListener(
+                "click",
+                () => {
+
+                    preferencias.tamanho +=
+                        1;
+
+                    aplicarPreferencias(
+                        true
+                    );
+
+                    atualizar();
+                }
+            );
+
+
+            atualizar();
+        }
+    );
+
+       botaoTema.addEventListener(
+        "click",
+        () => {
+
+            abrirPopover(
+                botaoTema,
+                `
+                <div class="reader-popover">
+                    <strong>
+                        Tema
+                    </strong>
+
+                    <button
+                        type="button"
+                        data-theme-option="arquivo"
+                    >
+                        Escuro
+                    </button>
+
+                    <button
+                        type="button"
+                        data-theme-option="papel"
+                    >
+                        Papel antigo
+                    </button>
+                </div>
+                `
+            );
+
+
+            areaPopovers
+                .querySelectorAll(
+                    "[data-theme-option]"
+                )
+                .forEach(
+                    opcao => {
+
+                        opcao.addEventListener(
+                            "click",
+                            () => {
+
+                                preferencias.tema =
+                                    opcao.dataset
+                                        .themeOption;
+
+                                aplicarPreferencias(
+                                    true
+                                );
+
+                                fecharPopover();
+                            }
+                        );
+                    }
+                );
+        }
+    );
+
+
+    botaoFonte.addEventListener(
+        "click",
+        () => {
+
+            abrirPopover(
+                botaoFonte,
+                `
+                <div class="reader-popover">
+                    <strong>
+                        Fonte
+                    </strong>
+
+                    <button
+                        type="button"
+                        data-font-option="baskerville"
+                    >
+                        Baskerville
+                    </button>
+
+                    <button
+                        type="button"
+                        data-font-option="georgia"
+                    >
+                        Georgia
+                    </button>
+
+                    <button
+                        type="button"
+                        data-font-option="arial"
+                    >
+                        Arial
+                    </button>
+
+                    <button
+                        type="button"
+                        data-font-option="verdana"
+                    >
+                        Verdana
+                    </button>
+                </div>
+                `
+            );
+
+
+            areaPopovers
+                .querySelectorAll(
+                    "[data-font-option]"
+                )
+                .forEach(
+                    opcao => {
+
+                        opcao.addEventListener(
+                            "click",
+                            () => {
+
+                                preferencias.fonte =
+                                    opcao.dataset
+                                        .fontOption;
+
+                                aplicarPreferencias(
+                                    true
+                                );
+
+                                fecharPopover();
+                            }
+                        );
+                    }
+                );
+        }
+    );
+
+    botaoLinhas.addEventListener(
+        "click",
+        () => {
+
+            abrirPopover(
+                botaoLinhas,
+                `
+                <div class="reader-popover">
+                    <strong>
+                        Espaçamento
+                    </strong>
+
+                    <button
+                        type="button"
+                        data-spacing-option="1.5"
+                    >
+                        Compacto
+                    </button>
+
+                    <button
+                        type="button"
+                        data-spacing-option="1.8"
+                    >
+                        Normal
+                    </button>
+
+                    <button
+                        type="button"
+                        data-spacing-option="2.1"
+                    >
+                        Amplo
+                    </button>
+                </div>
+                `
+            );
+
+
+            areaPopovers
+                .querySelectorAll(
+                    "[data-spacing-option]"
+                )
+                .forEach(
+                    opcao => {
+
+                        opcao.addEventListener(
+                            "click",
+                            () => {
+
+                                preferencias.espaco =
+                                    Number(
+                                        opcao.dataset
+                                            .spacingOption
+                                    );
+
+                                aplicarPreferencias(
+                                    true
+                                );
+
+                                fecharPopover();
+                            }
+                        );
+                    }
+                );
+        }
+    );
+
+
+    document.addEventListener(
+        "click",
+        evento => {
+
+            if (
+                !barra.contains(
+                    evento.target
+                )
+            ) {
+                fecharPopover();
+            }
+        }
+    );
+
+
+    aplicarPreferencias();
+}
+
+
+   
 /* ==========================================================================
    SUBLINHADOS DO MODO DE LEITURA
    ========================================================================== */
