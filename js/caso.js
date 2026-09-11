@@ -3959,9 +3959,17 @@ function configurarPaginasLeitura(barra) {
         );
     }
 
-       function mostrarPagina(
+           function mostrarPagina(
         destino
     ) {
+
+        const sumario =
+            janela.querySelector(
+                ".dossie-summary"
+            );
+
+        const temSumario =
+            Boolean(sumario);
 
         pagina =
             calcularPaginaLeitura(
@@ -3969,9 +3977,34 @@ function configurarPaginasLeitura(barra) {
                 destino
             );
 
-        janela.scrollLeft =
-            pagina *
-            largura;
+        const exibindoSumario =
+            temSumario &&
+            pagina === 0;
+
+        janela.classList.toggle(
+            "reader-show-summary",
+            exibindoSumario
+        );
+
+        if (exibindoSumario) {
+
+            janela.scrollLeft =
+                0;
+
+        } else {
+
+            const paginaConteudo =
+                temSumario
+                    ? pagina - 1
+                    : pagina;
+
+            janela.scrollLeft =
+                Math.max(
+                    0,
+                    paginaConteudo
+                ) *
+                largura;
+        }
 
         janela.scrollTop =
             0;
