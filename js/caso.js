@@ -4568,6 +4568,7 @@ function configurarSumarioDossieLegado() {
  * Os textos são inseridos com textContent para que subtítulos vindos do banco
  * nunca sejam interpretados como HTML.
  */
+
 function configurarSumarioDossie() {
 
     const artigo =
@@ -4575,21 +4576,37 @@ function configurarSumarioDossie() {
             ".case-main-content"
         );
 
-    if (!artigo || document.querySelector(".dossie-summary")) {
+    if (
+        !artigo ||
+        document.querySelector(
+            ".dossie-summary"
+        )
+    ) {
         return;
     }
 
     const secoes = [];
 
     const historico =
-        document.getElementById("historico");
+        document.getElementById(
+            "historico"
+        );
 
-    if (historico && !historico.hidden) {
+    if (
+        historico &&
+        !historico.hidden
+    ) {
         secoes.push({
-            id: "historico",
+            id:
+                "historico",
+
             titulo:
-                historico.querySelector(".case-block-heading h2")
-                    ?.textContent?.trim() ||
+                historico
+                    .querySelector(
+                        ".case-block-heading h2"
+                    )
+                    ?.textContent
+                    ?.trim() ||
                 "Histórico do Caso"
         });
     }
@@ -4599,32 +4616,65 @@ function configurarSumarioDossie() {
             "#caso-historia .case-content-subtitle[id]"
         )
         .forEach(subtitulo => {
+
             secoes.push({
-                id: subtitulo.id,
+                id:
+                    subtitulo.id,
+
                 titulo:
-                    subtitulo.textContent.trim()
+                    subtitulo
+                        .textContent
+                        .trim()
             });
         });
 
     [
-        ["evidencias", "Evidências & Vestígios"],
-        ["teorias", "Teorias"]
-    ].forEach(([id, titulo]) => {
+        [
+            "evidencias",
+            "Evidências & Vestígios"
+        ],
+        [
+            "teorias",
+            "Teorias"
+        ]
+    ].forEach(
+        ([id, titulo]) => {
 
-        const elemento =
-            document.getElementById(id);
+            const elemento =
+                document.getElementById(
+                    id
+                );
 
-        if (elemento && !elemento.hidden) {
-            secoes.push({ id, titulo });
+            if (
+                elemento &&
+                !elemento.hidden
+            ) {
+                secoes.push({
+                    id,
+                    titulo
+                });
+            }
         }
-    });
+    );
 
     if (!secoes.length) {
         return;
     }
 
+    const ITENS_POR_PAGINA = 5;
+
+    const totalPaginas =
+        Math.ceil(
+            secoes.length /
+            ITENS_POR_PAGINA
+        );
+
+    let paginaAtual = 0;
+
     const sumario =
-        document.createElement("aside");
+        document.createElement(
+            "aside"
+        );
 
     sumario.className =
         "dossie-summary";
@@ -4638,52 +4688,219 @@ function configurarSumarioDossie() {
     );
 
     const navegacao =
-        document.createElement("nav");
+        document.createElement(
+            "nav"
+        );
+
+    navegacao.setAttribute(
+        "aria-label",
+        "Sumário do dossiê"
+    );
 
     const lista =
-        document.createElement("ul");
+        document.createElement(
+            "ul"
+        );
 
-    secoes.forEach(secao => {
+    const paginacao =
+        document.createElement(
+            "div"
+        );
 
-        const item =
-            document.createElement("li");
+    paginacao.className =
+        "dossie-summary-pagination";
 
-        const link =
-            criarElementoTextoDossie(
-                "a",
-                secao.titulo
+    const botaoAnterior =
+        document.createElement(
+            "button"
+        );
+
+    botaoAnterior.type =
+        "button";
+
+    botaoAnterior.className =
+        "dossie-summary-page-button";
+
+    botaoAnterior.textContent =
+        "Anterior";
+
+    botaoAnterior.setAttribute(
+        "aria-label",
+        "Mostrar página anterior do sumário"
+    );
+
+    const indicador =
+        document.createElement(
+            "span"
+        );
+
+    indicador.className =
+        "dossie-summary-page-indicator";
+
+    indicador.setAttribute(
+        "aria-live",
+        "polite"
+    );
+
+    const botaoProximo =
+        document.createElement(
+            "button"
+        );
+
+    botaoProximo.type =
+        "button";
+
+    botaoProximo.className =
+        "dossie-summary-page-button";
+
+    botaoProximo.textContent =
+        "Próxima";
+
+    botaoProximo.setAttribute(
+        "aria-label",
+        "Mostrar próxima página do sumário"
+    );
+
+    paginacao.append(
+        botaoAnterior,
+        indicador,
+        botaoProximo
+    );
+
+    const abrirSecao = secao => {
+
+        const destino =
+            document.getElementById(
+                secao.id
             );
 
-        link.href = `#${secao.id}`;
-        link.dataset.summaryTarget =
-            secao.id;
+        destino?.scrollIntoView({
+            behavior:
+                window.matchMedia(
+                    "(prefers-reduced-motion: reduce)"
+                ).matches
+                    ? "auto"
+                    : "smooth",
 
-        link.addEventListener(
-            "click",
-            evento => {
+            block:
+                "start"
+        });
+    };
 
-                evento.preventDefault();
+    const renderizarPagina = () => {
 
-                const destino =
-                    document.getElementById(
-                        secao.id
+        const inicio =
+            paginaAtual *
+            ITENS_POR_PAGINA;
+
+        const itensDaPagina =
+            secoes.slice(
+                inicio,
+                inicio +
+                ITENS_POR_PAGINA
+            );
+
+        lista.replaceChildren();
+
+        itensDaPagina.forEach(
+            secao => {
+
+                const item =
+                    document.createElement(
+                        "li"
                     );
 
-                destino?.scrollIntoView({
-                    behavior:
-                        window.matchMedia("(prefers-reduced-motion: reduce)").matches
-                            ? "auto"
-                            : "smooth",
-                    block: "start"
-                });
+                const link =
+                    criarElementoTextoDossie(
+                                               "a",
+                        secao.titulo
+                    );
+
+                link.href =
+                    `#${secao.id}`;
+
+                link.dataset.summaryTarget =
+                    secao.id;
+
+                link.addEventListener(
+                    "click",
+                    evento => {
+
+                        evento.preventDefault();
+
+                        abrirSecao(
+                            secao
+                        );
+                    }
+                );
+
+                item.appendChild(
+                    link
+                );
+
+                lista.appendChild(
+                    item
+                );
             }
         );
 
-        item.appendChild(link);
-        lista.appendChild(item);
-    });
+        indicador.textContent =
+            `${paginaAtual + 1} / ${totalPaginas}`;
 
-    navegacao.appendChild(lista);
-    sumario.appendChild(navegacao);
-    artigo.before(sumario);
+        botaoAnterior.disabled =
+            paginaAtual === 0;
+
+        botaoProximo.disabled =
+            paginaAtual ===
+            totalPaginas - 1;
+
+        paginacao.hidden =
+            totalPaginas <= 1;
+    };
+
+    botaoAnterior.addEventListener(
+        "click",
+        () => {
+
+            if (paginaAtual <= 0) {
+                return;
+            }
+
+            paginaAtual -= 1;
+
+            renderizarPagina();
+        }
+    );
+
+    botaoProximo.addEventListener(
+        "click",
+        () => {
+
+            if (
+                paginaAtual >=
+                totalPaginas - 1
+            ) {
+                return;
+            }
+
+            paginaAtual += 1;
+
+            renderizarPagina();
+        }
+    );
+
+    navegacao.appendChild(
+        lista
+    );
+
+    sumario.append(
+        navegacao,
+        paginacao
+    );
+
+    artigo.before(
+        sumario
+    );
+
+    renderizarPagina();
 }
