@@ -3959,6 +3959,370 @@ function configurarPaginasLeitura(barra) {
         );
     }
 
+       function mostrarPagina(
+        destino
+    ) {
+
+        pagina =
+            calcularPaginaLeitura(
+                total,
+                destino
+            );
+
+        janela.scrollLeft =
+            pagina *
+            largura;
+
+        janela.scrollTop =
+            0;
+
+        contador.textContent =
+            `${pagina + 1} / ${total}`;
+
+        anterior.disabled =
+            pagina === 0;
+
+        proxima.disabled =
+            pagina ===
+            total - 1;
+    }
+
+
+    function recalcular() {
+
+        agendado =
+            false;
+
+        const ativo =
+            paginasAtivas();
+
+        document.body
+            .classList
+            .toggle(
+                "case-paginated",
+                ativo
+            );
+
+        navegacao.hidden =
+            !ativo;
+
+        if (!ativo) {
+
+            janela.scrollLeft =
+                0;
+
+            janela.scrollTop =
+                0;
+
+            janela.style.removeProperty(
+                "height"
+            );
+
+            janela.style.removeProperty(
+                "max-height"
+            );
+
+            janela.style.removeProperty(
+                "overflow"
+            );
+
+            artigo.style.removeProperty(
+                "--reader-page-height"
+            );
+
+            artigo.style.removeProperty(
+                "--reader-page-width"
+            );
+
+            return;
+        }
+
+
+        largura =
+            janela.clientWidth;
+
+        if (!largura) {
+            return;
+        }
+
+
+        const alturaVisivel =
+            window.visualViewport?.height ||
+            window.innerHeight;
+
+        const altura =
+            Math.max(
+                260,
+                alturaVisivel -
+                    barra.getBoundingClientRect()
+                        .height -
+                40
+            );
+
+
+        janela.style.height =
+            altura + "px";
+
+        janela.style.maxHeight =
+            altura + "px";
+
+        janela.style.overflow =
+            "hidden";
+
+
+        artigo.style.setProperty(
+            "--reader-page-height",
+            altura + "px"
+        );
+
+        artigo.style.setProperty(
+            "--reader-page-width",
+            largura + "px"
+        );
+
+
+        total =
+            Math.max(
+                1,
+                Math.ceil(
+                    (
+                        artigo.scrollWidth -
+                        1
+                    ) /
+                    largura
+                )
+            );
+
+
+        mostrarPagina(
+            pagina
+        );
+    }
+
+
+    function agendar() {
+
+        if (agendado) {
+            return;
+        }
+
+        agendado =
+            true;
+
+        requestAnimationFrame(
+            recalcular
+        );
+    }
+
+    function fecharMenuFormato() {
+
+        areaPopovers.innerHTML =
+            "";
+
+        areaPopovers.classList.remove(
+            "active"
+        );
+
+        botaoFormato.classList.remove(
+            "active"
+        );
+    }
+
+
+    botaoFormato.addEventListener(
+        "click",
+        () => {
+
+            const aberto =
+                botaoFormato
+                    .classList
+                    .contains(
+                        "active"
+                    );
+
+            areaPopovers.innerHTML =
+                "";
+
+            barra
+                .querySelectorAll(
+                    ".case-reader-action.active"
+                )
+                .forEach(
+                    botao =>
+                        botao.classList.remove(
+                            "active"
+                        )
+                );
+
+            if (aberto) {
+
+                areaPopovers
+                    .classList
+                    .remove(
+                        "active"
+                    );
+
+                return;
+            }
+
+
+            botaoFormato.classList.add(
+                "active"
+            );
+
+            areaPopovers.classList.add(
+                "active"
+            );
+
+
+            areaPopovers.innerHTML = `
+
+                <div class="reader-popover">
+
+                    <strong>
+                        Formato de leitura
+                    </strong>
+
+                    <button
+                        type="button"
+                        data-format-option="scroll"
+                    >
+                        <i class="fa-solid fa-bars"></i>
+
+                        Rolagem contínua
+                    </button>
+
+                    <button
+                        type="button"
+                        data-format-option="pages"
+                    >
+                        <i class="fa-regular fa-file"></i>
+
+                        Páginas de livro
+                    </button>
+
+                </div>
+
+            `;
+
+
+            areaPopovers
+                .querySelectorAll(
+                    "[data-format-option]"
+                )
+                .forEach(
+                    opcao => {
+
+                        opcao.addEventListener(
+                            "click",
+                            () => {
+
+                                modo =
+                                    opcao.dataset
+                                        .formatOption;
+
+                                pagina =
+                                    0;
+
+                                fecharMenuFormato();
+
+                                recalcular();
+                            }
+                        );
+                    }
+                );
+        }
+    );
+
+
+    anterior.addEventListener(
+        "click",
+        () =>
+            mostrarPagina(
+                pagina - 1
+            )
+    );
+
+
+    proxima.addEventListener(
+        "click",
+        () =>
+            mostrarPagina(
+                pagina + 1
+            )
+    );
+
+       document.addEventListener(
+        "keydown",
+        evento => {
+
+            if (
+                !paginasAtivas() ||
+                evento.altKey ||
+                evento.ctrlKey ||
+                evento.metaKey ||
+                evento.shiftKey
+            ) {
+                return;
+            }
+
+            if (
+                evento.target.closest?.(
+                    "input, textarea, select, button, a, [contenteditable]"
+                )
+            ) {
+                return;
+            }
+
+
+            if (
+                evento.key ===
+                "ArrowLeft"
+            ) {
+
+                evento.preventDefault();
+
+                mostrarPagina(
+                    pagina - 1
+                );
+            }
+
+
+            if (
+                evento.key ===
+                "ArrowRight"
+            ) {
+
+                evento.preventDefault();
+
+                mostrarPagina(
+                    pagina + 1
+                );
+            }
+        }
+    );
+
+
+    window.addEventListener(
+        "resize",
+        agendar
+    );
+
+
+    if (window.visualViewport) {
+
+        window.visualViewport
+            .addEventListener(
+                "resize",
+                agendar
+            );
+    }
+
+
+    recalcular();
+}
+
+
 function configurarSublinhadoLeitura(
     barra,
     casoId
