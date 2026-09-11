@@ -4039,10 +4039,14 @@ function configurarPaginasLeitura(barra) {
         navegacao.hidden =
             !ativo;
 
-        if (!ativo) {
+       if (!ativo) {
 
-            janela.scrollLeft =
-                0;
+    janela.classList.remove(
+        "reader-show-summary"
+    );
+
+    janela.scrollLeft =
+        0;
 
             janela.scrollTop =
                 0;
@@ -4136,18 +4140,32 @@ artigo.style.setProperty(
 );
 
 
-        total =
-            Math.max(
-                1,
-                Math.ceil(
-                    (
-                        artigo.scrollWidth -
-                        1
-                    ) /
-                    largura
-                )
-            );
+     const paginasConteudo =
+    Math.max(
+        1,
+        Math.ceil(
+            (
+                artigo.scrollWidth -
+                1
+            ) /
+            largura
+        )
+    );
 
+const temSumario =
+    Boolean(
+        janela.querySelector(
+            ".dossie-summary"
+        )
+    );
+
+total =
+    paginasConteudo +
+    (
+        temSumario
+            ? 1
+            : 0
+    );
 
         mostrarPagina(
             pagina
