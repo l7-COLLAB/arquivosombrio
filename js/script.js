@@ -7925,6 +7925,45 @@ const livro =
 
 </label>
 
+<label>
+
+    Cronologia
+
+    <textarea
+        id="admin-chronology"
+        rows="12"
+        placeholder="Digite um acontecimento por bloco de texto. Separe cada acontecimento com uma linha em branco."
+    >${
+        dados &&
+        Array.isArray(
+            dados.conteudo_blocos
+        )
+            ? escaparHTML(
+                dados.conteudo_blocos
+                    .filter(
+                        bloco =>
+                            bloco.tipo ===
+                            "cronologia"
+                    )
+                    .flatMap(
+                        bloco =>
+                            Array.isArray(
+                                bloco.dados?.itens
+                            )
+                                ? bloco.dados.itens
+                                : []
+                    )
+                    .join("\n\n")
+            )
+            : ""
+    }</textarea>
+
+    <small>
+        Separe cada acontecimento com uma linha em branco.
+    </small>
+
+</label>
+
 <div class="admin-content-editor">
     <div class="admin-content-editor-header">
         <div>
