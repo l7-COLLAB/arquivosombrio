@@ -8006,15 +8006,29 @@ const livro =
     </p>
 </div>
 
-                    <textarea id="admin-evidence" hidden>${
-                        dados
-                            ? escaparHTML(
-                                normalizarEvidencias(
-                                    dados.evidencias
-                                ).join("\n")
-                            )
-                            : ""
-                    }</textarea>
+                  <label>
+
+    Evidências
+
+    <textarea
+        id="admin-evidence"
+        rows="10"
+        placeholder="Digite uma evidência por bloco de texto. Separe cada evidência com uma linha em branco."
+    >${
+        dados
+            ? escaparHTML(
+                normalizarEvidencias(
+                    dados.evidencias
+                ).join("\n\n")
+            )
+            : ""
+    }</textarea>
+
+    <small>
+        Limite de cinco evidências. Separe cada uma com uma linha em branco.
+    </small>
+
+</label>
 
                     <textarea id="admin-theories" hidden>${
                         dados
