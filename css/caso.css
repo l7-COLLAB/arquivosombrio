@@ -1156,10 +1156,10 @@ body.case-paginated .reader-page-window {
         calc(100vw - 32px)
     );
 
-    margin: 0 auto;
+  margin: 0 auto;
+padding: 18px 0;
 
-    overflow: hidden;
-
+overflow: hidden;
     border:
         1px solid
         var(--reader-border, #776344);
