@@ -3072,7 +3072,14 @@ function criarBlocoNarrativoAdmin(tipo = "paragrafo", blocoSalvo = {}) {
                blocoSalvo.id ||
         criarIdentificadorBlocoAdmin();
 
+if (dados.posicao) {
+
+    bloco.dataset.insertPosition =
+        dados.posicao;
+}
+   
     bloco.innerHTML = `
+    
         <div class="admin-content-block-header">
             <strong>${escaparHTML(titulo)}</strong>
 
