@@ -10019,3 +10019,419 @@ function filtrarTrechosImagemAdmin(trechos, consulta) {
     }, []);
 }
 
+/* =========================================================
+   POSICIONAMENTO DE IMAGENS NO EDITOR NARRATIVO ATUAL
+   ========================================================= */
+
+function configurarLocalizadorImagemNarrativoAdmin(blocoImagem) {
+
+    if (
+        !blocoImagem ||
+        blocoImagem.dataset.blockType !== "imagem" ||
+        blocoImagem.querySelector(
+            "[data-image-position-manager]"
+        )
+    ) {
+        return;
+    }
+
+    const editor =
+        blocoImagem.closest(
+            "#admin-content-blocks"
+        );
+
+    if (!editor) {
+        return;
+    }
+
+    const painel =
+        document.createElement("div");
+
+    painel.dataset.imagePositionManager = "";
+
+    painel.style.cssText = `
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+        padding: 16px;
+        border: 1px solid rgba(187, 161, 109, 0.45);
+        background: rgba(166, 140, 85, 0.06);
+    `;
+
+    painel.innerHTML = `
+        <label>
+            Localizar trecho para posicionar a imagem
+
+            <input
+                type="search"
+                data-image-position-search
+                placeholder="Digite ou cole uma frase do texto..."
+                autocomplete="off"
+            >
+        </label>
+
+        <small
+            data-image-position-status
+            role="status"
+            aria-live="polite"
+        >
+            Digite uma frase presente no dossiê.
+        </small>
+
+        <div
+            data-image-position-results
+            style="
+                display: grid;
+                gap: 12px;
+                max-height: 420px;
+                overflow: auto;
+            "
+        ></div>
+    `;
+
+    blocoImagem.appendChild(painel);
+
+    const busca =
+        painel.querySelector(
+            "[data-image-position-search]"
+        );
+
+    const status =
+        painel.querySelector(
+            "[data-image-position-status]"
+        );
+
+    const resultados =
+        painel.querySelector(
+            "[data-image-position-results]"
+        );
+
+    const normalizar = valor =>
+        String(valor || "")
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .toLowerCase()
+            .trim();
+
+    const criarParagrafo = texto => {
+
+        const novoBloco =
+            criarBlocoNarrativoAdmin(
+                "paragrafo",
+                {
+                    dados: {
+                        texto
+                    }
+                }
+            );
+
+        configurarBlocoNarrativoAdmin(
+            novoBloco
+        );
+
+        return novoBloco;
+    };
+
+    const obterTrechos = () => {
+
+        const trechos = [];
+
+        Array
+            .from(
+                editor.children
+            )
+            .filter(
+                elemento =>
+                    elemento.matches(
+                        "[data-content-block]"
+                    ) &&
+                    elemento !== blocoImagem
+            )
+            .forEach(elemento => {
+
+                const tipo =
+                    elemento.dataset.blockType;
+
+                if (
+                    tipo !== "paragrafo" &&
+                    tipo !== "subtitulo"
+                ) {
+                    return;
+                }
+
+                const texto =
+                    elemento
+                        .querySelector(
+                            "[data-block-content]"
+                        )
+                        ?.value
+                        ?.trim() || "";
+
+                if (!texto) {
+                    return;
+                }
+
+                const partes =
+                    tipo === "paragrafo"
+                        ? texto
+                            .split(/\n\s*\n/)
+                            .map(parte =>
+                                parte.trim()
+                            )
+                            .filter(Boolean)
+                        : [texto];
+
+                partes.forEach(
+                    (parte, indiceParte) => {
+
+                        trechos.push({
+                            elemento,
+                            tipo,
+                            texto: parte,
+                            indiceParte,
+                            totalPartes:
+                                partes.length,
+                            partes
+                        });
+                    }
+                );
+            });
+
+        return trechos;
+    };
+
+    const moverImagem = (
+        trecho,
+        modo
+    ) => {
+
+        const alvo =
+            trecho.elemento;
+
+        if (
+            trecho.tipo === "paragrafo" &&
+            trecho.totalPartes > 1
+        ) {
+
+            const partesAntes =
+                modo === "antes"
+                    ? trecho.partes.slice(
+                        0,
+                        trecho.indiceParte
+                    )
+                    : trecho.partes.slice(
+                        0,
+                        trecho.indiceParte + 1
+                    );
+
+            const partesDepois =
+                modo === "antes"
+                    ? trecho.partes.slice(
+                        trecho.indiceParte
+                    )
+                    : trecho.partes.slice(
+                        trecho.indiceParte + 1
+                    );
+
+            const fragmento =
+                document.createDocumentFragment();
+
+            partesAntes.forEach(parte => {
+                fragmento.appendChild(
+                    criarParagrafo(parte)
+                );
+            });
+
+            fragmento.appendChild(
+                blocoImagem
+            );
+
+            partesDepois.forEach(parte => {
+                fragmento.appendChild(
+                    criarParagrafo(parte)
+                );
+            });
+
+            alvo.replaceWith(
+                fragmento
+            );
+
+        } else if (
+            modo === "antes"
+        ) {
+
+            alvo.before(
+                blocoImagem
+            );
+
+        } else {
+
+            alvo.after(
+                blocoImagem
+            );
+        }
+
+        status.textContent =
+            modo === "antes"
+                ? "Imagem colocada antes do trecho selecionado. Clique em Salvar para confirmar."
+                : "Imagem colocada depois do trecho selecionado. Clique em Salvar para confirmar.";
+
+        resultados.replaceChildren();
+        busca.value = "";
+
+        blocoImagem.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    };
+
+    const pesquisar = () => {
+
+        const consulta =
+            normalizar(
+                busca.value
+            );
+
+        resultados.replaceChildren();
+
+        if (!consulta) {
+
+            status.textContent =
+                "Digite uma frase presente no dossiê.";
+
+            return;
+        }
+
+        const encontrados =
+            obterTrechos()
+                .filter(trecho =>
+                    normalizar(
+                        trecho.texto
+                    )
+                        .includes(
+                            consulta
+                        )
+                );
+
+        if (!encontrados.length) {
+
+            status.textContent =
+                "Nenhum trecho foi encontrado no editor narrativo.";
+
+            return;
+        }
+
+        status.textContent =
+            `${encontrados.length} trecho(s) encontrado(s).`;
+
+        encontrados.forEach(
+            (trecho, indice) => {
+
+                const resultado =
+                    document.createElement(
+                        "div"
+                    );
+
+                resultado.style.cssText = `
+                    padding: 14px;
+                    border: 1px solid rgba(117, 97, 63, 0.8);
+                    background: rgba(0, 0, 0, 0.16);
+                `;
+
+                const texto =
+                    document.createElement(
+                        "p"
+                    );
+
+                texto.style.cssText = `
+                    margin: 0;
+                    white-space: pre-line;
+                    overflow-wrap: anywhere;
+                `;
+
+                texto.textContent =
+                    `Trecho ${indice + 1}: ${trecho.texto}`;
+
+                const acoes =
+                    document.createElement(
+                        "div"
+                    );
+
+                acoes.style.cssText = `
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    margin-top: 12px;
+                `;
+
+                const botaoAntes =
+                    document.createElement(
+                        "button"
+                    );
+
+                botaoAntes.type =
+                    "button";
+
+                botaoAntes.className =
+                    "admin-secondary-button";
+
+                botaoAntes.textContent =
+                    "Inserir antes";
+
+                botaoAntes.addEventListener(
+                    "click",
+                    () =>
+                        moverImagem(
+                            trecho,
+                            "antes"
+                        )
+                );
+
+                const botaoDepois =
+                    document.createElement(
+                        "button"
+                    );
+
+                botaoDepois.type =
+                    "button";
+
+                botaoDepois.className =
+                    "admin-secondary-button";
+
+                botaoDepois.textContent =
+                    "Inserir depois";
+
+                botaoDepois.addEventListener(
+                    "click",
+                    () =>
+                        moverImagem(
+                            trecho,
+                            "depois"
+                        )
+                );
+
+                acoes.append(
+                    botaoAntes,
+                    botaoDepois
+                );
+
+                resultado.append(
+                    texto,
+                    acoes
+                );
+
+                resultados.appendChild(
+                    resultado
+                );
+            }
+        );
+    };
+
+    busca.addEventListener(
+        "input",
+        pesquisar
+    );
+}
