@@ -3242,4 +3242,16 @@ body[data-reader-theme="papel"]
             visibility 0.01ms;
     }
 }
+/* CADA SEÇÃO PRINCIPAL COMEÇA NO TOPO DE UMA NOVA PÁGINA */
 
+body.case-paginated
+.case-main-content > .case-block {
+    break-before: column;
+    page-break-before: always;
+}
+
+body.case-paginated
+.case-main-content > .case-block:first-child {
+    break-before: auto;
+    page-break-before: auto;
+}
