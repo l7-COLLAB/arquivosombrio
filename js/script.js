@@ -2972,7 +2972,35 @@ function inicializarEditorConteudoAdmin(dados = null) {
                 dadosBloco
             );
 
-        editor.appendChild(bloco);
+        if (
+    blocoInsercaoSelecionadoAdmin &&
+    editor.children[blocoInsercaoSelecionadoAdmin.indice]
+) {
+
+    const alvo =
+        editor.children[
+            blocoInsercaoSelecionadoAdmin.indice
+        ];
+
+    if (
+        blocoInsercaoSelecionadoAdmin.modo === "apos"
+    ) {
+
+        alvo.after(bloco);
+
+    } else {
+
+        alvo.before(bloco);
+
+    }
+
+    blocoInsercaoSelecionadoAdmin = null;
+
+} else {
+
+    editor.appendChild(bloco);
+
+}
 
         configurarBlocoNarrativoAdmin(
             bloco
