@@ -10433,31 +10433,40 @@ function filtrarTrechosImagemAdmin(trechos, consulta) {
    POSICIONAMENTO DE IMAGENS NO EDITOR NARRATIVO ATUAL
    ========================================================= */
 
-function configurarLocalizadorImagemNarrativoAdmin(blocoImagem) {
+function configurarLocalizadorImagemNarrativoAdmin(blocoMidia) {
 
     if (
-        !blocoImagem ||
-        blocoImagem.dataset.blockType !== "imagem" ||
-        blocoImagem.querySelector(
+        !blocoMidia ||
+        ![
+            "imagem",
+            "documento",
+            "video"
+        ].includes(
+            blocoMidia.dataset.blockType
+        ) ||
+        blocoMidia.querySelector(
             "[data-image-position-manager]"
         )
     ) {
         return;
     }
 
-    const editor =
-        blocoImagem.closest(
-            "#admin-content-blocks"
+    const campoHistoria =
+        document.getElementById(
+            "admin-history"
         );
 
-    if (!editor) {
+    if (!campoHistoria) {
         return;
     }
 
     const painel =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    painel.dataset.imagePositionManager = "";
+    painel.dataset.imagePositionManager =
+        "";
 
     painel.style.cssText = `
         display: grid;
@@ -10470,12 +10479,12 @@ function configurarLocalizadorImagemNarrativoAdmin(blocoImagem) {
 
     painel.innerHTML = `
         <label>
-            Localizar trecho para posicionar a imagem
+            Localizar trecho para posicionar este material
 
             <input
                 type="search"
                 data-image-position-search
-                placeholder="Digite ou cole uma frase do texto..."
+                placeholder="Digite ou cole uma frase da História..."
                 autocomplete="off"
             >
         </label>
@@ -10485,8 +10494,18 @@ function configurarLocalizadorImagemNarrativoAdmin(blocoImagem) {
             role="status"
             aria-live="polite"
         >
-            Digite uma frase presente no dossiê.
+            Digite uma frase presente na caixa História / Relatório.
         </small>
+
+        <div
+            data-image-current-position
+            style="
+                display: none;
+                padding: 10px 12px;
+                border-left: 3px solid #bba16d;
+                background: rgba(187, 161, 109, 0.08);
+            "
+        ></div>
 
         <div
             data-image-position-results
@@ -10497,9 +10516,19 @@ function configurarLocalizadorImagemNarrativoAdmin(blocoImagem) {
                 overflow: auto;
             "
         ></div>
+
+        <button
+            type="button"
+            class="admin-secondary-button"
+            data-image-position-end
+        >
+            Colocar no final da História
+        </button>
     `;
 
-    blocoImagem.appendChild(painel);
+    blocoMidia.appendChild(
+        painel
+    );
 
     const busca =
         painel.querySelector(
@@ -10511,9 +10540,19 @@ function configurarLocalizadorImagemNarrativoAdmin(blocoImagem) {
             "[data-image-position-status]"
         );
 
+    const posicaoAtual =
+        painel.querySelector(
+            "[data-image-current-position]"
+        );
+
     const resultados =
         painel.querySelector(
             "[data-image-position-results]"
+        );
+
+    const botaoFinal =
+        painel.querySelector(
+            "[data-image-position-end]"
         );
 
     const normalizar = valor =>
@@ -10526,176 +10565,100 @@ function configurarLocalizadorImagemNarrativoAdmin(blocoImagem) {
             .toLowerCase()
             .trim();
 
-    const criarParagrafo = texto => {
-
-        const novoBloco =
-            criarBlocoNarrativoAdmin(
-                "paragrafo",
-                {
-                    dados: {
-                        texto
-                    }
-                }
-            );
-
-        configurarBlocoNarrativoAdmin(
-            novoBloco
-        );
-
-        return novoBloco;
-    };
-
-    const obterTrechos = () => {
-
-        const trechos = [];
-
-        Array
-            .from(
-                editor.children
+    const obterTrechos = () =>
+        String(
+            campoHistoria.value || ""
+        )
+            .split(/\n\s*\n/)
+            .map(trecho =>
+                trecho.trim()
             )
-            .filter(
-                elemento =>
-                    elemento.matches(
-                        "[data-content-block]"
-                    ) &&
-                    elemento !== blocoImagem
-            )
-            .forEach(elemento => {
+            .filter(Boolean);
 
-                const tipo =
-                    elemento.dataset.blockType;
+    const nomePosicao = posicao => {
 
-                if (
-                    tipo !== "paragrafo" &&
-                    tipo !== "subtitulo"
-                ) {
-                    return;
-                }
-
-                const texto =
-                    elemento
-                        .querySelector(
-                            "[data-block-content]"
-                        )
-                        ?.value
-                        ?.trim() || "";
-
-                if (!texto) {
-                    return;
-                }
-
-                const partes =
-                    tipo === "paragrafo"
-                        ? texto
-                            .split(/\n\s*\n/)
-                            .map(parte =>
-                                parte.trim()
-                            )
-                            .filter(Boolean)
-                        : [texto];
-
-                partes.forEach(
-                    (parte, indiceParte) => {
-
-                        trechos.push({
-                            elemento,
-                            tipo,
-                            texto: parte,
-                            indiceParte,
-                            totalPartes:
-                                partes.length,
-                            partes
-                        });
-                    }
-                );
-            });
-
-        return trechos;
-    };
-
-    const moverImagem = (
-        trecho,
-        modo
-    ) => {
-
-        const alvo =
-            trecho.elemento;
-
-        if (
-            trecho.tipo === "paragrafo" &&
-            trecho.totalPartes > 1
-        ) {
-
-            const partesAntes =
-                modo === "antes"
-                    ? trecho.partes.slice(
-                        0,
-                        trecho.indiceParte
-                    )
-                    : trecho.partes.slice(
-                        0,
-                        trecho.indiceParte + 1
-                    );
-
-            const partesDepois =
-                modo === "antes"
-                    ? trecho.partes.slice(
-                        trecho.indiceParte
-                    )
-                    : trecho.partes.slice(
-                        trecho.indiceParte + 1
-                    );
-
-            const fragmento =
-                document.createDocumentFragment();
-
-            partesAntes.forEach(parte => {
-                fragmento.appendChild(
-                    criarParagrafo(parte)
-                );
-            });
-
-            fragmento.appendChild(
-                blocoImagem
-            );
-
-            partesDepois.forEach(parte => {
-                fragmento.appendChild(
-                    criarParagrafo(parte)
-                );
-            });
-
-            alvo.replaceWith(
-                fragmento
-            );
-
-        } else if (
-            modo === "antes"
-        ) {
-
-            alvo.before(
-                blocoImagem
-            );
-
-        } else {
-
-            alvo.after(
-                blocoImagem
-            );
+        if (!posicao) {
+            return "";
         }
 
-        status.textContent =
-            modo === "antes"
-                ? "Imagem colocada antes do trecho selecionado. Clique em Salvar para confirmar."
-                : "Imagem colocada depois do trecho selecionado. Clique em Salvar para confirmar.";
+        if (posicao === "fim") {
+            return "No final da História";
+        }
+
+        const correspondencia =
+            posicao.match(
+                /^(antes|apos)-(\d+)$/
+            );
+
+        if (!correspondencia) {
+            return "";
+        }
+
+        const modo =
+            correspondencia[1] ===
+            "antes"
+                ? "Antes"
+                : "Depois";
+
+        const numero =
+            Number(
+                correspondencia[2]
+            ) + 1;
+
+        return `${modo} do trecho ${numero}`;
+    };
+
+    const mostrarPosicaoAtual = () => {
+
+        const posicao =
+            blocoMidia.dataset
+                .insertPosition || "";
+
+        const nome =
+            nomePosicao(
+                posicao
+            );
+
+        if (!nome) {
+
+            posicaoAtual.style.display =
+                "none";
+
+            posicaoAtual.textContent =
+                "";
+
+            return;
+        }
+
+        posicaoAtual.style.display =
+            "block";
+
+        posicaoAtual.textContent =
+            `Posição definida: ${nome}.`;
+    };
+
+    const definirPosicao = (
+        modo,
+        indice
+    ) => {
+
+        const posicao =
+            modo === "fim"
+                ? "fim"
+                : `${modo}-${indice}`;
+
+        blocoMidia.dataset
+            .insertPosition =
+                posicao;
+
+        mostrarPosicaoAtual();
 
         resultados.replaceChildren();
+
         busca.value = "";
 
-        blocoImagem.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
+        status.textContent =
+            "Posição registrada. Clique em Salvar para aplicar na página pública.";
     };
 
     const pesquisar = () => {
@@ -10710,16 +10673,25 @@ function configurarLocalizadorImagemNarrativoAdmin(blocoImagem) {
         if (!consulta) {
 
             status.textContent =
-                "Digite uma frase presente no dossiê.";
+                "Digite uma frase presente na caixa História / Relatório.";
 
             return;
         }
 
+        const trechos =
+            obterTrechos();
+
         const encontrados =
-            obterTrechos()
-                .filter(trecho =>
+            trechos
+                .map(
+                    (trecho, indice) => ({
+                        trecho,
+                        indice
+                    })
+                )
+                .filter(item =>
                     normalizar(
-                        trecho.texto
+                        item.trecho
                     )
                         .includes(
                             consulta
@@ -10729,119 +10701,132 @@ function configurarLocalizadorImagemNarrativoAdmin(blocoImagem) {
         if (!encontrados.length) {
 
             status.textContent =
-                "Nenhum trecho foi encontrado no editor narrativo.";
+                "Nenhum trecho foi encontrado na História.";
 
             return;
         }
 
         status.textContent =
-            `${encontrados.length} trecho(s) encontrado(s).`;
+            `${encontrados.length} trecho(s) encontrado(s). Escolha a posição.`;
 
-        encontrados.forEach(
-            (trecho, indice) => {
+        encontrados.forEach(item => {
 
-                const resultado =
-                    document.createElement(
-                        "div"
-                    );
-
-                resultado.style.cssText = `
-                    padding: 14px;
-                    border: 1px solid rgba(117, 97, 63, 0.8);
-                    background: rgba(0, 0, 0, 0.16);
-                `;
-
-                const texto =
-                    document.createElement(
-                        "p"
-                    );
-
-                texto.style.cssText = `
-                    margin: 0;
-                    white-space: pre-line;
-                    overflow-wrap: anywhere;
-                `;
-
-                texto.textContent =
-                    `Trecho ${indice + 1}: ${trecho.texto}`;
-
-                const acoes =
-                    document.createElement(
-                        "div"
-                    );
-
-                acoes.style.cssText = `
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 10px;
-                    margin-top: 12px;
-                `;
-
-                const botaoAntes =
-                    document.createElement(
-                        "button"
-                    );
-
-                botaoAntes.type =
-                    "button";
-
-                botaoAntes.className =
-                    "admin-secondary-button";
-
-                botaoAntes.textContent =
-                    "Inserir antes";
-
-                botaoAntes.addEventListener(
-                    "click",
-                    () =>
-                        moverImagem(
-                            trecho,
-                            "antes"
-                        )
+            const resultado =
+                document.createElement(
+                    "div"
                 );
 
-                const botaoDepois =
-                    document.createElement(
-                        "button"
-                    );
+            resultado.style.cssText = `
+                padding: 14px;
+                border: 1px solid rgba(117, 97, 63, 0.8);
+                background: rgba(0, 0, 0, 0.16);
+            `;
 
-                botaoDepois.type =
-                    "button";
-
-                botaoDepois.className =
-                    "admin-secondary-button";
-
-                botaoDepois.textContent =
-                    "Inserir depois";
-
-                botaoDepois.addEventListener(
-                    "click",
-                    () =>
-                        moverImagem(
-                            trecho,
-                            "depois"
-                        )
+            const texto =
+                document.createElement(
+                    "p"
                 );
 
-                acoes.append(
-                    botaoAntes,
-                    botaoDepois
+            texto.style.cssText = `
+                margin: 0;
+                white-space: pre-line;
+                overflow-wrap: anywhere;
+            `;
+
+            texto.textContent =
+                `Trecho ${item.indice + 1}: ` +
+                item.trecho.replace(
+                    /^##\s+/,
+                    ""
                 );
 
-                resultado.append(
-                    texto,
-                    acoes
+            const acoes =
+                document.createElement(
+                    "div"
                 );
 
-                resultados.appendChild(
-                    resultado
+            acoes.style.cssText = `
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 12px;
+            `;
+
+            const botaoAntes =
+                document.createElement(
+                    "button"
                 );
-            }
-        );
+
+            botaoAntes.type =
+                "button";
+
+            botaoAntes.className =
+                "admin-secondary-button";
+
+            botaoAntes.textContent =
+                "Inserir antes";
+
+            botaoAntes.addEventListener(
+                "click",
+                () =>
+                    definirPosicao(
+                        "antes",
+                        item.indice
+                    )
+            );
+
+            const botaoDepois =
+                document.createElement(
+                    "button"
+                );
+
+            botaoDepois.type =
+                "button";
+
+            botaoDepois.className =
+                "admin-secondary-button";
+
+            botaoDepois.textContent =
+                "Inserir depois";
+
+            botaoDepois.addEventListener(
+                "click",
+                () =>
+                    definirPosicao(
+                        "apos",
+                        item.indice
+                    )
+            );
+
+            acoes.append(
+                botaoAntes,
+                botaoDepois
+            );
+
+            resultado.append(
+                texto,
+                acoes
+            );
+
+            resultados.appendChild(
+                resultado
+            );
+        });
     };
 
     busca.addEventListener(
         "input",
         pesquisar
     );
+
+    botaoFinal.addEventListener(
+        "click",
+        () =>
+            definirPosicao(
+                "fim",
+                null
+            )
+    );
+
+    mostrarPosicaoAtual();
 }
