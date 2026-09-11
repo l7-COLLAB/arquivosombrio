@@ -3360,6 +3360,7 @@ function calcularPaginaLeitura(total, pagina) {
     return Math.min(Math.max(0, Math.trunc(pagina) || 0), Math.max(0, total - 1));
 }
 
+
 function configurarPaginasLeitura(barra) {
 
     const artigo =
@@ -3506,6 +3507,9 @@ function configurarPaginasLeitura(barra) {
             pagina *
             largura;
 
+        janela.scrollTop =
+            0;
+
         contador.textContent =
             `${pagina + 1} / ${total}`;
 
@@ -3541,6 +3545,21 @@ function configurarPaginasLeitura(barra) {
             janela.scrollLeft =
                 0;
 
+            janela.scrollTop =
+                0;
+
+            janela.style.removeProperty(
+                "height"
+            );
+
+            janela.style.removeProperty(
+                "max-height"
+            );
+
+            janela.style.removeProperty(
+                "overflow"
+            );
+
             artigo.style.removeProperty(
                 "--reader-page-height"
             );
@@ -3561,14 +3580,28 @@ function configurarPaginasLeitura(barra) {
         }
 
 
+        const alturaVisivel =
+            window.visualViewport?.height ||
+            window.innerHeight;
+
         const altura =
             Math.max(
                 260,
-                window.innerHeight -
-                barra.getBoundingClientRect()
-                    .height -
+                alturaVisivel -
+                    barra.getBoundingClientRect()
+                        .height -
                 40
             );
+
+
+        janela.style.height =
+            altura + "px";
+
+        janela.style.maxHeight =
+            altura + "px";
+
+        janela.style.overflow =
+            "hidden";
 
 
         artigo.style.setProperty(
@@ -3810,6 +3843,16 @@ function configurarPaginasLeitura(barra) {
         "resize",
         agendar
     );
+
+
+    if (window.visualViewport) {
+
+        window.visualViewport
+            .addEventListener(
+                "resize",
+                agendar
+            );
+    }
 
 
     recalcular();
