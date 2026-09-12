@@ -1,10 +1,11 @@
 {
-  "name": "Nome Completo do Seu Aplicativo",
-  "short_name": "NomeCurto",
+  "name": "Arquivo Sombrio - Dossiês e Mistérios",
+  "short_name": "Arq. Sombrio",
+  "description": "Arquivo Sombrio - dossiês criminais e mistérios",
   "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#080706",
+  "theme_color": "#080706",
   "icons": [
     {
       "src": "icon-192.png",
