@@ -5603,6 +5603,34 @@ select:focus-visible {
     text-decoration: underline;
 }
 
+.forum-entry-meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+}
+
+.forum-delete-action {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #b75b5b;
+    font: inherit;
+    font-size: 0.72rem;
+    cursor: pointer;
+}
+
+.forum-delete-action:hover {
+    color: #df7777;
+    text-decoration: underline;
+}
+
+.forum-delete-action:disabled {
+    opacity: 0.45;
+    cursor: wait;
+}
+
 .forum-replies-list {
     display: grid;
     gap: 0.75rem;
@@ -5693,6 +5721,10 @@ select:focus-visible {
     .forum-reply-header {
         flex-direction: column;
         gap: 0.25rem;
+    }
+
+    .forum-entry-meta {
+        justify-content: flex-start;
     }
 
     .forum-comment-actions {
