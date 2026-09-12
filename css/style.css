@@ -3802,6 +3802,39 @@ select:focus-visible {
     outline-offset: 3px;
 }
 
+.case-card,
+.book-card {
+    position: relative;
+}
+
+.content-favorite-button {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 6;
+    display: inline-grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(224, 206, 177, 0.35);
+    border-radius: 50%;
+    background: rgba(8, 7, 6, 0.88);
+    color: #e1d5c3;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+}
+
+.content-favorite-button.is-favorite {
+    border-color: #9d1c1c;
+    background: #691313;
+    color: #fff4e6;
+}
+
+.content-favorite-button:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
 
 /* ==========================================================================
    RESPONSIVIDADE — NOTEBOOK
