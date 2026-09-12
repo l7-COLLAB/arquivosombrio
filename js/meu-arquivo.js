@@ -184,6 +184,14 @@ const meuArquivoState = {
    Não colocamos nenhuma chave privada neste arquivo.
    ========================================================= */
 
+async function obterSupabaseMeuArquivo() {
+    if (typeof obterClienteSupabase !== "function") {
+        throw new Error("O cliente principal do Supabase não está disponível.");
+    }
+
+    return obterClienteSupabase();
+}
+
 
 
 
