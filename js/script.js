@@ -3815,6 +3815,20 @@ function criarCardCaso(caso) {
             data-case-id="${escaparHTML(caso.id)}"
         >
 
+            <button
+                type="button"
+                class="content-favorite-button"
+                aria-label="Adicionar caso aos favoritos"
+                data-favorite-type="case"
+                data-favorite-id="${escaparHTML(caso.id)}"
+                data-favorite-title="${escaparHTML(caso.titulo || "Dossiê") }"
+                data-favorite-subtitle="${escaparHTML(caso.categoria || "Caso") }"
+                data-favorite-image="${escaparHTML(caso.imagem || "") }"
+                data-favorite-url="caso.html?id=${encodeURIComponent(caso.id)}"
+            >
+                <i class="fa-regular fa-bookmark"></i>
+            </button>
+
             <a
                 href="caso.html?id=${encodeURIComponent(caso.id)}"
                 class="case-card-link"
@@ -4953,7 +4967,21 @@ function carregarLivros() {
         }
 
         return `
-            <article class="book-card">
+            <article class="book-card" data-book-id="${escaparHTML(livro.id || livro.titulo || "livro")}">
+
+                <button
+                    type="button"
+                    class="content-favorite-button"
+                    aria-label="Adicionar livro aos favoritos"
+                    data-favorite-type="book"
+                    data-favorite-id="${escaparHTML(livro.id || livro.titulo || "livro") }"
+                    data-favorite-title="${escaparHTML(livro.titulo || "Livro") }"
+                    data-favorite-subtitle="${escaparHTML(livro.autor || "Autor não informado") }"
+                    data-favorite-image="${escaparHTML(livro.capa || "") }"
+                    data-favorite-url="index.html#livros"
+                >
+                    <i class="fa-regular fa-bookmark"></i>
+                </button>
 
                 <div class="book-image">
 
@@ -11295,3 +11323,107 @@ if (document.readyState === "loading") {
 } else {
     inicializarInteracoesComentariosForum();
 }
+
+
+/* ==========================================================================
+   FAVORITOS PRIVADOS — CASOS E LIVROS
+   ========================================================================== */
+
+async function alternarFavoritoConteudo(botao) {
+    if (!botao || botao.disabled) return;
+
+    const supabaseClient = await obterClienteSupabase();
+    const { data: sessaoData } = await supabaseClient.auth.getSession();
+    const usuario = sessaoData?.session?.user;
+
+    if (!usuario) {
+        alert("Entre na sua conta para salvar favoritos.");
+        entrarForum();
+        return;
+    }
+
+    botao.disabled = true;
+
+    try {
+        const tipo = botao.dataset.favoriteType;
+        const itemId = botao.dataset.favoriteId;
+        const ativo = botao.classList.contains("is-favorite");
+
+        if (ativo) {
+            const { error } = await supabaseClient
+                .from("user_favorites")
+                .delete()
+                .eq("user_id", usuario.id)
+                .eq("item_type", tipo)
+                .eq("item_id", itemId);
+            if (error) throw error;
+        } else {
+            const { error } = await supabaseClient.from("user_favorites").upsert({
+                user_id: usuario.id,
+                item_type: tipo,
+                item_id: itemId,
+                title: botao.dataset.favoriteTitle || "Favorito",
+                subtitle: botao.dataset.favoriteSubtitle || null,
+                image_url: botao.dataset.favoriteImage || null,
+                target_url: botao.dataset.favoriteUrl || "index.html"
+            }, { onConflict: "user_id,item_type,item_id" });
+            if (error) throw error;
+        }
+
+        botao.classList.toggle("is-favorite", !ativo);
+        botao.querySelector("i")?.classList.toggle("fa-solid", !ativo);
+        botao.querySelector("i")?.classList.toggle("fa-regular", ativo);
+        botao.setAttribute("aria-label", ativo ? "Adicionar aos favoritos" : "Remover dos favoritos");
+    } catch (erro) {
+        console.error("Não foi possível alterar o favorito.", erro);
+        alert("Não foi possível atualizar seus favoritos.");
+    } finally {
+        botao.disabled = false;
+    }
+}
+
+
+async function marcarFavoritosSalvos() {
+    const botoes = [...document.querySelectorAll("[data-favorite-type][data-favorite-id]")];
+    if (!botoes.length) return;
+
+    try {
+        const supabaseClient = await obterClienteSupabase();
+        const { data: sessaoData } = await supabaseClient.auth.getSession();
+        const usuario = sessaoData?.session?.user;
+        if (!usuario) return;
+
+        const { data, error } = await supabaseClient
+            .from("user_favorites")
+            .select("item_type,item_id")
+            .eq("user_id", usuario.id);
+        if (error) throw error;
+
+        const salvos = new Set((data || []).map(item => `${item.item_type}:${item.item_id}`));
+        botoes.forEach(botao => {
+            const ativo = salvos.has(`${botao.dataset.favoriteType}:${botao.dataset.favoriteId}`);
+            botao.classList.toggle("is-favorite", ativo);
+            botao.querySelector("i")?.classList.toggle("fa-solid", ativo);
+            botao.querySelector("i")?.classList.toggle("fa-regular", !ativo);
+        });
+    } catch (erro) {
+        console.warn("Não foi possível identificar os favoritos salvos.", erro);
+    }
+}
+
+
+document.addEventListener("click", evento => {
+    const botao = evento.target.closest(".content-favorite-button");
+    if (botao) alternarFavoritoConteudo(botao);
+});
+
+
+const observadorFavoritos = new MutationObserver(() => {
+    window.clearTimeout(observadorFavoritos.timer);
+    observadorFavoritos.timer = window.setTimeout(marcarFavoritosSalvos, 120);
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    observadorFavoritos.observe(document.body, { childList: true, subtree: true });
+    marcarFavoritosSalvos();
+});
