@@ -5155,3 +5155,117 @@ if (
     inicializarBotaoVoltarTopo();
 }
 
+
+/* ==========================================================================
+   SINCRONIZAÇÃO PRIVADA DOS TRECHOS SUBLINHADOS
+   ========================================================================== */
+
+function salvarSublinhadosLeitura(casoId, lista) {
+    try {
+        localStorage.setItem(chaveSublinhadosLeitura(casoId), JSON.stringify(lista));
+    } catch (erro) {
+        console.warn("Não foi possível salvar os sublinhados localmente.", erro);
+    }
+
+    sincronizarDestaquesLeitura(casoId, lista).catch(erro => {
+        console.warn("Não foi possível sincronizar os sublinhados.", erro);
+    });
+}
+
+
+function obterTextoBaseLeitura() {
+    const artigo = document.querySelector(".case-main-content");
+    return artigo?.textContent || "";
+}
+
+
+function obterTituloDossieAtual() {
+    return document.querySelector(".case-title, h1")?.textContent?.trim() || "Dossiê";
+}
+
+
+async function sincronizarDestaquesLeitura(casoId, lista) {
+    const supabase = await obterClienteSupabaseCaso();
+    const { data: sessaoData } = await supabase.auth.getSession();
+    const usuario = sessaoData?.session?.user;
+    if (!usuario) return;
+
+    const texto = obterTextoBaseLeitura();
+    const baseUrl = `caso.html?id=${encodeURIComponent(casoId)}`;
+
+    const { error: deleteError } = await supabase
+        .from("user_highlights")
+        .delete()
+        .eq("user_id", usuario.id)
+        .eq("case_id", String(casoId));
+
+    if (deleteError) throw deleteError;
+
+    if (!Array.isArray(lista) || !lista.length) return;
+
+    const registros = lista.map(item => ({
+        user_id: usuario.id,
+        case_id: String(casoId),
+        case_title: obterTituloDossieAtual(),
+        excerpt: texto.slice(item.inicio, item.fim).trim().slice(0, 500) || "Trecho sublinhado",
+        start_offset: item.inicio,
+        end_offset: item.fim,
+        target_url: `${baseUrl}&highlight=${item.inicio}-${item.fim}`
+    }));
+
+    const { error: insertError } = await supabase.from("user_highlights").insert(registros);
+    if (insertError) throw insertError;
+}
+
+
+async function carregarDestaquesPrivadosDoCaso(casoId) {
+    try {
+        const supabase = await obterClienteSupabaseCaso();
+        const { data: sessaoData } = await supabase.auth.getSession();
+        const usuario = sessaoData?.session?.user;
+        if (!usuario) return;
+
+        const { data, error } = await supabase
+            .from("user_highlights")
+            .select("start_offset,end_offset")
+            .eq("user_id", usuario.id)
+            .eq("case_id", String(casoId))
+            .order("start_offset", { ascending: true });
+
+        if (error || !Array.isArray(data)) return;
+
+        const lista = data.map(item => ({ inicio: item.start_offset, fim: item.end_offset }));
+        localStorage.setItem(chaveSublinhadosLeitura(casoId), JSON.stringify(lista));
+        restaurarSublinhadosLeitura(casoId);
+        rolarParaDestaqueSolicitado(casoId, lista);
+    } catch (erro) {
+        console.warn("Não foi possível carregar os sublinhados privados.", erro);
+    }
+}
+
+
+function rolarParaDestaqueSolicitado(casoId, lista = lerSublinhadosLeitura(casoId)) {
+    const parametro = new URLSearchParams(location.search).get("highlight");
+    const correspondencia = parametro?.match(/^(\d+)-(\d+)$/);
+    if (!correspondencia) return;
+
+    const inicio = Number(correspondencia[1]);
+    const fim = Number(correspondencia[2]);
+    const indice = lista.findIndex(item => item.inicio === inicio && item.fim === fim);
+    const marca = document.querySelectorAll(".case-main-content mark")[indice];
+    marca?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+
+function iniciarSincronizacaoDestaques() {
+    const casoId = new URLSearchParams(location.search).get("id");
+    if (!casoId) return;
+    window.setTimeout(() => carregarDestaquesPrivadosDoCaso(casoId), 900);
+}
+
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", iniciarSincronizacaoDestaques, { once: true });
+} else {
+    iniciarSincronizacaoDestaques();
+}
