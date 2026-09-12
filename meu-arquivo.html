@@ -386,6 +386,29 @@
             </div>
 
         </section>
+
+        <nav class="arquivo-config-nav" aria-label="Seções do Meu Arquivo">
+            <div class="container arquivo-config-nav-inner" role="tablist">
+                <button type="button" class="arquivo-config-tab active" role="tab" aria-selected="true" data-arquivo-tab="inicio">
+                    <i class="fa-solid fa-house"></i><span>Visão geral</span>
+                </button>
+                <button type="button" class="arquivo-config-tab" role="tab" aria-selected="false" data-arquivo-tab="perfil">
+                    <i class="fa-solid fa-user-pen"></i><span>Perfil</span>
+                </button>
+                <button type="button" class="arquivo-config-tab" role="tab" aria-selected="false" data-arquivo-tab="favoritos">
+                    <i class="fa-solid fa-bookmark"></i><span>Favoritos</span>
+                </button>
+                <button type="button" class="arquivo-config-tab" role="tab" aria-selected="false" data-arquivo-tab="marcacoes">
+                    <i class="fa-solid fa-highlighter"></i><span>Marcações</span>
+                </button>
+                <button type="button" class="arquivo-config-tab" role="tab" aria-selected="false" data-arquivo-tab="ferramentas">
+                    <i class="fa-solid fa-folder-tree"></i><span>Ferramentas</span>
+                </button>
+                <button type="button" class="arquivo-config-tab" role="tab" aria-selected="false" data-arquivo-tab="seguranca">
+                    <i class="fa-solid fa-shield-halved"></i><span>Segurança</span>
+                </button>
+            </div>
+        </nav>
         
                 <!-- =====================================================
              PAINEL PRINCIPAL DO INVESTIGADOR
@@ -1681,26 +1704,21 @@
                         </div>
 
 
-                        <div
-                            class="colecao-conteudo"
-                            id="lista-favoritos"
-                        >
-
-                            <div class="arquivo-empty-state">
-
-                                <i class="fa-regular fa-bookmark"></i>
-
-                                <h4>
-                                    Nenhum item marcado
-                                </h4>
-
-                                <p>
-                                    Artigos, documentos e outros conteúdos
-                                    favoritos serão reunidos aqui.
-                                </p>
-
-                            </div>
-
+                        <div class="favoritos-divididos">
+                            <section class="favoritos-grupo" aria-labelledby="casos-favoritos-title">
+                                <div class="favoritos-grupo-titulo">
+                                    <i class="fa-solid fa-folder-open"></i>
+                                    <h4 id="casos-favoritos-title">Casos favoritos</h4>
+                                </div>
+                                <div class="colecao-conteudo" id="lista-casos-favoritos"></div>
+                            </section>
+                            <section class="favoritos-grupo" aria-labelledby="livros-favoritos-title">
+                                <div class="favoritos-grupo-titulo">
+                                    <i class="fa-solid fa-book-open"></i>
+                                    <h4 id="livros-favoritos-title">Livros favoritos</h4>
+                                </div>
+                                <div class="colecao-conteudo" id="lista-livros-favoritos"></div>
+                            </section>
                         </div>
 
                     </article>
@@ -1782,6 +1800,18 @@
 
                     </article>
 
+                </section>
+
+                <section class="marcacoes-leitura-section" id="trechos-sublinhados" aria-labelledby="trechos-sublinhados-title">
+                    <div class="section-heading">
+                        <div>
+                            <p class="section-kicker">LEITURA PESSOAL</p>
+                            <h2 id="trechos-sublinhados-title">Trechos sublinhados</h2>
+                        </div>
+                        <span class="section-code"><i class="fa-solid fa-lock"></i> PRIVADO</span>
+                    </div>
+                    <p class="marcadores-description">Abra novamente o ponto exato que você destacou durante a leitura de um dossiê.</p>
+                    <div class="trechos-sublinhados-lista" id="lista-trechos-sublinhados"></div>
                 </section>
 
 
@@ -3437,4 +3467,3 @@
 </body>
 
 </html>
-
