@@ -2257,6 +2257,16 @@
     <script src="js/script.js" defer></script>
     <script src="js/filtros.js" defer></script>
 
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker registrado com sucesso!', reg))
+        .catch(err => console.log('Falha ao registrar o Service Worker', err));
+    });
+  }
+</script>
+
 
 </body>
 
