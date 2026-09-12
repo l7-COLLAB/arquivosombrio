@@ -147,6 +147,8 @@ const meuArquivoState = {
 
     favoritos: [],
 
+    destaquesLeitura: [],
+
     observacao: [],
 
     marcadores: [],
@@ -637,6 +639,8 @@ async function carregarDadosMeuArquivo() {
 
             carregarFavoritosUsuario(),
 
+            carregarDestaquesLeitura(),
+
             carregarCasosObservacao(),
 
             carregarMarcadoresUsuario(),
@@ -849,21 +853,23 @@ async function carregarFavoritosUsuario() {
         );
 
 
-    renderizarColecaoGenerica(
-        "lista-favoritos",
-        meuArquivoState.favoritos,
-        {
-            vazio:
-                "Nenhum registro foi marcado como favorito.",
+    const casos = meuArquivoState.favoritos.filter(item => item.item_type === "case");
+    const livros = meuArquivoState.favoritos.filter(item => item.item_type === "book");
 
-            titulo:
-                "Registro favorito",
+    renderizarFavoritosMeuArquivo("lista-casos-favoritos", casos, "Nenhum caso favorito.", "fa-folder-open");
+    renderizarFavoritosMeuArquivo("lista-livros-favoritos", livros, "Nenhum livro favorito.", "fa-book-open");
 
-            icone:
-                "fa-heart"
-        }
+}
+
+
+async function carregarDestaquesLeitura() {
+    meuArquivoState.destaquesLeitura = await consultarTabelaUsuario(
+        "user_highlights",
+        "user_id",
+        { ordem: "created_at" }
     );
 
+    renderizarDestaquesLeitura();
 }
 
 
@@ -6972,3 +6978,250 @@ document.addEventListener(
 );
 
 
+/* =========================================================
+   MEU ARQUIVO — NAVEGAÇÃO, FAVORITOS, MARCAÇÕES E AVATAR
+   ========================================================= */
+
+const secoesMeuArquivo = {
+    inicio: ["credencial", "resumo-title", "setores-title"],
+    perfil: ["credencial"],
+    favoritos: ["colecao-title"],
+    marcacoes: ["trechos-sublinhados"],
+    ferramentas: [
+        "mural-investigacao", "investigacao-privada-title", "evidence-legend-title",
+        "marcadores", "historico", "linha-do-tempo", "atividade-comunidade",
+        "alertas", "casos-enviados", "compartilhar-teoria"
+    ],
+    seguranca: ["seguranca", "preferencias", "documentos-legais", "encerrar-arquivo"]
+};
+
+
+function obterSecaoPrincipalArquivo(elemento) {
+    const container = document.querySelector(".arquivo-dashboard > .container");
+    let atual = elemento;
+
+    while (atual && atual.parentElement !== container) atual = atual.parentElement;
+    return atual && atual.tagName === "SECTION" ? atual : null;
+}
+
+
+function abrirSecaoMeuArquivo(nome, atualizarHash = true) {
+    const container = document.querySelector(".arquivo-dashboard > .container");
+    const ids = secoesMeuArquivo[nome] || secoesMeuArquivo.inicio;
+
+    if (!container) return;
+
+    container.querySelectorAll(":scope > section").forEach(secao => {
+        secao.dataset.arquivoSectionHidden = "true";
+    });
+
+    ids.forEach(id => {
+        const alvo = document.getElementById(id);
+        const secao = alvo ? obterSecaoPrincipalArquivo(alvo) : null;
+        if (secao) secao.dataset.arquivoSectionHidden = "false";
+    });
+
+    document.querySelectorAll("[data-arquivo-tab]").forEach(botao => {
+        const ativo = botao.dataset.arquivoTab === nome;
+        botao.classList.toggle("active", ativo);
+        botao.setAttribute("aria-selected", String(ativo));
+    });
+
+    if (atualizarHash) history.replaceState(null, "", `#arquivo-${nome}`);
+    window.scrollTo({ top: document.querySelector(".arquivo-config-nav")?.offsetTop || 0, behavior: "smooth" });
+}
+
+
+function inicializarNavegacaoMeuArquivo() {
+    document.querySelectorAll("[data-arquivo-tab]").forEach(botao => {
+        botao.addEventListener("click", () => abrirSecaoMeuArquivo(botao.dataset.arquivoTab));
+    });
+
+    const secaoHash = location.hash.replace("#arquivo-", "");
+    abrirSecaoMeuArquivo(secoesMeuArquivo[secaoHash] ? secaoHash : "inicio", false);
+}
+
+
+function normalizarLinkMeuArquivo(valor) {
+    try {
+        const url = new URL(String(valor || ""), location.href);
+        if (url.origin !== location.origin) return "#";
+        return url.pathname.split("/").pop() + url.search + url.hash;
+    } catch {
+        return "#";
+    }
+}
+
+
+function renderizarFavoritosMeuArquivo(containerId, itens, mensagemVazia, icone) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    if (!Array.isArray(itens) || !itens.length) {
+        container.innerHTML = criarEstadoVazio(mensagemVazia, icone);
+        return;
+    }
+
+    container.innerHTML = itens.map(item => `
+        <article class="arquivo-item-card">
+            <div class="arquivo-item-thumb"><i class="fa-solid ${icone}"></i></div>
+            <div class="arquivo-item-info">
+                <h4>${escaparHTML(item.title || "Favorito")}</h4>
+                <p>${escaparHTML(item.subtitle || "Salvo no seu arquivo pessoal.")}</p>
+                <a class="arquivo-favorite-link" href="${escaparHTML(normalizarLinkMeuArquivo(item.target_url))}">Abrir item</a>
+            </div>
+            <button type="button" class="arquivo-favorite-remove" data-remove-favorite="${escaparHTML(item.id)}" aria-label="Remover dos favoritos">
+                <i class="fa-regular fa-trash-can"></i>
+            </button>
+        </article>
+    `).join("");
+}
+
+
+function renderizarDestaquesLeitura() {
+    const container = document.getElementById("lista-trechos-sublinhados");
+    const itens = meuArquivoState.destaquesLeitura;
+    if (!container) return;
+
+    if (!Array.isArray(itens) || !itens.length) {
+        container.innerHTML = criarEstadoVazio("Nenhum trecho foi sublinhado em seus dossiês.", "fa-highlighter");
+        return;
+    }
+
+    container.innerHTML = itens.map(item => `
+        <article class="trecho-sublinhado-card">
+            <i class="fa-solid fa-highlighter"></i>
+            <div>
+                <strong>${escaparHTML(item.case_title || "Dossiê")}</strong>
+                <blockquote>“${escaparHTML(item.excerpt || "Trecho marcado") }”</blockquote>
+                <small>${escaparHTML(formatarDataArquivo(item.created_at))}</small><br>
+                <a class="trecho-sublinhado-link" href="${escaparHTML(normalizarLinkMeuArquivo(item.target_url))}">Voltar ao trecho</a>
+            </div>
+            <button type="button" class="trecho-sublinhado-remove" data-remove-highlight="${escaparHTML(item.id)}" aria-label="Remover marcação">
+                <i class="fa-regular fa-trash-can"></i>
+            </button>
+        </article>
+    `).join("");
+}
+
+
+async function removerRegistroPessoal(tabela, id) {
+    const supabase = await obterSupabaseMeuArquivo();
+    const usuario = meuArquivoState.usuario;
+    if (!supabase || !usuario || !id) return;
+
+    const { error } = await supabase.from(tabela).delete().eq("id", id).eq("user_id", usuario.id);
+    if (error) {
+        alert("Não foi possível remover este registro.");
+        return;
+    }
+
+    if (tabela === "user_favorites") await carregarFavoritosUsuario();
+    if (tabela === "user_highlights") await carregarDestaquesLeitura();
+    atualizarResumoMeuArquivo();
+}
+
+
+function prepararEventosRegistrosPessoais() {
+    document.addEventListener("click", evento => {
+        const favorito = evento.target.closest("[data-remove-favorite]");
+        const destaque = evento.target.closest("[data-remove-highlight]");
+
+        if (favorito) removerRegistroPessoal("user_favorites", favorito.dataset.removeFavorite);
+        if (destaque) removerRegistroPessoal("user_highlights", destaque.dataset.removeHighlight);
+    });
+}
+
+
+function aplicarImagemAvatar(url, nome) {
+    const elemento = arquivoElements.investigadorAvatar;
+    if (!elemento) return;
+
+    elemento.style.backgroundImage = url ? `url("${url}")` : "";
+    elemento.classList.toggle("has-avatar", Boolean(url));
+    elemento.setAttribute("aria-label", `Avatar de ${nome || "Investigador"}`);
+}
+
+
+async function preencherAvatarUsuario(metadata, nome) {
+    if (metadata?.avatar_path) {
+        const supabase = await obterSupabaseMeuArquivo();
+        const { data } = await supabase.storage.from("avatars").createSignedUrl(metadata.avatar_path, 3600);
+        if (data?.signedUrl) {
+            aplicarImagemAvatar(data.signedUrl, nome);
+            return;
+        }
+    }
+
+    aplicarImagemAvatar(metadata?.avatar_url || metadata?.picture || "", nome);
+}
+
+
+function prepararEventoAvatar() {
+    const botao = document.getElementById("alterar-avatar");
+    if (!botao) return;
+
+    botao.addEventListener("click", () => {
+        abrirModalArquivo("Alterar foto de perfil", `
+            <form id="form-alterar-avatar" class="arquivo-form">
+                <div class="arquivo-field">
+                    <label for="arquivo-avatar-file">Escolher foto</label>
+                    <input id="arquivo-avatar-file" name="avatar" type="file" accept="image/jpeg,image/png,image/webp" required>
+                    <small>JPEG, PNG ou WebP. Tamanho máximo: 2 MB.</small>
+                </div>
+                <div id="avatar-mensagem" aria-live="polite"></div>
+                <div class="arquivo-form-actions">
+                    <button type="button" class="arquivo-button arquivo-button-secondary" data-close-arquivo-modal>Cancelar</button>
+                    <button type="submit" class="arquivo-button"><i class="fa-solid fa-upload"></i> Salvar foto</button>
+                </div>
+            </form>
+        `);
+
+        document.getElementById("form-alterar-avatar")?.addEventListener("submit", salvarAvatarMeuArquivo);
+    });
+}
+
+
+async function salvarAvatarMeuArquivo(evento) {
+    evento.preventDefault();
+    const formulario = evento.currentTarget;
+    const arquivo = formulario.avatar.files?.[0];
+    const mensagem = document.getElementById("avatar-mensagem");
+    const botao = formulario.querySelector('[type="submit"]');
+    const usuario = meuArquivoState.usuario;
+
+    if (!arquivo || !usuario) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(arquivo.type) || arquivo.size > 2097152) {
+        mostrarMensagemElemento(mensagem, "Use uma imagem JPEG, PNG ou WebP de até 2 MB.", "erro");
+        return;
+    }
+
+    const supabase = await obterSupabaseMeuArquivo();
+    const extensao = arquivo.type === 'image/jpeg' ? 'jpg' : arquivo.type.split('/')[1];
+    const caminho = `${usuario.id}/avatar.${extensao}`;
+
+    try {
+        definirBotaoCarregando(botao, true);
+        const { error: uploadError } = await supabase.storage.from("avatars").upload(caminho, arquivo, { upsert: true, cacheControl: "3600" });
+        if (uploadError) throw uploadError;
+
+        const { data, error: userError } = await supabase.auth.updateUser({ data: { avatar_path: caminho } });
+        if (userError) throw userError;
+
+        meuArquivoState.usuario = data.user;
+        await preencherAvatarUsuario(data.user.user_metadata || {}, data.user.user_metadata?.display_name);
+        mostrarMensagemElemento(mensagem, "Foto de perfil atualizada.", "sucesso");
+        window.setTimeout(fecharModalArquivo, 700);
+    } catch (erro) {
+        console.error("Erro ao atualizar avatar:", erro);
+        mostrarMensagemElemento(mensagem, "Não foi possível salvar a foto de perfil.", "erro");
+    } finally {
+        definirBotaoCarregando(botao, false);
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    inicializarNavegacaoMeuArquivo();
+    prepararEventosRegistrosPessoais();
+});
