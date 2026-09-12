@@ -24,6 +24,7 @@ const TURNSTILE_SITE_KEY =
 
 
 let clienteSupabase = null;
+let promessaClienteSupabase = null;
 let promessaSupabaseSDK = null;
 let casosSupabase = [];
 let livrosSupabase = [];
@@ -526,47 +527,67 @@ async function obterClienteSupabase() {
 
     }
 
+    if (promessaClienteSupabase) {
 
-    await carregarSupabaseSDK();
-
-
-    if (
-        !window.supabase ||
-        typeof window.supabase.createClient !==
-            "function"
-    ) {
-
-        throw new Error(
-            "A biblioteca do Supabase não ficou disponível."
-        );
+        return promessaClienteSupabase;
 
     }
 
+    promessaClienteSupabase =
+        (async () => {
 
-    clienteSupabase =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY,
-            {
+            await carregarSupabaseSDK();
 
-                auth: {
+            if (
+                !window.supabase ||
+                typeof window.supabase.createClient !==
+                    "function"
+            ) {
 
-                    persistSession:
-                        true,
-
-                    autoRefreshToken:
-                        true,
-
-                    detectSessionInUrl:
-                        true
-
-                }
+                throw new Error(
+                    "A biblioteca do Supabase não ficou disponível."
+                );
 
             }
-        );
 
+            clienteSupabase =
+                window.supabase.createClient(
+                    SUPABASE_URL,
+                    SUPABASE_PUBLISHABLE_KEY,
+                    {
 
-    return clienteSupabase;
+                        auth: {
+
+                            persistSession:
+                                true,
+
+                            autoRefreshToken:
+                                true,
+
+                            detectSessionInUrl:
+                                true
+
+                        }
+
+                    }
+                );
+
+            return clienteSupabase;
+
+        })();
+
+    try {
+
+        return await promessaClienteSupabase;
+
+    } catch (erro) {
+
+        promessaClienteSupabase = null;
+
+        throw erro;
+
+    }
+
 }
 
 
