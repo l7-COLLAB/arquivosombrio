@@ -10954,7 +10954,19 @@ async function carregarComentarios() {
                                 <i class="fa-solid fa-user-secret"></i>
                                 ${escaparHTML(comentario.author_name || "Investigador")}
                             </strong>
-                            <time>${escaparHTML(formatarDataForum(comentario.created_at))}</time>
+                            <div class="forum-entry-meta">
+                                <time>${escaparHTML(formatarDataForum(comentario.created_at))}</time>
+                                ${usuario?.id === comentario.user_id ? `
+                                    <button
+                                        type="button"
+                                        class="forum-delete-action forum-delete-comment"
+                                        data-comment-id="${escaparHTML(comentario.id)}"
+                                    >
+                                        <i class="fa-regular fa-trash-can"></i>
+                                        Excluir
+                                    </button>
+                                ` : ""}
+                            </div>
                         </div>
                         <p>${escaparHTML(comentario.content || "")}</p>
                     </article>
@@ -10999,7 +11011,19 @@ async function carregarComentarios() {
                             <i class="fa-solid fa-user-secret"></i>
                             ${escaparHTML(publicacao.author_name || "Investigador")}
                         </strong>
-                        <time>${escaparHTML(formatarDataForum(publicacao.created_at))}</time>
+                        <div class="forum-entry-meta">
+                            <time>${escaparHTML(formatarDataForum(publicacao.created_at))}</time>
+                            ${usuario?.id === publicacao.user_id ? `
+                                <button
+                                    type="button"
+                                    class="forum-delete-action forum-delete-post"
+                                    data-post-id="${escaparHTML(publicacao.id)}"
+                                >
+                                    <i class="fa-regular fa-trash-can"></i>
+                                    Excluir publicação
+                                </button>
+                            ` : ""}
+                        </div>
                     </div>
 
                     ${publicacao.title ? `<h3>${escaparHTML(publicacao.title)}</h3>` : ""}
@@ -11031,6 +11055,8 @@ async function carregarComentarios() {
             `;
         }).join("");
 
+        liberarEnvioPublicacaoForum();
+
     } catch (erro) {
         console.error("Falha ao carregar publicações e comentários do fórum.", erro);
 
@@ -11051,6 +11077,9 @@ async function publicarComentarioForum(formulario) {
     const postId = formulario.dataset.postId;
 
     if (!conteudo || !postId) return;
+
+    if (formulario.dataset.submitting === "true") return;
+    formulario.dataset.submitting = "true";
 
     let botao = null;
 
@@ -11097,6 +11126,63 @@ async function publicarComentarioForum(formulario) {
 
     } finally {
         if (botao) botao.disabled = false;
+        formulario.dataset.submitting = "false";
+    }
+}
+
+
+function liberarEnvioPublicacaoForum() {
+    const formulario = document.getElementById("form-forum");
+    const botao = formulario?.querySelector('button[type="submit"]');
+
+    if (formulario) formulario.dataset.submitting = "false";
+    if (botao) botao.disabled = false;
+}
+
+
+async function excluirItemForum(tabela, id, descricao) {
+    const numeroId = Number(id);
+
+    if (!Number.isFinite(numeroId)) return;
+
+    const confirmou = confirm(
+        `Excluir ${descricao}?\n\nEsta ação é permanente e não poderá ser desfeita.`
+    );
+
+    if (!confirmou) return;
+
+    try {
+        const supabaseClient = await obterClienteSupabase();
+        const { data: sessaoData, error: sessaoErro } = await supabaseClient.auth.getSession();
+
+        if (sessaoErro) throw sessaoErro;
+
+        const usuario = sessaoData?.session?.user;
+
+        if (!usuario) {
+            alert("Entre novamente na sua conta para excluir este conteúdo.");
+            atualizarInterfaceForum(null);
+            return;
+        }
+
+        const { data, error } = await supabaseClient
+            .from(tabela)
+            .delete()
+            .eq("id", numeroId)
+            .eq("user_id", usuario.id)
+            .select("id");
+
+        if (error) throw error;
+
+        if (!Array.isArray(data) || !data.length) {
+            throw new Error("O conteúdo não foi encontrado ou não pertence à sua conta.");
+        }
+
+        await carregarComentarios();
+
+    } catch (erro) {
+        console.error(`Falha ao excluir ${descricao}.`, erro);
+        alert(erro?.message || `Não foi possível excluir ${descricao}.`);
     }
 }
 
@@ -11107,7 +11193,50 @@ function inicializarInteracoesComentariosForum() {
     if (!lista || lista.dataset.commentsReady === "true") return;
     lista.dataset.commentsReady = "true";
 
+    const formularioPublicacao = document.getElementById("form-forum");
+
+    if (formularioPublicacao && formularioPublicacao.dataset.submitGuard !== "true") {
+        formularioPublicacao.dataset.submitGuard = "true";
+
+        formularioPublicacao.addEventListener("submit", evento => {
+            if (formularioPublicacao.dataset.submitting === "true") {
+                evento.preventDefault();
+                evento.stopImmediatePropagation();
+                return;
+            }
+
+            formularioPublicacao.dataset.submitting = "true";
+
+            const botao = formularioPublicacao.querySelector('button[type="submit"]');
+            if (botao) botao.disabled = true;
+
+            window.setTimeout(liberarEnvioPublicacaoForum, 8000);
+        }, true);
+    }
+
     lista.addEventListener("click", evento => {
+        const excluirPost = evento.target.closest(".forum-delete-post");
+
+        if (excluirPost) {
+            excluirItemForum(
+                "forum_posts",
+                excluirPost.dataset.postId,
+                "esta publicação"
+            );
+            return;
+        }
+
+        const excluirComentario = evento.target.closest(".forum-delete-comment");
+
+        if (excluirComentario) {
+            excluirItemForum(
+                "forum_comments",
+                excluirComentario.dataset.commentId,
+                "este comentário"
+            );
+            return;
+        }
+
         const botaoComentar = evento.target.closest(".forum-comment-toggle");
 
         if (botaoComentar) {
