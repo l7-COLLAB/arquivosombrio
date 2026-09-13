@@ -6995,6 +6995,7 @@ const secoesMeuArquivo = {
     perfil: ["credencial"],
     favoritos: ["colecao-title"],
     marcacoes: ["trechos-sublinhados"],
+    observacao: ["observacao"],
     investigacoes: [
         "mural-investigacao", "investigacao-privada-title", "evidence-legend-title",
         "marcadores", "linha-do-tempo"
@@ -7089,12 +7090,16 @@ function inicializarNavegacaoMeuArquivo() {
     });
 
     const gruposSetores = {
+        "#credencial": "perfil",
         "#favoritos": "favoritos",
         "#meus-dossies": "investigacoes",
-        "#observacao": "investigacoes",
+        "#observacao": "observacao",
+        "#trechos-sublinhados": "marcacoes",
         "#mural-investigacao": "investigacoes",
         "#caderno": "investigacoes",
-        "#teorias": "investigacoes"
+        "#teorias": "investigacoes",
+        "#historico": "atividade",
+        "#configuracoes-hub": "configuracoes"
     };
 
     document.querySelectorAll(".setor-card").forEach(link => {
@@ -7134,6 +7139,16 @@ function normalizarLinkMeuArquivo(valor) {
 }
 
 
+function normalizarImagemFavorito(valor) {
+    try {
+        const url = new URL(String(valor || ""), location.href);
+        return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+    } catch {
+        return "";
+    }
+}
+
+
 function renderizarFavoritosMeuArquivo(containerId, itens, mensagemVazia, icone) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -7143,19 +7158,33 @@ function renderizarFavoritosMeuArquivo(containerId, itens, mensagemVazia, icone)
         return;
     }
 
-    container.innerHTML = itens.map(item => `
-        <article class="arquivo-item-card">
-            <div class="arquivo-item-thumb"><i class="fa-solid ${icone}"></i></div>
-            <div class="arquivo-item-info">
-                <h4>${escaparHTML(item.title || "Favorito")}</h4>
-                <p>${escaparHTML(item.subtitle || "Salvo no seu arquivo pessoal.")}</p>
-                <a class="arquivo-favorite-link" href="${escaparHTML(normalizarLinkMeuArquivo(item.target_url))}">Abrir item</a>
-            </div>
-            <button type="button" class="arquivo-favorite-remove" data-remove-favorite="${escaparHTML(item.id)}" aria-label="Remover dos favoritos">
-                <i class="fa-regular fa-trash-can"></i>
-            </button>
-        </article>
-    `).join("");
+    container.innerHTML = itens.map(item => {
+        const imagem = normalizarImagemFavorito(item.image_url);
+
+        return `
+            <details class="arquivo-favorite-item">
+                <summary class="arquivo-favorite-summary">
+                    <span class="arquivo-favorite-thumb">
+                        ${imagem
+                            ? `<img src="${escaparHTML(imagem)}" alt="" loading="lazy">`
+                            : `<i class="fa-solid ${icone}"></i>`}
+                    </span>
+                    <strong>${escaparHTML(item.title || "Favorito")}</strong>
+                    <i class="fa-solid fa-chevron-down arquivo-favorite-chevron"></i>
+                </summary>
+
+                <div class="arquivo-favorite-details">
+                    <p>${escaparHTML(item.subtitle || "Salvo no seu arquivo pessoal.")}</p>
+                    <div class="arquivo-favorite-actions">
+                        <a class="arquivo-favorite-link" href="${escaparHTML(normalizarLinkMeuArquivo(item.target_url))}">Abrir</a>
+                        <button type="button" class="arquivo-favorite-remove" data-remove-favorite="${escaparHTML(item.id)}" aria-label="Remover dos favoritos">
+                            <i class="fa-regular fa-trash-can"></i> Remover
+                        </button>
+                    </div>
+                </div>
+            </details>
+        `;
+    }).join("");
 }
 
 

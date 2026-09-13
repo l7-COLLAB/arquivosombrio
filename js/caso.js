@@ -29,6 +29,24 @@ document.addEventListener(
 );
 
 
+function finalizarAberturaDoCaso() {
+
+    window.requestAnimationFrame(
+        () => {
+
+            document.body.classList.remove(
+                "case-booting"
+            );
+
+            document.body.removeAttribute(
+                "aria-busy"
+            );
+
+        }
+    );
+}
+
+
 /* ==========================================================================
    SUPABASE
    ========================================================================== */
@@ -525,6 +543,8 @@ function renderizarCaso(caso) {
 
     document.title =
         `${caso.titulo} — Arquivo Sombrio`;
+
+    finalizarAberturaDoCaso();
 }
 
 
@@ -1013,6 +1033,8 @@ function mostrarNaoEncontrado() {
 
     document.title =
         "Arquivo não encontrado — Arquivo Sombrio";
+
+    finalizarAberturaDoCaso();
 }
 
 
