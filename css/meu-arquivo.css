@@ -100,6 +100,12 @@
     z-index: 1;
 }
 
+.meu-arquivo-page {
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 
 /* =========================================================
    BOTÕES GERAIS
@@ -5762,4 +5768,350 @@ body.menu-arquivo-aberto { overflow: hidden; }
 @media (max-width: 430px) {
     .arquivo-setores-grid { grid-template-columns: 1fr 1fr; }
     .arquivo-config-nav { width: 92vw; }
+
+    .meu-arquivo-page .arquivo-button,
+    .meu-arquivo-page .avatar-edit-button,
+    .meu-arquivo-page .arquivo-button-danger {
+        width: auto;
+        min-height: 40px;
+        padding: 0.55rem 0.72rem;
+        gap: 0.42rem;
+        font-size: 0.58rem;
+        letter-spacing: 0.045em;
+        line-height: 1.2;
+    }
+
+    .meu-arquivo-page .arquivo-button i,
+    .meu-arquivo-page .avatar-edit-button i,
+    .meu-arquivo-page .arquivo-button-danger i {
+        font-size: 0.72rem;
+    }
+
+    .investigacao-card .arquivo-button {
+        width: auto;
+        align-self: flex-start;
+    }
+
+    .arquivo-form-actions {
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .arquivo-form-actions .arquivo-button {
+        width: auto;
+        flex: 0 0 auto;
+    }
+}
+
+/* =========================================================
+   INTERFACE MINIMALISTA — HIERARQUIA COMPACTA
+   ========================================================= */
+
+.meu-arquivo-page {
+    --arquivo-surface: #0d0c0a;
+    --arquivo-border: rgba(181, 157, 122, 0.13);
+    --arquivo-border-strong: rgba(181, 157, 122, 0.2);
+}
+
+.meu-arquivo-page .arquivo-hero {
+    min-height: auto;
+    padding: 3.25rem 0 2.6rem;
+}
+
+.meu-arquivo-page .arquivo-hero::after,
+.meu-arquivo-page .arquivo-hero-stamp,
+.meu-arquivo-page .arquivo-classificacao {
+    display: none;
+}
+
+.meu-arquivo-page .arquivo-hero-layout {
+    display: block;
+}
+
+.meu-arquivo-page .arquivo-hero-content {
+    max-width: 680px;
+}
+
+.meu-arquivo-page .arquivo-hero h1 {
+    margin-top: 0.55rem;
+    font-size: clamp(2.4rem, 7vw, 4.2rem);
+    line-height: 0.98;
+}
+
+.meu-arquivo-page .arquivo-hero h1 span {
+    display: inline;
+}
+
+.meu-arquivo-page .arquivo-hero-description {
+    max-width: 560px;
+    margin-top: 1rem;
+    font-size: 0.78rem;
+    line-height: 1.65;
+}
+
+.meu-arquivo-page .arquivo-status {
+    margin-top: 1.15rem;
+    padding: 0.42rem 0.65rem;
+    font-size: 0.48rem;
+}
+
+.meu-arquivo-page .arquivo-dashboard {
+    padding: 2.25rem 0 3.5rem;
+}
+
+.meu-arquivo-page .arquivo-dashboard > .container {
+    gap: 1.75rem;
+}
+
+.meu-arquivo-page .section-heading {
+    align-items: center;
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.65rem;
+}
+
+.meu-arquivo-page .section-heading h2 {
+    font-size: clamp(1.05rem, 2.6vw, 1.4rem);
+}
+
+.meu-arquivo-page .section-kicker,
+.meu-arquivo-page .section-code {
+    font-size: 0.46rem;
+}
+
+.meu-arquivo-page .investigador-card {
+    border-color: var(--arquivo-border);
+    background: #0d0c0a;
+}
+
+.meu-arquivo-page .investigador-card::after {
+    opacity: 0.18;
+}
+
+.meu-arquivo-page .investigador-card-header {
+    min-height: 48px;
+    padding: 0.72rem 0.9rem;
+}
+
+.meu-arquivo-page .investigador-card-body {
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 1.3rem;
+    padding: 1.15rem;
+}
+
+.meu-arquivo-page .investigador-avatar {
+    width: 104px;
+    height: 118px;
+    box-shadow: none;
+}
+
+.meu-arquivo-page .investigador-avatar i {
+    font-size: 2.5rem;
+}
+
+.meu-arquivo-page .avatar-edit-button {
+    width: auto;
+    font-size: 0.45rem;
+}
+
+.meu-arquivo-page .investigador-info h2 {
+    font-size: clamp(1.2rem, 3vw, 1.65rem);
+}
+
+.meu-arquivo-page .investigador-bio {
+    margin-top: 0.7rem;
+    font-size: 0.72rem;
+    line-height: 1.6;
+}
+
+.meu-arquivo-page .investigador-meta {
+    margin: 0.9rem 0;
+}
+
+.meu-arquivo-page .arquivo-setores-grid,
+.meu-arquivo-page .investigacao-grid,
+.meu-arquivo-page .seguranca-grid {
+    gap: 0.65rem;
+}
+
+.meu-arquivo-page .setor-card,
+.meu-arquivo-page .investigacao-card,
+.meu-arquivo-page .colecao-bloco,
+.meu-arquivo-page .seguranca-card {
+    border-color: var(--arquivo-border);
+    background: #0d0c0a;
+    box-shadow: none;
+}
+
+.meu-arquivo-page .setor-card:hover,
+.meu-arquivo-page .investigacao-card:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.meu-arquivo-page .investigacao-card {
+    padding: 1rem;
+}
+
+.meu-arquivo-page .investigacao-card h3 {
+    margin-bottom: 0.45rem;
+    font-size: 0.95rem;
+}
+
+.meu-arquivo-page .investigacao-card > p:not(.investigacao-type) {
+    font-size: 0.67rem;
+    line-height: 1.55;
+}
+
+.meu-arquivo-page .investigacao-card-meta {
+    margin: 0.75rem 0 0.65rem;
+    padding-top: 0.6rem;
+}
+
+.meu-arquivo-page .arquivo-button {
+    min-height: 38px;
+    padding: 0.52rem 0.72rem;
+    gap: 0.42rem;
+    font-size: 0.57rem;
+    letter-spacing: 0.045em;
+    color: #d8cfc2;
+    background: #15120f;
+    border-color: rgba(181, 157, 122, 0.2);
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.meu-arquivo-page .arquivo-button-primary {
+    color: #eee5d8;
+    background: #671713;
+    border-color: #8e2420;
+}
+
+.meu-arquivo-page .arquivo-button-secondary {
+    color: #aaa093;
+    background: transparent;
+    border-color: rgba(181, 157, 122, 0.16);
+}
+
+.meu-arquivo-page .arquivo-field input,
+.meu-arquivo-page .arquivo-field textarea,
+.meu-arquivo-page .arquivo-field select {
+    padding: 0.65rem 0.72rem;
+    font-size: 0.7rem;
+}
+
+.meu-arquivo-page .arquivo-field input {
+    min-height: 42px;
+}
+
+.meu-arquivo-page .arquivo-field textarea {
+    min-height: 96px;
+}
+
+.meu-arquivo-page .arquivo-modal-dialog {
+    width: min(94vw, 540px);
+    border-color: var(--arquivo-border-strong);
+}
+
+.meu-arquivo-page .arquivo-modal-header {
+    min-height: 50px;
+    padding: 0.7rem 0.85rem;
+}
+
+.meu-arquivo-page .arquivo-modal-content {
+    padding: 1rem;
+}
+
+@media (max-width: 760px) {
+    .meu-arquivo-page .arquivo-hero {
+        padding: 2rem 0 1.65rem;
+    }
+
+    .meu-arquivo-page .arquivo-hero h1 {
+        font-size: 2.65rem;
+    }
+
+    .meu-arquivo-page .arquivo-eyebrow {
+        font-size: 0.48rem;
+    }
+
+    .meu-arquivo-page .arquivo-config-launcher {
+        padding: 0.4rem 0;
+    }
+
+    .meu-arquivo-page .arquivo-config-trigger {
+        width: auto;
+        min-height: 40px;
+        padding: 0.55rem 0.75rem;
+        font-size: 0.58rem;
+    }
+
+    .meu-arquivo-page .arquivo-dashboard {
+        padding: 1.35rem 0 2.5rem;
+    }
+
+    .meu-arquivo-page .arquivo-dashboard > .container {
+        gap: 1.25rem;
+    }
+
+    .meu-arquivo-page .investigador-card-body {
+        grid-template-columns: 78px minmax(0, 1fr);
+        align-items: start;
+        gap: 0.9rem;
+        padding: 0.85rem;
+    }
+
+    .meu-arquivo-page .investigador-avatar {
+        width: 72px;
+        height: 82px;
+    }
+
+    .meu-arquivo-page .investigador-avatar::before,
+    .meu-arquivo-page .investigador-meta,
+    .meu-arquivo-page .document-security,
+    .meu-arquivo-page .setor-number,
+    .meu-arquivo-page .setor-arrow {
+        display: none;
+    }
+
+    .meu-arquivo-page .investigador-info h2 {
+        font-size: 1.05rem;
+    }
+
+    .meu-arquivo-page .investigador-bio {
+        font-size: 0.66rem;
+    }
+
+    .meu-arquivo-page .arquivo-setores .setor-card {
+        min-height: 76px;
+        padding: 0.65rem;
+    }
+
+    .meu-arquivo-page .arquivo-setores .setor-icon {
+        width: 24px;
+        height: 24px;
+        margin-bottom: 0.1rem;
+        font-size: 0.65rem;
+    }
+
+    .meu-arquivo-page .arquivo-setores .setor-content h3 {
+        font-size: 0.72rem;
+    }
+
+    .meu-arquivo-page .investigacao-grid,
+    .meu-arquivo-page .seguranca-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .meu-arquivo-page .arquivo-modal {
+        padding: 0.65rem;
+    }
+
+    .meu-arquivo-page .arquivo-modal-dialog {
+        width: 100%;
+        max-height: 84dvh;
+        border: 1px solid var(--arquivo-border-strong);
+    }
 }
