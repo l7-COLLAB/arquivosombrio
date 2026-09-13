@@ -5787,3 +5787,98 @@ select:focus-visible {
         font-size: 0.82rem;
     }
 }
+
+/* Administração dos casos curtos diários */
+.admin-daily-cases-section {
+    border-left: 2px solid rgba(157, 28, 28, 0.75);
+}
+
+.admin-section-title-row,
+.daily-repeat-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.admin-section-title-row small,
+.daily-form-intro,
+.daily-repeat-heading p {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+}
+
+.daily-case-form-card {
+    width: min(860px, calc(100vw - 2rem));
+}
+
+.daily-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.daily-admin-repeat-section {
+    margin-top: 1.35rem;
+    padding: 1rem;
+    border: 1px solid rgba(224, 206, 177, 0.14);
+    background: rgba(0, 0, 0, 0.16);
+}
+
+.daily-admin-repeat-row {
+    display: grid;
+    gap: 0.65rem;
+    margin-top: 0.85rem;
+    padding: 0.85rem;
+    border: 1px solid rgba(224, 206, 177, 0.12);
+}
+
+.daily-admin-image-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.daily-admin-source-row {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr) auto;
+    align-items: end;
+}
+
+.daily-sensitive-check {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.daily-sensitive-check input {
+    width: auto !important;
+}
+
+.daily-remove-row {
+    width: fit-content;
+    padding: 0.45rem 0.65rem;
+    border: 0;
+    background: transparent;
+    color: #b86d65;
+    font: 0.68rem var(--font-mono);
+    cursor: pointer;
+}
+
+@media (max-width: 640px) {
+    .daily-case-form-card {
+        width: calc(100vw - 1rem);
+        padding: 1rem;
+    }
+
+    .daily-admin-grid,
+    .daily-admin-image-row,
+    .daily-admin-source-row {
+        grid-template-columns: 1fr;
+    }
+
+    .daily-repeat-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}
