@@ -67,7 +67,7 @@
 
     <link
         rel="stylesheet"
-        href="css/meu-arquivo.css?v=20260913-5"
+        href="css/meu-arquivo.css?v=20260913-6"
     >
 
 </head>
@@ -213,64 +213,50 @@
         </div>
 
 
-        <nav class="sidebar-links">
+        <nav class="sidebar-links arquivo-account-menu" aria-label="Navegação da conta">
 
             <a href="index.html">
 
                 <i class="fa-solid fa-house"></i>
 
-                Início
+                Voltar ao início
 
             </a>
 
 
-            <a href="index.html#casos">
+            <span class="arquivo-menu-group">SEU ARQUIVO</span>
 
-                <i class="fa-solid fa-folder-tree"></i>
+            <button type="button" class="arquivo-menu-link active" data-arquivo-tab="inicio">
+                <i class="fa-solid fa-house-chimney-window"></i><span>Visão geral</span>
+            </button>
 
-                Dossiês & Casos
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="perfil">
+                <i class="fa-regular fa-user"></i><span>Perfil</span>
+            </button>
 
-            </a>
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="favoritos">
+                <i class="fa-regular fa-bookmark"></i><span>Favoritos</span>
+            </button>
 
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="marcacoes">
+                <i class="fa-solid fa-highlighter"></i><span>Marcações</span>
+            </button>
 
-            <a href="index.html#forense">
+            <span class="arquivo-menu-group">ATIVIDADE</span>
 
-                <i class="fa-solid fa-microscope"></i>
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="investigacoes">
+                <i class="fa-solid fa-folder-tree"></i><span>Investigações</span>
+            </button>
 
-                Ciência Forense
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="atividade">
+                <i class="fa-solid fa-clock-rotate-left"></i><span>Sua atividade</span>
+            </button>
 
-            </a>
+            <span class="arquivo-menu-group">CONTA</span>
 
-
-            <a href="index.html#livros">
-
-                <i class="fa-solid fa-book-open"></i>
-
-                Biblioteca Sombria
-
-            </a>
-
-
-            <a href="index.html#forum">
-
-                <i class="fa-solid fa-comments"></i>
-
-                Fórum Investigativo
-
-            </a>
-
-
-            <a
-                href="meu-arquivo.html"
-                class="sidebar-meu-arquivo active"
-                aria-current="page"
-            >
-
-                <i class="fa-solid fa-user-secret"></i>
-
-                Meu Arquivo
-
-            </a>
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="configuracoes">
+                <i class="fa-solid fa-gear"></i><span>Configurações</span>
+            </button>
 
         </nav>
 
@@ -387,49 +373,6 @@
 
         </section>
 
-        <div class="arquivo-config-launcher">
-            <div class="container">
-                <button type="button" class="arquivo-config-trigger" id="abrir-menu-arquivo" aria-expanded="false" aria-controls="menu-interno-arquivo">
-                    <i class="fa-solid fa-bars"></i>
-                    <span>Menu do Arquivo</span>
-                </button>
-            </div>
-        </div>
-
-        <div class="arquivo-config-overlay" id="menu-arquivo-overlay" hidden></div>
-
-        <nav class="arquivo-config-nav" id="menu-interno-arquivo" aria-label="Seções do Meu Arquivo" aria-hidden="true">
-            <div class="arquivo-config-header">
-                <div>
-                    <small>ARQUIVO PESSOAL</small>
-                    <strong>Navegação interna</strong>
-                </div>
-                <button type="button" id="fechar-menu-arquivo" aria-label="Fechar menu do Arquivo">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="arquivo-config-nav-inner" role="tablist" aria-orientation="vertical">
-                <button type="button" class="arquivo-config-tab active" role="tab" aria-selected="true" data-arquivo-tab="inicio">
-                    <i class="fa-solid fa-house"></i><span>Visão geral</span>
-                </button>
-                <button type="button" class="arquivo-config-tab" role="tab" aria-selected="false" data-arquivo-tab="perfil">
-                    <i class="fa-solid fa-user-pen"></i><span>Perfil</span>
-                </button>
-                <button type="button" class="arquivo-config-tab" role="tab" aria-selected="false" data-arquivo-tab="favoritos">
-                    <i class="fa-solid fa-bookmark"></i><span>Favoritos</span>
-                </button>
-                <button type="button" class="arquivo-config-tab" role="tab" aria-selected="false" data-arquivo-tab="marcacoes">
-                    <i class="fa-solid fa-highlighter"></i><span>Marcações</span>
-                </button>
-                <button type="button" class="arquivo-config-tab" role="tab" aria-selected="false" data-arquivo-tab="ferramentas">
-                    <i class="fa-solid fa-folder-tree"></i><span>Ferramentas</span>
-                </button>
-                <button type="button" class="arquivo-config-tab" role="tab" aria-selected="false" data-arquivo-tab="seguranca">
-                    <i class="fa-solid fa-shield-halved"></i><span>Segurança</span>
-                </button>
-            </div>
-        </nav>
-        
                 <!-- =====================================================
              PAINEL PRINCIPAL DO INVESTIGADOR
              ===================================================== -->
@@ -2622,6 +2565,63 @@
 
                 </section>
                 
+                <!-- =============================================
+                     CENTRAL DE CONFIGURAÇÕES
+                     ============================================= -->
+
+                <section class="arquivo-settings-hub" id="configuracoes-hub" aria-labelledby="configuracoes-hub-title">
+                    <div class="settings-hub-header">
+                        <p class="section-kicker">CONTA E CONTROLE</p>
+                        <h2 id="configuracoes-hub-title">Configurações</h2>
+                        <p>Gerencie sua identidade, segurança, privacidade e informações legais.</p>
+                    </div>
+
+                    <div class="settings-list">
+                        <h3>Como você usa o Arquivo</h3>
+                        <button type="button" class="settings-row" data-settings-target="editar-perfil">
+                            <i class="fa-regular fa-user"></i><span><strong>Editar perfil</strong><small>Nome, identificação e biografia</small></span><i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <button type="button" class="settings-row" data-settings-target="configurar-notificacoes">
+                            <i class="fa-regular fa-bell"></i><span><strong>Notificações</strong><small>Alertas e comunicações</small></span><i class="fa-solid fa-chevron-right"></i>
+                        </button>
+
+                        <h3>Quem pode ver seu conteúdo</h3>
+                        <button type="button" class="settings-row" data-settings-target="configurar-privacidade">
+                            <i class="fa-solid fa-user-shield"></i><span><strong>Privacidade</strong><small>Visibilidade das informações</small></span><i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <button type="button" class="settings-row" data-settings-target="abrir-bloqueados">
+                            <i class="fa-solid fa-user-slash"></i><span><strong>Bloqueados</strong><small>Gerencie investigadores bloqueados</small></span><i class="fa-solid fa-chevron-right"></i>
+                        </button>
+
+                        <h3>Acesso e segurança</h3>
+                        <button type="button" class="settings-row" data-settings-target="alterar-email">
+                            <i class="fa-solid fa-at"></i><span><strong>E-mail</strong><small>Atualize o endereço da conta</small></span><i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <button type="button" class="settings-row" data-settings-target="alterar-senha">
+                            <i class="fa-solid fa-key"></i><span><strong>Senha</strong><small>Altere sua credencial de acesso</small></span><i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <button type="button" class="settings-row" data-settings-target="arquivo-logout">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i><span><strong>Sair</strong><small>Encerrar sessão neste dispositivo</small></span><i class="fa-solid fa-chevron-right"></i>
+                        </button>
+
+                        <h3>Informações e suporte</h3>
+                        <a class="settings-row" href="index.html#privacidade">
+                            <i class="fa-solid fa-shield-halved"></i><span><strong>Política de Privacidade</strong><small>Como seus dados são tratados</small></span><i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                        <a class="settings-row" href="index.html#termos">
+                            <i class="fa-regular fa-file-lines"></i><span><strong>Termos de Uso</strong><small>Regras aplicáveis ao serviço</small></span><i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                        <a class="settings-row" href="diretrizes.html">
+                            <i class="fa-solid fa-scale-balanced"></i><span><strong>Diretrizes da Comunidade</strong><small>Convivência e moderação</small></span><i class="fa-solid fa-chevron-right"></i>
+                        </a>
+
+                        <h3>Controle da conta</h3>
+                        <button type="button" class="settings-row settings-row-danger" data-settings-target="excluir-conta-arquivo">
+                            <i class="fa-regular fa-trash-can"></i><span><strong>Excluir conta</strong><small>Solicitar encerramento permanente</small></span><i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </section>
+
                                 <!-- =============================================
                      SALA DE SEGURANÇA
                      ============================================= -->
@@ -3055,6 +3055,8 @@
                     class="encerrar-arquivo-section"
                     id="encerrar-arquivo"
                     aria-labelledby="encerrar-arquivo-title"
+                    aria-hidden="true"
+                    hidden
                 >
 
                     <div class="encerrar-arquivo-document">
@@ -3481,7 +3483,7 @@
 
     <script src="js/script.js?v=20260913-1"></script>
 
-    <script src="js/meu-arquivo.js?v=20260913-2"></script>
+    <script src="js/meu-arquivo.js?v=20260913-6"></script>
 
 
 </body>
