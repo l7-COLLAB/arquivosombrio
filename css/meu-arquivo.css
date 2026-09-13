@@ -5144,6 +5144,183 @@
     }
 }
 
+/* =========================================================
+   MENU DA CONTA — ORGANIZAÇÃO EM LISTA
+   ========================================================= */
+
+.meu-arquivo-page .arquivo-account-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+}
+
+.meu-arquivo-page .arquivo-menu-group {
+    margin: 1rem 0 0.35rem;
+    padding: 0 0.9rem;
+    color: #655d53;
+    font-family: "DM Mono", monospace;
+    font-size: 0.45rem;
+    letter-spacing: 0.14em;
+}
+
+.meu-arquivo-page .arquivo-menu-link {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.65rem 0.85rem;
+    border: 0;
+    border-radius: 3px;
+    color: #b5ab9d;
+    background: transparent;
+    font-family: "DM Mono", monospace;
+    font-size: 0.68rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.meu-arquivo-page .arquivo-menu-link > i {
+    width: 22px;
+    color: #756b60;
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.meu-arquivo-page .arquivo-menu-link:hover,
+.meu-arquivo-page .arquivo-menu-link.active {
+    color: #eee5d8;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.meu-arquivo-page .arquivo-menu-link.active > i {
+    color: #9d2924;
+}
+
+/* =========================================================
+   CONFIGURAÇÕES — PADRÃO DE LISTA SIMPLES
+   ========================================================= */
+
+.meu-arquivo-page .arquivo-settings-hub {
+    width: min(100%, 720px);
+    margin-inline: auto;
+}
+
+.meu-arquivo-page .settings-hub-header {
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--arquivo-border);
+}
+
+.meu-arquivo-page .settings-hub-header h2 {
+    margin: 0.35rem 0 0.45rem;
+    color: #e4dccf;
+    font-family: "Cinzel", serif;
+    font-size: 1.45rem;
+    font-weight: 600;
+}
+
+.meu-arquivo-page .settings-hub-header > p:last-child {
+    margin: 0;
+    color: #756d62;
+    font-size: 0.7rem;
+    line-height: 1.55;
+}
+
+.meu-arquivo-page .settings-list {
+    display: grid;
+}
+
+.meu-arquivo-page .settings-list > h3 {
+    margin: 1.35rem 0 0.45rem;
+    color: #81776b;
+    font-family: "DM Mono", monospace;
+    font-size: 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.meu-arquivo-page .settings-row {
+    width: 100%;
+    min-height: 58px;
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr) 16px;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.65rem 0.2rem;
+    border: 0;
+    border-bottom: 1px solid rgba(181, 157, 122, 0.1);
+    color: #d1c8bb;
+    background: transparent;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.meu-arquivo-page .settings-row > i:first-child {
+    color: #887d70;
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.meu-arquivo-page .settings-row > i:last-child {
+    color: #514a42;
+    font-size: 0.56rem;
+}
+
+.meu-arquivo-page .settings-row > span {
+    min-width: 0;
+    display: grid;
+    gap: 0.2rem;
+}
+
+.meu-arquivo-page .settings-row strong {
+    font-family: "DM Mono", monospace;
+    font-size: 0.67rem;
+    font-weight: 500;
+}
+
+.meu-arquivo-page .settings-row small {
+    overflow: hidden;
+    color: #6e665c;
+    font-size: 0.59rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.meu-arquivo-page .settings-row:hover {
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.meu-arquivo-page .settings-row-danger,
+.meu-arquivo-page .settings-row-danger > i:first-child {
+    color: #a64a45;
+}
+
+@media (max-width: 760px) {
+    .meu-arquivo-page .sidebar-marca {
+        margin-bottom: 0.5rem;
+    }
+
+    .meu-arquivo-page .arquivo-menu-group {
+        margin-top: 0.75rem;
+    }
+
+    .meu-arquivo-page .arquivo-settings-hub {
+        width: 100%;
+    }
+
+    .meu-arquivo-page .settings-hub-header h2 {
+        font-size: 1.2rem;
+    }
+
+    .meu-arquivo-page .settings-row {
+        min-height: 54px;
+    }
+}
+
 
 /* =========================================================
    IPHONES / TELAS PEQUENAS
