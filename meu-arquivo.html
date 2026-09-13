@@ -67,7 +67,7 @@
 
     <link
         rel="stylesheet"
-        href="css/meu-arquivo.css?v=20260913-6"
+        href="css/meu-arquivo.css?v=20260913-7"
     >
 
 </head>
@@ -224,39 +224,23 @@
             </a>
 
 
-            <span class="arquivo-menu-group">SEU ARQUIVO</span>
+            <span class="arquivo-menu-group">PRIVACIDADE E LEIS</span>
 
-            <button type="button" class="arquivo-menu-link active" data-arquivo-tab="inicio">
-                <i class="fa-solid fa-house-chimney-window"></i><span>Visão geral</span>
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="configuracoes" data-settings-target="configurar-privacidade">
+                <i class="fa-solid fa-user-shield"></i><span>Configuração de privacidade</span>
             </button>
 
-            <button type="button" class="arquivo-menu-link" data-arquivo-tab="perfil">
-                <i class="fa-regular fa-user"></i><span>Perfil</span>
-            </button>
+            <a href="privacidade.html">
+                <i class="fa-solid fa-shield-halved"></i><span>Política de Privacidade</span>
+            </a>
 
-            <button type="button" class="arquivo-menu-link" data-arquivo-tab="favoritos">
-                <i class="fa-regular fa-bookmark"></i><span>Favoritos</span>
-            </button>
+            <a href="termos.html">
+                <i class="fa-regular fa-file-lines"></i><span>Termos de Uso</span>
+            </a>
 
-            <button type="button" class="arquivo-menu-link" data-arquivo-tab="marcacoes">
-                <i class="fa-solid fa-highlighter"></i><span>Marcações</span>
-            </button>
-
-            <span class="arquivo-menu-group">ATIVIDADE</span>
-
-            <button type="button" class="arquivo-menu-link" data-arquivo-tab="investigacoes">
-                <i class="fa-solid fa-folder-tree"></i><span>Investigações</span>
-            </button>
-
-            <button type="button" class="arquivo-menu-link" data-arquivo-tab="atividade">
-                <i class="fa-solid fa-clock-rotate-left"></i><span>Sua atividade</span>
-            </button>
-
-            <span class="arquivo-menu-group">CONTA</span>
-
-            <button type="button" class="arquivo-menu-link" data-arquivo-tab="configuracoes">
-                <i class="fa-solid fa-gear"></i><span>Configurações</span>
-            </button>
+            <a href="diretrizes.html">
+                <i class="fa-solid fa-scale-balanced"></i><span>Diretrizes da Comunidade</span>
+            </a>
 
         </nav>
 
@@ -823,6 +807,31 @@
                         </a>
 
 
+                        <!-- TRECHOS SUBLINHADOS -->
+
+                        <a
+                            href="#trechos-sublinhados"
+                            class="setor-card"
+                        >
+
+                            <span class="setor-number">
+                                04
+                            </span>
+
+                            <div class="setor-icon">
+                                <i class="fa-solid fa-highlighter"></i>
+                            </div>
+
+                            <div class="setor-content">
+                                <h3>Trechos Sublinhados</h3>
+                                <p>Marcações feitas durante a leitura dos dossiês.</p>
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right setor-arrow"></i>
+
+                        </a>
+
+
                         <!-- MURAL -->
 
                         <a
@@ -831,7 +840,7 @@
                         >
 
                             <span class="setor-number">
-                                04
+                                05
                             </span>
 
                             <div class="setor-icon">
@@ -871,7 +880,7 @@
                         >
 
                             <span class="setor-number">
-                                05
+                                06
                             </span>
 
                             <div class="setor-icon">
@@ -906,7 +915,7 @@
                         >
 
                             <span class="setor-number">
-                                06
+                                07
                             </span>
 
                             <div class="setor-icon">
@@ -930,6 +939,37 @@
 
                             <i class="fa-solid fa-arrow-right setor-arrow"></i>
 
+                        </a>
+
+
+                        <a href="#credencial" class="setor-card">
+                            <span class="setor-number">08</span>
+                            <div class="setor-icon"><i class="fa-regular fa-user"></i></div>
+                            <div class="setor-content">
+                                <h3>Perfil</h3>
+                                <p>Nome, foto e biografia do investigador.</p>
+                            </div>
+                            <i class="fa-solid fa-arrow-right setor-arrow"></i>
+                        </a>
+
+                        <a href="#historico" class="setor-card">
+                            <span class="setor-number">09</span>
+                            <div class="setor-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                            <div class="setor-content">
+                                <h3>Sua Atividade</h3>
+                                <p>Histórico, publicações, comentários e alertas.</p>
+                            </div>
+                            <i class="fa-solid fa-arrow-right setor-arrow"></i>
+                        </a>
+
+                        <a href="#configuracoes-hub" class="setor-card">
+                            <span class="setor-number">10</span>
+                            <div class="setor-icon"><i class="fa-solid fa-key"></i></div>
+                            <div class="setor-content">
+                                <h3>Conta e Segurança</h3>
+                                <p>E-mail, senha, bloqueios e controle da conta.</p>
+                            </div>
+                            <i class="fa-solid fa-arrow-right setor-arrow"></i>
                         </a>
 
 
@@ -1668,20 +1708,21 @@
 
 
                         <div class="favoritos-divididos">
-                            <section class="favoritos-grupo" aria-labelledby="casos-favoritos-title">
-                                <div class="favoritos-grupo-titulo">
-                                    <i class="fa-solid fa-folder-open"></i>
-                                    <h4 id="casos-favoritos-title">Casos favoritos</h4>
-                                </div>
+                            <details class="favoritos-grupo">
+                                <summary class="favoritos-grupo-titulo">
+                                    <span><i class="fa-solid fa-folder-open"></i> Casos favoritos</span>
+                                    <i class="fa-solid fa-chevron-down favoritos-chevron"></i>
+                                </summary>
                                 <div class="colecao-conteudo" id="lista-casos-favoritos"></div>
-                            </section>
-                            <section class="favoritos-grupo" aria-labelledby="livros-favoritos-title">
-                                <div class="favoritos-grupo-titulo">
-                                    <i class="fa-solid fa-book-open"></i>
-                                    <h4 id="livros-favoritos-title">Livros favoritos</h4>
-                                </div>
+                            </details>
+
+                            <details class="favoritos-grupo">
+                                <summary class="favoritos-grupo-titulo">
+                                    <span><i class="fa-solid fa-book-open"></i> Livros favoritos</span>
+                                    <i class="fa-solid fa-chevron-down favoritos-chevron"></i>
+                                </summary>
                                 <div class="colecao-conteudo" id="lista-livros-favoritos"></div>
-                            </section>
+                            </details>
                         </div>
 
                     </article>
@@ -3483,7 +3524,7 @@
 
     <script src="js/script.js?v=20260913-1"></script>
 
-    <script src="js/meu-arquivo.js?v=20260913-6"></script>
+    <script src="js/meu-arquivo.js?v=20260913-7"></script>
 
 
 </body>
