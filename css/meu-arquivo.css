@@ -40,7 +40,6 @@
     color: var(--arquivo-text);
 }
 
-
 /* =========================================================
    BASE
    ========================================================= */
@@ -6291,4 +6290,126 @@ body.menu-arquivo-aberto { overflow: hidden; }
         max-height: 84dvh;
         border: 1px solid var(--arquivo-border-strong);
     }
+}
+
+/* Ajustes finais: estas regras ficam por último para vencer estilos legados. */
+.meu-arquivo-page .arquivo-account-menu { gap: 0.15rem; }
+.meu-arquivo-page .arquivo-account-menu a,
+.meu-arquivo-page .arquivo-account-menu .arquivo-menu-link {
+    min-height: 46px;
+    padding-block: 0.65rem;
+    color: #cfc5b7;
+}
+.meu-arquivo-page .arquivo-account-menu i { color: #a52a25; }
+
+.meu-arquivo-page .favoritos-divididos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+}
+.meu-arquivo-page .favoritos-grupo {
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(181,157,122,.18);
+    background: #0c0b09;
+}
+.meu-arquivo-page .favoritos-grupo-titulo {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .7rem;
+    margin: 0;
+    padding: .65rem .8rem;
+    color: #ded4c5;
+    font-family: "DM Mono", monospace;
+    font-size: .66rem;
+    letter-spacing: .055em;
+    cursor: pointer;
+    list-style: none;
+}
+.meu-arquivo-page .favoritos-grupo-titulo::-webkit-details-marker,
+.meu-arquivo-page .arquivo-favorite-summary::-webkit-details-marker { display: none; }
+.meu-arquivo-page .favoritos-grupo-titulo > span { display: inline-flex; align-items: center; gap: .65rem; }
+.meu-arquivo-page .favoritos-grupo-titulo > span i { color: #a52a25; }
+.meu-arquivo-page .favoritos-chevron,
+.meu-arquivo-page .arquivo-favorite-chevron {
+    color: #776e62;
+    font-size: .58rem;
+    transition: transform .2s ease;
+}
+.meu-arquivo-page .favoritos-grupo[open] > summary .favoritos-chevron,
+.meu-arquivo-page .arquivo-favorite-item[open] > summary .arquivo-favorite-chevron { transform: rotate(180deg); }
+.meu-arquivo-page .favoritos-grupo > .colecao-conteudo { display: grid; gap: 0; padding: 0 .8rem .55rem; }
+.meu-arquivo-page .arquivo-favorite-item { border-top: 1px solid rgba(181,157,122,.11); }
+.meu-arquivo-page .arquivo-favorite-summary {
+    min-height: 44px;
+    display: grid;
+    grid-template-columns: 32px minmax(0,1fr) 12px;
+    align-items: center;
+    gap: .65rem;
+    padding: .42rem 0;
+    color: #d8cfc2;
+    cursor: pointer;
+    list-style: none;
+}
+.meu-arquivo-page .arquivo-favorite-summary strong {
+    overflow: hidden;
+    font-family: "Libre Baskerville", serif;
+    font-size: .72rem;
+    font-weight: 400;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.meu-arquivo-page .arquivo-favorite-thumb {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(181,157,122,.18);
+    background: #15120f;
+    color: #9d2b26;
+}
+.meu-arquivo-page .arquivo-favorite-thumb img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.meu-arquivo-page .arquivo-favorite-details { padding: .2rem 0 .7rem 2.95rem; }
+.meu-arquivo-page .arquivo-favorite-details p { margin: 0 0 .55rem; color: #978d80; font-size: .62rem; line-height: 1.5; }
+.meu-arquivo-page .arquivo-favorite-actions { display: flex; align-items: center; gap: .85rem; }
+.meu-arquivo-page .arquivo-favorite-link,
+.meu-arquivo-page .arquivo-favorite-remove {
+    min-height: 30px;
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: 0;
+    font-family: "DM Mono", monospace;
+    font-size: .56rem;
+    letter-spacing: .04em;
+}
+.meu-arquivo-page .colecao-description,
+.meu-arquivo-page .marcadores-description,
+.meu-arquivo-page .investigacao-card > p,
+.meu-arquivo-page .arquivo-empty-state p,
+.meu-arquivo-page .timeline-intro p,
+.meu-arquivo-page .mural-intro p { color: #a69c8f; }
+.meu-arquivo-page .arquivo-empty-state > i,
+.meu-arquivo-page .marcador-placeholder > i { color: #9c302b; opacity: .9; }
+.meu-arquivo-page .marcadores-section .section-heading h2,
+.meu-arquivo-page .timeline-section .section-heading h2,
+.meu-arquivo-page .marcacoes-leitura-section .section-heading h2,
+.meu-arquivo-page .colecao-bloco-header h3 {
+    color: #e1d8ca;
+    font-size: clamp(1rem,3.8vw,1.3rem);
+}
+.meu-arquivo-page .marcadores-section,
+.meu-arquivo-page .timeline-section,
+.meu-arquivo-page .marcacoes-leitura-section { text-align: left; }
+
+@media (max-width:760px) {
+    .meu-arquivo-page .arquivo-setores-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .meu-arquivo-page .arquivo-setores .setor-card { min-height: 82px; padding: .65rem; }
+    .meu-arquivo-page .arquivo-setores .setor-content h3 { font-size: .74rem; }
+    .meu-arquivo-page .colecao-description,
+    .meu-arquivo-page .marcadores-description,
+    .meu-arquivo-page .timeline-intro p { font-size: .76rem; line-height: 1.62; }
 }

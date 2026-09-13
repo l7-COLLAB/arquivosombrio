@@ -3301,3 +3301,30 @@ body.case-paginated
         max-height: calc(100% - 32px);
     }
 }
+/* Evita que a interface antiga apareça antes da montagem do leitor. */
+body.case-booting {
+    min-height: 100vh;
+    overflow: hidden;
+    background: #090806;
+}
+
+body.case-booting > * {
+    visibility: hidden;
+}
+
+body.case-booting::before {
+    content: "ABRINDO ARQUIVO";
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: grid;
+    place-items: center;
+    visibility: visible;
+    color: #a99a86;
+    background:
+        radial-gradient(circle at 50% 44%, rgba(103, 23, 19, 0.13), transparent 34%),
+        #090806;
+    font-family: "DM Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.28em;
+}
