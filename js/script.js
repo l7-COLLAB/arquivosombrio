@@ -11427,3 +11427,369 @@ document.addEventListener("DOMContentLoaded", () => {
     observadorFavoritos.observe(document.body, { childList: true, subtree: true });
     marcarFavoritosSalvos();
 });
+
+
+/* ==========================================================================
+   CASOS CURTOS DIÁRIOS — ADMINISTRAÇÃO
+   Módulo independente dos dossiês.
+   ========================================================================== */
+
+let casosDiariosAdmin = [];
+let casosDiariosAdminCarregados = false;
+let casosDiariosAdminCarregando = false;
+
+function slugCasoDiario(texto) {
+    return String(texto || "caso")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 150) || "caso";
+}
+
+async function carregarCasosDiariosAdmin() {
+    if (casosDiariosAdminCarregando) return;
+    casosDiariosAdminCarregando = true;
+
+    try {
+        const cliente = await obterClienteSupabase();
+        const { data, error } = await cliente
+            .from("casos_diarios")
+            .select("*")
+            .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        casosDiariosAdmin = Array.isArray(data) ? data : [];
+        casosDiariosAdminCarregados = true;
+        injetarCasosDiariosNoGerenciador();
+    } catch (erro) {
+        console.error("Não foi possível carregar os casos diários.", erro);
+    } finally {
+        casosDiariosAdminCarregando = false;
+    }
+}
+
+function injetarCasosDiariosNoGerenciador() {
+    const painel = document.querySelector("#admin-manager .admin-manager");
+    const acoes = painel?.querySelector(".admin-actions");
+    if (!painel || !acoes) return;
+
+    if (!document.getElementById("admin-new-daily-case")) {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "admin-action-button";
+        botao.id = "admin-new-daily-case";
+        botao.innerHTML = '<i class="fa-solid fa-newspaper"></i> Novo Caso Diário';
+        const sair = document.getElementById("admin-logout");
+        acoes.insertBefore(botao, sair || null);
+        botao.addEventListener("click", () => abrirFormularioCasoDiario());
+    }
+
+    let secao = document.getElementById("admin-daily-cases-section");
+    if (!secao) {
+        secao = document.createElement("section");
+        secao.id = "admin-daily-cases-section";
+        secao.className = "admin-list-section admin-daily-cases-section";
+        acoes.after(secao);
+    }
+
+    secao.innerHTML = `
+        <div class="admin-section-title-row">
+            <div>
+                <span class="admin-eyebrow">GARIMPO SOMBRIO</span>
+                <h3>Casos curtos diários</h3>
+            </div>
+            <small>${casosDiariosAdmin.length} registro(s)</small>
+        </div>
+        <div class="admin-list">
+            ${!casosDiariosAdminCarregados
+                ? '<p class="admin-empty">Consultando casos diários...</p>'
+                : casosDiariosAdmin.length === 0
+                    ? '<p class="admin-empty">Nenhum caso diário cadastrado.</p>'
+                    : casosDiariosAdmin.map(caso => `
+                        <div class="admin-item">
+                            <div>
+                                <strong>${escaparHTML(caso.titulo || "Caso sem título")}</strong>
+                                <small>${escaparHTML(caso.status_publicacao === "publicado" ? "PUBLICADO" : "RASCUNHO")} · ${escaparHTML(caso.categoria || "GARIMPO SOMBRIO")}</small>
+                            </div>
+                            <div class="admin-item-buttons">
+                                <button type="button" data-edit-daily-case="${escaparHTML(caso.id)}">Editar</button>
+                                <button type="button" data-delete-daily-case="${escaparHTML(caso.id)}">Excluir</button>
+                            </div>
+                        </div>
+                    `).join("")}
+        </div>`;
+
+    secao.querySelectorAll("[data-edit-daily-case]").forEach(botao => {
+        botao.addEventListener("click", () => {
+            const caso = casosDiariosAdmin.find(item => String(item.id) === String(botao.dataset.editDailyCase));
+            if (caso) abrirFormularioCasoDiario(caso);
+        });
+    });
+
+    secao.querySelectorAll("[data-delete-daily-case]").forEach(botao => {
+        botao.addEventListener("click", () => removerCasoDiario(botao.dataset.deleteDailyCase));
+    });
+}
+
+const renderizarGerenciadorAdminBase = renderizarGerenciadorAdmin;
+renderizarGerenciadorAdmin = function renderizarGerenciadorAdminComCasosDiarios() {
+    renderizarGerenciadorAdminBase();
+    injetarCasosDiariosNoGerenciador();
+    if (!casosDiariosAdminCarregados) carregarCasosDiariosAdmin();
+};
+
+function criarLinhaImagemCasoDiario(imagem = {}) {
+    const linha = document.createElement("div");
+    linha.className = "daily-admin-repeat-row daily-admin-image-row";
+    linha.innerHTML = `
+        <input class="daily-image-url" type="url" placeholder="URL da imagem" value="${escaparHTML(imagem.url || "")}">
+        <input class="daily-image-file" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+        <button class="admin-secondary-button daily-image-upload" type="button"><i class="fa-solid fa-cloud-arrow-up"></i> Enviar imagem</button>
+        <input class="daily-image-caption" type="text" placeholder="Legenda" value="${escaparHTML(imagem.legenda || "")}">
+        <input class="daily-image-source" type="text" placeholder="Fonte ou instituição" value="${escaparHTML(imagem.fonte || "")}">
+        <input class="daily-image-credit" type="text" placeholder="Crédito" value="${escaparHTML(imagem.credito || "")}">
+        <input class="daily-image-link" type="url" placeholder="Link original da fonte" value="${escaparHTML(imagem.link || "")}">
+        <label class="daily-sensitive-check"><input class="daily-image-sensitive" type="checkbox" ${imagem.sensivel ? "checked" : ""}> Imagem sensível</label>
+        <button class="daily-remove-row" type="button" aria-label="Remover imagem">Remover</button>`;
+
+    const arquivo = linha.querySelector(".daily-image-file");
+    const enviar = linha.querySelector(".daily-image-upload");
+    enviar.addEventListener("click", () => arquivo.click());
+    arquivo.addEventListener("change", async () => {
+        const selecionado = arquivo.files?.[0];
+        if (!selecionado) return;
+        const original = enviar.innerHTML;
+        enviar.disabled = true;
+        enviar.textContent = "Enviando...";
+        try {
+            const resultado = await enviarArquivoStorage("imagens", "casos-diarios/conteudo", selecionado);
+            linha.querySelector(".daily-image-url").value = resultado.url;
+        } catch (erro) {
+            alert(erro?.message || "Não foi possível enviar a imagem.");
+        } finally {
+            enviar.disabled = false;
+            enviar.innerHTML = original;
+            arquivo.value = "";
+        }
+    });
+    linha.querySelector(".daily-remove-row").addEventListener("click", () => linha.remove());
+    return linha;
+}
+
+function criarLinhaFonteCasoDiario(fonte = {}) {
+    const linha = document.createElement("div");
+    linha.className = "daily-admin-repeat-row daily-admin-source-row";
+    linha.innerHTML = `
+        <input class="daily-source-title" type="text" placeholder="Nome da fonte" value="${escaparHTML(fonte.titulo || "")}">
+        <input class="daily-source-url" type="url" placeholder="https://..." value="${escaparHTML(fonte.url || "")}">
+        <button class="daily-remove-row" type="button" aria-label="Remover fonte">Remover</button>`;
+    linha.querySelector(".daily-remove-row").addEventListener("click", () => linha.remove());
+    return linha;
+}
+
+function abrirFormularioCasoDiario(dados = null) {
+    let modal = document.getElementById("admin-daily-case-modal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "admin-daily-case-modal";
+        modal.className = "admin-form-overlay";
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div class="admin-form-card daily-case-form-card">
+            <button type="button" class="admin-close" id="daily-form-close" aria-label="Fechar">&times;</button>
+            <span class="admin-eyebrow">GARIMPO SOMBRIO</span>
+            <h2>${dados ? "Editar" : "Cadastrar"} Caso Diário</h2>
+            <p class="daily-form-intro">Registro curto, verificável e separado dos dossiês extensos.</p>
+            <form id="daily-case-form">
+                <div class="daily-admin-grid">
+                    <label>Título<input id="daily-title" type="text" maxlength="180" required value="${escaparHTML(dados?.titulo || "")}"></label>
+                    <label>Categoria
+                        <select id="daily-category">
+                            ${["GARIMPO SOMBRIO", "CRIME REAL", "DESAPARECIMENTO", "MISTÉRIO", "CASO FAMILIAR", "SOBREVIVÊNCIA", "FALHA INVESTIGATIVA"].map(item => `<option value="${item}" ${dados?.categoria === item ? "selected" : ""}>${item}</option>`).join("")}
+                        </select>
+                    </label>
+                    <label>Local<input id="daily-location" type="text" value="${escaparHTML(dados?.local || "")}"></label>
+                    <label>Data ou período<input id="daily-date" type="text" value="${escaparHTML(dados?.data_caso || "")}"></label>
+                    <label>Status do caso<input id="daily-case-status" type="text" value="${escaparHTML(dados?.status_caso || "EM INVESTIGAÇÃO")}"></label>
+                    <label>Publicação
+                        <select id="daily-publication-status">
+                            <option value="rascunho" ${dados?.status_publicacao !== "publicado" ? "selected" : ""}>Rascunho</option>
+                            <option value="publicado" ${dados?.status_publicacao === "publicado" ? "selected" : ""}>Publicado</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="admin-upload-section">
+                    <span class="admin-eyebrow">IMAGEM DE CAPA</span>
+                    <input id="daily-cover-file" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+                    <button id="daily-cover-upload" class="admin-upload-button" type="button"><i class="fa-solid fa-cloud-arrow-up"></i> Escolher imagem</button>
+                    <div id="daily-cover-preview" class="admin-image-preview"></div>
+                    <label>URL da capa<input id="daily-cover" type="url" required value="${escaparHTML(dados?.imagem_capa || "")}"></label>
+                </div>
+
+                <label>Resumo curto<textarea id="daily-summary" rows="4" maxlength="700" required>${escaparHTML(dados?.resumo || "")}</textarea></label>
+                <label>Relato do caso<textarea id="daily-content" rows="14" required placeholder="Escreva o caso de forma curta, imersiva e objetiva.">${escaparHTML(dados?.conteudo || "")}</textarea></label>
+                <label>Cronologia opcional<textarea id="daily-chronology" rows="5">${escaparHTML(dados?.cronologia || "")}</textarea></label>
+                <label>Evidências<textarea id="daily-evidence" rows="5" placeholder="Separe os itens com uma linha em branco.">${escaparHTML(Array.isArray(dados?.evidencias) ? dados.evidencias.join("\n\n") : "")}</textarea></label>
+                <label>Hipóteses e controvérsias<textarea id="daily-theories" rows="5" placeholder="Separe os itens com uma linha em branco.">${escaparHTML(Array.isArray(dados?.hipoteses) ? dados.hipoteses.join("\n\n") : "")}</textarea></label>
+                <label>Situação oficial<textarea id="daily-official-status" rows="4">${escaparHTML(dados?.situacao_oficial || "")}</textarea></label>
+
+                <section class="daily-admin-repeat-section">
+                    <div class="daily-repeat-heading"><div><span class="admin-eyebrow">IMAGENS INTERNAS</span><p>Inclua legenda, crédito e origem.</p></div><button id="daily-add-image" class="admin-secondary-button" type="button">+ Imagem</button></div>
+                    <div id="daily-images-list"></div>
+                </section>
+
+                <section class="daily-admin-repeat-section">
+                    <div class="daily-repeat-heading"><div><span class="admin-eyebrow">FONTES</span><p>Obrigatórias para publicar.</p></div><button id="daily-add-source" class="admin-secondary-button" type="button">+ Fonte</button></div>
+                    <div id="daily-sources-list"></div>
+                </section>
+
+                <button type="submit" class="admin-submit"><i class="fa-solid fa-floppy-disk"></i> Salvar Caso Diário</button>
+            </form>
+        </div>`;
+
+    modal.classList.add("active");
+    document.getElementById("daily-form-close").addEventListener("click", () => modal.classList.remove("active"));
+
+    const listaImagens = document.getElementById("daily-images-list");
+    const listaFontes = document.getElementById("daily-sources-list");
+    (Array.isArray(dados?.imagens) ? dados.imagens : []).forEach(item => listaImagens.appendChild(criarLinhaImagemCasoDiario(item)));
+    (Array.isArray(dados?.fontes) ? dados.fontes : []).forEach(item => listaFontes.appendChild(criarLinhaFonteCasoDiario(item)));
+    if (!listaFontes.children.length) listaFontes.appendChild(criarLinhaFonteCasoDiario());
+
+    document.getElementById("daily-add-image").addEventListener("click", () => listaImagens.appendChild(criarLinhaImagemCasoDiario()));
+    document.getElementById("daily-add-source").addEventListener("click", () => listaFontes.appendChild(criarLinhaFonteCasoDiario()));
+
+    const capa = document.getElementById("daily-cover");
+    atualizarPreviewImagemAdmin(capa.value, "#daily-cover-preview");
+    document.getElementById("daily-cover-upload").addEventListener("click", () => document.getElementById("daily-cover-file").click());
+    document.getElementById("daily-cover-file").addEventListener("change", async evento => {
+        const arquivo = evento.target.files?.[0];
+        if (!arquivo) return;
+        const botao = document.getElementById("daily-cover-upload");
+        definirEstadoUpload(botao, true, "Enviando imagem...");
+        try {
+            const resultado = await enviarArquivoStorage("imagens", "casos-diarios/capas", arquivo);
+            capa.value = resultado.url;
+            atualizarPreviewImagemAdmin(resultado.url, "#daily-cover-preview");
+        } catch (erro) {
+            alert(erro?.message || "Não foi possível enviar a capa.");
+        } finally {
+            definirEstadoUpload(botao, false);
+            evento.target.value = "";
+        }
+    });
+    capa.addEventListener("input", () => atualizarPreviewImagemAdmin(capa.value.trim(), "#daily-cover-preview"));
+    document.getElementById("daily-case-form").addEventListener("submit", evento => salvarCasoDiario(evento, dados));
+}
+
+function coletarImagensCasoDiario() {
+    return [...document.querySelectorAll("#daily-images-list .daily-admin-image-row")]
+        .map(linha => ({
+            url: linha.querySelector(".daily-image-url").value.trim(),
+            legenda: linha.querySelector(".daily-image-caption").value.trim(),
+            fonte: linha.querySelector(".daily-image-source").value.trim(),
+            credito: linha.querySelector(".daily-image-credit").value.trim(),
+            link: linha.querySelector(".daily-image-link").value.trim(),
+            sensivel: linha.querySelector(".daily-image-sensitive").checked
+        }))
+        .filter(item => item.url);
+}
+
+function coletarFontesCasoDiario() {
+    return [...document.querySelectorAll("#daily-sources-list .daily-admin-source-row")]
+        .map(linha => ({
+            titulo: linha.querySelector(".daily-source-title").value.trim(),
+            url: linha.querySelector(".daily-source-url").value.trim()
+        }))
+        .filter(item => item.titulo || item.url);
+}
+
+async function salvarCasoDiario(evento, existente = null) {
+    evento.preventDefault();
+    const botao = evento.currentTarget.querySelector('button[type="submit"]');
+    const original = botao.innerHTML;
+    botao.disabled = true;
+    botao.textContent = "Salvando...";
+
+    try {
+        if (!await obterSessaoAdmin()) throw new Error("Sua sessão administrativa expirou.");
+        const titulo = document.getElementById("daily-title").value.trim();
+        const resumo = document.getElementById("daily-summary").value.trim();
+        const conteudo = document.getElementById("daily-content").value.trim();
+        const imagemCapa = document.getElementById("daily-cover").value.trim();
+        const fontes = coletarFontesCasoDiario();
+        const statusPublicacao = document.getElementById("daily-publication-status").value;
+
+        if (titulo.length < 3) throw new Error("Informe o título do caso.");
+        if (resumo.length < 20) throw new Error("O resumo precisa ter pelo menos 20 caracteres.");
+        if (conteudo.length < 50) throw new Error("O relato precisa ter pelo menos 50 caracteres.");
+        if (!imagemCapa) throw new Error("Adicione a imagem de capa.");
+        if (statusPublicacao === "publicado" && !fontes.some(fonte => fonte.titulo && fonte.url)) {
+            throw new Error("Para publicar, adicione pelo menos uma fonte com nome e link.");
+        }
+
+        const agora = new Date().toISOString();
+        const registro = {
+            titulo,
+            slug: existente?.slug || `${slugCasoDiario(titulo)}-${Date.now().toString(36)}`,
+            categoria: document.getElementById("daily-category").value,
+            local: document.getElementById("daily-location").value.trim() || null,
+            data_caso: document.getElementById("daily-date").value.trim() || null,
+            status_caso: document.getElementById("daily-case-status").value.trim() || "EM INVESTIGAÇÃO",
+            status_publicacao: statusPublicacao,
+            imagem_capa: imagemCapa,
+            resumo,
+            conteudo,
+            cronologia: document.getElementById("daily-chronology").value.trim() || null,
+            evidencias: normalizarEvidencias(document.getElementById("daily-evidence").value),
+            hipoteses: normalizarEvidencias(document.getElementById("daily-theories").value),
+            situacao_oficial: document.getElementById("daily-official-status").value.trim() || null,
+            imagens: coletarImagensCasoDiario(),
+            fontes,
+            atualizado_em: undefined,
+            updated_at: agora,
+            publicado_em: statusPublicacao === "publicado" ? (existente?.publicado_em || agora) : null
+        };
+        delete registro.atualizado_em;
+
+        const cliente = await obterClienteSupabase();
+        const consulta = existente?.id
+            ? cliente.from("casos_diarios").update(registro).eq("id", existente.id)
+            : cliente.from("casos_diarios").insert([registro]);
+        const { error } = await consulta.select().single();
+        if (error) throw error;
+
+        document.getElementById("admin-daily-case-modal").classList.remove("active");
+        casosDiariosAdminCarregados = false;
+        await carregarCasosDiariosAdmin();
+        renderizarGerenciadorAdmin();
+        alert(existente ? "Caso diário atualizado." : "Caso diário salvo.");
+    } catch (erro) {
+        console.error("Erro ao salvar caso diário.", erro);
+        alert(erro?.message || "Não foi possível salvar o caso diário.");
+    } finally {
+        botao.disabled = false;
+        botao.innerHTML = original;
+    }
+}
+
+async function removerCasoDiario(id) {
+    if (!confirm("Excluir este caso diário permanentemente?")) return;
+    try {
+        if (!await obterSessaoAdmin()) throw new Error("Sua sessão administrativa expirou.");
+        const cliente = await obterClienteSupabase();
+        const { error } = await cliente.from("casos_diarios").delete().eq("id", id);
+        if (error) throw error;
+        casosDiariosAdminCarregados = false;
+        await carregarCasosDiariosAdmin();
+        renderizarGerenciadorAdmin();
+    } catch (erro) {
+        console.error("Erro ao excluir caso diário.", erro);
+        alert(erro?.message || "Não foi possível excluir o caso diário.");
+    }
+}
