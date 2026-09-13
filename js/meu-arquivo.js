@@ -6995,12 +6995,12 @@ const secoesMeuArquivo = {
     perfil: ["credencial"],
     favoritos: ["colecao-title"],
     marcacoes: ["trechos-sublinhados"],
-    ferramentas: [
+    investigacoes: [
         "mural-investigacao", "investigacao-privada-title", "evidence-legend-title",
-        "marcadores", "historico", "linha-do-tempo", "atividade-comunidade",
-        "alertas", "casos-enviados", "compartilhar-teoria"
+        "marcadores", "linha-do-tempo"
     ],
-    seguranca: ["seguranca", "preferencias", "documentos-legais", "encerrar-arquivo"]
+    atividade: ["historico", "atividade-comunidade", "alertas", "casos-enviados", "compartilhar-teoria"],
+    configuracoes: ["configuracoes-hub"]
 };
 
 
@@ -7056,7 +7056,11 @@ function abrirSecaoMeuArquivo(nome, atualizarHash = true) {
         const ativo = botao.dataset.arquivoTab === nome;
         botao.classList.toggle("active", ativo);
         botao.setAttribute("aria-selected", String(ativo));
+        if (ativo) botao.setAttribute("aria-current", "page");
+        else botao.removeAttribute("aria-current");
     });
+
+    document.body.dataset.arquivoView = nome;
 
     definirMenuArquivo(false);
 
@@ -7078,16 +7082,19 @@ function inicializarNavegacaoMeuArquivo() {
     });
 
     document.querySelectorAll("[data-arquivo-tab]").forEach(botao => {
-        botao.addEventListener("click", () => abrirSecaoMeuArquivo(botao.dataset.arquivoTab));
+        botao.addEventListener("click", () => {
+            abrirSecaoMeuArquivo(botao.dataset.arquivoTab);
+            document.getElementById("close-sidebar")?.click();
+        });
     });
 
     const gruposSetores = {
         "#favoritos": "favoritos",
-        "#meus-dossies": "ferramentas",
-        "#observacao": "ferramentas",
-        "#mural-investigacao": "ferramentas",
-        "#caderno": "ferramentas",
-        "#teorias": "ferramentas"
+        "#meus-dossies": "investigacoes",
+        "#observacao": "investigacoes",
+        "#mural-investigacao": "investigacoes",
+        "#caderno": "investigacoes",
+        "#teorias": "investigacoes"
     };
 
     document.querySelectorAll(".setor-card").forEach(link => {
@@ -7101,6 +7108,13 @@ function inicializarNavegacaoMeuArquivo() {
             window.requestAnimationFrame(() => {
                 document.querySelector(seletor)?.scrollIntoView({ behavior: "smooth", block: "start" });
             });
+        });
+    });
+
+    document.querySelectorAll("[data-settings-target]").forEach(controle => {
+        controle.addEventListener("click", () => {
+            const alvo = document.getElementById(controle.dataset.settingsTarget);
+            if (alvo && alvo !== controle) alvo.click();
         });
     });
 
