@@ -67,7 +67,7 @@
 
     <link
         rel="stylesheet"
-        href="css/meu-arquivo.css?v=20260913-1"
+        href="css/meu-arquivo.css?v=20260913-2"
     >
 
 </head>
@@ -387,8 +387,28 @@
 
         </section>
 
-        <nav class="arquivo-config-nav" aria-label="Seções do Meu Arquivo">
-            <div class="container arquivo-config-nav-inner" role="tablist">
+        <div class="arquivo-config-launcher">
+            <div class="container">
+                <button type="button" class="arquivo-config-trigger" id="abrir-menu-arquivo" aria-expanded="false" aria-controls="menu-interno-arquivo">
+                    <i class="fa-solid fa-bars"></i>
+                    <span>Menu do Arquivo</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="arquivo-config-overlay" id="menu-arquivo-overlay" hidden></div>
+
+        <nav class="arquivo-config-nav" id="menu-interno-arquivo" aria-label="Seções do Meu Arquivo" aria-hidden="true">
+            <div class="arquivo-config-header">
+                <div>
+                    <small>ARQUIVO PESSOAL</small>
+                    <strong>Navegação interna</strong>
+                </div>
+                <button type="button" id="fechar-menu-arquivo" aria-label="Fechar menu do Arquivo">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="arquivo-config-nav-inner" role="tablist" aria-orientation="vertical">
                 <button type="button" class="arquivo-config-tab active" role="tab" aria-selected="true" data-arquivo-tab="inicio">
                     <i class="fa-solid fa-house"></i><span>Visão geral</span>
                 </button>
@@ -3242,7 +3262,7 @@
         <div class="container">
 
 
-            <div class="footer-grid">
+            <div class="footer-layout">
 
 
                 <div class="footer-brand">
@@ -3276,7 +3296,7 @@
                 </div>
 
 
-                <div class="footer-column">
+                <div class="footer-column footer-navigation">
 
                     <h3>
                         ARQUIVO
@@ -3301,7 +3321,7 @@
                 </div>
 
 
-                <div class="footer-column">
+                <div class="footer-column footer-navigation">
 
                     <h3>
                         INVESTIGADOR
@@ -3326,7 +3346,7 @@
                 </div>
 
 
-                <div class="footer-column">
+                <div class="footer-column footer-navigation">
 
                     <h3>
                         COMUNIDADE
@@ -3461,7 +3481,7 @@
 
     <script src="js/script.js?v=20260913-1"></script>
 
-    <script src="js/meu-arquivo.js?v=20260913-1"></script>
+    <script src="js/meu-arquivo.js?v=20260913-2"></script>
 
 
 </body>
