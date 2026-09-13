@@ -6991,7 +6991,7 @@ document.addEventListener(
    ========================================================= */
 
 const secoesMeuArquivo = {
-    inicio: ["credencial", "resumo-title", "setores-title"],
+    inicio: ["credencial", "setores-title"],
     perfil: ["credencial"],
     favoritos: ["colecao-title"],
     marcacoes: ["trechos-sublinhados"],
@@ -7002,6 +7002,29 @@ const secoesMeuArquivo = {
     ],
     seguranca: ["seguranca", "preferencias", "documentos-legais", "encerrar-arquivo"]
 };
+
+
+function definirMenuArquivo(aberto) {
+    const menu = document.getElementById("menu-interno-arquivo");
+    const overlay = document.getElementById("menu-arquivo-overlay");
+    const gatilho = document.getElementById("abrir-menu-arquivo");
+
+    if (!menu || !overlay || !gatilho) return;
+
+    const estavaAberto = menu.classList.contains("is-open");
+
+    menu.classList.toggle("is-open", aberto);
+    menu.setAttribute("aria-hidden", String(!aberto));
+    overlay.hidden = !aberto;
+    gatilho.setAttribute("aria-expanded", String(aberto));
+    document.body.classList.toggle("menu-arquivo-aberto", aberto);
+
+    if (aberto) {
+        document.getElementById("fechar-menu-arquivo")?.focus();
+    } else if (estavaAberto) {
+        gatilho.focus({ preventScroll: true });
+    }
+}
 
 
 function obterSecaoPrincipalArquivo(elemento) {
@@ -7035,14 +7058,50 @@ function abrirSecaoMeuArquivo(nome, atualizarHash = true) {
         botao.setAttribute("aria-selected", String(ativo));
     });
 
+    definirMenuArquivo(false);
+
     if (atualizarHash) history.replaceState(null, "", `#arquivo-${nome}`);
     window.scrollTo({ top: document.querySelector(".arquivo-config-nav")?.offsetTop || 0, behavior: "smooth" });
 }
 
 
 function inicializarNavegacaoMeuArquivo() {
+    document.getElementById("abrir-menu-arquivo")?.addEventListener("click", () => {
+        const aberto = document.getElementById("menu-interno-arquivo")?.classList.contains("is-open");
+        definirMenuArquivo(!aberto);
+    });
+
+    document.getElementById("fechar-menu-arquivo")?.addEventListener("click", () => definirMenuArquivo(false));
+    document.getElementById("menu-arquivo-overlay")?.addEventListener("click", () => definirMenuArquivo(false));
+    document.addEventListener("keydown", evento => {
+        if (evento.key === "Escape") definirMenuArquivo(false);
+    });
+
     document.querySelectorAll("[data-arquivo-tab]").forEach(botao => {
         botao.addEventListener("click", () => abrirSecaoMeuArquivo(botao.dataset.arquivoTab));
+    });
+
+    const gruposSetores = {
+        "#favoritos": "favoritos",
+        "#meus-dossies": "ferramentas",
+        "#observacao": "ferramentas",
+        "#mural-investigacao": "ferramentas",
+        "#caderno": "ferramentas",
+        "#teorias": "ferramentas"
+    };
+
+    document.querySelectorAll(".setor-card").forEach(link => {
+        link.addEventListener("click", evento => {
+            const seletor = link.getAttribute("href");
+            const grupo = gruposSetores[seletor];
+            if (!grupo) return;
+
+            evento.preventDefault();
+            abrirSecaoMeuArquivo(grupo);
+            window.requestAnimationFrame(() => {
+                document.querySelector(seletor)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+        });
     });
 
     const secaoHash = location.hash.replace("#arquivo-", "");
