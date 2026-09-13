@@ -5541,31 +5541,83 @@
    FIM — MEU ARQUIVO
    ========================================================= */
 
-.arquivo-config-nav {
+.arquivo-config-launcher {
     position: sticky;
     top: 0;
-    z-index: 40;
-    border-top: 1px solid rgba(170, 129, 74, 0.18);
-    border-bottom: 1px solid rgba(170, 129, 74, 0.28);
+    z-index: 38;
+    padding: 0.65rem 0;
+    border-block: 1px solid rgba(170, 129, 74, 0.24);
     background: rgba(9, 8, 7, 0.96);
     backdrop-filter: blur(12px);
 }
 
-.arquivo-config-nav-inner {
-    display: flex;
-    gap: 0.55rem;
-    padding-top: 0.8rem;
-    padding-bottom: 0.8rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-}
-
-.arquivo-config-nav-inner::-webkit-scrollbar { display: none; }
-
-.arquivo-config-tab {
+.arquivo-config-trigger {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 0.75rem;
+    min-height: 46px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #861818;
+    background: linear-gradient(145deg, #25100f, #130d0c);
+    color: #eee4d6;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.arquivo-config-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 89;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(3px);
+}
+
+.arquivo-config-nav {
+    position: fixed;
+    inset: 0 0 0 auto;
+    z-index: 90;
+    width: min(88vw, 390px);
+    padding: 1.25rem;
+    border-left: 1px solid rgba(151, 28, 28, 0.62);
+    background: linear-gradient(165deg, #161310 0%, #090807 72%);
+    box-shadow: -22px 0 60px rgba(0, 0, 0, 0.62);
+    transform: translateX(105%);
+    visibility: hidden;
+    transition: transform 0.28s ease, visibility 0.28s ease;
+}
+
+.arquivo-config-nav.is-open {
+    transform: translateX(0);
+    visibility: visible;
+}
+
+.arquivo-config-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0 1.2rem;
+    border-bottom: 1px solid rgba(170, 129, 74, 0.22);
+}
+
+.arquivo-config-header div { display: grid; gap: 0.3rem; }
+.arquivo-config-header small { color: #8f806d; font-family: var(--font-mono, monospace); letter-spacing: 0.13em; }
+.arquivo-config-header strong { color: #eee4d6; font-family: var(--font-display, serif); font-size: 1.25rem; }
+.arquivo-config-header button { width: 44px; height: 44px; border: 1px solid rgba(170, 129, 74, 0.3); background: #100e0c; color: #eee4d6; font-size: 1.2rem; cursor: pointer; }
+
+.arquivo-config-nav-inner {
+    display: grid;
+    gap: 0.6rem;
+    padding-top: 1.2rem;
+}
+
+.arquivo-config-tab {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     gap: 0.55rem;
     min-height: 44px;
     padding: 0.72rem 1rem;
@@ -5576,7 +5628,9 @@
     font-family: var(--font-mono, monospace);
     font-size: 0.72rem;
     letter-spacing: 0.05em;
+    width: 100%;
     white-space: nowrap;
+    cursor: pointer;
 }
 
 .arquivo-config-tab.active,
@@ -5642,11 +5696,70 @@
 
 [data-arquivo-section-hidden="true"] { display: none !important; }
 
+body.menu-arquivo-aberto { overflow: hidden; }
+
+.arquivo-setores-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
+.arquivo-setores .setor-card {
+    min-height: 132px;
+    padding: 1rem;
+}
+
+.arquivo-setores .setor-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
+}
+
+.arquivo-setores .setor-content h3 {
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.arquivo-setores .setor-content p {
+    font-size: 0.68rem;
+    line-height: 1.45;
+}
+
+.main-footer .footer-column h3 {
+    margin: 0 0 0.65rem;
+    color: #c59b61;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+}
+
 @media (max-width: 760px) {
-    .arquivo-config-nav { top: 0; }
-    .arquivo-config-nav-inner { padding-inline: 1rem; }
-    .arquivo-config-tab { min-width: max-content; }
+    .arquivo-hero { min-height: auto; padding: 4rem 0 3rem; }
+    .arquivo-hero h1 { font-size: clamp(3.35rem, 17vw, 5rem); line-height: 0.92; }
+    .arquivo-hero-description { font-size: 0.95rem; line-height: 1.65; }
+    .arquivo-config-trigger { width: 100%; justify-content: center; }
+    .arquivo-dashboard { padding-top: 2.2rem; }
+    .investigador-card-body { padding: 1.5rem 1.1rem; }
+    .investigador-meta { grid-template-columns: 1fr; }
+    .arquivo-setores-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.55rem; }
+    .arquivo-setores .setor-card { min-height: 96px; padding: 0.75rem; gap: 0.45rem; }
+    .setor-card .setor-number { font-size: 0.6rem; }
+    .arquivo-setores .setor-icon { width: 28px; height: 28px; font-size: 0.75rem; }
+    .setor-card .setor-content p, .setor-card .setor-tag { display: none; }
+    .arquivo-setores .setor-content h3 { font-size: 0.82rem; line-height: 1.15; }
+    .arquivo-setores .setor-arrow { font-size: 0.68rem; }
     .favoritos-divididos { grid-template-columns: 1fr; }
     .trecho-sublinhado-card { grid-template-columns: auto minmax(0, 1fr); }
     .trecho-sublinhado-remove { grid-column: 2; justify-self: start; }
+    .main-footer { padding-top: 2.25rem; }
+    .main-footer .footer-layout { grid-template-columns: 1fr 1fr; gap: 1.6rem 1rem; padding-bottom: 1.8rem; }
+    .main-footer .footer-brand { grid-column: 1 / -1; }
+    .main-footer .footer-column:last-child { grid-column: 1 / -1; }
+    .main-footer .footer-navigation { gap: 0.55rem; }
+    .main-footer .footer-navigation a { font-size: 0.72rem; }
+    .main-footer .footer-bottom { font-size: 0.58rem; line-height: 1.6; }
+}
+
+@media (max-width: 430px) {
+    .arquivo-setores-grid { grid-template-columns: 1fr 1fr; }
+    .arquivo-config-nav { width: 92vw; }
 }
