@@ -5226,6 +5226,16 @@
     color: #a8322d;
 }
 
+.mural-upload-input {
+    position: fixed !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+}
+
 .mural-editor-spacer {
     flex: 1 1 auto;
 }
@@ -5274,8 +5284,8 @@
 
 .mural-canvas {
     position: relative;
-    width: max(100%, 900px);
-    min-height: max(100%, 650px);
+    width: 100%;
+    min-height: max(100%, clamp(500px, 68dvh, 760px));
     overflow: hidden;
     background:
         radial-gradient(circle at 18% 22%, rgba(255,255,255,.035), transparent 21rem),
@@ -5338,6 +5348,7 @@
     cursor: grab;
     touch-action: none;
     user-select: none;
+    max-width: calc(100% - 16px);
 }
 
 .mural-canvas-item:active {
@@ -5362,6 +5373,29 @@
     height: 120px;
     display: block;
     margin-bottom: 0.65rem;
+    object-fit: cover;
+    filter: sepia(.16) contrast(.96);
+    pointer-events: none;
+}
+
+.mural-private-image {
+    width: 100%;
+    height: 120px;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.65rem;
+    color: #746859;
+    background: rgba(36, 28, 21, 0.08);
+    font-family: "DM Mono", monospace;
+    font-size: 0.53rem;
+}
+
+.mural-private-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
     object-fit: cover;
     filter: sepia(.16) contrast(.96);
     pointer-events: none;
@@ -5429,6 +5463,7 @@
 }
 
 .mural-document-link {
+    width: 100%;
     min-height: 84px;
     display: grid;
     place-content: center;
@@ -5436,11 +5471,22 @@
     gap: 0.45rem;
     margin-bottom: 0.65rem;
     border: 1px dashed rgba(39,28,20,.3);
+    background: transparent;
     color: #4c3828;
     font-family: "DM Mono", monospace;
     font-size: 0.58rem;
     text-decoration: none;
     touch-action: manipulation;
+}
+
+.mural-document-link small {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    color: #776858;
+    font-size: 0.48rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .mural-document-link i {
@@ -5500,12 +5546,30 @@
     }
 
     .mural-editor-toolbar {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.35rem;
         padding: 0.48rem;
+        overflow: visible;
     }
 
     .mural-editor-toolbar button {
+        width: 100%;
+        min-width: 0;
         min-height: 40px;
-        padding: 0.5rem 0.62rem;
+        padding: 0.45rem 0.3rem;
+        font-size: clamp(0.47rem, 2.35vw, 0.57rem);
+        letter-spacing: 0;
+    }
+
+    .mural-editor-toolbar button span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .mural-editor-spacer {
+        display: none;
     }
 
     .mural-save-state {
@@ -5522,8 +5586,33 @@
     }
 
     .mural-canvas {
-        width: 900px;
-        min-height: 700px;
+        width: 100%;
+        min-width: 0;
+        min-height: max(100%, calc(100dvh - 178px));
+    }
+}
+
+@media (max-width: 380px) {
+    .mural-editor-toolbar button span {
+        display: none;
+    }
+
+    .mural-editor-toolbar button {
+        font-size: 0.8rem;
+    }
+
+    .mural-canvas-item {
+        min-width: 118px;
+    }
+}
+
+@media (min-width: 761px) and (max-height: 720px) {
+    .meu-arquivo-page .arquivo-modal--mural .arquivo-modal-dialog {
+        height: calc(100dvh - 1rem);
+    }
+
+    .mural-canvas {
+        min-height: max(100%, 480px);
     }
 }
 
