@@ -9487,6 +9487,7 @@ if (
         }
 
 
+        await concluirRascunhoAdmin();
         fecharFormularioAdmin();
 
         await carregarCasosSupabase();
@@ -9667,6 +9668,7 @@ async function salvarPericiaAdmin(
             throw resultado.error;
         }
 
+        await concluirRascunhoAdmin();
         fecharFormularioAdmin();
 
         await carregarPericiasSupabase();
@@ -9907,6 +9909,7 @@ async function salvarLivroAdmin(
             throw error;
         }
 
+        await concluirRascunhoAdmin();
         fecharFormularioAdmin();
 
         await carregarLivrosSupabase();
@@ -11876,6 +11879,7 @@ async function salvarCasoDiario(evento, existente = null) {
         const { error } = await consulta.select().single();
         if (error) throw error;
 
+        await concluirRascunhoAdmin();
         document.getElementById("admin-daily-case-modal").classList.remove("active");
         casosDiariosAdminCarregados = false;
         await carregarCasosDiariosAdmin();
@@ -11983,5 +11987,163 @@ function renderizarDetalheCasoDiario(container, caso) {
             ${fontes.length ? `<section class="daily-reader-sources"><h2>Fontes</h2>${fontes.map(fonte => `<a href="${escaparHTML(fonte.url || "#")}" target="_blank" rel="noopener noreferrer">${escaparHTML(fonte.titulo || fonte.url || "Fonte")}</a>`).join("")}</section>` : ""}
         </article>`;
 }
+
+
+/* RASCUNHOS AUTOMÁTICOS — ADMINISTRAÇÃO */
+const RASCUNHO_ADMIN_ESPERA=800;
+let rascunhoAdmin=null,timerRascunhoAdmin=null;
+function chaveRascunhoAdmin(tipo,id){return tipo+":"+(id==null||id===""?"novo":id);}
+function tituloRascunhoAdmin(tipo){
+ const ids={dossie:"admin-title",caso_diario:"daily-title",pericia:"admin-forensic-title",livro:"admin-book-title"};
+ return document.getElementById(ids[tipo])?.value?.trim()||"Rascunho sem título";
+}
+function camposRascunhoAdmin(form){
+ const usados={};
+ return [...form.querySelectorAll("input,textarea,select")]
+ .filter(c=>!["file","submit","button"].includes(c.type)).map(c=>{
+  const base=c.id?"#"+c.id:c.name?'[name="'+c.name+'"]':"."+[...c.classList].join(".");
+  const indice=usados[base]||0;usados[base]=indice+1;
+  return{base,indice,valor:c.value,marcado:c.checked};
+ });
+}
+function aplicarCamposRascunhoAdmin(form,campos){
+ (Array.isArray(campos)?campos:[]).forEach(item=>{
+  let lista=[];try{lista=[...form.querySelectorAll(item.base)];}catch(_){return;}
+  const c=lista[item.indice||0];if(!c)return;
+  if(c.type==="checkbox"||c.type==="radio")c.checked=Boolean(item.marcado);
+  else c.value=item.valor??"";
+ });
+}
+function extrasRascunhoAdmin(tipo){
+ if(tipo==="dossie")return{blocos:coletarBlocosConteudoAdmin(),documentos:coletarDocumentosAdmin()};
+ if(tipo==="livro")return{links:coletarLinksAfiliadosAdmin()};
+ if(tipo==="caso_diario")return{imagens:coletarImagensCasoDiario(),fontes:coletarFontesCasoDiario()};
+ return{};
+}
+function clonarSemEventosAdmin(seletor){
+ const el=document.querySelector(seletor);if(!el)return null;
+ const novo=el.cloneNode(true);el.replaceWith(novo);return novo;
+}
+function aplicarExtrasRascunhoAdmin(tipo,extras){
+ if(!extras)return;
+ if(tipo==="dossie"){
+  const editor=document.getElementById("admin-content-blocks");
+  if(editor&&Array.isArray(extras.blocos)){
+   editor.replaceChildren();
+   document.querySelectorAll("[data-add-content-block]").forEach(b=>{const n=b.cloneNode(true);b.replaceWith(n);});
+   inicializarEditorConteudoAdmin({conteudo_blocos:extras.blocos});
+  }
+  if(Array.isArray(extras.documentos)){
+   clonarSemEventosAdmin("#admin-document-file");clonarSemEventosAdmin("#admin-document-upload-button");
+   inicializarDocumentosCaso({documentos:extras.documentos});
+  }
+ }
+ if(tipo==="livro"&&Array.isArray(extras.links)){
+  const lista=document.getElementById("admin-affiliate-links");
+  const botao=clonarSemEventosAdmin("#admin-add-affiliate-link");
+  if(lista){lista.replaceChildren();(extras.links.length?extras.links:[{}]).forEach(l=>adicionarLinhaAfiliado(lista,l));}
+  botao?.addEventListener("click",()=>adicionarLinhaAfiliado(lista));
+ }
+ if(tipo==="caso_diario"){
+  const imagens=document.getElementById("daily-images-list"),fontes=document.getElementById("daily-sources-list");
+  if(imagens&&Array.isArray(extras.imagens)){imagens.replaceChildren();extras.imagens.forEach(i=>imagens.appendChild(criarLinhaImagemCasoDiario(i)));}
+  if(fontes&&Array.isArray(extras.fontes)){fontes.replaceChildren();(extras.fontes.length?extras.fontes:[{}]).forEach(f=>fontes.appendChild(criarLinhaFonteCasoDiario(f)));}
+ }
+}
+function statusRascunhoAdmin(texto,falha=false){
+ const el=rascunhoAdmin?.form?.querySelector("[data-draft-status]");if(!el)return;
+ el.textContent=texto;el.style.color=falha?"#d88":"";
+}
+async function gravarRascunhoAdmin(manual=false){
+ const atual=rascunhoAdmin;
+ if(!atual||atual.restaurando||atual.finalizado||atual.salvando||!atual.form.isConnected)return;
+ clearTimeout(timerRascunhoAdmin);atual.salvando=true;
+ try{
+  const sessao=await obterSessaoAdmin();if(!sessao?.user)throw new Error("Sua sessão administrativa expirou.");
+  const cliente=await obterClienteSupabase();
+  const payload={versao:1,salvo_em:new Date().toISOString(),campos:camposRascunhoAdmin(atual.form),extras:extrasRascunhoAdmin(atual.tipo)};
+  const{error}=await cliente.from("admin_drafts").upsert({
+   user_id:sessao.user.id,draft_key:atual.chave,content_type:atual.tipo,
+   record_id:atual.id==null?null:String(atual.id),title:tituloRascunhoAdmin(atual.tipo),
+   payload,updated_at:new Date().toISOString()
+  },{onConflict:"user_id,draft_key"});
+  if(error)throw error;
+  statusRascunhoAdmin(manual?"Rascunho salvo.":"Rascunho salvo automaticamente.");
+ }catch(erro){
+  console.error("Falha ao salvar rascunho.",erro);statusRascunhoAdmin("Falha ao salvar o rascunho.",true);
+  if(manual)alert(erro?.message||"Não foi possível salvar o rascunho.");
+ }finally{if(rascunhoAdmin===atual)atual.salvando=false;}
+}
+function agendarRascunhoAdmin(){
+ if(!rascunhoAdmin||rascunhoAdmin.restaurando||rascunhoAdmin.finalizado)return;
+ statusRascunhoAdmin("Salvamento automático pendente...");clearTimeout(timerRascunhoAdmin);
+ timerRascunhoAdmin=setTimeout(()=>gravarRascunhoAdmin(false),RASCUNHO_ADMIN_ESPERA);
+}
+async function apagarRascunhoAdmin(descartar=false){
+ const atual=rascunhoAdmin;if(!atual)return true;
+ if(descartar&&!confirm("Descartar este rascunho? O conteúdo não publicado será perdido."))return false;
+ clearTimeout(timerRascunhoAdmin);atual.finalizado=true;
+ try{
+  const sessao=await obterSessaoAdmin();if(!sessao?.user)throw new Error("Sua sessão administrativa expirou.");
+  const cliente=await obterClienteSupabase();
+  const{error}=await cliente.from("admin_drafts").delete().eq("user_id",sessao.user.id).eq("draft_key",atual.chave);
+  if(error)throw error;
+  if(descartar){atual.modal.classList.remove("active");rascunhoAdmin=null;}return true;
+ }catch(erro){
+  atual.finalizado=false;console.error("Falha ao apagar rascunho.",erro);
+  if(descartar)alert(erro?.message||"Não foi possível descartar o rascunho.");return false;
+ }
+}
+async function concluirRascunhoAdmin(){await apagarRascunhoAdmin(false);}
+async function recuperarRascunhoAdmin(){
+ const atual=rascunhoAdmin;
+ try{
+  const sessao=await obterSessaoAdmin();if(!sessao?.user)return;
+  const cliente=await obterClienteSupabase();
+  const{data,error}=await cliente.from("admin_drafts").select("payload,updated_at")
+   .eq("user_id",sessao.user.id).eq("draft_key",atual.chave).maybeSingle();
+  if(error)throw error;if(!data?.payload||rascunhoAdmin!==atual)return;
+  aplicarCamposRascunhoAdmin(atual.form,data.payload.campos);aplicarExtrasRascunhoAdmin(atual.tipo,data.payload.extras);
+  [["admin-image","#admin-image-preview"],["admin-book-cover","#admin-book-cover-preview"],["daily-cover","#daily-cover-preview"]].forEach(([id,seletor])=>{
+   const valor=document.getElementById(id)?.value;if(valor)atualizarPreviewImagemAdmin(valor,seletor);
+  });
+  statusRascunhoAdmin("Rascunho recuperado de "+new Date(data.updated_at).toLocaleString("pt-BR")+".");
+ }catch(erro){console.error("Falha ao recuperar rascunho.",erro);statusRascunhoAdmin("Não foi possível recuperar o rascunho.",true);}
+ finally{if(rascunhoAdmin===atual)atual.restaurando=false;}
+}
+function prepararRascunhoAdmin(tipo,id,form,modal,fechar){
+ if(!form||!modal)return;
+ const submit=form.querySelector('button[type="submit"]'),acoes=document.createElement("div");
+ acoes.className="admin-draft-actions";acoes.style.cssText="display:flex;flex-wrap:wrap;gap:10px;align-items:center";
+ acoes.innerHTML='<button type="button" class="admin-secondary-button" data-save-draft><i class="fa-regular fa-floppy-disk"></i> Salvar rascunho</button><button type="button" class="admin-secondary-button" data-discard-draft><i class="fa-regular fa-trash-can"></i> Descartar</button><small data-draft-status aria-live="polite"></small>';
+ submit?.before(acoes);
+ rascunhoAdmin={tipo,id,chave:chaveRascunhoAdmin(tipo,id),form,modal,restaurando:true,finalizado:false,salvando:false};
+ form.addEventListener("input",agendarRascunhoAdmin);form.addEventListener("change",agendarRascunhoAdmin);
+ form.addEventListener("click",e=>{
+  if(e.target.closest("[data-add-content-block],.admin-block-remove,.admin-document-remove,#admin-add-affiliate-link,.admin-affiliate-remove,#daily-add-image,#daily-add-source,.daily-remove-row"))setTimeout(agendarRascunhoAdmin,0);
+ });
+ acoes.querySelector("[data-save-draft]").addEventListener("click",()=>gravarRascunhoAdmin(true));
+ acoes.querySelector("[data-discard-draft]").addEventListener("click",()=>apagarRascunhoAdmin(true));
+ fechar?.addEventListener("click",async e=>{
+  e.preventDefault();e.stopImmediatePropagation();await gravarRascunhoAdmin(false);
+  modal.classList.remove("active");rascunhoAdmin=null;
+ },true);
+ recuperarRascunhoAdmin();
+}
+const abrirFormularioAdminSemRascunho=abrirFormularioAdmin;
+abrirFormularioAdmin=function(tipo,dados=null){
+ abrirFormularioAdminSemRascunho(tipo,dados);
+ const modal=document.getElementById("admin-form-modal");
+ prepararRascunhoAdmin(tipo==="caso"?"dossie":tipo==="pericia"?"pericia":"livro",dados?.id??null,
+  document.getElementById("admin-content-form"),modal,document.getElementById("admin-form-close"));
+};
+const abrirFormularioCasoDiarioSemRascunho=abrirFormularioCasoDiario;
+abrirFormularioCasoDiario=function(dados=null){
+ abrirFormularioCasoDiarioSemRascunho(dados);
+ const modal=document.getElementById("admin-daily-case-modal");
+ prepararRascunhoAdmin("caso_diario",dados?.id??null,document.getElementById("daily-case-form"),modal,document.getElementById("daily-form-close"));
+};
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")gravarRascunhoAdmin(false);});
+window.addEventListener("pagehide",()=>gravarRascunhoAdmin(false));
 
 document.addEventListener("DOMContentLoaded", carregarGarimpoPublico);
