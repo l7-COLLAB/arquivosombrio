@@ -5052,6 +5052,8 @@ function abrirMuralInvestigacao(muralId) {
                     <button type="button" data-mural-add="note"><i class="fa-solid fa-note-sticky"></i><span>Anotação</span></button>
                     <button type="button" data-mural-add="image"><i class="fa-solid fa-image"></i><span>Fotografia</span></button>
                     <button type="button" data-mural-add="document"><i class="fa-solid fa-file-lines"></i><span>Documento</span></button>
+                    <input type="file" id="mural-upload-image" class="mural-upload-input" accept="image/jpeg,image/png,image/webp" aria-label="Selecionar fotografia">
+                    <input type="file" id="mural-upload-document" class="mural-upload-input" accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" aria-label="Selecionar documento">
                     <span class="mural-editor-spacer"></span>
                     <span class="mural-save-state" id="mural-save-state" aria-live="polite"><i class="fa-solid fa-cloud"></i> Salvo</span>
                     <button type="button" class="mural-save-button" data-mural-save><i class="fa-solid fa-floppy-disk"></i><span>Salvar</span></button>
@@ -5134,7 +5136,25 @@ function prepararEditorMural() {
         botao.addEventListener("click", () => adicionarItemMural(botao.dataset.muralAdd));
     });
 
+    editor.querySelector("#mural-upload-image")?.addEventListener("change", evento => {
+        const arquivo = evento.currentTarget.files?.[0];
+        evento.currentTarget.value = "";
+        if (arquivo) enviarArquivoMural(arquivo, "image");
+    });
+
+    editor.querySelector("#mural-upload-document")?.addEventListener("change", evento => {
+        const arquivo = evento.currentTarget.files?.[0];
+        evento.currentTarget.value = "";
+        if (arquivo) enviarArquivoMural(arquivo, "document");
+    });
+
     editor.querySelector("[data-mural-save]")?.addEventListener("click", () => salvarMuralAberto(true));
+
+    const canvas = editor.querySelector("#mural-canvas");
+    if (canvas && "ResizeObserver" in window) {
+        const observador = new ResizeObserver(() => ajustarItensAoCanvasMural(false));
+        observador.observe(canvas);
+    }
 }
 
 
@@ -5144,26 +5164,17 @@ function adicionarItemMural(tipo) {
 
     let titulo = "";
     let conteudo = "";
-    let url = "";
 
     if (tipo === "note") {
         titulo = window.prompt("Título da anotação:", "Nova pista")?.trim() || "";
         if (!titulo) return;
         conteudo = window.prompt("Escreva a anotação:", "")?.trim() || "";
     } else if (tipo === "image") {
-        titulo = window.prompt("Legenda da fotografia:", "Fotografia")?.trim() || "Fotografia";
-        url = normalizarUrlMural(window.prompt("Cole o endereço HTTPS da imagem:", "") || "");
-        if (!url) {
-            window.alert("Informe um endereço válido iniciado por https://");
-            return;
-        }
+        document.getElementById("mural-upload-image")?.click();
+        return;
     } else if (tipo === "document") {
-        titulo = window.prompt("Nome do documento:", "Documento")?.trim() || "Documento";
-        url = normalizarUrlMural(window.prompt("Cole o endereço HTTPS do documento ou fonte:", "") || "");
-        if (!url) {
-            window.alert("Informe um endereço válido iniciado por https://");
-            return;
-        }
+        document.getElementById("mural-upload-document")?.click();
+        return;
     } else {
         return;
     }
@@ -5173,7 +5184,7 @@ function adicionarItemMural(tipo) {
         type: tipo,
         title: titulo.slice(0, 120),
         content: conteudo.slice(0, 1000),
-        url,
+        url: "",
         x: 8 + ((mural.board_data.items.length * 9) % 48),
         y: 8 + ((mural.board_data.items.length * 11) % 48),
         width: tipo === "note" ? 190 : 170
@@ -5181,6 +5192,94 @@ function adicionarItemMural(tipo) {
 
     registrarAlteracaoMural();
     renderizarItensMural();
+}
+
+
+function sanitizarNomeArquivoMural(nome) {
+    const seguro = String(nome || "arquivo")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9._-]+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "")
+        .slice(-100);
+    return seguro || "arquivo";
+}
+
+
+function validarArquivoMural(arquivo, tipo) {
+    const imagens = ["image/jpeg", "image/png", "image/webp"];
+    const documentos = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "text/plain"
+    ];
+    const extensao = String(arquivo.name || "").split(".").pop().toLowerCase();
+    const extensoesDocumento = ["pdf", "doc", "docx", "txt"];
+
+    if (tipo === "image") {
+        if (!imagens.includes(arquivo.type) || arquivo.size > 8 * 1024 * 1024) {
+            return "Escolha uma imagem JPEG, PNG ou WebP de até 8 MB.";
+        }
+    } else if (!(documentos.includes(arquivo.type) || (!arquivo.type && extensoesDocumento.includes(extensao))) || arquivo.size > 15 * 1024 * 1024) {
+        return "Escolha um PDF, DOC, DOCX ou TXT de até 15 MB.";
+    }
+
+    return "";
+}
+
+
+async function enviarArquivoMural(arquivo, tipo) {
+    const mural = meuArquivoState.muralAberto;
+    const usuario = meuArquivoState.usuario;
+    if (!mural || !usuario) return;
+
+    const erroValidacao = validarArquivoMural(arquivo, tipo);
+    if (erroValidacao) {
+        window.alert(erroValidacao);
+        return;
+    }
+
+    const id = criarIdItemMural();
+    const nomeArquivo = sanitizarNomeArquivoMural(arquivo.name);
+    const caminho = `${usuario.id}/${mural.id}/${id}/${nomeArquivo}`;
+    const botoes = document.querySelectorAll(".mural-editor-toolbar button");
+
+    try {
+        botoes.forEach(botao => botao.disabled = true);
+        atualizarEstadoSalvamentoMural("upload");
+        const supabase = await obterSupabaseMeuArquivo();
+        const { error } = await supabase.storage
+            .from("mural-private")
+            .upload(caminho, arquivo, { cacheControl: "3600", upsert: false, contentType: arquivo.type || undefined });
+
+        if (error) throw error;
+
+        mural.board_data.items.push({
+            id,
+            type: tipo,
+            title: arquivo.name.replace(/\.[^.]+$/, "").slice(0, 120) || (tipo === "image" ? "Fotografia" : "Documento"),
+            content: "",
+            url: "",
+            storage_path: caminho,
+            file_name: arquivo.name.slice(0, 180),
+            mime_type: arquivo.type || "application/octet-stream",
+            x: 8 + ((mural.board_data.items.length * 9) % 48),
+            y: 8 + ((mural.board_data.items.length * 11) % 48),
+            width: tipo === "image" ? 180 : 170
+        });
+
+        registrarAlteracaoMural();
+        renderizarItensMural();
+        await salvarMuralAberto(false);
+    } catch (erro) {
+        console.error("Erro ao enviar arquivo ao mural:", erro);
+        atualizarEstadoSalvamentoMural("erro");
+        window.alert("Não foi possível enviar o arquivo. Tente novamente.");
+    } finally {
+        botoes.forEach(botao => botao.disabled = false);
+    }
 }
 
 
@@ -5203,9 +5302,13 @@ function renderizarItensMural() {
         cartao.style.width = `${Math.max(130, Math.min(300, Number(item.width) || 170))}px`;
 
         const visual = item.type === "image"
-            ? `<img src="${escaparHTML(normalizarUrlMural(item.url))}" alt="${escaparHTML(item.title || "Fotografia do mural")}" loading="lazy">`
+            ? item.storage_path
+                ? `<div class="mural-private-image" data-mural-private-image><i class="fa-solid fa-spinner fa-spin"></i><span>Carregando fotografia</span></div>`
+                : `<img src="${escaparHTML(normalizarUrlMural(item.url))}" alt="${escaparHTML(item.title || "Fotografia do mural")}" loading="lazy">`
             : item.type === "document"
-                ? `<a class="mural-document-link" href="${escaparHTML(normalizarUrlMural(item.url))}" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-lines"></i><span>Abrir documento</span></a>`
+                ? item.storage_path
+                    ? `<button type="button" class="mural-document-link" data-mural-open-file><i class="fa-solid fa-file-lines"></i><span>Abrir documento</span><small>${escaparHTML(item.file_name || "Arquivo privado")}</small></button>`
+                    : `<a class="mural-document-link" href="${escaparHTML(normalizarUrlMural(item.url))}" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-lines"></i><span>Abrir documento</span></a>`
                 : `<p>${escaparHTML(item.content || "Anotação sem conteúdo.")}</p>`;
 
         cartao.innerHTML = `
@@ -5221,14 +5324,105 @@ function renderizarItensMural() {
 
         prepararInteracaoItemMural(cartao, item);
         canvas.appendChild(cartao);
+        if (item.type === "image" && item.storage_path) carregarImagemPrivadaMural(cartao, item);
     });
+
+    window.requestAnimationFrame(() => ajustarItensAoCanvasMural(false));
+}
+
+
+function ajustarItensAoCanvasMural(salvar = false) {
+    const canvas = document.getElementById("mural-canvas");
+    const mural = meuArquivoState.muralAberto;
+    if (!canvas || !mural || !canvas.clientWidth || !canvas.clientHeight) return;
+
+    let alterado = false;
+    canvas.querySelectorAll(".mural-canvas-item").forEach(cartao => {
+        const item = mural.board_data.items.find(atual => atual.id === cartao.dataset.muralItemId);
+        if (!item) return;
+        const maxX = Math.max(0, 100 - (cartao.offsetWidth / canvas.clientWidth * 100));
+        const maxY = Math.max(0, 100 - (cartao.offsetHeight / canvas.clientHeight * 100));
+        const novoX = Math.max(0, Math.min(maxX, Number(item.x) || 0));
+        const novoY = Math.max(0, Math.min(maxY, Number(item.y) || 0));
+        if (novoX !== item.x || novoY !== item.y) alterado = true;
+        item.x = novoX;
+        item.y = novoY;
+        cartao.style.left = `${novoX}%`;
+        cartao.style.top = `${novoY}%`;
+    });
+
+    if (alterado && salvar) registrarAlteracaoMural();
+}
+
+
+async function criarUrlAssinadaMural(caminho, expiraEm = 3600) {
+    const supabase = await obterSupabaseMeuArquivo();
+    const { data, error } = await supabase.storage
+        .from("mural-private")
+        .createSignedUrl(caminho, expiraEm);
+    if (error) throw error;
+    return data?.signedUrl || "";
+}
+
+
+async function carregarImagemPrivadaMural(cartao, item) {
+    const area = cartao.querySelector("[data-mural-private-image]");
+    if (!area) return;
+    try {
+        const url = await criarUrlAssinadaMural(item.storage_path);
+        if (!cartao.isConnected || !url) return;
+        area.innerHTML = `<img src="${escaparHTML(url)}" alt="${escaparHTML(item.title || "Fotografia do mural")}" loading="lazy">`;
+    } catch (erro) {
+        console.error("Erro ao carregar fotografia privada:", erro);
+        area.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i><span>Fotografia indisponível</span>`;
+    }
+}
+
+
+async function abrirArquivoPrivadoMural(item, botao) {
+    if (!item.storage_path) return;
+    const novaAba = window.open("", "_blank");
+    if (novaAba) novaAba.opener = null;
+    try {
+        botao.disabled = true;
+        const url = await criarUrlAssinadaMural(item.storage_path, 120);
+        if (url && novaAba) novaAba.location.href = url;
+        else if (url) window.location.href = url;
+    } catch (erro) {
+        novaAba?.close();
+        console.error("Erro ao abrir documento privado:", erro);
+        window.alert("Não foi possível abrir este documento.");
+    } finally {
+        botao.disabled = false;
+    }
+}
+
+
+async function removerArquivoPrivadoMural(item) {
+    if (!item.storage_path) return true;
+    try {
+        const supabase = await obterSupabaseMeuArquivo();
+        const { error } = await supabase.storage.from("mural-private").remove([item.storage_path]);
+        if (error) throw error;
+        return true;
+    } catch (erro) {
+        console.error("Erro ao excluir arquivo privado:", erro);
+        window.alert("O arquivo não pôde ser excluído. Nada foi removido do mural.");
+        return false;
+    }
 }
 
 
 function prepararInteracaoItemMural(cartao, item) {
-    cartao.querySelector("[data-mural-delete]")?.addEventListener("click", evento => {
+    cartao.querySelector("[data-mural-open-file]")?.addEventListener("click", evento => {
+        evento.stopPropagation();
+        abrirArquivoPrivadoMural(item, evento.currentTarget);
+    });
+
+    cartao.querySelector("[data-mural-delete]")?.addEventListener("click", async evento => {
         evento.stopPropagation();
         if (!window.confirm(`Excluir “${item.title || "este item"}” do mural?`)) return;
+        if (!(await removerArquivoPrivadoMural(item))) return;
         const itens = meuArquivoState.muralAberto?.board_data?.items || [];
         meuArquivoState.muralAberto.board_data.items = itens.filter(atual => atual.id !== item.id);
         registrarAlteracaoMural();
@@ -5308,6 +5502,7 @@ function atualizarEstadoSalvamentoMural(estado) {
     if (!elemento) return;
     const dados = {
         alterado: ["fa-clock", "Alterações pendentes"],
+        upload: ["fa-spinner fa-spin", "Enviando arquivo…"],
         salvando: ["fa-spinner fa-spin", "Salvando…"],
         salvo: ["fa-cloud", "Salvo"],
         erro: ["fa-triangle-exclamation", "Não foi possível salvar"]
