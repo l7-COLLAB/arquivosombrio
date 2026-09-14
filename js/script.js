@@ -4021,113 +4021,83 @@ function identificarTipoForense(caso) {
 }
 
 
+const estadoFiltroForense = { busca: "", tipo: "todos", ordem: "recentes" };
+
+function obterPericiasParaGrade() {
+    const novas = (Array.isArray(periciasSupabase) ? periciasSupabase : []).map(item => ({ ...item, origem_forense: "nova" }));
+    const legadas = obterTodosCasos().filter(item => String(item.categoria).toUpperCase() === "PERÍCIA").map(item => ({ ...item, origem_forense: "legada" }));
+    const titulosNovos = new Set(novas.map(item => normalizarTextoForense(item.titulo)));
+    return novas.concat(legadas.filter(item => !titulosNovos.has(normalizarTextoForense(item.titulo))));
+}
+
 function criarCardPericia(pericia) {
     const url = "pericia.html?id=" + encodeURIComponent(pericia.id) + "#forense";
     return '<article class="case-card" data-forensic-id="' + escaparHTML(pericia.id) + '">' +
-        '<button type="button" class="content-favorite-button" aria-label="Adicionar perícia aos favoritos" ' +
-        'data-favorite-type="forensic" data-favorite-id="' + escaparHTML(pericia.id) + '" ' +
-        'data-favorite-title="' + escaparHTML(pericia.titulo || "Perícia") + '" ' +
-        'data-favorite-subtitle="' + escaparHTML(pericia.categoria || "Ciência Forense") + '" ' +
-        'data-favorite-image="' + escaparHTML(pericia.imagem || "") + '" ' +
-        'data-favorite-url="' + escaparHTML(url) + '"><i class="fa-regular fa-bookmark"></i></button>' +
+        '<button type="button" class="content-favorite-button" aria-label="Adicionar perícia aos favoritos" data-favorite-type="forensic" data-favorite-id="' + escaparHTML(pericia.id) + '" data-favorite-title="' + escaparHTML(pericia.titulo || "Perícia") + '" data-favorite-subtitle="' + escaparHTML(pericia.categoria || "Ciência Forense") + '" data-favorite-image="' + escaparHTML(pericia.imagem || "") + '" data-favorite-url="' + escaparHTML(url) + '"><i class="fa-regular fa-bookmark"></i></button>' +
         '<a href="' + escaparHTML(url) + '" class="case-card-link" aria-label="Abrir perícia: ' + escaparHTML(pericia.titulo || "") + '">' +
-        '<div class="card-image"><img src="' + escaparHTML(pericia.imagem || "") + '" alt="' + escaparHTML(pericia.legenda_imagem || pericia.titulo || "") + '" loading="lazy" onerror="this.src=\'https://placehold.co/800x500/111/777?text=Ciencia+Forense\';">' +
-        '<span class="badge status">TÉCNICO / METODOLÓGICO</span></div>' +
-        '<div class="card-content"><span class="badge category">' + escaparHTML(pericia.categoria || "PERÍCIA") + '</span>' +
-        '<h3>' + escaparHTML(pericia.titulo || "Matéria forense") + '</h3>' +
-        '<div class="card-meta"><span><i class="fa-solid fa-flask-vial"></i> Ciência Forense</span>' +
-        '<span><i class="fa-solid fa-file-lines"></i> Artigo técnico</span></div>' +
-        '<p class="card-summary">' + escaparHTML(pericia.resumo || "Sem resumo disponível.") + '</p>' +
-        '<span class="btn-read-more">Abrir perícia <i class="fa-solid fa-arrow-right"></i></span>' +
-        '</div></a></article>';
+        '<div class="card-image"><img src="' + escaparHTML(pericia.imagem || "") + '" alt="' + escaparHTML(pericia.legenda_imagem || pericia.titulo || "") + '" loading="lazy" onerror="this.src=\'https://placehold.co/800x500/111/777?text=Ciencia+Forense\';"><span class="badge status">TÉCNICO / METODOLÓGICO</span></div>' +
+        '<div class="card-content"><span class="badge category">' + escaparHTML(pericia.categoria || "PERÍCIA") + '</span><h3>' + escaparHTML(pericia.titulo || "Matéria forense") + '</h3>' +
+        '<div class="card-meta"><span><i class="fa-solid fa-flask-vial"></i> Ciência Forense</span><span><i class="fa-solid fa-file-lines"></i> Artigo técnico</span></div>' +
+        '<p class="card-summary">' + escaparHTML(pericia.resumo || "Sem resumo disponível.") + '</p><span class="btn-read-more">Abrir perícia <i class="fa-solid fa-arrow-right"></i></span></div></a></article>';
 }
 
-function carregarForense(filtro = "todos") {
+function paragrafosPericia(valor) {
+    return String(valor || "").split(/\n\s*\n/).map(p => p.trim()).filter(Boolean).map(p => "<p>" + escaparHTML(p).replace(/\n/g, "<br>") + "</p>").join("");
+}
+
+function renderizarDetalhePericia(grid, pericia) {
+    const secoes = [
+        ["Introdução", pericia.introducao], ["Como funciona", pericia.como_funciona],
+        ["História da técnica", pericia.historia_tecnica], ["Aplicação em casos reais", pericia.aplicacao_casos_reais],
+        ["Limitações e controvérsias", pericia.limitacoes_controversias], ["Curiosidades", pericia.curiosidades],
+        ["Casos relacionados", pericia.casos_relacionados], ["Fontes", pericia.fontes]
+    ].filter(item => String(item[1] || "").trim());
+    const imagem = pericia.imagem ? '<figure class="forensic-detail-image"><img src="' + escaparHTML(pericia.imagem) + '" alt="' + escaparHTML(pericia.legenda_imagem || pericia.titulo || "") + '">' + (pericia.legenda_imagem ? "<figcaption>" + escaparHTML(pericia.legenda_imagem) + (pericia.fonte_imagem ? " · " + escaparHTML(pericia.fonte_imagem) : "") + "</figcaption>" : "") + "</figure>" : "";
+    grid.innerHTML = '<article class="forensic-detail"><a class="forensic-back" href="pericia.html#forense"><i class="fa-solid fa-arrow-left"></i> Voltar para todas as perícias</a><header><span class="badge category">' + escaparHTML(pericia.categoria || "CIÊNCIA FORENSE") + '</span><h1>' + escaparHTML(pericia.titulo || "Matéria forense") + '</h1><p>' + escaparHTML(pericia.resumo || "") + '</p></header>' + imagem + '<div class="forensic-detail-content">' + secoes.map(item => "<section><h2>" + escaparHTML(item[0]) + "</h2>" + paragrafosPericia(item[1]) + "</section>").join("") + "</div></article>";
+}
+
+function atualizarCategoriasForenses() {
+    const select = document.getElementById("forensic-type");
+    if (!select) return;
+    const atual = select.value || estadoFiltroForense.tipo;
+    const categorias = [...new Set(obterPericiasParaGrade().map(item => String(item.categoria || "Geral").trim()).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR"));
+    select.innerHTML = '<option value="todos">Todos os assuntos</option>' + categorias.map(cat => '<option value="' + escaparHTML(normalizarTextoForense(cat)) + '">' + escaparHTML(cat) + "</option>").join("");
+    if ([...select.options].some(opcao => opcao.value === atual)) select.value = atual;
+}
+
+function carregarForense() {
     const grid = document.getElementById("grid-forense");
     if (!grid) return;
-
-    const novas = (Array.isArray(periciasSupabase) ? periciasSupabase : [])
-        .map(item => ({ ...item, origem_forense: "nova" }));
-    const legadas = obterTodosCasos()
-        .filter(item => String(item.categoria).toUpperCase() === "PERÍCIA")
-        .map(item => ({ ...item, origem_forense: "legada" }));
-    const titulosNovos = new Set(novas.map(item => normalizarTextoForense(item.titulo)));
-    let casos = novas.concat(legadas.filter(item => !titulosNovos.has(normalizarTextoForense(item.titulo))));
-
-    if (filtro !== "todos") {
-        casos = casos.filter(item => identificarTipoForense(item) === filtro);
+    const id = new URLSearchParams(location.search).get("id");
+    if (id) {
+        const selecionada = (Array.isArray(periciasSupabase) ? periciasSupabase : []).find(item => String(item.id) === String(id));
+        if (selecionada) { renderizarDetalhePericia(grid, selecionada); document.querySelector(".forensic-tools")?.setAttribute("hidden", ""); document.getElementById("forensic-results-status")?.setAttribute("hidden", ""); return; }
     }
-
-    if (!casos.length) {
-        const mensagens = {
-            papiloscopia: ["Nenhum arquivo de papiloscopia", "Ainda não existem conteúdos de identificação por impressões digitais nesta categoria."],
-            vestigios: ["Nenhuma análise de vestígios", "Ainda não existem conteúdos de análise química ou vestígios cadastrados nesta categoria."],
-            biologica: ["Nenhuma evidência biológica", "Ainda não existem conteúdos de DNA ou evidências biológicas cadastrados nesta categoria."],
-            todos: ["Nenhum laudo disponível", "O arquivo pericial ainda não possui documentos publicados."]
-        };
-        const mensagem = mensagens[filtro] || mensagens.todos;
-        grid.innerHTML = '<div class="empty-state"><i class="fa-solid fa-flask"></i><h3>' + escaparHTML(mensagem[0]) + '</h3><p>' + escaparHTML(mensagem[1]) + '</p></div>';
-        return;
-    }
-
-    grid.innerHTML = casos.map(item => item.origem_forense === "nova" ? criarCardPericia(item) : criarCardCaso(item)).join("");
+    document.querySelector(".forensic-tools")?.removeAttribute("hidden");
+    document.getElementById("forensic-results-status")?.removeAttribute("hidden");
+    atualizarCategoriasForenses();
+    let itens = obterPericiasParaGrade();
+    const busca = normalizarTextoForense(estadoFiltroForense.busca);
+    if (busca) itens = itens.filter(item => normalizarTextoForense([item.titulo,item.categoria,item.resumo,item.introducao,item.como_funciona].join(" ")).includes(busca));
+    if (estadoFiltroForense.tipo !== "todos") itens = itens.filter(item => normalizarTextoForense(item.categoria || "Geral") === estadoFiltroForense.tipo);
+    itens.sort((a,b) => {
+        if (estadoFiltroForense.ordem === "az") return String(a.titulo||"").localeCompare(String(b.titulo||""),"pt-BR");
+        if (estadoFiltroForense.ordem === "za") return String(b.titulo||"").localeCompare(String(a.titulo||""),"pt-BR");
+        const da = new Date(a.created_at || a.criadoEm || 0).getTime() || 0, db = new Date(b.created_at || b.criadoEm || 0).getTime() || 0;
+        return estadoFiltroForense.ordem === "antigos" ? da-db : db-da;
+    });
+    const status = document.getElementById("forensic-results-status");
+    if (status) status.textContent = itens.length === 1 ? "1 matéria encontrada" : itens.length + " matérias encontradas";
+    grid.innerHTML = itens.length ? itens.map(item => item.origem_forense === "nova" ? criarCardPericia(item) : criarCardCaso(item)).join("") : '<div class="empty-state"><i class="fa-solid fa-magnifying-glass"></i><h3>Nenhuma perícia encontrada</h3><p>Tente outro nome ou selecione todos os assuntos.</p></div>';
 }
 
 function inicializarFiltrosForenses() {
-
-    const botoes =
-        document.querySelectorAll(
-            "[data-forensic-filter]"
-        );
-
-    if (!botoes.length) {
-        return;
-    }
-
-    botoes.forEach(
-        botao => {
-
-            botao.addEventListener(
-                "click",
-                evento => {
-
-                    evento.preventDefault();
-
-                    const filtro =
-                        botao.dataset
-                            .forensicFilter;
-
-                    botoes.forEach(
-                        item => {
-                            item.classList.remove(
-                                "active"
-                            );
-                        }
-                    );
-
-                    botao.classList.add(
-                        "active"
-                    );
-
-                    carregarForense(
-                        filtro
-                    );
-
-                    const grid =
-                        document.getElementById(
-                            "grid-forense"
-                        );
-
-                    grid?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
-                    });
-                }
-            );
-        }
-    );
+    const busca = document.getElementById("forensic-search"), tipo = document.getElementById("forensic-type"), ordem = document.getElementById("forensic-order"), limpar = document.getElementById("forensic-clear");
+    busca?.addEventListener("input", () => { estadoFiltroForense.busca = busca.value; carregarForense(); });
+    tipo?.addEventListener("change", () => { estadoFiltroForense.tipo = tipo.value; carregarForense(); });
+    ordem?.addEventListener("change", () => { estadoFiltroForense.ordem = ordem.value; carregarForense(); });
+    limpar?.addEventListener("click", () => { estadoFiltroForense.busca=""; estadoFiltroForense.tipo="todos"; estadoFiltroForense.ordem="recentes"; if(busca)busca.value=""; if(tipo)tipo.value="todos"; if(ordem)ordem.value="recentes"; carregarForense(); });
 }
-
 
 /* ==========================================================================
    LIVROS

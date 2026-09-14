@@ -1381,97 +1381,43 @@
 
 
 
-                <div class="forensic-intro">
-
-
-                    <!-- PAPILOSCOPIA -->
-
-                    <a
-                        href="#grid-forense"
-                        class="forensic-intro-item forensic-intro-link"
-                        data-forensic-filter="papiloscopia"
-                    >
-
-
-                        <i class="fa-solid fa-fingerprint"></i>
-
-
+                <div class="forensic-tools" aria-label="Pesquisar e filtrar perícias">
+                    <label class="forensic-search">
+                        <span>BUSCAR NO LABORATÓRIO</span>
                         <div>
-
-                            <small>
-                                IDENTIFICAÇÃO
-                            </small>
-
-                            <strong>
-                                Papiloscopia
-                            </strong>
-
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input
+                                type="search"
+                                id="forensic-search"
+                                placeholder="Digite o nome ou assunto da perícia..."
+                                autocomplete="off"
+                            >
                         </div>
+                    </label>
 
+                    <label>
+                        <span>ESPECIALIDADE</span>
+                        <select id="forensic-type">
+                            <option value="todos">Todos os assuntos</option>
+                        </select>
+                    </label>
 
-                    </a>
+                    <label>
+                        <span>ORGANIZAR</span>
+                        <select id="forensic-order">
+                            <option value="recentes">Mais recentes</option>
+                            <option value="antigos">Mais antigos</option>
+                            <option value="az">Nome: A–Z</option>
+                            <option value="za">Nome: Z–A</option>
+                        </select>
+                    </label>
 
-
-
-                    <!-- ANÁLISE DE VESTÍGIOS -->
-
-                    <a
-                        href="#grid-forense"
-                        class="forensic-intro-item forensic-intro-link"
-                        data-forensic-filter="vestigios"
-                    >
-
-
-                        <i class="fa-solid fa-flask-vial"></i>
-
-
-                        <div>
-
-                            <small>
-                                QUÍMICA
-                            </small>
-
-                            <strong>
-                                Análise de Vestígios
-                            </strong>
-
-                        </div>
-
-
-                    </a>
-
-
-
-                    <!-- EVIDÊNCIA BIOLÓGICA -->
-
-                    <a
-                        href="#grid-forense"
-                        class="forensic-intro-item forensic-intro-link"
-                        data-forensic-filter="biologica"
-                    >
-
-
-                        <i class="fa-solid fa-dna"></i>
-
-
-                        <div>
-
-                            <small>
-                                BIOLOGIA
-                            </small>
-
-                            <strong>
-                                Evidência Biológica
-                            </strong>
-
-                        </div>
-
-
-                    </a>
-
-
+                    <button type="button" class="forensic-clear" id="forensic-clear">
+                        Limpar filtros
+                    </button>
                 </div>
 
+                <p class="forensic-results-status" id="forensic-results-status" aria-live="polite"></p>
 
 
                 <div

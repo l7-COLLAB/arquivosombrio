@@ -6496,3 +6496,193 @@ select:focus-visible {
         touch-action: manipulation;
     }
 }
+
+/* ==========================================================================
+   PERÍCIA — BUSCA, FILTROS E LEITURA
+   ========================================================================== */
+
+.forensic-tools {
+    display: grid;
+    grid-template-columns: minmax(240px, 1.6fr) minmax(170px, 0.8fr) minmax(160px, 0.7fr) auto;
+    gap: 12px;
+    align-items: end;
+    margin-bottom: 12px;
+    padding: 18px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+}
+
+.forensic-tools label {
+    display: grid;
+    gap: 7px;
+}
+
+.forensic-tools label > span {
+    color: var(--gold);
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.1em;
+}
+
+.forensic-tools input,
+.forensic-tools select,
+.forensic-clear {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    color: var(--paper-soft);
+    background: #090807;
+    border: 1px solid var(--border);
+    outline: none;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+}
+
+.forensic-search > div {
+    position: relative;
+}
+
+.forensic-search i {
+    position: absolute;
+    top: 50%;
+    left: 13px;
+    color: var(--muted-dark);
+    transform: translateY(-50%);
+}
+
+.forensic-search input {
+    padding-left: 37px;
+}
+
+.forensic-tools input:focus,
+.forensic-tools select:focus {
+    border-color: var(--gold);
+}
+
+.forensic-clear {
+    width: auto;
+    cursor: pointer;
+    color: var(--muted);
+}
+
+.forensic-clear:hover {
+    color: var(--paper);
+    border-color: var(--red-light);
+}
+
+.forensic-results-status {
+    min-height: 22px;
+    margin: 0 0 18px;
+    color: var(--muted-dark);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+}
+
+.forensic-detail {
+    grid-column: 1 / -1;
+    width: min(100%, 940px);
+    margin: 0 auto;
+    padding: clamp(22px, 4vw, 48px);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+.forensic-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 30px;
+    color: var(--gold);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+}
+
+.forensic-detail header {
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.forensic-detail header h1 {
+    margin: 14px 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.65rem, 4vw, 2.7rem);
+    line-height: 1.2;
+}
+
+.forensic-detail header p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.8;
+}
+
+.forensic-detail-image {
+    margin: 28px 0;
+}
+
+.forensic-detail-image img {
+    width: 100%;
+    max-height: 540px;
+    object-fit: cover;
+}
+
+.forensic-detail-image figcaption {
+    margin-top: 9px;
+    color: var(--muted-dark);
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+}
+
+.forensic-detail-content {
+    display: grid;
+    gap: 28px;
+    margin-top: 30px;
+}
+
+.forensic-detail-content section {
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(196, 170, 112, 0.12);
+}
+
+.forensic-detail-content h2 {
+    margin-bottom: 14px;
+    color: var(--paper-soft);
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+}
+
+.forensic-detail-content p {
+    margin-bottom: 12px;
+    color: var(--muted);
+    line-height: 1.85;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+    .forensic-tools {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .forensic-search {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 560px) {
+    .forensic-tools {
+        grid-template-columns: 1fr;
+        padding: 14px;
+    }
+
+    .forensic-search {
+        grid-column: auto;
+    }
+
+    .forensic-clear {
+        width: 100%;
+    }
+
+    .forensic-detail {
+        padding: 20px 16px;
+    }
+}
