@@ -311,7 +311,8 @@ function obterIdDaURL() {
     const id =
         parametros.get(
             "id"
-        );
+        ) ||
+        window.ARQUIVO_CASO_ID;
 
 
     if (!id) {
