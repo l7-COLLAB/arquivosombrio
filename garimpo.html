@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Garimpo Sombrio — casos reais curtos arquivados diariamente.">
+    <meta name="theme-color" content="#080706">
+    <title>Garimpo Sombrio — Arquivo Sombrio</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260914-4">
+</head>
+<body class="garimpo-page">
+    <header class="main-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo" aria-label="Arquivo Sombrio — início">
+                <span class="logo-simbolo"><i class="fa-solid fa-folder-open"></i></span>
+                <span class="logo-texto">ARQUIVO <strong>SOMBRIO</strong></span>
+            </a>
+            <nav class="nav-menu" aria-label="Navegação principal">
+                <a href="index.html">Início</a>
+                <a href="dossies.html">Dossiês</a>
+                <a href="garimpo.html" aria-current="page">Garimpo</a>
+                <a href="index.html#livros">Biblioteca</a>
+                <a href="index.html#forum">Fórum</a>
+                <a href="meu-arquivo.html">Meu Arquivo</a>
+            </nav>
+            <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="sidebar-menu"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </header>
+
+    <aside class="sidebar-menu" id="sidebar-menu" aria-label="Menu mobile">
+        <button type="button" class="close-sidebar" id="close-sidebar" aria-label="Fechar menu">&times;</button>
+        <div class="sidebar-marca"><span>ARQUIVO</span><strong>SOMBRIO</strong><small>DOCUMENTAÇÃO &amp; INVESTIGAÇÃO</small></div>
+        <nav class="sidebar-links">
+            <a href="index.html"><i class="fa-solid fa-house"></i> Início</a>
+            <a href="dossies.html"><i class="fa-regular fa-folder-open"></i> Dossiês</a>
+            <a href="garimpo.html"><i class="fa-regular fa-newspaper"></i> Garimpo Sombrio</a>
+            <a href="index.html#livros"><i class="fa-solid fa-book-open"></i> Biblioteca</a>
+            <a href="index.html#forum"><i class="fa-regular fa-comments"></i> Fórum</a>
+            <a href="meu-arquivo.html"><i class="fa-solid fa-user-secret"></i> Meu Arquivo</a>
+        </nav>
+    </aside>
+
+    <main class="garimpo-main">
+        <section class="garimpo-intro" id="daily-archive-list">
+            <div class="container">
+                <a class="archive-back" href="index.html"><i class="fa-solid fa-arrow-left"></i> Voltar ao início</a>
+                <p class="section-eyebrow">REGISTROS CURTOS · ARQUIVO PERMANENTE</p>
+                <h1>Garimpo <span>Sombrio</span></h1>
+                <p class="garimpo-description">Casos reais pouco conhecidos, encontrados em jornais, decisões, arquivos e registros públicos. Um novo documento por dia.</p>
+                <div class="daily-archive-grid" id="daily-archive-grid" aria-live="polite">
+                    <p class="home-preview-loading">Consultando os registros...</p>
+                </div>
+            </div>
+        </section>
+        <section class="container daily-case-detail" id="daily-case-detail" hidden></section>
+    </main>
+
+    <footer class="main-footer compact-footer">
+        <div class="container footer-bottom"><p>&copy; 2026 Arquivo Sombrio.</p><p>Conteúdo documental e editorial.</p></div>
+    </footer>
+
+    <script src="data/caso.js" defer></script>
+    <script src="js/script.js?v=20260914-2" defer></script>
+</body>
+</html>
