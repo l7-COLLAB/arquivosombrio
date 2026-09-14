@@ -11682,8 +11682,17 @@ function abrirFormularioCasoDiario(dados = null) {
                 </section>
 
                 <section class="daily-admin-repeat-section">
-                    <div class="daily-repeat-heading"><div><span class="admin-eyebrow">FONTES</span><p>Obrigatórias para publicar.</p></div><button id="daily-add-source" class="admin-secondary-button" type="button">+ Fonte</button></div>
-                    <div id="daily-sources-list"></div>
+                    <div class="daily-repeat-heading">
+                        <div>
+                            <span class="admin-eyebrow">FONTES</span>
+                            <p>Informe o nome e o link de cada fonte. Separe fontes diferentes com uma linha em branco.</p>
+                        </div>
+                    </div>
+                    <textarea
+                        id="daily-sources-text"
+                        rows="9"
+                        placeholder="Nome da fonte&#10;https://exemplo.com/materia&#10;&#10;Nome da segunda fonte&#10;https://exemplo.com/documento"
+                    >${escaparHTML(formatarFontesCasoDiario(dados?.fontes))}</textarea>
                 </section>
 
                 <button type="submit" class="admin-submit"><i class="fa-solid fa-floppy-disk"></i> Salvar Caso Diário</button>
@@ -11694,13 +11703,13 @@ function abrirFormularioCasoDiario(dados = null) {
     document.getElementById("daily-form-close").addEventListener("click", () => modal.classList.remove("active"));
 
     const listaImagens = document.getElementById("daily-images-list");
-    const listaFontes = document.getElementById("daily-sources-list");
-    (Array.isArray(dados?.imagens) ? dados.imagens : []).forEach(item => listaImagens.appendChild(criarLinhaImagemCasoDiario(item)));
-    (Array.isArray(dados?.fontes) ? dados.fontes : []).forEach(item => listaFontes.appendChild(criarLinhaFonteCasoDiario(item)));
-    if (!listaFontes.children.length) listaFontes.appendChild(criarLinhaFonteCasoDiario());
+    (Array.isArray(dados?.imagens) ? dados.imagens : []).forEach(item =>
+        listaImagens.appendChild(criarLinhaImagemCasoDiario(item))
+    );
 
-    document.getElementById("daily-add-image").addEventListener("click", () => listaImagens.appendChild(criarLinhaImagemCasoDiario()));
-    document.getElementById("daily-add-source").addEventListener("click", () => listaFontes.appendChild(criarLinhaFonteCasoDiario()));
+    document.getElementById("daily-add-image").addEventListener("click", () =>
+        listaImagens.appendChild(criarLinhaImagemCasoDiario())
+    );
 
     const capa = document.getElementById("daily-cover");
     atualizarPreviewImagemAdmin(capa.value, "#daily-cover-preview");
@@ -11738,13 +11747,68 @@ function coletarImagensCasoDiario() {
         .filter(item => item.url);
 }
 
+function formatarFontesCasoDiario(fontes) {
+    if (!Array.isArray(fontes)) return "";
+
+    return fontes
+        .map(fonte =>
+            [
+                String(fonte?.titulo || "").trim(),
+                String(fonte?.url || "").trim()
+            ]
+                .filter(Boolean)
+                .join("\n")
+        )
+        .filter(Boolean)
+        .join("\n\n");
+}
+
 function coletarFontesCasoDiario() {
-    return [...document.querySelectorAll("#daily-sources-list .daily-admin-source-row")]
-        .map(linha => ({
-            titulo: linha.querySelector(".daily-source-title").value.trim(),
-            url: linha.querySelector(".daily-source-url").value.trim()
-        }))
-        .filter(item => item.titulo || item.url);
+    const texto =
+        document
+            .getElementById("daily-sources-text")
+            ?.value || "";
+
+    return texto
+        .split(/\n\s*\n/)
+        .map(bloco => {
+            const linhas =
+                bloco
+                    .split("\n")
+                    .map(linha => linha.trim())
+                    .filter(Boolean);
+
+            const indiceUrl =
+                linhas.findIndex(linha =>
+                    /^https?:\/\//i.test(linha)
+                );
+
+            if (indiceUrl < 0) {
+                return {
+                    titulo: linhas.join(" "),
+                    url: ""
+                };
+            }
+
+            return {
+                titulo:
+                    linhas
+                        .filter((_, indice) =>
+                            indice !== indiceUrl
+                        )
+                        .join(" ")
+                        .replace(
+                            /^(nome da fonte|fonte)\s*:\s*/i,
+                            ""
+                        )
+                        .trim(),
+                url: linhas[indiceUrl]
+            };
+        })
+        .filter(fonte =>
+            fonte.titulo ||
+            fonte.url
+        );
 }
 
 async function salvarCasoDiario(evento, existente = null) {
@@ -11971,6 +12035,10 @@ function aplicarExtrasRascunhoAdmin(tipo,extras){
   const imagens=document.getElementById("daily-images-list"),fontes=document.getElementById("daily-sources-list");
   if(imagens&&Array.isArray(extras.imagens)){imagens.replaceChildren();extras.imagens.forEach(i=>imagens.appendChild(criarLinhaImagemCasoDiario(i)));}
   if(fontes&&Array.isArray(extras.fontes)){fontes.replaceChildren();(extras.fontes.length?extras.fontes:[{}]).forEach(f=>fontes.appendChild(criarLinhaFonteCasoDiario(f)));}
+  const caixaFontes=document.getElementById("daily-sources-text");
+  if(caixaFontes&&Array.isArray(extras.fontes)&&!caixaFontes.value.trim()){
+   caixaFontes.value=formatarFontesCasoDiario(extras.fontes);
+  }
  }
 }
 function statusRascunhoAdmin(texto,falha=false){
@@ -11979,12 +12047,12 @@ function statusRascunhoAdmin(texto,falha=false){
 }
 async function gravarRascunhoAdmin(manual=false){
  const atual=rascunhoAdmin;
- if(!atual||atual.restaurando||atual.finalizado||atual.salvando||!atual.form.isConnected)return;
+ if(!atual||atual.restaurando||atual.finalizado||atual.salvando||!atual.form.isConnected)return false;
  clearTimeout(timerRascunhoAdmin);atual.salvando=true;
  try{
   const sessao=await obterSessaoAdmin();if(!sessao?.user)throw new Error("Sua sessão administrativa expirou.");
   const cliente=await obterClienteSupabase();
-  const payload={versao:1,salvo_em:new Date().toISOString(),campos:camposRascunhoAdmin(atual.form),extras:extrasRascunhoAdmin(atual.tipo)};
+  const payload={versao:2,salvo_em:new Date().toISOString(),campos:camposRascunhoAdmin(atual.form),extras:extrasRascunhoAdmin(atual.tipo)};
   const{error}=await cliente.from("admin_drafts").upsert({
    user_id:sessao.user.id,draft_key:atual.chave,content_type:atual.tipo,
    record_id:atual.id==null?null:String(atual.id),title:tituloRascunhoAdmin(atual.tipo),
@@ -11992,9 +12060,11 @@ async function gravarRascunhoAdmin(manual=false){
   },{onConflict:"user_id,draft_key"});
   if(error)throw error;
   statusRascunhoAdmin(manual?"Rascunho salvo.":"Rascunho salvo automaticamente.");
+  return true;
  }catch(erro){
   console.error("Falha ao salvar rascunho.",erro);statusRascunhoAdmin("Falha ao salvar o rascunho.",true);
   if(manual)alert(erro?.message||"Não foi possível salvar o rascunho.");
+  return false;
  }finally{if(rascunhoAdmin===atual)atual.salvando=false;}
 }
 function agendarRascunhoAdmin(){
@@ -12043,9 +12113,15 @@ function prepararRascunhoAdmin(tipo,id,form,modal,fechar){
  rascunhoAdmin={tipo,id,chave:chaveRascunhoAdmin(tipo,id),form,modal,restaurando:true,finalizado:false,salvando:false};
  form.addEventListener("input",agendarRascunhoAdmin);form.addEventListener("change",agendarRascunhoAdmin);
  form.addEventListener("click",e=>{
-  if(e.target.closest("[data-add-content-block],.admin-block-remove,.admin-document-remove,#admin-add-affiliate-link,.admin-affiliate-remove,#daily-add-image,#daily-add-source,.daily-remove-row"))setTimeout(agendarRascunhoAdmin,0);
+  if(e.target.closest("[data-add-content-block],.admin-block-remove,.admin-document-remove,#admin-add-affiliate-link,.admin-affiliate-remove,#daily-add-image,.daily-remove-row"))setTimeout(agendarRascunhoAdmin,0);
  });
- acoes.querySelector("[data-save-draft]").addEventListener("click",()=>gravarRascunhoAdmin(true));
+ acoes.querySelector("[data-save-draft]").addEventListener("click",async()=>{
+  const salvo=await gravarRascunhoAdmin(true);
+  if(salvo&&rascunhoAdmin===rascunhoAdmin){
+   modal.classList.remove("active");
+   rascunhoAdmin=null;
+  }
+ });
  acoes.querySelector("[data-discard-draft]").addEventListener("click",()=>apagarRascunhoAdmin(true));
  fechar?.addEventListener("click",async e=>{
   e.preventDefault();e.stopImmediatePropagation();await gravarRascunhoAdmin(false);
