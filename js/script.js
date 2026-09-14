@@ -3759,6 +3759,8 @@ async function carregarPericiasSupabase() {
                 ? data
                 : [];
 
+        carregarForense();
+
     } catch (erro) {
 
         /*
@@ -4019,106 +4021,57 @@ function identificarTipoForense(caso) {
 }
 
 
-function carregarForense(
-    filtro = "todos"
-) {
-
-    const grid =
-        document.getElementById(
-            "grid-forense"
-        );
-
-    if (!grid) {
-        return;
-    }
-
-    let casos =
-        obterTodosCasos()
-            .filter(
-                caso =>
-                    String(
-                        caso.categoria
-                    ).toUpperCase() ===
-                    "PERÍCIA"
-            );
-
-    if (filtro !== "todos") {
-
-        casos =
-            casos.filter(
-                caso =>
-                    identificarTipoForense(
-                        caso
-                    ) === filtro
-            );
-    }
-
-    if (casos.length === 0) {
-
-        const mensagens = {
-
-            papiloscopia: {
-                titulo:
-                    "Nenhum arquivo de papiloscopia",
-                texto:
-                    "Ainda não existem conteúdos de identificação por impressões digitais nesta categoria."
-            },
-
-            vestigios: {
-                titulo:
-                    "Nenhuma análise de vestígios",
-                texto:
-                    "Ainda não existem conteúdos de análise química ou vestígios cadastrados nesta categoria."
-            },
-
-            biologica: {
-                titulo:
-                    "Nenhuma evidência biológica",
-                texto:
-                    "Ainda não existem conteúdos de DNA ou evidências biológicas cadastrados nesta categoria."
-            },
-
-            todos: {
-                titulo:
-                    "Nenhum laudo disponível",
-                texto:
-                    "O arquivo pericial ainda não possui documentos publicados."
-            }
-        };
-
-        const mensagem =
-            mensagens[filtro] ||
-            mensagens.todos;
-
-        grid.innerHTML = `
-            <div class="empty-state">
-
-                <i class="fa-solid fa-flask"></i>
-
-                <h3>
-                    ${escaparHTML(
-                        mensagem.titulo
-                    )}
-                </h3>
-
-                <p>
-                    ${escaparHTML(
-                        mensagem.texto
-                    )}
-                </p>
-
-            </div>
-        `;
-
-        return;
-    }
-
-    grid.innerHTML =
-        casos
-            .map(criarCardCaso)
-            .join("");
+function criarCardPericia(pericia) {
+    const url = "pericia.html?id=" + encodeURIComponent(pericia.id) + "#forense";
+    return '<article class="case-card" data-forensic-id="' + escaparHTML(pericia.id) + '">' +
+        '<button type="button" class="content-favorite-button" aria-label="Adicionar perícia aos favoritos" ' +
+        'data-favorite-type="forensic" data-favorite-id="' + escaparHTML(pericia.id) + '" ' +
+        'data-favorite-title="' + escaparHTML(pericia.titulo || "Perícia") + '" ' +
+        'data-favorite-subtitle="' + escaparHTML(pericia.categoria || "Ciência Forense") + '" ' +
+        'data-favorite-image="' + escaparHTML(pericia.imagem || "") + '" ' +
+        'data-favorite-url="' + escaparHTML(url) + '"><i class="fa-regular fa-bookmark"></i></button>' +
+        '<a href="' + escaparHTML(url) + '" class="case-card-link" aria-label="Abrir perícia: ' + escaparHTML(pericia.titulo || "") + '">' +
+        '<div class="card-image"><img src="' + escaparHTML(pericia.imagem || "") + '" alt="' + escaparHTML(pericia.legenda_imagem || pericia.titulo || "") + '" loading="lazy" onerror="this.src=\'https://placehold.co/800x500/111/777?text=Ciencia+Forense\';">' +
+        '<span class="badge status">TÉCNICO / METODOLÓGICO</span></div>' +
+        '<div class="card-content"><span class="badge category">' + escaparHTML(pericia.categoria || "PERÍCIA") + '</span>' +
+        '<h3>' + escaparHTML(pericia.titulo || "Matéria forense") + '</h3>' +
+        '<div class="card-meta"><span><i class="fa-solid fa-flask-vial"></i> Ciência Forense</span>' +
+        '<span><i class="fa-solid fa-file-lines"></i> Artigo técnico</span></div>' +
+        '<p class="card-summary">' + escaparHTML(pericia.resumo || "Sem resumo disponível.") + '</p>' +
+        '<span class="btn-read-more">Abrir perícia <i class="fa-solid fa-arrow-right"></i></span>' +
+        '</div></a></article>';
 }
 
+function carregarForense(filtro = "todos") {
+    const grid = document.getElementById("grid-forense");
+    if (!grid) return;
+
+    const novas = (Array.isArray(periciasSupabase) ? periciasSupabase : [])
+        .map(item => ({ ...item, origem_forense: "nova" }));
+    const legadas = obterTodosCasos()
+        .filter(item => String(item.categoria).toUpperCase() === "PERÍCIA")
+        .map(item => ({ ...item, origem_forense: "legada" }));
+    const titulosNovos = new Set(novas.map(item => normalizarTextoForense(item.titulo)));
+    let casos = novas.concat(legadas.filter(item => !titulosNovos.has(normalizarTextoForense(item.titulo))));
+
+    if (filtro !== "todos") {
+        casos = casos.filter(item => identificarTipoForense(item) === filtro);
+    }
+
+    if (!casos.length) {
+        const mensagens = {
+            papiloscopia: ["Nenhum arquivo de papiloscopia", "Ainda não existem conteúdos de identificação por impressões digitais nesta categoria."],
+            vestigios: ["Nenhuma análise de vestígios", "Ainda não existem conteúdos de análise química ou vestígios cadastrados nesta categoria."],
+            biologica: ["Nenhuma evidência biológica", "Ainda não existem conteúdos de DNA ou evidências biológicas cadastrados nesta categoria."],
+            todos: ["Nenhum laudo disponível", "O arquivo pericial ainda não possui documentos publicados."]
+        };
+        const mensagem = mensagens[filtro] || mensagens.todos;
+        grid.innerHTML = '<div class="empty-state"><i class="fa-solid fa-flask"></i><h3>' + escaparHTML(mensagem[0]) + '</h3><p>' + escaparHTML(mensagem[1]) + '</p></div>';
+        return;
+    }
+
+    grid.innerHTML = casos.map(item => item.origem_forense === "nova" ? criarCardPericia(item) : criarCardCaso(item)).join("");
+}
 
 function inicializarFiltrosForenses() {
 
