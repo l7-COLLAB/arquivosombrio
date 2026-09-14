@@ -5340,7 +5340,7 @@
     position: absolute;
     z-index: 3;
     min-height: 115px;
-    padding: 1rem 0.8rem 0.8rem;
+    padding: 2.65rem 0.8rem 0.8rem;
     color: #241c15;
     background: #d0c4ad;
     border: 1px solid rgba(20, 14, 10, 0.48);
@@ -5349,11 +5349,47 @@
     touch-action: none;
     user-select: none;
     max-width: calc(100% - 16px);
+    will-change: transform;
+    -webkit-touch-callout: none;
 }
 
 .mural-canvas-item:active {
     z-index: 10;
     cursor: grabbing;
+}
+
+.mural-canvas-item.is-dragging,
+.mural-canvas-item.is-resizing {
+    z-index: 20;
+    cursor: grabbing;
+    box-shadow: 0 20px 45px rgba(0,0,0,.62), 0 0 0 2px rgba(126,31,26,.4);
+}
+
+.mural-drag-handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 34px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 0.38rem;
+    padding: 0 0.55rem;
+    border-bottom: 1px solid rgba(45,31,21,.16);
+    color: rgba(48,35,25,.72);
+    background: rgba(255,255,255,.12);
+    font-family: "DM Mono", monospace;
+    font-size: 0.48rem;
+    letter-spacing: 0.04em;
+    cursor: grab;
+    touch-action: none;
+}
+
+.mural-canvas-item.is-dragging .mural-drag-handle {
+    cursor: grabbing;
+    color: #6f1714;
+    background: rgba(255,255,255,.24);
 }
 
 .mural-item-note {
@@ -5376,6 +5412,7 @@
     object-fit: cover;
     filter: sepia(.16) contrast(.96);
     pointer-events: none;
+    -webkit-user-drag: none;
 }
 
 .mural-private-image {
@@ -5420,7 +5457,7 @@
 
 .mural-item-pin {
     position: absolute;
-    top: 5px;
+    top: 11px;
     left: 50%;
     width: 10px;
     height: 10px;
@@ -5432,9 +5469,9 @@
 
 .mural-item-actions {
     position: absolute;
-    top: 0.28rem;
+    top: 2.28rem;
     right: 0.28rem;
-    z-index: 2;
+    z-index: 5;
     display: flex;
     gap: 0.2rem;
     opacity: 0;
@@ -5517,6 +5554,24 @@
 @media (hover: none) and (pointer: coarse) {
     .mural-item-actions {
         opacity: 1;
+    }
+
+    .mural-drag-handle {
+        height: 40px;
+        font-size: 0.54rem;
+    }
+
+    .mural-canvas-item {
+        padding-top: 3rem;
+    }
+
+    .mural-item-actions {
+        top: 2.7rem;
+    }
+
+    .mural-resize-handle {
+        width: 38px;
+        height: 38px;
     }
 }
 
