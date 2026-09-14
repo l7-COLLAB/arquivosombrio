@@ -5062,7 +5062,7 @@ function abrirMuralInvestigacao(muralId) {
                 <div class="mural-editor-note">
                     <i class="fa-solid fa-lock"></i>
                     <span>Privado — apenas você pode acessar este quadro.</span>
-                    <small>Arraste os cartões para organizar.</small>
+                    <small>Segure a barra “Mover” e arraste o cartão.</small>
                 </div>
 
                 <div class="mural-editor-scroll">
@@ -5312,6 +5312,10 @@ function renderizarItensMural() {
                 : `<p>${escaparHTML(item.content || "Anotação sem conteúdo.")}</p>`;
 
         cartao.innerHTML = `
+            <div class="mural-drag-handle" data-mural-drag aria-label="Segure e arraste para mover">
+                <i class="fa-solid fa-grip-lines"></i>
+                <span>Mover</span>
+            </div>
             <span class="mural-item-pin" aria-hidden="true"></span>
             <div class="mural-item-actions">
                 <button type="button" data-mural-edit aria-label="Editar item"><i class="fa-solid fa-pen"></i></button>
@@ -5443,30 +5447,79 @@ function prepararInteracaoItemMural(cartao, item) {
     });
 
     const iniciar = (evento, modo) => {
-        if (evento.target.closest("button, a")) return;
+        if (evento.button !== undefined && evento.button !== 0) return;
         evento.preventDefault();
         cartao.setPointerCapture(evento.pointerId);
         const canvas = cartao.parentElement;
-        const inicio = { x: evento.clientX, y: evento.clientY, left: item.x, top: item.y, width: item.width };
+        const canvasRect = canvas.getBoundingClientRect();
+        const cartaoRect = cartao.getBoundingClientRect();
+        const inicio = {
+            x: evento.clientX,
+            y: evento.clientY,
+            leftPx: cartaoRect.left - canvasRect.left,
+            topPx: cartaoRect.top - canvasRect.top,
+            width: cartaoRect.width
+        };
+        let ultimoEvento = evento;
+        let quadroAnimacao = 0;
+        let houveMovimento = false;
+
+        cartao.classList.add(modo === "resize" ? "is-resizing" : "is-dragging");
+
+        const desenhar = () => {
+            quadroAnimacao = 0;
+            const movimento = ultimoEvento;
+            const dx = movimento.clientX - inicio.x;
+            const dy = movimento.clientY - inicio.y;
+
+            if (Math.abs(dx) > 2 || Math.abs(dy) > 2) houveMovimento = true;
+
+            if (modo === "resize") {
+                const limite = Math.max(130, Math.min(300, canvas.clientWidth - inicio.leftPx - 8));
+                const largura = Math.max(130, Math.min(limite, inicio.width + dx));
+                item.width = largura;
+                cartao.style.width = `${largura}px`;
+                return;
+            }
+
+            const maxX = Math.max(0, canvas.clientWidth - cartao.offsetWidth);
+            const maxY = Math.max(0, canvas.clientHeight - cartao.offsetHeight);
+            const novoX = Math.max(0, Math.min(maxX, inicio.leftPx + dx));
+            const novoY = Math.max(0, Math.min(maxY, inicio.topPx + dy));
+            cartao.style.transform = `translate3d(${novoX - inicio.leftPx}px, ${novoY - inicio.topPx}px, 0)`;
+            cartao.dataset.dragX = String(novoX);
+            cartao.dataset.dragY = String(novoY);
+        };
 
         const mover = movimento => {
-            const rect = canvas.getBoundingClientRect();
-            if (modo === "resize") {
-                item.width = Math.max(130, Math.min(300, inicio.width + movimento.clientX - inicio.x));
-                cartao.style.width = `${item.width}px`;
-            } else {
-                item.x = Math.max(0, Math.min(100 - (cartao.offsetWidth / rect.width * 100), inicio.left + ((movimento.clientX - inicio.x) / rect.width * 100)));
-                item.y = Math.max(0, Math.min(100 - (cartao.offsetHeight / rect.height * 100), inicio.top + ((movimento.clientY - inicio.y) / rect.height * 100)));
-                cartao.style.left = `${item.x}%`;
-                cartao.style.top = `${item.y}%`;
-            }
-            registrarAlteracaoMural();
+            ultimoEvento = movimento;
+            movimento.preventDefault();
+            if (!quadroAnimacao) quadroAnimacao = window.requestAnimationFrame(desenhar);
         };
 
         const terminar = () => {
+            if (quadroAnimacao) {
+                window.cancelAnimationFrame(quadroAnimacao);
+                desenhar();
+            }
+
+            if (modo === "move" && houveMovimento) {
+                const novoX = Number(cartao.dataset.dragX || inicio.leftPx);
+                const novoY = Number(cartao.dataset.dragY || inicio.topPx);
+                item.x = canvas.clientWidth ? novoX / canvas.clientWidth * 100 : 0;
+                item.y = canvas.clientHeight ? novoY / canvas.clientHeight * 100 : 0;
+                cartao.style.left = `${item.x}%`;
+                cartao.style.top = `${item.y}%`;
+                cartao.style.transform = "";
+            }
+
+            cartao.classList.remove("is-dragging", "is-resizing");
+            delete cartao.dataset.dragX;
+            delete cartao.dataset.dragY;
             cartao.removeEventListener("pointermove", mover);
             cartao.removeEventListener("pointerup", terminar);
             cartao.removeEventListener("pointercancel", terminar);
+            if (houveMovimento) registrarAlteracaoMural();
         };
 
         cartao.addEventListener("pointermove", mover);
@@ -5474,7 +5527,7 @@ function prepararInteracaoItemMural(cartao, item) {
         cartao.addEventListener("pointercancel", terminar);
     };
 
-    cartao.addEventListener("pointerdown", evento => iniciar(evento, "move"));
+    cartao.querySelector("[data-mural-drag]")?.addEventListener("pointerdown", evento => iniciar(evento, "move"));
     cartao.querySelector(".mural-resize-handle")?.addEventListener("pointerdown", evento => {
         evento.stopPropagation();
         iniciar(evento, "resize");
