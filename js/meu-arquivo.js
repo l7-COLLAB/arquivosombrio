@@ -173,7 +173,13 @@ const meuArquivoState = {
 
     alertas: [],
 
-    casosEnviados: []
+    casosEnviados: [],
+
+    muralAberto: null,
+
+    muralSalvamentoTimer: null,
+
+    muralSalvando: false
 
 };
 
@@ -2299,6 +2305,12 @@ function fecharModalArquivo() {
         return;
     }
 
+    if (meuArquivoState.muralAberto) {
+        salvarMuralAberto(false);
+        meuArquivoState.muralAberto = null;
+        window.clearTimeout(meuArquivoState.muralSalvamentoTimer);
+    }
+
 
     modal.hidden =
         true;
@@ -2306,6 +2318,10 @@ function fecharModalArquivo() {
 
     document.body.classList.remove(
         "arquivo-modal-aberto"
+    );
+
+    modal.classList.remove(
+        "arquivo-modal--mural"
     );
 
 
@@ -5011,97 +5027,330 @@ document.addEventListener(
    ABRIR MURAL
    ========================================================= */
 
-function abrirMuralInvestigacao(
-    muralId
-) {
-
-    const mural =
-        meuArquivoState.murais.find(
-            item =>
-                String(item.id) ===
-                String(muralId)
-        );
-
+function abrirMuralInvestigacao(muralId) {
+    const mural = meuArquivoState.murais.find(
+        item => String(item.id) === String(muralId)
+    );
 
     if (!mural) {
-
         abrirModalArquivo(
             "Mural de investigação",
-            criarEstadoVazio(
-                "Este mural não pôde ser localizado.",
-                "fa-thumbtack"
-            )
+            criarEstadoVazio("Este mural não pôde ser localizado.", "fa-thumbtack")
         );
-
         return;
-
     }
 
-
-    const titulo =
-        obterPrimeiroValor(
-            mural,
-            [
-                "title",
-                "titulo",
-                "name",
-                "nome"
-            ],
-            "Investigação"
-        );
-
-
-    const descricao =
-        obterPrimeiroValor(
-            mural,
-            [
-                "description",
-                "descricao"
-            ],
-            "Nenhuma nota inicial registrada."
-        );
-
+    meuArquivoState.muralAberto = mural;
+    const dados = obterDadosMural(mural);
+    mural.board_data = dados;
 
     abrirModalArquivo(
-        titulo,
+        obterPrimeiroValor(mural, ["title", "titulo", "name", "nome"], "Investigação"),
         `
-            <div class="arquivo-form">
+            <section class="mural-editor" aria-label="Editor do mural particular">
+                <div class="mural-editor-toolbar" role="toolbar" aria-label="Adicionar ao mural">
+                    <button type="button" data-mural-add="note"><i class="fa-solid fa-note-sticky"></i><span>Anotação</span></button>
+                    <button type="button" data-mural-add="image"><i class="fa-solid fa-image"></i><span>Fotografia</span></button>
+                    <button type="button" data-mural-add="document"><i class="fa-solid fa-file-lines"></i><span>Documento</span></button>
+                    <span class="mural-editor-spacer"></span>
+                    <span class="mural-save-state" id="mural-save-state" aria-live="polite"><i class="fa-solid fa-cloud"></i> Salvo</span>
+                    <button type="button" class="mural-save-button" data-mural-save><i class="fa-solid fa-floppy-disk"></i><span>Salvar</span></button>
+                </div>
 
-                <div class="arquivo-message">
-
+                <div class="mural-editor-note">
                     <i class="fa-solid fa-lock"></i>
+                    <span>Privado — apenas você pode acessar este quadro.</span>
+                    <small>Arraste os cartões para organizar.</small>
+                </div>
 
-                    <div>
-
-                        <strong>
-                            Mural particular
-                        </strong>
-
-                        <p>
-                            ${escaparHTML(descricao)}
-                        </p>
-
+                <div class="mural-editor-scroll">
+                    <div class="mural-canvas" id="mural-canvas">
+                        <div class="mural-canvas-empty" id="mural-canvas-empty">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <strong>Seu mural está vazio</strong>
+                            <span>Adicione uma anotação, fotografia ou documento.</span>
+                        </div>
                     </div>
-
                 </div>
-
-
-                <div class="arquivo-message">
-
-                    <i class="fa-solid fa-diagram-project"></i>
-
-                    <span>
-                        A área interativa para posicionar fotografias,
-                        documentos, pessoas, pistas e fios de conexão
-                        será vinculada a este mural nas próximas etapas.
-                    </span>
-
-                </div>
-
-            </div>
+            </section>
         `
     );
 
+    arquivoElements.modal?.classList.add("arquivo-modal--mural");
+    renderizarItensMural();
+    prepararEditorMural();
+}
+
+
+function obterDadosMural(mural) {
+    const chave = obterChaveRascunhoMural(mural.id);
+    let remoto = mural.board_data;
+
+    if (!remoto || typeof remoto !== "object" || Array.isArray(remoto)) {
+        remoto = { version: 1, items: [] };
+    }
+
+    try {
+        const local = JSON.parse(localStorage.getItem(chave) || "null");
+        if (local?.data && Number(local.saved_at || 0) > new Date(mural.updated_at || 0).getTime()) {
+            remoto = local.data;
+        }
+    } catch (erro) {
+        console.warn("Rascunho local do mural inválido.", erro);
+    }
+
+    return {
+        version: 1,
+        items: Array.isArray(remoto.items) ? remoto.items.slice(0, 100) : []
+    };
+}
+
+
+function obterChaveRascunhoMural(muralId) {
+    return `arquivo_sombrio_mural_${meuArquivoState.usuario?.id || "anon"}_${muralId}`;
+}
+
+
+function criarIdItemMural() {
+    return window.crypto?.randomUUID?.() || `item-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+
+function normalizarUrlMural(valor) {
+    try {
+        const url = new URL(String(valor || "").trim());
+        return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+    } catch (_) {
+        return "";
+    }
+}
+
+
+function prepararEditorMural() {
+    const editor = document.querySelector(".mural-editor");
+    if (!editor) return;
+
+    editor.querySelectorAll("[data-mural-add]").forEach(botao => {
+        botao.addEventListener("click", () => adicionarItemMural(botao.dataset.muralAdd));
+    });
+
+    editor.querySelector("[data-mural-save]")?.addEventListener("click", () => salvarMuralAberto(true));
+}
+
+
+function adicionarItemMural(tipo) {
+    const mural = meuArquivoState.muralAberto;
+    if (!mural) return;
+
+    let titulo = "";
+    let conteudo = "";
+    let url = "";
+
+    if (tipo === "note") {
+        titulo = window.prompt("Título da anotação:", "Nova pista")?.trim() || "";
+        if (!titulo) return;
+        conteudo = window.prompt("Escreva a anotação:", "")?.trim() || "";
+    } else if (tipo === "image") {
+        titulo = window.prompt("Legenda da fotografia:", "Fotografia")?.trim() || "Fotografia";
+        url = normalizarUrlMural(window.prompt("Cole o endereço HTTPS da imagem:", "") || "");
+        if (!url) {
+            window.alert("Informe um endereço válido iniciado por https://");
+            return;
+        }
+    } else if (tipo === "document") {
+        titulo = window.prompt("Nome do documento:", "Documento")?.trim() || "Documento";
+        url = normalizarUrlMural(window.prompt("Cole o endereço HTTPS do documento ou fonte:", "") || "");
+        if (!url) {
+            window.alert("Informe um endereço válido iniciado por https://");
+            return;
+        }
+    } else {
+        return;
+    }
+
+    mural.board_data.items.push({
+        id: criarIdItemMural(),
+        type: tipo,
+        title: titulo.slice(0, 120),
+        content: conteudo.slice(0, 1000),
+        url,
+        x: 8 + ((mural.board_data.items.length * 9) % 48),
+        y: 8 + ((mural.board_data.items.length * 11) % 48),
+        width: tipo === "note" ? 190 : 170
+    });
+
+    registrarAlteracaoMural();
+    renderizarItensMural();
+}
+
+
+function renderizarItensMural() {
+    const canvas = document.getElementById("mural-canvas");
+    const mural = meuArquivoState.muralAberto;
+    if (!canvas || !mural) return;
+
+    canvas.querySelectorAll(".mural-canvas-item").forEach(item => item.remove());
+    const itens = mural.board_data?.items || [];
+    const vazio = document.getElementById("mural-canvas-empty");
+    if (vazio) vazio.hidden = itens.length > 0;
+
+    itens.forEach(item => {
+        const cartao = document.createElement("article");
+        cartao.className = `mural-canvas-item mural-item-${item.type || "note"}`;
+        cartao.dataset.muralItemId = item.id;
+        cartao.style.left = `${Math.max(0, Math.min(82, Number(item.x) || 0))}%`;
+        cartao.style.top = `${Math.max(0, Math.min(82, Number(item.y) || 0))}%`;
+        cartao.style.width = `${Math.max(130, Math.min(300, Number(item.width) || 170))}px`;
+
+        const visual = item.type === "image"
+            ? `<img src="${escaparHTML(normalizarUrlMural(item.url))}" alt="${escaparHTML(item.title || "Fotografia do mural")}" loading="lazy">`
+            : item.type === "document"
+                ? `<a class="mural-document-link" href="${escaparHTML(normalizarUrlMural(item.url))}" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-lines"></i><span>Abrir documento</span></a>`
+                : `<p>${escaparHTML(item.content || "Anotação sem conteúdo.")}</p>`;
+
+        cartao.innerHTML = `
+            <span class="mural-item-pin" aria-hidden="true"></span>
+            <div class="mural-item-actions">
+                <button type="button" data-mural-edit aria-label="Editar item"><i class="fa-solid fa-pen"></i></button>
+                <button type="button" data-mural-delete aria-label="Excluir item"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            ${visual}
+            <strong>${escaparHTML(item.title || "Registro")}</strong>
+            <div class="mural-resize-handle" aria-label="Redimensionar item"></div>
+        `;
+
+        prepararInteracaoItemMural(cartao, item);
+        canvas.appendChild(cartao);
+    });
+}
+
+
+function prepararInteracaoItemMural(cartao, item) {
+    cartao.querySelector("[data-mural-delete]")?.addEventListener("click", evento => {
+        evento.stopPropagation();
+        if (!window.confirm(`Excluir “${item.title || "este item"}” do mural?`)) return;
+        const itens = meuArquivoState.muralAberto?.board_data?.items || [];
+        meuArquivoState.muralAberto.board_data.items = itens.filter(atual => atual.id !== item.id);
+        registrarAlteracaoMural();
+        renderizarItensMural();
+    });
+
+    cartao.querySelector("[data-mural-edit]")?.addEventListener("click", evento => {
+        evento.stopPropagation();
+        const titulo = window.prompt("Título:", item.title || "")?.trim();
+        if (titulo === undefined) return;
+        item.title = (titulo || "Registro").slice(0, 120);
+        if (item.type === "note") {
+            const conteudo = window.prompt("Anotação:", item.content || "");
+            if (conteudo !== null) item.content = conteudo.trim().slice(0, 1000);
+        }
+        registrarAlteracaoMural();
+        renderizarItensMural();
+    });
+
+    const iniciar = (evento, modo) => {
+        if (evento.target.closest("button, a")) return;
+        evento.preventDefault();
+        cartao.setPointerCapture(evento.pointerId);
+        const canvas = cartao.parentElement;
+        const inicio = { x: evento.clientX, y: evento.clientY, left: item.x, top: item.y, width: item.width };
+
+        const mover = movimento => {
+            const rect = canvas.getBoundingClientRect();
+            if (modo === "resize") {
+                item.width = Math.max(130, Math.min(300, inicio.width + movimento.clientX - inicio.x));
+                cartao.style.width = `${item.width}px`;
+            } else {
+                item.x = Math.max(0, Math.min(100 - (cartao.offsetWidth / rect.width * 100), inicio.left + ((movimento.clientX - inicio.x) / rect.width * 100)));
+                item.y = Math.max(0, Math.min(100 - (cartao.offsetHeight / rect.height * 100), inicio.top + ((movimento.clientY - inicio.y) / rect.height * 100)));
+                cartao.style.left = `${item.x}%`;
+                cartao.style.top = `${item.y}%`;
+            }
+            registrarAlteracaoMural();
+        };
+
+        const terminar = () => {
+            cartao.removeEventListener("pointermove", mover);
+            cartao.removeEventListener("pointerup", terminar);
+            cartao.removeEventListener("pointercancel", terminar);
+        };
+
+        cartao.addEventListener("pointermove", mover);
+        cartao.addEventListener("pointerup", terminar);
+        cartao.addEventListener("pointercancel", terminar);
+    };
+
+    cartao.addEventListener("pointerdown", evento => iniciar(evento, "move"));
+    cartao.querySelector(".mural-resize-handle")?.addEventListener("pointerdown", evento => {
+        evento.stopPropagation();
+        iniciar(evento, "resize");
+    });
+}
+
+
+function registrarAlteracaoMural() {
+    const mural = meuArquivoState.muralAberto;
+    if (!mural) return;
+
+    localStorage.setItem(
+        obterChaveRascunhoMural(mural.id),
+        JSON.stringify({ saved_at: Date.now(), data: mural.board_data })
+    );
+
+    atualizarEstadoSalvamentoMural("alterado");
+    window.clearTimeout(meuArquivoState.muralSalvamentoTimer);
+    meuArquivoState.muralSalvamentoTimer = window.setTimeout(() => salvarMuralAberto(false), 700);
+}
+
+
+function atualizarEstadoSalvamentoMural(estado) {
+    const elemento = document.getElementById("mural-save-state");
+    if (!elemento) return;
+    const dados = {
+        alterado: ["fa-clock", "Alterações pendentes"],
+        salvando: ["fa-spinner fa-spin", "Salvando…"],
+        salvo: ["fa-cloud", "Salvo"],
+        erro: ["fa-triangle-exclamation", "Não foi possível salvar"]
+    }[estado] || ["fa-cloud", "Salvo"];
+    elemento.innerHTML = `<i class="fa-solid ${dados[0]}"></i> ${dados[1]}`;
+    elemento.dataset.state = estado;
+}
+
+
+async function salvarMuralAberto(mostrarConfirmacao = false) {
+    const mural = meuArquivoState.muralAberto;
+    if (!mural || meuArquivoState.muralSalvando) return;
+
+    window.clearTimeout(meuArquivoState.muralSalvamentoTimer);
+    meuArquivoState.muralSalvando = true;
+    atualizarEstadoSalvamentoMural("salvando");
+
+    try {
+        const supabase = await obterSupabaseMeuArquivo();
+        const agora = new Date().toISOString();
+        const { data, error } = await supabase
+            .from("investigation_boards")
+            .update({ board_data: mural.board_data, updated_at: agora })
+            .eq("id", mural.id)
+            .eq("user_id", meuArquivoState.usuario.id)
+            .select("id, board_data, updated_at")
+            .single();
+
+        if (error) throw error;
+        mural.board_data = data.board_data;
+        mural.updated_at = data.updated_at;
+        localStorage.setItem(
+            obterChaveRascunhoMural(mural.id),
+            JSON.stringify({ saved_at: new Date(data.updated_at).getTime(), data: data.board_data })
+        );
+        atualizarEstadoSalvamentoMural("salvo");
+        if (mostrarConfirmacao) window.setTimeout(() => atualizarEstadoSalvamentoMural("salvo"), 600);
+    } catch (erro) {
+        console.error("Erro ao salvar mural:", erro);
+        atualizarEstadoSalvamentoMural("erro");
+    } finally {
+        meuArquivoState.muralSalvando = false;
+    }
 }
 
 
