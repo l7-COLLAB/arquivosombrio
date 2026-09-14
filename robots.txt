@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /meu-arquivo.html
+
+Sitemap: https://l7-collab.github.io/arquivosombrio/sitemap.xml
