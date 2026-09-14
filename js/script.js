@@ -3826,13 +3826,13 @@ function criarCardCaso(caso) {
                 data-favorite-title="${escaparHTML(caso.titulo || "Dossiê") }"
                 data-favorite-subtitle="${escaparHTML(caso.categoria || "Caso") }"
                 data-favorite-image="${escaparHTML(caso.imagem || "") }"
-                data-favorite-url="caso.html?id=${encodeURIComponent(caso.id)}"
+                data-favorite-url="${obterURLPublicaDossie(caso)}"
             >
                 <i class="fa-regular fa-bookmark"></i>
             </button>
 
             <a
-                href="caso.html?id=${encodeURIComponent(caso.id)}"
+                href="${obterURLPublicaDossie(caso)}"
                 class="case-card-link"
                 aria-label="Abrir dossiê: ${escaparHTML(caso.titulo)}"
             >
@@ -7366,6 +7366,23 @@ async function autenticarAdmin(evento) {
             }
         }
     }
+}
+
+
+
+function obterURLPublicaDossie(caso) {
+
+    const rotas = {
+        "2": "dossies/caso-isabella-nardoni.html",
+        "4": "dossies/lizzie-borden.html",
+        "5": "dossies/caso-dana-chandler.html",
+        "6": "dossies/unabomber-ted-kaczynski.html",
+        "7": "dossies/caso-jonbenet-ramsey.html",
+        "8": "dossies/gemeos-reimer-john-money.html"
+    };
+
+    return rotas[String(caso?.id)] ||
+        `caso.html?id=${encodeURIComponent(caso?.id)}`;
 }
 
 
