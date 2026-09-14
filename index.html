@@ -226,6 +226,29 @@
         }
 
         /*
+         * TÍTULO ROTATIVO DA HOME
+         * Mantém a altura estável e faz apenas um fade discreto.
+         */
+        .hero-rotating-title {
+            transition: opacity 0.48s ease;
+            will-change: opacity;
+        }
+
+        .hero-rotating-title.is-changing {
+            opacity: 0;
+        }
+
+        .hero-rotating-title .hero-title-accent {
+            display: block;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-rotating-title {
+                transition: none;
+            }
+        }
+
+        /*
          * LINK LEGAL DO RODAPÉ
          */
         .footer-legal-link {
@@ -702,14 +725,12 @@
                     </p>
 
 
-                    <h1>
-
-                        Onde os casos esquecidos
-
-                        <span>
-                            voltam a ser abertos.
-                        </span>
-
+                    <h1
+                        class="hero-rotating-title"
+                        id="hero-rotating-title"
+                    >
+                        Há mais em um caso do que aquilo que
+                        <span class="hero-title-accent">virou notícia.</span>
                     </h1>
 
 
@@ -2299,7 +2320,6 @@
                 </div>
 
 
-
                 <div class="form-row">
 
 
@@ -2360,6 +2380,140 @@
     <script src="data/caso.js" defer></script>
     <script src="js/script.js?v=20260914-3" defer></script>
     <script src="js/filtros.js" defer></script>
+
+<script>
+(function () {
+    const title = document.getElementById('hero-rotating-title');
+
+    if (!title || title.dataset.rotatorReady === 'true') {
+        return;
+    }
+
+    title.dataset.rotatorReady = 'true';
+
+    const phrases = [
+        {
+            text: 'Há mais em um caso do que aquilo que',
+            accent: 'virou notícia.'
+        },
+        {
+            text: 'Os detalhes mudam a forma como uma história',
+            accent: 'é contada.'
+        },
+        {
+            text: 'O que ficou para trás ainda merece',
+            accent: 'ser lido.'
+        }
+    ];
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const intervalMs = 9000;
+    const fadeMs = 480;
+    let currentIndex = 0;
+    let rotationTimer = null;
+    let fadeTimer = null;
+    let resizeTimer = null;
+
+    function renderPhrase(index) {
+        const phrase = phrases[index];
+        title.textContent = phrase.text + ' ';
+
+        const accent = document.createElement('span');
+        accent.className = 'hero-title-accent';
+        accent.textContent = phrase.accent;
+        title.appendChild(accent);
+    }
+
+    function stabilizeTitleHeight() {
+        const parent = title.parentElement;
+        if (!parent) return;
+
+        const measuringTitle = title.cloneNode(false);
+        measuringTitle.removeAttribute('id');
+        measuringTitle.classList.remove('is-changing');
+        measuringTitle.style.position = 'absolute';
+        measuringTitle.style.visibility = 'hidden';
+        measuringTitle.style.pointerEvents = 'none';
+        measuringTitle.style.width = title.getBoundingClientRect().width + 'px';
+        measuringTitle.style.minHeight = '0';
+        measuringTitle.style.height = 'auto';
+        parent.appendChild(measuringTitle);
+
+        let maxHeight = 0;
+
+        phrases.forEach((phrase) => {
+            measuringTitle.textContent = phrase.text + ' ';
+            const accent = document.createElement('span');
+            accent.className = 'hero-title-accent';
+            accent.textContent = phrase.accent;
+            measuringTitle.appendChild(accent);
+            maxHeight = Math.max(maxHeight, measuringTitle.getBoundingClientRect().height);
+        });
+
+        measuringTitle.remove();
+
+        if (maxHeight > 0) {
+            title.style.minHeight = Math.ceil(maxHeight) + 'px';
+        }
+    }
+
+    function stopRotation() {
+        if (rotationTimer) {
+            clearInterval(rotationTimer);
+            rotationTimer = null;
+        }
+
+        if (fadeTimer) {
+            clearTimeout(fadeTimer);
+            fadeTimer = null;
+        }
+    }
+
+    function showNextPhrase() {
+        if (document.hidden || reducedMotion.matches) return;
+
+        title.classList.add('is-changing');
+
+        fadeTimer = window.setTimeout(() => {
+            currentIndex = (currentIndex + 1) % phrases.length;
+            renderPhrase(currentIndex);
+            title.classList.remove('is-changing');
+            fadeTimer = null;
+        }, fadeMs);
+    }
+
+    function startRotation() {
+        stopRotation();
+
+        if (document.hidden || reducedMotion.matches) return;
+
+        rotationTimer = window.setInterval(showNextPhrase, intervalMs);
+    }
+
+    renderPhrase(currentIndex);
+    stabilizeTitleHeight();
+    startRotation();
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopRotation();
+            title.classList.remove('is-changing');
+        } else {
+            startRotation();
+        }
+    });
+
+    reducedMotion.addEventListener?.('change', () => {
+        title.classList.remove('is-changing');
+        startRotation();
+    });
+
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(stabilizeTitleHeight, 160);
+    }, { passive: true });
+})();
+</script>
 
 <script>
   if ('serviceWorker' in navigator) {
