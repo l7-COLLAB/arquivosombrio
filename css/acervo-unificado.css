@@ -69,7 +69,7 @@
 .home-page #grid-casos .case-card,
 .home-page #grid-forense .case-card {
     display: block !important;
-    min-height: 118px;
+    min-height: 128px;
     scroll-snap-align: start;
     transform: none;
     box-shadow: none;
@@ -77,7 +77,7 @@
 
 .home-page #grid-casos .case-card-link,
 .home-page #grid-forense .case-card-link {
-    min-height: 118px;
+    min-height: 128px;
     display: grid;
     grid-template-columns: 92px minmax(0,1fr);
 }
@@ -86,7 +86,7 @@
 .home-page #grid-forense .card-image {
     width: 92px;
     height: 100%;
-    min-height: 104px;
+    min-height: 114px;
 }
 
 .home-page #grid-casos .card-content,
@@ -126,6 +126,11 @@
     -webkit-line-clamp: 3;
 }
 
+/*
+ * O resumo original permanece intacto no banco/dossiê.
+ * Na vitrine exibimos três linhas, com reticências visuais apenas quando
+ * o espaço do card termina. Assim não há alteração nem perda do texto salvo.
+ */
 .home-page #grid-casos .card-summary,
 .home-page #grid-forense .card-summary {
     display: -webkit-box;
@@ -135,7 +140,9 @@
     font-size: .6rem;
     line-height: 1.45;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    text-overflow: ellipsis;
 }
 
 .home-page .forensic-archive-link,
