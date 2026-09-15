@@ -101,33 +101,33 @@ function abrirModalAdminImediatamente(){
     return true;
 }
 
+async function tratarAcessoAdmin(evento){
+    const alvo=evento.target?.closest?.("#btn-open-admin,#mobile-btn-admin,.sidebar-admin-link");
+    if(!alvo)return;
+
+    evento.preventDefault();
+
+    try{
+        if(typeof obterSessaoAdmin==="function"){
+            const sessao=await obterSessaoAdmin();
+
+            if(sessao && typeof abrirPainelAdmin==="function"){
+                await abrirPainelAdmin();
+                return;
+            }
+        }
+    }catch(erro){
+        console.warn("Falha não bloqueante ao verificar a sessão administrativa.",erro);
+    }
+
+    abrirModalAdminImediatamente();
+}
+
 function instalarAcessoAdminIndependente(){
     if(window.__arquivoSombrioAdminClickReady)return;
     window.__arquivoSombrioAdminClickReady=true;
 
-    /*
-     * Fallback apenas para páginas em que o módulo administrativo principal
-     * não estiver disponível. Quando script.js carregou corretamente, ele é
-     * responsável por validar a sessão e decidir entre abrir o painel ou o
-     * formulário de login. Não interceptamos esse clique, evitando bloquear
-     * os listeners instalados por inicializarAdmin().
-     */
-    document.addEventListener("click",evento=>{
-        const alvo=evento.target?.closest?.("#btn-open-admin,#mobile-btn-admin,.sidebar-admin-link");
-        if(!alvo)return;
-
-        const adminPrincipalDisponivel=
-            typeof window.obterSessaoAdmin==="function" ||
-            typeof window.abrirPainelAdmin==="function" ||
-            typeof inicializarAdmin==="function";
-
-        if(adminPrincipalDisponivel){
-            return;
-        }
-
-        evento.preventDefault();
-        abrirModalAdminImediatamente();
-    },false);
+    document.addEventListener("click",tratarAcessoAdmin,false);
 }
 
 function carregarModulosLiterariosAdmin(){
@@ -138,7 +138,7 @@ function carregarModulosLiterariosAdmin(){
     if(existente)return;
 
     const script=document.createElement("script");
-    script.src=`js/admin-core-tabs.js?v=20260915-1`;
+    script.src=`js/admin-core-tabs.js?v=20260915-2`;
     script.defer=true;
     script.dataset.adminLiteraryCore="true";
     script.addEventListener("error",()=>{
