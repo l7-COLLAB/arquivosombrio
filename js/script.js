@@ -154,7 +154,22 @@ function obterTokenTurnstile() {
                         );
 
 
+                        let temporizador = null;
+
                         const limpar = () => {
+
+                            if (
+                                temporizador !==
+                                null
+                            ) {
+
+                                clearTimeout(
+                                    temporizador
+                                );
+
+                                temporizador =
+                                    null;
+                            }
 
                             if (
                                 widgetId !== null &&
@@ -196,6 +211,51 @@ function obterTokenTurnstile() {
                                     )
                                 );
                             };
+
+
+                        /*
+                         * Instrução visível: o Cloudflare
+                         * pode exigir clique no checkbox;
+                         * sem este aviso, o usuário não
+                         * sabe que precisa interagir.
+                         */
+
+                        const aviso =
+                            document.createElement(
+                                "div"
+                            );
+
+                        aviso.textContent =
+                            "CONCLUA A VERIFICAÇÃO DE SEGURANÇA";
+
+                        aviso.style.cssText =
+                            "font:600 11px/1.4 monospace;letter-spacing:.12em;color:#cfc6bd;text-transform:uppercase;margin:0 0 12px;text-align:center";
+
+                        container.appendChild(
+                            aviso
+                        );
+
+
+                        /*
+                         * Rede de segurança: se nenhum
+                         * callback do widget disparar
+                         * em 2 minutos, encerra a
+                         * espera com orientação clara
+                         * em vez de "Verificando..."
+                         * infinito.
+                         */
+
+                        temporizador =
+                            setTimeout(
+                                () => {
+
+                                    rejeitar(
+                                        "A verificação de segurança não foi concluída. Clique na caixa exibida e tente novamente."
+                                    );
+
+                                },
+                                120000
+                            );
 
 
                         widgetId =
@@ -7354,6 +7414,24 @@ async function autenticarAdmin(evento) {
     }
 
 
+    /*
+     * Orientação imediata: o widget do
+     * Cloudflare pode exigir clique no
+     * checkbox. Sem este aviso, a tela
+     * parece travada em "Verificando...".
+     */
+
+    if (erroElemento) {
+
+        erroElemento.textContent =
+            "Se aparecer uma caixa de verificação, conclua-a para continuar.";
+
+        erroElemento.classList.add(
+            "visible"
+        );
+    }
+
+
     try {
 
         const supabaseClient =
@@ -7361,6 +7439,16 @@ async function autenticarAdmin(evento) {
 
         const captchaToken =
             await obterTokenTurnstile();
+
+
+        if (erroElemento) {
+
+            erroElemento.textContent = "";
+
+            erroElemento.classList.remove(
+                "visible"
+            );
+        }
 
 
         const {
