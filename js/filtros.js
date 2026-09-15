@@ -9,46 +9,29 @@ function render(casos){const grid=document.getElementById("grid-casos");if(!grid
 function aplicarFiltros(){if(!document.getElementById("grid-casos"))return;const f={busca:norm(document.getElementById("busca-casos")?.value),rapido:norm(document.querySelector(".filter-chip.active")?.dataset.filtro||"todos"),status:norm(document.getElementById("filtro-status")?.value),crime:norm(document.getElementById("filtro-crime")?.value),autor:norm(document.getElementById("filtro-autor")?.value),pais:norm(document.getElementById("filtro-pais")?.value)};let r=dadosFiltro().filter(c=>corresponde(c,f));const o=document.getElementById("ordenar-casos")?.value||"padrao";if(o==="az")r.sort((a,b)=>String(a.titulo).localeCompare(String(b.titulo),"pt-BR"));if(o==="za")r.sort((a,b)=>String(b.titulo).localeCompare(String(a.titulo),"pt-BR"));if(o==="recentes")r.sort((a,b)=>Number(b.ano||0)-Number(a.ano||0));if(o==="antigos")r.sort((a,b)=>Number(a.ano||0)-Number(b.ano||0));render(r);}
 function inicializarFiltrosArquivo(){const busca=document.getElementById("busca-casos");if(!busca)return;busca.addEventListener("input",aplicarFiltros);document.getElementById("limpar-busca")?.addEventListener("click",()=>{busca.value="";aplicarFiltros();busca.focus();});document.querySelectorAll(".filter-chip").forEach(ch=>ch.addEventListener("click",()=>{document.querySelectorAll(".filter-chip").forEach(x=>x.classList.remove("active"));ch.classList.add("active");aplicarFiltros();}));["filtro-status","filtro-crime","filtro-autor","filtro-pais","ordenar-casos"].forEach(id=>document.getElementById(id)?.addEventListener("change",aplicarFiltros));const abrir=document.getElementById("abrir-filtros-avancados"),painel=document.getElementById("filtros-avancados");abrir?.addEventListener("click",()=>{if(painel)painel.hidden=!painel.hidden;});document.getElementById("resetar-filtros")?.addEventListener("click",()=>{busca.value="";["filtro-status","filtro-crime","filtro-autor","filtro-pais"].forEach(id=>{const e=document.getElementById(id);if(e)e.value="";});const ord=document.getElementById("ordenar-casos");if(ord)ord.value="padrao";document.querySelectorAll(".filter-chip").forEach(x=>x.classList.toggle("active",x.dataset.filtro==="todos"));aplicarFiltros();});aplicarFiltros();}
 
-/* Módulos complementares da Home/Central de Arquivo */
-function carregarModulo(src){const base=src.split("?")[0];document.querySelectorAll(`script[src^="${base}"]`).forEach(s=>s.remove());const s=document.createElement("script");s.src=src;s.async=true;document.head.appendChild(s);}
+function carregarModulo(src,onload){const base=src.split("?")[0];document.querySelectorAll(`script[src^="${base}"]`).forEach(s=>s.remove());const s=document.createElement("script");s.src=src;s.async=true;if(onload)s.addEventListener("load",onload,{once:true});document.head.appendChild(s);}
 function carregarCss(href){if(document.querySelector(`link[href^="${href.split("?")[0]}"]`))return;const l=document.createElement("link");l.rel="stylesheet";l.href=href;document.head.appendChild(l);}
 
-/* Ponte direta: os dois módulos precisam existir na Central mesmo se o módulo literário demorar a carregar. */
-function garantirAbasLiterariasAdmin(){
- const painel=document.querySelector("#admin-manager .admin-manager");
- const tabs=painel?.querySelector(".admin-content-tabs");
- if(!painel||!tabs)return false;
- const defs=[
-  ["lendas","fa-book-skull","Lendas"],
-  ["creepypastas","fa-ghost","Creepypastas"]
- ];
- defs.forEach(([tipo,icone,nome])=>{
-  if(tabs.querySelector(`[data-admin-tab="${tipo}"]`))return;
-  const b=document.createElement("button");
-  b.type="button";b.dataset.adminTab=tipo;b.className="admin-literary-bridge-tab";
-  b.innerHTML=`<i class="fa-solid ${icone}"></i><span>${nome}</span><small>0</small>`;
-  b.addEventListener("click",()=>{
-   const real=tabs.querySelector(`[data-admin-tab="${tipo}"]:not(.admin-literary-bridge-tab)`);
-   if(real){real.click();return;}
-   carregarModulo(`js/admin-literario.js?v=20260914-2316-${Date.now()}`);
-   setTimeout(()=>{
-    const alvo=tabs.querySelector(`[data-admin-tab="${tipo}"]:not(.admin-literary-bridge-tab)`);
-    if(alvo)alvo.click();
-    else alert(`O módulo ${nome} está sendo carregado. Toque novamente em ${nome} em um instante.`);
-   },450);
-  });
-  tabs.appendChild(b);
- });
- return true;
+/*
+ * Central Administrativa: não criar abas provisórias com o mesmo data-admin-tab.
+ * Isso bloqueava ensureShell() do admin-literario.js: ele encontrava a aba provisória,
+ * entendia que Lendas/Creepypastas já existiam e nunca criava/bindava as abas reais.
+ */
+function limparAbasLiterariasProvisorias(){
+ document.querySelectorAll(".admin-literary-bridge-tab").forEach(el=>el.remove());
 }
-
-const observadorAdminLiterario=new MutationObserver(()=>garantirAbasLiterariasAdmin());
-observadorAdminLiterario.observe(document.documentElement,{childList:true,subtree:true});
+function carregarAdminLiterario(){
+ limparAbasLiterariasProvisorias();
+ carregarModulo(`js/admin-literario.js?v=20260915-2330-${Date.now()}`,()=>{
+  limparAbasLiterariasProvisorias();
+  /* O próprio módulo possui MutationObserver e ensureShell(); ao carregar com a
+     Central já aberta ele insere as abas reais, ações e seções imediatamente. */
+ });
+}
 
 document.addEventListener("DOMContentLoaded",()=>{
  inicializarFiltrosArquivo();
- garantirAbasLiterariasAdmin();
- carregarModulo(`js/admin-literario.js?v=20260914-2316-${Date.now()}`);
+ carregarAdminLiterario();
  if(document.body.classList.contains("home-page")){
   carregarCss("css/home-literario.css?v=20260915-1");
   carregarModulo("js/home-lendas-creepypastas.js?v=20260915-1");
