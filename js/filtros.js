@@ -148,14 +148,32 @@ function carregarModulosLiterariosAdmin(){
     document.head.appendChild(script);
 }
 
+function atualizarServiceWorkerProjeto(){
+    if(!("serviceWorker" in navigator))return;
+    if(window.__arquivoSombrioSwUpdateReady)return;
+    window.__arquivoSombrioSwUpdateReady=true;
+
+    const swUrl=new URL("sw.js",window.location.href);
+
+    navigator.serviceWorker
+        .register(swUrl.href)
+        .then(registro=>registro.update())
+        .catch(erro=>{
+            console.warn("Não foi possível atualizar o Service Worker do Arquivo Sombrio.",erro);
+            window.__arquivoSombrioSwUpdateReady=false;
+        });
+}
+
 function inicializarComplementosArquivo(){
     instalarAcessoAdminIndependente();
     carregarModulosLiterariosAdmin();
+    atualizarServiceWorkerProjeto();
     inicializarFiltrosArquivo();
 }
 
 instalarAcessoAdminIndependente();
 carregarModulosLiterariosAdmin();
+atualizarServiceWorkerProjeto();
 if(document.readyState==="loading"){
     document.addEventListener("DOMContentLoaded",inicializarComplementosArquivo,{once:true});
 }else{
