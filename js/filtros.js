@@ -10,6 +10,41 @@ function aplicarFiltros(){if(!document.getElementById("grid-casos"))return;const
 function inicializarFiltrosArquivo(){const busca=document.getElementById("busca-casos");if(!busca)return;busca.addEventListener("input",aplicarFiltros);document.getElementById("limpar-busca")?.addEventListener("click",()=>{busca.value="";aplicarFiltros();busca.focus();});document.querySelectorAll(".filter-chip").forEach(ch=>ch.addEventListener("click",()=>{document.querySelectorAll(".filter-chip").forEach(x=>x.classList.remove("active"));ch.classList.add("active");aplicarFiltros();}));["filtro-status","filtro-crime","filtro-autor","filtro-pais","ordenar-casos"].forEach(id=>document.getElementById(id)?.addEventListener("change",aplicarFiltros));const abrir=document.getElementById("abrir-filtros-avancados"),painel=document.getElementById("filtros-avancados");abrir?.addEventListener("click",()=>{if(painel)painel.hidden=!painel.hidden;});document.getElementById("resetar-filtros")?.addEventListener("click",()=>{busca.value="";["filtro-status","filtro-crime","filtro-autor","filtro-pais"].forEach(id=>{const e=document.getElementById(id);if(e)e.value="";});const ord=document.getElementById("ordenar-casos");if(ord)ord.value="padrao";document.querySelectorAll(".filter-chip").forEach(x=>x.classList.toggle("active",x.dataset.filtro==="todos"));aplicarFiltros();});aplicarFiltros();}
 
 /* =========================================================
+   ACESSO ADMINISTRATIVO RESILIENTE
+   =========================================================
+   O script principal historicamente consulta o Supabase antes de exibir o
+   modal. Se essa consulta atrasar, o botão parece não responder. Este fallback
+   garante resposta visual imediata e também mantém o acesso funcionando caso
+   outra inicialização do script principal falhe antes de inicializarAdmin().
+   ========================================================= */
+function instalarFallbackAcessoAdmin(){
+    const seletores=["#btn-open-admin","#mobile-btn-admin",".sidebar-admin-link"];
+    document.querySelectorAll(seletores.join(",")).forEach(botao=>{
+        if(botao.dataset.adminFallbackReady==="true")return;
+        botao.dataset.adminFallbackReady="true";
+        botao.addEventListener("click",evento=>{
+            if(botao.matches("#mobile-btn-admin,.sidebar-admin-link"))evento.preventDefault();
+            const modal=document.getElementById("modal-admin");
+            if(modal)modal.classList.add("active");
+
+            /*
+             * A checagem de sessão acontece em paralelo. Não bloqueamos a
+             * abertura do modal esperando rede, SDK ou Supabase.
+             */
+            if(typeof obterSessaoAdmin==="function"){
+                Promise.resolve(obterSessaoAdmin())
+                    .then(sessao=>{
+                        if(sessao&&typeof abrirPainelAdmin==="function"){
+                            return abrirPainelAdmin();
+                        }
+                    })
+                    .catch(erro=>console.warn("Falha não bloqueante ao verificar sessão administrativa.",erro));
+            }
+        },{capture:true});
+    });
+}
+
+/* =========================================================
    MÓDULOS LITERÁRIOS DA ÁREA ADMINISTRATIVA
    Lendas + Creepypastas
    ========================================================= */
@@ -49,7 +84,7 @@ function carregarAdministracaoLiteraria(){
         return;
     }
     administracaoLiterariaIniciada=true;
-    const versao="20260915-0907";
+    const versao="20260915-0924";
 
     /*
      * O editor real é carregado primeiro. Assim, quando o painel administrativo
@@ -66,6 +101,7 @@ function carregarAdministracaoLiteraria(){
 
     if(!observadorAdminLiterario){
         observadorAdminLiterario=new MutationObserver(()=>{
+            instalarFallbackAcessoAdmin();
             if(document.querySelector("#admin-manager .admin-manager")){
                 garantirAdministracaoLiteraria();
             }
@@ -75,11 +111,12 @@ function carregarAdministracaoLiteraria(){
 }
 
 function inicializarComplementosArquivo(){
+    instalarFallbackAcessoAdmin();
     inicializarFiltrosArquivo();
     carregarAdministracaoLiteraria();
     if(document.body.classList.contains("home-page")){
-        carregarCss("css/home-literario.css?v=20260915-3");
-        carregarModulo("js/home-lendas-creepypastas.js?v=20260915-3");
+        carregarCss("css/home-literario.css?v=20260915-4");
+        carregarModulo("js/home-lendas-creepypastas.js?v=20260915-4");
     }
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",inicializarComplementosArquivo,{once:true});else inicializarComplementosArquivo();
