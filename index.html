@@ -338,6 +338,195 @@
 
         }
 
+        /*
+         * APOIO AO ARQUIVO
+         * Bloco documental discreto no encerramento da página inicial.
+         */
+        .archive-support {
+            position: relative;
+            padding: clamp(4.5rem, 8vw, 7rem) 0;
+            overflow: hidden;
+            border-top: 1px solid rgba(177, 145, 92, 0.18);
+            background:
+                linear-gradient(rgba(8, 7, 6, 0.96), rgba(8, 7, 6, 0.98)),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent 0,
+                    transparent 3px,
+                    rgba(255, 255, 255, 0.018) 4px
+                );
+        }
+
+        .archive-support::before {
+            content: "ARQUIVO INDEPENDENTE";
+            position: absolute;
+            top: 1.15rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(177, 145, 92, 0.07);
+            font-family: var(--font-display);
+            font-size: clamp(2.3rem, 8vw, 6.5rem);
+            letter-spacing: 0.09em;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .archive-support-card {
+            position: relative;
+            width: min(760px, 100%);
+            margin: 0 auto;
+            padding: clamp(1.75rem, 5vw, 3.5rem);
+            border: 1px solid rgba(177, 145, 92, 0.32);
+            background: rgba(17, 15, 12, 0.88);
+            box-shadow: 0 22px 50px rgba(0, 0, 0, 0.28);
+        }
+
+        .archive-support-card::after {
+            content: "AS • MANUTENÇÃO DO ACERVO";
+            display: block;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px dashed rgba(177, 145, 92, 0.22);
+            color: rgba(219, 207, 181, 0.46);
+            font-family: var(--font-mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.16em;
+            text-align: right;
+        }
+
+        .archive-support-label,
+        .archive-support-pix-title {
+            color: var(--red-light);
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .archive-support-card h2 {
+            margin: 0.8rem 0 1.4rem;
+            color: var(--paper);
+            font-family: var(--font-display);
+            font-size: clamp(1.45rem, 4vw, 2.3rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .archive-support-copy {
+            max-width: 650px;
+            color: var(--paper-soft);
+            font-family: var(--font-serif);
+            font-size: 0.94rem;
+            line-height: 1.85;
+        }
+
+        .archive-support-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin: 1.7rem 0 2rem;
+        }
+
+        .archive-support-button {
+            display: inline-flex;
+            min-height: 42px;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            padding: 0.78rem 1.15rem;
+            border: 1px solid rgba(177, 145, 92, 0.55);
+            background: transparent;
+            color: var(--paper);
+            font-family: var(--font-mono);
+            font-size: 0.67rem;
+            letter-spacing: 0.12em;
+            text-decoration: none;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .archive-support-button:hover,
+        .archive-support-button:focus-visible {
+            border-color: var(--red-light);
+            background: rgba(119, 25, 26, 0.16);
+            color: #fff;
+        }
+
+        .archive-support-pix {
+            scroll-margin-top: 7rem;
+            padding: 1.25rem;
+            border-left: 2px solid var(--red-light);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .archive-support-pix-title {
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--paper);
+        }
+
+        .archive-support-pix dl {
+            display: grid;
+            grid-template-columns: max-content minmax(0, 1fr);
+            gap: 0.55rem 1rem;
+            margin: 0 0 1.2rem;
+            color: var(--paper-soft);
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            line-height: 1.55;
+        }
+
+        .archive-support-pix dt {
+            color: rgba(219, 207, 181, 0.58);
+        }
+
+        .archive-support-pix dd {
+            min-width: 0;
+            margin: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .archive-support-note {
+            margin: 1.5rem 0 0;
+            color: rgba(219, 207, 181, 0.64);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            line-height: 1.6;
+        }
+
+        .archive-support-status {
+            align-self: center;
+            min-height: 1em;
+            color: var(--paper-soft);
+            font-family: var(--font-mono);
+            font-size: 0.64rem;
+        }
+
+        @media (max-width: 600px) {
+            .archive-support {
+                padding: 3.5rem 0;
+            }
+
+            .archive-support-card {
+                padding: 1.5rem 1.1rem;
+            }
+
+            .archive-support-actions,
+            .archive-support-button {
+                width: 100%;
+            }
+
+            .archive-support-pix dl {
+                grid-template-columns: 1fr;
+                gap: 0.15rem;
+            }
+
+            .archive-support-pix dd + dt {
+                margin-top: 0.55rem;
+            }
+        }
+
     </style>
 
 </head>
@@ -2075,6 +2264,96 @@
 
 
     </main>
+
+    <!-- ================================================================
+         APOIO AO ARQUIVO
+         ================================================================ -->
+
+    <section
+        class="archive-support"
+        id="apoie-o-arquivo"
+        aria-labelledby="archive-support-title"
+    >
+        <div class="container">
+            <div class="archive-support-card">
+                <span class="archive-support-label">
+                    PROJETO EDITORIAL • REGISTRO DE MANUTENÇÃO
+                </span>
+
+                <h2 id="archive-support-title">
+                    ESTE ARQUIVO É INDEPENDENTE
+                </h2>
+
+                <p class="archive-support-copy">
+                    Cada dossiê exige horas de pesquisa, consulta a fontes,
+                    organização de documentos e manutenção do acervo.
+                </p>
+
+                <p class="archive-support-copy">
+                    O Arquivo Sombrio é um projeto independente. Se este trabalho
+                    tem valor para você e quiser contribuir para que novos arquivos
+                    continuem sendo abertos, é possível apoiar a manutenção do projeto.
+                </p>
+
+                <div class="archive-support-actions">
+                    <a
+                        class="archive-support-button"
+                        href="#archive-support-pix"
+                    >
+                        <i class="fa-solid fa-box-archive" aria-hidden="true"></i>
+                        APOIAR O ARQUIVO
+                    </a>
+                </div>
+
+                <div
+                    class="archive-support-pix"
+                    id="archive-support-pix"
+                >
+                    <strong class="archive-support-pix-title">
+                        CONTRIBUIÇÃO VIA PIX
+                    </strong>
+
+                    <dl>
+                        <dt>Instituição:</dt>
+                        <dd>Mercado Pago</dd>
+
+                        <dt>Recebedora:</dt>
+                        <dd>Leticia Da Silva Rodrigues</dd>
+
+                        <dt>Tipo de chave:</dt>
+                        <dd>Chave aleatória</dd>
+
+                        <dt>Chave Pix:</dt>
+                        <dd>eb22f557-822b-4a1a-b66a-90ca36e3de43</dd>
+                    </dl>
+
+                    <div class="archive-support-actions">
+                        <button
+                            class="archive-support-button"
+                            id="copy-archive-pix"
+                            type="button"
+                            data-pix-key="eb22f557-822b-4a1a-b66a-90ca36e3de43"
+                        >
+                            <i class="fa-regular fa-copy" aria-hidden="true"></i>
+                            <span>COPIAR CHAVE PIX</span>
+                        </button>
+
+                        <span
+                            class="archive-support-status"
+                            id="archive-support-status"
+                            role="status"
+                            aria-live="polite"
+                        ></span>
+                    </div>
+                </div>
+
+                <p class="archive-support-note">
+                    O acesso ao Arquivo Sombrio continua livre. O apoio é inteiramente opcional.
+                </p>
+            </div>
+        </div>
+    </section>
+
     <!-- ================================================================
          RODAPÉ
          ================================================================ -->
@@ -2512,6 +2791,53 @@
         clearTimeout(resizeTimer);
         resizeTimer = window.setTimeout(stabilizeTitleHeight, 160);
     }, { passive: true });
+})();
+</script>
+
+
+<script>
+(function () {
+    const button = document.getElementById('copy-archive-pix');
+    const status = document.getElementById('archive-support-status');
+
+    if (!button || !status) return;
+
+    async function copyPixKey() {
+        const pixKey = button.dataset.pixKey || '';
+        const label = button.querySelector('span');
+
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(pixKey);
+            } else {
+                const temporaryField = document.createElement('textarea');
+                temporaryField.value = pixKey;
+                temporaryField.setAttribute('readonly', '');
+                temporaryField.style.position = 'fixed';
+                temporaryField.style.opacity = '0';
+                document.body.appendChild(temporaryField);
+                temporaryField.select();
+
+                if (!document.execCommand('copy')) {
+                    throw new Error('A cópia não foi autorizada pelo navegador.');
+                }
+
+                temporaryField.remove();
+            }
+
+            if (label) label.textContent = 'CHAVE COPIADA';
+            status.textContent = 'Chave Pix copiada com segurança.';
+
+            window.setTimeout(() => {
+                if (label) label.textContent = 'COPIAR CHAVE PIX';
+                status.textContent = '';
+            }, 3200);
+        } catch (error) {
+            status.textContent = 'Não foi possível copiar. Pressione a chave acima para selecioná-la.';
+        }
+    }
+
+    button.addEventListener('click', copyPixKey);
 })();
 </script>
 
