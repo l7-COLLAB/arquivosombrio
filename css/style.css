@@ -6686,3 +6686,141 @@ select:focus-visible {
         padding: 20px 16px;
     }
 }
+
+
+/* Listagens completas — Dossiês e Ciência Forense */
+.archive-page .cases-section,
+.forensic-page .forensic-section {
+    padding-block: clamp(2.4rem, 7vw, 5rem);
+}
+
+.archive-page-back {
+    margin-bottom: clamp(1.6rem, 4vw, 2.4rem);
+}
+
+.archive-list-heading {
+    align-items: end;
+    margin-bottom: 1.8rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(181, 157, 122, 0.18);
+}
+
+.archive-list-heading h2 {
+    font-size: clamp(2.35rem, 7vw, 5.25rem);
+    line-height: 0.98;
+}
+
+.archive-list-heading h2 span {
+    color: var(--red-light);
+}
+
+.archive-page #grid-casos,
+.forensic-page #grid-forense {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1.4rem;
+}
+
+.archive-page .case-card-link,
+.forensic-page .case-card-link {
+    display: grid;
+    grid-template-columns: clamp(150px, 24vw, 245px) minmax(0, 1fr);
+    min-height: 220px;
+}
+
+.archive-page .case-card .card-image,
+.forensic-page .case-card .card-image {
+    height: 100%;
+    min-height: 220px;
+}
+
+.archive-page .case-card .card-content,
+.forensic-page .case-card .card-content {
+    justify-content: center;
+    padding: clamp(1.25rem, 3vw, 2.1rem);
+}
+
+.archive-page .case-card .card-content h3,
+.forensic-page .case-card .card-content h3 {
+    font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+}
+
+.archive-page .case-card .card-summary,
+.forensic-page .case-card .card-summary {
+    max-width: 72ch;
+    margin-bottom: 0.75rem;
+}
+
+.forensic-page .forensic-section .home-section-link {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .archive-list-heading {
+        display: block;
+    }
+
+    .archive-list-heading .section-description {
+        margin-top: 0.9rem;
+    }
+
+    .archive-page .case-card-link,
+    .forensic-page .case-card-link {
+        grid-template-columns: 116px minmax(0, 1fr);
+        min-height: 176px;
+    }
+
+    .archive-page .case-card .card-image,
+    .forensic-page .case-card .card-image {
+        min-height: 176px;
+    }
+
+    .archive-page .case-card .card-content,
+    .forensic-page .case-card .card-content {
+        padding: 1rem;
+    }
+
+    .archive-page .case-card .card-content h3,
+    .forensic-page .case-card .card-content h3 {
+        margin-bottom: 0.45rem;
+        font-size: 0.9rem;
+        line-height: 1.35;
+    }
+
+    .archive-page .case-card .card-meta,
+    .forensic-page .case-card .card-meta,
+    .archive-page .case-card .btn-read-more,
+    .forensic-page .case-card .btn-read-more {
+        display: none;
+    }
+
+    .archive-page .case-card .card-summary,
+    .forensic-page .case-card .card-summary {
+        display: -webkit-box;
+        margin: 0;
+        overflow: hidden;
+        font-size: 0.72rem;
+        line-height: 1.55;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
+
+    .archive-page .case-card .badge.category,
+    .forensic-page .case-card .badge.category {
+        margin-bottom: 0.65rem;
+        padding: 0;
+        color: var(--red-light);
+        background: transparent;
+        font-size: 0.5rem;
+    }
+
+    .archive-page .case-card .badge.status,
+    .forensic-page .case-card .badge.status {
+        right: auto;
+        left: 0.55rem;
+        top: 0.55rem;
+        max-width: calc(100% - 1.1rem);
+        padding: 0.3rem 0.4rem;
+        font-size: 0.43rem;
+    }
+}
