@@ -126,11 +126,7 @@
     -webkit-line-clamp: 3;
 }
 
-/*
- * O resumo original permanece intacto no banco/dossiê.
- * Na vitrine exibimos três linhas, com reticências visuais apenas quando
- * o espaço do card termina. Assim não há alteração nem perda do texto salvo.
- */
+/* O resumo original permanece intacto; a vitrine mostra três linhas. */
 .home-page #grid-casos .card-summary,
 .home-page #grid-forense .card-summary {
     display: -webkit-box;
@@ -210,7 +206,49 @@
     font-size: .58rem;
 }
 
+/*
+ * iOS/Safari: evita que a barra dinâmica do navegador altere a altura útil
+ * da tela e faça o conteúdo inicial nascer atrás da interface do navegador.
+ * svh representa a menor viewport estável, com as barras visíveis.
+ */
+@supports (height: 100svh) {
+    html,
+    body.home-page {
+        min-height: 100svh;
+    }
+
+    .home-page .hero-section {
+        min-height: auto !important;
+        height: auto !important;
+    }
+
+    .home-page .sidebar-menu,
+    .home-page .mobile-overlay {
+        height: 100svh;
+        max-height: 100svh;
+    }
+}
+
 @media (max-width:760px) {
+    .home-page {
+        min-height: 100%;
+        overflow-x: clip;
+    }
+
+    .home-page .main-header {
+        top: 0;
+    }
+
+    .home-page .hero-section {
+        min-height: auto !important;
+        height: auto !important;
+    }
+
+    .home-page .hero-layout {
+        min-height: 0 !important;
+        height: auto !important;
+    }
+
     .home-page #grid-casos,
     .home-page #grid-forense {
         grid-auto-columns: minmax(255px,84%);
