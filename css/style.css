@@ -9,3 +9,27 @@
 @media(max-width:760px){.admin-manager-overlay,.admin-form-overlay{padding-left:8px!important;padding-right:8px!important}.admin-manager-overlay .admin-manager,.admin-form-overlay .admin-form-container,.admin-form-overlay .admin-form-panel{padding-top:max(20px,env(safe-area-inset-top))!important;padding-bottom:max(64px,env(safe-area-inset-bottom))!important}.admin-manager .admin-content-tabs{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin:15px 0 17px!important}.admin-manager .admin-content-tabs button{min-height:67px!important;grid-template-columns:22px minmax(0,1fr) auto!important;gap:7px!important;padding:10px 9px!important}.admin-manager .admin-content-tabs button i{font-size:.92rem!important}.admin-manager .admin-content-tabs button span{font-size:.57rem!important;letter-spacing:.035em!important;overflow-wrap:anywhere!important}.admin-manager .admin-content-tabs button small{min-width:22px!important;height:22px!important;font-size:.52rem!important}.admin-manager .admin-actions{gap:6px!important}.admin-manager .admin-action-button{flex:1 1 auto!important;min-height:40px!important;padding:9px 10px!important}.lit-grid-3{grid-template-columns:1fr}.lit-editor-section{padding:14px}.lit-sticky-actions{top:0}.lit-sticky-actions small{width:100%;margin-left:0}.lit-block-head{align-items:flex-start}.lit-block-head span{flex-wrap:wrap;justify-content:flex-end}.lit-block-add button{flex:1 1 45%}}
 
 @media(max-width:390px){.admin-manager .admin-content-tabs button{min-height:63px!important;padding:9px 7px!important;grid-template-columns:19px minmax(0,1fr) 21px!important}.admin-manager .admin-content-tabs button span{font-size:.53rem!important}.admin-manager .admin-content-tabs button small{min-width:21px!important;width:21px!important;padding:0!important}}
+
+/* Apoio ao Arquivo — marca d'água editorial mais legível. */
+.archive-support::before{
+    top:42%!important;
+    left:50%!important;
+    transform:translate(-50%,-50%)!important;
+    width:100%!important;
+    color:var(--paper)!important;
+    opacity:.075!important;
+    font-size:clamp(4rem,9vw,9rem)!important;
+    letter-spacing:.04em!important;
+    text-align:center!important;
+    user-select:none!important;
+    pointer-events:none!important;
+}
+
+@media(max-width:600px){
+    .archive-support::before{
+        top:34%!important;
+        font-size:clamp(2.8rem,15vw,5rem)!important;
+        white-space:normal!important;
+        line-height:.95!important;
+    }
+}
