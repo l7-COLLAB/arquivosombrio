@@ -1,0 +1,228 @@
+/* Arquivo Sombrio — vitrines e listagens unificadas (Dossiês / Garimpo / Perícia) */
+
+/* Página inicial: as três vitrines usam a mesma gramática compacta do Garimpo. */
+.home-page .cases-section,
+.home-page .forensic-section,
+.home-daily-section {
+    padding-block: clamp(3rem, 7vw, 5rem);
+    border-top: 1px solid rgba(181,157,122,.13);
+    border-bottom: 0;
+    background: transparent;
+}
+
+.home-page .forensic-section { display: block; }
+
+.home-page .cases-section .section-header,
+.home-page .forensic-section .section-header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 0;
+    border: 0;
+}
+
+.home-page .cases-section .section-header .section-description,
+.home-page .forensic-section .section-header .section-description,
+.home-page .forensic-intro,
+.home-page .forensic-tools,
+.home-page .forensic-results-status,
+.home-page .cases-section .archive-search-panel {
+    display: none !important;
+}
+
+.home-page .cases-section .section-number,
+.home-page .forensic-section .section-number {
+    display: block;
+    margin-bottom: .5rem;
+    color: #9f2b26;
+    font: .53rem/1 var(--font-mono);
+    letter-spacing: .14em;
+}
+
+.home-page .cases-section .section-eyebrow,
+.home-page .forensic-section .section-eyebrow {
+    display: none;
+}
+
+.home-page .cases-section .section-header h2,
+.home-page .forensic-section .section-header h2 {
+    margin: 0;
+    font: 500 clamp(1.4rem,4vw,2rem)/1 var(--font-display);
+    text-transform: none;
+}
+
+.home-page #grid-casos,
+.home-page #grid-forense {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(245px,31%);
+    grid-template-columns: none;
+    gap: .65rem;
+    overflow-x: auto;
+    padding-bottom: .55rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+}
+
+.home-page #grid-casos .case-card,
+.home-page #grid-forense .case-card {
+    display: block !important;
+    min-height: 118px;
+    scroll-snap-align: start;
+    transform: none;
+    box-shadow: none;
+}
+
+.home-page #grid-casos .case-card-link,
+.home-page #grid-forense .case-card-link {
+    min-height: 118px;
+    display: grid;
+    grid-template-columns: 92px minmax(0,1fr);
+}
+
+.home-page #grid-casos .card-image,
+.home-page #grid-forense .card-image {
+    width: 92px;
+    height: 100%;
+    min-height: 104px;
+}
+
+.home-page #grid-casos .card-content,
+.home-page #grid-forense .card-content {
+    min-width: 0;
+    justify-content: center;
+    padding: .7rem .75rem;
+}
+
+.home-page #grid-casos .badge.category,
+.home-page #grid-forense .badge.category {
+    margin: 0 0 .45rem;
+    padding: 0;
+    color: #8f2420;
+    background: transparent;
+    font-size: .46rem;
+}
+
+.home-page #grid-casos .badge.status,
+.home-page #grid-forense .badge.status,
+.home-page #grid-casos .card-meta,
+.home-page #grid-forense .card-meta,
+.home-page #grid-casos .btn-read-more,
+.home-page #grid-forense .btn-read-more,
+.home-page #grid-casos .content-favorite-button,
+.home-page #grid-forense .content-favorite-button {
+    display: none !important;
+}
+
+.home-page #grid-casos .card-content h3,
+.home-page #grid-forense .card-content h3 {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0 0 .35rem;
+    font: 500 .76rem/1.3 var(--font-display);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.home-page #grid-casos .card-summary,
+.home-page #grid-forense .card-summary {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0;
+    color: #92887b;
+    font-size: .6rem;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.home-page .forensic-archive-link,
+.home-page .cases-section .home-section-link {
+    margin-top: .9rem;
+}
+
+/* Listagens completas: mesmo padrão do Garimpo, mantendo busca e filtros discretos. */
+.archive-page #grid-casos,
+.forensic-page #grid-forense {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .75rem;
+}
+
+.archive-page .case-card,
+.forensic-page .case-card {
+    background: #0c0b09;
+    border-color: rgba(181,157,122,.15);
+}
+
+.archive-page .case-card-link,
+.forensic-page .case-card-link {
+    display: grid;
+    grid-template-columns: 184px minmax(0,1fr);
+    min-height: 190px;
+}
+
+.archive-page .case-card .card-image,
+.forensic-page .case-card .card-image {
+    height: 100%;
+    min-height: 190px;
+}
+
+.archive-page .case-card .card-content,
+.forensic-page .case-card .card-content {
+    justify-content: center;
+    padding: 1.25rem 1.4rem;
+}
+
+.archive-page .case-card .badge.category,
+.forensic-page .case-card .badge.category {
+    width: fit-content;
+    margin-bottom: .65rem;
+    padding: 0;
+    color: var(--red-light);
+    background: transparent;
+}
+
+/* Pesquisa compacta. */
+.archive-page .archive-search-panel,
+.forensic-page .forensic-tools {
+    margin: 0 0 1rem;
+    padding: .55rem;
+    background: rgba(11,9,8,.48);
+    border-color: rgba(181,157,122,.12);
+}
+
+.archive-page .archive-search input,
+.forensic-page .forensic-tools input,
+.forensic-page .forensic-tools select,
+.forensic-page .forensic-clear {
+    min-height: 34px;
+    padding-block: .4rem;
+    font-size: .58rem;
+}
+
+@media (max-width:760px) {
+    .home-page #grid-casos,
+    .home-page #grid-forense {
+        grid-auto-columns: minmax(255px,84%);
+    }
+
+    .home-page .cases-section .section-header,
+    .home-page .forensic-section .section-header {
+        display: flex;
+        align-items: end;
+    }
+
+    .archive-page .case-card-link,
+    .forensic-page .case-card-link {
+        grid-template-columns: 116px minmax(0,1fr);
+        min-height: 176px;
+    }
+
+    .archive-page .case-card .card-image,
+    .forensic-page .case-card .card-image {
+        min-height: 176px;
+    }
+}
