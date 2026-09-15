@@ -9,29 +9,20 @@ function render(casos){const grid=document.getElementById("grid-casos");if(!grid
 function aplicarFiltros(){if(!document.getElementById("grid-casos"))return;const f={busca:norm(document.getElementById("busca-casos")?.value),rapido:norm(document.querySelector(".filter-chip.active")?.dataset.filtro||"todos"),status:norm(document.getElementById("filtro-status")?.value),crime:norm(document.getElementById("filtro-crime")?.value),autor:norm(document.getElementById("filtro-autor")?.value),pais:norm(document.getElementById("filtro-pais")?.value)};let r=dadosFiltro().filter(c=>corresponde(c,f));const o=document.getElementById("ordenar-casos")?.value||"padrao";if(o==="az")r.sort((a,b)=>String(a.titulo).localeCompare(String(b.titulo),"pt-BR"));if(o==="za")r.sort((a,b)=>String(b.titulo).localeCompare(String(a.titulo),"pt-BR"));if(o==="recentes")r.sort((a,b)=>Number(b.ano||0)-Number(a.ano||0));if(o==="antigos")r.sort((a,b)=>Number(a.ano||0)-Number(b.ano||0));render(r);}
 function inicializarFiltrosArquivo(){const busca=document.getElementById("busca-casos");if(!busca)return;busca.addEventListener("input",aplicarFiltros);document.getElementById("limpar-busca")?.addEventListener("click",()=>{busca.value="";aplicarFiltros();busca.focus();});document.querySelectorAll(".filter-chip").forEach(ch=>ch.addEventListener("click",()=>{document.querySelectorAll(".filter-chip").forEach(x=>x.classList.remove("active"));ch.classList.add("active");aplicarFiltros();}));["filtro-status","filtro-crime","filtro-autor","filtro-pais","ordenar-casos"].forEach(id=>document.getElementById(id)?.addEventListener("change",aplicarFiltros));const abrir=document.getElementById("abrir-filtros-avancados"),painel=document.getElementById("filtros-avancados");abrir?.addEventListener("click",()=>{if(painel)painel.hidden=!painel.hidden;});document.getElementById("resetar-filtros")?.addEventListener("click",()=>{busca.value="";["filtro-status","filtro-crime","filtro-autor","filtro-pais"].forEach(id=>{const e=document.getElementById(id);if(e)e.value="";});const ord=document.getElementById("ordenar-casos");if(ord)ord.value="padrao";document.querySelectorAll(".filter-chip").forEach(x=>x.classList.toggle("active",x.dataset.filtro==="todos"));aplicarFiltros();});aplicarFiltros();}
 
-function carregarModulo(src,onload){const base=src.split("?")[0];document.querySelectorAll(`script[src^="${base}"]`).forEach(s=>s.remove());const s=document.createElement("script");s.src=src;s.async=true;if(onload)s.addEventListener("load",onload,{once:true});document.head.appendChild(s);}
+function carregarModulo(src,onload){const base=src.split("?")[0];document.querySelectorAll(`script[src^="${base}"]`).forEach(s=>s.remove());const s=document.createElement("script");s.src=src;s.async=false;if(onload)s.addEventListener("load",onload,{once:true});document.head.appendChild(s);}
 function carregarCss(href){if(document.querySelector(`link[href^="${href.split("?")[0]}"]`))return;const l=document.createElement("link");l.rel="stylesheet";l.href=href;document.head.appendChild(l);}
 
-/*
- * Central Administrativa: não criar abas provisórias com o mesmo data-admin-tab.
- * Isso bloqueava ensureShell() do admin-literario.js: ele encontrava a aba provisória,
- * entendia que Lendas/Creepypastas já existiam e nunca criava/bindava as abas reais.
- */
-function limparAbasLiterariasProvisorias(){
- document.querySelectorAll(".admin-literary-bridge-tab").forEach(el=>el.remove());
-}
-function carregarAdminLiterario(){
- limparAbasLiterariasProvisorias();
- carregarModulo(`js/admin-literario.js?v=20260915-2330-${Date.now()}`,()=>{
-  limparAbasLiterariasProvisorias();
-  /* O próprio módulo possui MutationObserver e ensureShell(); ao carregar com a
-     Central já aberta ele insere as abas reais, ações e seções imediatamente. */
+/* Central literária: carregamento pelo filtros.js, que já faz parte nativa do index. */
+function carregarAdministracaoLiteraria(){
+ const versao=`20260915-0750-${Date.now()}`;
+ carregarModulo(`js/admin-literario.js?v=${versao}`,()=>{
+  carregarModulo(`js/admin-core-tabs.js?v=${versao}`);
  });
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
  inicializarFiltrosArquivo();
- carregarAdminLiterario();
+ carregarAdministracaoLiteraria();
  if(document.body.classList.contains("home-page")){
   carregarCss("css/home-literario.css?v=20260915-1");
   carregarModulo("js/home-lendas-creepypastas.js?v=20260915-1");
