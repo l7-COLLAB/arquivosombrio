@@ -6824,3 +6824,123 @@ select:focus-visible {
         font-size: 0.43rem;
     }
 }
+
+
+/* Busca e filtros discretos nas listagens completas */
+.archive-page .archive-search-panel,
+.forensic-page .forensic-tools {
+    margin-bottom: 1.25rem;
+    padding: 0.7rem;
+    background: rgba(11, 9, 8, 0.58);
+    border-color: rgba(181, 157, 122, 0.14);
+}
+
+.archive-page .archive-search {
+    margin-bottom: 0.65rem;
+}
+
+.archive-page .archive-search input,
+.forensic-page .forensic-tools input,
+.forensic-page .forensic-tools select,
+.forensic-page .forensic-clear {
+    min-height: 36px;
+    padding-block: 0.45rem;
+    background: rgba(5, 5, 4, 0.72);
+    border-color: rgba(181, 157, 122, 0.16);
+    font-size: 0.61rem;
+}
+
+.archive-page .quick-filters {
+    flex-wrap: nowrap;
+    gap: 0.35rem;
+    margin-bottom: 0.65rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    scrollbar-width: none;
+}
+
+.archive-page .quick-filters::-webkit-scrollbar {
+    display: none;
+}
+
+.archive-page .filter-chip {
+    flex: 0 0 auto;
+    padding: 0.35rem 0.55rem;
+    font-size: 0.5rem;
+    opacity: 0.78;
+}
+
+.archive-page .filter-chip.active {
+    opacity: 1;
+}
+
+.archive-page .archive-filter-actions {
+    gap: 0.5rem;
+}
+
+.archive-page .advanced-filter-button,
+.archive-page .archive-order,
+.archive-page .reset-filters-button {
+    min-height: 34px;
+    padding: 0.4rem 0.65rem;
+    font-size: 0.55rem;
+}
+
+.archive-page .archive-results-bar {
+    min-height: auto;
+    margin-top: 0.6rem;
+    padding-top: 0.55rem;
+    font-size: 0.54rem;
+}
+
+.forensic-page .forensic-tools {
+    grid-template-columns: minmax(220px, 1.5fr) minmax(145px, 0.75fr) minmax(135px, 0.7fr) auto;
+    gap: 0.5rem;
+}
+
+.forensic-page .forensic-tools label {
+    gap: 0.3rem;
+}
+
+.forensic-page .forensic-tools label > span {
+    font-size: 0.45rem;
+    opacity: 0.72;
+}
+
+.forensic-page .forensic-clear {
+    width: auto;
+    padding-inline: 0.7rem;
+}
+
+@media (max-width: 700px) {
+    .archive-page .archive-search-panel,
+    .forensic-page .forensic-tools {
+        padding: 0.55rem;
+    }
+
+    .archive-page .archive-filter-actions {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .archive-page .advanced-filter-button,
+    .archive-page .archive-order {
+        width: 100%;
+    }
+
+    .archive-page .active-filter-indicator {
+        display: none;
+    }
+
+    .forensic-page .forensic-tools {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .forensic-page .forensic-search {
+        grid-column: 1 / -1;
+    }
+
+    .forensic-page .forensic-clear {
+        width: 100%;
+    }
+}
