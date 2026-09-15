@@ -10,6 +10,47 @@ function aplicarFiltros(){if(!document.getElementById("grid-casos"))return;const
 function inicializarFiltrosArquivo(){const busca=document.getElementById("busca-casos");if(!busca)return;busca.addEventListener("input",aplicarFiltros);document.getElementById("limpar-busca")?.addEventListener("click",()=>{busca.value="";aplicarFiltros();busca.focus();});document.querySelectorAll(".filter-chip").forEach(ch=>ch.addEventListener("click",()=>{document.querySelectorAll(".filter-chip").forEach(x=>x.classList.remove("active"));ch.classList.add("active");aplicarFiltros();}));["filtro-status","filtro-crime","filtro-autor","filtro-pais","ordenar-casos"].forEach(id=>document.getElementById(id)?.addEventListener("change",aplicarFiltros));const abrir=document.getElementById("abrir-filtros-avancados"),painel=document.getElementById("filtros-avancados");abrir?.addEventListener("click",()=>{if(painel)painel.hidden=!painel.hidden;});document.getElementById("resetar-filtros")?.addEventListener("click",()=>{busca.value="";["filtro-status","filtro-crime","filtro-autor","filtro-pais"].forEach(id=>{const e=document.getElementById(id);if(e)e.value="";});const ord=document.getElementById("ordenar-casos");if(ord)ord.value="padrao";document.querySelectorAll(".filter-chip").forEach(x=>x.classList.toggle("active",x.dataset.filtro==="todos"));aplicarFiltros();});aplicarFiltros();}
 
 /* Módulos complementares da Home/Central de Arquivo */
-function carregarModulo(src){const base=src.split("?")[0];document.querySelectorAll(`script[src^="${base}"]`).forEach(s=>s.remove());const s=document.createElement("script");s.src=src;s.defer=true;document.head.appendChild(s);}
+function carregarModulo(src){const base=src.split("?")[0];document.querySelectorAll(`script[src^="${base}"]`).forEach(s=>s.remove());const s=document.createElement("script");s.src=src;s.async=true;document.head.appendChild(s);}
 function carregarCss(href){if(document.querySelector(`link[href^="${href.split("?")[0]}"]`))return;const l=document.createElement("link");l.rel="stylesheet";l.href=href;document.head.appendChild(l);}
-document.addEventListener("DOMContentLoaded",()=>{inicializarFiltrosArquivo();carregarModulo("js/admin-literario.js?v=20260914-2312");if(document.body.classList.contains("home-page")){carregarCss("css/home-literario.css?v=20260915-1");carregarModulo("js/home-lendas-creepypastas.js?v=20260915-1");}});
+
+/* Ponte direta: os dois módulos precisam existir na Central mesmo se o módulo literário demorar a carregar. */
+function garantirAbasLiterariasAdmin(){
+ const painel=document.querySelector("#admin-manager .admin-manager");
+ const tabs=painel?.querySelector(".admin-content-tabs");
+ if(!painel||!tabs)return false;
+ const defs=[
+  ["lendas","fa-book-skull","Lendas"],
+  ["creepypastas","fa-ghost","Creepypastas"]
+ ];
+ defs.forEach(([tipo,icone,nome])=>{
+  if(tabs.querySelector(`[data-admin-tab="${tipo}"]`))return;
+  const b=document.createElement("button");
+  b.type="button";b.dataset.adminTab=tipo;b.className="admin-literary-bridge-tab";
+  b.innerHTML=`<i class="fa-solid ${icone}"></i><span>${nome}</span><small>0</small>`;
+  b.addEventListener("click",()=>{
+   const real=tabs.querySelector(`[data-admin-tab="${tipo}"]:not(.admin-literary-bridge-tab)`);
+   if(real){real.click();return;}
+   carregarModulo(`js/admin-literario.js?v=20260914-2316-${Date.now()}`);
+   setTimeout(()=>{
+    const alvo=tabs.querySelector(`[data-admin-tab="${tipo}"]:not(.admin-literary-bridge-tab)`);
+    if(alvo)alvo.click();
+    else alert(`O módulo ${nome} está sendo carregado. Toque novamente em ${nome} em um instante.`);
+   },450);
+  });
+  tabs.appendChild(b);
+ });
+ return true;
+}
+
+const observadorAdminLiterario=new MutationObserver(()=>garantirAbasLiterariasAdmin());
+observadorAdminLiterario.observe(document.documentElement,{childList:true,subtree:true});
+
+document.addEventListener("DOMContentLoaded",()=>{
+ inicializarFiltrosArquivo();
+ garantirAbasLiterariasAdmin();
+ carregarModulo(`js/admin-literario.js?v=20260914-2316-${Date.now()}`);
+ if(document.body.classList.contains("home-page")){
+  carregarCss("css/home-literario.css?v=20260915-1");
+  carregarModulo("js/home-lendas-creepypastas.js?v=20260915-1");
+ }
+});
