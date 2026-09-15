@@ -130,12 +130,32 @@ function instalarAcessoAdminIndependente(){
     },false);
 }
 
+function carregarModulosLiterariosAdmin(){
+    if(window.__arquivoSombrioLiterarioLoaderReady)return;
+    window.__arquivoSombrioLiterarioLoaderReady=true;
+
+    const existente=document.querySelector('script[data-admin-literary-core="true"]');
+    if(existente)return;
+
+    const script=document.createElement("script");
+    script.src=`js/admin-core-tabs.js?v=20260915-1`;
+    script.defer=true;
+    script.dataset.adminLiteraryCore="true";
+    script.addEventListener("error",()=>{
+        console.warn("Não foi possível carregar os módulos de Lendas e Creepypastas da área administrativa.");
+        window.__arquivoSombrioLiterarioLoaderReady=false;
+    },{once:true});
+    document.head.appendChild(script);
+}
+
 function inicializarComplementosArquivo(){
     instalarAcessoAdminIndependente();
+    carregarModulosLiterariosAdmin();
     inicializarFiltrosArquivo();
 }
 
 instalarAcessoAdminIndependente();
+carregarModulosLiterariosAdmin();
 if(document.readyState==="loading"){
     document.addEventListener("DOMContentLoaded",inicializarComplementosArquivo,{once:true});
 }else{
