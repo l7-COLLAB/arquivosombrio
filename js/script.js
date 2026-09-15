@@ -9636,7 +9636,67 @@ if (
 
         if (resultado.error) {
 
-            throw resultado.error;
+            /*
+             * Compatibilidade: se a migração SQL
+             * ainda não foi aplicada, o banco não
+             * conhece status_publicacao/slug.
+             * Repete a operação sem esses campos
+             * em vez de falhar.
+             */
+
+            const mensagemErro =
+                String(
+                    resultado.error.message ||
+                    ""
+                );
+
+            const faltaColuna =
+                mensagemErro.includes(
+                    "status_publicacao"
+                ) ||
+                mensagemErro.includes(
+                    "'slug'"
+                );
+
+            if (faltaColuna) {
+
+                const casoCompativel =
+                    {
+                        ...caso
+                    };
+
+                delete casoCompativel.status_publicacao;
+
+                delete casoCompativel.slug;
+
+                resultado =
+                    casoExistente
+                        ? await supabaseClient
+                              .from("Casos")
+                              .update(casoCompativel)
+                              .eq(
+                                  "id",
+                                  casoExistente.id
+                              )
+                              .select()
+                              .single()
+                        : await supabaseClient
+                              .from("Casos")
+                              .insert([
+                                  casoCompativel
+                              ])
+                              .select()
+                              .single();
+
+                if (resultado.error) {
+
+                    throw resultado.error;
+                }
+
+            } else {
+
+                throw resultado.error;
+            }
         }
 
 

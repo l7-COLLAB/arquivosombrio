@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    ARQUIVO SOMBRIO
    BANCO DE DADOS PRINCIPAL — CASOS, MISTÉRIOS E PERÍCIA
    ========================================================================== */
@@ -73,7 +73,7 @@ teorias: [
 
         status: "TÉCNICO / METODOLÓGICO",
 
-        imagem: "imagens/forense/luminol.PNG",
+        imagem: "imagens/forense/luminol.jpg",
 
         resumo:
             "Análise introdutória sobre o uso de reagentes quimioluminescentes na localização de possíveis vestígios de sangue em investigações forenses.",
@@ -113,7 +113,7 @@ teorias: [
 
         status: "CASO HISTÓRICO",
 
-        imagem: "imagens/misterio/somerton.PNG",
+        imagem: "imagens/misterio/somerton.jpg",
 
         resumo:
             "Um homem foi encontrado morto na praia de Somerton, dando origem a uma das investigações de identidade mais intrigantes da Austrália.",
@@ -295,7 +295,7 @@ teorias: [
 
         status: "TÉCNICO / METODOLÓGICO",
 
-        imagem: "imagens/forense/papiloscopia.PNG",
+        imagem: "imagens/forense/papiloscopia.jpg",
 
         resumo:
             "Introdução aos princípios utilizados na identificação papiloscópica e no confronto de impressões digitais.",
