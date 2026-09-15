@@ -1,24 +1,54 @@
-const VERSION = "arquivo-sombrio-20260915-admin-core-5";
-self.addEventListener("install", () => self.skipWaiting());
-self.addEventListener("activate", event => event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.map(key=>caches.delete(key)));await self.clients.claim();})()));
+const CACHE_NAME = "arquivo-sombrio-20260915-cache-6";
+
+self.addEventListener("install", () => {
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.map(key => caches.delete(key)));
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener("message", event => {
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
+  if (event.data?.type === "CLEAR_CACHES") {
+    event.waitUntil(caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key)))));
+  }
+});
+
 self.addEventListener("fetch", event => {
-  const req = event.request;
-  if (req.mode !== "navigate") return;
-  const url = new URL(req.url);
-  const isHome = url.pathname === "/arquivosombrio/" || url.pathname.endsWith("/arquivosombrio/index.html");
-  if (!isHome) return;
+  const request = event.request;
+  if (request.method !== "GET") return;
+
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  const atualizado = request.mode === "navigate" || /\.(?:html|js|css|json|xml)$/i.test(url.pathname);
+
+  if (atualizado) {
+    event.respondWith((async () => {
+      try {
+        return await fetch(request, { cache: "no-store" });
+      } catch (error) {
+        const cached = await caches.match(request);
+        if (cached) return cached;
+        throw error;
+      }
+    })());
+    return;
+  }
+
   event.respondWith((async () => {
-    try {
-      const response = await fetch(req, { cache: "no-store" });
-      if (!response.ok) return response;
-      let html = await response.text();
-      const inject = '<script src="js/admin-literario.js?v=20260915-0752"></script><script src="js/admin-core-tabs.js?v=20260915-0752"></script>';
-      html = html.replace(/<script src="js\/admin-core-tabs\.js[^>]*><\/script>/g, "").replace(/<script src="js\/admin-literario\.js[^>]*><\/script>/g, "");
-      html = html.replace("</body>", inject + "</body>");
-      const headers = new Headers(response.headers);
-      headers.delete("content-length");
-      headers.set("cache-control","no-store, no-cache, must-revalidate");
-      return new Response(html,{status:response.status,statusText:response.statusText,headers});
-    } catch (_) { return fetch(req,{cache:"no-store"}); }
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    const response = await fetch(request);
+    if (response?.ok && response.type === "basic") {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone());
+    }
+    return response;
   })());
 });
