@@ -104,13 +104,30 @@ function abrirModalAdminImediatamente(){
 function instalarAcessoAdminIndependente(){
     if(window.__arquivoSombrioAdminClickReady)return;
     window.__arquivoSombrioAdminClickReady=true;
+
+    /*
+     * Fallback apenas para páginas em que o módulo administrativo principal
+     * não estiver disponível. Quando script.js carregou corretamente, ele é
+     * responsável por validar a sessão e decidir entre abrir o painel ou o
+     * formulário de login. Não interceptamos esse clique, evitando bloquear
+     * os listeners instalados por inicializarAdmin().
+     */
     document.addEventListener("click",evento=>{
         const alvo=evento.target?.closest?.("#btn-open-admin,#mobile-btn-admin,.sidebar-admin-link");
         if(!alvo)return;
+
+        const adminPrincipalDisponivel=
+            typeof window.obterSessaoAdmin==="function" ||
+            typeof window.abrirPainelAdmin==="function" ||
+            typeof inicializarAdmin==="function";
+
+        if(adminPrincipalDisponivel){
+            return;
+        }
+
         evento.preventDefault();
-        evento.stopImmediatePropagation();
         abrirModalAdminImediatamente();
-    },true);
+    },false);
 }
 
 function inicializarComplementosArquivo(){
