@@ -106,12 +106,15 @@ async function tratarAcessoAdmin(evento){
     if(!alvo)return;
 
     evento.preventDefault();
+    evento.stopImmediatePropagation();
 
     try{
-        if(typeof obterSessaoAdmin==="function"){
+        if(
+            typeof obterSessaoAdmin==="function" &&
+            typeof abrirPainelAdmin==="function"
+        ){
             const sessao=await obterSessaoAdmin();
-
-            if(sessao && typeof abrirPainelAdmin==="function"){
+            if(sessao){
                 await abrirPainelAdmin();
                 return;
             }
@@ -127,7 +130,32 @@ function instalarAcessoAdminIndependente(){
     if(window.__arquivoSombrioAdminClickReady)return;
     window.__arquivoSombrioAdminClickReady=true;
 
-    document.addEventListener("click",tratarAcessoAdmin,false);
+    document.addEventListener("click",tratarAcessoAdmin,true);
+
+    document.addEventListener("submit",evento=>{
+        const formulario=evento.target;
+        if(formulario?.id!=="form-admin-login")return;
+        if(typeof autenticarAdmin!=="function")return;
+
+        evento.preventDefault();
+        evento.stopImmediatePropagation();
+        autenticarAdmin(evento);
+    },true);
+
+    document.addEventListener("click",evento=>{
+        const fechar=evento.target?.closest?.("#close-modal");
+        if(!fechar)return;
+        const modal=document.getElementById("modal-admin");
+        if(!modal)return;
+        evento.preventDefault();
+        evento.stopImmediatePropagation();
+        modal.classList.remove("active");
+        modal.style.removeProperty("display");
+        modal.style.removeProperty("visibility");
+        modal.style.removeProperty("opacity");
+        modal.style.removeProperty("pointer-events");
+        document.body.classList.remove("modal-open");
+    },true);
 }
 
 function carregarModulosLiterariosAdmin(){
@@ -138,7 +166,7 @@ function carregarModulosLiterariosAdmin(){
     if(existente)return;
 
     const script=document.createElement("script");
-    script.src=`js/admin-core-tabs.js?v=20260915-2`;
+    script.src=`js/admin-core-tabs.js?v=20260915-3`;
     script.defer=true;
     script.dataset.adminLiteraryCore="true";
     script.addEventListener("error",()=>{
