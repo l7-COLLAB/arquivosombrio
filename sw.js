@@ -1,4 +1,4 @@
-const VERSION = "arquivo-sombrio-20260914-literario-1";
+const VERSION = "arquivo-sombrio-20260915-literario-2";
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", event => event.waitUntil(self.clients.claim()));
 self.addEventListener("fetch", event => {
@@ -12,13 +12,11 @@ self.addEventListener("fetch", event => {
       const response = await fetch(req, { cache: "no-store" });
       if (!response.ok) return response;
       let html = await response.text();
-      const inject = '<script src="js/arquivo-literario-bootstrap.js?v=20260914-2"></script><script src="js/admin-literario.js?v=20260914-2"></script>';
-      if (!html.includes("js/admin-literario.js")) html = html.replace("</body>", inject + "</body>");
-      const headers = new Headers(response.headers);
-      headers.delete("content-length");
-      return new Response(html, { status: response.status, statusText: response.statusText, headers });
-    } catch (_) {
-      return fetch(req);
-    }
+      const inject = '<script src="js/arquivo-literario-bootstrap.js?v=20260915-2"></script><script src="js/admin-literario.js?v=20260915-2"></script>';
+      html = html.replace(/<script src="js\/arquivo-literario-bootstrap\.js[^>]*><\/script>/g, "").replace(/<script src="js\/admin-literario\.js[^>]*><\/script>/g, "");
+      html = html.replace("</body>", inject + "</body>");
+      const headers = new Headers(response.headers); headers.delete("content-length");
+      return new Response(html,{status:response.status,statusText:response.statusText,headers});
+    } catch (_) { return fetch(req,{cache:"no-store"}); }
   })());
 });
