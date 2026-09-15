@@ -138,7 +138,7 @@ function obterTokenTurnstile() {
                             "translate(-50%, -50%)";
 
                         container.style.zIndex =
-                            "999999";
+                            "2147483647";
 
                         container.style.padding =
                             "20px";
@@ -3777,14 +3777,39 @@ async function carregarPericiasSupabase() {
 }
 
 
+function casoEstaPublicado(
+    caso
+) {
+
+    /*
+     * Registros sem a coluna status_publicacao
+     * (legado / antes da migração SQL) são
+     * tratados como publicados.
+     */
+
+    const status =
+        String(
+            caso?.status_publicacao ||
+            "publicado"
+        ).toLowerCase();
+
+    return status === "publicado";
+}
+
+
 function obterTodosCasos() {
 
     const iniciais =
         obterCasosIniciais();
 
+    const casosSupabasePublicos =
+        casosSupabase.filter(
+            casoEstaPublicado
+        );
+
     const idsSupabase =
         new Set(
-            casosSupabase.map(
+            casosSupabasePublicos.map(
                 caso =>
                     String(caso.id)
             )
@@ -3799,7 +3824,7 @@ function obterTodosCasos() {
         );
 
     return [
-        ...casosSupabase,
+        ...casosSupabasePublicos,
         ...casosIniciaisFiltrados
     ];
 }
@@ -6984,6 +7009,15 @@ function enviarSugestao(evento) {
                 )
     };
 
+    /*
+     * Persistência real: Supabase primeiro.
+     * O localStorage continua como cópia de
+     * segurança local, mas a administradora
+     * recebe a sugestão em qualquer dispositivo.
+     */
+
+    enviarSugestaoSupabase(sugestao);
+
     const sugestoes =
         lerStorage(
             CONFIG.STORAGE_SUGESTOES
@@ -7005,6 +7039,55 @@ function enviarSugestao(evento) {
         mostrarMensagem(
             "mensagem-sucesso",
             "Sugestão enviada para o arquivo."
+        );
+    }
+}
+
+
+async function enviarSugestaoSupabase(
+    sugestao
+) {
+
+    try {
+
+        const supabaseClient =
+            await obterClienteSupabase();
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("Sugestoes")
+                .insert([
+                    {
+                        nome:
+                            sugestao.nome,
+                        titulo:
+                            sugestao.titulo,
+                        descricao:
+                            sugestao.descricao ||
+                            null
+                    }
+                ]);
+
+        if (error) {
+
+            throw error;
+        }
+
+    } catch (erro) {
+
+        /*
+         * Sem a migração SQL aplicada (colunas
+         * nome/titulo/descricao), a inserção
+         * falha e a sugestão fica apenas no
+         * localStorage, como antes.
+         */
+
+        console.warn(
+            "Sugestão não registrada no Supabase (verifique a migração SQL):",
+            erro?.message ||
+            erro
         );
     }
 }
@@ -7342,8 +7425,16 @@ async function autenticarAdmin(evento) {
 
         if (erroElemento) {
 
+            const mensagemAntiBot =
+                /anti-bot|verificação|Turnstile/i.test(
+                    erro?.message ||
+                    ""
+                );
+
             erroElemento.textContent =
-                "Credenciais inválidas ou acesso não autorizado.";
+                mensagemAntiBot
+                    ? erro.message
+                    : "Credenciais inválidas ou acesso não autorizado.";
 
             erroElemento.classList.add(
                 "visible"
@@ -7572,7 +7663,7 @@ const pericias =
                                         ${escaparHTML(
                                             caso.categoria ||
                                             "Sem categoria"
-                                        )}
+                                        )}${caso.status_publicacao === "rascunho" ? " · <strong style=\"color:#c96a5a;\">RASCUNHO</strong>" : ""}
                                     </small>
 
                                 </div>
@@ -8168,6 +8259,69 @@ const livro =
                                     : "EM ARQUIVO"
                             }"
                         >
+
+                    </label>
+
+
+                    <label>
+
+                        Publicação
+
+                        <select
+                            id="admin-publicacao"
+                        >
+
+                            <option
+                                value="publicado"
+                                ${
+                                    dados?.status_publicacao !==
+                                    "rascunho"
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
+                                Publicado
+                            </option>
+
+
+                            <option
+                                value="rascunho"
+                                ${
+                                    dados?.status_publicacao ===
+                                    "rascunho"
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
+                                Rascunho (invisível ao público)
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <label>
+
+                        Endereço amigável (slug)
+
+                        <input
+                            type="text"
+                            id="admin-slug"
+                            value="${
+                                dados
+                                    ? escaparHTML(
+                                        dados.slug ||
+                                        ""
+                                    )
+                                    : ""
+                            }"
+                            placeholder="ex.: lizzie-borden (gerado a partir do título se vazio)"
+                        >
+
+                        <small>
+                            Usado em caso.html?slug=... Deixe vazio para gerar automaticamente.
+                        </small>
 
                     </label>
 
@@ -9119,6 +9273,38 @@ const livro =
 
 
 /* ==========================================================================
+   SLUG DE DOSSIÊ
+   ========================================================================== */
+
+function normalizarSlugDossie(
+    texto
+) {
+
+    return String(
+        texto || ""
+    )
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .toLowerCase()
+        .replace(
+            /[^a-z0-9]+/g,
+            "-"
+        )
+        .replace(
+            /^-+|-+$/g,
+            ""
+        )
+        .slice(
+            0,
+            80
+        );
+}
+
+
+/* ==========================================================================
    SALVAR CASO ADMIN — SUPABASE
    ========================================================================== */
 async function salvarCasoAdmin(
@@ -9220,6 +9406,33 @@ async function salvarCasoAdmin(
                     ?.value
                     .trim() ||
                 "EM ARQUIVO",
+
+            status_publicacao:
+                document
+                    .getElementById(
+                        "admin-publicacao"
+                    )
+                    ?.value ===
+                "rascunho"
+                    ? "rascunho"
+                    : "publicado",
+
+            slug:
+                normalizarSlugDossie(
+                    document
+                        .getElementById(
+                            "admin-slug"
+                        )
+                        ?.value
+                ) ||
+                normalizarSlugDossie(
+                    document
+                        .getElementById(
+                            "admin-title"
+                        )
+                        ?.value
+                ) ||
+                null,
 
             imagem:
                 document

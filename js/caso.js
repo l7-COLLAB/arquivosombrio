@@ -327,12 +327,36 @@ function obterIdDaURL() {
 }
 
 
+function obterSlugDaURL() {
+
+    const parametros =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const slug =
+        parametros.get(
+            "slug"
+        );
+
+    if (!slug) {
+
+        return null;
+    }
+
+    return String(
+        slug
+    ).toLowerCase();
+}
+
+
 /* ==========================================================================
    BUSCAR CASO NO SUPABASE
    ========================================================================== */
 
 async function buscarCasoSupabase(
-    id
+    id,
+    slug
 ) {
 
     try {
@@ -341,22 +365,33 @@ async function buscarCasoSupabase(
             await obterClienteSupabaseCaso();
 
 
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
+        const consulta =
+            supabaseClient
                 .from(
                     "Casos"
                 )
                 .select(
                     "*"
-                )
-                .eq(
-                    "id",
-                    id
-                )
-                .maybeSingle();
+                );
+
+
+        const {
+            data,
+            error
+        } =
+            slug
+                ? await consulta
+                    .ilike(
+                        "slug",
+                        slug
+                    )
+                    .maybeSingle()
+                : await consulta
+                    .eq(
+                        "id",
+                        id
+                    )
+                    .maybeSingle();
 
 
         if (error) {
@@ -390,8 +425,11 @@ async function carregarCaso() {
     const id =
         obterIdDaURL();
 
+    const slug =
+        obterSlugDaURL();
 
-    if (!id) {
+
+    if (!id && !slug) {
 
         mostrarNaoEncontrado();
 
@@ -401,12 +439,13 @@ async function carregarCaso() {
 
     /*
      * 1. Tenta buscar o dossiê diretamente
-     *    no Supabase.
+     *    no Supabase (por slug ou id).
      */
 
     let caso =
         await buscarCasoSupabase(
-            id
+            id,
+            slug
         );
 
 
@@ -454,7 +493,66 @@ async function carregarCaso() {
 }
 
 
+function exibirAvisoRascunho(caso) {
+
+    if (
+        String(
+            caso?.status_publicacao || ""
+        ).toLowerCase() !==
+        "rascunho"
+    ) {
+        return;
+    }
+
+    const titulo =
+        document.getElementById(
+            "caso-titulo"
+        );
+
+    if (!titulo) {
+        return;
+    }
+
+    const container =
+        titulo.closest("section") ||
+        titulo.parentElement;
+
+    if (
+        !container ||
+        document.getElementById(
+            "caso-rascunho-aviso"
+        )
+    ) {
+        return;
+    }
+
+    const aviso =
+        document.createElement("div");
+
+    aviso.id =
+        "caso-rascunho-aviso";
+
+    aviso.setAttribute(
+        "role",
+        "status"
+    );
+
+    aviso.style.cssText =
+        "border:1px solid #b34141;background:rgba(179,65,65,.12);color:#e8b8b8;padding:12px 16px;margin:0 0 18px;font:600 13px/1.5 monospace;letter-spacing:.06em;text-transform:uppercase";
+
+    aviso.textContent =
+        "RASCUNHO — visível apenas para a administração. Publique o dossiê para liberar ao público.";
+
+    container.insertBefore(
+        aviso,
+        container.firstChild
+    );
+}
+
+
 function renderizarCaso(caso) {
+
+    exibirAvisoRascunho(caso);
 
     preencherTexto(
         "caso-titulo",
