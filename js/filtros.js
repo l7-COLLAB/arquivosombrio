@@ -109,21 +109,75 @@ async function tratarAcessoAdmin(evento){
     evento.stopImmediatePropagation();
 
     try{
-        if(
-            typeof obterSessaoAdmin==="function" &&
-            typeof abrirPainelAdmin==="function"
-        ){
+        if(typeof obterSessaoAdmin==="function"&&typeof abrirPainelAdmin==="function"){
             const sessao=await obterSessaoAdmin();
-            if(sessao){
-                await abrirPainelAdmin();
-                return;
-            }
+            if(sessao){await abrirPainelAdmin();return;}
         }
-    }catch(erro){
-        console.warn("Falha não bloqueante ao verificar a sessão administrativa.",erro);
-    }
+    }catch(erro){console.warn("Falha não bloqueante ao verificar a sessão administrativa.",erro);}
 
     abrirModalAdminImediatamente();
+}
+
+async function autenticarAdminDireto(formulario){
+    const email=document.getElementById("admin-email")?.value?.trim();
+    const senha=document.getElementById("admin-pass")?.value||"";
+    const mensagem=document.getElementById("admin-login-erro");
+    const botao=formulario.querySelector('button[type="submit"]');
+    const original=botao?.innerHTML;
+
+    const mostrar=texto=>{
+        if(!mensagem)return;
+        mensagem.textContent=texto;
+        mensagem.classList.add("visible");
+    };
+
+    if(!email||!senha){mostrar("Preencha o e-mail e a senha.");return;}
+
+    if(botao){
+        botao.disabled=true;
+        botao.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
+    }
+    if(mensagem){mensagem.textContent="";mensagem.classList.remove("visible");}
+
+    try{
+        if(typeof obterClienteSupabase!=="function")throw new Error("Cliente do Supabase indisponível.");
+        const supabaseClient=await obterClienteSupabase();
+
+        // O login administrativo não deve ficar indefinidamente bloqueado
+        // esperando o widget visual do Turnstile. O Supabase continua sendo
+        // responsável por validar e criar a sessão; se o projeto exigir
+        // CAPTCHA, a resposta real será exibida ao administrador.
+        const {data,error}=await Promise.race([
+            supabaseClient.auth.signInWithPassword({email,password:senha}),
+            new Promise((_,reject)=>setTimeout(()=>reject(new Error("O servidor demorou demais para responder. Tente novamente.")),15000))
+        ]);
+
+        if(error)throw error;
+        if(!data?.session?.user)throw new Error("Não foi possível iniciar a sessão administrativa.");
+
+        const role=data.session.user.app_metadata?.role;
+        if(role!=="admin"){
+            await supabaseClient.auth.signOut();
+            throw new Error("A conta foi autenticada, mas não possui permissão administrativa.");
+        }
+
+        formulario.reset();
+        if(mensagem){mensagem.textContent="";mensagem.classList.remove("visible");}
+        if(typeof fecharModalAdmin==="function")fecharModalAdmin();
+        if(typeof abrirPainelAdmin==="function")await abrirPainelAdmin();
+    }catch(erro){
+        console.error("Falha no login administrativo.",erro);
+        const texto=String(erro?.message||"");
+        if(/captcha|turnstile|challenge/i.test(texto)){
+            mostrar("A autenticação chegou ao Supabase, mas a proteção CAPTCHA está bloqueando o login. Verifique a configuração do CAPTCHA no Supabase.");
+        }else if(/invalid login credentials/i.test(texto)){
+            mostrar("E-mail ou senha incorretos para esta conta do Arquivo Sombrio.");
+        }else{
+            mostrar(texto||"Não foi possível acessar a área administrativa.");
+        }
+    }finally{
+        if(botao){botao.disabled=false;if(original!==undefined)botao.innerHTML=original;}
+    }
 }
 
 function instalarAcessoAdminIndependente(){
@@ -135,21 +189,9 @@ function instalarAcessoAdminIndependente(){
     document.addEventListener("submit",evento=>{
         const formulario=evento.target;
         if(formulario?.id!=="form-admin-login")return;
-        if(typeof autenticarAdmin!=="function")return;
-
         evento.preventDefault();
         evento.stopImmediatePropagation();
-
-        // O listener delegado roda no document; autenticarAdmin, porém,
-        // precisa receber o formulário como currentTarget para poder
-        // resetá-lo após um login válido. Sem isso, o login é aceito pelo
-        // Supabase e em seguida falha em formulario.reset(), exibindo uma
-        // mensagem genérica de credenciais inválidas.
-        autenticarAdmin({
-            preventDefault:()=>{},
-            currentTarget:formulario,
-            target:formulario
-        });
+        autenticarAdminDireto(formulario);
     },true);
 
     document.addEventListener("click",evento=>{
@@ -171,18 +213,13 @@ function instalarAcessoAdminIndependente(){
 function carregarModulosLiterariosAdmin(){
     if(window.__arquivoSombrioLiterarioLoaderReady)return;
     window.__arquivoSombrioLiterarioLoaderReady=true;
-
     const existente=document.querySelector('script[data-admin-literary-core="true"]');
     if(existente)return;
-
     const script=document.createElement("script");
     script.src=`js/admin-core-tabs.js?v=20260915-3`;
     script.defer=true;
     script.dataset.adminLiteraryCore="true";
-    script.addEventListener("error",()=>{
-        console.warn("Não foi possível carregar os módulos de Lendas e Creepypastas da área administrativa.");
-        window.__arquivoSombrioLiterarioLoaderReady=false;
-    },{once:true});
+    script.addEventListener("error",()=>{console.warn("Não foi possível carregar os módulos de Lendas e Creepypastas da área administrativa.");window.__arquivoSombrioLiterarioLoaderReady=false;},{once:true});
     document.head.appendChild(script);
 }
 
@@ -190,16 +227,8 @@ function atualizarServiceWorkerProjeto(){
     if(!("serviceWorker" in navigator))return;
     if(window.__arquivoSombrioSwUpdateReady)return;
     window.__arquivoSombrioSwUpdateReady=true;
-
     const swUrl=new URL("sw.js",window.location.href);
-
-    navigator.serviceWorker
-        .register(swUrl.href)
-        .then(registro=>registro.update())
-        .catch(erro=>{
-            console.warn("Não foi possível atualizar o Service Worker do Arquivo Sombrio.",erro);
-            window.__arquivoSombrioSwUpdateReady=false;
-        });
+    navigator.serviceWorker.register(swUrl.href).then(registro=>registro.update()).catch(erro=>{console.warn("Não foi possível atualizar o Service Worker do Arquivo Sombrio.",erro);window.__arquivoSombrioSwUpdateReady=false;});
 }
 
 function inicializarComplementosArquivo(){
@@ -212,9 +241,6 @@ function inicializarComplementosArquivo(){
 instalarAcessoAdminIndependente();
 carregarModulosLiterariosAdmin();
 atualizarServiceWorkerProjeto();
-if(document.readyState==="loading"){
-    document.addEventListener("DOMContentLoaded",inicializarComplementosArquivo,{once:true});
-}else{
-    inicializarComplementosArquivo();
-}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",inicializarComplementosArquivo,{once:true});
+else inicializarComplementosArquivo();
 })();
