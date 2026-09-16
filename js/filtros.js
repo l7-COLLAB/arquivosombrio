@@ -139,7 +139,17 @@ function instalarAcessoAdminIndependente(){
 
         evento.preventDefault();
         evento.stopImmediatePropagation();
-        autenticarAdmin(evento);
+
+        // O listener delegado roda no document; autenticarAdmin, porém,
+        // precisa receber o formulário como currentTarget para poder
+        // resetá-lo após um login válido. Sem isso, o login é aceito pelo
+        // Supabase e em seguida falha em formulario.reset(), exibindo uma
+        // mensagem genérica de credenciais inválidas.
+        autenticarAdmin({
+            preventDefault:()=>{},
+            currentTarget:formulario,
+            target:formulario
+        });
     },true);
 
     document.addEventListener("click",evento=>{
