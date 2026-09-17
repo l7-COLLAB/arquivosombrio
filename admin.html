@@ -39,6 +39,31 @@
             color: var(--paper);
             border-color: var(--red-light);
         }
+
+        .admin-captcha-area {
+            margin: 18px 0;
+            padding: 16px;
+            border: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.22);
+        }
+
+        #admin-turnstile {
+            min-height: 65px;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        #admin-captcha-status {
+            margin: 10px 0 0;
+            color: var(--muted);
+            font-family: var(--font-mono);
+            font-size: 0.64rem;
+        }
+
+        #admin-submit:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
@@ -89,7 +114,24 @@
                         >
                     </div>
 
-                    <button type="submit" class="btn-primary btn-form">
+                    <div class="admin-captcha-area">
+                        <div
+                            id="admin-turnstile"
+                            class="cf-turnstile"
+                            data-sitekey="0x4AAAAAAEnNLBi2BDt_aJkF"
+                            data-theme="dark"
+                            data-language="pt-BR"
+                            data-callback="arquivoAdminCaptchaConcluido"
+                            data-error-callback="arquivoAdminCaptchaErro"
+                            data-expired-callback="arquivoAdminCaptchaExpirado"
+                            data-timeout-callback="arquivoAdminCaptchaErro"
+                        ></div>
+                        <p id="admin-captcha-status" role="status" aria-live="polite">
+                            Conclua a verificação de segurança para liberar o acesso.
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-form" id="admin-submit" disabled>
                         <i class="fa-solid fa-unlock-keyhole"></i>
                         Acessar Painel
                     </button>
@@ -107,8 +149,46 @@
         </div>
     </main>
 
+    <script>
+        window.ARQUIVO_ADMIN_CAPTCHA_ATIVO = true;
+        window.ARQUIVO_ADMIN_CAPTCHA_TOKEN = "";
+
+        window.arquivoAdminCaptchaConcluido = function (token) {
+            window.ARQUIVO_ADMIN_CAPTCHA_TOKEN = token || "";
+            var botao = document.getElementById("admin-submit");
+            var status = document.getElementById("admin-captcha-status");
+            if (botao) botao.disabled = !window.ARQUIVO_ADMIN_CAPTCHA_TOKEN;
+            if (status) status.textContent = window.ARQUIVO_ADMIN_CAPTCHA_TOKEN
+                ? "Verificação concluída. O acesso foi liberado."
+                : "A verificação não retornou um token válido.";
+        };
+
+        window.arquivoAdminCaptchaErro = function () {
+            window.ARQUIVO_ADMIN_CAPTCHA_TOKEN = "";
+            var botao = document.getElementById("admin-submit");
+            var status = document.getElementById("admin-captcha-status");
+            if (botao) botao.disabled = true;
+            if (status) status.textContent = "Não foi possível carregar a verificação. Atualize a página e tente novamente.";
+        };
+
+        window.arquivoAdminCaptchaExpirado = function () {
+            window.ARQUIVO_ADMIN_CAPTCHA_TOKEN = "";
+            var botao = document.getElementById("admin-submit");
+            var status = document.getElementById("admin-captcha-status");
+            if (botao) botao.disabled = true;
+            if (status) status.textContent = "A verificação expirou. Marque a caixa novamente.";
+        };
+
+        window.arquivoAdminCaptchaReset = function () {
+            window.arquivoAdminCaptchaExpirado();
+            if (window.turnstile) {
+                try { window.turnstile.reset(); } catch (erro) { console.warn(erro); }
+            }
+        };
+    </script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="data/caso.js" defer></script>
-    <script src="js/script.js?v=20260917-6" defer></script>
+    <script src="js/script.js?v=20260917-8" defer></script>
     <script src="js/admin-literario.js?v=20260917-7" defer></script>
     <script src="js/admin-core-tabs.js?v=20260917-7" defer></script>
 </body>
