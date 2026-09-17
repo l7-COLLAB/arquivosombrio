@@ -348,18 +348,15 @@
                     Meu Arquivo
                 </a>
 
-                <button
-                    type="button"
+                <a
+                    href="admin.html?v=20260917-1"
                     class="btn-restricted"
-                    id="btn-open-admin"
-                    aria-controls="modal-admin"
-                    aria-haspopup="dialog"
                 >
 
                     <i class="fa-solid fa-lock"></i>
                     Administração
 
-                </button>
+                </a>
 
             </nav>
 
@@ -478,11 +475,7 @@
 
 
             <a
-                href="#"
-                id="mobile-btn-admin"
-                class="sidebar-admin-link"
-                aria-controls="modal-admin"
-                aria-haspopup="dialog"
+                href="admin.html?v=20260917-1"
             >
 
                 <i class="fa-solid fa-lock"></i>
@@ -2324,17 +2317,6 @@
          primeiro os dados, depois a lógica.
          ================================================================ -->
 
-    <script>
-    document.addEventListener("click", function (evento) {
-        if (!evento.target.closest("#btn-open-admin, #mobile-btn-admin")) return;
-        var modal = document.getElementById("modal-admin");
-        if (!modal) return;
-        evento.preventDefault();
-        modal.classList.add("active");
-        modal.removeAttribute("hidden");
-        modal.setAttribute("aria-hidden", "false");
-    }, true);
-    </script>
     <script src="data/caso.js" defer></script>
     <script src="js/script.js?v=20260917-4" defer></script>
     <script src="js/filtros.js?v=20260917-3" defer></script>
