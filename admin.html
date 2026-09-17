@@ -13,11 +13,12 @@
     <link rel="stylesheet" href="css/style-base-20260914.css?v=20260917-6">
     <link rel="stylesheet" href="css/style.css?v=20260917-6">
     <style>
-        #modal-admin {
-            display: flex;
-            visibility: visible;
-            opacity: 1;
-            pointer-events: auto;
+        #modal-admin:not(.active),
+        #modal-admin[hidden] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
 
         .admin-login-back {
@@ -193,7 +194,7 @@
         defer
     ></script>
     <script src="data/caso.js" defer></script>
-    <script src="js/script.js?v=20260917-9" defer></script>
+    <script src="js/script.js?v=20260917-10" defer></script>
     <script src="js/admin-literario.js?v=20260917-7" defer></script>
     <script src="js/admin-core-tabs.js?v=20260917-7" defer></script>
 </body>
