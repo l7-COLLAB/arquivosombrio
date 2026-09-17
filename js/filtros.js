@@ -104,17 +104,14 @@ function abrirModalAdminImediatamente(){
 async function tratarAcessoAdmin(evento){
     const alvo=evento.target?.closest?.("#btn-open-admin,#mobile-btn-admin,.sidebar-admin-link");
     if(!alvo)return;
-
     evento.preventDefault();
     evento.stopImmediatePropagation();
-
     try{
         if(typeof obterSessaoAdmin==="function"&&typeof abrirPainelAdmin==="function"){
             const sessao=await obterSessaoAdmin();
             if(sessao){await abrirPainelAdmin(sessao);return;}
         }
     }catch(erro){console.warn("Falha não bloqueante ao verificar a sessão administrativa.",erro);}
-
     abrirModalAdminImediatamente();
 }
 
@@ -124,21 +121,10 @@ async function autenticarAdminDireto(formulario){
     const mensagem=document.getElementById("admin-login-erro");
     const botao=formulario.querySelector('button[type="submit"]');
     const original=botao?.innerHTML;
-
-    const mostrar=texto=>{
-        if(!mensagem)return;
-        mensagem.textContent=texto;
-        mensagem.classList.add("visible");
-    };
-
+    const mostrar=texto=>{if(!mensagem)return;mensagem.textContent=texto;mensagem.classList.add("visible");};
     if(!email||!senha){mostrar("Preencha o e-mail e a senha.");return;}
-
-    if(botao){
-        botao.disabled=true;
-        botao.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
-    }
+    if(botao){botao.disabled=true;botao.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';}
     if(mensagem){mensagem.textContent="";mensagem.classList.remove("visible");}
-
     try{
         if(typeof obterClienteSupabase!=="function")throw new Error("Cliente do Supabase indisponível.");
         const supabaseClient=await obterClienteSupabase();
@@ -146,16 +132,13 @@ async function autenticarAdminDireto(formulario){
             supabaseClient.auth.signInWithPassword({email,password:senha}),
             new Promise((_,reject)=>setTimeout(()=>reject(new Error("O servidor demorou demais para responder. Tente novamente.")),15000))
         ]);
-
         if(error)throw error;
         if(!data?.session?.user)throw new Error("Não foi possível iniciar a sessão administrativa.");
-
         const role=data.session.user.app_metadata?.role;
         if(role!=="admin"){
             await supabaseClient.auth.signOut();
             throw new Error("A conta foi autenticada, mas não possui permissão administrativa.");
         }
-
         formulario.reset();
         if(mensagem){mensagem.textContent="";mensagem.classList.remove("visible");}
         if(typeof fecharModalAdmin==="function")fecharModalAdmin();
@@ -163,13 +146,9 @@ async function autenticarAdminDireto(formulario){
     }catch(erro){
         console.error("Falha no login administrativo.",erro);
         const texto=String(erro?.message||"");
-        if(/captcha|turnstile|challenge/i.test(texto)){
-            mostrar("A autenticação chegou ao Supabase, mas a proteção CAPTCHA está bloqueando o login. Verifique a configuração do CAPTCHA no Supabase.");
-        }else if(/invalid login credentials/i.test(texto)){
-            mostrar("E-mail ou senha incorretos para esta conta do Arquivo Sombrio.");
-        }else{
-            mostrar(texto||"Não foi possível acessar a área administrativa.");
-        }
+        if(/captcha|turnstile|challenge/i.test(texto))mostrar("A autenticação chegou ao Supabase, mas a proteção CAPTCHA está bloqueando o login. Verifique a configuração do CAPTCHA no Supabase.");
+        else if(/invalid login credentials/i.test(texto))mostrar("E-mail ou senha incorretos para esta conta do Arquivo Sombrio.");
+        else mostrar(texto||"Não foi possível acessar a área administrativa.");
     }finally{
         if(botao){botao.disabled=false;if(original!==undefined)botao.innerHTML=original;}
     }
@@ -224,16 +203,24 @@ async function cadastrarUsuarioSeguro(evento){
     if(!politicas){mostrar("É necessário aceitar os termos e políticas para criar a conta.");return;}
 
     const original=botao?.textContent;
-    if(botao){botao.disabled=true;botao.textContent="CRIANDO CONTA...";}
-    mostrar("");
+    if(botao){botao.disabled=true;botao.textContent="VERIFICANDO...";}
+    mostrar("Conclua a verificação de segurança para criar a conta.");
 
     try{
         if(typeof obterClienteSupabase!=="function")throw new Error("Cliente do Supabase indisponível.");
+        if(typeof obterTokenTurnstile!=="function")throw new Error("A proteção anti-bot do site não está disponível.");
         const supabaseClient=await obterClienteSupabase();
+        const captchaToken=await obterTokenTurnstile();
+        if(!captchaToken)throw new Error("A verificação de segurança não retornou um token válido.");
+        if(botao)botao.textContent="CRIANDO CONTA...";
+        mostrar("");
         const {data,error}=await supabaseClient.auth.signUp({
             email,
             password:senha,
-            options:{data:{display_name:nome,nome,accepted_terms:true,age_confirmed:true}}
+            options:{
+                captchaToken,
+                data:{display_name:nome,nome,accepted_terms:true,age_confirmed:true}
+            }
         });
         if(error)throw error;
         if(!data?.user)throw new Error("O Supabase não confirmou a criação da conta.");
@@ -245,6 +232,7 @@ async function cadastrarUsuarioSeguro(evento){
         const texto=String(erro?.message||"");
         if(/already registered|already exists|user already/i.test(texto))mostrar("Este e-mail já possui uma conta. Use a opção Entrar.");
         else if(/invalid.*email|email.*invalid/i.test(texto))mostrar("O Supabase recusou o endereço de e-mail. Confira o e-mail digitado.");
+        else if(/captcha|turnstile|challenge|verifica/i.test(texto))mostrar("Não foi possível concluir a verificação de segurança. Tente novamente.");
         else mostrar(texto||"Não foi possível criar a conta.");
     }finally{
         if(botao){botao.disabled=false;botao.textContent=original||"CRIAR CONTA";}
@@ -266,9 +254,7 @@ function instalarCadastroSeguro(){
 function instalarAcessoAdminIndependente(){
     if(window.__arquivoSombrioAdminClickReady)return;
     window.__arquivoSombrioAdminClickReady=true;
-
     document.addEventListener("click",tratarAcessoAdmin,true);
-
     document.addEventListener("submit",evento=>{
         const formulario=evento.target;
         if(formulario?.id!=="form-admin-login")return;
@@ -276,7 +262,6 @@ function instalarAcessoAdminIndependente(){
         evento.stopImmediatePropagation();
         autenticarAdminDireto(formulario);
     },true);
-
     document.addEventListener("click",evento=>{
         const fechar=evento.target?.closest?.("#close-modal");
         if(!fechar)return;
