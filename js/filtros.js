@@ -142,11 +142,6 @@ async function autenticarAdminDireto(formulario){
     try{
         if(typeof obterClienteSupabase!=="function")throw new Error("Cliente do Supabase indisponível.");
         const supabaseClient=await obterClienteSupabase();
-
-        // O login administrativo não deve ficar indefinidamente bloqueado
-        // esperando o widget visual do Turnstile. O Supabase continua sendo
-        // responsável por validar e criar a sessão; se o projeto exigir
-        // CAPTCHA, a resposta real será exibida ao administrador.
         const {data,error}=await Promise.race([
             supabaseClient.auth.signInWithPassword({email,password:senha}),
             new Promise((_,reject)=>setTimeout(()=>reject(new Error("O servidor demorou demais para responder. Tente novamente.")),15000))
@@ -178,6 +173,94 @@ async function autenticarAdminDireto(formulario){
     }finally{
         if(botao){botao.disabled=false;if(original!==undefined)botao.innerHTML=original;}
     }
+}
+
+function fecharCadastroSeguro(){
+    document.getElementById("arquivo-cadastro-seguro")?.remove();
+    document.body.classList.remove("modal-open");
+}
+
+function abrirCadastroSeguro(){
+    fecharCadastroSeguro();
+    const fundo=document.createElement("div");
+    fundo.id="arquivo-cadastro-seguro";
+    fundo.setAttribute("role","dialog");
+    fundo.setAttribute("aria-modal","true");
+    fundo.style.cssText="position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.86)";
+    fundo.innerHTML=`<form id="arquivo-form-cadastro-seguro" style="width:min(430px,100%);max-height:90vh;overflow:auto;padding:24px;border:1px solid rgba(177,145,92,.45);background:#0d0b0a;color:#ddd;font-family:monospace">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px"><strong style="letter-spacing:.12em">CRIAR CONTA</strong><button type="button" id="arquivo-fechar-cadastro" aria-label="Fechar" style="border:0;background:transparent;color:#ddd;font-size:24px;cursor:pointer">×</button></div>
+        <label style="display:block;margin:12px 0 6px">Nome</label><input id="arquivo-cadastro-nome" name="name" type="text" autocomplete="name" required maxlength="80" style="box-sizing:border-box;width:100%;padding:12px;background:#171412;border:1px solid #55483a;color:#fff">
+        <label style="display:block;margin:12px 0 6px">E-mail</label><input id="arquivo-cadastro-email" name="email" type="email" inputmode="email" autocomplete="email" required style="box-sizing:border-box;width:100%;padding:12px;background:#171412;border:1px solid #55483a;color:#fff">
+        <label style="display:block;margin:12px 0 6px">Senha</label><input id="arquivo-cadastro-senha" name="new-password" type="password" autocomplete="new-password" required minlength="8" style="box-sizing:border-box;width:100%;padding:12px;background:#171412;border:1px solid #55483a;color:#fff">
+        <label style="display:block;margin:12px 0 6px">Confirmar senha</label><input id="arquivo-cadastro-confirmar" type="password" autocomplete="new-password" required minlength="8" style="box-sizing:border-box;width:100%;padding:12px;background:#171412;border:1px solid #55483a;color:#fff">
+        <label style="display:flex;gap:9px;align-items:flex-start;margin:16px 0;font-size:12px;line-height:1.5"><input id="arquivo-cadastro-politicas" type="checkbox" required> <span>Declaro ter 18 anos ou mais e aceito os Termos de Uso, a Política de Privacidade e as Diretrizes da Comunidade.</span></label>
+        <div id="arquivo-cadastro-mensagem" aria-live="polite" style="min-height:20px;margin:10px 0;color:#d8b9a1;font-size:12px"></div>
+        <button type="submit" style="width:100%;padding:13px;border:1px solid #8a2525;background:#651516;color:#fff;letter-spacing:.1em;cursor:pointer">CRIAR CONTA</button>
+    </form>`;
+    document.body.appendChild(fundo);
+    document.body.classList.add("modal-open");
+    document.getElementById("arquivo-fechar-cadastro")?.addEventListener("click",fecharCadastroSeguro);
+    fundo.addEventListener("click",e=>{if(e.target===fundo)fecharCadastroSeguro();});
+    document.getElementById("arquivo-form-cadastro-seguro")?.addEventListener("submit",cadastrarUsuarioSeguro);
+    document.getElementById("arquivo-cadastro-nome")?.focus();
+}
+
+async function cadastrarUsuarioSeguro(evento){
+    evento.preventDefault();
+    const formulario=evento.currentTarget;
+    const nome=document.getElementById("arquivo-cadastro-nome")?.value.trim()||"";
+    const email=document.getElementById("arquivo-cadastro-email")?.value.trim().toLowerCase()||"";
+    const senha=document.getElementById("arquivo-cadastro-senha")?.value||"";
+    const confirmar=document.getElementById("arquivo-cadastro-confirmar")?.value||"";
+    const politicas=document.getElementById("arquivo-cadastro-politicas")?.checked;
+    const mensagem=document.getElementById("arquivo-cadastro-mensagem");
+    const botao=formulario.querySelector('button[type="submit"]');
+    const mostrar=texto=>{if(mensagem)mensagem.textContent=texto;};
+
+    if(!nome||!email||!senha||!confirmar){mostrar("Preencha todos os campos.");return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){mostrar("Digite um endereço de e-mail válido.");return;}
+    if(senha.length<8){mostrar("A senha deve ter pelo menos 8 caracteres.");return;}
+    if(senha!==confirmar){mostrar("As senhas não coincidem.");return;}
+    if(!politicas){mostrar("É necessário aceitar os termos e políticas para criar a conta.");return;}
+
+    const original=botao?.textContent;
+    if(botao){botao.disabled=true;botao.textContent="CRIANDO CONTA...";}
+    mostrar("");
+
+    try{
+        if(typeof obterClienteSupabase!=="function")throw new Error("Cliente do Supabase indisponível.");
+        const supabaseClient=await obterClienteSupabase();
+        const {data,error}=await supabaseClient.auth.signUp({
+            email,
+            password:senha,
+            options:{data:{display_name:nome,nome,accepted_terms:true,age_confirmed:true}}
+        });
+        if(error)throw error;
+        if(!data?.user)throw new Error("O Supabase não confirmou a criação da conta.");
+        const exigeConfirmacao=!data.session;
+        alert(exigeConfirmacao?"Conta criada. Confira seu e-mail para confirmar o cadastro antes de entrar.":"Conta criada com sucesso. Você já pode entrar.");
+        fecharCadastroSeguro();
+    }catch(erro){
+        console.error("Falha ao criar conta.",erro);
+        const texto=String(erro?.message||"");
+        if(/already registered|already exists|user already/i.test(texto))mostrar("Este e-mail já possui uma conta. Use a opção Entrar.");
+        else if(/invalid.*email|email.*invalid/i.test(texto))mostrar("O Supabase recusou o endereço de e-mail. Confira o e-mail digitado.");
+        else mostrar(texto||"Não foi possível criar a conta.");
+    }finally{
+        if(botao){botao.disabled=false;botao.textContent=original||"CRIAR CONTA";}
+    }
+}
+
+function instalarCadastroSeguro(){
+    if(window.__arquivoSombrioCadastroSeguroReady)return;
+    window.__arquivoSombrioCadastroSeguroReady=true;
+    document.addEventListener("click",evento=>{
+        const alvo=evento.target?.closest?.("#forum-btn-signup,#forum-inline-signup");
+        if(!alvo)return;
+        evento.preventDefault();
+        evento.stopImmediatePropagation();
+        abrirCadastroSeguro();
+    },true);
 }
 
 function instalarAcessoAdminIndependente(){
@@ -232,12 +315,14 @@ function atualizarServiceWorkerProjeto(){
 }
 
 function inicializarComplementosArquivo(){
+    instalarCadastroSeguro();
     instalarAcessoAdminIndependente();
     carregarModulosLiterariosAdmin();
     atualizarServiceWorkerProjeto();
     inicializarFiltrosArquivo();
 }
 
+instalarCadastroSeguro();
 instalarAcessoAdminIndependente();
 carregarModulosLiterariosAdmin();
 atualizarServiceWorkerProjeto();
