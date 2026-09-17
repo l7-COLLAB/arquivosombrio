@@ -518,6 +518,26 @@ function carregarSupabaseSDK() {
         new Promise(
             (resolve, reject) => {
 
+                let encerrado = false;
+
+                const encerrar = (acao, valor) => {
+                    if (encerrado) return;
+                    encerrado = true;
+                    window.clearTimeout(tempoLimite);
+                    acao(valor);
+                };
+
+                const tempoLimite =
+                    window.setTimeout(
+                        () => encerrar(
+                            reject,
+                            new Error(
+                                "O Supabase demorou demais para carregar. Atualize a página e tente novamente."
+                            )
+                        ),
+                        15000
+                    );
+
                 const scriptExistente =
                     document.querySelector(
                         'script[data-arquivo-sombrio-supabase="true"]'
@@ -529,7 +549,7 @@ function carregarSupabaseSDK() {
                     scriptExistente
                         .addEventListener(
                             "load",
-                            () => resolve(),
+                            () => encerrar(resolve),
                             {
                                 once: true
                             }
@@ -539,7 +559,8 @@ function carregarSupabaseSDK() {
                         .addEventListener(
                             "error",
                             () =>
-                                reject(
+                                encerrar(
+                                    reject,
                                     new Error(
                                         "Falha ao carregar o Supabase."
                                     )
@@ -572,7 +593,7 @@ function carregarSupabaseSDK() {
 
                 script.addEventListener(
                     "load",
-                    () => resolve(),
+                    () => encerrar(resolve),
                     {
                         once: true
                     }
@@ -582,7 +603,8 @@ function carregarSupabaseSDK() {
                 script.addEventListener(
                     "error",
                     () =>
-                        reject(
+                        encerrar(
+                            reject,
                             new Error(
                                 "Falha ao carregar o Supabase."
                             )
@@ -697,9 +719,21 @@ async function obterSessaoAdmin() {
             data,
             error
         } =
-            await supabaseClient
-                .auth
-                .getSession();
+            await Promise.race([
+                supabaseClient
+                    .auth
+                    .getSession(),
+                new Promise((_, reject) =>
+                    window.setTimeout(
+                        () => reject(
+                            new Error(
+                                "A verificação da sessão demorou demais."
+                            )
+                        ),
+                        10000
+                    )
+                )
+            ]);
 
 
         if (error) {
@@ -7343,9 +7377,10 @@ function fecharModalAdmin() {
 }
 
 
-async function abrirPainelAdmin() {
+async function abrirPainelAdmin(sessaoValidada = null) {
 
     const sessao =
+        sessaoValidada ||
         await obterSessaoAdmin();
 
     if (!sessao) {
@@ -7467,7 +7502,19 @@ async function autenticarAdmin(evento) {
     try {
 
         const supabaseClient =
-            await obterClienteSupabase();
+            await Promise.race([
+                obterClienteSupabase(),
+                new Promise((_, reject) =>
+                    window.setTimeout(
+                        () => reject(
+                            new Error(
+                                "O Supabase demorou demais para iniciar. Atualize a página e tente novamente."
+                            )
+                        ),
+                        15000
+                    )
+                )
+            ]);
 
         const captchaToken =
             window.ARQUIVO_ADMIN_CAPTCHA_TOKEN ||
@@ -7557,7 +7604,9 @@ async function autenticarAdmin(evento) {
 
         fecharModalAdmin();
 
-        await abrirPainelAdmin();
+        await abrirPainelAdmin(
+            data.session
+        );
 
 
     } catch (erro) {
