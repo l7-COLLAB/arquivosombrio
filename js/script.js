@@ -7367,13 +7367,27 @@ function inicializarAdmin() {
 
 function fecharModalAdmin() {
 
-    document
-        .getElementById(
+    const modal =
+        document.getElementById(
             "modal-admin"
-        )
-        ?.classList.remove(
-            "active"
         );
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove(
+        "active"
+    );
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    if (window.ARQUIVO_ADMIN_CAPTCHA_ATIVO) {
+        modal.hidden = true;
+    }
 }
 
 
@@ -7394,9 +7408,9 @@ async function abrirPainelAdmin(sessaoValidada = null) {
         return;
     }
 
-    fecharModalAdmin();
-
     renderizarGerenciadorAdmin();
+
+    fecharModalAdmin();
 }
 
 
@@ -7601,8 +7615,6 @@ async function autenticarAdmin(evento) {
 
 
         formulario.reset();
-
-        fecharModalAdmin();
 
         await abrirPainelAdmin(
             data.session
