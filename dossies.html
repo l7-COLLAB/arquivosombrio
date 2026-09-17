@@ -2324,9 +2324,20 @@
          primeiro os dados, depois a lógica.
          ================================================================ -->
 
+    <script>
+    document.addEventListener("click", function (evento) {
+        if (!evento.target.closest("#btn-open-admin, #mobile-btn-admin")) return;
+        var modal = document.getElementById("modal-admin");
+        if (!modal) return;
+        evento.preventDefault();
+        modal.classList.add("active");
+        modal.removeAttribute("hidden");
+        modal.setAttribute("aria-hidden", "false");
+    }, true);
+    </script>
     <script src="data/caso.js" defer></script>
     <script src="js/script.js?v=20260917-4" defer></script>
-    <script src="js/filtros.js?v=20260917-2" defer></script>
+    <script src="js/filtros.js?v=20260917-3" defer></script>
 
 <script>
   if ('serviceWorker' in navigator) {
