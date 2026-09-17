@@ -56,6 +56,22 @@ function carregarTurnstileSDK() {
         new Promise(
             (resolve, reject) => {
 
+                let finalizado = false;
+
+                const finalizar =
+                    (acao, valor) => {
+
+                        if (finalizado) {
+                            return;
+                        }
+
+                        finalizado = true;
+                        window.clearTimeout(
+                            temporizadorCarregamento
+                        );
+                        acao(valor);
+                    };
+
                 const script =
                     document.createElement(
                         "script"
@@ -67,18 +83,36 @@ function carregarTurnstileSDK() {
                 script.async = true;
                 script.defer = true;
 
+                const temporizadorCarregamento =
+                    window.setTimeout(
+                        () => {
+
+                            script.remove();
+
+                            finalizar(
+                                reject,
+                                new Error(
+                                    "A proteção de segurança não carregou. Desative o bloqueador de anúncios para este site e tente novamente."
+                                )
+                            );
+                        },
+                        15000
+                    );
+
                 script.onload = () => {
 
                     if (window.turnstile) {
 
-                        resolve(
+                        finalizar(
+                            resolve,
                             window.turnstile
                         );
 
                         return;
                     }
 
-                    reject(
+                    finalizar(
+                        reject,
                         new Error(
                             "Cloudflare Turnstile não foi carregado."
                         )
@@ -87,9 +121,10 @@ function carregarTurnstileSDK() {
 
                 script.onerror = () => {
 
-                    reject(
+                    finalizar(
+                        reject,
                         new Error(
-                            "Não foi possível carregar a proteção anti-bot."
+                            "Não foi possível carregar a proteção anti-bot. Desative o bloqueador de anúncios para este site e tente novamente."
                         )
                     );
                 };
@@ -100,6 +135,12 @@ function carregarTurnstileSDK() {
 
             }
         );
+
+    promessaTurnstileSDK.catch(
+        () => {
+            promessaTurnstileSDK = null;
+        }
+    );
 
     return promessaTurnstileSDK;
 }
@@ -125,29 +166,18 @@ function obterTokenTurnstile() {
                         container.id =
                             "arquivo-sombrio-turnstile";
 
-                        container.style.position =
-                            "fixed";
+                        container.setAttribute(
+                            "role",
+                            "dialog"
+                        );
 
-                        container.style.left =
-                            "50%";
+                        container.setAttribute(
+                            "aria-label",
+                            "Verificação de segurança"
+                        );
 
-                        container.style.top =
-                            "50%";
-
-                        container.style.transform =
-                            "translate(-50%, -50%)";
-
-                        container.style.zIndex =
-                            "2147483647";
-
-                        container.style.padding =
-                            "20px";
-
-                        container.style.background =
-                            "#111";
-
-                        container.style.border =
-                            "1px solid rgba(255,255,255,0.15)";
+                        container.style.cssText =
+                            "position:fixed;inset:0;z-index:2147483647;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.92)";
 
                         document.body.appendChild(
                             container
@@ -254,7 +284,7 @@ function obterTokenTurnstile() {
                                     );
 
                                 },
-                                45000
+                                30000
                             );
 
 
