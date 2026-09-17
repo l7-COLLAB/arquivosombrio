@@ -17,7 +17,7 @@ const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj";
 
 const SUPABASE_SDK_URL =
-    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0";
 
 const TURNSTILE_SITE_KEY =
     "0x4AAAAAAEnNLBi2BDt_aJkF";
@@ -662,24 +662,43 @@ async function obterClienteSupabase() {
 
             }
 
+            const opcoesAuth = {
+
+                persistSession:
+                    true,
+
+                autoRefreshToken:
+                    true,
+
+                detectSessionInUrl:
+                    true
+
+            };
+
+            /*
+             * O LockManager do Safari pode manter a autenticação esperando
+             * quando há mais de uma guia do site aberta. A área administrativa
+             * usa armazenamento próprio e serialização local, pois possui um
+             * único formulário de acesso por página.
+             */
+            if (window.ARQUIVO_ADMIN_CAPTCHA_ATIVO) {
+
+                opcoesAuth.storageKey =
+                    "arquivo-sombrio-admin-auth-v1";
+
+                opcoesAuth.lock =
+                    async (_nome, _tempo, executar) =>
+                        await executar();
+
+            }
+
             clienteSupabase =
                 window.supabase.createClient(
                     SUPABASE_URL,
                     SUPABASE_PUBLISHABLE_KEY,
                     {
 
-                        auth: {
-
-                            persistSession:
-                                true,
-
-                            autoRefreshToken:
-                                true,
-
-                            detectSessionInUrl:
-                                true
-
-                        }
+                        auth: opcoesAuth
 
                     }
                 );
