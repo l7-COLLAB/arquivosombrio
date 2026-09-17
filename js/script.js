@@ -254,7 +254,7 @@ function obterTokenTurnstile() {
                                     );
 
                                 },
-                                120000
+                                45000
                             );
 
 
@@ -7438,7 +7438,19 @@ async function autenticarAdmin(evento) {
             await obterClienteSupabase();
 
         const captchaToken =
-            await obterTokenTurnstile();
+            await Promise.race([
+                obterTokenTurnstile(),
+                new Promise((_, reject) =>
+                    window.setTimeout(
+                        () => reject(
+                            new Error(
+                                "A verificação de segurança demorou demais. Feche a janela, abra novamente e tente outra vez."
+                            )
+                        ),
+                        50000
+                    )
+                )
+            ]);
 
 
         if (erroElemento) {
@@ -7455,16 +7467,28 @@ async function autenticarAdmin(evento) {
             data,
             error
         } =
-            await supabaseClient
-                .auth
-                .signInWithPassword({
-                    email,
-                    password: senha,
+            await Promise.race([
+                supabaseClient
+                    .auth
+                    .signInWithPassword({
+                        email,
+                        password: senha,
 
-                    options: {
-                        captchaToken
-                    }
-                });
+                        options: {
+                            captchaToken
+                        }
+                    }),
+                new Promise((_, reject) =>
+                    window.setTimeout(
+                        () => reject(
+                            new Error(
+                                "O servidor demorou demais para responder. Tente novamente."
+                            )
+                        ),
+                        20000
+                    )
+                )
+            ]);
 
 
         if (error) {
@@ -7500,7 +7524,7 @@ async function autenticarAdmin(evento) {
 
         fecharModalAdmin();
 
-        abrirPainelAdmin();
+        await abrirPainelAdmin();
 
 
     } catch (erro) {
