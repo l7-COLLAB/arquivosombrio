@@ -7454,7 +7454,9 @@ async function autenticarAdmin(evento) {
     if (erroElemento) {
 
         erroElemento.textContent =
-            "Se aparecer uma caixa de verificação, conclua-a para continuar.";
+            window.ARQUIVO_ADMIN_CAPTCHA_ATIVO
+                ? "Entrando na área administrativa..."
+                : "Se aparecer uma caixa de verificação, conclua-a para continuar.";
 
         erroElemento.classList.add(
             "visible"
@@ -7468,6 +7470,7 @@ async function autenticarAdmin(evento) {
             await obterClienteSupabase();
 
         const captchaToken =
+            window.ARQUIVO_ADMIN_CAPTCHA_TOKEN ||
             await Promise.race([
                 obterTokenTurnstile(),
                 new Promise((_, reject) =>
@@ -7564,6 +7567,13 @@ async function autenticarAdmin(evento) {
             erro
         );
 
+        if (
+            window.ARQUIVO_ADMIN_CAPTCHA_ATIVO &&
+            typeof window.arquivoAdminCaptchaReset === "function"
+        ) {
+            window.arquivoAdminCaptchaReset();
+        }
+
 
         if (erroElemento) {
 
@@ -7588,7 +7598,10 @@ async function autenticarAdmin(evento) {
 
         if (botao) {
 
-            botao.disabled = false;
+            botao.disabled = Boolean(
+                window.ARQUIVO_ADMIN_CAPTCHA_ATIVO &&
+                !window.ARQUIVO_ADMIN_CAPTCHA_TOKEN
+            );
 
             if (
                 htmlOriginal !==
