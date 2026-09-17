@@ -111,7 +111,7 @@ async function tratarAcessoAdmin(evento){
     try{
         if(typeof obterSessaoAdmin==="function"&&typeof abrirPainelAdmin==="function"){
             const sessao=await obterSessaoAdmin();
-            if(sessao){await abrirPainelAdmin();return;}
+            if(sessao){await abrirPainelAdmin(sessao);return;}
         }
     }catch(erro){console.warn("Falha não bloqueante ao verificar a sessão administrativa.",erro);}
 
@@ -164,7 +164,7 @@ async function autenticarAdminDireto(formulario){
         formulario.reset();
         if(mensagem){mensagem.textContent="";mensagem.classList.remove("visible");}
         if(typeof fecharModalAdmin==="function")fecharModalAdmin();
-        if(typeof abrirPainelAdmin==="function")await abrirPainelAdmin();
+        if(typeof abrirPainelAdmin==="function")await abrirPainelAdmin(data.session);
     }catch(erro){
         console.error("Falha no login administrativo.",erro);
         const texto=String(erro?.message||"");
