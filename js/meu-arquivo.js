@@ -6426,71 +6426,64 @@ async function salvarNovoEmail(
    ALTERAÇÃO DE SENHA
    ========================================================= */
 
+function mascararEmailSeguranca(email) {
+
+    const partes =
+        String(email || "").split("@");
+
+    if (partes.length !== 2) {
+        return "e-mail cadastrado";
+    }
+
+    const usuario = partes[0];
+    const dominio = partes[1];
+    const inicio = usuario.slice(0, 2);
+    const oculto = "•".repeat(
+        Math.max(3, Math.min(8, usuario.length - 2))
+    );
+
+    return inicio + oculto + "@" + dominio;
+
+}
+
+
+/* =========================================================
+   SOLICITAR VERIFICAÇÃO PARA TROCAR SENHA
+   ========================================================= */
+
 function abrirAlteracaoSenha() {
+
+    const email =
+        meuArquivoState.usuario?.email || "";
+
+    const emailProtegido =
+        mascararEmailSeguranca(email);
 
     abrirModalArquivo(
         "Alterar senha",
         `
             <form
-                id="form-alterar-senha"
+                id="form-solicitar-troca-senha"
                 class="arquivo-form"
             >
 
-                <div class="arquivo-field">
-
-                    <label for="nova-senha">
-                        Nova senha
-                    </label>
-
-                    <input
-                        id="nova-senha"
-                        name="senha"
-                        type="password"
-                        minlength="8"
-                        maxlength="128"
-                        autocomplete="new-password"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="arquivo-field">
-
-                    <label for="confirmar-nova-senha">
-                        Confirmar nova senha
-                    </label>
-
-                    <input
-                        id="confirmar-nova-senha"
-                        name="confirmacao"
-                        type="password"
-                        minlength="8"
-                        maxlength="128"
-                        autocomplete="new-password"
-                        required
-                    >
-
-                </div>
-
-
                 <div class="arquivo-message">
 
-                    <i class="fa-solid fa-shield-halved"></i>
+                    <i class="fa-solid fa-envelope-circle-check"></i>
 
                     <span>
-                        Use uma senha exclusiva para sua conta
-                        e não a compartilhe com outras pessoas.
+                        Enviaremos um link seguro e temporário para
+                        <strong>${escaparHTML(emailProtegido)}</strong>.
+                        Abra a mensagem para confirmar sua identidade e
+                        definir uma nova senha.
                     </span>
 
                 </div>
-
 
                 <div
                     id="senha-mensagem"
                     aria-live="polite"
                 ></div>
-
 
                 <div class="arquivo-form-actions">
 
@@ -6506,8 +6499,8 @@ function abrirAlteracaoSenha() {
                         type="submit"
                         class="arquivo-button"
                     >
-                        <i class="fa-solid fa-key"></i>
-                        Alterar senha
+                        <i class="fa-solid fa-paper-plane"></i>
+                        Enviar verificação
                     </button>
 
                 </div>
@@ -6516,98 +6509,61 @@ function abrirAlteracaoSenha() {
         `
     );
 
-
     const formulario =
         document.getElementById(
-            "form-alterar-senha"
+            "form-solicitar-troca-senha"
         );
-
 
     if (formulario) {
-
         formulario.addEventListener(
             "submit",
-            salvarNovaSenha
+            solicitarEmailAlteracaoSenha
         );
-
     }
 
 }
 
 
-/* =========================================================
-   SALVAR NOVA SENHA
-   ========================================================= */
-
-async function salvarNovaSenha(
-    evento
-) {
+async function solicitarEmailAlteracaoSenha(evento) {
 
     evento.preventDefault();
 
-
     const formulario =
         evento.currentTarget;
-
 
     const botao =
         formulario.querySelector(
             'button[type="submit"]'
         );
 
-
     const mensagem =
         document.getElementById(
             "senha-mensagem"
         );
 
+    const email =
+        meuArquivoState.usuario?.email || "";
 
-    const senha =
-        formulario.senha.value;
-
-
-    const confirmacao =
-        formulario.confirmacao.value;
-
-
-    if (
-        senha.length < 8
-    ) {
-
+    if (!email) {
         mostrarMensagemElemento(
             mensagem,
-            "A nova senha deve possuir pelo menos 8 caracteres.",
+            "Não foi possível identificar o e-mail desta conta.",
             "erro"
         );
-
         return;
-
     }
-
-
-    if (
-        senha !== confirmacao
-    ) {
-
-        mostrarMensagemElemento(
-            mensagem,
-            "As duas senhas não coincidem.",
-            "erro"
-        );
-
-        return;
-
-    }
-
 
     const supabase =
-    await obterSupabaseMeuArquivo();
-
+        await obterSupabaseMeuArquivo();
 
     if (!supabase) {
+        mostrarMensagemElemento(
+            mensagem,
+            "Não foi possível conectar ao serviço de segurança.",
+            "erro"
+        );
         return;
     }
-
 
     try {
 
@@ -6616,52 +6572,46 @@ async function salvarNovaSenha(
             true
         );
 
+        const redirectTo =
+            new URL(
+                "redefinir-senha.html",
+                window.location.href
+            ).href;
 
-        const {
-            error
-        } =
-            await supabase.auth.updateUser({
-                password: senha
-            });
-
+        const { error } =
+            await supabase.auth.resetPasswordForEmail(
+                email,
+                { redirectTo }
+            );
 
         if (error) {
             throw error;
         }
 
-
-        formulario.reset();
-
-
         mostrarMensagemElemento(
             mensagem,
-            "Senha alterada com sucesso.",
+            "Verificação enviada. Confira sua caixa de entrada e também a pasta de spam.",
             "sucesso"
         );
 
-
-        window.setTimeout(
-            fecharModalArquivo,
-            900
+        iniciarEsperaReenvioSenha(
+            botao,
+            60
         );
 
     }
     catch (erro) {
 
         console.error(
-            "Erro ao alterar senha:",
+            "Erro ao solicitar troca de senha:",
             erro
         );
 
-
         mostrarMensagemElemento(
             mensagem,
-            "Não foi possível alterar a senha.",
+            "Não foi possível enviar a verificação agora. Aguarde um momento e tente novamente.",
             "erro"
         );
-
-    }
-    finally {
 
         definirBotaoCarregando(
             botao,
@@ -6669,6 +6619,46 @@ async function salvarNovaSenha(
         );
 
     }
+
+}
+
+
+function iniciarEsperaReenvioSenha(botao, segundos) {
+
+    if (!botao) {
+        return;
+    }
+
+    let restante = segundos;
+
+    botao.disabled = true;
+
+    const atualizar = function () {
+
+        if (!botao.isConnected) {
+            return;
+        }
+
+        if (restante <= 0) {
+            botao.disabled = false;
+            botao.innerHTML =
+                '<i class="fa-solid fa-rotate-right"></i> Reenviar e-mail';
+            return;
+        }
+
+        botao.textContent =
+            "Reenviar em " + restante + "s";
+
+        restante -= 1;
+
+        window.setTimeout(
+            atualizar,
+            1000
+        );
+
+    };
+
+    atualizar();
 
 }
 
