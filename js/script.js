@@ -7454,6 +7454,20 @@ async function abrirPainelAdmin(sessaoValidada = null) {
         return;
     }
 
+    /*
+     * O gerenciador não pode ser montado antes que o acervo termine
+     * de carregar. Sem essa espera, a primeira renderização usa
+     * casosSupabase = [] e mostra falsamente uma lista vazia.
+     */
+    await Promise.all([
+        carregarCasosSupabase(),
+        carregarPericiasSupabase(),
+        carregarLivrosSupabase(),
+        typeof carregarCasosDiariosAdmin === "function"
+            ? carregarCasosDiariosAdmin()
+            : Promise.resolve()
+    ]);
+
     renderizarGerenciadorAdmin();
 
     const painel =
