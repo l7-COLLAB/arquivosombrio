@@ -7459,14 +7459,7 @@ async function abrirPainelAdmin(sessaoValidada = null) {
      * de carregar. Sem essa espera, a primeira renderização usa
      * casosSupabase = [] e mostra falsamente uma lista vazia.
      */
-    await Promise.all([
-        carregarCasosSupabase(),
-        carregarPericiasSupabase(),
-        carregarLivrosSupabase(),
-        typeof carregarCasosDiariosAdmin === "function"
-            ? carregarCasosDiariosAdmin()
-            : Promise.resolve()
-    ]);
+    await carregarCasosSupabase();
 
     renderizarGerenciadorAdmin();
 
