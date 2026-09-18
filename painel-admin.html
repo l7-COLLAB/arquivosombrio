@@ -133,7 +133,7 @@
                 );
                 await carregarScript(
                     "a sessão administrativa",
-                    "js/admin-auth.js?v=20260918-15",
+                    "js/admin-auth.js?v=20260918-16",
                     12000
                 );
 
@@ -146,14 +146,15 @@
                 }
 
                 atualizar("Carregando os dados do arquivo...");
-                await carregarScript("os dados editoriais", "data/caso.js?v=20260918-15", 12000);
-                await carregarScript("o painel principal", "js/script.js?v=20260918-15", 20000);
+                await carregarScript("os dados editoriais", "data/caso.js?v=20260918-16", 12000);
+                await carregarScript("o painel principal", "js/script.js?v=20260918-16", 20000);
 
-                atualizar("Carregando os editores...");
-                await Promise.all([
-                    carregarScript("o editor de lendas e creepypastas", "js/admin-literario.js?v=20260918-15", 12000),
-                    carregarScript("as abas administrativas", "js/admin-core-tabs.js?v=20260918-15", 12000)
-                ]);
+                atualizar("Carregando o editor literário...");
+                await carregarScript(
+                    "o editor de lendas e creepypastas",
+                    "js/admin-literario.js?v=20260918-16",
+                    12000
+                );
 
                 if (typeof abrirPainelAdmin !== "function") {
                     throw new Error("A função principal do painel não ficou disponível.");
