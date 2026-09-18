@@ -846,6 +846,16 @@ async function sairAdmin() {
     }
 
 
+    if (window.ARQUIVO_ADMIN_PAINEL_DIRETO) {
+
+        window.location.replace(
+            "admin.html?logout=1"
+        );
+
+        return;
+    }
+
+
     document
         .getElementById(
             "admin-manager"
@@ -7683,6 +7693,16 @@ async function autenticarAdmin(evento) {
             throw new Error(
                 "Este usuário não possui permissão administrativa."
             );
+        }
+
+
+        if (window.ARQUIVO_ADMIN_CAPTCHA_ATIVO) {
+
+            window.location.replace(
+                "painel-admin.html?v=20260918-13"
+            );
+
+            return;
         }
 
 
