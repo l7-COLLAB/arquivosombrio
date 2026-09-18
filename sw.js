@@ -1,4 +1,4 @@
-const CACHE_NAME = "arquivo-sombrio-20260915-cache-8";
+const CACHE_NAME = "arquivo-sombrio-20260918-cache-9";
 
 self.addEventListener("install", () => {
   self.skipWaiting();
