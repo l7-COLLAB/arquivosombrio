@@ -87,10 +87,57 @@
         window.ARQUIVO_ADMIN_CAPTCHA_ATIVO = true;
         window.ARQUIVO_ADMIN_PAINEL_DIRETO = true;
 
-        window.addEventListener("DOMContentLoaded", async function () {
+        (async function iniciarPainelAdministrativo() {
             var status = document.getElementById("admin-panel-status");
 
+            function atualizar(texto) {
+                if (status) status.textContent = texto;
+            }
+
+            function carregarScript(nome, endereco, prazo) {
+                return new Promise(function (resolver, rejeitar) {
+                    var concluido = false;
+                    var script = document.createElement("script");
+                    var temporizador = window.setTimeout(function () {
+                        if (concluido) return;
+                        concluido = true;
+                        script.remove();
+                        rejeitar(new Error(nome + " demorou demais para carregar."));
+                    }, prazo || 15000);
+
+                    script.src = endereco;
+                    script.async = false;
+                    script.onload = function () {
+                        if (concluido) return;
+                        concluido = true;
+                        window.clearTimeout(temporizador);
+                        resolver();
+                    };
+                    script.onerror = function () {
+                        if (concluido) return;
+                        concluido = true;
+                        window.clearTimeout(temporizador);
+                        rejeitar(new Error("Não foi possível carregar " + nome + "."));
+                    };
+
+                    document.head.appendChild(script);
+                });
+            }
+
             try {
+                atualizar("Preparando a autenticação...");
+                await carregarScript(
+                    "a autenticação do Supabase",
+                    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0",
+                    15000
+                );
+                await carregarScript(
+                    "a sessão administrativa",
+                    "js/admin-auth.js?v=20260918-15",
+                    12000
+                );
+
+                atualizar("Validando a sessão administrativa...");
                 var sessao = await obterSessaoAdminIsolada();
 
                 if (!sessao) {
@@ -98,20 +145,31 @@
                     return;
                 }
 
+                atualizar("Carregando os dados do arquivo...");
+                await carregarScript("os dados editoriais", "data/caso.js?v=20260918-15", 12000);
+                await carregarScript("o painel principal", "js/script.js?v=20260918-15", 20000);
+
+                atualizar("Carregando os editores...");
+                await Promise.all([
+                    carregarScript("o editor de lendas e creepypastas", "js/admin-literario.js?v=20260918-15", 12000),
+                    carregarScript("as abas administrativas", "js/admin-core-tabs.js?v=20260918-15", 12000)
+                ]);
+
+                if (typeof abrirPainelAdmin !== "function") {
+                    throw new Error("A função principal do painel não ficou disponível.");
+                }
+
+                atualizar("Montando a Central de Arquivo...");
                 await abrirPainelAdmin(sessao);
             } catch (erro) {
                 console.error("Falha ao abrir o painel administrativo.", erro);
                 if (status) {
-                    status.innerHTML = "Não foi possível montar o painel.<br><br><a href=\"admin.html\">Voltar ao acesso administrativo</a>";
+                    status.innerHTML =
+                        String(erro && erro.message ? erro.message : "Não foi possível montar o painel.") +
+                        '<br><br><a href="admin.html?retry=1">Voltar e tentar novamente</a>';
                 }
             }
-        });
+        })();
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" data-arquivo-sombrio-supabase="true" defer></script>
-    <script src="js/admin-auth.js?v=20260918-14" defer></script>
-    <script src="data/caso.js" defer></script>
-    <script src="js/script.js?v=20260918-14" defer></script>
-    <script src="js/admin-literario.js?v=20260917-7" defer></script>
-    <script src="js/admin-core-tabs.js?v=20260917-7" defer></script>
 </body>
 </html>
