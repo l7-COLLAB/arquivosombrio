@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="css/style-base-20260914.css?v=20260917-6">
     <link rel="stylesheet" href="css/style.css?v=20260918-17">
+    <link rel="stylesheet" href="css/admin-dashboard.css?v=20260918-1">
     <style>
         body {
             min-height: 100dvh;
@@ -189,6 +190,13 @@
                 await carregarScript(
                     "o editor de lendas e creepypastas",
                     "js/admin-literario.js?v=20260918-16",
+                    12000
+                );
+
+                atualizar("Preparando a central administrativa...");
+                await carregarScript(
+                    "a central administrativa",
+                    "js/admin-dashboard.js?v=20260918-1",
                     12000
                 );
 
