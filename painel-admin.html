@@ -91,7 +91,7 @@
             var status = document.getElementById("admin-panel-status");
 
             try {
-                var sessao = await obterSessaoAdmin();
+                var sessao = await obterSessaoAdminIsolada();
 
                 if (!sessao) {
                     window.location.replace("admin.html?session=expirada");
@@ -108,8 +108,9 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" data-arquivo-sombrio-supabase="true" defer></script>
+    <script src="js/admin-auth.js?v=20260918-14" defer></script>
     <script src="data/caso.js" defer></script>
-    <script src="js/script.js?v=20260918-13" defer></script>
+    <script src="js/script.js?v=20260918-14" defer></script>
     <script src="js/admin-literario.js?v=20260917-7" defer></script>
     <script src="js/admin-core-tabs.js?v=20260917-7" defer></script>
 </body>
