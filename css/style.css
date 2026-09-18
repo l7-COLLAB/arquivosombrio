@@ -10,6 +10,180 @@
 
 @media(max-width:390px){.admin-manager .admin-content-tabs button{min-height:63px!important;padding:9px 7px!important;grid-template-columns:19px minmax(0,1fr) 21px!important}.admin-manager .admin-content-tabs button span{font-size:.53rem!important}.admin-manager .admin-content-tabs button small{min-width:21px!important;width:21px!important;padding:0!important}}
 
+/* Editor administrativo literário — interface compacta e consistente. */
+#admin-literary-editor-v2.admin-form-overlay{
+    align-items:flex-start!important;
+    padding:18px clamp(10px,2.5vw,32px) 40px!important;
+    background:rgba(3,3,3,.94)!important;
+}
+#admin-literary-editor-v2 .lit-editor-panel{
+    width:min(100%,1040px)!important;
+    padding:clamp(22px,3vw,38px)!important;
+    border-color:rgba(139,18,18,.72)!important;
+    background:linear-gradient(180deg,#0d0b0a 0%,#080706 100%)!important;
+    box-shadow:0 24px 70px rgba(0,0,0,.66)!important;
+}
+#admin-literary-editor-v2 .admin-close-form{
+    position:absolute;
+    top:16px;
+    right:16px;
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(181,157,122,.28);
+    background:#0a0807;
+    color:#bdb2a5;
+    font-size:1.25rem;
+    cursor:pointer;
+}
+#admin-literary-editor-v2 .admin-close-form:hover{
+    border-color:#9e1717;
+    background:#711010;
+    color:#fff;
+}
+#admin-literary-editor-v2>.lit-editor-panel>.admin-eyebrow{
+    display:block;
+    padding-right:52px;
+    color:#b69a72;
+}
+#admin-literary-editor-v2>.lit-editor-panel>h2{
+    margin:7px 52px 20px 0;
+    color:#eee5d9;
+    font-size:clamp(1.8rem,4vw,2.65rem);
+    line-height:1.05;
+}
+#admin-literary-editor-v2 .lit-sticky-actions{
+    top:0;
+    margin:0 -10px 18px;
+    padding:10px;
+    border:1px solid rgba(181,157,122,.16);
+    background:rgba(10,8,7,.97);
+    box-shadow:0 8px 22px rgba(0,0,0,.28);
+}
+#admin-literary-editor-v2 .lit-sticky-actions button,
+#admin-literary-editor-v2 .lit-bottom-actions button,
+#admin-literary-editor-v2 .admin-secondary-button,
+#admin-literary-editor-v2 [data-repeat-add]{
+    min-height:40px;
+    padding:10px 14px;
+    border:1px solid rgba(181,157,122,.30);
+    background:#100d0b;
+    color:#ddd2c4;
+    font:600 .66rem var(--font-mono);
+    letter-spacing:.055em;
+    text-transform:uppercase;
+    cursor:pointer;
+}
+#admin-literary-editor-v2 .lit-sticky-actions [data-save="publish"],
+#admin-literary-editor-v2 .lit-bottom-actions [data-save="publish"]{
+    border-color:#9f1b1b;
+    background:#7f1010;
+    color:#fff;
+}
+#admin-literary-editor-v2 .lit-sticky-actions button:hover,
+#admin-literary-editor-v2 .lit-bottom-actions button:hover,
+#admin-literary-editor-v2 .admin-secondary-button:hover,
+#admin-literary-editor-v2 [data-repeat-add]:hover{
+    border-color:#a51b1b;
+    background:#26100e;
+    color:#fff;
+}
+#admin-literary-editor-v2 .lit-sticky-actions small{
+    max-width:260px;
+    color:#918579;
+    font-size:.62rem;
+    text-align:right;
+}
+#admin-literary-editor-v2 #literary-editor-form{
+    display:grid;
+    gap:14px;
+}
+#admin-literary-editor-v2 .lit-editor-section{
+    margin:0!important;
+    padding:18px 20px!important;
+    border:1px solid rgba(181,157,122,.17)!important;
+    background:rgba(13,11,9,.88)!important;
+}
+#admin-literary-editor-v2 .lit-editor-section h3{
+    margin:0 0 14px!important;
+    padding-bottom:10px;
+    border-bottom:1px solid rgba(181,157,122,.13);
+    color:#e6dbce;
+    font-size:1.22rem!important;
+    line-height:1.2;
+}
+#admin-literary-editor-v2 .lit-editor-section label{
+    margin:10px 0!important;
+    color:#bfae98;
+}
+#admin-literary-editor-v2 .lit-editor-section input,
+#admin-literary-editor-v2 .lit-editor-section textarea,
+#admin-literary-editor-v2 .lit-editor-section select{
+    min-height:42px;
+    border-color:rgba(181,157,122,.26)!important;
+    background:#080706!important;
+    color:#eee4d7!important;
+    outline:none;
+}
+#admin-literary-editor-v2 .lit-editor-section input:focus,
+#admin-literary-editor-v2 .lit-editor-section textarea:focus,
+#admin-literary-editor-v2 .lit-editor-section select:focus{
+    border-color:#8d1a1a!important;
+    box-shadow:0 0 0 2px rgba(141,26,26,.14);
+}
+#admin-literary-editor-v2 .lit-block-add{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:7px;
+}
+#admin-literary-editor-v2 .lit-block-add button{
+    min-height:38px;
+    padding:8px 7px;
+    font-size:.54rem;
+    cursor:pointer;
+}
+#admin-literary-editor-v2 .lit-repeat-item{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px 12px;
+    margin:10px 0;
+    padding:14px;
+    background:#090807;
+}
+#admin-literary-editor-v2 .lit-repeat-item label{margin:0!important}
+#admin-literary-editor-v2 .lit-repeat-item>[data-repeat-remove]{
+    grid-column:1/-1;
+    justify-self:end;
+    padding:7px 0;
+    cursor:pointer;
+}
+#admin-literary-editor-v2 .lit-bottom-actions{
+    position:sticky;
+    bottom:0;
+    z-index:4;
+    margin-top:0;
+    padding:12px;
+    border:1px solid rgba(181,157,122,.17);
+    background:rgba(9,7,6,.97);
+}
+
+@media(max-width:760px){
+    #admin-literary-editor-v2.admin-form-overlay{padding:0!important}
+    #admin-literary-editor-v2 .lit-editor-panel{padding:20px 12px 72px!important;border-inline:0!important}
+    #admin-literary-editor-v2 .admin-close-form{position:fixed;top:max(10px,env(safe-area-inset-top));right:10px;z-index:8}
+    #admin-literary-editor-v2>.lit-editor-panel>h2{margin-right:44px}
+    #admin-literary-editor-v2 .lit-sticky-actions{top:0;margin-inline:0;padding-right:48px}
+    #admin-literary-editor-v2 .lit-sticky-actions button{flex:1 1 120px}
+    #admin-literary-editor-v2 .lit-sticky-actions small{width:100%;max-width:none;text-align:left}
+    #admin-literary-editor-v2 #literary-editor-form{gap:10px}
+    #admin-literary-editor-v2 .lit-editor-section{padding:15px 12px!important}
+    #admin-literary-editor-v2 .lit-block-add{grid-template-columns:repeat(2,minmax(0,1fr))}
+    #admin-literary-editor-v2 .lit-repeat-item{grid-template-columns:1fr}
+    #admin-literary-editor-v2 .lit-repeat-item>[data-repeat-remove]{grid-column:1}
+    #admin-literary-editor-v2 .lit-bottom-actions button{flex:1 1 130px}
+}
+
 /* Apoio ao Arquivo — marca d'água editorial mais legível. */
 .archive-support::before{
     top:42%!important;
