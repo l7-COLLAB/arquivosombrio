@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Redefinição segura de senha do Arquivo Sombrio.">
+    <meta name="theme-color" content="#080706">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Redefinir senha — Arquivo Sombrio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260918-1">
+    <style>
+        body.password-recovery-page {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top, rgba(126, 24, 24, .12), transparent 42%),
+                #080706;
+            color: #ded7c8;
+        }
+        .password-recovery-main {
+            min-height: calc(100vh - 82px);
+            display: grid;
+            place-items: center;
+            padding: 42px 18px;
+        }
+        .password-recovery-card {
+            width: min(100%, 560px);
+            border: 1px solid rgba(145, 31, 31, .55);
+            background: linear-gradient(145deg, rgba(20, 18, 16, .98), rgba(9, 8, 7, .98));
+            box-shadow: 0 26px 80px rgba(0, 0, 0, .5);
+            padding: clamp(24px, 5vw, 42px);
+        }
+        .password-recovery-kicker {
+            margin: 0 0 10px;
+            color: #a93631;
+            font: 500 .72rem/1.4 "DM Mono", monospace;
+            letter-spacing: .18em;
+        }
+        .password-recovery-card h1 {
+            margin: 0 0 12px;
+            font: 600 clamp(1.55rem, 5vw, 2.35rem)/1.15 "Cinzel", serif;
+        }
+        .password-recovery-intro {
+            margin: 0 0 26px;
+            color: #aaa296;
+            line-height: 1.7;
+        }
+        .password-recovery-field {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .password-recovery-field label {
+            font: 500 .76rem/1.4 "DM Mono", monospace;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+        .password-recovery-field input {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #403a34;
+            background: #0d0c0b;
+            color: #f0eadf;
+            padding: 13px 14px;
+            font: inherit;
+        }
+        .password-recovery-field input:focus {
+            outline: 2px solid rgba(156, 37, 32, .42);
+            border-color: #9c2520;
+        }
+        .password-recovery-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 4px 0 24px;
+            color: #b9b1a5;
+            line-height: 1.5;
+        }
+        .password-recovery-check input {
+            margin-top: 4px;
+            accent-color: #9c2520;
+        }
+        .password-recovery-action {
+            width: 100%;
+            border: 1px solid #a02c27;
+            background: #7f211d;
+            color: #fff8ed;
+            padding: 13px 18px;
+            cursor: pointer;
+            font: 600 .78rem/1.2 "DM Mono", monospace;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+        .password-recovery-action:disabled {
+            cursor: wait;
+            opacity: .58;
+        }
+        .password-recovery-message {
+            min-height: 24px;
+            margin: 16px 0 0;
+            font-size: .92rem;
+            line-height: 1.5;
+        }
+        .password-recovery-message[data-status="erro"] { color: #df7770; }
+        .password-recovery-message[data-status="sucesso"] { color: #9ac59d; }
+        .password-recovery-invalid {
+            border-left: 3px solid #922721;
+            background: rgba(121, 28, 24, .12);
+            padding: 14px;
+            line-height: 1.6;
+        }
+        .password-recovery-link {
+            display: inline-flex;
+            margin-top: 18px;
+            color: #d7c7ad;
+        }
+    </style>
+</head>
+<body class="password-recovery-page">
+    <header class="main-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo" aria-label="Arquivo Sombrio — início">
+                <span class="logo-simbolo"><i class="fa-solid fa-folder-open"></i></span>
+                <span class="logo-texto">ARQUIVO <strong>SOMBRIO</strong></span>
+            </a>
+        </div>
+    </header>
+
+    <main class="password-recovery-main">
+        <section class="password-recovery-card" aria-labelledby="recovery-title">
+            <p class="password-recovery-kicker">SEGURANÇA DA CONTA</p>
+            <h1 id="recovery-title">Definir nova senha</h1>
+            <p class="password-recovery-intro">
+                Crie uma senha exclusiva com pelo menos oito caracteres.
+                O link recebido por e-mail é temporário e só deve ser usado por você.
+            </p>
+
+            <div id="recovery-loading" class="password-recovery-invalid">
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+                Validando o link de segurança…
+            </div>
+
+            <form id="recovery-form" hidden>
+                <div class="password-recovery-field">
+                    <label for="recovery-password">Nova senha</label>
+                    <input id="recovery-password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required>
+                </div>
+
+                <div class="password-recovery-field">
+                    <label for="recovery-confirmation">Confirmar nova senha</label>
+                    <input id="recovery-confirmation" name="confirmation" type="password" minlength="8" maxlength="128" autocomplete="new-password" required>
+                </div>
+
+                <label class="password-recovery-check">
+                    <input id="recovery-revoke-others" type="checkbox" checked>
+                    <span>Encerrar as outras sessões conectadas após alterar a senha.</span>
+                </label>
+
+                <button id="recovery-submit" class="password-recovery-action" type="submit">
+                    <i class="fa-solid fa-key"></i>
+                    Salvar nova senha
+                </button>
+
+                <p id="recovery-message" class="password-recovery-message" aria-live="polite"></p>
+            </form>
+
+            <div id="recovery-invalid" class="password-recovery-invalid" hidden>
+                Este link é inválido ou expirou. Solicite uma nova verificação em
+                <strong>Meu Arquivo → Configurações → Senha</strong>.
+                <br>
+                <a class="password-recovery-link" href="meu-arquivo.html">Voltar ao Meu Arquivo</a>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/script.js?v=20260917-4"></script>
+    <script src="js/redefinir-senha.js?v=20260918-1"></script>
+</body>
+</html>
