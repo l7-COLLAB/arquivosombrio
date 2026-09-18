@@ -62,12 +62,25 @@ async function saveDraftSnapshot(modal,type,x){try{const c=await db(),{data:{ses
 async function saveRecord(modal,type,x,mode,unpublish=false){const c=await db(),status=mode==="publish"&&!unpublish?"publicado":"rascunho",p=payload(modal,type,status);if(status==="publicado")p.publicado_em=x.publicado_em||new Date().toISOString();else if(unpublish)p.publicado_em=null;if(!p.titulo?.trim())return alert("O título é obrigatório.");if(mode==="publish"&&x.id&&x.status_publicacao==="publicado"&&!confirm("Salvar as alterações nesta publicação?"))return;let result=x.id?await c.from(type).update(p).eq("id",x.id).select().single():await c.from(type).insert(p).select().single();if(result.error)return alert(result.error.message);editing=result.data;const state=modal.querySelector("[data-save-state]");if(state)state.textContent=status==="publicado"?"Publicado":"Rascunho salvo";await clearDraft(type,x);await loadList(type);if(!x.id){modal.remove();openEditor(type,result.data);}else if(unpublish){modal.remove();openEditor(type,result.data);}}
 async function clearDraft(type,x){try{const c=await db(),{data:{session}}=await c.auth.getSession();if(session)await c.from("admin_drafts").delete().eq("user_id",session.user.id).eq("draft_key",`literario:${type}:${x.id||"novo"}`);}catch(_){}}
 async function openEditor(type,x={}){editing=x;let modal=document.getElementById("admin-literary-editor-v2");modal?.remove();modal=document.createElement("div");modal.id="admin-literary-editor-v2";modal.className="admin-form-overlay active";modal.innerHTML=editorHTML(type,x);document.body.appendChild(modal);wireEditor(modal,type,x);if(!x.id){try{const c=await db(),{data:{session}}=await c.auth.getSession();if(session){const {data}=await c.from("admin_drafts").select("payload").eq("user_id",session.user.id).eq("draft_key",`literario:${type}:novo`).maybeSingle();if(data?.payload&&confirm("Há um rascunho automático não publicado. Deseja recuperá-lo?")){modal.remove();openEditor(type,data.payload);}}}catch(e){console.warn(e);}}}
+async function loadCounts(){
+ const p=panel(); if(!p)return;
+ try{
+  const c=await db();
+  await Promise.all(Object.keys(CFG).map(async type=>{
+   const {count,error}=await c.from(type).select("*",{count:"exact",head:true});
+   if(error)throw error;
+   const badge=p.querySelector(`[data-lit-count="${type}"]`);
+   if(badge)badge.textContent=String(count||0);
+  }));
+ }catch(e){console.warn("Não foi possível atualizar as contagens literárias.",e);}
+}
 function boot(){
- if(ensureShell())return;
+ if(ensureShell()){loadCounts();return;}
  observer=new MutationObserver(()=>{
   if(!ensureShell())return;
   observer.disconnect();
   observer=null;
+  loadCounts();
   if(active)show(active);
  });
  observer.observe(document.documentElement,{childList:true,subtree:true});
