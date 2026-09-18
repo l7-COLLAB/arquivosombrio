@@ -21,6 +21,47 @@
             pointer-events: none !important;
         }
 
+        body.admin-dashboard-open {
+            min-height: 100dvh;
+            overflow: auto !important;
+            background: #080706;
+        }
+
+        body.admin-dashboard-open > main {
+            display: none !important;
+        }
+
+        body.admin-dashboard-open #admin-manager.admin-manager-overlay.active {
+            position: relative !important;
+            inset: auto !important;
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 100dvh !important;
+            max-height: none !important;
+            padding: max(12px, env(safe-area-inset-top)) 8px max(32px, env(safe-area-inset-bottom)) !important;
+            overflow: visible !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            background: #080706 !important;
+        }
+
+        body.admin-dashboard-open #admin-manager > .admin-manager {
+            display: block !important;
+            position: relative !important;
+            width: min(100%, 1120px) !important;
+            min-height: 420px !important;
+            max-height: none !important;
+            margin: 0 auto !important;
+            overflow: visible !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        body.admin-dashboard-open #admin-manager-close {
+            display: none !important;
+        }
+
         .admin-login-back {
             position: absolute;
             top: 18px;
@@ -194,7 +235,7 @@
         defer
     ></script>
     <script src="data/caso.js" defer></script>
-    <script src="js/script.js?v=20260917-11" defer></script>
+    <script src="js/script.js?v=20260918-12" defer></script>
     <script src="js/admin-literario.js?v=20260917-7" defer></script>
     <script src="js/admin-core-tabs.js?v=20260917-7" defer></script>
 </body>
