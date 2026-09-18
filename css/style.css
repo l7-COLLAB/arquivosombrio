@@ -230,6 +230,42 @@
     .home-page .menu-toggle{display:block!important}
 }
 
+/* Nota editorial do destaque inicial, sem ícone de alerta. */
+.home-page .hero-warning{
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    align-items:start;
+    gap:13px;
+    max-width:650px;
+    margin-top:26px;
+    padding:15px 17px;
+    border:1px solid rgba(181,157,122,.16);
+    border-left:2px solid rgba(151,24,24,.8);
+    background:rgba(12,10,8,.58);
+}
+.home-page .hero-warning-label{
+    padding-top:2px;
+    color:#a92a25;
+    font:600 .54rem/1.4 var(--font-mono);
+    letter-spacing:.095em;
+    white-space:nowrap;
+}
+.home-page .hero-warning p{
+    margin:0;
+    color:#8e8478;
+    font-size:.7rem;
+    line-height:1.6;
+}
+@media(max-width:760px){
+    .home-page .hero-warning{
+        display:grid!important;
+        grid-template-columns:1fr;
+        gap:6px;
+        margin-top:20px;
+        padding:12px 13px;
+    }
+}
+
 /* Apoio ao Arquivo — marca d'água editorial mais legível. */
 .archive-support::before{
     top:42%!important;
