@@ -32,3 +32,37 @@ function atualizarServiceWorkerProjeto(){if(!("serviceWorker" in navigator))retu
 function inicializarComplementosArquivo(){instalarCadastroSeguro();instalarLoginSeguro();instalarAcessoAdminIndependente();carregarModulosLiterariosAdmin();atualizarServiceWorkerProjeto();inicializarFiltrosArquivo();}
 instalarCadastroSeguro();instalarLoginSeguro();instalarAcessoAdminIndependente();carregarModulosLiterariosAdmin();atualizarServiceWorkerProjeto();if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",inicializarComplementosArquivo,{once:true});else inicializarComplementosArquivo();
 })();
+
+/* Biblioteca: controle compacto para abrir e fechar a sinopse. */
+document.addEventListener("DOMContentLoaded", () => {
+    const gridLivros = document.getElementById("grid-livros");
+    if (!gridLivros) return;
+
+    const prepararSinopses = () => {
+        gridLivros.querySelectorAll(".book-card").forEach(card => {
+            if (card.dataset.sinopsePronta === "true") return;
+            const sinopse = card.querySelector(".book-description");
+            if (!sinopse) return;
+
+            const botao = document.createElement("button");
+            botao.type = "button";
+            botao.className = "book-synopsis-toggle";
+            botao.setAttribute("aria-expanded", "false");
+            botao.innerHTML = '<span>ver mais</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>';
+            sinopse.before(botao);
+            card.dataset.sinopsePronta = "true";
+
+            botao.addEventListener("click", () => {
+                const aberta = card.classList.toggle("synopsis-open");
+                botao.setAttribute("aria-expanded", String(aberta));
+                botao.querySelector("span").textContent = aberta ? "ver menos" : "ver mais";
+            });
+        });
+    };
+
+    prepararSinopses();
+    new MutationObserver(prepararSinopses).observe(gridLivros, {
+        childList: true,
+        subtree: true
+    });
+});
