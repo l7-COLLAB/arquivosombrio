@@ -326,3 +326,8 @@
     .book-more summary{font-size:.47rem}
     .book-more .book-description{font-size:.62rem}
 }
+
+
+/* Compatibilidade imediata com os cartões anteriores. */
+.books-category-grid .book-content>.book-description,
+.books-category-grid .book-content>.book-commerce{display:none}
