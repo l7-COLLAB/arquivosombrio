@@ -84,7 +84,7 @@
     >
 
     <!-- CSS PRINCIPAL -->
-    <link rel="stylesheet" href="css/style.css?v=20260918-21">
+    <link rel="stylesheet" href="css/style.css?v=20260918-22">
 
     <!-- AJUSTES LOCAIS -->
     <style>
@@ -2655,7 +2655,7 @@
          ================================================================ -->
 
     <script src="data/caso.js" defer></script>
-    <script src="js/script.js?v=20260918-14" defer></script>
+    <script src="js/script.js?v=20260918-15" defer></script>
     <script src="js/filtros.js?v=20260917-3" defer></script>
 
 <script>
@@ -2850,6 +2850,42 @@
 </script>
 
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const gridLivros = document.getElementById("grid-livros");
+            if (!gridLivros) return;
+
+            const prepararSinopses = () => {
+                gridLivros.querySelectorAll(".book-card").forEach(card => {
+                    if (card.dataset.sinopsePronta === "true") return;
+
+                    const sinopse = card.querySelector(".book-description");
+                    if (!sinopse) return;
+
+                    const botao = document.createElement("button");
+                    botao.type = "button";
+                    botao.className = "book-synopsis-toggle";
+                    botao.setAttribute("aria-expanded", "false");
+                    botao.innerHTML = '<span>ver mais</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>';
+
+                    sinopse.before(botao);
+                    card.dataset.sinopsePronta = "true";
+
+                    botao.addEventListener("click", () => {
+                        const aberta = card.classList.toggle("synopsis-open");
+                        botao.setAttribute("aria-expanded", String(aberta));
+                        botao.querySelector("span").textContent = aberta ? "ver menos" : "ver mais";
+                    });
+                });
+            };
+
+            prepararSinopses();
+            new MutationObserver(prepararSinopses).observe(gridLivros, {
+                childList: true,
+                subtree: true
+            });
+        });
+    </script>
 </body>
 
 </html>
