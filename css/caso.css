@@ -3328,3 +3328,24 @@ body.case-booting::before {
     font-size: 0.68rem;
     letter-spacing: 0.28em;
 }
+
+
+/* Evidências expansíveis do editor em blocos */
+.case-page #caso-historia[data-content-format="blocks"] .case-content-evidence .case-content-card-list {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card--evidence.evidence-card {
+    display: block;
+    padding: 0;
+    gap: 0;
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card--evidence .evidence-details {
+    padding: clamp(1rem, 2.6vw, 1.35rem);
+}
+
+.case-page #caso-historia[data-content-format="blocks"] .case-content-card--evidence .case-content-card-link {
+    display: inline-flex;
+    margin-top: 1rem;
+}

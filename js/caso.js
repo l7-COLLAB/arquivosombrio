@@ -810,28 +810,17 @@ function renderizarEvidencias(evidencias) {
                         typeof evidencia ===
                         "string"
                     ) {
+                        const textoEvidencia =
+                            evidencia.trim();
 
-                        return `
-                            <div class="evidence-card evidence-card-simple">
-
-                                <div class="evidence-card-header">
-
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-
-                                    <div>
-                                        <span class="evidence-number">
-                                            EVIDÊNCIA ${String(indice + 1).padStart(2, "0")}
-                                        </span>
-
-                                        <h3>
-                                            ${escaparHTML(evidencia)}
-                                        </h3>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        `;
+                        evidencia = {
+                            titulo:
+                                textoEvidencia.length > 110
+                                    ? textoEvidencia.slice(0, 107).trimEnd() + "..."
+                                    : textoEvidencia,
+                            detalhes:
+                                textoEvidencia
+                        };
                     }
 
 
@@ -2340,7 +2329,176 @@ function renderizarCardsBlocoDossie(
 
         card.className = hipoteses
             ? "case-content-card case-content-card--hypothesis"
-            : "case-content-card case-content-card--evidence";
+            : "case-content-card case-content-card--evidence evidence-card";
+
+        /*
+         * Evidências do editor em blocos usam o mesmo acordeão dos casos
+         * antigos. Assim, qualquer caso atual ou futuro recebe ABRIR/FECHAR
+         * sem depender do formato em que foi salvo.
+         */
+        if (!hipoteses) {
+            const objeto =
+                typeof item === "object" && item
+                    ? item
+                    : {};
+
+            const textoCompleto =
+                typeof item === "string"
+                    ? item.trim()
+                    : obterCampoItemDossie(
+                        objeto,
+                        ["detalhes", "descricao", "texto", "resumo"]
+                    );
+
+            const tituloOriginal =
+                obterCampoItemDossie(
+                    objeto,
+                    ["titulo", "nome"]
+                ) ||
+                textoCompleto ||
+                `Evidência ${indice + 1}`;
+
+            const titulo =
+                tituloOriginal.length > 110
+                    ? tituloOriginal.slice(0, 107).trimEnd() + "..."
+                    : tituloOriginal;
+
+            const resumo =
+                obterCampoItemDossie(objeto, ["resumo"]);
+
+            const classificacao =
+                obterCampoItemDossie(
+                    objeto,
+                    ["classificacao", "tipo"],
+                    `Evidência ${indice + 1}`
+                );
+
+            const botao =
+                document.createElement("button");
+
+            botao.type = "button";
+            botao.className = "evidence-toggle";
+            botao.setAttribute("aria-expanded", "false");
+
+            const cabecalho =
+                document.createElement("div");
+
+            cabecalho.className = "evidence-card-header";
+
+            const icone =
+                document.createElement("i");
+
+            icone.className = "fa-solid fa-magnifying-glass";
+            icone.setAttribute("aria-hidden", "true");
+
+            const cabecalhoTexto =
+                document.createElement("div");
+
+            cabecalhoTexto.className = "evidence-heading";
+            cabecalhoTexto.appendChild(
+                criarElementoTextoDossie(
+                    "span",
+                    classificacao,
+                    "evidence-number"
+                )
+            );
+            cabecalhoTexto.appendChild(
+                criarElementoTextoDossie("h3", titulo)
+            );
+
+            if (
+                resumo &&
+                resumo !== textoCompleto
+            ) {
+                cabecalhoTexto.appendChild(
+                    criarElementoTextoDossie("p", resumo)
+                );
+            }
+
+            const rotulo =
+                document.createElement("span");
+
+            rotulo.className = "evidence-open-label";
+            rotulo.innerHTML =
+                'ABRIR <i class="fa-solid fa-plus" aria-hidden="true"></i>';
+
+            cabecalho.appendChild(icone);
+            cabecalho.appendChild(cabecalhoTexto);
+            cabecalho.appendChild(rotulo);
+            botao.appendChild(cabecalho);
+
+            const detalhes =
+                document.createElement("div");
+
+            detalhes.className = "evidence-details";
+            detalhes.hidden = true;
+
+            const texto =
+                document.createElement("div");
+
+            texto.className = "evidence-text";
+            texto.appendChild(
+                criarElementoTextoDossie(
+                    "p",
+                    textoCompleto ||
+                    "Informações complementares desta evidência ainda não foram cadastradas."
+                )
+            );
+            detalhes.appendChild(texto);
+
+            const fonte =
+                obterCampoItemDossie(objeto, ["fonte"]);
+
+            if (fonte) {
+                const fonteBloco =
+                    document.createElement("div");
+
+                fonteBloco.className = "evidence-source";
+                fonteBloco.appendChild(
+                    criarElementoTextoDossie(
+                        "span",
+                        "FONTE / REFERÊNCIA"
+                    )
+                );
+                fonteBloco.appendChild(
+                    criarElementoTextoDossie("p", fonte)
+                );
+                detalhes.appendChild(fonteBloco);
+            }
+
+            const link =
+                criarLinkExternoDossie(
+                    objeto.link ||
+                    objeto.url ||
+                    objeto.link_fonte,
+                    "Consultar referência",
+                    "case-content-card-link"
+                );
+
+            if (link) {
+                detalhes.appendChild(link);
+            }
+
+            botao.addEventListener("click", () => {
+                const aberto =
+                    botao.getAttribute("aria-expanded") === "true";
+
+                botao.setAttribute(
+                    "aria-expanded",
+                    String(!aberto)
+                );
+                detalhes.hidden = aberto;
+                card.classList.toggle("open", !aberto);
+                rotulo.innerHTML = aberto
+                    ? 'ABRIR <i class="fa-solid fa-plus" aria-hidden="true"></i>'
+                    : 'FECHAR <i class="fa-solid fa-minus" aria-hidden="true"></i>';
+            });
+
+            card.appendChild(botao);
+            card.appendChild(detalhes);
+            lista.appendChild(card);
+            return;
+        }
 
         const classificacao =
             typeof item === "object" && item
