@@ -633,6 +633,15 @@ function carregarSupabaseSDK() {
 
 async function obterClienteSupabase() {
 
+    if (window.arquivoAdminSupabaseClient) {
+
+        clienteSupabase =
+            window.arquivoAdminSupabaseClient;
+
+        return clienteSupabase;
+
+    }
+
     if (clienteSupabase) {
 
         return clienteSupabase;
@@ -674,23 +683,6 @@ async function obterClienteSupabase() {
                     true
 
             };
-
-            /*
-             * O LockManager do Safari pode manter a autenticação esperando
-             * quando há mais de uma guia do site aberta. A área administrativa
-             * usa armazenamento próprio e serialização local, pois possui um
-             * único formulário de acesso por página.
-             */
-            if (window.ARQUIVO_ADMIN_CAPTCHA_ATIVO) {
-
-                opcoesAuth.storageKey =
-                    "arquivo-sombrio-admin-auth-v1";
-
-                opcoesAuth.lock =
-                    async (_nome, _tempo, executar) =>
-                        await executar();
-
-            }
 
             clienteSupabase =
                 window.supabase.createClient(
