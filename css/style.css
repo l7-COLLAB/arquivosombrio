@@ -184,6 +184,21 @@
     #admin-literary-editor-v2 .lit-bottom-actions button{flex:1 1 130px}
 }
 
+/* Diretório inicial — seis áreas principais do Arquivo. */
+.home-page .home-directory{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+}
+@media(max-width:760px){
+    .home-page .home-directory{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+}
+@media(max-width:430px){
+    .home-page .home-directory{
+        grid-template-columns:1fr;
+    }
+}
+
 /* Apoio ao Arquivo — marca d'água editorial mais legível. */
 .archive-support::before{
     top:42%!important;
