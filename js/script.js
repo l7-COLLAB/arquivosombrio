@@ -855,6 +855,33 @@ async function sairAdmin() {
         );
 
 
+    if (window.ARQUIVO_ADMIN_CAPTCHA_ATIVO) {
+
+        document.body.classList.remove(
+            "admin-dashboard-open"
+        );
+
+        const modal =
+            document.getElementById(
+                "modal-admin"
+            );
+
+        if (modal) {
+            modal.hidden = false;
+            modal.classList.add("active");
+            modal.setAttribute("aria-hidden", "false");
+        }
+
+        if (
+            typeof window.arquivoAdminCaptchaReset ===
+                "function"
+        ) {
+            window.arquivoAdminCaptchaReset();
+        }
+
+    }
+
+
     fecharFormularioAdmin();
 
 }
@@ -7418,8 +7445,6 @@ async function abrirPainelAdmin(sessaoValidada = null) {
 
     if (!sessao) {
 
-        fecharModalAdmin();
-
         alert(
             "Acesso administrativo não autorizado."
         );
@@ -7428,6 +7453,34 @@ async function abrirPainelAdmin(sessaoValidada = null) {
     }
 
     renderizarGerenciadorAdmin();
+
+    const painel =
+        document.getElementById(
+            "admin-manager"
+        );
+
+    if (
+        !painel ||
+        !painel.querySelector(
+            ".admin-manager"
+        )
+    ) {
+        throw new Error(
+            "O painel administrativo não pôde ser montado."
+        );
+    }
+
+    if (window.ARQUIVO_ADMIN_CAPTCHA_ATIVO) {
+
+        painel.hidden = false;
+        painel.classList.add("active");
+        painel.setAttribute("aria-hidden", "false");
+
+        document.body.classList.add(
+            "admin-dashboard-open"
+        );
+
+    }
 
     fecharModalAdmin();
 }
