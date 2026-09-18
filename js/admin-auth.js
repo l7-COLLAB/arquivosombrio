@@ -129,7 +129,7 @@
             }
 
             if (status) status.textContent = "Acesso confirmado. Abrindo o painel...";
-            window.location.replace("painel-admin.html?v=20260918-14");
+            window.location.replace("painel-admin.html?v=20260918-15");
         } catch (falha) {
             console.error("Falha no acesso administrativo.", falha);
             const texto = String(falha?.message || "");
