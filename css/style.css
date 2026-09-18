@@ -199,6 +199,37 @@
     }
 }
 
+/* Cabeçalho inicial com todas as áreas, sem estouro horizontal. */
+.home-page .header-content{
+    gap:clamp(10px,1.5vw,24px);
+}
+.home-page .nav-menu{
+    min-width:0;
+    gap:clamp(8px,1vw,17px);
+}
+.home-page .nav-menu a{
+    flex:0 0 auto;
+    font-size:clamp(.54rem,.56vw,.64rem);
+    letter-spacing:.055em;
+    white-space:nowrap;
+}
+.home-page .nav-menu .btn-restricted{
+    padding:10px 12px;
+}
+
+@media(max-width:1400px) and (min-width:1181px){
+    .home-page .logo{gap:8px}
+    .home-page .logo-texto{font-size:.78rem;letter-spacing:.08em}
+    .home-page .nav-menu{gap:9px}
+    .home-page .nav-menu a{font-size:.54rem;letter-spacing:.035em}
+    .home-page .nav-menu .btn-restricted{padding:9px 10px}
+}
+
+@media(max-width:1180px){
+    .home-page .nav-menu{display:none!important}
+    .home-page .menu-toggle{display:block!important}
+}
+
 /* Apoio ao Arquivo — marca d'água editorial mais legível. */
 .archive-support::before{
     top:42%!important;
