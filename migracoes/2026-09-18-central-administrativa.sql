@@ -160,3 +160,12 @@ comment on table public.content_reports is
 'Denúncias de conteúdo enviadas por usuários e analisadas pela administração.';
 comment on function public.admin_list_users() is
 'Lista administrativa mínima de contas e aceites legais; exige app_metadata.role=admin.';
+
+
+-- A Data API exige GRANT além das políticas RLS.
+-- Permissões mínimas usadas pela tela administrativa de Solicitações.
+grant select, update on table public.account_deletion_requests to authenticated;
+grant select, update on table public.account_content_review to authenticated;
+grant select, update on table public.admin_notifications to authenticated;
+
+notify pgrst, 'reload schema';
