@@ -7245,24 +7245,69 @@ const supabase =
         }
 
 
-        /*
-         * A chamada destrutiva será ligada ao endpoint
-         * delete-own-account já existente no projeto
-         * depois da conferência final da integração.
-         *
-         * Não executamos exclusão por fallback nem
-         * tentamos apagar diretamente auth.users.
-         */
+        const urlEdgeFunction =
+            `${SUPABASE_URL}/functions/v1/delete-own-account`;
+
+
+        const resposta =
+            await fetch(
+                urlEdgeFunction,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({})
+                }
+            );
+
+
+        let dadosResposta = null;
+
+
+        try {
+            dadosResposta = await resposta.json();
+        } catch (erroJson) {
+            console.warn(
+                "O serviço de exclusão retornou uma resposta sem JSON.",
+                erroJson
+            );
+        }
+
+
+        if (!resposta.ok || !dadosResposta?.success) {
+            throw new Error(
+                dadosResposta?.error ||
+                "O servidor não confirmou a exclusão da conta."
+            );
+        }
+
+
+        try {
+            await supabase.auth.signOut({
+                scope: "local"
+            });
+        } catch (erroLogout) {
+            console.warn(
+                "A conta foi excluída, mas a sessão local não pôde ser limpa integralmente.",
+                erroLogout
+            );
+        }
+
 
         mostrarMensagemElemento(
             mensagem,
-            "Confirmação validada. A exclusão definitiva será executada somente pelo serviço seguro de encerramento de conta.",
+            "Sua conta foi excluída permanentemente.",
             "sucesso"
         );
 
 
-        console.info(
-            "Meu Arquivo: exclusão confirmada pelo usuário; aguardando integração final com delete-own-account."
+        window.setTimeout(
+            function () {
+                window.location.href = "index.html";
+            },
+            900
         );
 
     }
