@@ -640,8 +640,22 @@ function renderizarCaso(caso) {
 
     restaurarSublinhadosLeitura(caso.id);
 
-    document.title =
-        `${caso.titulo} — Arquivo Sombrio`;
+    if (window.ArquivoSEO) {
+        window.ArquivoSEO.aplicar({
+            id: caso.id,
+            titulo: caso.titulo,
+            descricao: caso.resumo,
+            imagem: caso.imagem || caso.imagem_capa,
+            caminho: "caso.html",
+            secao: caso.categoria || "Dossiês",
+            publicadoEm: caso.publicado_em || caso.created_at,
+            modificadoEm: caso.updated_at,
+            createdAt: caso.created_at
+        });
+    } else {
+        document.title =
+            `${caso.titulo} — Arquivo Sombrio`;
+    }
 
     finalizarAberturaDoCaso();
 }
