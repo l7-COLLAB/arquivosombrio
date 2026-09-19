@@ -236,6 +236,42 @@
 
             </a>
 
+            <span class="arquivo-menu-group">MEU ARQUIVO</span>
+
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="inicio">
+                <i class="fa-solid fa-house-user"></i><span>Visão geral</span>
+            </button>
+
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="favoritos">
+                <i class="fa-solid fa-bookmark"></i><span>Favoritos</span>
+            </button>
+
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="marcacoes">
+                <i class="fa-solid fa-highlighter"></i><span>Trechos salvos</span>
+            </button>
+
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="investigacoes">
+                <i class="fa-solid fa-note-sticky"></i><span>Observações privadas</span>
+            </button>
+
+            <span class="arquivo-menu-group">CONTA</span>
+
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="configuracoes" data-settings-target="editar-perfil">
+                <i class="fa-solid fa-user-pen"></i><span>Editar perfil</span>
+            </button>
+
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="configuracoes" data-settings-target="alterar-senha">
+                <i class="fa-solid fa-key"></i><span>Alterar senha</span>
+            </button>
+
+            <button type="button" class="arquivo-menu-link" data-arquivo-tab="configuracoes" data-settings-target="arquivo-logout">
+                <i class="fa-solid fa-right-from-bracket"></i><span>Sair</span>
+            </button>
+
+            <button type="button" class="arquivo-menu-link arquivo-menu-link-danger" data-arquivo-tab="configuracoes" data-settings-target="excluir-conta-arquivo">
+                <i class="fa-solid fa-user-xmark"></i><span>Excluir conta</span>
+            </button>
+
 
             <span class="arquivo-menu-group">PRIVACIDADE E LEIS</span>
 
@@ -542,6 +578,10 @@
 
                                 Editar credencial
 
+                            </button>
+
+                            <button type="button" class="arquivo-profile-more" id="perfil-menu-mais" aria-label="Mais opções do perfil" title="Mais opções">
+                                <i class="fa-solid fa-ellipsis"></i>
                             </button>
 
 
@@ -905,12 +945,12 @@
                             <div class="setor-content">
 
                                 <h3>
-                                    Caderno do Investigador
+                                    Observações pessoais
                                 </h3>
 
                                 <p>
-                                    Registre observações privadas
-                                    durante suas investigações.
+                                    Registre observações privadas, separadas
+                                    das contribuições públicas.
                                 </p>
 
                             </div>
@@ -1723,7 +1763,7 @@
                         <div class="favoritos-divididos">
                             <details class="favoritos-grupo">
                                 <summary class="favoritos-grupo-titulo">
-                                    <span><i class="fa-solid fa-folder-open"></i> Casos favoritos</span>
+                                    <span><i class="fa-solid fa-folder-open"></i> Casos e perícias favoritos</span>
                                     <i class="fa-solid fa-chevron-down favoritos-chevron"></i>
                                 </summary>
                                 <div class="colecao-conteudo" id="lista-casos-favoritos"></div>
@@ -3486,13 +3526,10 @@
 
             <div class="arquivo-modal-header">
 
-                <span>
-                    ARQUIVO SOMBRIO
-                </span>
-
-                <small>
-                    REGISTRO PARTICULAR
-                </small>
+                <div>
+                    <small>ARQUIVO SOMBRIO · REGISTRO PARTICULAR</small>
+                    <h2 class="arquivo-modal-title" id="arquivo-modal-title">Registro</h2>
+                </div>
 
             </div>
 
@@ -3501,10 +3538,6 @@
                 class="arquivo-modal-content"
                 id="arquivo-modal-content"
             >
-
-                <h2 class="arquivo-modal-title" id="arquivo-modal-title">
-                    Registro
-                </h2>
 
             </div>
 
@@ -3537,7 +3570,7 @@
 
     <script src="js/script.js?v=20260917-4"></script>
 
-    <script src="js/meu-arquivo.js?v=20260918-1"></script>
+    <script src="js/meu-arquivo.js?v=20260919-2"></script>
 
 
 </body>

@@ -6829,6 +6829,43 @@ body.menu-arquivo-aberto { overflow: hidden; }
     color: #cfc5b7;
 }
 .meu-arquivo-page .arquivo-account-menu i { color: #a52a25; }
+.meu-arquivo-page .arquivo-menu-link-danger { color: #d29a94 !important; }
+.meu-arquivo-page .arquivo-menu-link-danger i { color: #c23b34 !important; }
+
+.meu-arquivo-page .investigador-info { position: relative; }
+.meu-arquivo-page .arquivo-profile-more {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(181,157,122,.18);
+    border-radius: 50%;
+    background: #12100e;
+    color: #bdb2a4;
+    cursor: pointer;
+}
+.meu-arquivo-page .arquivo-profile-more:hover,
+.meu-arquivo-page .arquivo-profile-more:focus-visible { border-color: #8e2420; color: #fff; }
+.meu-arquivo-page .arquivo-quick-actions { gap: .5rem; }
+
+.meu-arquivo-page .arquivo-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .8rem;
+    border: 1px solid rgba(181,157,122,.16);
+    background: #0d0c0a;
+    cursor: pointer;
+}
+.meu-arquivo-page .arquivo-toggle-row span { display: grid; gap: .2rem; }
+.meu-arquivo-page .arquivo-toggle-row strong { color: #ded4c5; font-size: .72rem; }
+.meu-arquivo-page .arquivo-toggle-row small { color: #8f8579; font-size: .58rem; line-height: 1.45; }
+.meu-arquivo-page .arquivo-toggle-row input { width: 18px; height: 18px; accent-color: #8e2420; flex: 0 0 auto; }
+.meu-arquivo-page .arquivo-form-intro { margin: 0; color: #a69c8f; font-size: .7rem; line-height: 1.6; }
 
 .meu-arquivo-page .favoritos-divididos {
     display: grid;

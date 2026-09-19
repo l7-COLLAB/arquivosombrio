@@ -173,13 +173,17 @@ const meuArquivoState = {
 
     alertas: [],
 
+    preferencias: null,
+
     casosEnviados: [],
 
     muralAberto: null,
 
     muralSalvamentoTimer: null,
 
-    muralSalvando: false
+    muralSalvando: false,
+
+    focoAntesModal: null
 
 };
 
@@ -675,6 +679,8 @@ async function carregarDadosMeuArquivo() {
 
             carregarAlertasUsuario(),
 
+            carregarPreferenciasUsuario(),
+
             carregarCasosEnviadosUsuario()
 
         ]);
@@ -867,10 +873,10 @@ async function carregarFavoritosUsuario() {
         );
 
 
-    const casos = meuArquivoState.favoritos.filter(item => item.item_type === "case");
+    const casos = meuArquivoState.favoritos.filter(item => item.item_type !== "book");
     const livros = meuArquivoState.favoritos.filter(item => item.item_type === "book");
 
-    renderizarFavoritosMeuArquivo("lista-casos-favoritos", casos, "Nenhum caso favorito.", "fa-folder-open");
+    renderizarFavoritosMeuArquivo("lista-casos-favoritos", casos, "Nenhum caso ou arquivo pericial favorito.", "fa-folder-open");
     renderizarFavoritosMeuArquivo("lista-livros-favoritos", livros, "Nenhum livro favorito.", "fa-book-open");
 
 }
@@ -1236,6 +1242,25 @@ async function carregarAlertasUsuario() {
 
     renderizarAlertas();
 
+}
+
+
+async function carregarPreferenciasUsuario() {
+    const registros = await consultarTabelaUsuario(
+        "user_preferences",
+        "user_id",
+        { limite: 1 }
+    );
+
+    meuArquivoState.preferencias = registros[0] || {
+        profile_visibility: "private",
+        show_bio: false,
+        show_activity: false,
+        notify_comments: true,
+        notify_replies: true,
+        notify_case_updates: true,
+        notify_admin: true
+    };
 }
 
 
@@ -2239,6 +2264,8 @@ function abrirModalArquivo(
         return;
     }
 
+    meuArquivoState.focoAntesModal = document.activeElement;
+
 
     if (
         arquivoElements.modalTitle
@@ -2266,6 +2293,8 @@ function abrirModalArquivo(
 
     modal.hidden =
         false;
+
+    modal.setAttribute("aria-hidden", "false");
 
 
     document.body.classList.add(
@@ -2315,6 +2344,8 @@ function fecharModalArquivo() {
     modal.hidden =
         true;
 
+    modal.setAttribute("aria-hidden", "true");
+
 
     document.body.classList.remove(
         "arquivo-modal-aberto"
@@ -2334,6 +2365,11 @@ function fecharModalArquivo() {
             .innerHTML = "";
 
     }
+
+    if (meuArquivoState.focoAntesModal?.isConnected) {
+        meuArquivoState.focoAntesModal.focus();
+    }
+    meuArquivoState.focoAntesModal = null;
 
 }
 
@@ -2901,6 +2937,8 @@ function prepararEventosMeuArquivo() {
 
     prepararEventoEditarPerfil();
 
+    prepararEventoMenuPerfil();
+
     prepararEventoAvatar();
 
     prepararEventoCriarMural();
@@ -2913,6 +2951,34 @@ function prepararEventosMeuArquivo() {
 
     prepararEventosSeguranca();
 
+}
+
+
+function prepararEventoMenuPerfil() {
+    document.getElementById("perfil-menu-mais")?.addEventListener("click", function () {
+        abrirModalArquivo("Opções do perfil", `
+            <div class="arquivo-form arquivo-quick-actions">
+                <button type="button" class="settings-row" data-profile-action="edit">
+                    <i class="fa-solid fa-user-pen"></i><span><strong>Nome e biografia</strong><small>Editar identificação pública</small></span>
+                </button>
+                <button type="button" class="settings-row" data-profile-action="avatar">
+                    <i class="fa-solid fa-camera"></i><span><strong>Foto de perfil</strong><small>Enviar ou substituir imagem</small></span>
+                </button>
+                <button type="button" class="settings-row" data-profile-action="privacy">
+                    <i class="fa-solid fa-user-shield"></i><span><strong>Privacidade</strong><small>Controlar visibilidade do perfil</small></span>
+                </button>
+            </div>
+        `);
+
+        document.querySelectorAll("[data-profile-action]").forEach(function (controle) {
+            controle.addEventListener("click", function () {
+                const acao = controle.dataset.profileAction;
+                if (acao === "edit") abrirEdicaoPerfil();
+                if (acao === "avatar") document.getElementById("alterar-avatar")?.click();
+                if (acao === "privacy") abrirConfiguracaoPrivacidade();
+            });
+        });
+    });
 }
 
 
@@ -6050,9 +6116,14 @@ function mostrarBloqueadosUsuario() {
 
                                         <i class="fa-solid fa-user-slash"></i>
 
-                                        <strong>
-                                            ${escaparHTML(nome)}
-                                        </strong>
+                                        <div>
+                                            <strong>${escaparHTML(nome)}</strong>
+                                            <small>Este usuário não pode interagir com você.</small>
+                                        </div>
+
+                                        <button type="button" class="arquivo-button arquivo-button-secondary" data-unblock-user="${escaparHTML(item.id)}">
+                                            Desbloquear
+                                        </button>
 
                                     </article>
                                 `;
@@ -6065,6 +6136,30 @@ function mostrarBloqueadosUsuario() {
             </div>
         `
     );
+
+    document.querySelectorAll("[data-unblock-user]").forEach(function (botao) {
+        botao.addEventListener("click", async function () {
+            const supabase = await obterSupabaseMeuArquivo();
+            const usuario = meuArquivoState.usuario;
+            if (!supabase || !usuario) return;
+
+            definirBotaoCarregando(botao, true);
+            const { error } = await supabase
+                .from("user_blocks")
+                .delete()
+                .eq("id", botao.dataset.unblockUser)
+                .eq("user_id", usuario.id);
+
+            if (error) {
+                definirBotaoCarregando(botao, false);
+                alert("Não foi possível desbloquear este usuário.");
+                return;
+            }
+
+            await carregarBloqueadosUsuario();
+            mostrarBloqueadosUsuario();
+        });
+    });
 
 }
 
@@ -6844,35 +6939,13 @@ function prepararEventosPreferencias() {
 
 
     if (notificacoes) {
-
-        notificacoes.addEventListener(
-            "click",
-            function () {
-
-                abrirPainelPreferencia(
-                    "Notificações",
-                    "As preferências de alertas e notificações serão vinculadas à sua conta quando configurarmos esta estrutura no banco de dados."
-                );
-
-            }
-        );
+        notificacoes.addEventListener("click", abrirConfiguracaoNotificacoes);
 
     }
 
 
     if (privacidade) {
-
-        privacidade.addEventListener(
-            "click",
-            function () {
-
-                abrirPainelPreferencia(
-                    "Privacidade",
-                    "Murais, anotações, teorias e evidências pessoais permanecem privados por padrão. As opções detalhadas de visibilidade serão configuradas nesta área."
-                );
-
-            }
-        );
+        privacidade.addEventListener("click", abrirConfiguracaoPrivacidade);
 
     }
 
@@ -6893,6 +6966,80 @@ function prepararEventosPreferencias() {
 
     }
 
+}
+
+
+function preferenciaMarcada(chave) {
+    return meuArquivoState.preferencias?.[chave] ? "checked" : "";
+}
+
+
+function abrirConfiguracaoNotificacoes() {
+    abrirModalArquivo("Notificações", `
+        <form id="form-preferencias-notificacoes" class="arquivo-form">
+            <p class="arquivo-form-intro">Escolha quais movimentações poderão gerar alertas dentro do Meu Arquivo.</p>
+            <label class="arquivo-toggle-row"><span><strong>Comentários</strong><small>Interações em suas publicações</small></span><input type="checkbox" name="notify_comments" ${preferenciaMarcada("notify_comments")}></label>
+            <label class="arquivo-toggle-row"><span><strong>Respostas</strong><small>Respostas diretas aos seus comentários</small></span><input type="checkbox" name="notify_replies" ${preferenciaMarcada("notify_replies")}></label>
+            <label class="arquivo-toggle-row"><span><strong>Atualizações de casos</strong><small>Novidades em casos acompanhados</small></span><input type="checkbox" name="notify_case_updates" ${preferenciaMarcada("notify_case_updates")}></label>
+            <label class="arquivo-toggle-row"><span><strong>Comunicados administrativos</strong><small>Segurança, moderação e avisos do projeto</small></span><input type="checkbox" name="notify_admin" ${preferenciaMarcada("notify_admin")}></label>
+            <div id="preferencias-mensagem" aria-live="polite"></div>
+            <div class="arquivo-form-actions"><button type="button" class="arquivo-button arquivo-button-secondary" data-close-arquivo-modal>Cancelar</button><button type="submit" class="arquivo-button">Salvar</button></div>
+        </form>
+    `);
+    document.getElementById("form-preferencias-notificacoes")?.addEventListener("submit", salvarPreferenciasUsuario);
+}
+
+
+function abrirConfiguracaoPrivacidade() {
+    const preferencias = meuArquivoState.preferencias || {};
+    abrirModalArquivo("Privacidade", `
+        <form id="form-preferencias-privacidade" class="arquivo-form">
+            <div class="arquivo-message"><i class="fa-solid fa-lock"></i><span>Observações, murais, trechos, histórico e investigações pessoais permanecem privados em qualquer opção.</span></div>
+            <div class="arquivo-field"><label for="profile-visibility">Visibilidade do perfil na comunidade</label><select id="profile-visibility" name="profile_visibility"><option value="private" ${preferencias.profile_visibility !== "community" ? "selected" : ""}>Privado</option><option value="community" ${preferencias.profile_visibility === "community" ? "selected" : ""}>Visível na comunidade</option></select></div>
+            <label class="arquivo-toggle-row"><span><strong>Exibir biografia</strong><small>Mostra a nota do perfil quando o perfil estiver visível</small></span><input type="checkbox" name="show_bio" ${preferenciaMarcada("show_bio")}></label>
+            <label class="arquivo-toggle-row"><span><strong>Exibir atividade pública</strong><small>Mostra apenas publicações e comentários já públicos</small></span><input type="checkbox" name="show_activity" ${preferenciaMarcada("show_activity")}></label>
+            <div id="preferencias-mensagem" aria-live="polite"></div>
+            <div class="arquivo-form-actions"><button type="button" class="arquivo-button arquivo-button-secondary" data-close-arquivo-modal>Cancelar</button><button type="submit" class="arquivo-button">Salvar</button></div>
+        </form>
+    `);
+    document.getElementById("form-preferencias-privacidade")?.addEventListener("submit", salvarPreferenciasUsuario);
+}
+
+
+async function salvarPreferenciasUsuario(evento) {
+    evento.preventDefault();
+    const formulario = evento.currentTarget;
+    const botao = formulario.querySelector('[type="submit"]');
+    const mensagem = document.getElementById("preferencias-mensagem");
+    const usuario = meuArquivoState.usuario;
+    const supabase = await obterSupabaseMeuArquivo();
+    if (!usuario || !supabase) return;
+
+    const dados = {
+        user_id: usuario.id,
+        profile_visibility: formulario.elements.profile_visibility?.value || meuArquivoState.preferencias?.profile_visibility || "private",
+        show_bio: formulario.elements.show_bio?.checked ?? meuArquivoState.preferencias?.show_bio ?? false,
+        show_activity: formulario.elements.show_activity?.checked ?? meuArquivoState.preferencias?.show_activity ?? false,
+        notify_comments: formulario.elements.notify_comments?.checked ?? meuArquivoState.preferencias?.notify_comments ?? true,
+        notify_replies: formulario.elements.notify_replies?.checked ?? meuArquivoState.preferencias?.notify_replies ?? true,
+        notify_case_updates: formulario.elements.notify_case_updates?.checked ?? meuArquivoState.preferencias?.notify_case_updates ?? true,
+        notify_admin: formulario.elements.notify_admin?.checked ?? meuArquivoState.preferencias?.notify_admin ?? true,
+        updated_at: new Date().toISOString()
+    };
+
+    try {
+        definirBotaoCarregando(botao, true);
+        const { data, error } = await supabase.from("user_preferences").upsert(dados, { onConflict: "user_id" }).select().single();
+        if (error) throw error;
+        meuArquivoState.preferencias = data;
+        mostrarMensagemElemento(mensagem, "Preferências salvas.", "sucesso");
+        window.setTimeout(fecharModalArquivo, 650);
+    } catch (erro) {
+        console.error("Erro ao salvar preferências:", erro);
+        mostrarMensagemElemento(mensagem, "Não foi possível salvar as preferências.", "erro");
+    } finally {
+        definirBotaoCarregando(botao, false);
+    }
 }
 
 
