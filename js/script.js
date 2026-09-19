@@ -6444,7 +6444,7 @@ async function cadastrarForum() {
                             true,
 
                         terms_version:
-                            "1.0",
+                            "1.1",
 
                         privacy_version:
                             "1.2",

@@ -7073,13 +7073,26 @@ function abrirConfirmacaoExclusaoConta() {
                         </strong>
 
                         <p>
-                            Esta ação solicitará a exclusão definitiva
-                            da sua conta no Arquivo Sombrio.
+                            Esta ação excluirá definitivamente sua conta e seus
+                            dados pessoais. Escolha abaixo o destino das suas
+                            contribuições públicas.
                         </p>
 
                     </div>
 
                 </div>
+
+                <fieldset class="arquivo-field">
+                    <legend>Contribuições públicas</legend>
+                    <label>
+                        <input type="radio" name="destino-contribuicoes" value="delete_all" checked>
+                        Excluir minhas contribuições
+                    </label>
+                    <label>
+                        <input type="radio" name="destino-contribuicoes" value="review_for_anonymization">
+                        Ocultar e enviar para avaliação administrativa, com possível manutenção anônima
+                    </label>
+                </fieldset>
 
 
                 <div class="arquivo-field">
@@ -7194,6 +7207,14 @@ async function solicitarExclusaoConta(
 
     }
 
+    const escolhaConteudo =
+        document.querySelector('input[name="destino-contribuicoes"]:checked')?.value;
+
+    if (!['delete_all', 'review_for_anonymization'].includes(escolhaConteudo)) {
+        mostrarMensagemElemento(mensagem, "Escolha o destino das contribuições.", "erro");
+        return;
+    }
+
 
 const supabase =
     await obterSupabaseMeuArquivo();
@@ -7258,7 +7279,7 @@ const supabase =
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${accessToken}`
                     },
-                    body: JSON.stringify({})
+                    body: JSON.stringify({ content_choice: escolhaConteudo })
                 }
             );
 
@@ -7298,7 +7319,9 @@ const supabase =
 
         mostrarMensagemElemento(
             mensagem,
-            "Sua conta foi excluída permanentemente.",
+            escolhaConteudo === "review_for_anonymization"
+                ? "Sua conta foi excluída. As contribuições ficaram ocultas para avaliação administrativa."
+                : "Sua conta e suas contribuições foram excluídas permanentemente.",
             "sucesso"
         );
 
@@ -7321,7 +7344,7 @@ const supabase =
 
         mostrarMensagemElemento(
             mensagem,
-            "Não foi possível validar a sessão para exclusão.",
+            erro?.message || "Não foi possível concluir a exclusão.",
             "erro"
         );
 
