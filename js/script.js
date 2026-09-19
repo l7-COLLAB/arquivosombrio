@@ -4251,6 +4251,17 @@ function renderizarDetalhePericia(grid, pericia) {
     ].filter(item => String(item[1] || "").trim());
     const imagem = pericia.imagem ? '<figure class="forensic-detail-image"><img src="' + escaparHTML(pericia.imagem) + '" alt="' + escaparHTML(pericia.legenda_imagem || pericia.titulo || "") + '">' + (pericia.legenda_imagem ? "<figcaption>" + escaparHTML(pericia.legenda_imagem) + (pericia.fonte_imagem ? " · " + escaparHTML(pericia.fonte_imagem) : "") + "</figcaption>" : "") + "</figure>" : "";
     grid.innerHTML = '<article class="forensic-detail"><a class="forensic-back" href="pericia.html#forense"><i class="fa-solid fa-arrow-left"></i> Voltar para todas as perícias</a><header><span class="badge category">' + escaparHTML(pericia.categoria || "CIÊNCIA FORENSE") + '</span><h1>' + escaparHTML(pericia.titulo || "Matéria forense") + '</h1><p>' + escaparHTML(pericia.resumo || "") + '</p></header>' + imagem + '<div class="forensic-detail-content">' + secoes.map(item => "<section><h2>" + escaparHTML(item[0]) + "</h2>" + paragrafosPericia(item[1]) + "</section>").join("") + "</div></article>";
+    window.ArquivoSEO?.aplicar({
+        id: pericia.id,
+        titulo: pericia.titulo,
+        descricao: pericia.resumo,
+        imagem: pericia.imagem || pericia.imagem_capa,
+        caminho: "pericia.html",
+        secao: "Ciência Forense",
+        publicadoEm: pericia.publicado_em,
+        modificadoEm: pericia.updated_at,
+        createdAt: pericia.created_at
+    });
 }
 
 function atualizarCategoriasForenses() {
@@ -12576,6 +12587,17 @@ function renderizarDetalheCasoDiario(container, caso) {
             ${imagens.map(imagem => `<figure><img src="${escaparHTML(imagem.url || "")}" alt="${escaparHTML(imagem.legenda || "")}" loading="lazy"><figcaption>${escaparHTML([imagem.legenda, imagem.credito].filter(Boolean).join(" · "))}</figcaption></figure>`).join("")}
             ${fontes.length ? `<section class="daily-reader-sources"><h2>Fontes</h2>${fontes.map(fonte => `<a href="${escaparHTML(fonte.url || "#")}" target="_blank" rel="noopener noreferrer">${escaparHTML(fonte.titulo || fonte.url || "Fonte")}</a>`).join("")}</section>` : ""}
         </article>`;
+    window.ArquivoSEO?.aplicar({
+        id: caso.id,
+        titulo: caso.titulo,
+        descricao: caso.resumo,
+        imagem: caso.imagem_capa,
+        caminho: "garimpo.html",
+        secao: "Garimpo Sombrio",
+        publicadoEm: caso.publicado_em,
+        modificadoEm: caso.updated_at,
+        createdAt: caso.created_at
+    });
 }
 
 
