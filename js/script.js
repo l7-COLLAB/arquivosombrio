@@ -12747,3 +12747,22 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 window.addEventListener("pagehide",()=>gravarRascunhoAdmin(false));
 
 document.addEventListener("DOMContentLoaded", carregarGarimpoPublico);
+
+// Aceita links públicos de vídeo de qualquer plataforma no editor administrativo.
+function validarUrlVideoAdmin(url) {
+    const valor = String(url || "").trim();
+
+    if (!valor || /<\/?(?:iframe|video|script)\b/i.test(valor)) {
+        return false;
+    }
+
+    try {
+        const endereco = new URL(valor);
+
+        return ["http:", "https:"]
+            .includes(endereco.protocol);
+
+    } catch (erro) {
+        return false;
+    }
+}
