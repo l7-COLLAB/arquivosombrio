@@ -5113,7 +5113,9 @@ function carregarLivros() {
                             livro.titulo || "Livro"
                         )}"
                         loading="lazy"
-                        onerror="this.src='https://placehold.co/300x450/111/777?text=Arquivo+Sombrio'"
+                        decoding="async"
+                        referrerpolicy="no-referrer"
+                        onerror="if(!this.dataset.capaDireta){this.dataset.capaDireta='1';try{const original=new URL(this.src).searchParams.get('url');if(original){this.src=original;return;}}catch(erro){} }this.onerror=null;this.src='icon-512.png';this.alt='Capa temporariamente indisponível';"
                     >
 
                     ${
