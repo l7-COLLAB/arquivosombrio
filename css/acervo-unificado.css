@@ -197,6 +197,29 @@
     border-color: rgba(181,157,122,.12);
 }
 
+/* Na rota de leitura, exibe somente o documento pericial. */
+.forensic-page .forensic-tools[hidden],
+.forensic-page .forensic-results-status[hidden],
+.forensic-page .forensic-detail-mode .archive-page-back,
+.forensic-page .forensic-detail-mode .archive-list-heading {
+    display: none !important;
+}
+
+.forensic-page .forensic-detail-mode {
+    padding-top: clamp(1.5rem, 4vw, 3rem);
+}
+
+.forensic-page .forensic-detail-mode #grid-forense {
+    display: block;
+}
+
+/* Mantém listagem e leitura do Garimpo como estados mutuamente exclusivos. */
+.garimpo-page .garimpo-intro[hidden],
+.garimpo-page .daily-case-detail[hidden],
+.garimpo-page.garimpo-detail-mode .garimpo-intro {
+    display: none !important;
+}
+
 .archive-page .archive-search input,
 .forensic-page .forensic-tools input,
 .forensic-page .forensic-tools select,

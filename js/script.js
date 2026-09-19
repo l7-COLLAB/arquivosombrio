@@ -4276,11 +4276,19 @@ function atualizarCategoriasForenses() {
 function carregarForense() {
     const grid = document.getElementById("grid-forense");
     if (!grid) return;
+    const secaoForense = grid.closest(".forensic-section");
     const id = new URLSearchParams(location.search).get("id");
     if (id) {
         const selecionada = (Array.isArray(periciasSupabase) ? periciasSupabase : []).find(item => String(item.id) === String(id));
-        if (selecionada) { renderizarDetalhePericia(grid, selecionada); document.querySelector(".forensic-tools")?.setAttribute("hidden", ""); document.getElementById("forensic-results-status")?.setAttribute("hidden", ""); return; }
+        if (selecionada) {
+            secaoForense?.classList.add("forensic-detail-mode");
+            renderizarDetalhePericia(grid, selecionada);
+            document.querySelector(".forensic-tools")?.setAttribute("hidden", "");
+            document.getElementById("forensic-results-status")?.setAttribute("hidden", "");
+            return;
+        }
     }
+    secaoForense?.classList.remove("forensic-detail-mode");
     document.querySelector(".forensic-tools")?.removeAttribute("hidden");
     document.getElementById("forensic-results-status")?.removeAttribute("hidden");
     atualizarCategoriasForenses();
@@ -12565,6 +12573,7 @@ async function carregarGarimpoPublico() {
             const caso = casos.find(item => String(item.id) === String(id));
             detalhe.hidden = !caso;
             document.getElementById("daily-archive-list")?.toggleAttribute("hidden", Boolean(caso));
+            document.body.classList.toggle("garimpo-detail-mode", Boolean(caso));
             if (caso) renderizarDetalheCasoDiario(detalhe, caso);
         }
     } catch (erro) {
