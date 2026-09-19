@@ -6386,7 +6386,11 @@ async function cadastrarForum() {
     const aceitouPoliticas =
         confirm(
             "TERMOS E POLÍTICAS\n\n" +
-            "Para criar sua conta, você precisa declarar que leu e aceita os Termos de Uso, a Política de Privacidade e as Diretrizes da Comunidade.\n\n" +
+            "Antes de criar sua conta, consulte:\n" +
+            "Termos: https://l7-collab.github.io/arquivosombrio/termos.html\n" +
+            "Privacidade: https://l7-collab.github.io/arquivosombrio/privacidade.html\n" +
+            "Diretrizes: https://l7-collab.github.io/arquivosombrio/diretrizes.html\n\n" +
+            "Você declara que leu e aceita os Termos de Uso e as Diretrizes, e que tomou ciência da Política de Privacidade vigente?\n\n" +
             "Você concorda com esses documentos?"
         );
 
@@ -6443,7 +6447,7 @@ async function cadastrarForum() {
                             "1.0",
 
                         privacy_version:
-                            "1.0",
+                            "1.1",
 
                         guidelines_version:
                             "1.0",
