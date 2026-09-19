@@ -2748,12 +2748,22 @@
     }
 
     function showNextPhrase() {
-        if (document.hidden || reducedMotion.matches) return;
+        if (document.hidden || fadeTimer) return;
+
+        currentIndex = (currentIndex + 1) % phrases.length;
+
+        /*
+         * "Reduzir Movimento" deve remover somente o fade. A troca de
+         * conteúdo continua disponível no Safari e no PWA do iPhone.
+         */
+        if (reducedMotion.matches) {
+            renderPhrase(currentIndex);
+            return;
+        }
 
         title.classList.add('is-changing');
 
         fadeTimer = window.setTimeout(() => {
-            currentIndex = (currentIndex + 1) % phrases.length;
             renderPhrase(currentIndex);
             title.classList.remove('is-changing');
             fadeTimer = null;
@@ -2763,7 +2773,7 @@
     function startRotation() {
         stopRotation();
 
-        if (document.hidden || reducedMotion.matches) return;
+        if (document.hidden) return;
 
         rotationTimer = window.setInterval(showNextPhrase, intervalMs);
     }
