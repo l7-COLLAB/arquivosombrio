@@ -90,6 +90,29 @@
                     );
                 }
             );
+
+            formulario
+                .querySelectorAll("[data-password-toggle]")
+                .forEach(function (botao) {
+                    botao.addEventListener("click", function () {
+                        const campo = document.getElementById(
+                            botao.dataset.passwordToggle
+                        );
+
+                        if (!campo) return;
+
+                        const visivel = campo.type === "password";
+                        campo.type = visivel ? "text" : "password";
+                        botao.setAttribute("aria-pressed", String(visivel));
+                        botao.setAttribute(
+                            "aria-label",
+                            visivel ? "Ocultar senha" : "Mostrar senha"
+                        );
+                        botao.innerHTML = visivel
+                            ? '<i class="fa-regular fa-eye-slash" aria-hidden="true"></i>'
+                            : '<i class="fa-regular fa-eye" aria-hidden="true"></i>';
+                    });
+                });
         }
         catch (erro) {
             console.error(
@@ -144,9 +167,16 @@
         mensagem.dataset.status = "";
         mensagem.textContent = "";
 
-        if (senha.length < 8) {
+        const senhaSegura =
+            senha.length >= 12 &&
+            /[a-z]/.test(senha) &&
+            /[A-Z]/.test(senha) &&
+            /\d/.test(senha) &&
+            /[^A-Za-z0-9]/.test(senha);
+
+        if (!senhaSegura) {
             mostrarMensagem(
-                "A senha deve possuir pelo menos 8 caracteres.",
+                "A senha precisa ter no mínimo 12 caracteres, com letra maiúscula, minúscula, número e símbolo.",
                 "erro"
             );
             return;
@@ -217,10 +247,24 @@
                 "Erro ao salvar nova senha:",
                 erro
             );
-            mostrarMensagem(
-                "Não foi possível alterar a senha. O link pode ter expirado; solicite uma nova verificação.",
-                "erro"
-            );
+            const detalhe = String(erro?.message || "");
+
+            if (/password|senha|weak|leaked|character|caractere/i.test(detalhe)) {
+                mostrarMensagem(
+                    "A senha foi recusada pelo sistema: " + detalhe,
+                    "erro"
+                );
+            } else if (/reauth|nonce|current password|senha atual/i.test(detalhe)) {
+                mostrarMensagem(
+                    "Esta conta exige uma confirmação adicional. Solicite uma nova verificação e tente novamente.",
+                    "erro"
+                );
+            } else {
+                mostrarMensagem(
+                    "Não foi possível alterar a senha agora. " + (detalhe || "Tente solicitar um novo link de verificação."),
+                    "erro"
+                );
+            }
             botao.disabled = false;
             botao.innerHTML =
                 '<i class="fa-solid fa-key"></i> Salvar nova senha';
