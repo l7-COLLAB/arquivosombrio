@@ -6447,7 +6447,7 @@ async function cadastrarForum() {
                             "1.0",
 
                         privacy_version:
-                            "1.1",
+                            "1.2",
 
                         guidelines_version:
                             "1.0",
