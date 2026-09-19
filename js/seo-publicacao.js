@@ -1,7 +1,7 @@
 "use strict";
 
 (() => {
-    const SITE_URL = "https://l7-collab.github.io/arquivosombrio/";
+    const SITE_URL = "https://arquivosombrio.net.br/";
     const SITE_NAME = "Arquivo Sombrio";
 
     function texto(valor, limite = 160) {

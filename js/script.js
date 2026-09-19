@@ -6395,9 +6395,9 @@ async function cadastrarForum() {
         confirm(
             "TERMOS E POLÍTICAS\n\n" +
             "Antes de criar sua conta, consulte:\n" +
-            "Termos: https://l7-collab.github.io/arquivosombrio/termos.html\n" +
-            "Privacidade: https://l7-collab.github.io/arquivosombrio/privacidade.html\n" +
-            "Diretrizes: https://l7-collab.github.io/arquivosombrio/diretrizes.html\n\n" +
+            "Termos: https://arquivosombrio.net.br/termos.html\n" +
+            "Privacidade: https://arquivosombrio.net.br/privacidade.html\n" +
+            "Diretrizes: https://arquivosombrio.net.br/diretrizes.html\n\n" +
             "Você declara que leu e aceita os Termos de Uso e as Diretrizes, e que tomou ciência da Política de Privacidade vigente?\n\n" +
             "Você concorda com esses documentos?"
         );
@@ -6438,7 +6438,7 @@ async function cadastrarForum() {
                     captchaToken,
 
                     emailRedirectTo:
-                        "https://l7-collab.github.io/arquivosombrio/",
+                        "https://arquivosombrio.net.br/",
 
                     data: {
 
