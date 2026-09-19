@@ -74,6 +74,38 @@
             outline: 2px solid rgba(156, 37, 32, .42);
             border-color: #9c2520;
         }
+        .password-recovery-password-wrap {
+            position: relative;
+        }
+        .password-recovery-password-wrap input {
+            padding-right: 52px;
+        }
+        .password-recovery-toggle {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            width: 38px;
+            height: 38px;
+            border: 0;
+            background: transparent;
+            color: #c9bdab;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .password-recovery-toggle:focus-visible {
+            outline: 2px solid rgba(156, 37, 32, .7);
+            outline-offset: 1px;
+        }
+        .password-recovery-requirements {
+            margin: -4px 0 22px;
+            color: #b9b1a5;
+            font-size: .85rem;
+            line-height: 1.6;
+        }
+        .password-recovery-requirements strong {
+            color: #e0d5c5;
+        }
         .password-recovery-check {
             display: flex;
             align-items: flex-start;
@@ -137,8 +169,10 @@
             <p class="password-recovery-kicker">SEGURANÇA DA CONTA</p>
             <h1 id="recovery-title">Definir nova senha</h1>
             <p class="password-recovery-intro">
-                Crie uma senha exclusiva com pelo menos oito caracteres.
-                O link recebido por e-mail é temporário e só deve ser usado por você.
+                Crie uma senha exclusiva para o Arquivo Sombrio. O link recebido por e-mail é temporário e só deve ser usado por você.
+            </p>
+            <p class="password-recovery-requirements">
+                <strong>Para salvar:</strong> use no mínimo 12 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um símbolo, como <strong>!</strong> ou <strong>@</strong>.
             </p>
 
             <div id="recovery-loading" class="password-recovery-invalid">
@@ -149,12 +183,22 @@
             <form id="recovery-form" hidden>
                 <div class="password-recovery-field">
                     <label for="recovery-password">Nova senha</label>
-                    <input id="recovery-password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required>
+                    <div class="password-recovery-password-wrap">
+                        <input id="recovery-password" name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" aria-describedby="password-requirements" required>
+                        <button class="password-recovery-toggle" type="button" data-password-toggle="recovery-password" aria-label="Mostrar senha" aria-pressed="false">
+                            <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="password-recovery-field">
                     <label for="recovery-confirmation">Confirmar nova senha</label>
-                    <input id="recovery-confirmation" name="confirmation" type="password" minlength="8" maxlength="128" autocomplete="new-password" required>
+                    <div class="password-recovery-password-wrap">
+                        <input id="recovery-confirmation" name="confirmation" type="password" minlength="12" maxlength="128" autocomplete="new-password" required>
+                        <button class="password-recovery-toggle" type="button" data-password-toggle="recovery-confirmation" aria-label="Mostrar confirmação de senha" aria-pressed="false">
+                            <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <label class="password-recovery-check">
@@ -180,6 +224,6 @@
     </main>
 
     <script src="js/script.js?v=20260917-4"></script>
-    <script src="js/redefinir-senha.js?v=20260918-1"></script>
+    <script src="js/redefinir-senha.js?v=20260919-1"></script>
 </body>
 </html>
