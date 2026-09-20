@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /meu-arquivo.html
+Disallow: /admin.html
+Disallow: /painel-admin.html
+Disallow: /redefinir-senha.html
 
 Sitemap: https://arquivosombrio.net.br/sitemap.xml
