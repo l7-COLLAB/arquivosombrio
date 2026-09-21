@@ -10,35 +10,57 @@ permissions:
   contents: write
 
 jobs:
-  resize:
+  gerar:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Instalar Pillow
-        run: python -m pip install --quiet pillow
+      - name: Instalar dependencias
+        run: python -m pip install --quiet cairosvg pillow
 
-      - name: Gerar favicons
-        env:
-          FAVICON_B64: "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"
+      - name: Gerar identidade do favicon
         run: |
+          cat > favicon.svg <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <rect width="512" height="512" rx="76" fill="#070707"/>
+            <g fill="none" stroke="#8b0d14" stroke-width="22" stroke-linecap="round" opacity=".96">
+              <path d="M95 208c16-76 80-132 158-132 84 0 153 65 160 148"/>
+              <path d="M80 258c0-99 80-179 179-179 95 0 173 74 179 168"/>
+              <path d="M87 314c-8-111 78-207 190-207 104 0 188 84 188 188"/>
+              <path d="M112 362c-34-106 43-218 155-226 106-8 201 72 209 178"/>
+              <path d="M154 399c-58-89-1-213 105-237 102-23 207 44 230 146"/>
+              <path d="M202 419c-73-60-50-181 39-212 88-31 184 24 205 113"/>
+              <path d="M250 430c-72-28-80-128-13-168 68-41 156-1 170 76"/>
+            </g>
+            <g>
+              <path d="M254 120c-61 0-110 49-110 110 0 35 16 66 42 86l-35 123h206l-35-123c26-20 42-51 42-86 0-61-49-110-110-110zm0 52a58 58 0 1 1 0 116 58 58 0 0 1 0-116z" fill="#d9bd8d" stroke="#f0dbb3" stroke-width="8"/>
+              <path d="M218 290h72l28 103H190z" fill="#070707"/>
+            </g>
+            <g transform="translate(315 298) rotate(36)">
+              <circle cx="0" cy="0" r="68" fill="#0d0d0d" fill-opacity=".82" stroke="#d9bd8d" stroke-width="14"/>
+              <circle cx="0" cy="0" r="54" fill="none" stroke="#f0dbb3" stroke-width="4" opacity=".8"/>
+              <rect x="-10" y="58" width="20" height="104" rx="10" fill="#d9bd8d" stroke="#f0dbb3" stroke-width="4"/>
+              <rect x="-18" y="79" width="36" height="12" rx="6" fill="#070707" stroke="#d9bd8d" stroke-width="4"/>
+            </g>
+          </svg>
+          SVG
+
           python - <<'PY'
-          import base64, os
+          import cairosvg
           from PIL import Image
-          raw = base64.b64decode(os.environ["FAVICON_B64"])
-          with open("favicon-96.png", "wb") as f:
-              f.write(raw)
-          img = Image.open("favicon-96.png").convert("RGBA")
-          for size in (180, 192, 512):
-              out = img.resize((size, size), Image.Resampling.LANCZOS)
-              out.save(f"favicon-{size}.png", optimize=True)
+          sizes = (48, 96, 180, 192, 512)
+          for size in sizes:
+              cairosvg.svg2png(url="favicon.svg", write_to=f"favicon-{size}.png",
+                               output_width=size, output_height=size)
+          img = Image.open("favicon-512.png").convert("RGBA")
+          img.save("favicon.ico", sizes=[(16,16),(32,32),(48,48),(64,64)])
           PY
 
       - name: Publicar arquivos
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add favicon-96.png favicon-180.png favicon-192.png favicon-512.png
-          git commit -m "Atualiza conjunto de favicons"
+          git add favicon.svg favicon.ico favicon-48.png favicon-96.png favicon-180.png favicon-192.png favicon-512.png
+          git commit -m "Finaliza conjunto de favicons do Arquivo Sombrio"
           git push
