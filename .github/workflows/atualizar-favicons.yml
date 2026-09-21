@@ -1,0 +1,41 @@
+name: Atualizar favicons derivados
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/atualizar-favicons.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  resize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar Pillow
+        run: python -m pip install --quiet pillow
+
+      - name: Gerar tamanhos
+        run: |
+          python - <<'PY'
+          from PIL import Image
+          img = Image.open("favicon-96.png").convert("RGBA")
+          for size in (180, 192, 512):
+              out = img.resize((size, size), Image.Resampling.LANCZOS)
+              out.save(f"favicon-{size}.png", optimize=True)
+          PY
+
+      - name: Publicar arquivos
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add favicon-180.png favicon-192.png favicon-512.png
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Atualiza conjunto de favicons"
+          git push
