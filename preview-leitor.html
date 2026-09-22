@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Preview do Leitor — Arquivo Sombrio</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0d0b09;color:#e7dfd3;font-family:Georgia,serif}.preview-top{padding:18px 20px;border-bottom:1px solid #2c251d;background:#12100d;position:sticky;top:0;z-index:5}.preview-top strong{font-family:Arial,sans-serif;font-size:12px;letter-spacing:.15em;color:#a88d61}.preview-top span{display:block;margin-top:4px;font:12px Arial,sans-serif;color:#8d8173}.wrap{width:min(100% - 28px,920px);margin:34px auto 80px}.case-main-content{line-height:1.72;font-size:18px}.case-main-content h1{font:700 clamp(28px,5vw,46px)/1.05 Georgia,serif;margin:0 0 14px;color:#f0e7da}.case-main-content .lead{font-size:17px;color:#b9ad9d;margin-bottom:32px}.case-main-content h2{font:700 20px Arial,sans-serif;letter-spacing:.07em;text-transform:uppercase;margin:38px 0 14px;color:#c3a87d}.case-main-content p{margin:0 0 18px}.case-main-content .note{border-left:2px solid #806a49;padding-left:14px;color:#9d9182;font-size:14px}
+/* Arquivo Sombrio — Leitor Inteligente */
+.smart-reader{width:min(100% - 32px,920px);margin:0 auto 26px;border:1px solid rgba(178,150,105,.32);background:rgba(14,12,10,.96);box-shadow:0 14px 34px rgba(0,0,0,.16);font-family:"DM Mono",monospace;color:#e7dfd3}
+.smart-reader[hidden]{display:none!important}.smart-reader__main{display:flex;align-items:center;gap:12px;padding:13px 14px}.smart-reader__play{width:42px;height:42px;border:1px solid #9e835b;background:#1b1713;color:#eee4d4;border-radius:50%;cursor:pointer}
+.smart-reader__play:hover{background:#2b241d}.smart-reader__info{min-width:0;flex:1}.smart-reader__label{display:block;font-size:.61rem;letter-spacing:.13em;text-transform:uppercase;color:#9f8d72;margin-bottom:4px}.smart-reader__now{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.76rem;color:#e9e0d2}
+.smart-reader__actions{display:flex;align-items:center;gap:7px}.smart-reader button,.smart-reader select{font:inherit}.smart-reader__icon{min-width:34px;height:34px;border:1px solid rgba(178,150,105,.26);background:transparent;color:#d8cdbd;cursor:pointer;border-radius:3px}
+.smart-reader__settings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:13px 14px;border-top:1px solid rgba(178,150,105,.18)}.smart-reader__field{display:grid;gap:5px}.smart-reader__field span{font-size:.57rem;letter-spacing:.1em;text-transform:uppercase;color:#998870}.smart-reader__field select{width:100%;min-height:36px;background:#15120f;color:#eee4d4;border:1px solid rgba(178,150,105,.28);padding:6px 8px}
+.smart-reader__note{grid-column:1/-1;margin:0;font-size:.58rem;line-height:1.5;color:#8f8373}.smart-reader__progress{height:2px;background:rgba(255,255,255,.08)}.smart-reader__progress>span{display:block;width:0;height:100%;background:#a88d61;transition:width .18s linear}
+.smart-reader-active{outline:1px solid rgba(168,141,97,.32);outline-offset:6px;border-radius:1px}.smart-reader-paused .smart-reader__play{background:#2b241d}
+@media(max-width:680px){.smart-reader{width:calc(100% - 24px)}.smart-reader__main{gap:9px;padding:11px}.smart-reader__actions{gap:4px}.smart-reader__settings{grid-template-columns:1fr}.smart-reader__now{font-size:.7rem}.smart-reader__note{grid-column:auto}}
+@media print{.smart-reader{display:none!important}}
+</style>
+</head>
+<body class="case-page">
+<div class="preview-top"><strong>ARQUIVO SOMBRIO · PREVIEW DO LEITOR</strong><span>Ambiente temporário. Nada desta página altera o site público.</span></div>
+<main class="wrap">
+<article class="case-main-content" data-smart-reader-root>
+<h1>Irmãos Menendez: os disparos em Beverly Hills e o julgamento que nunca acabou</h1>
+<p class="lead">José e Kitty Menendez foram mortos em Beverly Hills em 1989. Lyle e Erik, filhos do casal, foram condenados pelos homicídios, mas o processo permanece marcado pelo choque entre provas de planejamento e relatos de abuso prolongado.</p>
+<h2>Uma casa onde o sucesso era obrigatório</h2>
+<p>José Menendez nasceu em Cuba e chegou aos Estados Unidos ainda jovem. Construiu uma carreira empresarial de alto nível, com passagens pelas indústrias do entretenimento e do vídeo. Kitty, ex professora e ex rainha de beleza, deixou parte de sua vida profissional para acompanhar o marido e cuidar da família.</p>
+<p>Lyle nasceu em 1968. Erik nasceu em 1970. Os irmãos cresceram entre Nova Jersey e Califórnia, cercados por conforto material, escolas particulares e expectativas rígidas.</p>
+<h2>A semana antes dos homicídios</h2>
+<p>Segundo os irmãos, a tensão chegou ao limite durante uma sequência de confrontos familiares em agosto de 1989. A acusação contestou essa interpretação e sustentou que havia planejamento.</p>
+<h2>20 de agosto de 1989</h2>
+<p>Naquela noite, José e Kitty estavam na sala de televisão. A família havia passado parte do dia junta. Lyle e Erik saíram de casa e retornaram com as espingardas.</p>
+<p class="note">Este preview usa apenas um trecho do dossiê real para testar voz, ritmo, controles e destaque de leitura.</p>
+</article>
+</main>
+<script>"use strict";
+(()=>{
+const S='.case-main-content,#literary-detail:not([hidden]),.daily-reader,.forensic-detail,[data-smart-reader-root]';
+const KEY='arquivoSombrio.reader.'+location.pathname+location.search;
+const NEURAL_ENDPOINT='https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/narrar-arquivo';
+const readerProfiles={helena:{label:'Helena · feminina'},clara:{label:'Clara · feminina'},augusto:{label:'Augusto · masculina'},dante:{label:'Dante · masculina'}};
+let root=null,parts=[],i=0,playing=false,utt=null,audio=null,open=false;
+const q=s=>document.querySelector(s), clean=t=>String(t||'').replace(/\s+/g,' ').trim();
+function spoken(el,t){const tag=el.tagName.toLowerCase();if(tag==='h1')return 'Título. '+t;if(/cronologia/i.test(t)&&/^h[2-4]$/.test(tag))return 'Cronologia. '+t.replace(/^cronologia[.:]?\s*/i,'');if(el.classList.contains('archive-literary-subtitle'))return 'Subtítulo. '+t;if(/^h[2-4]$/.test(tag))return 'Seção. '+t;if(tag==='figcaption')return 'Legenda da imagem. '+t;return t;}
+function collect(){const seen=new Set();return [...root.querySelectorAll('h1,h2,h3,h4,p,li,blockquote,figcaption')].filter(el=>!el.closest('.archive-literary-sources,.daily-reader-sources,.smart-reader,nav,footer,[hidden],.no-narration')).map(el=>{const t=clean(el.textContent),s=spoken(el,t),k=s.toLowerCase();if(!t||seen.has(k))return null;seen.add(k);return{el,t,s};}).filter(Boolean);}
+function restore(){try{const x=JSON.parse(localStorage.getItem(KEY)||'{}');if(Number.isInteger(x.i))i=Math.max(0,Math.min(x.i,parts.length-1));return x;}catch{return{}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({i,voice:q('[data-reader-voice]')?.value||'helena',rate:q('[data-reader-rate]')?.value||'1'}));}catch{}}
+function bar(){const e=document.createElement('section');e.className='smart-reader';e.setAttribute('aria-label','Leitor inteligente do Arquivo Sombrio');e.innerHTML='<div class="smart-reader__main"><button class="smart-reader__play" type="button" data-reader-play aria-label="Ouvir arquivo"><i class="fa-solid fa-play"></i></button><div class="smart-reader__info"><span class="smart-reader__label">LEITOR DO ARQUIVO</span><strong class="smart-reader__now" data-reader-now>Pronto para iniciar</strong></div><div class="smart-reader__actions"><button class="smart-reader__icon" type="button" data-reader-back aria-label="Voltar trecho"><i class="fa-solid fa-backward-step"></i></button><button class="smart-reader__icon" type="button" data-reader-forward aria-label="Avançar trecho"><i class="fa-solid fa-forward-step"></i></button><button class="smart-reader__icon" type="button" data-reader-settings aria-label="Configurações" aria-expanded="false"><i class="fa-solid fa-sliders"></i></button></div></div><div class="smart-reader__progress"><span data-reader-progress></span></div><div class="smart-reader__settings" data-reader-panel hidden><label class="smart-reader__field"><span>Narrador</span><select data-reader-voice><option value="helena">Helena · feminina</option><option value="clara">Clara · feminina</option><option value="augusto">Augusto · masculina</option><option value="dante">Dante · masculina</option></select></label><label class="smart-reader__field"><span>Velocidade</span><select data-reader-rate><option value=".75">0,75×</option><option value="1" selected>1×</option><option value="1.25">1,25×</option><option value="1.5">1,5×</option><option value="2">2×</option></select></label><label class="smart-reader__field"><span>Leitura</span><select disabled><option>Estrutura inteligente</option></select></label><p class="smart-reader__note">O leitor reconhece títulos, subtítulos e cronologias, ignora navegação e salva o ponto em que você parou. A voz é sintetizada automaticamente pelo leitor; se o serviço estiver indisponível, o aparelho usa uma voz local.</p></div>';return e;}
+function voices(){return ('speechSynthesis'in window)?speechSynthesis.getVoices().filter(v=>/^pt/i.test(v.lang)):[]}
+function chooseVoice(){const list=voices(),pref=q('[data-reader-voice]')?.value||'helena';if(!list.length)return null;const feminine=/helena|clara/.test(pref),fem=/(female|feminina|luciana|francisca|maria|victoria|camila|thalia)/i,mas=/(male|masculina|antonio|felipe|daniel|ricardo)/i;return list.find(v=>(feminine?fem:mas).test(v.name))||list[0];}
+function ui(){const p=parts[i],pct=parts.length?(i/parts.length)*100:0;const now=q('[data-reader-now]'),prog=q('[data-reader-progress]'),play=q('[data-reader-play]');if(now)now.textContent=p?p.t:'Nenhum trecho disponível';if(prog)prog.style.width=Math.max(0,Math.min(100,pct))+'%';if(play){play.innerHTML=playing?'<i class="fa-solid fa-pause"></i>':'<i class="fa-solid fa-play"></i>';play.setAttribute('aria-label',playing?'Pausar leitura':'Ouvir arquivo')}}
+function mark(){document.querySelectorAll('.smart-reader-active').forEach(x=>x.classList.remove('smart-reader-active'));const p=parts[i];if(!p)return;p.el.classList.add('smart-reader-active');p.el.scrollIntoView({block:'center',behavior:'smooth'});}
+function stop(){if('speechSynthesis'in window)speechSynthesis.cancel();if(audio){audio.pause();audio.src='';audio=null;}utt=null;}
+function pause(){stop();playing=false;save();ui();}
+function move(n){stop();i=Math.max(0,Math.min(parts.length-1,i+n));save();ui();mark();if(playing)speak();}
+function speakLocal(p){return new Promise((resolve,reject)=>{if(!('speechSynthesis'in window))return reject(new Error('Síntese local indisponível.'));utt=new SpeechSynthesisUtterance(p.s);utt.lang='pt-BR';utt.rate=Number(q('[data-reader-rate]')?.value||1);const v=chooseVoice();if(v)utt.voice=v;utt.onend=resolve;utt.onerror=reject;speechSynthesis.speak(utt);});}
+async function speakNeural(p){const profile=q('[data-reader-voice]')?.value||'helena';const r=await fetch(NEURAL_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:p.s,profile,rate:Number(q('[data-reader-rate]')?.value||1),context:{type:document.body.dataset.archiveType||document.body.className||'arquivo',title:q('h1')?.textContent?.trim()||document.title}})});if(!r.ok)throw new Error('Voz neural indisponível.');const b=await r.blob(),url=URL.createObjectURL(b);audio=new Audio(url);audio.playbackRate=Number(q('[data-reader-rate]')?.value||1);await new Promise((resolve,reject)=>{audio.onended=()=>{URL.revokeObjectURL(url);audio=null;resolve()};audio.onerror=()=>{URL.revokeObjectURL(url);audio=null;reject(new Error('Falha ao reproduzir áudio.'))};audio.play().catch(reject)});}
+async function speak(){const p=parts[i];if(!p){pause();return;}playing=true;ui();mark();save();try{try{await speakNeural(p)}catch{await speakLocal(p)}if(!playing)return;if(i>=parts.length-1){playing=false;ui();return;}i++;save();speak();}catch{pause();}}
+function bind(){q('[data-reader-play]')?.addEventListener('click',()=>playing?pause():speak());q('[data-reader-back]')?.addEventListener('click',()=>{const was=playing;playing=false;move(-1);if(was)speak()});q('[data-reader-forward]')?.addEventListener('click',()=>{const was=playing;playing=false;move(1);if(was)speak()});q('[data-reader-settings]')?.addEventListener('click',e=>{open=!open;q('[data-reader-panel]').hidden=!open;e.currentTarget.setAttribute('aria-expanded',String(open))});q('[data-reader-voice]')?.addEventListener('change',save);q('[data-reader-rate]')?.addEventListener('change',save);window.addEventListener('beforeunload',()=>{save();stop()});}
+function mount(r){if(!r||r.dataset.smartReaderMounted==='true')return;root=r;parts=collect();if(!parts.length)return;r.dataset.smartReaderMounted='true';r.parentNode.insertBefore(bar(),r);const x=restore();if(x.voice&&readerProfiles[x.voice]&&q('[data-reader-voice]'))q('[data-reader-voice]').value=x.voice;if(x.rate&&q('[data-reader-rate]'))q('[data-reader-rate]').value=x.rate;bind();ui();}
+function boot(){const r=q(S);if(r&&clean(r.textContent).length>120){mount(r);return;}const o=new MutationObserver(()=>{const x=q(S);if(x&&clean(x.textContent).length>120){o.disconnect();mount(x)}});o.observe(document.documentElement,{childList:true,subtree:true,characterData:true});setTimeout(()=>o.disconnect(),20000)}
+document.addEventListener('DOMContentLoaded',boot);
+})();</script>
+</body>
+</html>
