@@ -12583,6 +12583,76 @@ async function carregarGarimpoPublico() {
     }
 }
 
+function normalizarItensGarimpo(valor) {
+    if (Array.isArray(valor)) return valor.filter(Boolean);
+    if (!valor) return [];
+    return String(valor).split(/\n\s*\n/).map(item => item.trim()).filter(Boolean);
+}
+
+function textoItemGarimpo(item) {
+    if (typeof item === "string") return item;
+    if (!item || typeof item !== "object") return "";
+    return item.detalhes || item.descricao || item.texto || item.resumo || item.conteudo || "";
+}
+
+function tituloItemGarimpo(item, indice) {
+    if (item && typeof item === "object") return item.titulo || item.nome || item.label || `Registro ${indice + 1}`;
+    return `Registro ${indice + 1}`;
+}
+
+function renderizarSecaoDocumentalGarimpo(classe, rotulo, titulo, itens) {
+    const lista = normalizarItensGarimpo(itens);
+    if (!lista.length) return "";
+    return `
+        <section class="daily-reader-documental ${classe}">
+            <div class="daily-reader-section-head">
+                <small>${escaparHTML(rotulo)}</small>
+                <h2>${escaparHTML(titulo)}</h2>
+            </div>
+            <div class="daily-reader-documental-list">
+                ${lista.map((item, indice) => `
+                    <article>
+                        <span>${String(indice + 1).padStart(2, "0")}</span>
+                        <div>
+                            ${typeof item === "object" && (item.titulo || item.nome || item.label) ? `<h3>${escaparHTML(tituloItemGarimpo(item, indice))}</h3>` : ""}
+                            <p>${escaparHTML(textoItemGarimpo(item) || (typeof item === "string" ? item : "")).replace(/\n/g, "<br>")}</p>
+                        </div>
+                    </article>`).join("")}
+            </div>
+        </section>`;
+}
+
+function renderizarCronologiaGarimpo(valor) {
+    const itens = normalizarItensGarimpo(valor);
+    if (!itens.length) return "";
+    return `
+        <section class="daily-reader-documental daily-reader-timeline">
+            <div class="daily-reader-section-head">
+                <small>LINHA DO TEMPO</small>
+                <h2>Cronologia</h2>
+            </div>
+            <ol>
+                ${itens.map(item => {
+                    const objeto = item && typeof item === "object" ? item : null;
+                    const data = objeto?.data || objeto?.ano || objeto?.periodo || "";
+                    const texto = objeto ? textoItemGarimpo(objeto) || objeto.titulo || "" : item;
+                    return `<li>${data ? `<time>${escaparHTML(data)}</time>` : ""}<p>${escaparHTML(texto).replace(/\n/g, "<br>")}</p></li>`;
+                }).join("")}
+            </ol>
+        </section>`;
+}
+
+function renderizarSituacaoGarimpo(valor, status) {
+    const texto = String(valor || "").trim();
+    if (!texto) return "";
+    return `
+        <section class="daily-reader-official">
+            <small>SITUAÇÃO DO ARQUIVO</small>
+            <h2>${escaparHTML(status || "Situação atual")}</h2>
+            <p>${escaparHTML(texto).replace(/\n/g, "<br>")}</p>
+        </section>`;
+}
+
 function renderizarDetalheCasoDiario(container, caso) {
     const fontes = Array.isArray(caso.fontes) ? caso.fontes : [];
     const imagens = Array.isArray(caso.imagens) ? caso.imagens : [];
@@ -12594,11 +12664,15 @@ function renderizarDetalheCasoDiario(container, caso) {
                 <h1>${escaparHTML(caso.titulo || "Registro")}</h1>
                 <p>${escaparHTML([caso.local, caso.data_caso, caso.status_caso].filter(Boolean).join(" · "))}</p>
             </header>
-            ${caso.imagem_capa ? `<img class="daily-reader-cover" src="${escaparHTML(caso.imagem_capa)}" alt="">` : ""}
+            ${caso.imagem_capa ? `<img class="daily-reader-cover" src="${escaparHTML(caso.imagem_capa)}" alt="${escaparHTML(caso.titulo || "Imagem de capa do registro")}" loading="eager">` : ""}
             <p class="daily-reader-lead">${escaparHTML(caso.resumo || "")}</p>
             <div class="daily-reader-text">${escaparHTML(caso.conteudo || "").split(/\n{2,}/).map(paragrafo => `<p>${paragrafo.replace(/\n/g, "<br>")}</p>`).join("")}</div>
-            ${imagens.map(imagem => `<figure><img src="${escaparHTML(imagem.url || "")}" alt="${escaparHTML(imagem.legenda || "")}" loading="lazy"><figcaption>${escaparHTML([imagem.legenda, imagem.credito].filter(Boolean).join(" · "))}</figcaption></figure>`).join("")}
-            ${fontes.length ? `<section class="daily-reader-sources"><h2>Fontes</h2>${fontes.map(fonte => `<a href="${escaparHTML(fonte.url || "#")}" target="_blank" rel="noopener noreferrer">${escaparHTML(fonte.titulo || fonte.url || "Fonte")}</a>`).join("")}</section>` : ""}
+            ${renderizarCronologiaGarimpo(caso.cronologia)}
+            ${renderizarSecaoDocumentalGarimpo("daily-reader-evidence", "VESTÍGIOS E ELEMENTOS", "Evidências", caso.evidencias)}
+            ${renderizarSecaoDocumentalGarimpo("daily-reader-hypotheses", "LEITURAS DO CASO", "Hipóteses e controvérsias", caso.hipoteses)}
+            ${renderizarSituacaoGarimpo(caso.situacao_oficial, caso.status_caso)}
+            ${imagens.length ? `<section class="daily-reader-gallery"><div class="daily-reader-section-head"><small>ANEXOS VISUAIS</small><h2>Imagens do arquivo</h2></div>${imagens.map(imagem => `<figure><img src="${escaparHTML(imagem.url || "")}" alt="${escaparHTML(imagem.legenda || "Imagem documental")}" loading="lazy"><figcaption>${escaparHTML([imagem.legenda, imagem.credito].filter(Boolean).join(" · "))}</figcaption></figure>`).join("")}</section>` : ""}
+            ${fontes.length ? `<section class="daily-reader-sources"><div class="daily-reader-section-head"><small>REFERÊNCIAS</small><h2>Fontes</h2></div>${fontes.map(fonte => `<a href="${escaparHTML(fonte.url || "#")}" target="_blank" rel="noopener noreferrer">${escaparHTML(fonte.titulo || fonte.url || "Fonte")}</a>`).join("")}</section>` : ""}
         </article>`;
     window.ArquivoSEO?.aplicar({
         id: caso.id,
@@ -12612,7 +12686,6 @@ function renderizarDetalheCasoDiario(container, caso) {
         createdAt: caso.created_at
     });
 }
-
 
 /* RASCUNHOS AUTOMÁTICOS — ADMINISTRAÇÃO */
 const RASCUNHO_ADMIN_ESPERA=800;
