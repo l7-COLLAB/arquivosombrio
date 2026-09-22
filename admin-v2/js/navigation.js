@@ -1,0 +1,1 @@
+export const NAV=[{group:"GERAL",items:[["overview","Visão geral"]]},{group:"CONTEÚDO",items:[["dossies","Dossiês"],["garimpo","Garimpo Sombrio"],["pericias","Perícia"],["lendas","Lendas"],["creepypastas","Creepypastas"],["biblioteca","Biblioteca"]]}];export const LABELS=Object.fromEntries(NAV.flatMap(g=>g.items));
