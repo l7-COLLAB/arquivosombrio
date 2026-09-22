@@ -33,3 +33,10 @@ Implementar primeiro o núcleo editorial sem afetar o frontend público.
 - Admin V2 agora possui login próprio com sessão isolada e validação de app_metadata.role=admin.
 - Dashboard e seis seções editoriais consultam dados reais somente para leitura.
 - Escrita/publicação/exclusão continuam bloqueadas no V2.
+
+## Editor de Dossiês — fase segura
+- Abas funcionais: Geral, Conteúdo, Evidências, Teorias, Mídia, Fontes, SEO, Interno e Publicação.
+- Campos atuais de Casos são preservados no formato real do banco.
+- Fontes, SEO, pessoas e notas internas ficam encapsulados em editor_v2 dentro do rascunho até migração aditiva própria.
+- conteudo_blocos e documentos são preservados integralmente; editor visual específico será construído sem conversão destrutiva.
+- Publicar e Agendar seguem bloqueados.
