@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Central Administrativa V2 | Arquivo Sombrio</title>
+  <link rel="stylesheet" href="./css/admin-v2.css">
+</head>
+<body>
+  <div id="admin-v2-app" class="admin-app">
+    <aside class="admin-sidebar" aria-label="Navegação administrativa">
+      <div class="admin-brand">
+        <small>ARQUIVO SOMBRIO</small>
+        <strong>Central Administrativa</strong>
+        <span>V2 · Ambiente de desenvolvimento</span>
+      </div>
+      <nav id="admin-v2-nav"></nav>
+      <button id="admin-v2-logout" class="admin-logout" type="button">Sair</button>
+    </aside>
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <small id="admin-v2-breadcrumb">Central Administrativa</small>
+          <h1 id="admin-v2-title">Visão geral</h1>
+        </div>
+        <div class="admin-environment">TESTE</div>
+      </header>
+      <section id="admin-v2-view" class="admin-view" aria-live="polite"></section>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.min.js"></script>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
