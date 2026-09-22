@@ -23,3 +23,13 @@ Mapear tabelas, buckets, políticas RLS e funções RPC atuais.
 Definir contratos de dados comuns e específicos por tipo de conteúdo.
 Criar autenticação/login próprio do V2.
 Implementar primeiro o núcleo editorial sem afetar o frontend público.
+
+## Auditoria de compatibilidade — 22/09/2026
+- Mapeadas tabelas editoriais: Casos, casos_diarios, pericias, lendas, creepypastas e livros.
+- Mapeados admin_drafts, admin_audit_log, content_reports, Sugestoes e estruturas de comunidade.
+- Buckets existentes: avatars (privado), documentos (público), forum (privado), imagens (público), mural-private (privado).
+- RLS confirmada nas tabelas editoriais consultadas.
+- Atenção de migração: pericias possui leitura pública sem filtro de status; livros é integralmente público. Não alterar durante compatibilidade com o painel legado.
+- Admin V2 agora possui login próprio com sessão isolada e validação de app_metadata.role=admin.
+- Dashboard e seis seções editoriais consultam dados reais somente para leitura.
+- Escrita/publicação/exclusão continuam bloqueadas no V2.
