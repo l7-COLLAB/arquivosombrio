@@ -1,4 +1,58 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>Central Administrativa V2 | Arquivo Sombrio</title><link rel="stylesheet" href="./css/admin-v2.css"></head><body>
-<section id="admin-v2-login" class="admin-login-screen"><form id="admin-v2-login-form" class="admin-login-card"><small>ARQUIVO SOMBRIO · ACESSO RESTRITO</small><h1>Central Administrativa</h1><p>Admin V2 Essencial. Use a conta administrativa do Arquivo Sombrio.</p><label>E-mail<input id="admin-v2-email" type="email" autocomplete="username" required></label><label>Senha<input id="admin-v2-password" type="password" autocomplete="current-password" required></label><div class="admin-captcha-area"><div id="admin-v2-turnstile" class="cf-turnstile" data-sitekey="0x4AAAAAAEnNLBi2BDt_aJkF" data-theme="dark" data-language="pt-br" data-callback="adminV2CaptchaOk" data-expired-callback="adminV2CaptchaReset" data-error-callback="adminV2CaptchaReset"></div><small id="admin-v2-captcha-status">Conclua a verificação de segurança.</small></div><button id="admin-v2-login-button" type="submit" disabled>Entrar</button><div id="admin-v2-login-message" class="admin-login-message" aria-live="polite"></div></form></section>
-<div id="admin-v2-app" class="admin-app" hidden><button id="admin-mobile-menu" class="admin-mobile-menu" type="button" aria-label="Abrir menu">☰</button><div id="admin-menu-shade" class="admin-menu-shade" hidden></div><aside class="admin-sidebar"><div class="admin-brand"><small>ARQUIVO SOMBRIO</small><strong>Central Administrativa</strong><span>V2 · Essencial</span></div><nav id="admin-v2-nav"></nav><button id="admin-v2-logout" class="admin-logout" type="button">Sair</button></aside><main class="admin-main"><header class="admin-topbar"><div><small>Central Administrativa</small><h1 id="admin-v2-title">Visão geral</h1></div><div class="admin-environment">ADMIN V2 ESSENCIAL</div></header><section id="admin-v2-view" class="admin-view" aria-live="polite"></section></main></div>
-<script>window.ADMIN_V2_CAPTCHA_TOKEN="";window.adminV2CaptchaOk=t=>{window.ADMIN_V2_CAPTCHA_TOKEN=t;const b=document.getElementById("admin-v2-login-button");if(b)b.disabled=false;const s=document.getElementById("admin-v2-captcha-status");if(s)s.textContent="Verificação concluída."};window.adminV2CaptchaReset=()=>{window.ADMIN_V2_CAPTCHA_TOKEN="";const b=document.getElementById("admin-v2-login-button");if(b)b.disabled=true;const s=document.getElementById("admin-v2-captcha-status");if(s)s.textContent="Faça a verificação novamente."};</script><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.min.js"></script><script type="module" src="./js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel Administrativo V2 — Arquivo Sombrio</title>
+<link rel="icon" type="image/png" href="../favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="./legacy/css/style-base.css?v=clone-1">
+<link rel="stylesheet" href="./legacy/css/style.css?v=clone-1">
+<link rel="stylesheet" href="./legacy/css/admin-dashboard.css?v=clone-1">
+<style>
+body{min-height:100dvh;background:#080706}
+#admin-panel-loading{min-height:100dvh;display:grid;place-items:center;padding:24px;color:#d8cfc2;text-align:center;font-family:"IBM Plex Mono",monospace}
+#admin-panel-loading div{width:min(100%,520px);padding:32px 24px;border:1px solid rgba(164,19,19,.6);background:#0b0908}
+#admin-panel-loading a{color:#d8cfc2}
+body.admin-dashboard-open #admin-panel-loading{display:none!important}
+body.admin-dashboard-open #admin-manager.admin-manager-overlay.active{position:relative!important;inset:auto!important;display:block!important;width:100%!important;height:auto!important;min-height:100dvh!important;max-height:none!important;padding:max(12px,env(safe-area-inset-top)) 8px max(32px,env(safe-area-inset-bottom))!important;overflow:visible!important;visibility:visible!important;opacity:1!important;background:#080706!important}
+body.admin-dashboard-open #admin-manager>.admin-manager{display:block!important;position:relative!important;width:min(100%,1120px)!important;min-height:420px!important;max-height:none!important;margin:0 auto!important;overflow:visible!important;visibility:visible!important;opacity:1!important}
+body.admin-dashboard-open #admin-manager-close{position:absolute!important;top:18px!important;right:18px!important;z-index:10!important;display:grid!important;width:42px!important;height:42px!important;place-items:center!important;border:1px solid rgba(181,157,122,.3)!important;background:#0b0908!important;color:#cfc4b6!important;font-size:1.35rem!important;cursor:pointer!important}
+body.admin-dashboard-open #admin-manager-close:hover,body.admin-dashboard-open #admin-manager-close:focus-visible{border-color:#a91c1c!important;background:#7c1010!important;color:#fff!important}
+@media(max-width:760px){body.admin-dashboard-open #admin-manager-close{position:fixed!important;top:max(10px,env(safe-area-inset-top))!important;right:10px!important}}
+</style>
+</head>
+<body>
+<main id="admin-panel-loading"><div><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><p id="admin-panel-status">Abrindo a Central de Arquivo...</p></div></main>
+<script>
+window.ARQUIVO_ADMIN_CAPTCHA_ATIVO=true;
+window.ARQUIVO_ADMIN_PAINEL_DIRETO=true;
+window.ARQUIVO_ADMIN_V2_CLONE=true;
+document.addEventListener("click",function(e){var f=e.target.closest("#admin-manager-close");if(!f)return;e.preventDefault();e.stopImmediatePropagation();window.location.href="../index.html"},true);
+(async function(){var status=document.getElementById("admin-panel-status");function set(t){if(status)status.textContent=t}function load(name,url,timeout){return new Promise(function(ok,fail){var done=false,s=document.createElement("script"),timer=setTimeout(function(){if(done)return;done=true;s.remove();fail(new Error(name+" demorou demais para carregar."))},timeout||15000);s.src=url;s.async=false;s.onload=function(){if(done)return;done=true;clearTimeout(timer);ok()};s.onerror=function(){if(done)return;done=true;clearTimeout(timer);fail(new Error("Não foi possível carregar "+name+"."))};document.head.appendChild(s)})}
+try{
+set("Preparando a autenticação...");
+await load("a autenticação do Supabase","https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0",15000);
+await load("a sessão administrativa","./legacy/js/admin-auth.js?v=clone-1",12000);
+set("Validando a sessão administrativa...");
+var sessao=await obterSessaoAdminIsolada();
+if(!sessao){window.location.replace("../admin.html?session=expirada&next=admin-v2");return}
+set("Carregando os dados do arquivo...");
+await load("os dados editoriais","./legacy/data/caso.js?v=clone-1",12000);
+await load("o painel principal","./legacy/js/script.js?v=clone-1",20000);
+set("Carregando o editor literário...");
+await load("o editor de lendas e creepypastas","./legacy/js/admin-literario.js?v=clone-1",12000);
+set("Preparando a central administrativa...");
+await load("a central administrativa","./legacy/js/admin-dashboard.js?v=clone-1",12000);
+if(typeof abrirPainelAdmin!=="function")throw new Error("A função principal do painel não ficou disponível.");
+set("Montando a Central de Arquivo...");
+await abrirPainelAdmin(sessao);
+}catch(err){console.error("Falha ao abrir o painel V2 clonado.",err);if(status)status.innerHTML=String(err&&err.message?err.message:"Não foi possível montar o painel.")+'<br><br><a href="../admin.html?retry=1">Voltar e tentar novamente</a>'}
+})();
+</script>
+</body>
+</html>
