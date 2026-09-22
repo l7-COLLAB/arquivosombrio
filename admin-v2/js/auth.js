@@ -1,5 +1,5 @@
 import{SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,ADMIN_STORAGE_KEY,ADMIN_ROLE}from"./config.js";
-let client;
-export function getClient(){if(client)return client;if(!window.supabase?.createClient)throw new Error("Supabase não carregou.");client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{storageKey:ADMIN_STORAGE_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});return client}
-export async function requireAdmin(){const c=getClient();const{data,error}=await c.auth.getSession();if(error)throw error;const session=data?.session;if(!session?.user||session.user.app_metadata?.role!==ADMIN_ROLE)return null;return session}
+let client;export function getClient(){if(client)return client;if(!window.supabase?.createClient)throw new Error("Supabase não carregou.");client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{storageKey:ADMIN_STORAGE_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});return client}
+export async function requireAdmin(){const{data,error}=await getClient().auth.getSession();if(error)throw error;const s=data?.session;return s?.user?.app_metadata?.role===ADMIN_ROLE?s:null}
+export async function loginAdmin(email,password){const c=getClient();const{data,error}=await c.auth.signInWithPassword({email,password});if(error)throw error;if(data?.session?.user?.app_metadata?.role!==ADMIN_ROLE){await c.auth.signOut();throw new Error("Esta conta não possui permissão administrativa.");}return data.session}
 export async function signOut(){await getClient().auth.signOut()}
