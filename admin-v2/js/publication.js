@@ -3,8 +3,9 @@ const txt=v=>String(v??"").trim();
 export function compileDossierForPublic(draft){
  const d=structuredClone(draft||{}),errors=[],warnings=[];
  const blocks=Array.isArray(d.conteudo_blocos)?d.conteudo_blocos:[];
+ const expanded=[];blocks.forEach(b=>{if(b?.tipo==="galeria"){const imgs=Array.isArray(b.dados?.itens)?b.dados.itens:[];if(!imgs.length)warnings.push("Galeria vazia não será publicada.");imgs.forEach((img,n)=>expanded.push({id:(b.id||"galeria")+"-"+n,tipo:"imagem",ordem:expanded.length+1,dados:typeof img==="string"?{url:img}:{...img}}));return}if(["citacao","nota_do_arquivo","destaque"].includes(b?.tipo)){const text=String(b.dados?.texto??"").trim();if(text){expanded.push({...b,tipo:"paragrafo",ordem:expanded.length+1,dados:{...b.dados,texto:text}});warnings.push((b.tipo==="citacao"?"Citação":b.tipo==="nota_do_arquivo"?"Nota do Arquivo":"Destaque")+" será publicada como parágrafo até o site público possuir estilo próprio.");}return}if(b?.tipo==="separador"){warnings.push("Separador é apenas editorial e não gera bloco público.");return}expanded.push(b)});
  const compiled=[];
- blocks.forEach((b,i)=>{
+ expanded.forEach((b,i)=>{
   const type=txt(b?.tipo),data=(b&&typeof b.dados==="object"&&!Array.isArray(b.dados))?{...b.dados}:{};
   if(!PUBLIC_BLOCK_TYPES.has(type)){warnings.push("Bloco "+(i+1)+" ("+(type||"sem tipo")+") não é suportado pelo renderizador público e não será publicado.");return}
   const out={...b,tipo:type,ordem:compiled.length+1,dados:data};
