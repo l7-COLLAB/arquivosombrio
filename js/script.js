@@ -7727,7 +7727,7 @@ async function autenticarAdmin(evento) {
         if (window.ARQUIVO_ADMIN_CAPTCHA_ATIVO) {
 
             window.location.replace(
-                "painel-admin.html?v=20260918-13"
+                "painel-admin.html?v=20260923-agendado-1"
             );
 
             return;
