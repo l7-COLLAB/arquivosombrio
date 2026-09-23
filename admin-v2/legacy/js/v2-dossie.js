@@ -13,10 +13,10 @@ function atualizarEstadoDossie(modal,dados){
  var badge=acoes.querySelector("[data-v2-dossier-state]");
  if(!badge){badge=document.createElement("small");badge.dataset.v2DossierState="";badge.className="v2-dossier-state";submit.before(badge)}
  function sync(){
-   var pub=select.value!=="rascunho";
-   badge.textContent=pub?"PUBLICADO":"RASCUNHO";
-   badge.dataset.state=pub?"publicado":"rascunho";
-   submit.innerHTML='<i class="fa-regular fa-floppy-disk"></i> '+(pub?"Salvar / publicar":"Salvar como rascunho");
+   var state=select.value;
+   badge.textContent=state==="publicado"?"PUBLICADO":state==="agendado"?"AGENDADO":"RASCUNHO";
+   badge.dataset.state=state;
+   submit.innerHTML='<i class="fa-regular fa-floppy-disk"></i> '+(state==="publicado"?"Salvar / publicar":state==="agendado"?"Salvar como agendado":"Salvar como rascunho");
  }
  select.addEventListener("change",sync);sync();
  if(dados&&dados.id!=null){
