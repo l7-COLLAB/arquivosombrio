@@ -16,7 +16,7 @@ function atualizarEstadoDossie(modal,dados){
    var state=select.value;
    badge.textContent=state==="publicado"?"PUBLICADO":state==="agendado"?"AGENDADO":"RASCUNHO";
    badge.dataset.state=state;
-   submit.innerHTML='<i class="fa-regular fa-floppy-disk"></i> '+(state==="publicado"?"Salvar / publicar":state==="agendado"?"Salvar como agendado":"Salvar como rascunho");
+   submit.classList.toggle("is-scheduled",state==="agendado");submit.innerHTML=state==="agendado"?'<i class="fa-regular fa-clock"></i> Agendar publicação':'<i class="fa-regular fa-floppy-disk"></i> '+(state==="publicado"?"Salvar / publicar":"Salvar como rascunho");
  }
  select.addEventListener("change",sync);sync();
  if(dados&&dados.id!=null){
