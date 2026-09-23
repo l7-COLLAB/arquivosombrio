@@ -1164,3 +1164,36 @@ body.admin-dashboard-open #admin-manager>.admin-manager,
         max-width:92vw!important;
     }
 }
+
+
+.narration-auto-pronunciations{
+    display:grid;
+    gap:6px;
+    margin-top:9px;
+    padding:9px 10px;
+    border:1px solid rgba(181,157,122,.12);
+    background:#090807;
+}
+.narration-auto-pronunciations>span{
+    color:#8f1b1b;
+    font:600 .48rem/1 var(--font-mono);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+.narration-auto-pronunciations small{
+    color:#6f6459;
+    font:500 .5rem/1.35 var(--font-mono);
+}
+.narration-auto-pronunciations>div{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+}
+.narration-auto-pronunciations em{
+    padding:5px 7px;
+    border:1px solid rgba(125,75,22,.35);
+    background:#0b0908;
+    color:#c79e63;
+    font:500 .5rem/1 var(--font-mono);
+    font-style:normal;
+}
