@@ -36,3 +36,10 @@
 .voice-field output{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#b59d7a}
 .voice-test-text{width:100%;resize:vertical;box-sizing:border-box;margin-top:12px;padding:13px;background:#0d0a08;color:#e8ded0;border:1px solid rgba(181,157,122,.2);font:400 .86rem/1.6 inherit}
 .voice-test-audio{width:100%;margin-top:14px}
+
+.voice-evaluation{margin-top:18px;padding-top:16px;border-top:1px solid rgba(181,157,122,.14)}
+.voice-evaluation h4{margin:0 0 12px;color:#ded2c2;font-size:.82rem}
+.voice-evaluation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.voice-evaluation-grid label{display:grid;gap:6px;color:#95887c;font-size:.68rem}
+.voice-evaluation-grid select,.voice-evaluation textarea{width:100%;box-sizing:border-box;min-height:38px;padding:8px 9px;background:#0d0a08;color:#e8ded0;border:1px solid rgba(181,157,122,.2)}
+@media(max-width:620px){.voice-evaluation-grid{grid-template-columns:1fr}}
