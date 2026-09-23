@@ -8,7 +8,7 @@ function aprimorar(dados){
  if(!select||!submit)return;
  var badge=form.querySelector("[data-v2-garimpo-state]");
  if(!badge){badge=document.createElement("small");badge.dataset.v2GarimpoState="";badge.className="v2-dossier-state v2-garimpo-state";submit.before(badge)}
- function sync(){var pub=select.value==="publicado";badge.textContent=pub?"PUBLICADO":"RASCUNHO";badge.dataset.state=pub?"publicado":"rascunho";submit.innerHTML='<i class="fa-regular fa-floppy-disk"></i> '+(pub?"Salvar / publicar":"Salvar como rascunho")}
+ function sync(){var state=select.value;badge.textContent=state==="publicado"?"PUBLICADO":state==="agendado"?"AGENDADO":"RASCUNHO";badge.dataset.state=state;submit.innerHTML='<i class="fa-regular fa-floppy-disk"></i> '+(state==="publicado"?"Salvar / publicar":state==="agendado"?"Salvar como agendado":"Salvar como rascunho")}
  select.addEventListener("change",sync);sync();
  if(dados&&dados.id!=null&&!form.querySelector("[data-v2-garimpo-preview]")){
    var b=document.createElement("button");b.type="button";b.className="admin-secondary-button";b.dataset.v2GarimpoPreview="";
