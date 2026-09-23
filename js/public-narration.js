@@ -386,6 +386,10 @@
         err.code="LOGIN_REQUIRED";
         throw err;
       }
+      if(r.status===409&&data?.code==="CHUNK_BUSY"){
+        await new Promise(resolve=>setTimeout(resolve,900));
+        return await callNarration(body);
+      }
       if(!r.ok)throw new Error(data.error||"Não foi possível preparar a narração.");
       return data;
     }
