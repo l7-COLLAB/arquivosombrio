@@ -7999,7 +7999,7 @@ const pericias =
                                         ${escaparHTML(
                                             caso.categoria ||
                                             "Sem categoria"
-                                        )}${caso.status_publicacao === "rascunho" ? " · <strong style=\"color:#c96a5a;\">RASCUNHO</strong>" : ""}
+                                        )}${caso.status_publicacao === "rascunho" ? " · <strong style=\"color:#c96a5a;\">RASCUNHO</strong>" : caso.status_publicacao === "agendado" ? " · <strong>AGENDADO</strong>" : ""}
                                     </small>
 
                                 </div>
@@ -8066,7 +8066,7 @@ const pericias =
                                         ${escaparHTML(
                                             pericia.categoria ||
                                             "Sem categoria"
-                                        )}
+                                        )} · ${escaparHTML(pericia.status_publicacao === "publicado" ? "PUBLICADO" : pericia.status_publicacao === "agendado" ? "AGENDADO" : "RASCUNHO")}
                                     </small>
 
                                 </div>
@@ -8131,7 +8131,7 @@ const pericias =
                                     <small>
                                         ${escaparHTML(
                                             livro.autor
-                                        )}
+                                        )} · ${escaparHTML(livro.status_publicacao === "publicado" ? "PUBLICADO" : livro.status_publicacao === "agendado" ? "AGENDADO" : "RASCUNHO")}
                                     </small>
 
                                 </div>
@@ -9082,6 +9082,15 @@ const livro =
                     </label>
 
                     <label>
+                        Publicação
+                        <select id="admin-forensic-publication">
+                            <option value="rascunho" ${!dados || !["publicado", "agendado"].includes(dados?.status_publicacao) ? "selected" : ""}>Rascunho</option>
+                            <option value="agendado" ${dados?.status_publicacao === "agendado" ? "selected" : ""}>Agendado</option>
+                            <option value="publicado" ${dados?.status_publicacao === "publicado" ? "selected" : ""}>Publicado</option>
+                        </select>
+                    </label>
+
+                    <label>
                         Resumo
                         <textarea
                             id="admin-forensic-summary"
@@ -9261,6 +9270,15 @@ const livro =
 
                     </div>
 
+
+                    <label>
+                        Publicação
+                        <select id="admin-book-publication">
+                            <option value="rascunho" ${!dados || !["publicado", "agendado"].includes(dados?.status_publicacao) ? "selected" : ""}>Rascunho</option>
+                            <option value="agendado" ${dados?.status_publicacao === "agendado" ? "selected" : ""}>Agendado</option>
+                            <option value="publicado" ${dados?.status_publicacao === "publicado" ? "selected" : ""}>Publicado</option>
+                        </select>
+                    </label>
 
                     <label class="admin-book-featured-option">
 
@@ -10131,6 +10149,10 @@ async function salvarPericiaAdmin(
                 valor("admin-forensic-title"),
             categoria:
                 valor("admin-forensic-category"),
+            status_publicacao:
+                ["rascunho", "agendado", "publicado"].includes(valor("admin-forensic-publication"))
+                    ? valor("admin-forensic-publication")
+                    : "rascunho",
             resumo:
                 valor("admin-forensic-summary"),
             imagem:
@@ -10400,6 +10422,13 @@ async function salvarLivroAdmin(
         tag,
 
         recomendado,
+
+        status_publicacao:
+            ["rascunho", "agendado", "publicado"].includes(
+                document.getElementById("admin-book-publication")?.value
+            )
+                ? document.getElementById("admin-book-publication").value
+                : "rascunho",
 
         links_afiliados:
             coletarLinksAfiliadosAdmin()
