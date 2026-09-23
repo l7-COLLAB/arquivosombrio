@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-const LOCAL_URL="http://localhost:8890";
+const LOCAL_URL="http://127.0.0.1:8890";
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function client(){return window.obterClienteAdminIsolado?.()||window.arquivoAdminSupabaseClient||null;}
@@ -180,8 +180,10 @@ async function render(panel){
     const text=textBox.value.trim();
     if(!text)return alert("Escreva um texto para testar.");
     btn.disabled=true;
-    generation.textContent="Gerando no notebook...";
+    generation.textContent="Verificando o motor local...";
     try{
+      await testConnection();
+      generation.textContent="Gerando no notebook...";
       const r=await localFetch("/synthesize",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
@@ -202,8 +204,9 @@ async function render(panel){
       evaluation.hidden=false;
       await audio.play().catch(()=>{});
     }catch(e){
-      generation.textContent="Falha no teste local.";
-      alert("Não foi possível gerar o áudio local. "+(e?.message||""));
+      generation.textContent="Motor local indisponível.";
+      console.error("Arquivo Voz local:",e);
+      alert("O Arquivo Voz local não respondeu. Abra o Docker Desktop e inicie o laboratório local antes de gerar o teste.");
     }finally{btn.disabled=false;}
   };
 
