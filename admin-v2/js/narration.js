@@ -143,7 +143,7 @@ async function adaptarBlocosPollyAutomaticamente(projectId){
     if(b.polly_text_mode==="manual")return false;
     const texto=String(b.narration_text||b.source_text||"").trim();
     if(!texto)return false;
-    return !String(b.polly_text||"").trim() || !b.polly_text_source_hash;
+    return true;
   });
 
   const tamanhoLote=4;
@@ -184,7 +184,14 @@ async function syncProject(dossier){
 
   const payload=source.map(b=>{
     const old=existing.get(b.key);
-    const changed=old&&String(old.source_text||"")!==b.text;
+    const changed=Boolean(old&&String(old.source_text||"")!==b.text);
+    const oldNarration=String(old?.narration_text||"").trim();
+    const oldSource=String(old?.source_text||"").trim();
+    const narrationWasAutomatic=!oldNarration||oldNarration===oldSource;
+    const nextNarration=changed&&narrationWasAutomatic?b.text:(oldNarration||b.text);
+    const invalidatePolly=changed || nextNarration!==oldNarration;
+    const autoPolly=(old?.polly_text_mode||"auto")!=="manual";
+
     return {
       project_id:project.id,
       block_key:b.key,
@@ -192,23 +199,23 @@ async function syncProject(dossier){
       source_type:b.type,
       source_label:b.label,
       source_text:b.text,
-      narration_text:old?.narration_text?.trim()?old.narration_text:b.text,
-      status:changed&&old?.audio_path?"desatualizado":old?.status||"nao_gravado",
+      narration_text:nextNarration,
+      status:changed?"desatualizado":old?.status||"nao_gravado",
       playback_source:old?.playback_source||"polly",
       audio_path:old?.audio_path||null,
       audio_mime:old?.audio_mime||null,
       audio_duration_seconds:old?.audio_duration_seconds||null,
       recorded_at:old?.recorded_at||null,
       recorded_by:old?.recorded_by||null,
-      polly_text:old?.polly_text||null,
+      polly_text:invalidatePolly&&autoPolly?null:(old?.polly_text||null),
       polly_text_mode:old?.polly_text_mode||"auto",
-      polly_text_source_hash:old?.polly_text_source_hash||null,
-      polly_text_generated_at:old?.polly_text_generated_at||null,
-      polly_audio_path:old?.polly_audio_path||null,
+      polly_text_source_hash:invalidatePolly&&autoPolly?null:(old?.polly_text_source_hash||null),
+      polly_text_generated_at:invalidatePolly&&autoPolly?null:(old?.polly_text_generated_at||null),
+      polly_audio_path:invalidatePolly?null:(old?.polly_audio_path||null),
       polly_voice_id:old?.polly_voice_id||project.polly_voice_id||"Camila",
       polly_engine:old?.polly_engine||project.polly_engine||"standard",
-      polly_text_hash:old?.polly_text_hash||null,
-      polly_generated_at:old?.polly_generated_at||null,
+      polly_text_hash:invalidatePolly?null:(old?.polly_text_hash||null),
+      polly_generated_at:invalidatePolly?null:(old?.polly_generated_at||null),
       updated_at:new Date().toISOString()
     };
   });
@@ -283,13 +290,16 @@ function blockCard(b){
 }
 
 function projectSummary(blocks){
-  const counts={nao_gravado:0,gravado:0,desatualizado:0};
-  blocks.forEach(b=>counts[b.status]=(counts[b.status]||0)+1);
-  return '<div class="narration-summary">'+
+  const adaptationReady=blocks.filter(b=>b.polly_text_mode==="manual"||Boolean(b.polly_text&&b.polly_text_source_hash)).length;
+  const audioReady=blocks.filter(b=>Boolean(b.polly_audio_path&&b.polly_text_hash)).length;
+  const needsUpdate=blocks.filter(b=>b.status==="desatualizado"||!(b.polly_text_mode==="manual"||Boolean(b.polly_text&&b.polly_text_source_hash))).length;
+  const complete=blocks.length>0&&audioReady===blocks.length;
+  return '<div class="narration-summary narration-summary--operational">'+
     '<div><strong>'+blocks.length+'</strong><span>blocos</span></div>'+
-    '<div><strong>'+counts.nao_gravado+'</strong><span>não gravados</span></div>'+
-    '<div><strong>'+counts.gravado+'</strong><span>gravados</span></div>'+
-    '<div><strong>'+counts.desatualizado+'</strong><span>desatualizados</span></div>'+
+    '<div><strong>'+adaptationReady+'</strong><span>adaptações prontas</span></div>'+
+    '<div><strong>'+audioReady+'</strong><span>áudios prontos</span></div>'+
+    '<div><strong>'+needsUpdate+'</strong><span>precisam atualizar</span></div>'+
+    '<div class="narration-project-health '+(complete?"is-ready":"is-pending")+'"><strong>'+(complete?"ÁUDIO COMPLETO":"EM PREPARAÇÃO")+'</strong><span>'+(complete?"todos os blocos atualizados":"há blocos pendentes")+'</span></div>'+
   '</div>';
 }
 
