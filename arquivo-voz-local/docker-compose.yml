@@ -1,0 +1,28 @@
+services:
+  kokoro:
+    image: hwdsl2/kokoro-server:latest
+    container_name: arquivo-voz-kokoro
+    restart: unless-stopped
+    ports:
+      - "8880:8880"
+    volumes:
+      - kokoro-data:/var/lib/kokoro
+    environment:
+      - KOKORO_VOICE=pf_dora
+      - KOKORO_SPEED=0.95
+      - KOKORO_PORT=8880
+      - KOKORO_LANG_CODE=p
+
+  bridge:
+    build: ./bridge
+    container_name: arquivo-voz-bridge
+    restart: unless-stopped
+    depends_on:
+      - kokoro
+    ports:
+      - "8890:8890"
+    environment:
+      - KOKORO_URL=http://kokoro:8880
+
+volumes:
+  kokoro-data:
