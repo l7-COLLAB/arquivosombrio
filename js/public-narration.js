@@ -2,6 +2,7 @@
 (() => {
   const FN_URL="https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/public-narration";
   const KEY="sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj";
+  const PENDING_KEY="arquivoSombrioPendingAudio";
 
   function getContext(){
     const id=new URLSearchParams(location.search).get("id");
@@ -15,12 +16,177 @@
     return null;
   }
 
+  function contextKey(ctx){return ctx.type+":"+ctx.id}
+
+  async function getClient(){
+    if(typeof window.obterClienteSupabase==="function")return await window.obterClienteSupabase();
+    throw new Error("A autenticação do Arquivo Sombrio não está disponível nesta página.");
+  }
+
+  async function getSession(){
+    const c=await getClient();
+    const {data,error}=await c.auth.getSession();
+    if(error)throw error;
+    return data?.session||null;
+  }
+
+  async function captchaToken(){
+    if(typeof window.obterTokenTurnstile!=="function")return undefined;
+    try{return await window.obterTokenTurnstile()}catch(_){return undefined}
+  }
+
+  function returnUrl(){
+    const u=new URL(location.href);
+    u.searchParams.set("ouvir","1");
+    u.hash="";
+    return u.toString();
+  }
+
   function findTarget(type){
     if(type==="dossie")return document.querySelector(".case-reader-toolbar");
     if(type==="garimpo")return document.querySelector(".daily-reader > header");
     if(type==="pericia")return document.querySelector(".forensic-detail > header");
     if(type==="lenda"||type==="creepypasta")return document.querySelector(".archive-literary-detail .archive-literary-meta")||document.querySelector(".archive-literary-detail .archive-literary-title");
     return null;
+  }
+
+  function createAuthGate(ctx,onAuthenticated){
+    let overlay=document.querySelector(".narration-auth-overlay");
+    if(overlay)return overlay;
+
+    overlay=document.createElement("div");
+    overlay.className="narration-auth-overlay";
+    overlay.hidden=true;
+    overlay.innerHTML=`
+      <div class="narration-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="narration-auth-title">
+        <button type="button" class="narration-auth-close" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+        <div class="narration-auth-mark"><i class="fa-solid fa-headphones"></i></div>
+        <span class="narration-auth-kicker">ÁUDIO DOCUMENTAL</span>
+        <h2 id="narration-auth-title">Entre para ouvir este arquivo</h2>
+        <p class="narration-auth-intro">A leitura continua aberta para todos. A narração em áudio é um recurso gratuito para contas do Arquivo Sombrio.</p>
+
+        <div class="narration-auth-tabs" role="tablist">
+          <button type="button" class="active" data-auth-tab="login">Entrar</button>
+          <button type="button" data-auth-tab="signup">Criar conta</button>
+        </div>
+
+        <form class="narration-auth-form" data-auth-form="login">
+          <label>E-mail<input type="email" autocomplete="email" required data-login-email></label>
+          <label>Senha<input type="password" autocomplete="current-password" required data-login-password></label>
+          <button type="submit" class="narration-auth-primary">Entrar e ouvir</button>
+        </form>
+
+        <form class="narration-auth-form" data-auth-form="signup" hidden>
+          <label>Nome ou codinome<input type="text" autocomplete="nickname" required maxlength="60" data-signup-name></label>
+          <label>E-mail<input type="email" autocomplete="email" required data-signup-email></label>
+          <label>Senha<input type="password" autocomplete="new-password" minlength="6" required data-signup-password></label>
+          <label class="narration-auth-check"><input type="checkbox" required data-signup-age><span>Confirmo que tenho 18 anos ou mais.</span></label>
+          <label class="narration-auth-check"><input type="checkbox" required data-signup-legal><span>Li e aceito os <a href="termos.html" target="_blank" rel="noopener">Termos</a>, a <a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a> e as <a href="diretrizes.html" target="_blank" rel="noopener">Diretrizes</a>.</span></label>
+          <button type="submit" class="narration-auth-primary">Criar conta e ouvir</button>
+        </form>
+
+        <p class="narration-auth-state" data-auth-state></p>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    const state=overlay.querySelector("[data-auth-state]");
+    const forms=[...overlay.querySelectorAll("[data-auth-form]")];
+    const tabs=[...overlay.querySelectorAll("[data-auth-tab]")];
+
+    function showTab(name){
+      tabs.forEach(b=>b.classList.toggle("active",b.dataset.authTab===name));
+      forms.forEach(f=>f.hidden=f.dataset.authForm!==name);
+      state.textContent="";
+    }
+
+    function close(){
+      overlay.hidden=true;
+      document.body.classList.remove("narration-auth-open");
+    }
+
+    function open(tab="login"){
+      showTab(tab);
+      overlay.hidden=false;
+      document.body.classList.add("narration-auth-open");
+      requestAnimationFrame(()=>overlay.querySelector('[data-auth-form="'+tab+'"] input')?.focus());
+    }
+
+    overlay.querySelector(".narration-auth-close").onclick=close;
+    overlay.addEventListener("click",e=>{if(e.target===overlay)close()});
+    document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!overlay.hidden)close()});
+    tabs.forEach(b=>b.onclick=()=>showTab(b.dataset.authTab));
+
+    overlay.querySelector('[data-auth-form="login"]').addEventListener("submit",async e=>{
+      e.preventDefault();
+      const form=e.currentTarget;
+      const submit=form.querySelector('button[type="submit"]');
+      submit.disabled=true;
+      state.textContent="Verificando sua conta...";
+      try{
+        const c=await getClient();
+        const token=await captchaToken();
+        const args={
+          email:form.querySelector("[data-login-email]").value.trim(),
+          password:form.querySelector("[data-login-password]").value
+        };
+        if(token)args.options={captchaToken:token};
+        const {data,error}=await c.auth.signInWithPassword(args);
+        if(error)throw error;
+        if(!data?.session)throw new Error("A sessão não foi iniciada.");
+        localStorage.setItem(PENDING_KEY,contextKey(ctx));
+        close();
+        state.textContent="";
+        await onAuthenticated();
+      }catch(err){
+        state.textContent=err?.message||"Não foi possível entrar na conta.";
+      }finally{submit.disabled=false}
+    });
+
+    overlay.querySelector('[data-auth-form="signup"]').addEventListener("submit",async e=>{
+      e.preventDefault();
+      const form=e.currentTarget;
+      const submit=form.querySelector('button[type="submit"]');
+      submit.disabled=true;
+      state.textContent="Criando sua conta...";
+      try{
+        const c=await getClient();
+        const token=await captchaToken();
+        const name=form.querySelector("[data-signup-name]").value.trim();
+        const email=form.querySelector("[data-signup-email]").value.trim();
+        const password=form.querySelector("[data-signup-password]").value;
+        if(!form.querySelector("[data-signup-age]").checked||!form.querySelector("[data-signup-legal]").checked){
+          throw new Error("Confirme a idade e os documentos legais para continuar.");
+        }
+        localStorage.setItem(PENDING_KEY,contextKey(ctx));
+        const options={
+          emailRedirectTo:returnUrl(),
+          data:{
+            display_name:name,
+            age_18_confirmed:true,
+            legal_acceptance:true,
+            terms_version:"1.1",
+            privacy_version:"1.2",
+            guidelines_version:"1.0",
+            legal_accepted_at:new Date().toISOString()
+          }
+        };
+        if(token)options.captchaToken=token;
+        const {data,error}=await c.auth.signUp({email,password,options});
+        if(error)throw error;
+        if(data?.session){
+          close();
+          await onAuthenticated();
+        }else{
+          state.textContent="Conta criada. Confirme o e-mail; o link trará você de volta para este arquivo e a narração será preparada automaticamente.";
+        }
+      }catch(err){
+        state.textContent=err?.message||"Não foi possível criar sua conta.";
+      }finally{submit.disabled=false}
+    });
+
+    overlay._open=open;
+    overlay._close=close;
+    return overlay;
   }
 
   function createPlayer(ctx,target){
@@ -33,7 +199,7 @@
         <span class="public-narration-copy">
           <small>ÁUDIO DOCUMENTAL</small>
           <strong>Ouvir este arquivo</strong>
-          <em>Voz Amazon Polly · Camila</em>
+          <em>Disponível para contas do Arquivo Sombrio</em>
         </span>
         <span class="public-narration-action"><i class="fa-solid fa-play"></i></span>
       </button>
@@ -50,17 +216,18 @@
     const count=box.querySelector("[data-narration-count]");
     const track=box.querySelector("[data-narration-track]");
     let chunks=null,index=0,audio=null,loading=false;
+    let resumeAfterAuth=false;
 
-    function setState(state){
-      box.dataset.state=state;
-      action.className=state==="playing"?"fa-solid fa-pause":"fa-solid fa-play";
+    function setState(stateName){
+      box.dataset.state=stateName;
+      action.className=stateName==="playing"?"fa-solid fa-pause":"fa-solid fa-play";
       const strong=box.querySelector(".public-narration-copy strong");
-      if(strong)strong.textContent=state==="playing"?"Pausar narração":state==="paused"?"Continuar ouvindo":"Ouvir este arquivo";
+      if(strong)strong.textContent=stateName==="playing"?"Pausar narração":stateName==="paused"?"Continuar ouvindo":"Ouvir este arquivo";
     }
 
     function bindAudio(){
       if(!chunks?.length)return;
-      if(audio){audio.pause();audio.src="";}
+      if(audio){audio.pause();audio.src=""}
       const current=chunkCache.get(index);
       const url=typeof current==="string"?current:null;
       if(!url)return;
@@ -112,12 +279,23 @@
     let prefetching=null;
 
     async function callNarration(body){
+      const session=await getSession();
+      if(!session?.access_token){
+        const err=new Error("Entre na sua conta para ouvir este arquivo.");
+        err.code="LOGIN_REQUIRED";
+        throw err;
+      }
       const r=await fetch(FN_URL,{
         method:"POST",
-        headers:{"Content-Type":"application/json",apikey:KEY,Authorization:"Bearer "+KEY},
+        headers:{"Content-Type":"application/json",apikey:KEY,Authorization:"Bearer "+session.access_token},
         body:JSON.stringify({...ctx,...body})
       });
       const data=await r.json().catch(()=>({}));
+      if(r.status===401){
+        const err=new Error(data.error||"Entre na sua conta para ouvir este arquivo.");
+        err.code="LOGIN_REQUIRED";
+        throw err;
+      }
       if(!r.ok)throw new Error(data.error||"Não foi possível preparar a narração.");
       return data;
     }
@@ -138,7 +316,7 @@
     function prefetchNext(){
       const next=index+1;
       if(next>=totalChunks||chunkCache.has(next))return;
-      prefetching=getChunk(next).catch(()=>null).finally(()=>{prefetching=null;});
+      prefetching=getChunk(next).catch(()=>null).finally(()=>{prefetching=null});
     }
 
     async function prepare(){
@@ -163,8 +341,7 @@
       }
     }
 
-    button.addEventListener("click",async()=>{
-      if(loading)return;
+    async function startAudio(){
       try{
         if(!chunks)await prepare();
         if(audio&&!audio.paused){
@@ -181,14 +358,53 @@
           return;
         }
         playCurrent();
+        localStorage.removeItem(PENDING_KEY);
+        const u=new URL(location.href);
+        if(u.searchParams.get("ouvir")==="1"){
+          u.searchParams.delete("ouvir");
+          history.replaceState(null,"",u.toString());
+        }
       }catch(e){
+        if(e?.code==="LOGIN_REQUIRED"){
+          resumeAfterAuth=true;
+          localStorage.setItem(PENDING_KEY,contextKey(ctx));
+          authGate._open("login");
+          return;
+        }
         setState("ready");
         progress.hidden=false;
         status.textContent=e?.message||"Não foi possível abrir a narração.";
         count.textContent="";
         console.error(e);
       }
+    }
+
+    const authGate=createAuthGate(ctx,async()=>{
+      resumeAfterAuth=false;
+      await startAudio();
     });
+
+    button.addEventListener("click",async()=>{
+      if(loading)return;
+      const session=await getSession().catch(()=>null);
+      if(!session?.user){
+        resumeAfterAuth=true;
+        localStorage.setItem(PENDING_KEY,contextKey(ctx));
+        authGate._open("login");
+        return;
+      }
+      await startAudio();
+    });
+
+    (async()=>{
+      const pending=localStorage.getItem(PENDING_KEY)===contextKey(ctx);
+      const requested=new URLSearchParams(location.search).get("ouvir")==="1";
+      if(!pending&&!requested)return;
+      const session=await getSession().catch(()=>null);
+      if(session?.user){
+        setTimeout(()=>startAudio(),350);
+      }
+    })();
   }
 
   function init(){
