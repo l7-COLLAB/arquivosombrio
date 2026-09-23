@@ -23,39 +23,100 @@ function textFromValue(v){
 }
 
 function sourceBlocks(d){
+  const type=String(d.__contentType||"dossie");
   const out=[];
-  if(String(d.resumo||"").trim())out.push({key:"resumo",type:"resumo",label:"Resumo / abertura",text:String(d.resumo).trim()});
-  const blocks=Array.isArray(d.conteudo_blocos)?d.conteudo_blocos:[];
-  if(blocks.length){
-    blocks.forEach((b,i)=>{
-      const type=String(b?.tipo||"paragrafo");
-      if(["imagem","documento","video"].includes(type))return;
-      let txt="";
-      if(type==="subtitulo"||type==="paragrafo")txt=textFromValue(b?.dados?.texto||b?.texto||b?.dados);
-      else txt=textFromValue(b?.dados?.itens||b?.dados?.texto||b?.dados||b);
-      if(!txt.trim())return;
-      const labels={subtitulo:"Subtítulo",paragrafo:"Narrativa",cronologia:"Cronologia",evidencias:"Evidências",hipoteses:"Hipóteses e controvérsias",situacao_oficial:"Situação oficial",fontes:"Fontes"};
-      out.push({key:"bloco:"+(b?.id||i),type,label:labels[type]||type,text:txt.trim()});
-    });
-  }else if(String(d.historia||"").trim()){
-    String(d.historia).split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean).forEach((txt,i)=>{
+  const push=(key,sourceType,label,value)=>{
+    const text=textFromValue(value).trim();
+    if(text)out.push({key,type:sourceType,label,text});
+  };
+  const pushParagraphs=(prefix,label,value)=>{
+    const text=String(value||"").trim();
+    if(!text)return;
+    text.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean).forEach((txt,i)=>{
       const sub=txt.startsWith("## ");
-      out.push({key:"historia:"+i,type:sub?"subtitulo":"paragrafo",label:sub?"Subtítulo":"Narrativa",text:sub?txt.replace(/^##\s+/,""):txt});
+      out.push({key:prefix+":"+i,type:sub?"subtitulo":"paragrafo",label:sub?"Subtítulo":label,text:sub?txt.replace(/^##\s+/,""):txt});
     });
-  }
-  if(Array.isArray(d.evidencias)&&d.evidencias.length&&!blocks.some(b=>b?.tipo==="evidencias")){
-    out.push({key:"evidencias",type:"evidencias",label:"Evidências",text:textFromValue(d.evidencias)});
-  }
-  if(Array.isArray(d.teorias)&&d.teorias.length&&!blocks.some(b=>b?.tipo==="hipoteses")){
-    out.push({key:"teorias",type:"hipoteses",label:"Hipóteses e controvérsias",text:textFromValue(d.teorias)});
-  }
-  return out.map((x,i)=>({...x,order:i+1}));
-}
+  };
+  const blocks=Array.isArray(d.conteudo_blocos)?d.conteudo_blocos:[];
 
-async function getProject(dossierId){
-  const c=client(); if(!c)throw Error("Supabase indisponível.");
-  const {data,error}=await c.from("narration_projects").select("*").eq("dossier_id",dossierId).maybeSingle();
-  if(error)throw error; return data||null;
+  push("titulo","titulo","Título",d.titulo);
+
+  if(type!=="garimpo")push("resumo","resumo","Resumo / abertura",d.resumo);
+
+  if(type==="dossie"){
+    if(blocks.length){
+      blocks.forEach((b,i)=>{
+        const bt=String(b?.tipo||"paragrafo");
+        if(["imagem","documento","video","fontes"].includes(bt))return;
+        let txt="";
+        if(bt==="subtitulo"||bt==="paragrafo")txt=textFromValue(b?.dados?.texto||b?.texto||b?.dados);
+        else txt=textFromValue(b?.dados?.itens||b?.dados?.texto||b?.dados||b);
+        if(!txt.trim())return;
+        const labels={subtitulo:"Subtítulo",paragrafo:"Narrativa",cronologia:"Cronologia",evidencias:"Evidências",hipoteses:"Hipóteses e controvérsias",situacao_oficial:"Situação oficial"};
+        out.push({key:"bloco:"+(b?.id||i),type:bt,label:labels[bt]||bt,text:txt.trim()});
+      });
+    }else{
+      pushParagraphs("historia","Narrativa",d.historia);
+    }
+    if(!blocks.some(b=>b?.tipo==="evidencias"))push("evidencias","evidencias","Evidências",d.evidencias);
+    if(!blocks.some(b=>b?.tipo==="hipoteses"))push("teorias","hipoteses","Hipóteses e controvérsias",d.teorias);
+  }
+
+  if(type==="garimpo"){
+    pushParagraphs("conteudo","Narrativa",d.conteudo);
+    push("cronologia","cronologia","Cronologia",d.cronologia);
+    push("evidencias","evidencias","Evidências",d.evidencias);
+    push("hipoteses","hipoteses","Hipóteses e controvérsias",d.hipoteses);
+    push("situacao","situacao_oficial","Situação oficial",d.situacao_oficial);
+  }
+
+  if(type==="pericia"){
+    push("introducao","introducao","Introdução",d.introducao);
+    push("tecnica","tecnica","Técnica / como funciona",d.como_funciona);
+    push("historia_tecnica","historia_tecnica","História da técnica",d.historia_tecnica);
+    push("aplicacao","aplicacao","Aplicações e casos reais",d.aplicacao_casos_reais);
+    push("limitacoes","limitacoes","Limitações e controvérsias",d.limitacoes_controversias);
+    push("curiosidades","curiosidades","Curiosidades",d.curiosidades);
+    push("casos_relacionados","casos_relacionados","Casos relacionados",d.casos_relacionados);
+  }
+
+  if(type==="lenda"){
+    push("introducao","introducao","Introdução",d.introducao);
+    if(blocks.length){
+      blocks.forEach((b,i)=>{
+        const bt=String(b?.tipo||"paragrafo");
+        if(["imagem","documento","video","fontes"].includes(bt))return;
+        const txt=textFromValue(b?.dados?.texto||b?.dados?.itens||b?.texto||b?.dados);
+        if(txt.trim())out.push({key:"bloco:"+(b?.id||i),type:bt,label:bt==="subtitulo"?"Subtítulo":"Narrativa",text:txt.trim()});
+      });
+    }else pushParagraphs("conteudo","Narrativa",d.conteudo);
+    push("contexto","contexto","Contexto histórico",d.contexto_historico);
+    push("versoes","versoes","Versões",d.versoes||d.versoes_itens);
+    push("elementos_reais","elementos_reais","Elementos reais",d.elementos_reais);
+    push("afirmacoes","afirmacoes","Afirmações",d.afirmacoes_blocos);
+    push("documentado","documentado","O que é documentado",d.documentado_blocos);
+    push("origem","origem","Origem e evolução",d.origem_evolucao_blocos);
+    push("hipoteses","hipoteses","Hipóteses",d.hipoteses);
+    push("cronologia","cronologia","Cronologia",d.cronologia);
+    push("conclusao","conclusao","Conclusão do arquivo",d.conclusao_arquivo);
+  }
+
+  if(type==="creepypasta"){
+    push("introducao","introducao","Introdução",d.introducao);
+    if(blocks.length){
+      blocks.forEach((b,i)=>{
+        const bt=String(b?.tipo||"paragrafo");
+        if(["imagem","documento","video","fontes"].includes(bt))return;
+        const txt=textFromValue(b?.dados?.texto||b?.dados?.itens||b?.texto||b?.dados);
+        if(txt.trim())out.push({key:"bloco:"+(b?.id||i),type:bt,label:bt==="subtitulo"?"Subtítulo":"Narrativa",text:txt.trim()});
+      });
+    }else pushParagraphs("conteudo","Narrativa",d.conteudo);
+    push("bastidores","bastidores","Bastidores",d.bastidores_blocos);
+    push("realidade_ficcao","realidade_ficcao","Realidade ou ficção",d.realidade_ficcao);
+    push("nota_editorial","nota_editorial","Nota editorial",d.nota_editorial);
+  }
+
+  return out.map((x,i)=>({...x,order:i+1}));
 }
 
 async function adaptarBlocosPollyAutomaticamente(projectId){
@@ -84,15 +145,21 @@ async function adaptarBlocosPollyAutomaticamente(projectId){
 
 async function syncProject(dossier){
   const c=client(),s=await session(); if(!c||!s?.user)throw Error("Sessão administrativa inválida.");
-  let project=await getProject(dossier.id);
+  const contentType=String(dossier.__contentType||"dossie");
+  let project=await getProject(contentType,dossier.id);
   if(!project){
     const ins=await c.from("narration_projects").insert({
-      dossier_id:dossier.id,narrator_id:s.user.id,status:"preparacao",source_updated_at:dossier.updated_at||null
+      dossier_id:contentType==="dossie"?dossier.id:null,
+      content_type:contentType,
+      content_id:dossier.id,
+      narrator_id:s.user.id,
+      status:"preparacao",
+      source_updated_at:dossier.updated_at||dossier.publicado_em||dossier.created_at||null
     }).select().single();
     if(ins.error)throw ins.error; project=ins.data;
   }else{
     const up=await c.from("narration_projects").update({
-      narrator_id:project.narrator_id||s.user.id,source_updated_at:dossier.updated_at||null,updated_at:new Date().toISOString()
+      narrator_id:project.narrator_id||s.user.id,source_updated_at:dossier.updated_at||dossier.publicado_em||dossier.created_at||null,updated_at:new Date().toISOString()
     }).eq("id",project.id).select().single();
     if(up.error)throw up.error; project=up.data;
   }
@@ -187,8 +254,8 @@ function blockCard(b){
       '</select></label>'+
       '<div class="narration-voice-source-state"><i class="fa-solid '+(b.playback_source==="human"?"fa-microphone":"fa-wave-square")+'"></i><span>'+(b.playback_source==="human"?"MINHA VOZ":"AMAZON POLLY")+'</span></div>'+
     '</div>'+
-    '<details class="narration-source"><summary>Ver texto original do dossiê</summary><p>'+esc(b.source_text).replace(/\n/g,"<br>")+'</p></details>'+
-    '<label>Texto para narração<textarea rows="6" data-narration-text>'+esc(b.narration_text||b.source_text||"")+'</textarea><small>Este texto é só para a leitura em voz alta. Alterações aqui não mudam o dossiê público.</small></label>'+
+    '<details class="narration-source"><summary>Ver texto original do arquivo</summary><p>'+esc(b.source_text).replace(/\n/g,"<br>")+'</p></details>'+
+    '<label>Texto para narração<textarea rows="6" data-narration-text>'+esc(b.narration_text||b.source_text||"")+'</textarea><small>Este texto é só para a leitura em voz alta. Alterações aqui não mudam o arquivo público.</small></label>'+
     '<section class="narration-polly-text-box">'+
       '<div class="narration-polly-text-head"><div><span>VERSÃO PARA POLLY</span><strong>'+(b.polly_text_mode==="manual"?"Edição manual":"Gerada automaticamente")+'</strong><small data-polly-text-state>'+(b.polly_text?"Pronta para revisão":"Ainda não gerada")+'</small></div><button type="button" data-regenerate-polly-text><i class="fa-solid fa-wand-magic-sparkles"></i> Recalcular adaptação</button></div>'+
       '<textarea rows="6" data-polly-text placeholder="A adaptação automática será criada pelo sistema.">'+esc(b.polly_text||"")+'</textarea>'+
@@ -430,23 +497,59 @@ async function openProject(panel,dossier){
 
 async function render(panel){
   const c=client(); if(!c)throw Error("Supabase indisponível.");
-  const r=await c.from("Casos").select("id,titulo,categoria,status_publicacao,resumo,historia,conteudo_blocos,evidencias,teorias,updated_at").order("titulo",{ascending:true});
-  if(r.error)throw r.error;
-  const dossiers=r.data||[];
-  const projects=await c.from("narration_projects").select("dossier_id,status");
+
+  const consultas=await Promise.all([
+    c.from("Casos").select("*").order("titulo",{ascending:true}),
+    c.from("casos_diarios").select("*").order("titulo",{ascending:true}),
+    c.from("pericias").select("*").order("titulo",{ascending:true}),
+    c.from("lendas").select("*").order("titulo",{ascending:true}),
+    c.from("creepypastas").select("*").order("titulo",{ascending:true})
+  ]);
+  const erro=consultas.find(x=>x.error)?.error;
+  if(erro)throw erro;
+
+  const tipos=[
+    ["dossie","Dossiê",consultas[0].data||[]],
+    ["garimpo","Garimpo Sombrio",consultas[1].data||[]],
+    ["pericia","Perícia",consultas[2].data||[]],
+    ["lenda","Lenda",consultas[3].data||[]],
+    ["creepypasta","Creepypasta",consultas[4].data||[]]
+  ];
+  const items=tipos.flatMap(([type,label,rows])=>rows.map(d=>({...d,__contentType:type,__contentLabel:label})));
+
+  const projects=await c.from("narration_projects").select("content_type,content_id,status");
   if(projects.error)throw projects.error;
-  const projectMap=new Map((projects.data||[]).map(x=>[String(x.dossier_id),x]));
+  const projectMap=new Map((projects.data||[]).map(x=>[String(x.content_type)+":"+String(x.content_id),x]));
 
-  panel.innerHTML='<div class="admin-hub-section-heading"><div><span>ÁUDIO DOCUMENTAL</span><h2>Narração do Arquivo</h2><p>Prepare o roteiro falado dos dossiês e acompanhe o que ainda precisa ser gravado.</p></div></div>'+
-    '<section class="narration-picker"><label>Selecionar dossiê<select data-narration-dossier><option value="">Escolha um dossiê</option>'+dossiers.map(d=>'<option value="'+d.id+'">'+esc(d.titulo)+(projectMap.has(String(d.id))?' · projeto criado':'')+'</option>').join("")+'</select></label><button type="button" data-open-narration disabled><i class="fa-solid fa-microphone-lines"></i> Preparar narração</button></section>'+
-    '<div class="narration-notice"><i class="fa-solid fa-headphones"></i><div><strong>Etapa atual</strong><p>Roteiro, sincronização, texto falado, estados de gravação e dicionário de pronúncias. A gravação pelo navegador entra na próxima etapa.</p></div></div>'+
-    '<div data-narration-workspace><div class="admin-hub-empty"><i class="fa-solid fa-microphone-lines"></i><p>Selecione um dossiê para iniciar ou continuar a preparação da narração.</p></div></div>';
+  panel.innerHTML='<div class="admin-hub-section-heading"><div><span>ÁUDIO DOCUMENTAL</span><h2>Narração do Arquivo</h2><p>Prepare e revise a narração de Dossiês, Garimpo, Perícias, Lendas e Creepypastas. A adaptação para Polly é criada automaticamente.</p></div></div>'+
+    '<section class="narration-picker"><label>Tipo de arquivo<select data-narration-type><option value="dossie">Dossiês</option><option value="garimpo">Garimpo Sombrio</option><option value="pericia">Perícias</option><option value="lenda">Lendas</option><option value="creepypasta">Creepypastas</option></select></label><label>Selecionar arquivo<select data-narration-dossier></select></label><button type="button" data-open-narration disabled><i class="fa-solid fa-microphone-lines"></i> Preparar narração</button></section>'+
+    '<div class="narration-notice"><i class="fa-solid fa-headphones"></i><div><strong>Adaptação automática</strong><p>Ao preparar ou sincronizar um arquivo, a versão para Polly é criada automaticamente. Edições manuais continuam protegidas.</p></div></div>'+
+    '<div data-narration-workspace><div class="admin-hub-empty"><i class="fa-solid fa-microphone-lines"></i><p>Selecione um arquivo para iniciar ou continuar a preparação da narração.</p></div></div>';
 
-  const select=panel.querySelector("[data-narration-dossier]"),button=panel.querySelector("[data-open-narration]");
+  const typeSelect=panel.querySelector("[data-narration-type]");
+  const select=panel.querySelector("[data-narration-dossier]");
+  const button=panel.querySelector("[data-open-narration]");
+
+  const fill=()=>{
+    const type=typeSelect.value;
+    const subset=items.filter(x=>x.__contentType===type);
+    select.innerHTML='<option value="">Escolha um arquivo</option>'+subset.map(d=>{
+      const key=type+":"+String(d.id);
+      return '<option value="'+d.id+'">'+esc(d.titulo||("Arquivo "+d.id))+(projectMap.has(key)?' · projeto criado':'')+'</option>';
+    }).join("");
+    button.disabled=true;
+  };
+  typeSelect.onchange=fill;
   select.onchange=()=>button.disabled=!select.value;
-  button.onclick=()=>{const d=dossiers.find(x=>String(x.id)===String(select.value));if(d)openProject(panel,d);};
+  button.onclick=()=>{
+    const d=items.find(x=>x.__contentType===typeSelect.value&&String(x.id)===String(select.value));
+    if(d)openProject(panel,d);
+  };
+  fill();
+
   const activeProjects=(projects.data||[]).filter(x=>x.status!=="arquivada").length;
-  const badge=document.querySelector('[data-admin-hub-count="narration"]');if(badge)badge.textContent=activeProjects?String(activeProjects):"";
+  const badge=document.querySelector('[data-admin-hub-count="narration"]');
+  if(badge)badge.textContent=activeProjects?String(activeProjects):"";
 }
 
 window.ArquivoNarracao={render};
