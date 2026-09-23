@@ -372,3 +372,116 @@ body.garimpo-story-open{overflow:hidden}
 .garimpo-story-nav{position:absolute;z-index:5;top:70px;bottom:110px;width:42%;border:0;background:transparent}.garimpo-story-nav.prev{left:0}.garimpo-story-nav.next{right:0}
 @media(max-width:500px){.garimpo-story-viewer{padding:0}.garimpo-story-frame{width:100%;height:100dvh;max-height:none;border:0;border-radius:0}.garimpo-story-slot{right:12px;bottom:calc(14px + env(safe-area-inset-bottom))}.garimpo-story-bubble>span{width:58px;height:58px}}
 @media(prefers-reduced-motion:reduce){.garimpo-story-progress .active i{animation:none;width:100%}}
+
+
+/* Garimpo Sombrio · Stories integrados ao site */
+.garimpo-stories-bar{
+    border-bottom:1px solid rgba(181,157,122,.12);
+    background:linear-gradient(180deg,rgba(14,11,9,.98),rgba(8,7,6,.98));
+}
+.garimpo-stories-inner{
+    display:flex;
+    align-items:center;
+    gap:22px;
+    min-height:112px;
+    padding-top:14px;
+    padding-bottom:14px;
+}
+.garimpo-stories-label{
+    flex:0 0 auto;
+    display:grid;
+    gap:3px;
+    min-width:118px;
+}
+.garimpo-stories-label small{
+    color:#786d61;
+    font:600 .52rem/1.2 var(--font-mono);
+    letter-spacing:.12em;
+}
+.garimpo-stories-label strong{
+    color:#d4c9ba;
+    font-family:var(--font-display);
+    font-size:1.05rem;
+    font-weight:600;
+}
+.garimpo-story-slot{
+    position:static;
+    z-index:auto;
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    min-width:0;
+    max-width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:4px 2px 8px;
+    scrollbar-width:none;
+}
+.garimpo-story-slot::-webkit-scrollbar{display:none}
+.garimpo-story-bubble{
+    flex:0 0 82px;
+    width:82px;
+    display:grid;
+    justify-items:center;
+    gap:5px;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:var(--paper);
+    cursor:pointer;
+}
+.garimpo-story-bubble>span{
+    display:grid;
+    width:66px;
+    height:66px;
+    padding:3px;
+    place-items:center;
+    border:2px solid rgba(181,157,122,.34);
+    border-radius:50%;
+    background:#080706;
+    box-sizing:border-box;
+}
+.garimpo-story-bubble.unseen>span{
+    border-color:#8d1e1e;
+    box-shadow:0 0 0 2px rgba(141,30,30,.16);
+}
+.garimpo-story-bubble.seen>span{
+    opacity:.64;
+    border-color:rgba(181,157,122,.22);
+}
+.garimpo-story-bubble img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:50%;
+    background:#0d0b09;
+}
+.garimpo-story-bubble strong{
+    display:-webkit-box;
+    width:100%;
+    overflow:hidden;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    color:#c9beb0;
+    font:600 .55rem/1.25 var(--font-mono);
+    text-align:center;
+}
+.garimpo-story-bubble small{
+    color:#75695d;
+    font:500 .48rem/1 var(--font-mono);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+@media(max-width:700px){
+    .garimpo-stories-inner{
+        align-items:flex-start;
+        gap:12px;
+        min-height:98px;
+        padding-top:12px;
+        padding-bottom:10px;
+    }
+    .garimpo-stories-label{min-width:92px}
+    .garimpo-stories-label strong{font-size:.95rem}
+    .garimpo-story-bubble{flex-basis:72px;width:72px}
+    .garimpo-story-bubble>span{width:58px;height:58px}
+}
