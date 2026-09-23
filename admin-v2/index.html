@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="./legacy/css/style-base.css?v=clone-1">
 <link rel="stylesheet" href="./legacy/css/style.css?v=clone-1">
-<link rel="stylesheet" href="./legacy/css/admin-dashboard.css?v=polly-4">
+<link rel="stylesheet" href="./legacy/css/admin-dashboard.css?v=responsive-security-1">
 <style>
 body{min-height:100dvh;background:#080706}
 #admin-panel-loading{min-height:100dvh;display:grid;place-items:center;padding:24px;color:#d8cfc2;text-align:center;font-family:"IBM Plex Mono",monospace}
@@ -37,7 +37,7 @@ document.addEventListener("click",function(e){var f=e.target.closest("#admin-man
 try{
 set("Preparando a autenticação...");
 await load("a autenticação do Supabase","https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0",15000);
-await load("a sessão administrativa","./legacy/js/admin-auth.js?v=clone-1",12000);
+await load("a sessão administrativa","./legacy/js/admin-auth.js?v=security-1",12000);
 set("Validando a sessão administrativa...");
 var sessao=await obterSessaoAdminIsolada();
 var verifiedAt=Number(sessionStorage.getItem("arquivo-admin-verified-at")||0);
