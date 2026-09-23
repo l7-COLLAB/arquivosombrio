@@ -177,9 +177,9 @@ async function homeFeature(p){
   if(cfg.error)throw cfg.error;
 
   var dossiers=await state.client.from("Casos")
-    .select("id,titulo,categoria,status_publicacao,updated_at")
+    .select("id,titulo,categoria,status_publicacao,published_at,updated_at")
     .eq("status_publicacao","publicado")
-    .order("updated_at",{ascending:false});
+    .order("published_at",{ascending:false,nullsFirst:false});
   if(dossiers.error)throw dossiers.error;
 
   var current=cfg.data||{id:1,dossier_id:null,selected_at:null};
