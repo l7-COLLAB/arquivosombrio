@@ -13050,3 +13050,68 @@ function validarUrlVideoAdmin(url) {
         return false;
     }
 }
+
+
+/* ==========================================================================
+   HOME — PAINEL EDITORIAL VIVO
+   ========================================================================== */
+async function carregarPainelEditorialHome() {
+    const painel = document.getElementById("hero-editorial-dossie");
+    if (!painel) return;
+
+    try {
+        const cliente = await obterClienteSupabase();
+
+        const [dossieResp, garimpoResp, periciaResp] = await Promise.all([
+            cliente.from("Casos")
+                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,updated_at")
+                .eq("status_publicacao", "publicado")
+                .order("updated_at", { ascending: false })
+                .limit(1)
+                .maybeSingle(),
+            cliente.from("casos_diarios")
+                .select("id,titulo,categoria,imagem_capa,publicado_em,status_publicacao")
+                .eq("status_publicacao", "publicado")
+                .order("publicado_em", { ascending: false })
+                .limit(1)
+                .maybeSingle(),
+            cliente.from("pericias")
+                .select("id,titulo,categoria,imagem,publicado_em,status_publicacao")
+                .eq("status_publicacao", "publicado")
+                .order("publicado_em", { ascending: false })
+                .limit(1)
+                .maybeSingle()
+        ]);
+
+        const dossie = dossieResp.data;
+        if (dossie) {
+            painel.href = "caso.html?id=" + encodeURIComponent(dossie.id);
+            const img = document.getElementById("hero-editorial-dossie-image");
+            if (img && dossie.imagem) img.src = dossie.imagem;
+            const titulo = document.getElementById("hero-editorial-dossie-title");
+            if (titulo) titulo.textContent = dossie.titulo || "Abrir dossiê";
+            const meta = document.getElementById("hero-editorial-dossie-meta");
+            if (meta) meta.textContent = [dossie.categoria || "Dossiê", dossie.local || "", dossie.ano || ""].filter(Boolean).join(" · ");
+        }
+
+        const garimpo = garimpoResp.data;
+        if (garimpo) {
+            const link = document.getElementById("hero-editorial-garimpo");
+            if (link) link.href = "garimpo.html?id=" + encodeURIComponent(garimpo.id);
+            const titulo = document.getElementById("hero-editorial-garimpo-title");
+            if (titulo) titulo.textContent = garimpo.titulo || "Abrir registro diário";
+        }
+
+        const pericia = periciaResp.data;
+        if (pericia) {
+            const link = document.getElementById("hero-editorial-pericia");
+            if (link) link.href = "pericia.html?id=" + encodeURIComponent(pericia.id) + "#forense";
+            const titulo = document.getElementById("hero-editorial-pericia-title");
+            if (titulo) titulo.textContent = pericia.titulo || "Ciência aplicada à investigação";
+        }
+    } catch (erro) {
+        console.warn("Painel editorial da home indisponível.", erro);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", carregarPainelEditorialHome);
