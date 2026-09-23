@@ -129,7 +129,12 @@
             }
 
             if (status) status.textContent = "Acesso confirmado. Abrindo o painel...";
-            window.location.replace("painel-admin.html?v=20260923-agendado-1");
+            const destino = new URLSearchParams(window.location.search).get("next");
+            window.location.replace(
+                destino === "adm" || destino === "admin-v2"
+                    ? "adm/"
+                    : "painel-admin.html?v=20260923-agendado-1"
+            );
         } catch (falha) {
             console.error("Falha no acesso administrativo.", falha);
             const texto = String(falha?.message || "");
