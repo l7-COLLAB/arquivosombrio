@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="./legacy/css/style-base.css?v=clone-1">
 <link rel="stylesheet" href="./legacy/css/style.css?v=clone-1">
-<link rel="stylesheet" href="./legacy/css/admin-dashboard.css?v=schedule-center-2">
+<link rel="stylesheet" href="./legacy/css/admin-dashboard.css?v=narration-1">
 <style>
 body{min-height:100dvh;background:#080706}
 #admin-panel-loading{min-height:100dvh;display:grid;place-items:center;padding:24px;color:#d8cfc2;text-align:center;font-family:"IBM Plex Mono",monospace}
@@ -48,8 +48,10 @@ await load("os controles V2 de Dossiês","./legacy/js/v2-dossie.js?v=agendado-4"
 await load("os controles V2 do Garimpo","./legacy/js/v2-garimpo.js?v=agendado-4",12000);
 set("Carregando o editor literário...");
 await load("o editor de lendas e creepypastas","./legacy/js/admin-literario.js?v=schedule-center-2",12000);
+set("Preparando a narração do arquivo...");
+await load("o módulo de narração","./js/narration.js?v=narration-1",12000);
 set("Preparando a central administrativa...");
-await load("a central administrativa","./legacy/js/admin-dashboard.js?v=schedule-center-3",12000);
+await load("a central administrativa","./legacy/js/admin-dashboard.js?v=narration-1",12000);
 if(typeof abrirPainelAdmin!=="function")throw new Error("A função principal do painel não ficou disponível.");
 set("Montando a Central de Arquivo...");
 await abrirPainelAdmin(sessao);
