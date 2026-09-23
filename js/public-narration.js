@@ -61,8 +61,12 @@
     function bindAudio(){
       if(!chunks?.length)return;
       if(audio){audio.pause();audio.src="";}
-      audio=new Audio(chunks[index].url);
+      const current=chunkCache.get(index);
+      const url=typeof current==="string"?current:null;
+      if(!url)return;
+      audio=new Audio(url);
       audio.preload="auto";
+      audio.addEventListener("play",prefetchNext);
       audio.addEventListener("timeupdate",()=>{
         if(!audio.duration||!Number.isFinite(audio.duration))return;
         track.style.width=Math.min(100,Math.max(0,(audio.currentTime/audio.duration)*100))+"%";
@@ -71,7 +75,14 @@
         track.style.width="0%";
         if(index+1<chunks.length){
           index++;
-          playCurrent();
+          getChunk(index).then(url=>{
+            chunks[index]={index,url};
+            playCurrent();
+            prefetchNext();
+          }).catch(()=>{
+            setState("ready");
+            status.textContent="Não foi possível carregar o próximo trecho.";
+          });
         }else{
           index=0;
           setState("ready");
@@ -96,25 +107,56 @@
       });
     }
 
+    let totalChunks=0;
+    const chunkCache=new Map();
+    let prefetching=null;
+
+    async function callNarration(body){
+      const r=await fetch(FN_URL,{
+        method:"POST",
+        headers:{"Content-Type":"application/json",apikey:KEY,Authorization:"Bearer "+KEY},
+        body:JSON.stringify({...ctx,...body})
+      });
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(data.error||"Não foi possível preparar a narração.");
+      return data;
+    }
+
+    async function getChunk(i){
+      if(chunkCache.has(i))return chunkCache.get(i);
+      const p=callNarration({action:"chunk",index:i}).then(data=>{
+        if(!data?.url)throw new Error("Trecho de áudio indisponível.");
+        chunkCache.set(i,data.url);
+        return data.url;
+      });
+      chunkCache.set(i,p);
+      const url=await p;
+      chunkCache.set(i,url);
+      return url;
+    }
+
+    function prefetchNext(){
+      const next=index+1;
+      if(next>=totalChunks||chunkCache.has(next))return;
+      prefetching=getChunk(next).catch(()=>null).finally(()=>{prefetching=null;});
+    }
+
     async function prepare(){
       loading=true;
       button.disabled=true;
       progress.hidden=false;
-      status.textContent="Preparando voz e pronúncia...";
+      status.textContent="Preparando o primeiro trecho...";
       count.textContent="";
       try{
-        const r=await fetch(FN_URL,{
-          method:"POST",
-          headers:{"Content-Type":"application/json",apikey:KEY,Authorization:"Bearer "+KEY},
-          body:JSON.stringify(ctx)
-        });
-        const data=await r.json().catch(()=>({}));
-        if(!r.ok)throw new Error(data.error||"Não foi possível preparar a narração.");
-        chunks=Array.isArray(data.chunks)?data.chunks.filter(x=>x?.url):[];
-        if(!chunks.length)throw new Error("Nenhum trecho de áudio foi gerado.");
+        const manifest=await callNarration({action:"manifest"});
+        totalChunks=Number(manifest.total_chunks||0);
+        if(!totalChunks)throw new Error("Nenhum trecho de áudio foi preparado.");
+        await getChunk(0);
+        chunks=Array.from({length:totalChunks},(_,i)=>({index:i,url:chunkCache.get(i)||null}));
         index=0;
         status.textContent="Áudio pronto";
-        count.textContent=chunks.length+" trechos";
+        count.textContent=totalChunks+" trechos";
+        prefetchNext();
       }finally{
         loading=false;
         button.disabled=false;
