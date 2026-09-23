@@ -534,7 +534,7 @@ async function openProject(panel,dossier){
       setTimeout(()=>card?.classList.remove("is-test-target"),1800);
     });
 
-    wirePronunciations(box);
+    wirePronunciations(box,dossier);
   }catch(e){
     panel.querySelector("[data-narration-workspace]").innerHTML='<div class="admin-hub-error"><i class="fa-solid fa-triangle-exclamation"></i><p>'+esc(e.message||"Não foi possível preparar a narração.")+'</p></div>';
   }
