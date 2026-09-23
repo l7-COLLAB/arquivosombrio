@@ -170,3 +170,7 @@ body.case-reading .case-reader-toolbar .public-narration-progress{
 .narration-auth-check a{color:#b79972;text-decoration:none}
 .narration-auth-state{min-height:1.3em;margin:12px 0 0;color:#b49d80;font-size:.7rem;line-height:1.45}
 @media(max-width:520px){.narration-auth-dialog{padding:23px 18px 19px}.narration-auth-dialog h2{font-size:1.08rem}}
+
+.narration-turnstile-overlay{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.88)}
+.narration-turnstile-box{display:grid;gap:14px;justify-items:center;padding:18px;border:1px solid rgba(181,157,122,.2);background:#120f0c;color:#e7ddcf}
+.narration-turnstile-box strong{font-size:.72rem;letter-spacing:.08em}
