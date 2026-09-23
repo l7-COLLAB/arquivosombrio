@@ -9841,6 +9841,8 @@ conteudo_blocos:
                 coletarDocumentosAdmin()
         };
 
+        const agendaDossie = lerAgendamentoFormulario("admin-publicacao");
+
            const blocosNarrativos =
             Array.isArray(caso.conteudo_blocos)
                 ? caso.conteudo_blocos
@@ -10051,7 +10053,6 @@ if (
         }
 
 
-        const agendaDossie = lerAgendamentoFormulario("admin-publicacao");
         await salvarEstadoAgendamentoConteudo(
             "dossie",
             resultado.data?.id || casoExistente?.id,
@@ -10192,6 +10193,8 @@ async function salvarPericiaAdmin(
                 valor("admin-forensic-related-cases")
         };
 
+        const agendaPericia = lerAgendamentoFormulario("admin-forensic-publication");
+
         if (!pericia.titulo) {
             throw new Error(
                 "Informe o título da perícia."
@@ -10245,7 +10248,6 @@ async function salvarPericiaAdmin(
             throw resultado.error;
         }
 
-        const agendaPericia = lerAgendamentoFormulario("admin-forensic-publication");
         await salvarEstadoAgendamentoConteudo(
             "pericia",
             resultado.data?.id || periciaExistente?.id,
@@ -10457,6 +10459,8 @@ async function salvarLivroAdmin(
 
     };
 
+    const agendaLivro = lerAgendamentoFormulario("admin-book-publication");
+
     try {
 
         const sessao =
@@ -10499,7 +10503,6 @@ async function salvarLivroAdmin(
             throw error;
         }
 
-        const agendaLivro = lerAgendamentoFormulario("admin-book-publication");
         await salvarEstadoAgendamentoConteudo(
             "livro",
             livroSalvo?.id || livroExistente?.id,
