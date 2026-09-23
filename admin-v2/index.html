@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="./legacy/css/style-base.css?v=clone-1">
 <link rel="stylesheet" href="./legacy/css/style.css?v=clone-1">
-<link rel="stylesheet" href="./legacy/css/admin-dashboard.css?v=pronunciation-auto-1">
+<link rel="stylesheet" href="./legacy/css/admin-dashboard.css?v=narration-reliability-1">
 <style>
 body{min-height:100dvh;background:#080706}
 #admin-panel-loading{min-height:100dvh;display:grid;place-items:center;padding:24px;color:#d8cfc2;text-align:center;font-family:"IBM Plex Mono",monospace}
@@ -25,7 +25,7 @@ body.admin-dashboard-open #admin-manager-close{position:absolute!important;top:1
 body.admin-dashboard-open #admin-manager-close:hover,body.admin-dashboard-open #admin-manager-close:focus-visible{border-color:#a91c1c!important;background:#7c1010!important;color:#fff!important}
 @media(max-width:760px){body.admin-dashboard-open #admin-manager-close{position:fixed!important;top:max(10px,env(safe-area-inset-top))!important;right:10px!important}}
 </style>
-<link rel="stylesheet" href="./css/voice-studio.css?v=3">
+<link rel="stylesheet" href="./css/voice-studio.css?v=4">
 </head>
 <body>
 <main id="admin-panel-loading"><div><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><p id="admin-panel-status">Abrindo a Central de Arquivo...</p></div></main>
@@ -58,11 +58,11 @@ await load("os controles V2 do Garimpo","./legacy/js/v2-garimpo.js?v=agendado-4"
 set("Carregando o editor literário...");
 await load("o editor de lendas e creepypastas","./legacy/js/admin-literario.js?v=schedule-center-2",12000);
 set("Preparando a narração do arquivo...");
-await load("o módulo de narração","./js/narration.js?v=tts-multitype-1",12000);
+await load("o módulo de narração","./js/narration.js?v=narration-reliability-1",12000);
 set("Preparando o Arquivo Voz...");
-await load("o Arquivo Voz","./js/voice-studio.js?v=4",12000);
+await load("o Arquivo Voz","./js/voice-studio.js?v=5",12000);
 set("Preparando a central administrativa...");
-await load("a central administrativa","./legacy/js/admin-dashboard.js?v=arquivo-voz-1",12000);
+await load("a central administrativa","./legacy/js/admin-dashboard.js?v=home-published-at-1",12000);
 if(typeof abrirPainelAdmin!=="function")throw new Error("A função principal do painel não ficou disponível.");
 set("Montando a Central de Arquivo...");
 await abrirPainelAdmin(sessao);
