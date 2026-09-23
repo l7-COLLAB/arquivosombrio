@@ -1,0 +1,121 @@
+
+.public-narration-player{
+    width:min(100%,680px);
+    margin:1.35rem 0 1.6rem;
+    border:1px solid rgba(181,157,122,.18);
+    background:
+        linear-gradient(135deg,rgba(31,13,12,.5),rgba(8,7,6,.97) 46%),
+        #0a0908;
+    box-shadow:inset 3px 0 0 #7b0909;
+}
+.public-narration-main{
+    width:100%;
+    display:grid;
+    grid-template-columns:42px minmax(0,1fr) 38px;
+    align-items:center;
+    gap:12px;
+    padding:13px 14px;
+    border:0;
+    background:transparent;
+    color:inherit;
+    text-align:left;
+    cursor:pointer;
+}
+.public-narration-main:disabled{
+    cursor:wait;
+    opacity:.68;
+}
+.public-narration-icon{
+    width:42px;
+    height:42px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(164,19,19,.34);
+    background:rgba(123,9,9,.12);
+    color:#b22a25;
+}
+.public-narration-copy{
+    min-width:0;
+    display:grid;
+    gap:3px;
+}
+.public-narration-copy small{
+    color:#a41313;
+    font:600 .48rem/1 var(--font-mono);
+    letter-spacing:.13em;
+}
+.public-narration-copy strong{
+    color:#e7ded0;
+    font:500 .9rem/1.2 var(--font-display);
+}
+.public-narration-copy em{
+    color:#756b60;
+    font:500 .49rem/1.25 var(--font-mono);
+    font-style:normal;
+}
+.public-narration-action{
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(181,157,122,.2);
+    color:#c4aa70;
+}
+.public-narration-player[data-state="playing"] .public-narration-action{
+    border-color:rgba(164,19,19,.5);
+    background:rgba(123,9,9,.14);
+    color:#d8b16d;
+}
+.public-narration-progress{
+    padding:0 14px 12px 68px;
+}
+.public-narration-progress>div:first-child{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:7px;
+    color:#776d62;
+    font:500 .47rem/1.2 var(--font-mono);
+    letter-spacing:.05em;
+}
+.public-narration-track{
+    height:2px;
+    overflow:hidden;
+    background:rgba(181,157,122,.12);
+}
+.public-narration-track i{
+    display:block;
+    width:0;
+    height:100%;
+    background:#8f1b1b;
+    transition:width .15s linear;
+}
+.daily-reader>.public-narration-player,
+.forensic-detail>.public-narration-player,
+.archive-literary-detail>.public-narration-player{
+    width:100%;
+}
+@media(max-width:600px){
+    .public-narration-player{
+        margin:1rem 0 1.25rem;
+    }
+    .public-narration-main{
+        grid-template-columns:36px minmax(0,1fr) 32px;
+        gap:10px;
+        padding:11px 12px;
+    }
+    .public-narration-icon{
+        width:36px;
+        height:36px;
+    }
+    .public-narration-action{
+        width:30px;
+        height:30px;
+    }
+    .public-narration-copy strong{
+        font-size:.8rem;
+    }
+    .public-narration-progress{
+        padding:0 12px 11px 58px;
+    }
+}
