@@ -17,6 +17,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def private_network_access(request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Private-Network"] = "true"
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Vary"] = "Origin, Access-Control-Request-Private-Network"
+    return response
+
 class SynthesisRequest(BaseModel):
     text: str = Field(min_length=1, max_length=4096)
     voice: str = "pf_dora"
