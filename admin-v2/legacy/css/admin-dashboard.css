@@ -185,3 +185,14 @@ body.admin-dashboard-open #admin-manager > .admin-manager{width:min(1440px,calc(
     .admin-schedule-status{max-width:none;text-align:left}
     .admin-schedule-quick button{flex:1 1 120px}
 }
+
+.admin-submit.is-scheduled,
+#admin-content-form button[type="submit"].is-scheduled{
+    border-color:#8d5d24!important;
+    background:linear-gradient(180deg,#7d4b16,#5f350d)!important;
+    color:#fff!important;
+}
+.admin-submit.is-scheduled:hover,
+#admin-content-form button[type="submit"].is-scheduled:hover{
+    background:linear-gradient(180deg,#945f1e,#70400f)!important;
+}
