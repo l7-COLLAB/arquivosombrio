@@ -13100,7 +13100,7 @@ async function carregarPainelEditorialHome() {
 
         if (!dossieResp?.data) {
             dossieResp = await cliente.from("Casos")
-                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,updated_at")
+                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,published_at,updated_at")
                 .eq("status_publicacao", "publicado")
                 .order("published_at", { ascending: false, nullsFirst: false })
                 .limit(1)
