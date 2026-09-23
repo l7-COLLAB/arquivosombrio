@@ -61,6 +61,18 @@
     return data?.session||null;
   }
 
+  async function logMetric(ctx,eventType,metadata={}){
+    try{
+      const c=await getClient();
+      await c.from("audio_usage_events").insert({
+        event_type:eventType,
+        content_type:ctx.type,
+        content_id:Number(ctx.id),
+        metadata
+      });
+    }catch(_){}
+  }
+
   async function loadTurnstile(){
     if(window.turnstile)return window.turnstile;
     if(turnstilePromise)return turnstilePromise;
@@ -173,6 +185,7 @@
     }
 
     function open(tab="login"){
+      logMetric(ctx,"login_gate_shown");
       showTab(tab);
       overlay.hidden=false;
       document.body.classList.add("narration-auth-open");
@@ -202,6 +215,7 @@
         if(error)throw error;
         if(!data?.session)throw new Error("A sessão não foi iniciada.");
         localStorage.setItem(PENDING_KEY,contextKey(ctx));
+        await logMetric(ctx,"login_success");
         close();
         state.textContent="";
         await onAuthenticated();
@@ -226,6 +240,7 @@
           throw new Error("Confirme a idade e os documentos legais para continuar.");
         }
         localStorage.setItem(PENDING_KEY,contextKey(ctx));
+        await logMetric(ctx,"signup_started");
         const options={
           emailRedirectTo:returnUrl(),
           data:{
@@ -242,9 +257,11 @@
         const {data,error}=await c.auth.signUp({email,password,options});
         if(error)throw error;
         if(data?.session){
+          await logMetric(ctx,"signup_success");
           close();
           await onAuthenticated();
         }else{
+          await logMetric(ctx,"signup_success",{confirmation_required:true});
           state.textContent="Conta criada. Confirme o e-mail; o link trará você de volta para este arquivo e a narração será preparada automaticamente.";
         }
       }catch(err){
@@ -308,6 +325,7 @@
       });
       audio.addEventListener("ended",()=>{
         track.style.width="0%";
+        if(index+1>=chunks.length)logMetric(ctx,"play_completed",{chunks:chunks.length});
         if(index+1<chunks.length){
           index++;
           getChunk(index).then(url=>{
@@ -326,13 +344,17 @@
         }
       });
       audio.addEventListener("error",()=>{
+        logMetric(ctx,"play_error",{index});
         setState("ready");
         status.textContent="Não foi possível reproduzir este trecho.";
       });
     }
 
+    let playStartedLogged=false;
+
     function playCurrent(){
       bindAudio();
+      if(!playStartedLogged){playStartedLogged=true;logMetric(ctx,"play_started",{chunks:chunks?.length||0});}
       status.textContent="Reproduzindo";
       count.textContent="Trecho "+(index+1)+" de "+chunks.length;
       setState("playing");
@@ -395,6 +417,7 @@
       count.textContent="";
       try{
         const manifest=await callNarration({action:"manifest"});
+        await logMetric(ctx,"manifest_ready",{total_chunks:Number(manifest.total_chunks||0)});
         totalChunks=Number(manifest.total_chunks||0);
         if(!totalChunks)throw new Error("Nenhum trecho de áudio foi preparado.");
         await getChunk(0);
@@ -454,6 +477,7 @@
 
     button.addEventListener("click",async()=>{
       if(loading)return;
+      logMetric(ctx,"audio_click");
       const session=await getSession().catch(()=>null);
       if(!session?.user){
         resumeAfterAuth=true;
