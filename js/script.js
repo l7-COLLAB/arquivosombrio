@@ -12911,10 +12911,26 @@ async function carregarStoriesGarimpo() {
         if (error) throw error;
         garimpoStoriesAtivos = Array.isArray(data) ? data : [];
         if (!garimpoStoriesAtivos.length) { host.hidden = true; return; }
-        const naoVisto = garimpoStoriesAtivos.some(item=>!storyGarimpoVisto(item.id));
         host.hidden = false;
-        host.innerHTML = `<button type="button" class="garimpo-story-bubble ${naoVisto ? "unseen" : "seen"}" aria-label="Abrir Story do Garimpo"><span><img src="${escaparHTML(garimpoStoriesAtivos[0].story_imagem || garimpoStoriesAtivos[0].imagem_capa || "")}" alt=""></span><strong>Garimpo</strong><small>24h</small></button>`;
-        host.querySelector("button").addEventListener("click",()=>abrirStoryGarimpo(0));
+        host.innerHTML = garimpoStoriesAtivos.map((story, indice) => {
+            const visto = storyGarimpoVisto(story.id);
+            const imagem = story.story_imagem || story.imagem_capa || "";
+            const titulo = story.story_titulo || story.titulo || "Caso do dia";
+            return `
+                <button type="button"
+                    class="garimpo-story-bubble ${visto ? "seen" : "unseen"}"
+                    data-story-index="${indice}"
+                    aria-label="Abrir story: ${escaparHTML(titulo)}">
+                    <span>
+                        <img src="${escaparHTML(imagem)}" alt="" loading="lazy">
+                    </span>
+                    <strong>${escaparHTML(titulo)}</strong>
+                    <small>24h</small>
+                </button>`;
+        }).join("");
+        host.querySelectorAll("[data-story-index]").forEach(botao => {
+            botao.addEventListener("click", () => abrirStoryGarimpo(Number(botao.dataset.storyIndex) || 0));
+        });
     } catch (erro) {
         console.error("Não foi possível carregar o Story do Garimpo.", erro);
         host.hidden = true;
