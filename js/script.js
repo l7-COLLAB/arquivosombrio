@@ -12904,14 +12904,20 @@ function abrirStoryGarimpo(indice = 0) {
 async function carregarStoriesGarimpo() {
     const host = document.getElementById("garimpo-story-slot");
     if (!host) return;
+    const barra = host.closest("[data-garimpo-stories-bar]");
     try {
         const cliente = await obterClienteSupabase();
         const agora = new Date().toISOString();
         const { data, error } = await cliente.from("casos_diarios").select("id,titulo,categoria,imagem_capa,resumo,story_imagem,story_titulo,story_texto,story_cta,story_publicado_em,story_expira_em").eq("status_publicacao","publicado").eq("story_ativo",true).gt("story_expira_em",agora).order("story_publicado_em",{ascending:true});
         if (error) throw error;
         garimpoStoriesAtivos = Array.isArray(data) ? data : [];
-        if (!garimpoStoriesAtivos.length) { host.hidden = true; return; }
+        if (!garimpoStoriesAtivos.length) {
+            host.hidden = true;
+            if (barra) barra.hidden = true;
+            return;
+        }
         host.hidden = false;
+        if (barra) barra.hidden = false;
         host.innerHTML = garimpoStoriesAtivos.map((story, indice) => {
             const visto = storyGarimpoVisto(story.id);
             const imagem = story.story_imagem || story.imagem_capa || "";
@@ -12934,6 +12940,7 @@ async function carregarStoriesGarimpo() {
     } catch (erro) {
         console.error("Não foi possível carregar o Story do Garimpo.", erro);
         host.hidden = true;
+        if (barra) barra.hidden = true;
     }
 }
 document.addEventListener("DOMContentLoaded", carregarStoriesGarimpo);
