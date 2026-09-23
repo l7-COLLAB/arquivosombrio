@@ -13092,7 +13092,7 @@ async function carregarPainelEditorialHome() {
         let dossieResp;
         if (manualActive) {
             dossieResp = await cliente.from("Casos")
-                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,updated_at")
+                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,published_at,updated_at")
                 .eq("id", config.dossier_id)
                 .eq("status_publicacao", "publicado")
                 .maybeSingle();
@@ -13102,7 +13102,7 @@ async function carregarPainelEditorialHome() {
             dossieResp = await cliente.from("Casos")
                 .select("id,titulo,categoria,imagem,local,ano,status_publicacao,updated_at")
                 .eq("status_publicacao", "publicado")
-                .order("updated_at", { ascending: false })
+                .order("published_at", { ascending: false, nullsFirst: false })
                 .limit(1)
                 .maybeSingle();
         }
