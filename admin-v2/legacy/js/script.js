@@ -12205,9 +12205,14 @@ function injetarCasosDiariosNoGerenciador() {
         </div>`;
 
     secao.querySelectorAll("[data-edit-daily-case]").forEach(botao => {
-        botao.addEventListener("click", () => {
+        botao.addEventListener("click", async () => {
             const caso = casosDiariosAdmin.find(item => String(item.id) === String(botao.dataset.editDailyCase));
-            if (caso) abrirFormularioCasoDiario(caso);
+            if (!caso) return;
+            const agenda = await carregarAgendamentoConteudo("caso_diario", caso.id);
+            abrirFormularioCasoDiario({
+                ...caso,
+                _scheduled_for: agenda?.scheduled_for || null
+            });
         });
     });
 
@@ -12275,6 +12280,55 @@ function criarLinhaFonteCasoDiario(fonte = {}) {
     return linha;
 }
 
+
+function formatarDataHoraLocalAgendamento(valor) {
+    if (!valor) return "";
+    const data = new Date(valor);
+    if (Number.isNaN(data.getTime())) return "";
+    const local = new Date(data.getTime() - data.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 16);
+}
+
+async function carregarAgendamentoConteudo(tipo, id) {
+    if (!id) return null;
+    try {
+        const cliente = await obterClienteSupabase();
+        const { data, error } = await cliente
+            .from("admin_v2_content_state")
+            .select("scheduled_for,schedule_timezone,schedule_status,editorial_status")
+            .eq("content_type", tipo)
+            .eq("record_id", String(id))
+            .maybeSingle();
+        if (error) throw error;
+        return data || null;
+    } catch (erro) {
+        console.error("Não foi possível carregar o agendamento.", erro);
+        return null;
+    }
+}
+
+async function salvarEstadoAgendamentoConteudo(tipo, id, status, dataHoraISO, sessao) {
+    if (!id || !sessao?.user?.id) return;
+    const cliente = await obterClienteSupabase();
+    const agendado = status === "agendado";
+    const registro = {
+        content_type: tipo,
+        record_id: String(id),
+        editorial_status: status,
+        scheduled_for: agendado ? dataHoraISO : null,
+        schedule_timezone: "America/Sao_Paulo",
+        schedule_status: agendado ? "scheduled" : "none",
+        schedule_note: agendado ? "Aguardando publicação automática" : null,
+        scheduled_by: agendado ? sessao.user.id : null,
+        updated_by: sessao.user.id,
+        updated_at: new Date().toISOString()
+    };
+    const { error } = await cliente
+        .from("admin_v2_content_state")
+        .upsert(registro, { onConflict: "content_type,record_id" });
+    if (error) throw error;
+}
+
 function abrirFormularioCasoDiario(dados = null) {
     let modal = document.getElementById("admin-daily-case-modal");
     if (!modal) {
@@ -12307,6 +12361,11 @@ function abrirFormularioCasoDiario(dados = null) {
                             <option value="agendado" ${dados?.status_publicacao === "agendado" ? "selected" : ""}>Agendado</option>
                             <option value="publicado" ${dados?.status_publicacao === "publicado" ? "selected" : ""}>Publicado</option>
                         </select>
+                    </label>
+                    <label id="daily-schedule-wrap" ${dados?.status_publicacao === "agendado" ? "" : "hidden"}>
+                        Data e hora da publicação
+                        <input id="daily-scheduled-for" type="datetime-local" value="${formatarDataHoraLocalAgendamento(dados?._scheduled_for || "")}">
+                        <small>Horário de Brasília · publicação automática</small>
                     </label>
                 </div>
 
@@ -12547,13 +12606,25 @@ async function salvarCasoDiario(evento, existente = null) {
     botao.textContent = "Salvando...";
 
     try {
-        if (!await obterSessaoAdmin()) throw new Error("Sua sessão administrativa expirou.");
+        const sessao = await obterSessaoAdmin();
+        if (!sessao) throw new Error("Sua sessão administrativa expirou.");
         const titulo = document.getElementById("daily-title").value.trim();
         const resumo = document.getElementById("daily-summary").value.trim();
         const conteudo = document.getElementById("daily-content").value.trim();
         const imagemCapa = document.getElementById("daily-cover").value.trim();
         const fontes = coletarFontesCasoDiario();
         const statusPublicacao = document.getElementById("daily-publication-status").value;
+        const dataHoraAgendadaLocal = document.getElementById("daily-scheduled-for")?.value || "";
+        const dataHoraAgendadaISO = dataHoraAgendadaLocal ? new Date(dataHoraAgendadaLocal).toISOString() : null;
+
+        if (statusPublicacao === "agendado") {
+            if (!dataHoraAgendadaLocal || !dataHoraAgendadaISO) {
+                throw new Error("Escolha a data e a hora da publicação.");
+            }
+            if (new Date(dataHoraAgendadaISO).getTime() <= Date.now()) {
+                throw new Error("A data e a hora do agendamento precisam estar no futuro.");
+            }
+        }
 
         if (titulo.length < 3) throw new Error("Informe o título do caso.");
         if (resumo.length < 20) throw new Error("O resumo precisa ter pelo menos 20 caracteres.");
@@ -12608,8 +12679,16 @@ async function salvarCasoDiario(evento, existente = null) {
         const consulta = existente?.id
             ? cliente.from("casos_diarios").update(registro).eq("id", existente.id)
             : cliente.from("casos_diarios").insert([registro]);
-        const { error } = await consulta.select().single();
+        const { data: salvo, error } = await consulta.select().single();
         if (error) throw error;
+
+        await salvarEstadoAgendamentoConteudo(
+            "caso_diario",
+            salvo?.id || existente?.id,
+            statusPublicacao,
+            dataHoraAgendadaISO,
+            sessao
+        );
 
         await concluirRascunhoAdmin();
         document.getElementById("admin-daily-case-modal").classList.remove("active");
