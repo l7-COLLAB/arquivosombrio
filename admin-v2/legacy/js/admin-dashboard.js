@@ -3,11 +3,11 @@
 "use strict";
 var state = { client:null, session:null, mounted:false, view:"overview" };
 var labels = {
-  overview:"Visão geral", content:"Conteúdos e edição", schedule:"Agendamentos", narration:"Narração do Arquivo", community:"Comunidade",
+  overview:"Visão geral", content:"Conteúdos e edição", schedule:"Agendamentos", feature:"Destaque da Home", narration:"Narração do Arquivo", community:"Comunidade",
   users:"Usuários", requests:"Solicitações", activity:"Histórico administrativo"
 };
 var icons = {
-  overview:"fa-chart-line", content:"fa-folder-tree", schedule:"fa-calendar-check", narration:"fa-microphone-lines", community:"fa-comments",
+  overview:"fa-chart-line", content:"fa-folder-tree", schedule:"fa-calendar-check", feature:"fa-star", narration:"fa-microphone-lines", community:"fa-comments",
   users:"fa-users", requests:"fa-inbox", activity:"fa-clock-rotate-left"
 };
 function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
@@ -28,7 +28,7 @@ function shell(manager){
   Array.from(manager.children).forEach(function(c){if(c!==close)legacy.appendChild(c);});
   var root=document.createElement("div");root.className="admin-hub-shell";
   var nav=Object.keys(labels).map(function(v){return '<button type="button" data-admin-hub-view="'+v+'"><i class="fa-solid '+icons[v]+'"></i><span>'+labels[v]+'</span><small data-admin-hub-count="'+v+'"></small></button>';}).join("");
-  root.innerHTML='<aside class="admin-hub-sidebar"><div class="admin-hub-brand"><span>ÁREA RESTRITA</span><strong>Central Administrativa</strong><small>Arquivo Sombrio</small></div><nav aria-label="Menu administrativo">'+nav+'</nav><div class="admin-hub-sidebar-footer"><p><i class="fa-solid fa-shield-halved"></i> Acesso protegido</p><button type="button" data-admin-hub-logout><i class="fa-solid fa-right-from-bracket"></i> Sair</button></div></aside><div class="admin-hub-main"><header class="admin-hub-topbar"><button type="button" class="admin-hub-menu-toggle" aria-label="Abrir menu"><i class="fa-solid fa-bars"></i></button><div><span>PAINEL ADMINISTRATIVO</span><h1 data-admin-hub-title>Visão geral</h1></div><button type="button" class="admin-hub-refresh" aria-label="Atualizar"><i class="fa-solid fa-rotate"></i></button></header><div class="admin-hub-panels"><section class="admin-hub-panel" data-admin-hub-panel="overview"></section><section class="admin-hub-panel" data-admin-hub-panel="schedule" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="narration" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="community" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="users" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="requests" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="activity" hidden></section></div></div>';
+  root.innerHTML='<aside class="admin-hub-sidebar"><div class="admin-hub-brand"><span>ÁREA RESTRITA</span><strong>Central Administrativa</strong><small>Arquivo Sombrio</small></div><nav aria-label="Menu administrativo">'+nav+'</nav><div class="admin-hub-sidebar-footer"><p><i class="fa-solid fa-shield-halved"></i> Acesso protegido</p><button type="button" data-admin-hub-logout><i class="fa-solid fa-right-from-bracket"></i> Sair</button></div></aside><div class="admin-hub-main"><header class="admin-hub-topbar"><button type="button" class="admin-hub-menu-toggle" aria-label="Abrir menu"><i class="fa-solid fa-bars"></i></button><div><span>PAINEL ADMINISTRATIVO</span><h1 data-admin-hub-title>Visão geral</h1></div><button type="button" class="admin-hub-refresh" aria-label="Atualizar"><i class="fa-solid fa-rotate"></i></button></header><div class="admin-hub-panels"><section class="admin-hub-panel" data-admin-hub-panel="overview"></section><section class="admin-hub-panel" data-admin-hub-panel="schedule" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="feature" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="narration" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="community" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="users" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="requests" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="activity" hidden></section></div></div>';
   root.querySelector(".admin-hub-panels").appendChild(legacy);manager.appendChild(root);
   if(close){close.classList.add("admin-hub-native-close");root.querySelector(".admin-hub-topbar").appendChild(close);}
   root.querySelectorAll("[data-admin-hub-view]").forEach(function(b){b.onclick=function(){open(b.dataset.adminHubView);};});
@@ -44,7 +44,7 @@ function open(v){
 }
 async function load(v,force){
   if(v==="content")return;var p=panel(v);if(!p||(p.dataset.loaded&&!force))return;loading(v);
-  try{if(v==="overview")await overview(p);if(v==="schedule")await scheduleCenter(p);if(v==="narration"){if(!window.ArquivoNarracao?.render)throw new Error("O módulo de narração não carregou.");await window.ArquivoNarracao.render(p);}if(v==="community")await community(p);if(v==="users")await users(p);if(v==="requests")await requests(p);if(v==="activity")await activity(p);p.dataset.loaded="1";}
+  try{if(v==="overview")await overview(p);if(v==="schedule")await scheduleCenter(p);if(v==="feature")await homeFeature(p);if(v==="narration"){if(!window.ArquivoNarracao?.render)throw new Error("O módulo de narração não carregou.");await window.ArquivoNarracao.render(p);}if(v==="community")await community(p);if(v==="users")await users(p);if(v==="requests")await requests(p);if(v==="activity")await activity(p);p.dataset.loaded="1";}
   catch(e){console.error(e);p.innerHTML='<div class="admin-hub-error"><i class="fa-solid fa-triangle-exclamation"></i><p>'+esc(e.message||"Não foi possível carregar esta área.")+"</p></div>";}
 }
 
@@ -166,6 +166,99 @@ async function scheduleAction(b,p){
     await scheduleCenter(p);
   }catch(e){alert(e.message||"Não foi possível executar esta ação.");}
   finally{b.disabled=false;}
+}
+
+
+async function homeFeature(p){
+  var cfg=await state.client.from("home_featured_config")
+    .select("id,dossier_id,selected_at,selected_by,updated_at")
+    .eq("id",1)
+    .maybeSingle();
+  if(cfg.error)throw cfg.error;
+
+  var dossiers=await state.client.from("Casos")
+    .select("id,titulo,categoria,status_publicacao,updated_at")
+    .eq("status_publicacao","publicado")
+    .order("updated_at",{ascending:false});
+  if(dossiers.error)throw dossiers.error;
+
+  var current=cfg.data||{id:1,dossier_id:null,selected_at:null};
+  var selected=current.dossier_id?(dossiers.data||[]).find(function(x){return String(x.id)===String(current.dossier_id);}):null;
+  var selectedAt=current.selected_at?new Date(current.selected_at):null;
+  var expiresAt=selectedAt?new Date(selectedAt.getTime()+48*60*60*1000):null;
+  var manualActive=Boolean(selected&&expiresAt&&expiresAt>new Date());
+  var automatic=(dossiers.data||[])[0]||null;
+  var effective=manualActive?selected:automatic;
+
+  function expiryText(){
+    if(!selectedAt||!expiresAt)return"Sem destaque manual ativo";
+    if(expiresAt<=new Date())return"Prazo manual encerrado · modo automático ativo";
+    return"Manual até "+expiresAt.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})+"";
+  }
+
+  p.innerHTML=heading("HOME","Destaque editorial","Escolha qual dossiê ocupa o destaque principal da home. A seleção manual vale por 48 horas; depois disso, o dossiê publicado mais recente assume automaticamente.")+
+    '<div class="admin-home-feature-grid">'+
+      '<article class="admin-hub-card admin-home-feature-current"><header><i class="fa-solid fa-star"></i><h3>Destaque atual</h3></header>'+
+        '<span class="admin-home-feature-mode '+(manualActive?"is-manual":"is-auto")+'">'+(manualActive?"MANUAL · 48H":"AUTOMÁTICO")+'</span>'+
+        '<strong class="admin-home-feature-title">'+esc(effective?.titulo||"Nenhum dossiê publicado")+'</strong>'+
+        '<p>'+(manualActive?"Este dossiê foi escolhido manualmente.":"A home está usando o dossiê publicado mais recente.")+'</p>'+
+        '<small>'+esc(expiryText())+'</small>'+
+      '</article>'+
+      '<article class="admin-hub-card admin-home-feature-control"><header><i class="fa-solid fa-thumbtack"></i><h3>Escolher destaque</h3></header>'+
+        '<label>Dossiê publicado<select data-home-feature-select><option value="">Selecione um dossiê</option>'+
+          (dossiers.data||[]).map(function(d){return '<option value="'+esc(d.id)+'" '+(manualActive&&String(d.id)===String(current.dossier_id)?"selected":"")+'>'+esc(d.titulo)+'</option>';}).join("")+
+        '</select></label>'+
+        '<div class="admin-home-feature-actions">'+
+          '<button type="button" data-home-feature-save><i class="fa-solid fa-star"></i> Fixar por 48 horas</button>'+
+          '<button type="button" class="danger" data-home-feature-auto '+(!current.dossier_id?"disabled":"")+'><i class="fa-solid fa-rotate"></i> Usar automático agora</button>'+
+        '</div>'+
+        '<p class="admin-home-feature-note">Sempre que você escolher um dossiê, o prazo de 48 horas começa novamente a partir daquele momento.</p>'+
+      '</article>'+
+    '</div>';
+
+  var select=p.querySelector("[data-home-feature-select]");
+  var save=p.querySelector("[data-home-feature-save]");
+  var auto=p.querySelector("[data-home-feature-auto]");
+
+  save.onclick=async function(){
+    if(!select.value)return alert("Escolha um dossiê para destacar.");
+    save.disabled=true;
+    try{
+      var now=new Date().toISOString();
+      var r=await state.client.from("home_featured_config").update({
+        dossier_id:Number(select.value),
+        selected_at:now,
+        selected_by:state.session.user.id,
+        updated_at:now
+      }).eq("id",1);
+      if(r.error)throw r.error;
+      await audit("set_home_feature","dossie",select.value,{expires_in_hours:48});
+      p.dataset.loaded="";
+      invalidate(["overview","activity"]);
+      await homeFeature(p);
+    }catch(e){alert(e.message||"Não foi possível atualizar o destaque da home.");}
+    finally{save.disabled=false;}
+  };
+
+  auto.onclick=async function(){
+    if(!confirm("Voltar agora para o destaque automático pelo dossiê mais recente?"))return;
+    auto.disabled=true;
+    try{
+      var now=new Date().toISOString();
+      var r=await state.client.from("home_featured_config").update({
+        dossier_id:null,
+        selected_at:null,
+        selected_by:null,
+        updated_at:now
+      }).eq("id",1);
+      if(r.error)throw r.error;
+      await audit("reset_home_feature","dossie",null,{mode:"automatic"});
+      p.dataset.loaded="";
+      invalidate(["overview","activity"]);
+      await homeFeature(p);
+    }catch(e){alert(e.message||"Não foi possível restaurar o destaque automático.");}
+    finally{auto.disabled=false;}
+  };
 }
 
 async function overview(p){
