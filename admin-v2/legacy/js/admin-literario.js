@@ -121,6 +121,7 @@ async function loadCounts(){
   }));
  }catch(e){console.warn("Não foi possível atualizar as contagens literárias.",e);}
 }
+window.arquivoAbrirEditorLiterario=function(type,data){return openEditor(type,data||{});};
 function boot(){
  if(ensureShell()){loadCounts();return;}
  observer=new MutationObserver(()=>{
