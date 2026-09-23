@@ -12741,43 +12741,60 @@ function coletarFontesCasoDiario() {
     return texto
         .split(/\n\s*\n/)
         .map(bloco => {
-            const linhas =
-                bloco
-                    .split("\n")
-                    .map(linha => linha.trim())
-                    .filter(Boolean);
+            const bruto = String(bloco || "").trim();
+            if (!bruto) return null;
 
-            const indiceUrl =
-                linhas.findIndex(linha =>
-                    /^https?:\/\//i.test(linha)
-                );
+            const matchUrl = bruto.match(/https?:\/\/[^\s<>"')\]]+/i);
+            const url = matchUrl ? matchUrl[0].replace(/[.,;:]$/, "") : "";
 
-            if (indiceUrl < 0) {
-                return {
-                    titulo: linhas.join(" "),
-                    url: ""
-                };
+            let titulo = bruto;
+            if (url) {
+                titulo = titulo
+                    .replace(url, " ")
+                    .replace(/\s*[|•·–—-]\s*$/, " ")
+                    .replace(/^(nome da fonte|fonte|referência|referencia)\s*:\s*/i, "")
+                    .replace(/\s+/g, " ")
+                    .trim();
             }
 
-            return {
-                titulo:
-                    linhas
-                        .filter((_, indice) =>
-                            indice !== indiceUrl
-                        )
-                        .join(" ")
-                        .replace(
-                            /^(nome da fonte|fonte)\s*:\s*/i,
-                            ""
-                        )
-                        .trim(),
-                url: linhas[indiceUrl]
-            };
+            if (!titulo && url) {
+                try {
+                    titulo = new URL(url).hostname.replace(/^www\./, "");
+                } catch (_) {
+                    titulo = "Fonte";
+                }
+            }
+
+            return { titulo, url };
         })
-        .filter(fonte =>
-            fonte.titulo ||
-            fonte.url
-        );
+        .filter(Boolean)
+        .filter(fonte => fonte.titulo || fonte.url);
+}
+
+function destacarFontesCasoDiario(mensagem) {
+    const campo = document.getElementById("daily-sources-text");
+    if (!campo) return;
+    campo.classList.add("admin-field-error");
+    campo.setAttribute("aria-invalid", "true");
+
+    let aviso = document.getElementById("daily-sources-error");
+    if (!aviso) {
+        aviso = document.createElement("small");
+        aviso.id = "daily-sources-error";
+        aviso.className = "admin-field-error-message";
+        campo.after(aviso);
+    }
+    aviso.textContent = mensagem;
+    campo.scrollIntoView({ behavior: "smooth", block: "center" });
+    campo.focus();
+
+    const limpar = () => {
+        campo.classList.remove("admin-field-error");
+        campo.removeAttribute("aria-invalid");
+        aviso?.remove();
+        campo.removeEventListener("input", limpar);
+    };
+    campo.addEventListener("input", limpar);
 }
 
 async function salvarCasoDiario(evento, existente = null) {
@@ -12812,8 +12829,13 @@ async function salvarCasoDiario(evento, existente = null) {
         if (resumo.length < 20) throw new Error("O resumo precisa ter pelo menos 20 caracteres.");
         if (conteudo.length < 50) throw new Error("O relato precisa ter pelo menos 50 caracteres.");
         if (!imagemCapa) throw new Error("Adicione a imagem de capa.");
-        if (["publicado", "agendado"].includes(statusPublicacao) && !fontes.some(fonte => fonte.titulo && fonte.url)) {
-            throw new Error("Para publicar ou agendar, adicione pelo menos uma fonte com nome e link.");
+        if (["publicado", "agendado"].includes(statusPublicacao) && !fontes.some(fonte => fonte.url)) {
+            destacarFontesCasoDiario(
+                statusPublicacao === "agendado"
+                    ? "Adicione pelo menos um link de fonte antes de confirmar o agendamento."
+                    : "Adicione pelo menos um link de fonte antes de publicar."
+            );
+            throw new Error("Revise o campo Fontes destacado no formulário.");
         }
 
         const agora = new Date().toISOString();
