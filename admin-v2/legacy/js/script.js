@@ -9567,6 +9567,10 @@ const livro =
         );
 
 
+    if (caso) configurarAgendamentoFormulario("admin-publicacao", "dossie", dados);
+    if (pericia) configurarAgendamentoFormulario("admin-forensic-publication", "pericia", dados);
+    if (livro) configurarAgendamentoFormulario("admin-book-publication", "livro", dados);
+
     if (livro) {
 
         const containerLinks =
@@ -10047,6 +10051,15 @@ if (
         }
 
 
+        const agendaDossie = lerAgendamentoFormulario("admin-publicacao");
+        await salvarEstadoAgendamentoConteudo(
+            "dossie",
+            resultado.data?.id || casoExistente?.id,
+            caso.status_publicacao,
+            agendaDossie.iso,
+            sessao
+        );
+
         await concluirRascunhoAdmin();
         fecharFormularioAdmin();
 
@@ -10231,6 +10244,15 @@ async function salvarPericiaAdmin(
         if (resultado.error) {
             throw resultado.error;
         }
+
+        const agendaPericia = lerAgendamentoFormulario("admin-forensic-publication");
+        await salvarEstadoAgendamentoConteudo(
+            "pericia",
+            resultado.data?.id || periciaExistente?.id,
+            pericia.status_publicacao,
+            agendaPericia.iso,
+            sessao
+        );
 
         await concluirRascunhoAdmin();
         fecharFormularioAdmin();
@@ -10471,14 +10493,20 @@ async function salvarLivroAdmin(
                     .insert(livro);
         }
 
-        const {
-            error
-        } =
-            await consulta;
+        const { data: livroSalvo, error } = await consulta.select().single();
 
         if (error) {
             throw error;
         }
+
+        const agendaLivro = lerAgendamentoFormulario("admin-book-publication");
+        await salvarEstadoAgendamentoConteudo(
+            "livro",
+            livroSalvo?.id || livroExistente?.id,
+            livro.status_publicacao,
+            agendaLivro.iso,
+            sessao
+        );
 
         await concluirRascunhoAdmin();
         fecharFormularioAdmin();
@@ -12142,6 +12170,20 @@ async function carregarCasosDiariosAdmin() {
 
         if (error) throw error;
         casosDiariosAdmin = Array.isArray(data) ? data : [];
+        const idsAgendados = casosDiariosAdmin.filter(item => item.status_publicacao === "agendado").map(item => String(item.id));
+        if (idsAgendados.length) {
+            const { data: agendas } = await cliente
+                .from("admin_v2_content_state")
+                .select("record_id,scheduled_for,schedule_status")
+                .eq("content_type", "caso_diario")
+                .in("record_id", idsAgendados);
+            const mapaAgendas = new Map((agendas || []).map(item => [String(item.record_id), item]));
+            casosDiariosAdmin = casosDiariosAdmin.map(item => ({
+                ...item,
+                _scheduled_for: mapaAgendas.get(String(item.id))?.scheduled_for || null,
+                _schedule_status: mapaAgendas.get(String(item.id))?.schedule_status || null
+            }));
+        }
         casosDiariosAdminCarregados = true;
         injetarCasosDiariosNoGerenciador();
     } catch (erro) {
@@ -12194,7 +12236,7 @@ function injetarCasosDiariosNoGerenciador() {
                         <div class="admin-item" data-admin-title="${escaparHTML(caso.titulo || "")}" data-admin-date="${escaparHTML(caso.created_at || caso.publicado_em || "")}">
                             <div>
                                 <strong>${escaparHTML(caso.titulo || "Caso sem título")}</strong>
-                                <small>${escaparHTML(caso.status_publicacao === "publicado" ? "PUBLICADO" : caso.status_publicacao === "agendado" ? "AGENDADO" : "RASCUNHO")} · ${escaparHTML(caso.categoria || "GARIMPO SOMBRIO")}</small>
+                                <small>${escaparHTML(caso.status_publicacao === "publicado" ? "PUBLICADO" : caso.status_publicacao === "agendado" ? "AGENDADO" : "RASCUNHO")}${caso.status_publicacao === "agendado" && caso._scheduled_for ? " · " + escaparHTML(formatarAgendamentoLegivel(caso._scheduled_for)) : ""} · ${escaparHTML(caso.categoria || "GARIMPO SOMBRIO")}</small>
                             </div>
                             <div class="admin-item-buttons">
                                 <button type="button" data-edit-daily-case="${escaparHTML(caso.id)}">Editar</button>
@@ -12285,8 +12327,135 @@ function formatarDataHoraLocalAgendamento(valor) {
     if (!valor) return "";
     const data = new Date(valor);
     if (Number.isNaN(data.getTime())) return "";
-    const local = new Date(data.getTime() - data.getTimezoneOffset() * 60000);
-    return local.toISOString().slice(0, 16);
+    const partes = new Intl.DateTimeFormat("sv-SE", {
+        timeZone: "America/Sao_Paulo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+    }).formatToParts(data);
+    const mapa = Object.fromEntries(partes.map(p => [p.type, p.value]));
+    return `${mapa.year}-${mapa.month}-${mapa.day}T${mapa.hour}:${mapa.minute}`;
+}
+
+function dataHoraBrasiliaParaISO(valor) {
+    if (!valor) return null;
+    const normalizado = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(valor) ? `${valor}:00-03:00` : valor;
+    const data = new Date(normalizado);
+    return Number.isNaN(data.getTime()) ? null : data.toISOString();
+}
+
+function formatarAgendamentoLegivel(valor) {
+    if (!valor) return "";
+    const data = new Date(valor);
+    if (Number.isNaN(data.getTime())) return "";
+    return new Intl.DateTimeFormat("pt-BR", {
+        timeZone: "America/Sao_Paulo",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    }).format(data);
+}
+
+function proximoHorarioAgendamento(tipo) {
+    const agora = new Date();
+    const brasiliaAgora = new Date(agora.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+    if (tipo === "1h") brasiliaAgora.setHours(brasiliaAgora.getHours() + 1, 0, 0, 0);
+    if (tipo === "amanha8") {
+        brasiliaAgora.setDate(brasiliaAgora.getDate() + 1);
+        brasiliaAgora.setHours(8, 0, 0, 0);
+    }
+    if (tipo === "amanha12") {
+        brasiliaAgora.setDate(brasiliaAgora.getDate() + 1);
+        brasiliaAgora.setHours(12, 0, 0, 0);
+    }
+    const y = brasiliaAgora.getFullYear();
+    const m = String(brasiliaAgora.getMonth() + 1).padStart(2, "0");
+    const d = String(brasiliaAgora.getDate()).padStart(2, "0");
+    const h = String(brasiliaAgora.getHours()).padStart(2, "0");
+    const min = String(brasiliaAgora.getMinutes()).padStart(2, "0");
+    return `${y}-${m}-${d}T${h}:${min}`;
+}
+
+async function configurarAgendamentoFormulario(selectId, contentType, dados = null) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+    const label = select.closest("label");
+    if (!label || label.nextElementSibling?.dataset?.schedulePanel === selectId) return;
+
+    const painel = document.createElement("section");
+    painel.className = "admin-schedule-panel";
+    painel.dataset.schedulePanel = selectId;
+    painel.innerHTML = `
+        <div class="admin-schedule-head">
+            <div>
+                <span class="admin-eyebrow">AGENDAMENTO</span>
+                <strong>Publicação automática</strong>
+                <small>Horário de Brasília</small>
+            </div>
+            <span class="admin-schedule-status">Aguardando data e hora</span>
+        </div>
+        <label>
+            Data e hora
+            <input class="admin-scheduled-for" type="datetime-local">
+        </label>
+        <div class="admin-schedule-quick">
+            <button type="button" data-schedule-quick="1h">+ 1 hora</button>
+            <button type="button" data-schedule-quick="amanha8">Amanhã 08:00</button>
+            <button type="button" data-schedule-quick="amanha12">Amanhã 12:00</button>
+        </div>
+        <button type="button" class="admin-schedule-cancel">Cancelar agendamento</button>
+    `;
+    label.after(painel);
+
+    const input = painel.querySelector(".admin-scheduled-for");
+    const status = painel.querySelector(".admin-schedule-status");
+    if (dados?.id != null) {
+        const agenda = await carregarAgendamentoConteudo(contentType, dados.id);
+        if (agenda?.scheduled_for) input.value = formatarDataHoraLocalAgendamento(agenda.scheduled_for);
+    }
+
+    const sync = () => {
+        const ativo = select.value === "agendado";
+        painel.hidden = !ativo;
+        input.required = ativo;
+        if (ativo && input.value) status.textContent = "Programado para " + formatarAgendamentoLegivel(dataHoraBrasiliaParaISO(input.value));
+        else status.textContent = "Aguardando data e hora";
+    };
+
+    select.addEventListener("change", sync);
+    input.addEventListener("input", sync);
+    painel.querySelectorAll("[data-schedule-quick]").forEach(btn => btn.addEventListener("click", () => {
+        input.value = proximoHorarioAgendamento(btn.dataset.scheduleQuick);
+        select.value = "agendado";
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+        sync();
+    }));
+    painel.querySelector(".admin-schedule-cancel").addEventListener("click", () => {
+        input.value = "";
+        select.value = "rascunho";
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+        sync();
+    });
+    sync();
+}
+
+function lerAgendamentoFormulario(selectId) {
+    const select = document.getElementById(selectId);
+    const painel = document.querySelector(`[data-schedule-panel="${selectId}"]`);
+    const input = painel?.querySelector(".admin-scheduled-for");
+    const status = select?.value || "rascunho";
+    const local = input?.value || "";
+    const iso = local ? dataHoraBrasiliaParaISO(local) : null;
+    if (status === "agendado") {
+        if (!iso) throw new Error("Escolha a data e a hora da publicação.");
+        if (new Date(iso).getTime() <= Date.now()) throw new Error("Escolha um horário futuro para o agendamento.");
+    }
+    return { status, iso };
 }
 
 async function carregarAgendamentoConteudo(tipo, id) {
@@ -12362,11 +12531,21 @@ function abrirFormularioCasoDiario(dados = null) {
                             <option value="publicado" ${dados?.status_publicacao === "publicado" ? "selected" : ""}>Publicado</option>
                         </select>
                     </label>
-                    <label id="daily-schedule-wrap" ${dados?.status_publicacao === "agendado" ? "" : "hidden"}>
-                        Data e hora da publicação
-                        <input id="daily-scheduled-for" type="datetime-local" value="${formatarDataHoraLocalAgendamento(dados?._scheduled_for || "")}">
-                        <small>Horário de Brasília · publicação automática</small>
-                    </label>
+                    <section id="daily-schedule-wrap" class="admin-schedule-panel" ${dados?.status_publicacao === "agendado" ? "" : "hidden"}>
+                        <div class="admin-schedule-head">
+                            <div><span class="admin-eyebrow">AGENDAMENTO</span><strong>Publicação automática</strong><small>Horário de Brasília</small></div>
+                            <span id="daily-schedule-status" class="admin-schedule-status">Aguardando data e hora</span>
+                        </div>
+                        <label>Data e hora
+                            <input id="daily-scheduled-for" type="datetime-local" value="${formatarDataHoraLocalAgendamento(dados?._scheduled_for || "")}">
+                        </label>
+                        <div class="admin-schedule-quick">
+                            <button type="button" data-daily-schedule-quick="1h">+ 1 hora</button>
+                            <button type="button" data-daily-schedule-quick="amanha8">Amanhã 08:00</button>
+                            <button type="button" data-daily-schedule-quick="amanha12">Amanhã 12:00</button>
+                        </div>
+                        <button id="daily-schedule-cancel" class="admin-schedule-cancel" type="button">Cancelar agendamento</button>
+                    </section>
                 </div>
 
                 <div class="admin-upload-section">
@@ -12615,7 +12794,7 @@ async function salvarCasoDiario(evento, existente = null) {
         const fontes = coletarFontesCasoDiario();
         const statusPublicacao = document.getElementById("daily-publication-status").value;
         const dataHoraAgendadaLocal = document.getElementById("daily-scheduled-for")?.value || "";
-        const dataHoraAgendadaISO = dataHoraAgendadaLocal ? new Date(dataHoraAgendadaLocal).toISOString() : null;
+        const dataHoraAgendadaISO = dataHoraAgendadaLocal ? dataHoraBrasiliaParaISO(dataHoraAgendadaLocal) : null;
 
         if (statusPublicacao === "agendado") {
             if (!dataHoraAgendadaLocal || !dataHoraAgendadaISO) {
@@ -12630,8 +12809,8 @@ async function salvarCasoDiario(evento, existente = null) {
         if (resumo.length < 20) throw new Error("O resumo precisa ter pelo menos 20 caracteres.");
         if (conteudo.length < 50) throw new Error("O relato precisa ter pelo menos 50 caracteres.");
         if (!imagemCapa) throw new Error("Adicione a imagem de capa.");
-        if (statusPublicacao === "publicado" && !fontes.some(fonte => fonte.titulo && fonte.url)) {
-            throw new Error("Para publicar, adicione pelo menos uma fonte com nome e link.");
+        if (["publicado", "agendado"].includes(statusPublicacao) && !fontes.some(fonte => fonte.titulo && fonte.url)) {
+            throw new Error("Para publicar ou agendar, adicione pelo menos uma fonte com nome e link.");
         }
 
         const agora = new Date().toISOString();
