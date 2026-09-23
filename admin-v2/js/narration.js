@@ -119,6 +119,18 @@ function sourceBlocks(d){
   return out.map((x,i)=>({...x,order:i+1}));
 }
 
+async function getProject(contentType,contentId){
+  const c=client();
+  if(!c)throw Error("Supabase indisponível.");
+  const {data,error}=await c.from("narration_projects")
+    .select("*")
+    .eq("content_type",contentType)
+    .eq("content_id",contentId)
+    .maybeSingle();
+  if(error)throw error;
+  return data||null;
+}
+
 async function adaptarBlocosPollyAutomaticamente(projectId){
   const c=client();
   const q=await c.from("narration_blocks")
