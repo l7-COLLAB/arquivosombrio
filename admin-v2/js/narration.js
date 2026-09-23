@@ -99,7 +99,7 @@ async function syncProject(dossier){
       recorded_by:old?.recorded_by||null,
       polly_audio_path:old?.polly_audio_path||null,
       polly_voice_id:old?.polly_voice_id||project.polly_voice_id||"Camila",
-      polly_engine:old?.polly_engine||project.polly_engine||"neural",
+      polly_engine:old?.polly_engine||project.polly_engine||"standard",
       polly_text_hash:old?.polly_text_hash||null,
       polly_generated_at:old?.polly_generated_at||null,
       updated_at:new Date().toISOString()
@@ -156,7 +156,7 @@ function blockCard(b){
     '<details class="narration-source"><summary>Ver texto original do dossiê</summary><p>'+esc(b.source_text).replace(/\n/g,"<br>")+'</p></details>'+
     '<label>Texto para narração<textarea rows="6" data-narration-text>'+esc(b.narration_text||b.source_text||"")+'</textarea><small>Este texto é só para a leitura em voz alta. Alterações aqui não mudam o dossiê público.</small></label>'+
     '<section class="narration-polly-box">'+
-      '<div><span>AMAZON POLLY</span><strong>'+esc(b.polly_voice_id||"Camila")+' · '+esc((b.polly_engine||"neural").toUpperCase())+'</strong><small data-polly-state>'+(pollyReady?"Áudio pronto e armazenado":"Ainda não gerado ou precisa ser atualizado")+'</small></div>'+
+      '<div><span>AMAZON POLLY</span><strong>'+esc(b.polly_voice_id||"Camila")+' · '+esc((b.polly_engine||"standard").toUpperCase())+'</strong><small>Ritmo 92% · pausas leves · us-east-2</small><small data-polly-state>'+(pollyReady?"Áudio pronto e armazenado":"Ainda não gerado ou precisa ser atualizado")+'</small></div>'+
       '<div class="narration-polly-actions"><button type="button" data-generate-polly><i class="fa-solid fa-wand-magic-sparkles"></i> '+(pollyReady?"Atualizar Polly":"Gerar Polly")+'</button><button type="button" data-preview-polly '+(!b.polly_audio_path?"disabled":"")+'><i class="fa-solid fa-play"></i> Ouvir</button></div>'+
     '</section>'+
     '<div class="narration-block-actions"><button type="button" data-save-narration-text><i class="fa-regular fa-floppy-disk"></i> Salvar texto falado</button><button type="button" disabled title="Será ativado na etapa de gravação humana"><i class="fa-solid fa-microphone"></i> Gravar minha voz</button></div>'+
