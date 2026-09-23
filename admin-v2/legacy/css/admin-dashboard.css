@@ -743,3 +743,68 @@ body.admin-dashboard-open #admin-manager > .admin-manager{width:min(1440px,calc(
     .narration-polly-actions,
     .narration-project-actions{justify-content:flex-start}
 }
+
+
+/* Teste individual da narração Polly */
+.narration-test-block{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:14px;
+    align-items:end;
+    margin:0 0 18px;
+    padding:14px;
+    border:1px solid rgba(181,157,122,.16);
+    border-left:3px solid #8d5d24;
+    background:linear-gradient(135deg,rgba(74,44,13,.12),rgba(8,7,6,.96));
+}
+.narration-test-block>div:first-child{
+    display:grid;
+    gap:4px;
+}
+.narration-test-block span{
+    color:#9e6b2d;
+    font:600 .5rem/1 var(--font-mono);
+    letter-spacing:.1em;
+}
+.narration-test-block strong{
+    color:#ded4c7;
+    font-family:var(--font-display);
+    font-size:1rem;
+    font-weight:600;
+}
+.narration-test-block small{
+    color:#786c60;
+    font:500 .54rem/1.4 var(--font-mono);
+}
+.narration-test-block>div:last-child{
+    display:flex;
+    gap:8px;
+    align-items:center;
+}
+.narration-test-block select{
+    min-width:230px;
+    min-height:38px;
+    padding:8px 10px;
+    border:1px solid rgba(181,157,122,.18);
+    background:#070605;
+    color:#d7cdbf;
+    font:600 .6rem/1.2 var(--font-mono);
+}
+.narration-test-block button{
+    min-height:38px;
+    padding:8px 10px;
+    border:1px solid rgba(125,75,22,.65);
+    background:#0b0908;
+    color:#d0a566;
+    font:600 .52rem/1 var(--font-mono);
+    cursor:pointer;
+}
+.narration-block.is-test-target{
+    border-color:#9c6a2b!important;
+    box-shadow:0 0 0 2px rgba(156,106,43,.16);
+}
+@media(max-width:650px){
+    .narration-test-block{grid-template-columns:1fr}
+    .narration-test-block>div:last-child{display:grid}
+    .narration-test-block select{min-width:0;width:100%}
+}
