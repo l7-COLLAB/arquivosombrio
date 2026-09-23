@@ -5258,9 +5258,27 @@ select:focus-visible {
     text-decoration: none;
     text-transform: uppercase;
 }
-.garimpo-intro h1,
-.daily-reader h1 { margin: 0.7rem 0 1rem; font: 500 clamp(2.5rem, 8vw, 5.8rem)/0.96 var(--font-display); }
+.garimpo-intro h1 {
+    margin: 0.7rem 0 1rem;
+    font: 500 clamp(2.5rem, 8vw, 5.8rem)/0.96 var(--font-display);
+}
+.daily-reader h1 {
+    max-width: 100%;
+    margin: 0.75rem 0 1rem;
+    font: 500 clamp(2.1rem, 3.9vw, 3.25rem)/1.04 var(--font-display);
+    letter-spacing: -0.018em;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+}
 .garimpo-intro h1 span { color: #a82924; }
+
+@media (max-width: 760px) {
+    .daily-reader h1 {
+        font-size: clamp(1.9rem, 9vw, 2.65rem);
+        line-height: 1.06;
+        letter-spacing: -0.012em;
+    }
+}
 .garimpo-description { max-width: 670px; color: #9b9185; font-size: 0.9rem; line-height: 1.75; }
 .daily-archive-grid {
     display: grid;
