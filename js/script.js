@@ -8609,25 +8609,21 @@ const livro =
 
                             <option
                                 value="publicado"
-                                ${
-                                    dados?.status_publicacao !==
-                                    "rascunho"
-                                        ? "selected"
-                                        : ""
-                                }
+                                ${dados?.status_publicacao === "publicado" ? "selected" : ""}
                             >
                                 Publicado
                             </option>
 
+                            <option
+                                value="agendado"
+                                ${dados?.status_publicacao === "agendado" ? "selected" : ""}
+                            >
+                                Agendado (invisível ao público)
+                            </option>
 
                             <option
                                 value="rascunho"
-                                ${
-                                    dados?.status_publicacao ===
-                                    "rascunho"
-                                        ? "selected"
-                                        : ""
-                                }
+                                ${!dados || !["publicado", "agendado"].includes(dados?.status_publicacao) ? "selected" : ""}
                             >
                                 Rascunho (invisível ao público)
                             </option>
@@ -9744,14 +9740,11 @@ async function salvarCasoAdmin(
                 "EM ARQUIVO",
 
             status_publicacao:
-                document
-                    .getElementById(
-                        "admin-publicacao"
-                    )
-                    ?.value ===
-                "rascunho"
-                    ? "rascunho"
-                    : "publicado",
+                ["publicado", "agendado", "rascunho"].includes(
+                    document.getElementById("admin-publicacao")?.value
+                )
+                    ? document.getElementById("admin-publicacao").value
+                    : "rascunho",
 
             slug:
                 normalizarSlugDossie(
@@ -12281,7 +12274,8 @@ function abrirFormularioCasoDiario(dados = null) {
                     <label>Status do caso<input id="daily-case-status" type="text" value="${escaparHTML(dados?.status_caso || "EM INVESTIGAÇÃO")}"></label>
                     <label>Publicação
                         <select id="daily-publication-status">
-                            <option value="rascunho" ${dados?.status_publicacao !== "publicado" ? "selected" : ""}>Rascunho</option>
+                            <option value="rascunho" ${!dados || !["publicado", "agendado"].includes(dados?.status_publicacao) ? "selected" : ""}>Rascunho</option>
+                            <option value="agendado" ${dados?.status_publicacao === "agendado" ? "selected" : ""}>Agendado</option>
                             <option value="publicado" ${dados?.status_publicacao === "publicado" ? "selected" : ""}>Publicado</option>
                         </select>
                     </label>
