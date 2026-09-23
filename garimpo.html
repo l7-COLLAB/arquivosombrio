@@ -19,10 +19,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css?v=story-garimpo-1">
+    <link rel="stylesheet" href="css/style.css?v=story-garimpo-2">
 </head>
 <body class="garimpo-page">
-    <div id="garimpo-story-slot" class="garimpo-story-slot garimpo-story-slot-page" hidden aria-live="polite"></div>
     <header class="main-header">
         <div class="container header-content">
             <a href="index.html" class="logo" aria-label="Arquivo Sombrio — início">
@@ -40,6 +39,16 @@
             <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="sidebar-menu"><i class="fa-solid fa-bars"></i></button>
         </div>
     </header>
+
+    <section class="garimpo-stories-bar garimpo-stories-bar-page" aria-label="Stories do Garimpo Sombrio">
+        <div class="container garimpo-stories-inner">
+            <div class="garimpo-stories-label">
+                <small>CASOS DO DIA</small>
+                <strong>Stories 24h</strong>
+            </div>
+            <div id="garimpo-story-slot" class="garimpo-story-slot garimpo-story-slot-page" hidden aria-live="polite"></div>
+        </div>
+    </section>
 
     <aside class="sidebar-menu" id="sidebar-menu" aria-label="Menu mobile">
         <button type="button" class="close-sidebar" id="close-sidebar" aria-label="Fechar menu">&times;</button>
@@ -75,6 +84,6 @@
 
     <script src="js/seo-publicacao.js?v=20260919-1" defer></script>
     <script src="data/caso.js" defer></script>
-    <script src="js/script.js?v=story-garimpo-1" defer></script>
+    <script src="js/script.js?v=story-garimpo-2" defer></script>
 </body>
 </html>
