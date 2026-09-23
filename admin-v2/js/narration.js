@@ -303,18 +303,31 @@ function projectSummary(blocks){
   '</div>';
 }
 
-function pronunciationHTML(items){
-  return '<section class="narration-pronunciation"><header><div><span>DICIONÁRIO DE VOZ</span><h3>Pronúncias especiais</h3><p>Cadastre nomes e termos difíceis para consultar durante a gravação.</p></div><button type="button" data-add-pronunciation><i class="fa-solid fa-plus"></i> Adicionar</button></header>'+
-  '<div data-pronunciation-list>'+(items.length?items.map(x=>'<div class="narration-pronunciation-row" data-pronunciation-id="'+esc(x.id)+'"><input data-term value="'+esc(x.term)+'" aria-label="Termo"><span>→</span><input data-pronunciation value="'+esc(x.pronunciation)+'" aria-label="Pronúncia"><button type="button" data-save-pronunciation>Salvar</button><button type="button" class="danger" data-delete-pronunciation>×</button></div>').join(""):'<p class="narration-empty-pronunciation">Nenhuma pronúncia cadastrada.</p>')+'</div></section>';
+function pronunciationHTML(items,dossier){
+  const contentType=String(dossier?.__contentType||"dossie");
+  const contentId=String(dossier?.id||"");
+  const rowHtml=x=>'<div class="narration-pronunciation-row" data-pronunciation-id="'+esc(x.id)+'" data-content-type="'+esc(contentType)+'" data-content-id="'+esc(contentId)+'">'+
+    '<input data-term value="'+esc(x.term)+'" aria-label="Termo"><span>→</span>'+
+    '<input data-pronunciation value="'+esc(x.pronunciation)+'" aria-label="Pronúncia">'+
+    '<select data-scope aria-label="Escopo">'+
+      '<option value="global" '+(x.scope_type==="global"?"selected":"")+'>Global</option>'+
+      '<option value="content_type" '+(x.scope_type==="content_type"?"selected":"")+'>Só '+esc(contentType)+'</option>'+
+      '<option value="content" '+(x.scope_type==="content"?"selected":"")+'>Só este arquivo</option>'+
+    '</select>'+
+    '<button type="button" data-save-pronunciation>Salvar</button><button type="button" class="danger" data-delete-pronunciation>×</button></div>';
+  return '<section class="narration-pronunciation"><header><div><span>DICIONÁRIO DE VOZ</span><h3>Pronúncias especiais</h3><p>Prioridade: regra deste arquivo → regra do tipo → regra global.</p></div><button type="button" data-add-pronunciation><i class="fa-solid fa-plus"></i> Adicionar</button></header>'+
+  '<div data-pronunciation-list>'+(items.length?items.map(rowHtml).join(""):'<p class="narration-empty-pronunciation">Nenhuma pronúncia cadastrada.</p>')+'</div></section>';
 }
 
-async function wirePronunciations(panel){
+async function wirePronunciations(panel,dossier){
   panel.querySelector("[data-add-pronunciation]")?.addEventListener("click",()=>{
     const list=panel.querySelector("[data-pronunciation-list]");
     list.querySelector(".narration-empty-pronunciation")?.remove();
     const row=document.createElement("div");
     row.className="narration-pronunciation-row";
-    row.innerHTML='<input data-term placeholder="Ex.: DeAngelo" aria-label="Termo"><span>→</span><input data-pronunciation placeholder="Ex.: di Ânjelo" aria-label="Pronúncia"><button type="button" data-save-pronunciation>Salvar</button><button type="button" class="danger" data-delete-pronunciation>×</button>';
+    row.dataset.contentType=String(dossier?.__contentType||"dossie");
+    row.dataset.contentId=String(dossier?.id||"");
+    row.innerHTML='<input data-term placeholder="Ex.: DeAngelo" aria-label="Termo"><span>→</span><input data-pronunciation placeholder="Ex.: di Ânjelo" aria-label="Pronúncia"><select data-scope><option value="content">Só este arquivo</option><option value="content_type">Só este tipo</option><option value="global">Global</option></select><button type="button" data-save-pronunciation>Salvar</button><button type="button" class="danger" data-delete-pronunciation>×</button>';
     list.prepend(row); wirePronunciationRow(row);
   });
   panel.querySelectorAll(".narration-pronunciation-row").forEach(wirePronunciationRow);
@@ -323,11 +336,21 @@ async function wirePronunciations(panel){
 function wirePronunciationRow(row){
   row.querySelector("[data-save-pronunciation]")?.addEventListener("click",async()=>{
     const c=client(),s=await session(),term=row.querySelector("[data-term]").value.trim(),pron=row.querySelector("[data-pronunciation]").value.trim();
+    const scope=row.querySelector("[data-scope]")?.value||"global";
+    const contentType=row.dataset.contentType||null;
+    const contentId=Number(row.dataset.contentId||0)||null;
     if(!term||!pron)return alert("Informe o termo e a pronúncia.");
+    const payload={
+      term,pronunciation:pron,scope_type:scope,
+      content_type:scope==="global"?null:contentType,
+      content_id:scope==="content"?contentId:null,
+      priority:scope==="content"?30:scope==="content_type"?20:10,
+      updated_at:new Date().toISOString()
+    };
     const id=row.dataset.pronunciationId;
     const q=id
-      ? await c.from("narration_pronunciations").update({term,pronunciation:pron,updated_at:new Date().toISOString()}).eq("id",id).select().single()
-      : await c.from("narration_pronunciations").insert({term,pronunciation:pron,created_by:s?.user?.id||null}).select().single();
+      ? await c.from("narration_pronunciations").update(payload).eq("id",id).select().single()
+      : await c.from("narration_pronunciations").insert({...payload,created_by:s?.user?.id||null}).select().single();
     if(q.error)return alert(q.error.message);
     row.dataset.pronunciationId=q.data.id; alert("Pronúncia salva.");
   });
@@ -373,7 +396,7 @@ async function openProject(panel,dossier){
     box.innerHTML='<section class="narration-project-head"><div><span>NARRAÇÃO DO ARQUIVO</span><h2>'+esc(dossier.titulo||"Dossiê")+'</h2><p>Amazon Polly é a voz padrão. Sua gravação humana só substitui o Polly nos blocos em que você selecionar “Minha voz”.</p></div><div class="narration-project-actions"><button type="button" data-resync-narration><i class="fa-solid fa-rotate"></i> Sincronizar texto</button></div></section>'+
       projectSummary(blocks)+
       '<section class="narration-test-block"><div><span>TESTE INDIVIDUAL</span><strong>Escolha um bloco para gerar com Polly</strong><small>Use um bloco curto primeiro. Assim você testa a voz sem gerar o dossiê inteiro.</small></div><div><select data-test-block>'+blocks.map(b=>'<option value="'+esc(b.id)+'">Bloco '+String(b.sort_order).padStart(2,"0")+' · '+esc(b.source_label||b.source_type||"Trecho")+'</option>').join("")+'</select><button type="button" data-go-test-block><i class="fa-solid fa-arrow-down"></i> Ir ao bloco</button></div></section>'+
-      '<div class="narration-layout"><section class="narration-block-list"><div class="narration-section-title"><span>ROTEIRO</span><h3>Blocos de narração</h3></div>'+blocks.map(blockCard).join("")+'</section>'+pronunciationHTML(pron)+'</div>';
+      '<div class="narration-layout"><section class="narration-block-list"><div class="narration-section-title"><span>ROTEIRO</span><h3>Blocos de narração</h3></div>'+blocks.map(blockCard).join("")+'</section>'+pronunciationHTML(pron,dossier)+'</div>';
     box.querySelector("[data-resync-narration]").onclick=()=>openProject(panel,dossier);
     box.querySelectorAll("[data-save-narration-text]").forEach(btn=>btn.onclick=async()=>{
       const card=btn.closest("[data-narration-block]"),id=card.dataset.narrationBlock,text=card.querySelector("[data-narration-text]").value.trim();
