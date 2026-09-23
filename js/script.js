@@ -6173,6 +6173,10 @@ async function inicializarForum() {
             data?.session || null
         );
 
+        await concluirCadastroGoogleForum(
+            data?.session || null
+        );
+
 
         /* OBSERVAR LOGIN / LOGOUT */
 
@@ -6180,6 +6184,10 @@ async function inicializarForum() {
             (_evento, sessao) => {
 
                 atualizarInterfaceForum(
+                    sessao || null
+                );
+
+                concluirCadastroGoogleForum(
                     sessao || null
                 );
 
@@ -6335,7 +6343,177 @@ function atualizarInterfaceForum(sessao) {
    CADASTRO
    ========================================================================== */
 
+const GOOGLE_AUTH_PENDING_KEY = "arquivo_sombrio_google_auth_pending";
+
+function confirmarRequisitosContaForum() {
+    const confirmouMaioridade = confirm(
+        "CONFIRMAÇÃO DE IDADE\n\n" +
+        "A Comunidade do Arquivo Sombrio é destinada exclusivamente a pessoas com 18 anos ou mais.\n\n" +
+        "Você confirma que possui 18 anos ou mais?"
+    );
+
+    if (!confirmouMaioridade) {
+        alert("Não é possível criar uma conta na Comunidade sem confirmar que você possui 18 anos ou mais.");
+        return false;
+    }
+
+    const aceitouPoliticas = confirm(
+        "TERMOS E POLÍTICAS\n\n" +
+        "Antes de criar sua conta, consulte:\n" +
+        "Termos: https://arquivosombrio.net.br/termos.html\n" +
+        "Privacidade: https://arquivosombrio.net.br/privacidade.html\n" +
+        "Diretrizes: https://arquivosombrio.net.br/diretrizes.html\n\n" +
+        "Você declara que leu e aceita os Termos de Uso e as Diretrizes, e que tomou ciência da Política de Privacidade vigente?\n\n" +
+        "Você concorda com esses documentos?"
+    );
+
+    if (!aceitouPoliticas) {
+        alert("Para criar uma conta, é necessário aceitar os Termos de Uso, a Política de Privacidade e as Diretrizes da Comunidade.");
+        return false;
+    }
+
+    return true;
+}
+
+function escolherMetodoCadastroForum() {
+    return new Promise((resolve) => {
+        document.getElementById("auth-method-modal")?.remove();
+
+        const modal = document.createElement("div");
+        modal.id = "auth-method-modal";
+        modal.setAttribute("role", "dialog");
+        modal.setAttribute("aria-modal", "true");
+        modal.setAttribute("aria-labelledby", "auth-method-title");
+
+        modal.innerHTML = `
+            <div class="auth-method-backdrop" data-auth-close></div>
+            <div class="auth-method-panel">
+                <button type="button" class="auth-method-close" aria-label="Fechar" data-auth-close>&times;</button>
+                <p class="auth-method-kicker">ARQUIVO SOMBRIO</p>
+                <h2 id="auth-method-title">Criar conta</h2>
+                <p class="auth-method-copy">Escolha como deseja acessar o seu arquivo.</p>
+                <button type="button" class="auth-method-google" data-auth-google>
+                    <span class="auth-google-mark" aria-hidden="true">G</span>
+                    Continuar com Google
+                </button>
+                <div class="auth-method-divider"><span>ou</span></div>
+                <button type="button" class="auth-method-email" data-auth-email>
+                    Criar conta com e-mail
+                </button>
+                <p class="auth-method-note">Ao continuar, serão solicitadas a confirmação de idade e a aceitação dos documentos da plataforma.</p>
+            </div>
+        `;
+
+        if (!document.getElementById("auth-method-modal-style")) {
+            const style = document.createElement("style");
+            style.id = "auth-method-modal-style";
+            style.textContent = `
+                #auth-method-modal{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:20px;font-family:var(--font-mono,monospace)}
+                .auth-method-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(4px)}
+                .auth-method-panel{position:relative;width:min(100%,420px);padding:28px;border:1px solid rgba(255,255,255,.12);background:#0b0a09;color:#eee8dc;box-shadow:0 24px 70px rgba(0,0,0,.55)}
+                .auth-method-close{position:absolute;top:10px;right:12px;border:0;background:transparent;color:#aaa;font-size:25px;cursor:pointer}
+                .auth-method-kicker{margin:0 0 8px;color:#9d2b2b;font-size:11px;letter-spacing:.18em}
+                .auth-method-panel h2{margin:0 0 8px;font-family:var(--font-serif,serif);font-size:25px;font-weight:500}
+                .auth-method-copy{margin:0 0 22px;color:#aaa;font-size:13px;line-height:1.6}
+                .auth-method-google,.auth-method-email{width:100%;min-height:46px;border:1px solid rgba(255,255,255,.16);cursor:pointer;font:inherit;font-size:13px}
+                .auth-method-google{display:flex;align-items:center;justify-content:center;gap:10px;background:#f5f5f5;color:#161616}
+                .auth-google-mark{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#fff;color:#4285f4;font-family:Arial,sans-serif;font-weight:700}
+                .auth-method-email{background:transparent;color:#eee8dc}
+                .auth-method-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:#777;font-size:11px}
+                .auth-method-divider:before,.auth-method-divider:after{content:"";height:1px;flex:1;background:rgba(255,255,255,.1)}
+                .auth-method-note{margin:18px 0 0;color:#777;font-size:10px;line-height:1.55}
+            `;
+            document.head.appendChild(style);
+        }
+
+        const finish = (value) => {
+            modal.remove();
+            resolve(value);
+        };
+
+        modal.querySelector("[data-auth-google]").addEventListener("click", () => finish("google"));
+        modal.querySelector("[data-auth-email]").addEventListener("click", () => finish("email"));
+        modal.querySelectorAll("[data-auth-close]").forEach((el) => el.addEventListener("click", () => finish(null)));
+        document.body.appendChild(modal);
+    });
+}
+
+async function entrarComGoogleForum() {
+    if (!confirmarRequisitosContaForum()) return;
+
+    try {
+        const supabaseClient = await obterClienteSupabase();
+
+        localStorage.setItem(
+            GOOGLE_AUTH_PENDING_KEY,
+            JSON.stringify({
+                createdAt: new Date().toISOString(),
+                returnTo: window.location.href
+            })
+        );
+
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                redirectTo: window.location.href,
+                queryParams: {
+                    access_type: "offline",
+                    prompt: "select_account"
+                }
+            }
+        });
+
+        if (error) throw error;
+    } catch (erro) {
+        localStorage.removeItem(GOOGLE_AUTH_PENDING_KEY);
+        console.error("Falha no acesso com Google.", erro);
+        alert(erro?.message || "Não foi possível continuar com o Google.");
+    }
+}
+
+async function concluirCadastroGoogleForum(sessao) {
+    if (!sessao?.user || !localStorage.getItem(GOOGLE_AUTH_PENDING_KEY)) return;
+
+    try {
+        const supabaseClient = await obterClienteSupabase();
+        const nomeGoogle =
+            sessao.user.user_metadata?.full_name ||
+            sessao.user.user_metadata?.name ||
+            sessao.user.email?.split("@")[0] ||
+            "Investigador";
+
+        const { error } = await supabaseClient.auth.updateUser({
+            data: {
+                display_name: sessao.user.user_metadata?.display_name || nomeGoogle,
+                age_18_confirmed: true,
+                legal_acceptance: true,
+                terms_version: "1.1",
+                privacy_version: "1.2",
+                guidelines_version: "1.0",
+                legal_accepted_at: new Date().toISOString(),
+                signup_method: "google"
+            }
+        });
+
+        if (error) throw error;
+        localStorage.removeItem(GOOGLE_AUTH_PENDING_KEY);
+    } catch (erro) {
+        console.error("Não foi possível concluir os dados legais do cadastro Google.", erro);
+    }
+}
+
 async function cadastrarForum() {
+    const metodo = await escolherMetodoCadastroForum();
+    if (metodo === "google") {
+        await entrarComGoogleForum();
+        return;
+    }
+    if (metodo === "email") {
+        await cadastrarForumComEmail();
+    }
+}
+
+async function cadastrarForumComEmail() {
 
     const nome =
         prompt(
