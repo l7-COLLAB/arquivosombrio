@@ -91,11 +91,17 @@ async function syncProject(dossier){
       source_text:b.text,
       narration_text:old?.narration_text?.trim()?old.narration_text:b.text,
       status:changed&&old?.audio_path?"desatualizado":old?.status||"nao_gravado",
+      playback_source:old?.playback_source||"polly",
       audio_path:old?.audio_path||null,
       audio_mime:old?.audio_mime||null,
       audio_duration_seconds:old?.audio_duration_seconds||null,
       recorded_at:old?.recorded_at||null,
       recorded_by:old?.recorded_by||null,
+      polly_audio_path:old?.polly_audio_path||null,
+      polly_voice_id:old?.polly_voice_id||project.polly_voice_id||"Camila",
+      polly_engine:old?.polly_engine||project.polly_engine||"neural",
+      polly_text_hash:old?.polly_text_hash||null,
+      polly_generated_at:old?.polly_generated_at||null,
       updated_at:new Date().toISOString()
     };
   });
@@ -136,11 +142,24 @@ function statusBadge(b){
 }
 
 function blockCard(b){
+  const humanAvailable=Boolean(b.audio_path);
+  const pollyReady=Boolean(b.polly_audio_path&&b.polly_text_hash);
   return '<article class="narration-block" data-narration-block="'+esc(b.id)+'">'+
     '<header><div><span>BLOCO '+String(b.sort_order).padStart(2,"0")+'</span><h3>'+esc(b.source_label||b.source_type||"Trecho")+'</h3></div>'+statusBadge(b)+'</header>'+
+    '<div class="narration-voice-source">'+
+      '<label>Voz usada no site<select data-playback-source>'+
+        '<option value="polly" '+(b.playback_source!=="human"?"selected":"")+'>Amazon Polly · padrão</option>'+
+        '<option value="human" '+(b.playback_source==="human"?"selected":"")+' '+(!humanAvailable?"disabled":"")+'>Minha voz'+(!humanAvailable?" · grave primeiro":"")+'</option>'+
+      '</select></label>'+
+      '<div class="narration-voice-source-state"><i class="fa-solid '+(b.playback_source==="human"?"fa-microphone":"fa-wave-square")+'"></i><span>'+(b.playback_source==="human"?"MINHA VOZ":"AMAZON POLLY")+'</span></div>'+
+    '</div>'+
     '<details class="narration-source"><summary>Ver texto original do dossiê</summary><p>'+esc(b.source_text).replace(/\n/g,"<br>")+'</p></details>'+
     '<label>Texto para narração<textarea rows="6" data-narration-text>'+esc(b.narration_text||b.source_text||"")+'</textarea><small>Este texto é só para a leitura em voz alta. Alterações aqui não mudam o dossiê público.</small></label>'+
-    '<div class="narration-block-actions"><button type="button" data-save-narration-text><i class="fa-regular fa-floppy-disk"></i> Salvar texto falado</button><button type="button" disabled title="Será ativado na próxima etapa"><i class="fa-solid fa-microphone"></i> Gravar bloco</button></div>'+
+    '<section class="narration-polly-box">'+
+      '<div><span>AMAZON POLLY</span><strong>'+esc(b.polly_voice_id||"Camila")+' · '+esc((b.polly_engine||"neural").toUpperCase())+'</strong><small data-polly-state>'+(pollyReady?"Áudio pronto e armazenado":"Ainda não gerado ou precisa ser atualizado")+'</small></div>'+
+      '<div class="narration-polly-actions"><button type="button" data-generate-polly><i class="fa-solid fa-wand-magic-sparkles"></i> '+(pollyReady?"Atualizar Polly":"Gerar Polly")+'</button><button type="button" data-preview-polly '+(!b.polly_audio_path?"disabled":"")+'><i class="fa-solid fa-play"></i> Ouvir</button></div>'+
+    '</section>'+
+    '<div class="narration-block-actions"><button type="button" data-save-narration-text><i class="fa-regular fa-floppy-disk"></i> Salvar texto falado</button><button type="button" disabled title="Será ativado na etapa de gravação humana"><i class="fa-solid fa-microphone"></i> Gravar minha voz</button></div>'+
   '</article>';
 }
 
@@ -191,23 +210,104 @@ function wirePronunciationRow(row){
   });
 }
 
+
+async function setPlaybackSource(blockId,source){
+  const c=client();
+  const update=await c.from("narration_blocks").update({playback_source:source,updated_at:new Date().toISOString()}).eq("id",blockId);
+  if(update.error)throw update.error;
+}
+
+async function invokePolly(blockId,force=false){
+  const c=client();
+  const {data,error}=await c.functions.invoke("narration-polly",{body:{block_id:blockId,force}});
+  if(error)throw error;
+  if(data?.error){
+    const e=new Error(data.error);
+    e.code=data.code;
+    throw e;
+  }
+  return data;
+}
+
+function playAudio(url){
+  if(!url)return;
+  const audio=new Audio(url);
+  audio.play().catch(()=>alert("O navegador não conseguiu iniciar o áudio."));
+}
+
 async function openProject(panel,dossier){
   panel.querySelector("[data-narration-workspace]").innerHTML='<div class="admin-hub-loading"><i class="fa-solid fa-spinner fa-spin"></i><span>Preparando blocos do dossiê...</span></div>';
   try{
     const project=await syncProject(dossier);
     const [blocks,pron]=await Promise.all([loadBlocks(project.id),loadPronunciations()]);
     const box=panel.querySelector("[data-narration-workspace]");
-    box.innerHTML='<section class="narration-project-head"><div><span>NARRAÇÃO DO ARQUIVO</span><h2>'+esc(dossier.titulo||"Dossiê")+'</h2><p>Texto sincronizado com o dossiê. Você pode adaptar cada trecho para a fala sem alterar a publicação escrita.</p></div><button type="button" data-resync-narration><i class="fa-solid fa-rotate"></i> Sincronizar texto</button></section>'+
+    box.innerHTML='<section class="narration-project-head"><div><span>NARRAÇÃO DO ARQUIVO</span><h2>'+esc(dossier.titulo||"Dossiê")+'</h2><p>Amazon Polly é a voz padrão. Sua gravação humana só substitui o Polly nos blocos em que você selecionar “Minha voz”.</p></div><div class="narration-project-actions"><button type="button" data-generate-all-polly><i class="fa-solid fa-wand-magic-sparkles"></i> Gerar Polly em todos</button><button type="button" data-resync-narration><i class="fa-solid fa-rotate"></i> Sincronizar texto</button></div></section>'+
       projectSummary(blocks)+
       '<div class="narration-layout"><section class="narration-block-list"><div class="narration-section-title"><span>ROTEIRO</span><h3>Blocos de narração</h3></div>'+blocks.map(blockCard).join("")+'</section>'+pronunciationHTML(pron)+'</div>';
     box.querySelector("[data-resync-narration]").onclick=()=>openProject(panel,dossier);
     box.querySelectorAll("[data-save-narration-text]").forEach(btn=>btn.onclick=async()=>{
       const card=btn.closest("[data-narration-block]"),id=card.dataset.narrationBlock,text=card.querySelector("[data-narration-text]").value.trim();
       btn.disabled=true;
-      try{const r=await client().from("narration_blocks").update({narration_text:text,updated_at:new Date().toISOString()}).eq("id",id);if(r.error)throw r.error;btn.innerHTML='<i class="fa-solid fa-check"></i> Salvo';setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-floppy-disk"></i> Salvar texto falado',1300);}
-      catch(e){alert(e.message||"Não foi possível salvar o texto.");}
+      try{
+        const r=await client().from("narration_blocks").update({narration_text:text,polly_text_hash:null,updated_at:new Date().toISOString()}).eq("id",id);
+        if(r.error)throw r.error;
+        card.querySelector("[data-polly-state]").textContent="Texto alterado · atualize o áudio Polly";
+        btn.innerHTML='<i class="fa-solid fa-check"></i> Salvo';
+        setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-floppy-disk"></i> Salvar texto falado',1300);
+      }catch(e){alert(e.message||"Não foi possível salvar o texto.");}
       finally{btn.disabled=false;}
     });
+
+    box.querySelectorAll("[data-playback-source]").forEach(select=>select.onchange=async()=>{
+      const card=select.closest("[data-narration-block]"),id=card.dataset.narrationBlock;
+      if(select.value==="human"&&select.options[select.selectedIndex]?.disabled){select.value="polly";return;}
+      select.disabled=true;
+      try{
+        await setPlaybackSource(id,select.value);
+        const stateEl=card.querySelector(".narration-voice-source-state");
+        stateEl.innerHTML=select.value==="human"
+          ? '<i class="fa-solid fa-microphone"></i><span>MINHA VOZ</span>'
+          : '<i class="fa-solid fa-wave-square"></i><span>AMAZON POLLY</span>';
+      }catch(e){alert(e.message||"Não foi possível alterar a voz.");}
+      finally{select.disabled=false;}
+    });
+
+    box.querySelectorAll("[data-generate-polly]").forEach(btn=>btn.onclick=async()=>{
+      const card=btn.closest("[data-narration-block]"),id=card.dataset.narrationBlock,stateEl=card.querySelector("[data-polly-state]"),preview=card.querySelector("[data-preview-polly]");
+      btn.disabled=true;stateEl.textContent="Gerando áudio no Amazon Polly...";
+      try{
+        const data=await invokePolly(id,true);
+        stateEl.textContent="Áudio pronto · "+(data.cached?"cache":"gerado agora");
+        preview.disabled=false;
+        preview.dataset.audioUrl=data.audio_url||"";
+        btn.innerHTML='<i class="fa-solid fa-rotate"></i> Atualizar Polly';
+      }catch(e){
+        if(e.code==="AWS_CREDENTIALS_MISSING")alert("O módulo está pronto, mas ainda falta conectar as credenciais da AWS no Supabase.");
+        else alert(e.message||"Não foi possível gerar o áudio Polly.");
+        stateEl.textContent="Não foi possível gerar o áudio";
+      }finally{btn.disabled=false;}
+    });
+
+    box.querySelectorAll("[data-preview-polly]").forEach(btn=>btn.onclick=async()=>{
+      const card=btn.closest("[data-narration-block]"),id=card.dataset.narrationBlock;
+      btn.disabled=true;
+      try{
+        let url=btn.dataset.audioUrl||"";
+        if(!url){const data=await invokePolly(id,false);url=data.audio_url||"";btn.dataset.audioUrl=url;}
+        playAudio(url);
+      }catch(e){alert(e.message||"Não foi possível carregar o áudio Polly.");}
+      finally{btn.disabled=false;}
+    });
+
+    box.querySelector("[data-generate-all-polly]")?.addEventListener("click",async e=>{
+      if(!confirm("Gerar ou atualizar o áudio Polly de todos os blocos deste dossiê? Isso consome caracteres do Amazon Polly."))return;
+      const all=[...box.querySelectorAll("[data-generate-polly]")];
+      e.currentTarget.disabled=true;
+      try{
+        for(const b of all){await b.onclick();}
+      }finally{e.currentTarget.disabled=false;}
+    });
+
     wirePronunciations(box);
   }catch(e){
     panel.querySelector("[data-narration-workspace]").innerHTML='<div class="admin-hub-error"><i class="fa-solid fa-triangle-exclamation"></i><p>'+esc(e.message||"Não foi possível preparar a narração.")+'</p></div>';
