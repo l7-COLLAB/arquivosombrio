@@ -348,3 +348,17 @@ body.admin-dashboard-open #admin-manager > .admin-manager{width:min(1440px,calc(
     .admin-schedule-summary,
     .admin-schedule-center-item{grid-template-columns:1fr}
 }
+
+
+/* Validação contextual de campos */
+.admin-field-error{
+    border-color:#9c2b2b!important;
+    box-shadow:0 0 0 2px rgba(156,43,43,.12)!important;
+}
+.admin-field-error-message{
+    display:block;
+    margin-top:6px;
+    color:#d69a92;
+    font:600 .56rem/1.4 var(--font-mono);
+    letter-spacing:.03em;
+}
