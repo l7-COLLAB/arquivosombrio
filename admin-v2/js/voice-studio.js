@@ -26,16 +26,23 @@ async function render(panel){
   const c=client();
   if(!c)throw new Error("Supabase indisponível.");
 
-  const queue=await c.from("narration_prewarm_queue")
-    .select("content_type,content_id,status,next_chunk,total_chunks,attempts,last_error,updated_at")
-    .order("updated_at",{ascending:false}).limit(8);
+  const [queue,enginesRes,benchRes]=await Promise.all([
+    c.from("narration_prewarm_queue")
+      .select("content_type,content_id,status,next_chunk,total_chunks,attempts,last_error,updated_at")
+      .order("updated_at",{ascending:false}).limit(8),
+    c.from("arquivo_voz_engines").select("*").eq("enabled",true).order("name",{ascending:true}),
+    c.from("arquivo_voz_benchmarks").select("*").eq("active",true).order("created_at",{ascending:true})
+  ]);
 
   const jobs=queue.data||[];
+  const engines=enginesRes.data||[];
+  const benchmarks=benchRes.data||[];
   const active=jobs.filter(x=>x.status==="pending"||x.status==="running").length;
   const done=jobs.filter(x=>x.status==="done").length;
   const failed=jobs.filter(x=>x.status==="failed").length;
 
-  const testText="Em Washington, D.C., investigadores analisaram os registros do D.C. General. O arquivo reúne datas, depoimentos e evidências que precisam ser narrados com clareza, sem dramatização excessiva.";
+  let activeBenchmark=benchmarks[0]||null;
+  const testText=activeBenchmark?.text_content||"Em Washington, D.C., investigadores analisaram os registros do D.C. General. O arquivo reúne datas, depoimentos e evidências que precisam ser narrados com clareza, sem dramatização excessiva.";
 
   panel.innerHTML=
     '<div class="voice-studio-head">'+
@@ -57,16 +64,29 @@ async function render(panel){
         '<small class="voice-studio-help">Com Docker Desktop instalado, execute <code>docker compose up -d</code> dentro da pasta <code>arquivo-voz-local</code>.</small>'+
       '</section>'+
       '<section class="voice-studio-card">'+
-        '<header><div><span>MOTOR DE TESTE</span><h3>Kokoro 82M · pt-BR</h3></div><i class="fa-solid fa-wave-square"></i></header>'+
+        '<header><div><span>MOTOR DE TESTE</span><h3>Configuração ativa</h3></div><i class="fa-solid fa-wave-square"></i></header>'+
+        '<label class="voice-field">Motor<select data-engine-select>'+engines.map(e=>'<option value="'+esc(e.engine_key)+'"'+(e.engine_key==="kokoro-local"?' selected':'')+'>'+esc(e.name)+'</option>').join("")+'</select></label>'+
         '<label class="voice-field">Voz<select data-local-voice><option value="pf_dora">pf_dora · feminina</option><option value="pm_alex">pm_alex · masculina</option><option value="pm_santa">pm_santa · masculina</option></select></label>'+
         '<label class="voice-field">Velocidade<input type="range" min="0.75" max="1.15" step="0.05" value="0.95" data-local-speed><output data-local-speed-value>0.95×</output></label>'+
         '<p>Primeiro vamos comparar naturalidade, pronúncia e ritmo. O Polly continua sendo o motor público enquanto este laboratório estiver em teste.</p>'+
       '</section>'+
       '<section class="voice-studio-card voice-studio-wide">'+
-        '<header><div><span>TESTE DE VOZ</span><h3>Ouvir no próprio painel</h3></div><i class="fa-solid fa-headphones"></i></header>'+
+        '<header><div><span>BENCHMARK</span><h3>Teste padronizado de voz</h3></div><i class="fa-solid fa-headphones"></i></header>'+
+        '<label class="voice-field">Cenário<select data-benchmark-select>'+benchmarks.map((b,i)=>'<option value="'+esc(b.benchmark_key)+'"'+(i===0?' selected':'')+'>'+esc(b.title)+'</option>').join("")+'</select></label>'+
         '<textarea class="voice-test-text" rows="7" data-local-text>'+esc(testText)+'</textarea>'+
         '<div class="voice-studio-actions"><button type="button" class="voice-studio-primary" data-local-generate><i class="fa-solid fa-play"></i> Gerar teste local</button><span data-local-generation-state>Servidor ainda não testado.</span></div>'+
         '<audio controls class="voice-test-audio" data-local-audio hidden></audio>'+
+        '<div class="voice-evaluation" data-voice-evaluation hidden>'+
+          '<h4>Avaliação do teste</h4>'+
+          '<div class="voice-evaluation-grid">'+
+            '<label>Naturalidade<select data-score-natural><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>'+
+            '<label>Pronúncia<select data-score-pronunciation><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>'+
+            '<label>Ritmo<select data-score-pacing><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>'+
+          '</div>'+
+          '<label class="voice-field">Observações<textarea rows="3" data-score-notes placeholder="Ex.: D.C. correto, nome Zahra ainda artificial..."></textarea></label>'+
+          '<label class="narration-auth-check"><input type="checkbox" data-score-approved><span>Aprovar este resultado para comparação</span></label>'+
+          '<button type="button" class="voice-studio-primary" data-save-evaluation><i class="fa-solid fa-floppy-disk"></i> Salvar avaliação</button>'+
+        '</div>'+
       '</section>'+
       '<section class="voice-studio-card voice-studio-wide">'+
         '<header><div><span>ARQUITETURA</span><h3>Como o Arquivo Voz ficará</h3></div><i class="fa-solid fa-diagram-project"></i></header>'+
@@ -82,6 +102,8 @@ async function render(panel){
     '</div>';
 
   const status=panel.querySelector("[data-local-status]");
+  const engineSelect=panel.querySelector("[data-engine-select]");
+  const benchmarkSelect=panel.querySelector("[data-benchmark-select]");
   const engine=panel.querySelector("[data-local-engine]");
   const generation=panel.querySelector("[data-local-generation-state]");
   const voice=panel.querySelector("[data-local-voice]");
@@ -89,8 +111,26 @@ async function render(panel){
   const speedValue=panel.querySelector("[data-local-speed-value]");
   const textBox=panel.querySelector("[data-local-text]");
   const audio=panel.querySelector("[data-local-audio]");
+  const evaluation=panel.querySelector("[data-voice-evaluation]");
 
   speed.oninput=()=>speedValue.textContent=Number(speed.value).toFixed(2)+"×";
+  benchmarkSelect?.addEventListener("change",()=>{
+    activeBenchmark=benchmarks.find(b=>b.benchmark_key===benchmarkSelect.value)||null;
+    if(activeBenchmark)textBox.value=activeBenchmark.text_content;
+    evaluation.hidden=true;
+  });
+  engineSelect?.addEventListener("change",()=>{
+    const selected=engines.find(e=>e.engine_key===engineSelect.value);
+    const cfg=selected?.config||{};
+    if(Array.isArray(cfg.voices)&&cfg.voices.length){
+      voice.innerHTML=cfg.voices.map(id=>'<option value="'+esc(id)+'">'+esc(id)+'</option>').join("");
+      if(cfg.default_voice)voice.value=cfg.default_voice;
+    }
+    if(Number(cfg.default_speed)) {
+      speed.value=String(cfg.default_speed);
+      speedValue.textContent=Number(cfg.default_speed).toFixed(2)+"×";
+    }
+  });
 
   async function testConnection(){
     status.className="voice-local-status is-testing";
@@ -159,12 +199,36 @@ async function render(panel){
       audio.src=url;
       audio.hidden=false;
       generation.textContent="Teste pronto · "+voice.value+" · "+Number(speed.value).toFixed(2)+"×";
+      evaluation.hidden=false;
       await audio.play().catch(()=>{});
     }catch(e){
       generation.textContent="Falha no teste local.";
       alert("Não foi possível gerar o áudio local. "+(e?.message||""));
     }finally{btn.disabled=false;}
   };
+
+  panel.querySelector("[data-save-evaluation]")?.addEventListener("click",async()=>{
+    const nat=Number(panel.querySelector("[data-score-natural]").value||0);
+    const pro=Number(panel.querySelector("[data-score-pronunciation]").value||0);
+    const pac=Number(panel.querySelector("[data-score-pacing]").value||0);
+    if(!nat||!pro||!pac)return alert("Avalie naturalidade, pronúncia e ritmo antes de salvar.");
+    const {data:{session}}=await c.auth.getSession();
+    const payload={
+      engine_key:engineSelect.value,
+      voice_id:voice.value,
+      benchmark_key:benchmarkSelect.value,
+      speed:Number(speed.value),
+      score_naturalness:nat,
+      score_pronunciation:pro,
+      score_pacing:pac,
+      approved:panel.querySelector("[data-score-approved]").checked,
+      notes:panel.querySelector("[data-score-notes]").value.trim()||null,
+      tested_by:session?.user?.id||null
+    };
+    const {error}=await c.from("arquivo_voz_test_results").insert(payload);
+    if(error)return alert("Não foi possível salvar a avaliação: "+error.message);
+    alert("Avaliação salva no Arquivo Voz.");
+  });
 }
 
 window.ArquivoVozStudio={render};
