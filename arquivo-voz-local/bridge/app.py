@@ -26,7 +26,7 @@ class SynthesisRequest(BaseModel):
 async def health():
     try:
         async with httpx.AsyncClient(timeout=10) as client:
-            r = await client.get(f"{KOKORO_URL}/health")
+            r = await client.get(f"{KOKORO_URL}/v1/models")
             r.raise_for_status()
         return {"ok": True, "engine": "kokoro", "kokoro": True}
     except Exception as exc:
