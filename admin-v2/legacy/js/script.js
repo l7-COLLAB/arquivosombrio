@@ -12358,6 +12358,50 @@ function abrirFormularioCasoDiario(dados = null) {
     });
     capa.addEventListener("input", () => atualizarPreviewImagemAdmin(capa.value.trim(), "#daily-cover-preview"));
     document.getElementById("daily-case-form").addEventListener("submit", evento => salvarCasoDiario(evento, dados));
+
+    /* Admin V2: controles editoriais do Garimpo integrados ao formulário.
+       Mantidos aqui para não adicionar dependências ao bootstrap do painel. */
+    if (window.ARQUIVO_ADMIN_V2_CLONE) {
+        const formulario = document.getElementById("daily-case-form");
+        const publicacao = document.getElementById("daily-publication-status");
+        const salvar = formulario?.querySelector('button[type="submit"]');
+
+        if (formulario && publicacao && salvar) {
+            const estado = document.createElement("small");
+            estado.className = "v2-dossier-state v2-garimpo-state";
+            estado.dataset.v2GarimpoState = "";
+            salvar.before(estado);
+
+            const sincronizarEstado = () => {
+                const publicado = publicacao.value === "publicado";
+                estado.textContent = publicado ? "PUBLICADO" : "RASCUNHO";
+                estado.dataset.state = publicado ? "publicado" : "rascunho";
+                salvar.innerHTML =
+                    '<i class="fa-regular fa-floppy-disk"></i> ' +
+                    (publicado ? "Salvar / publicar" : "Salvar como rascunho");
+            };
+
+            publicacao.addEventListener("change", sincronizarEstado);
+            sincronizarEstado();
+
+            if (dados?.id != null) {
+                const visualizar = document.createElement("button");
+                visualizar.type = "button";
+                visualizar.className = "admin-secondary-button";
+                visualizar.dataset.v2GarimpoPreview = "";
+                visualizar.innerHTML =
+                    '<i class="fa-regular fa-eye"></i> Visualizar';
+                visualizar.addEventListener("click", () => {
+                    window.open(
+                        "../garimpo.html?id=" + encodeURIComponent(dados.id),
+                        "_blank",
+                        "noopener"
+                    );
+                });
+                salvar.before(visualizar);
+            }
+        }
+    }
 }
 
 function coletarImagensCasoDiario() {
