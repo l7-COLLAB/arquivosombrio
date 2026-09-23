@@ -25,6 +25,7 @@ body.admin-dashboard-open #admin-manager-close{position:absolute!important;top:1
 body.admin-dashboard-open #admin-manager-close:hover,body.admin-dashboard-open #admin-manager-close:focus-visible{border-color:#a91c1c!important;background:#7c1010!important;color:#fff!important}
 @media(max-width:760px){body.admin-dashboard-open #admin-manager-close{position:fixed!important;top:max(10px,env(safe-area-inset-top))!important;right:10px!important}}
 </style>
+<link rel="stylesheet" href="./css/voice-studio.css?v=1">
 </head>
 <body>
 <main id="admin-panel-loading"><div><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><p id="admin-panel-status">Abrindo a Central de Arquivo...</p></div></main>
@@ -58,8 +59,10 @@ set("Carregando o editor literário...");
 await load("o editor de lendas e creepypastas","./legacy/js/admin-literario.js?v=schedule-center-2",12000);
 set("Preparando a narração do arquivo...");
 await load("o módulo de narração","./js/narration.js?v=tts-multitype-1",12000);
+set("Preparando o Arquivo Voz...");
+await load("o Arquivo Voz","./js/voice-studio.js?v=1",12000);
 set("Preparando a central administrativa...");
-await load("a central administrativa","./legacy/js/admin-dashboard.js?v=home-feature-1",12000);
+await load("a central administrativa","./legacy/js/admin-dashboard.js?v=arquivo-voz-1",12000);
 if(typeof abrirPainelAdmin!=="function")throw new Error("A função principal do painel não ficou disponível.");
 set("Montando a Central de Arquivo...");
 await abrirPainelAdmin(sessao);
