@@ -162,6 +162,7 @@ function blockCard(b){
     '<section class="narration-polly-text-box">'+
       '<div class="narration-polly-text-head"><div><span>VERSÃO PARA POLLY</span><strong>'+(b.polly_text_mode==="manual"?"Edição manual":"Gerada automaticamente")+'</strong><small data-polly-text-state>'+(b.polly_text?"Pronta para revisão":"Ainda não gerada")+'</small></div><button type="button" data-regenerate-polly-text><i class="fa-solid fa-wand-magic-sparkles"></i> Regenerar adaptação</button></div>'+
       '<textarea rows="6" data-polly-text placeholder="A versão adaptada para pronúncia aparecerá aqui.">'+esc(b.polly_text||b.narration_text||b.source_text||"")+'</textarea>'+
+      '<div class="narration-auto-pronunciations" data-auto-pronunciations><span>Tratamentos automáticos</span><small>Ainda não analisado</small></div>'+
       '<div class="narration-polly-text-actions"><button type="button" data-save-polly-text><i class="fa-regular fa-floppy-disk"></i> Salvar edição manual</button><small>Esta caixa não altera o texto público nem o texto para narração.</small></div>'+
     '</section>'+
     '<section class="narration-polly-box">'+
@@ -278,6 +279,11 @@ async function openProject(panel,dossier){
         const data=await invokePolly(id,false,"regenerate_polly_text");
         if(ta)ta.value=data.polly_text||"";
         if(state)state.textContent="Gerada automaticamente";
+        const auto=card.querySelector("[data-auto-pronunciations]");
+        if(auto){
+          const terms=Array.isArray(data.foreign_terms)?data.foreign_terms:[];
+          auto.innerHTML='<span>Tratamentos automáticos</span>'+(terms.length?'<div>'+terms.map(t=>'<em>'+esc(t)+' · leitura en-US</em>').join("")+'</div>':'<small>Nenhum termo estrangeiro detectado neste bloco.</small>');
+        }
         card.querySelector("[data-polly-state]").textContent="Adaptação atualizada · gere o áudio novamente";
       }catch(e){
         if(state)state.textContent="Falha ao gerar adaptação";
@@ -331,6 +337,11 @@ async function openProject(panel,dossier){
           if(ta)ta.value=data.polly_text;
           const tstate=card.querySelector("[data-polly-text-state]");
           if(tstate)tstate.textContent="Adaptação sincronizada automaticamente";
+        }
+        const auto=card.querySelector("[data-auto-pronunciations]");
+        if(auto){
+          const terms=Array.isArray(data.foreign_terms)?data.foreign_terms:[];
+          auto.innerHTML='<span>Tratamentos automáticos</span>'+(terms.length?'<div>'+terms.map(t=>'<em>'+esc(t)+' · leitura en-US</em>').join("")+'</div>':'<small>Nenhum termo estrangeiro detectado neste bloco.</small>');
         }
         stateEl.textContent="Áudio pronto · "+(data.cached?"cache":"gerado agora");
         preview.disabled=false;
