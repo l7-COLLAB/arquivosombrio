@@ -16,7 +16,7 @@
   }
 
   function findTarget(type){
-    if(type==="dossie")return document.getElementById("caso-resumo");
+    if(type==="dossie")return document.querySelector(".case-reader-toolbar");
     if(type==="garimpo")return document.querySelector(".daily-reader > header");
     if(type==="pericia")return document.querySelector(".forensic-detail > header");
     if(type==="lenda"||type==="creepypasta")return document.querySelector(".archive-literary-detail .archive-literary-meta")||document.querySelector(".archive-literary-detail .archive-literary-title");
@@ -41,7 +41,7 @@
         <div><span data-narration-status>Preparando áudio...</span><span data-narration-count></span></div>
         <div class="public-narration-track"><i data-narration-track></i></div>
       </div>`;
-    target.insertAdjacentElement("afterend",box);
+    if(ctx.type==="dossie"&&target.classList?.contains("case-reader-toolbar")) target.appendChild(box); else target.insertAdjacentElement("afterend",box);
 
     const button=box.querySelector(".public-narration-main");
     const action=box.querySelector(".public-narration-action i");
