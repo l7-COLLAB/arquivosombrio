@@ -8,7 +8,7 @@
     else { el.src = href; el.defer = true; }
     document.head.appendChild(el);
   }
-  carregar("css/home-literario.css?v=20260915-1", "css");
+  carregar("css/home-literario.css?v=20260923-title-spacing-1", "css");
   carregar("js/home-lendas-creepypastas.js?v=20260915-1", "js");
 
   function adicionarLinks() {
