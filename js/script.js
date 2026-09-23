@@ -13062,12 +13062,10 @@ async function carregarPainelEditorialHome() {
     try {
         const cliente = await obterClienteSupabase();
 
-        const [dossieResp, garimpoResp, periciaResp] = await Promise.all([
-            cliente.from("Casos")
-                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,updated_at")
-                .eq("status_publicacao", "publicado")
-                .order("updated_at", { ascending: false })
-                .limit(1)
+        const [configResp, garimpoResp, periciaResp] = await Promise.all([
+            cliente.from("home_featured_config")
+                .select("dossier_id,selected_at")
+                .eq("id", 1)
                 .maybeSingle(),
             cliente.from("casos_diarios")
                 .select("id,titulo,categoria,imagem_capa,publicado_em,status_publicacao")
@@ -13082,6 +13080,32 @@ async function carregarPainelEditorialHome() {
                 .limit(1)
                 .maybeSingle()
         ]);
+
+        const config = configResp.data;
+        const selectedAt = config?.selected_at ? new Date(config.selected_at) : null;
+        const manualActive = Boolean(
+            config?.dossier_id &&
+            selectedAt &&
+            Date.now() - selectedAt.getTime() < 48 * 60 * 60 * 1000
+        );
+
+        let dossieResp;
+        if (manualActive) {
+            dossieResp = await cliente.from("Casos")
+                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,updated_at")
+                .eq("id", config.dossier_id)
+                .eq("status_publicacao", "publicado")
+                .maybeSingle();
+        }
+
+        if (!dossieResp?.data) {
+            dossieResp = await cliente.from("Casos")
+                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,updated_at")
+                .eq("status_publicacao", "publicado")
+                .order("updated_at", { ascending: false })
+                .limit(1)
+                .maybeSingle();
+        }
 
         const dossie = dossieResp.data;
         if (dossie) {
