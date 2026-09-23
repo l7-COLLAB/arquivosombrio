@@ -2,7 +2,14 @@
 (() => {
   const FN_URL="https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/public-narration";
   const KEY="sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj";
+  const SUPABASE_URL="https://iuhotznurbyujzbyhizf.supabase.co";
+  const SUPABASE_SDK_URL="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0";
+  const TURNSTILE_SITE_KEY="0x4AAAAAAEnNLBi2BDt_aJkF";
+  const TURNSTILE_SDK_URL="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
   const PENDING_KEY="arquivoSombrioPendingAudio";
+  let localClient=null;
+  let sdkPromise=null;
+  let turnstilePromise=null;
 
   function getContext(){
     const id=new URLSearchParams(location.search).get("id");
@@ -18,9 +25,33 @@
 
   function contextKey(ctx){return ctx.type+":"+ctx.id}
 
+  async function loadSupabaseSDK(){
+    if(window.supabase?.createClient)return window.supabase;
+    if(sdkPromise)return sdkPromise;
+    sdkPromise=new Promise((resolve,reject)=>{
+      const existing=document.querySelector('script[data-narration-supabase]');
+      if(existing){
+        existing.addEventListener("load",()=>window.supabase?.createClient?resolve(window.supabase):reject(new Error("Supabase não carregou.")),{once:true});
+        existing.addEventListener("error",()=>reject(new Error("Falha ao carregar Supabase.")),{once:true});
+        return;
+      }
+      const s=document.createElement("script");
+      s.src=SUPABASE_SDK_URL;
+      s.async=true;
+      s.dataset.narrationSupabase="1";
+      s.onload=()=>window.supabase?.createClient?resolve(window.supabase):reject(new Error("Supabase não carregou."));
+      s.onerror=()=>reject(new Error("Falha ao carregar Supabase."));
+      document.head.appendChild(s);
+    }).catch(e=>{sdkPromise=null;throw e});
+    return sdkPromise;
+  }
+
   async function getClient(){
     if(typeof window.obterClienteSupabase==="function")return await window.obterClienteSupabase();
-    throw new Error("A autenticação do Arquivo Sombrio não está disponível nesta página.");
+    if(localClient)return localClient;
+    const sdk=await loadSupabaseSDK();
+    localClient=sdk.createClient(SUPABASE_URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    return localClient;
   }
 
   async function getSession(){
@@ -30,9 +61,46 @@
     return data?.session||null;
   }
 
+  async function loadTurnstile(){
+    if(window.turnstile)return window.turnstile;
+    if(turnstilePromise)return turnstilePromise;
+    turnstilePromise=new Promise((resolve,reject)=>{
+      const s=document.createElement("script");
+      s.src=TURNSTILE_SDK_URL;
+      s.async=true;
+      s.defer=true;
+      s.onload=()=>window.turnstile?resolve(window.turnstile):reject(new Error("A verificação de segurança não carregou."));
+      s.onerror=()=>reject(new Error("A verificação de segurança não carregou."));
+      document.head.appendChild(s);
+    }).catch(e=>{turnstilePromise=null;throw e});
+    return turnstilePromise;
+  }
+
+  async function localCaptchaToken(){
+    const ts=await loadTurnstile();
+    return await new Promise((resolve,reject)=>{
+      const wrap=document.createElement("div");
+      wrap.className="narration-turnstile-overlay";
+      wrap.innerHTML='<div class="narration-turnstile-box"><strong>Verificação de segurança</strong><div data-turnstile-slot></div></div>';
+      document.body.appendChild(wrap);
+      let widget=null;
+      const clean=()=>{
+        try{if(widget!==null)ts.remove(widget)}catch(_){}
+        wrap.remove();
+      };
+      const timer=setTimeout(()=>{clean();reject(new Error("A verificação de segurança expirou."))},60000);
+      widget=ts.render(wrap.querySelector("[data-turnstile-slot]"),{
+        sitekey:TURNSTILE_SITE_KEY,
+        callback:token=>{clearTimeout(timer);clean();resolve(token)},
+        "error-callback":()=>{clearTimeout(timer);clean();reject(new Error("A verificação de segurança falhou."))},
+        "expired-callback":()=>{clearTimeout(timer);clean();reject(new Error("A verificação de segurança expirou."))}
+      });
+    });
+  }
+
   async function captchaToken(){
-    if(typeof window.obterTokenTurnstile!=="function")return undefined;
-    try{return await window.obterTokenTurnstile()}catch(_){return undefined}
+    if(typeof window.obterTokenTurnstile==="function")return await window.obterTokenTurnstile();
+    return await localCaptchaToken();
   }
 
   function returnUrl(){
