@@ -26,17 +26,24 @@ async function render(panel){
   const c=client();
   if(!c)throw new Error("Supabase indisponível.");
 
-  const [queue,enginesRes,benchRes]=await Promise.all([
+  const since24h=new Date(Date.now()-24*60*60*1000).toISOString();
+  const [queue,enginesRes,benchRes,audioMetricsRes]=await Promise.all([
     c.from("narration_prewarm_queue")
       .select("content_type,content_id,status,next_chunk,total_chunks,attempts,last_error,updated_at")
       .order("updated_at",{ascending:false}).limit(8),
     c.from("arquivo_voz_engines").select("*").eq("enabled",true).order("name",{ascending:true}),
-    c.from("arquivo_voz_benchmarks").select("*").eq("active",true).order("created_at",{ascending:true})
+    c.from("arquivo_voz_benchmarks").select("*").eq("active",true).order("created_at",{ascending:true}),
+    c.from("audio_usage_events").select("event_type,created_at").gte("created_at",since24h)
   ]);
 
   const jobs=queue.data||[];
   const engines=enginesRes.data||[];
   const benchmarks=benchRes.data||[];
+  const audioEvents=audioMetricsRes.data||[];
+  const audioClicks=audioEvents.filter(x=>x.event_type==="audio_click").length;
+  const loginGates=audioEvents.filter(x=>x.event_type==="login_gate_shown").length;
+  const loginConversions=audioEvents.filter(x=>x.event_type==="login_success"||x.event_type==="signup_success").length;
+  const plays=audioEvents.filter(x=>x.event_type==="play_started").length;
   const active=jobs.filter(x=>x.status==="pending"||x.status==="running").length;
   const done=jobs.filter(x=>x.status==="done").length;
   const failed=jobs.filter(x=>x.status==="failed").length;
@@ -55,6 +62,10 @@ async function render(panel){
       '<article><strong>'+done+'</strong><span>recentes concluídas</span></article>'+
       '<article><strong>'+failed+'</strong><span>com falha</span></article>'+
     '</div>'+
+    '<section class="voice-studio-funnel">'+
+      '<header><span>ÚLTIMAS 24 HORAS</span><h3>Conversão do áudio</h3></header>'+
+      '<div><article><strong>'+audioClicks+'</strong><span>cliques em ouvir</span></article><article><strong>'+loginGates+'</strong><span>barreiras de login</span></article><article><strong>'+loginConversions+'</strong><span>entradas/cadastros</span></article><article><strong>'+plays+'</strong><span>reproduções iniciadas</span></article></div>'+
+    '</section>'+
     '<div class="voice-studio-grid">'+
       '<section class="voice-studio-card">'+
         '<header><div><span>SERVIDOR LOCAL</span><h3>Conexão com o notebook</h3></div><i class="fa-solid fa-laptop"></i></header>'+
