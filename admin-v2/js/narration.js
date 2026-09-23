@@ -97,6 +97,10 @@ async function syncProject(dossier){
       audio_duration_seconds:old?.audio_duration_seconds||null,
       recorded_at:old?.recorded_at||null,
       recorded_by:old?.recorded_by||null,
+      polly_text:old?.polly_text||null,
+      polly_text_mode:old?.polly_text_mode||"auto",
+      polly_text_source_hash:old?.polly_text_source_hash||null,
+      polly_text_generated_at:old?.polly_text_generated_at||null,
       polly_audio_path:old?.polly_audio_path||null,
       polly_voice_id:old?.polly_voice_id||project.polly_voice_id||"Camila",
       polly_engine:old?.polly_engine||project.polly_engine||"standard",
@@ -155,6 +159,11 @@ function blockCard(b){
     '</div>'+
     '<details class="narration-source"><summary>Ver texto original do dossiê</summary><p>'+esc(b.source_text).replace(/\n/g,"<br>")+'</p></details>'+
     '<label>Texto para narração<textarea rows="6" data-narration-text>'+esc(b.narration_text||b.source_text||"")+'</textarea><small>Este texto é só para a leitura em voz alta. Alterações aqui não mudam o dossiê público.</small></label>'+
+    '<section class="narration-polly-text-box">'+
+      '<div class="narration-polly-text-head"><div><span>VERSÃO PARA POLLY</span><strong>'+(b.polly_text_mode==="manual"?"Edição manual":"Gerada automaticamente")+'</strong><small data-polly-text-state>'+(b.polly_text?"Pronta para revisão":"Ainda não gerada")+'</small></div><button type="button" data-regenerate-polly-text><i class="fa-solid fa-wand-magic-sparkles"></i> Regenerar adaptação</button></div>'+
+      '<textarea rows="6" data-polly-text placeholder="A versão adaptada para pronúncia aparecerá aqui.">'+esc(b.polly_text||b.narration_text||b.source_text||"")+'</textarea>'+
+      '<div class="narration-polly-text-actions"><button type="button" data-save-polly-text><i class="fa-regular fa-floppy-disk"></i> Salvar edição manual</button><small>Esta caixa não altera o texto público nem o texto para narração.</small></div>'+
+    '</section>'+
     '<section class="narration-polly-box">'+
       '<div><span>AMAZON POLLY</span><strong>'+esc(b.polly_voice_id||"Camila")+' · '+esc((b.polly_engine||"standard").toUpperCase())+'</strong><small>Ritmo 92% · pausas leves · us-east-2</small><small data-polly-state>'+(pollyReady?"Áudio pronto e armazenado":"Ainda não gerado ou precisa ser atualizado")+'</small></div>'+
       '<div class="narration-polly-actions"><button type="button" data-generate-polly><i class="fa-solid fa-wand-magic-sparkles"></i> '+(pollyReady?"Atualizar este bloco":"Gerar somente este bloco")+'</button><button type="button" data-preview-polly '+(!b.polly_audio_path?"disabled":"")+'><i class="fa-solid fa-play"></i> Ouvir</button></div>'+
@@ -217,9 +226,9 @@ async function setPlaybackSource(blockId,source){
   if(update.error)throw update.error;
 }
 
-async function invokePolly(blockId,force=false){
+async function invokePolly(blockId,force=false,action="synthesize"){
   const c=client();
-  const {data,error}=await c.functions.invoke("narration-polly",{body:{block_id:blockId,force}});
+  const {data,error}=await c.functions.invoke("narration-polly",{body:{block_id:blockId,force,action}});
   if(error)throw error;
   if(data?.error){
     const e=new Error(data.error);
@@ -250,12 +259,51 @@ async function openProject(panel,dossier){
       const card=btn.closest("[data-narration-block]"),id=card.dataset.narrationBlock,text=card.querySelector("[data-narration-text]").value.trim();
       btn.disabled=true;
       try{
-        const r=await client().from("narration_blocks").update({narration_text:text,polly_text_hash:null,updated_at:new Date().toISOString()}).eq("id",id);
+        const r=await client().from("narration_blocks").update({narration_text:text,polly_text_source_hash:null,polly_text_hash:null,updated_at:new Date().toISOString()}).eq("id",id);
         if(r.error)throw r.error;
         card.querySelector("[data-polly-state]").textContent="Texto alterado · atualize o áudio Polly";
+        const tstate=card.querySelector("[data-polly-text-state]");
+        if(tstate)tstate.textContent="Texto de narração alterado · regenere a adaptação";
         btn.innerHTML='<i class="fa-solid fa-check"></i> Salvo';
         setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-floppy-disk"></i> Salvar texto falado',1300);
       }catch(e){alert(e.message||"Não foi possível salvar o texto.");}
+      finally{btn.disabled=false;}
+    });
+
+    box.querySelectorAll("[data-regenerate-polly-text]").forEach(btn=>btn.onclick=async()=>{
+      const card=btn.closest("[data-narration-block]"),id=card.dataset.narrationBlock,ta=card.querySelector("[data-polly-text]"),state=card.querySelector("[data-polly-text-state]");
+      btn.disabled=true;
+      if(state)state.textContent="Gerando adaptação automática...";
+      try{
+        const data=await invokePolly(id,false,"regenerate_polly_text");
+        if(ta)ta.value=data.polly_text||"";
+        if(state)state.textContent="Gerada automaticamente";
+        card.querySelector("[data-polly-state]").textContent="Adaptação atualizada · gere o áudio novamente";
+      }catch(e){
+        if(state)state.textContent="Falha ao gerar adaptação";
+        alert(e.message||"Não foi possível gerar a versão para Polly.");
+      }finally{btn.disabled=false;}
+    });
+
+    box.querySelectorAll("[data-save-polly-text]").forEach(btn=>btn.onclick=async()=>{
+      const card=btn.closest("[data-narration-block]"),id=card.dataset.narrationBlock,ta=card.querySelector("[data-polly-text]"),state=card.querySelector("[data-polly-text-state]");
+      const text=ta?.value.trim()||"";
+      if(!text)return alert("A versão para Polly não pode ficar vazia.");
+      btn.disabled=true;
+      try{
+        const r=await client().from("narration_blocks").update({
+          polly_text:text,
+          polly_text_mode:"manual",
+          polly_text_hash:null,
+          polly_text_generated_at:new Date().toISOString(),
+          updated_at:new Date().toISOString()
+        }).eq("id",id);
+        if(r.error)throw r.error;
+        if(state)state.textContent="Edição manual salva";
+        card.querySelector("[data-polly-state]").textContent="Versão para Polly alterada · gere o áudio novamente";
+        btn.innerHTML='<i class="fa-solid fa-check"></i> Salvo';
+        setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-floppy-disk"></i> Salvar edição manual',1300);
+      }catch(e){alert(e.message||"Não foi possível salvar a versão para Polly.");}
       finally{btn.disabled=false;}
     });
 
@@ -278,6 +326,12 @@ async function openProject(panel,dossier){
       btn.disabled=true;stateEl.textContent="Gerando áudio no Amazon Polly...";
       try{
         const data=await invokePolly(id,true);
+        if(data.polly_text){
+          const ta=card.querySelector("[data-polly-text]");
+          if(ta)ta.value=data.polly_text;
+          const tstate=card.querySelector("[data-polly-text-state]");
+          if(tstate)tstate.textContent="Adaptação sincronizada automaticamente";
+        }
         stateEl.textContent="Áudio pronto · "+(data.cached?"cache":"gerado agora");
         preview.disabled=false;
         preview.dataset.audioUrl=data.audio_url||"";
