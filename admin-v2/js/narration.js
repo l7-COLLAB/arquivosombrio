@@ -144,7 +144,7 @@ function statusBadge(b){
 function blockCard(b){
   const humanAvailable=Boolean(b.audio_path);
   const pollyReady=Boolean(b.polly_audio_path&&b.polly_text_hash);
-  return '<article class="narration-block" data-narration-block="'+esc(b.id)+'">'+
+  return '<article class="narration-block" id="narration-block-'+esc(b.id)+'" data-narration-block="'+esc(b.id)+'">'+
     '<header><div><span>BLOCO '+String(b.sort_order).padStart(2,"0")+'</span><h3>'+esc(b.source_label||b.source_type||"Trecho")+'</h3></div>'+statusBadge(b)+'</header>'+
     '<div class="narration-voice-source">'+
       '<label>Voz usada no site<select data-playback-source>'+
@@ -157,7 +157,7 @@ function blockCard(b){
     '<label>Texto para narração<textarea rows="6" data-narration-text>'+esc(b.narration_text||b.source_text||"")+'</textarea><small>Este texto é só para a leitura em voz alta. Alterações aqui não mudam o dossiê público.</small></label>'+
     '<section class="narration-polly-box">'+
       '<div><span>AMAZON POLLY</span><strong>'+esc(b.polly_voice_id||"Camila")+' · '+esc((b.polly_engine||"standard").toUpperCase())+'</strong><small>Ritmo 92% · pausas leves · us-east-2</small><small data-polly-state>'+(pollyReady?"Áudio pronto e armazenado":"Ainda não gerado ou precisa ser atualizado")+'</small></div>'+
-      '<div class="narration-polly-actions"><button type="button" data-generate-polly><i class="fa-solid fa-wand-magic-sparkles"></i> '+(pollyReady?"Atualizar Polly":"Gerar Polly")+'</button><button type="button" data-preview-polly '+(!b.polly_audio_path?"disabled":"")+'><i class="fa-solid fa-play"></i> Ouvir</button></div>'+
+      '<div class="narration-polly-actions"><button type="button" data-generate-polly><i class="fa-solid fa-wand-magic-sparkles"></i> '+(pollyReady?"Atualizar este bloco":"Gerar somente este bloco")+'</button><button type="button" data-preview-polly '+(!b.polly_audio_path?"disabled":"")+'><i class="fa-solid fa-play"></i> Ouvir</button></div>'+
     '</section>'+
     '<div class="narration-block-actions"><button type="button" data-save-narration-text><i class="fa-regular fa-floppy-disk"></i> Salvar texto falado</button><button type="button" disabled title="Será ativado na etapa de gravação humana"><i class="fa-solid fa-microphone"></i> Gravar minha voz</button></div>'+
   '</article>';
@@ -241,8 +241,9 @@ async function openProject(panel,dossier){
     const project=await syncProject(dossier);
     const [blocks,pron]=await Promise.all([loadBlocks(project.id),loadPronunciations()]);
     const box=panel.querySelector("[data-narration-workspace]");
-    box.innerHTML='<section class="narration-project-head"><div><span>NARRAÇÃO DO ARQUIVO</span><h2>'+esc(dossier.titulo||"Dossiê")+'</h2><p>Amazon Polly é a voz padrão. Sua gravação humana só substitui o Polly nos blocos em que você selecionar “Minha voz”.</p></div><div class="narration-project-actions"><button type="button" data-generate-all-polly><i class="fa-solid fa-wand-magic-sparkles"></i> Gerar Polly em todos</button><button type="button" data-resync-narration><i class="fa-solid fa-rotate"></i> Sincronizar texto</button></div></section>'+
+    box.innerHTML='<section class="narration-project-head"><div><span>NARRAÇÃO DO ARQUIVO</span><h2>'+esc(dossier.titulo||"Dossiê")+'</h2><p>Amazon Polly é a voz padrão. Sua gravação humana só substitui o Polly nos blocos em que você selecionar “Minha voz”.</p></div><div class="narration-project-actions"><button type="button" data-resync-narration><i class="fa-solid fa-rotate"></i> Sincronizar texto</button></div></section>'+
       projectSummary(blocks)+
+      '<section class="narration-test-block"><div><span>TESTE INDIVIDUAL</span><strong>Escolha um bloco para gerar com Polly</strong><small>Use um bloco curto primeiro. Assim você testa a voz sem gerar o dossiê inteiro.</small></div><div><select data-test-block>'+blocks.map(b=>'<option value="'+esc(b.id)+'">Bloco '+String(b.sort_order).padStart(2,"0")+' · '+esc(b.source_label||b.source_type||"Trecho")+'</option>').join("")+'</select><button type="button" data-go-test-block><i class="fa-solid fa-arrow-down"></i> Ir ao bloco</button></div></section>'+
       '<div class="narration-layout"><section class="narration-block-list"><div class="narration-section-title"><span>ROTEIRO</span><h3>Blocos de narração</h3></div>'+blocks.map(blockCard).join("")+'</section>'+pronunciationHTML(pron)+'</div>';
     box.querySelector("[data-resync-narration]").onclick=()=>openProject(panel,dossier);
     box.querySelectorAll("[data-save-narration-text]").forEach(btn=>btn.onclick=async()=>{
@@ -282,9 +283,9 @@ async function openProject(panel,dossier){
         preview.dataset.audioUrl=data.audio_url||"";
         btn.innerHTML='<i class="fa-solid fa-rotate"></i> Atualizar Polly';
       }catch(e){
-        if(e.code==="AWS_CREDENTIALS_MISSING")alert("O módulo está pronto, mas ainda falta conectar as credenciais da AWS no Supabase.");
-        else alert(e.message||"Não foi possível gerar o áudio Polly.");
-        stateEl.textContent="Não foi possível gerar o áudio";
+        if(e.code==="AWS_CREDENTIALS_MISSING")alert("As credenciais da AWS ainda não estão disponíveis para a função.");
+        else alert("Não foi possível gerar este bloco com o Amazon Polly. O erro técnico foi registrado no Supabase.");
+        stateEl.textContent="Falha ao gerar este bloco";
       }finally{btn.disabled=false;}
     });
 
@@ -299,13 +300,14 @@ async function openProject(panel,dossier){
       finally{btn.disabled=false;}
     });
 
-    box.querySelector("[data-generate-all-polly]")?.addEventListener("click",async e=>{
-      if(!confirm("Gerar ou atualizar o áudio Polly de todos os blocos deste dossiê? Isso consome caracteres do Amazon Polly."))return;
-      const all=[...box.querySelectorAll("[data-generate-polly]")];
-      e.currentTarget.disabled=true;
-      try{
-        for(const b of all){await b.onclick();}
-      }finally{e.currentTarget.disabled=false;}
+    const testSelect=box.querySelector("[data-test-block]");
+    box.querySelector("[data-go-test-block]")?.addEventListener("click",()=>{
+      const id=testSelect?.value;
+      if(!id)return;
+      const card=box.querySelector('[data-narration-block="'+id+'"]');
+      card?.scrollIntoView({behavior:"smooth",block:"start"});
+      card?.classList.add("is-test-target");
+      setTimeout(()=>card?.classList.remove("is-test-target"),1800);
     });
 
     wirePronunciations(box);
