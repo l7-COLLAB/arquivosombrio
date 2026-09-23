@@ -21,3 +21,18 @@
 .voice-studio-jobs em{font-style:normal;font-size:.68rem;color:#9d9185;text-align:right}
 .voice-studio-progress{height:5px;background:rgba(255,255,255,.06);overflow:hidden}.voice-studio-progress span{display:block;height:100%;background:#775638}
 @media(max-width:760px){.voice-studio-head{display:grid}.voice-studio-metrics{grid-template-columns:1fr 1fr}.voice-studio-grid{grid-template-columns:1fr}.voice-studio-wide{grid-column:auto}.voice-studio-jobs article{grid-template-columns:1fr 44px}.voice-studio-progress{grid-column:1/-1;grid-row:2}.voice-studio-jobs em{grid-column:2;grid-row:1}}
+.voice-studio-actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:14px}
+.voice-studio-actions button{min-height:40px;padding:8px 12px;border:1px solid rgba(181,157,122,.22);background:#15110e;color:#e9dfcf;cursor:pointer}
+.voice-studio-actions button:disabled{opacity:.55;cursor:wait}
+.voice-studio-help{display:block;margin-top:12px;color:#7f756b;line-height:1.5}
+.voice-studio-help code,.voice-studio-card code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#c7af89}
+.voice-local-status{display:flex;align-items:center;gap:8px;margin-top:14px;padding:9px 10px;border:1px solid rgba(255,255,255,.08);font-size:.72rem;color:#8b8176}
+.voice-local-status.is-online{border-color:rgba(87,128,91,.35);color:#9db89e;background:rgba(61,92,65,.08)}
+.voice-local-status.is-offline{border-color:rgba(143,66,57,.35);color:#b89690;background:rgba(116,45,39,.08)}
+.voice-local-status.is-testing{color:#c7af89}
+.voice-field{display:grid;gap:7px;margin-top:12px;color:#a99d90;font-size:.72rem}
+.voice-field select,.voice-field input[type=range]{width:100%}
+.voice-field select{min-height:42px;padding:8px 10px;background:#0d0a08;color:#eadfd0;border:1px solid rgba(181,157,122,.22)}
+.voice-field output{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#b59d7a}
+.voice-test-text{width:100%;resize:vertical;box-sizing:border-box;margin-top:12px;padding:13px;background:#0d0a08;color:#e8ded0;border:1px solid rgba(181,157,122,.2);font:400 .86rem/1.6 inherit}
+.voice-test-audio{width:100%;margin-top:14px}
