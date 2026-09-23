@@ -55,3 +55,133 @@ body.admin-dashboard-open #admin-manager > .admin-manager{width:min(1440px,calc(
 
 /* V2 · estado editorial de Dossiês */
 .v2-dossier-state{display:inline-flex;align-items:center;min-height:30px;padding:0 9px;border:1px solid #4a3d32;font:600 9px "IBM Plex Mono",monospace;letter-spacing:.08em}.v2-dossier-state[data-state="rascunho"]{border-color:#76571f;color:#d2ad5a}.v2-dossier-state[data-state="publicado"]{border-color:#315c43;color:#75bd8b}
+
+
+/* Agendamento editorial V2 */
+.admin-schedule-panel,
+.lit-schedule-panel{
+    margin:14px 0 18px;
+    padding:16px;
+    border:1px solid rgba(181,157,122,.22);
+    border-left:3px solid rgba(160,27,27,.78);
+    background:linear-gradient(135deg,rgba(65,18,15,.14),rgba(9,8,7,.92));
+}
+.admin-schedule-panel[hidden],
+.lit-schedule-panel[hidden]{display:none!important}
+.admin-schedule-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:14px;
+}
+.admin-schedule-head>div{display:grid;gap:3px}
+.admin-schedule-head strong{
+    color:#d8cec0;
+    font-family:var(--font-display);
+    font-size:1rem;
+    font-weight:600;
+}
+.admin-schedule-head small{
+    color:#7d7165;
+    font:500 .56rem/1.3 var(--font-mono);
+    letter-spacing:.08em;
+}
+.admin-schedule-status{
+    max-width:260px;
+    padding:7px 9px;
+    border:1px solid rgba(181,157,122,.18);
+    background:#0a0908;
+    color:#b9ad9f;
+    font:600 .54rem/1.35 var(--font-mono);
+    letter-spacing:.04em;
+    text-align:right;
+}
+.admin-schedule-panel label,
+.lit-schedule-panel label{
+    display:grid;
+    gap:7px;
+    color:#9f9283;
+    font:600 .56rem/1.3 var(--font-mono);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+.admin-schedule-panel input[type="datetime-local"],
+.lit-schedule-panel input[type="datetime-local"]{
+    width:100%;
+    min-height:44px;
+    padding:10px 12px;
+    border:1px solid rgba(181,157,122,.24);
+    background:#070605;
+    color:#e2d8ca;
+    color-scheme:dark;
+    font:600 .78rem/1.2 var(--font-mono);
+}
+.admin-schedule-panel input[type="datetime-local"]:focus,
+.lit-schedule-panel input[type="datetime-local"]:focus{
+    outline:none;
+    border-color:#8f1b1b;
+    box-shadow:0 0 0 2px rgba(143,27,27,.14);
+}
+.admin-schedule-quick{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:10px;
+}
+.admin-schedule-quick button,
+.admin-schedule-cancel,
+.lit-schedule-actions button,
+.lit-schedule-trigger{
+    min-height:34px;
+    padding:8px 11px;
+    border:1px solid rgba(181,157,122,.2);
+    background:#0b0908;
+    color:#bdb1a3;
+    font:600 .54rem/1.2 var(--font-mono);
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    cursor:pointer;
+}
+.admin-schedule-quick button:hover,
+.admin-schedule-quick button:focus-visible,
+.lit-schedule-trigger:hover,
+.lit-schedule-trigger:focus-visible{
+    border-color:#8f1b1b;
+    color:#fff;
+}
+.admin-schedule-cancel{
+    margin-top:12px;
+    color:#8e8275;
+}
+.admin-schedule-cancel:hover,
+.admin-schedule-cancel:focus-visible{
+    border-color:#6f1515;
+    color:#d6b4b0;
+}
+.lit-schedule-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:12px;
+}
+.lit-confirm-schedule{
+    border-color:#8f1b1b!important;
+    background:#641010!important;
+    color:#fff!important;
+}
+.v2-dossier-state[data-state="agendado"]{
+    border-color:rgba(174,122,49,.45);
+    background:rgba(174,122,49,.1);
+    color:#d9b477;
+}
+.admin-item small strong{
+    color:#d0a768;
+    font-family:var(--font-mono);
+    font-size:inherit;
+}
+@media(max-width:700px){
+    .admin-schedule-head{display:grid}
+    .admin-schedule-status{max-width:none;text-align:left}
+    .admin-schedule-quick button{flex:1 1 120px}
+}
