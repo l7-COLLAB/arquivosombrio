@@ -1212,3 +1212,11 @@ body.admin-dashboard-open #admin-manager>.admin-manager,
 .admin-home-feature-actions button:first-child{border-color:rgba(164,19,19,.45);background:rgba(123,9,9,.14)}
 .admin-home-feature-actions button.danger{color:#b9968d}
 @media(max-width:760px){.admin-home-feature-grid{grid-template-columns:1fr}}
+
+.narration-summary--operational{grid-template-columns:repeat(5,minmax(0,1fr))}
+.narration-project-health{border-left:2px solid rgba(181,157,122,.25)}
+.narration-project-health.is-ready{border-left-color:rgba(86,137,91,.7)}
+.narration-project-health.is-ready strong{color:#a9c2aa}
+.narration-project-health.is-pending strong{color:#c9aa7a}
+.narration-pronunciation-row select[data-scope]{min-width:120px;background:#0d0a08;color:#d8cbbb;border:1px solid rgba(181,157,122,.2);padding:7px}
+@media(max-width:900px){.narration-summary--operational{grid-template-columns:repeat(2,minmax(0,1fr))}.narration-project-health{grid-column:1/-1}}
