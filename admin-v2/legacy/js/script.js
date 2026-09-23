@@ -12302,6 +12302,22 @@ function abrirFormularioCasoDiario(dados = null) {
                 <label>Hipóteses e controvérsias<textarea id="daily-theories" rows="5" placeholder="Separe os itens com uma linha em branco.">${escaparHTML(Array.isArray(dados?.hipoteses) ? dados.hipoteses.join("\n\n") : "")}</textarea></label>
                 <label>Situação oficial<textarea id="daily-official-status" rows="4">${escaparHTML(dados?.situacao_oficial || "")}</textarea></label>
 
+                <section class="daily-admin-repeat-section garimpo-story-admin">
+                    <div class="daily-repeat-heading">
+                        <div><span class="admin-eyebrow">STORY 24H</span><p>Exibição vertical temporária ligada a este Garimpo.</p></div>
+                        <label class="daily-sensitive-check"><input id="daily-story-active" type="checkbox" ${dados?.story_ativo ? "checked" : ""}> Ativar Story</label>
+                    </div>
+                    <label>Imagem vertical 9:16
+                        <input id="daily-story-file" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+                        <button id="daily-story-upload" class="admin-upload-button" type="button"><i class="fa-solid fa-cloud-arrow-up"></i> Enviar imagem do Story</button>
+                        <input id="daily-story-image" type="url" placeholder="URL da imagem" value="${escaparHTML(dados?.story_imagem || "")}">
+                    </label>
+                    <label>Título do Story<input id="daily-story-title" type="text" maxlength="120" value="${escaparHTML(dados?.story_titulo || dados?.titulo || "")}"></label>
+                    <label>Texto curto<textarea id="daily-story-text" rows="4" maxlength="420">${escaparHTML(dados?.story_texto || dados?.resumo || "")}</textarea></label>
+                    <label>Texto do botão<input id="daily-story-cta" type="text" maxlength="40" value="${escaparHTML(dados?.story_cta || "Abrir arquivo")}"></label>
+                    <small class="daily-form-intro">Ao salvar com o Story ativado, ele permanece disponível por 24 horas. Reativar depois de expirado inicia um novo período.</small>
+                </section>
+
                 <section class="daily-admin-repeat-section">
                     <div class="daily-repeat-heading"><div><span class="admin-eyebrow">IMAGENS INTERNAS</span><p>Inclua legenda, crédito e origem.</p></div><button id="daily-add-image" class="admin-secondary-button" type="button">+ Imagem</button></div>
                     <div id="daily-images-list"></div>
@@ -12357,6 +12373,25 @@ function abrirFormularioCasoDiario(dados = null) {
         }
     });
     capa.addEventListener("input", () => atualizarPreviewImagemAdmin(capa.value.trim(), "#daily-cover-preview"));
+
+    const storyArquivo = document.getElementById("daily-story-file");
+    const storyUpload = document.getElementById("daily-story-upload");
+    storyUpload?.addEventListener("click", () => storyArquivo?.click());
+    storyArquivo?.addEventListener("change", async evento => {
+        const arquivo = evento.target.files?.[0];
+        if (!arquivo) return;
+        definirEstadoUpload(storyUpload, true, "Enviando Story...");
+        try {
+            const resultado = await enviarArquivoStorage("imagens", "casos-diarios/stories", arquivo);
+            document.getElementById("daily-story-image").value = resultado.url;
+        } catch (erro) {
+            alert(erro?.message || "Não foi possível enviar a imagem do Story.");
+        } finally {
+            definirEstadoUpload(storyUpload, false);
+            evento.target.value = "";
+        }
+    });
+
     document.getElementById("daily-case-form").addEventListener("submit", evento => salvarCasoDiario(evento, dados));
 
     /* Admin V2: controles editoriais do Garimpo integrados ao formulário.
@@ -12521,6 +12556,13 @@ async function salvarCasoDiario(evento, existente = null) {
             evidencias: normalizarEvidencias(document.getElementById("daily-evidence").value),
             hipoteses: normalizarEvidencias(document.getElementById("daily-theories").value),
             situacao_oficial: document.getElementById("daily-official-status").value.trim() || null,
+            story_ativo: Boolean(document.getElementById("daily-story-active")?.checked),
+            story_imagem: document.getElementById("daily-story-image")?.value.trim() || imagemCapa || null,
+            story_titulo: document.getElementById("daily-story-title")?.value.trim() || titulo,
+            story_texto: document.getElementById("daily-story-text")?.value.trim() || resumo,
+            story_cta: document.getElementById("daily-story-cta")?.value.trim() || "Abrir arquivo",
+            story_publicado_em: null,
+            story_expira_em: null,
             imagens: coletarImagensCasoDiario(),
             fontes,
             atualizado_em: undefined,
@@ -12528,6 +12570,16 @@ async function salvarCasoDiario(evento, existente = null) {
             publicado_em: statusPublicacao === "publicado" ? (existente?.publicado_em || agora) : null
         };
         delete registro.atualizado_em;
+
+        if (registro.story_ativo) {
+            const expiraAtual = existente?.story_expira_em ? new Date(existente.story_expira_em) : null;
+            const storyAindaAtivo = Boolean(expiraAtual && expiraAtual.getTime() > Date.now() && existente?.story_ativo);
+            const inicioStory = storyAindaAtivo && existente?.story_publicado_em
+                ? new Date(existente.story_publicado_em)
+                : new Date();
+            registro.story_publicado_em = inicioStory.toISOString();
+            registro.story_expira_em = new Date(inicioStory.getTime() + 24 * 60 * 60 * 1000).toISOString();
+        }
 
         const cliente = await obterClienteSupabase();
         const consulta = existente?.id
