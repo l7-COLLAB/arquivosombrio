@@ -129,6 +129,8 @@
             }
 
             if (status) status.textContent = "Acesso confirmado. Abrindo o painel...";
+            sessionStorage.setItem("arquivo-admin-verified-at", String(Date.now()));
+            sessionStorage.setItem("arquivo-admin-verified-user", data.session.user.id);
             const destino = new URLSearchParams(window.location.search).get("next");
             window.location.replace(
                 destino === "adm" || destino === "admin-v2"
