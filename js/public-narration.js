@@ -387,8 +387,11 @@
         throw err;
       }
       if(r.status===409&&data?.code==="CHUNK_BUSY"){
-        await new Promise(resolve=>setTimeout(resolve,900));
-        return await callNarration(body);
+        const retry=Number(body?._busyRetry||0);
+        if(retry<6){
+          await new Promise(resolve=>setTimeout(resolve,900));
+          return await callNarration({...body,_busyRetry:retry+1});
+        }
       }
       if(!r.ok)throw new Error(data.error||"Não foi possível preparar a narração.");
       return data;
