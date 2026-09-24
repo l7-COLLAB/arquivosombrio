@@ -290,7 +290,7 @@
       </button>
       <div class="public-narration-progress" hidden>
         <div><span data-narration-status>Preparando áudio...</span><span data-narration-count></span></div>
-        <div class="public-narration-track"><i data-narration-track></i></div>
+        <div class="public-narration-timeline"><span data-elapsed>0:00</span><input data-seek type="range" min="0" max="1000" value="0" aria-label="Selecionar ponto da narração" disabled><span data-duration>--:--</span></div><div class="public-narration-controls"><button type="button" data-back disabled aria-label="Voltar 10 segundos">↶ 10s</button><button type="button" data-forward disabled aria-label="Avançar 10 segundos">10s ↷</button><label>Velocidade <select data-speed aria-label="Velocidade"><option value="0.85">0,85×</option><option value="1" selected>1×</option><option value="1.15">1,15×</option><option value="1.3">1,3×</option></select></label></div>
       </div>`;
     if(ctx.type==="dossie"&&target.classList?.contains("case-reader-toolbar")) target.appendChild(box); else target.insertAdjacentElement("afterend",box);
 
@@ -299,7 +299,23 @@
     const progress=box.querySelector(".public-narration-progress");
     const status=box.querySelector("[data-narration-status]");
     const count=box.querySelector("[data-narration-count]");
-    const track=box.querySelector("[data-narration-track]");
+    const seek=box.querySelector("[data-seek]"),elapsed=box.querySelector("[data-elapsed]"),duration=box.querySelector("[data-duration]"),back=box.querySelector("[data-back]"),forward=box.querySelector("[data-forward]"),speed=box.querySelector("[data-speed]");
+    const positionKey="arquivoAudioPosition:"+contextKey(ctx);
+    const fmt=t=>{if(!Number.isFinite(t))return "--:--";const n=Math.floor(t);return n>=3600?Math.floor(n/3600)+":"+String(Math.floor(n%3600/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0"):Math.floor(n/60)+":"+String(n%60).padStart(2,"0")};
+    let lastSave=0;
+    function timeline(){
+      if(!audio)return;
+      elapsed.textContent=fmt(audio.currentTime);duration.textContent=fmt(audio.duration);
+      const valid=Number.isFinite(audio.duration)&&audio.duration>0;
+      seek.disabled=!valid;back.disabled=!valid;forward.disabled=!valid;
+      if(valid)seek.value=String(Math.round(audio.currentTime/audio.duration*1000));
+      if(valid&&chunks?.length===1&&Date.now()-lastSave>4000){lastSave=Date.now();try{localStorage.setItem(positionKey,String(Math.floor(audio.currentTime)))}catch(_){}}
+    }
+    back.onclick=()=>{if(audio&&Number.isFinite(audio.duration)){audio.currentTime=Math.max(0,audio.currentTime-10);timeline()}};
+    forward.onclick=()=>{if(audio&&Number.isFinite(audio.duration)){audio.currentTime=Math.min(audio.duration,audio.currentTime+10);timeline()}};
+    seek.oninput=()=>{if(audio&&Number.isFinite(audio.duration)&&audio.duration>0){audio.currentTime=audio.duration*Number(seek.value)/1000;timeline()}};
+    speed.onchange=()=>{if(audio)audio.playbackRate=Number(speed.value)};
+
     let chunks=null,index=0,audio=null,loading=false;
     let resumeAfterAuth=false;
 
@@ -318,14 +334,21 @@
       if(!url)return;
       audio=new Audio(url);
       audio.preload="auto";
+      audio.playbackRate=Number(speed.value);
+      audio.addEventListener("loadedmetadata",()=>{
+        if(chunks?.length===1){let saved=0;try{saved=Number(localStorage.getItem(positionKey)||0)}catch(_){}if(saved>0&&Number.isFinite(audio.duration)&&saved<audio.duration-15)audio.currentTime=saved}
+        timeline();
+      });
+      audio.addEventListener("durationchange",timeline);
+      audio.addEventListener("seeked",timeline);
       audio.addEventListener("play",prefetchNext);
       audio.addEventListener("timeupdate",()=>{
         if(!audio.duration||!Number.isFinite(audio.duration))return;
-        track.style.width=Math.min(100,Math.max(0,(audio.currentTime/audio.duration)*100))+"%";
+        timeline();
       });
       audio.addEventListener("ended",()=>{
-        track.style.width="0%";
-        if(index+1>=chunks.length)logMetric(ctx,"play_completed",{chunks:chunks.length});
+        seek.value="0";
+        if(index+1>=chunks.length){logMetric(ctx,"play_completed",{chunks:chunks.length});try{localStorage.removeItem(positionKey)}catch(_){}}
         if(index+1<chunks.length){
           index++;
           getChunk(index).then(url=>{
