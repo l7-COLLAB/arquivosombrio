@@ -20,6 +20,17 @@ jobs:
           cache-dependency-path: arquivo-voz-cloud/requirements.txt
       - name: Install worker dependencies
         run: pip install -r arquivo-voz-cloud/requirements.txt
+      - name: Validate required credentials
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          for key in SUPABASE_SERVICE_ROLE_KEY R2_ENDPOINT R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET; do
+            if [ -z "${!key}" ]; then echo "Missing required environment secret: $key"; exit 1; fi
+          done
       - name: Start Kokoro
         run: docker compose -f arquivo-voz-local/docker-compose.yml up -d kokoro
       - name: Wait for Kokoro readiness
@@ -32,7 +43,7 @@ jobs:
           exit 1
       - name: Process one approved staging job
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_URL: https://iuhotznurbyujzbyhizf.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
