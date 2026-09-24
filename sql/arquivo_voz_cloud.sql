@@ -36,6 +36,3 @@ begin
 end $$;
 revoke all on function public.claim_arquivo_voz_cloud_job() from public, anon, authenticated;
 grant execute on function public.claim_arquivo_voz_cloud_job() to service_role;
-insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
-values('arquivo-voz-cloud','arquivo-voz-cloud',false,104857600,array['audio/mpeg'])
-on conflict(id) do nothing;
