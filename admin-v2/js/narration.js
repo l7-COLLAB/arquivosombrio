@@ -236,12 +236,8 @@ async function syncProject(dossier){
       await c.from("narration_blocks").delete().eq("id",old.id);
     }
   }
-  try{
-    await adaptarBlocosPollyAutomaticamente(project.id);
-  }catch(erro){
-    console.warn("Não foi possível concluir toda a adaptação automática para Polly.",erro);
-  }
-
+  // Polly adaptation is deliberately on demand. A full dossier may contain
+  // hundreds of blocks; awaiting remote adaptation here freezes the V2 editor.
   return project;
 }
 
@@ -290,7 +286,7 @@ function blockCard(b){
 }
 
 async function loadKokoroScripts(projectId){const r=await client().from("arquivo_voz_scripts").select("*").eq("project_id",projectId);if(r.error)throw r.error;return new Map((r.data||[]).map(x=>[String(x.block_id),x]));}
-function kokoroScriptPanel(b,saved){const stale=saved&&saved.source_snapshot!==String(b.source_text||"").trim();return '<section class="narration-polly-text-box"><div class="narration-polly-text-head"><div><span>ROTEIRO KOKORO · TESTES</span><strong>Adaptação editorial manual</strong><small data-kokoro-status>'+(stale?'Texto original alterado: revise':saved?'Roteiro salvo':'Cole o roteiro adaptado')+'</small></div></div><textarea rows="7" data-kokoro-text placeholder="Cole a versão adaptada para Kokoro...">'+esc(saved?.script_text||"")+'</textarea><div class="narration-polly-text-actions"><button type="button" data-save-kokoro-script>Salvar roteiro Kokoro</button><small>Não altera o texto público ou Polly.</small></div></section>';}
+function kokoroScriptPanel(b,saved){const stale=saved&&saved.source_snapshot!==String(b.source_text||"").trim();return '<section class="narration-polly-text-box" data-kokoro-block-id="'+esc(b.id)+'"><div class="narration-polly-text-head"><div><span>ROTEIRO KOKORO · TESTES</span><strong>Adaptação editorial manual</strong><small data-kokoro-status>'+(stale?'Texto original alterado: revise':saved?'Roteiro salvo':'Cole o roteiro adaptado')+'</small></div></div><textarea rows="7" data-kokoro-text placeholder="Cole a versão adaptada para Kokoro...">'+esc(saved?.script_text||"")+'</textarea><div class="narration-polly-text-actions"><button type="button" data-save-kokoro-script>Salvar roteiro Kokoro</button><small>Não altera o texto público ou Polly.</small></div></section>';}
 function projectSummary(blocks){
   const adaptationReady=blocks.filter(b=>b.polly_text_mode==="manual"||Boolean(b.polly_text&&b.polly_text_source_hash)).length;
   const audioReady=blocks.filter(b=>Boolean(b.polly_audio_path&&b.polly_text_hash)).length;
@@ -401,7 +397,7 @@ async function openProject(panel,dossier){
       '<section class="narration-test-block"><div><span>TESTE INDIVIDUAL</span><strong>Escolha um bloco para gerar com Polly</strong><small>Use um bloco curto primeiro. Assim você testa a voz sem gerar o dossiê inteiro.</small></div><div><select data-test-block>'+blocks.map(b=>'<option value="'+esc(b.id)+'">Bloco '+String(b.sort_order).padStart(2,"0")+' · '+esc(b.source_label||b.source_type||"Trecho")+'</option>').join("")+'</select><button type="button" data-go-test-block><i class="fa-solid fa-arrow-down"></i> Ir ao bloco</button></div></section>'+
       '<div class="narration-layout"><section class="narration-block-list"><div class="narration-section-title"><span>ROTEIRO</span><h3>Blocos de narração</h3></div>'+blocks.map(b=>blockCard(b)+(scriptsReady?kokoroScriptPanel(b,scripts.get(String(b.id))):"")).join("")+'</section>'+pronunciationHTML(pron,dossier)+'</div>';
     box.querySelector("[data-resync-narration]").onclick=()=>openProject(panel,dossier);
-    box.querySelectorAll("[data-save-kokoro-script]").forEach(btn=>btn.onclick=async()=>{const card=btn.closest("[data-narration-block]"),id=card.dataset.narrationBlock;const script=card.querySelector("[data-kokoro-text]").value.trim();const original=blocks.find(b=>String(b.id)===String(id))?.source_text?.trim()||"";if(!script)return alert("Cole o roteiro antes de salvar.");btn.disabled=true;try{const r=await client().from("arquivo_voz_scripts").upsert({project_id:project.id,block_id:id,source_snapshot:original,script_text:script,status:"draft",updated_at:new Date().toISOString()},{onConflict:"block_id"});if(r.error)throw r.error;card.querySelector("[data-kokoro-status]").textContent="Salvo · aguardando revisão";}catch(e){alert(e.message||"Falha ao salvar.");}finally{btn.disabled=false;}});
+    box.querySelectorAll("[data-save-kokoro-script]").forEach(btn=>btn.onclick=async()=>{const card=btn.closest("[data-kokoro-block-id]"),id=card.dataset.kokoroBlockId;const script=card.querySelector("[data-kokoro-text]").value.trim();const original=blocks.find(b=>String(b.id)===String(id))?.source_text?.trim()||"";if(!script)return alert("Cole o roteiro antes de salvar.");btn.disabled=true;try{const r=await client().from("arquivo_voz_scripts").upsert({project_id:project.id,block_id:id,source_snapshot:original,script_text:script,status:"draft",updated_at:new Date().toISOString()},{onConflict:"block_id"});if(r.error)throw r.error;card.querySelector("[data-kokoro-status]").textContent="Salvo · aguardando revisão";}catch(e){alert(e.message||"Falha ao salvar.");}finally{btn.disabled=false;}});
     box.querySelectorAll("[data-save-narration-text]").forEach(btn=>btn.onclick=async()=>{
       const card=btn.closest("[data-narration-block]"),id=card.dataset.narrationBlock,text=card.querySelector("[data-narration-text]").value.trim();
       btn.disabled=true;
