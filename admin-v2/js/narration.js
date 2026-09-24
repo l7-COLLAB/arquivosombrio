@@ -426,26 +426,39 @@ async function openSimpleKokoro(panel,dossier){
   });
   const queueBtn=host.querySelector("[data-queue-full-kokoro]");
   let lastSaved=saved?.script_text||"";
+  async function refreshQueueState(){
+    if(ta.value!==lastSaved){queueBtn.disabled=true;queueBtn.textContent="Salve as alterações";return;}
+    if(!lastSaved.trim()){queueBtn.disabled=true;queueBtn.textContent="Salve o roteiro";return;}
+    queueBtn.disabled=true;
+    const r=await c.rpc("arquivo_voz_full_script_queue_state",{p_project_id:project.id});
+    if(r.error){status.textContent="Não foi possível consultar a fila: "+r.error.message;return;}
+    if(r.data?.state==="existing"){
+      queueBtn.textContent="Geração já solicitada";
+      status.textContent="Este roteiro já possui uma solicitação ("+r.data.status+"). Altere e salve o texto para solicitar outra.";
+    }else{queueBtn.textContent="Solicitar geração Kokoro";queueBtn.disabled=false;}
+  }
+  ta.addEventListener("input",()=>{queueBtn.disabled=true;queueBtn.textContent="Salve as alterações";});
+  refreshQueueState();
   queueBtn.onclick=async()=>{
-    const current=ta.value.trim();
-    if(!current){status.textContent="Cole e salve o roteiro primeiro.";return;}
+    const current=ta.value;
+    if(!current.trim()){status.textContent="Cole e salve o roteiro primeiro.";return;}
     if(current!==lastSaved){status.textContent="Existem alterações não salvas. Salve o rascunho antes de solicitar.";return;}
     queueBtn.disabled=true;status.textContent="Enviando roteiro para a fila privada...";
     try{
       const r=await c.rpc("queue_arquivo_voz_full_script",{p_project_id:project.id});
       if(r.error)throw r.error;
-      const jobId=r.data;
-      status.textContent="Solicitação registrada. ID: "+jobId+". A geração depende da execução do trabalhador Kokoro na nuvem; o áudio não está publicado.";
-      queueBtn.textContent="Solicitação registrada";
+      const jobId=r.data?.job_id;
+      status.textContent=(r.data?.created?"Solicitação registrada. ":"Este roteiro já foi solicitado anteriormente. ")+"ID: "+jobId+". Nenhuma geração duplicada será criada.";
+      queueBtn.textContent="Geração já solicitada";
     }catch(e){status.textContent="Não foi possível solicitar: "+(e.message||e);}
-    finally{queueBtn.disabled=false;}
+    finally{await refreshQueueState();}
   };
   btn.onclick=async()=>{
-   const value=ta.value.trim();if(!value){status.textContent="Cole um roteiro antes de salvar.";return;}
+   const value=ta.value;if(!value.trim()){status.textContent="Cole um roteiro antes de salvar.";return;}
    btn.disabled=true;status.textContent="Salvando...";
    try{
     const r=await c.from("arquivo_voz_full_scripts").upsert({project_id:project.id,source_snapshot:original,script_text:value,status:"draft",updated_at:new Date().toISOString()},{onConflict:"project_id"});
-    if(r.error)throw r.error;lastSaved=value;queueBtn.textContent="Solicitar geração Kokoro";status.textContent="Rascunho salvo. Você já pode solicitar a geração.";
+    if(r.error)throw r.error;lastSaved=value;status.textContent="Rascunho salvo. Verificando se já existe solicitação...";await refreshQueueState();
    }catch(e){status.textContent="Erro ao salvar: "+(e.message||e);}finally{btn.disabled=false;}
   };
  }catch(e){host.innerHTML='<p role="alert">Não foi possível abrir o editor: '+esc(e.message||e)+'</p>';}
