@@ -12,10 +12,10 @@
   let turnstilePromise=null;
 
   function getContext(){
-    const id=new URLSearchParams(location.search).get("id");
+    const id=new URLSearchParams(location.search).get("id")||window.ARQUIVO_CASO_ID;
     if(!id)return null;
     const p=location.pathname.toLowerCase();
-    if(p.endsWith("caso.html"))return{type:"dossie",id};
+    if(p.endsWith("caso.html")||p==="/dossies/lizzie-borden.html")return{type:"dossie",id};
     if(p.endsWith("garimpo.html"))return{type:"garimpo",id};
     if(p.endsWith("pericia.html"))return{type:"pericia",id};
     if(document.body.dataset.archiveType==="lendas")return{type:"lenda",id};
