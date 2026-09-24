@@ -7906,6 +7906,7 @@ const pericias =
                 <button type="button" data-admin-tab="diarios"><i class="fa-regular fa-newspaper"></i><span>Casos diários</span><small>${casosDiariosAdmin?.length || 0}</small></button>
                 <button type="button" data-admin-tab="pericias"><i class="fa-solid fa-microscope"></i><span>Perícia</span><small>${pericias.length}</small></button>
                 <button type="button" data-admin-tab="livros"><i class="fa-solid fa-book-open"></i><span>Livros</span><small>${livros.length}</small></button>
+                <button type="button" data-admin-tab="novels" onclick="location.href='./novels.html'"><i class="fa-solid fa-feather-pointed"></i><span>Novels</span><small>1</small></button>
             </nav>
 
             <div class="admin-content-tools">
