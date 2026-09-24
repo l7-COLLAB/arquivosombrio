@@ -191,3 +191,15 @@ body.case-reading .case-reader-toolbar .public-narration-progress{
 .public-narration-controls select{margin-left:4px;padding:4px;border:1px solid currentColor;border-radius:4px;background:var(--reader-card,#171311);color:var(--reader-fg,#e7ded0);font:inherit}
 body.case-reading .case-reader-toolbar .public-narration-player{margin:2px auto 0}
 @media(max-width:600px){.public-narration-main{grid-template-columns:30px minmax(0,1fr) 28px;padding:8px 10px}.public-narration-progress{padding:0 10px 9px}.public-narration-controls{gap:9px}}
+
+/* Mini player: controls open only when requested */
+.public-narration-player{max-width:500px;margin:.3rem auto!important}
+.public-narration-main{min-height:42px;padding:5px 9px!important;grid-template-columns:25px minmax(0,1fr) 26px!important;gap:8px!important}
+.public-narration-icon{width:25px!important;height:25px!important;border:0;background:transparent}
+.public-narration-action{width:26px!important;height:26px!important;border:0}
+.public-narration-copy small{font-size:.43rem}
+.public-narration-copy strong{font-size:.72rem!important}
+.public-narration-expand{display:block;width:100%;padding:3px 10px 6px;border:0;background:transparent;color:inherit;opacity:.7;text-align:center;font:500 .59rem var(--font-mono);cursor:pointer}
+.public-narration-expand[hidden],.public-narration-progress[hidden]{display:none!important}
+.public-narration-progress{padding:4px 10px 9px}
+body.case-reading .case-reader-toolbar .public-narration-player{flex:0 1 500px;width:min(100%,500px);margin:2px auto!important}
