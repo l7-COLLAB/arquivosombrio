@@ -288,6 +288,7 @@
         </span>
         <span class="public-narration-action"><i class="fa-solid fa-play"></i></span>
       </button>
+      <button type="button" class="public-narration-expand" aria-expanded="false" aria-label="Mostrar controles de áudio" hidden>Controles <span aria-hidden="true">⌄</span></button>
       <div class="public-narration-progress" hidden>
         <div><span data-narration-status>Preparando áudio...</span><span data-narration-count></span></div>
         <div class="public-narration-timeline"><span data-elapsed>0:00</span><input data-seek type="range" min="0" max="1000" value="0" aria-label="Selecionar ponto da narração" disabled><span data-duration>--:--</span></div><div class="public-narration-controls"><button type="button" data-back disabled aria-label="Voltar 10 segundos">↶ 10s</button><button type="button" data-forward disabled aria-label="Avançar 10 segundos">10s ↷</button><label>Velocidade <select data-speed aria-label="Velocidade"><option value="0.85">0,85×</option><option value="1" selected>1×</option><option value="1.15">1,15×</option><option value="1.3">1,3×</option></select></label></div>
@@ -297,6 +298,9 @@
     const button=box.querySelector(".public-narration-main");
     const action=box.querySelector(".public-narration-action i");
     const progress=box.querySelector(".public-narration-progress");
+    const expand=box.querySelector(".public-narration-expand");
+    const showControls=visible=>{progress.hidden=!visible;expand.setAttribute("aria-expanded",String(visible));expand.querySelector("span").textContent=visible?"⌃":"⌄";};
+    expand.addEventListener("click",()=>showControls(progress.hidden));
     const status=box.querySelector("[data-narration-status]");
     const count=box.querySelector("[data-narration-count]");
     const seek=box.querySelector("[data-seek]"),elapsed=box.querySelector("[data-elapsed]"),duration=box.querySelector("[data-duration]"),back=box.querySelector("[data-back]"),forward=box.querySelector("[data-forward]"),speed=box.querySelector("[data-speed]");
@@ -442,7 +446,8 @@
     async function prepare(){
       loading=true;
       button.disabled=true;
-      progress.hidden=false;
+      expand.hidden=false;
+      showControls(false);
       status.textContent="Preparando o primeiro trecho...";
       count.textContent="";
       try{
@@ -493,7 +498,8 @@
           return;
         }
         setState("ready");
-        progress.hidden=false;
+        expand.hidden=false;
+        showControls(true);
         status.textContent=e?.message||"Não foi possível abrir a narração.";
         count.textContent="";
         console.error(e);
