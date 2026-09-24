@@ -1,0 +1,44 @@
+name: Arquivo Voz - Comparar vozes (privado)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: arquivo-voz-compare-staging
+  cancel-in-progress: false
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment: arquivo-voz-staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: arquivo-voz-cloud/requirements.txt
+      - run: pip install -r arquivo-voz-cloud/requirements.txt
+      - name: Generate temporary API key
+        run: echo "KOKORO_API_KEY=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+      - name: Start Kokoro
+        run: docker run -d --name arquivo-voz-kokoro -p 127.0.0.1:8880:8880 -e KOKORO_VOICE=pf_dora -e KOKORO_LANG_CODE=p -e KOKORO_API_KEY="$KOKORO_API_KEY" hwdsl2/kokoro-server:latest
+      - name: Wait for readiness
+        run: |
+          for i in $(seq 1 90); do
+            if curl --fail --silent -H "Authorization: Bearer $KOKORO_API_KEY" http://127.0.0.1:8880/v1/models > /dev/null; then exit 0; fi
+            sleep 5
+          done
+          docker logs arquivo-voz-kokoro
+          exit 1
+      - name: Generate private A/B samples
+        env:
+          SUPABASE_URL: https://iuhotznurbyujzbyhizf.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          KOKORO_URL: http://127.0.0.1:8880
+          KOKORO_API_KEY: ${{ env.KOKORO_API_KEY }}
+        run: python arquivo-voz-cloud/voice_comparison.py
