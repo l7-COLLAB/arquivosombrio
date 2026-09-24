@@ -32,16 +32,16 @@ jobs:
             if [ -z "${!key}" ]; then echo "Missing required environment secret: $key"; exit 1; fi
           done
       - name: Start Kokoro
-        run: docker compose -f arquivo-voz-local/docker-compose.yml up -d kokoro
+        run: docker run -d --name arquivo-voz-kokoro -p 127.0.0.1:8880:8880 -e KOKORO_VOICE=pf_dora -e KOKORO_LANG_CODE=p hwdsl2/kokoro-server:latest
       - name: Wait for Kokoro readiness
         run: |
           for i in $(seq 1 90); do
             if curl --fail --silent http://127.0.0.1:8880/v1/models > /dev/null; then exit 0; fi
             sleep 5
           done
-          docker compose -f arquivo-voz-local/docker-compose.yml logs kokoro
+          docker logs arquivo-voz-kokoro
           exit 1
-      - name: Process one approved staging job
+      - name: Process one staging job
         env:
           SUPABASE_URL: https://iuhotznurbyujzbyhizf.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
