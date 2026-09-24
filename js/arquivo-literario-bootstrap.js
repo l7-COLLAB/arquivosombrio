@@ -13,24 +13,39 @@
 
   function adicionarLinks() {
     const dir = document.querySelector(".home-directory");
-    if (dir && !dir.querySelector('a[href="lendas.html"]')) {
+    if (dir) {
       const biblioteca = dir.querySelector('a[href="#livros"]');
-      const lenda = document.createElement("a");
-      lenda.href = "lendas.html";
-      lenda.innerHTML = '<i class="fa-solid fa-book-skull"></i><span><small>FOLCLORE & TRADIÇÃO</small><strong>Lendas</strong></span><i class="fa-solid fa-arrow-right"></i>';
-      const creep = document.createElement("a");
-      creep.href = "creepypastas.html";
-      creep.innerHTML = '<i class="fa-solid fa-ghost"></i><span><small>HORROR DA INTERNET</small><strong>Creepypastas</strong></span><i class="fa-solid fa-arrow-right"></i>';
-      dir.insertBefore(lenda, biblioteca);
-      dir.insertBefore(creep, biblioteca);
+      if (biblioteca && !dir.querySelector('a[href="lendas.html"]')) {
+        const lenda = document.createElement("a");
+        lenda.href = "lendas.html";
+        lenda.innerHTML = '<i class="fa-solid fa-book-skull"></i><span><small>FOLCLORE & TRADIÇÃO</small><strong>Lendas</strong></span><i class="fa-solid fa-arrow-right"></i>';
+        dir.insertBefore(lenda, biblioteca);
+      }
+      if (biblioteca && !dir.querySelector('a[href="creepypastas.html"]')) {
+        const creep = document.createElement("a");
+        creep.href = "creepypastas.html";
+        creep.innerHTML = '<i class="fa-solid fa-ghost"></i><span><small>HORROR DA INTERNET</small><strong>Creepypastas</strong></span><i class="fa-solid fa-arrow-right"></i>';
+        dir.insertBefore(creep, biblioteca);
+      }
+      if (biblioteca && !dir.querySelector('a[href="novels.html"]')) {
+        const novel = document.createElement("a");
+        novel.href = "novels.html";
+        novel.innerHTML = '<i class="fa-solid fa-feather-pointed"></i><span><small>LEITURA SERIADA</small><strong>Novels</strong></span><i class="fa-solid fa-arrow-right"></i>';
+        dir.insertBefore(novel, biblioteca);
+      }
     }
     document.querySelectorAll(".sidebar-links").forEach(nav => {
-      if (nav.querySelector('a[href="lendas.html"]')) return;
       const biblioteca = nav.querySelector('a[href="#livros"]');
       if (!biblioteca) return;
-      const l = document.createElement("a"); l.href="lendas.html"; l.innerHTML='<i class="fa-solid fa-book-skull"></i>Lendas';
-      const c = document.createElement("a"); c.href="creepypastas.html"; c.innerHTML='<i class="fa-solid fa-ghost"></i>Creepypastas';
-      nav.insertBefore(l, biblioteca); nav.insertBefore(c, biblioteca);
+      if (!nav.querySelector('a[href="lendas.html"]')) {
+        const l = document.createElement("a"); l.href="lendas.html"; l.innerHTML='<i class="fa-solid fa-book-skull"></i>Lendas'; nav.insertBefore(l,biblioteca);
+      }
+      if (!nav.querySelector('a[href="creepypastas.html"]')) {
+        const c = document.createElement("a"); c.href="creepypastas.html"; c.innerHTML='<i class="fa-solid fa-ghost"></i>Creepypastas'; nav.insertBefore(c,biblioteca);
+      }
+      if (!nav.querySelector('a[href="novels.html"]')) {
+        const n = document.createElement("a"); n.href="novels.html"; n.innerHTML='<i class="fa-solid fa-feather-pointed"></i>Novels'; nav.insertBefore(n,biblioteca);
+      }
     });
   }
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", adicionarLinks) : adicionarLinks();
