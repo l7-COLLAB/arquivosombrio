@@ -29,3 +29,6 @@ body.novels{background:radial-gradient(ellipse at 50% -160px,rgba(95,58,41,.17),
 .novel-notice{padding:30px;border:1px solid #795d4b;background:#1c1613}
 .novel-detail{padding-top:55px}
 @media(max-width:700px){.novel-shell{width:calc(100% - 28px)}.novel-hero{margin:20px 0 32px;padding:45px 24px 46px}.novel-section-head{display:block;margin-top:35px}.novel-section-head p{margin-top:10px}.novel-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.novel-card{padding:8px}.novel-tools{display:grid;grid-template-columns:minmax(0,1fr) 120px}.novel-tools input{min-width:0;width:100%}.novel-tools select{min-width:0;width:100%}}
+
+/* Respect hidden state for detail and reader, including on mobile. */
+.novel-detail[hidden],.reader[hidden]{display:none!important}
