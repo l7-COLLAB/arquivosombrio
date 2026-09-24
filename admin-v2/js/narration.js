@@ -617,9 +617,9 @@ async function render(panel){
   if(projects.error)throw projects.error;
   const projectMap=new Map((projects.data||[]).map(x=>[String(x.content_type)+":"+String(x.content_id),x]));
 
-  panel.innerHTML='<div class="admin-hub-section-heading"><div><span>ÁUDIO DOCUMENTAL</span><h2>Narração do Arquivo</h2><p>Prepare e revise a narração de Dossiês, Garimpo, Perícias, Lendas e Creepypastas. A adaptação para Polly é criada automaticamente.</p></div></div>'+
-    '<section class="narration-picker"><label>Tipo de arquivo<select data-narration-type><option value="dossie">Dossiês</option><option value="garimpo">Garimpo Sombrio</option><option value="pericia">Perícias</option><option value="lenda">Lendas</option><option value="creepypasta">Creepypastas</option></select></label><label>Selecionar arquivo<select data-narration-dossier></select></label><button type="button" data-open-narration disabled><i class="fa-solid fa-microphone-lines"></i> Preparar narração</button></section>'+
-    '<div class="narration-notice"><i class="fa-solid fa-headphones"></i><div><strong>Adaptação automática</strong><p>Ao preparar ou sincronizar um arquivo, a versão para Polly é criada automaticamente. Edições manuais continuam protegidas.</p></div></div>'+
+  panel.innerHTML='<div class="admin-hub-section-heading"><div><span>ÁUDIO DOCUMENTAL</span><h2>Narração do Arquivo</h2><p>Edite e salve o roteiro completo de Dossiês, Garimpo, Perícias, Lendas e Creepypastas para a futura narração Kokoro.</p></div></div>'+
+    '<section class="narration-picker"><label>Tipo de arquivo<select data-narration-type><option value="dossie">Dossiês</option><option value="garimpo">Garimpo Sombrio</option><option value="pericia">Perícias</option><option value="lenda">Lendas</option><option value="creepypasta">Creepypastas</option></select></label><label>Selecionar arquivo<select data-narration-dossier></select></label><button type="button" data-open-narration disabled><i class="fa-solid fa-file-pen"></i> Abrir roteiro</button></section>'+
+    '<div class="narration-notice"><i class="fa-solid fa-headphones"></i><div><strong>Roteiro Kokoro</strong><p>Abra um arquivo para editar e salvar seu roteiro. O texto publicado e a narração Polly permanecem inalterados.</p></div></div>'+
     '<div data-narration-workspace><div class="admin-hub-empty"><i class="fa-solid fa-microphone-lines"></i><p>Selecione um arquivo para iniciar ou continuar a preparação da narração.</p></div></div>';
 
   const typeSelect=panel.querySelector("[data-narration-type]");
