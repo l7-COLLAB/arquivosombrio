@@ -69,19 +69,23 @@ async def loop():
             jobs = result.data or []
             if jobs:
                 job = jobs[0]
+                failed=False
                 try: await process(job)
                 except Exception as e:
+                    failed=True
                     log.exception("job failed")
                     db.table("arquivo_voz_cloud_jobs").update({
                         "status":"failed","error":str(e)[:400]
                     }).eq("id",job["id"]).execute()
-                if once: return
+                if once:
+                    if failed: raise RuntimeError("Staging narration job failed")
+                    return
             else:
                 if once: return
                 await asyncio.sleep(POLL)
         except Exception:
             log.exception("worker loop error")
-            if once: return
+            if once: raise
             await asyncio.sleep(POLL)
 
 @asynccontextmanager
