@@ -31,12 +31,14 @@ jobs:
           for key in SUPABASE_SERVICE_ROLE_KEY R2_ENDPOINT R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET; do
             if [ -z "${!key}" ]; then echo "Missing required environment secret: $key"; exit 1; fi
           done
+      - name: Generate temporary Kokoro API key
+        run: echo "KOKORO_API_KEY=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
       - name: Start Kokoro
-        run: docker run -d --name arquivo-voz-kokoro -p 127.0.0.1:8880:8880 -e KOKORO_VOICE=pf_dora -e KOKORO_LANG_CODE=p hwdsl2/kokoro-server:latest
+        run: docker run -d --name arquivo-voz-kokoro -p 127.0.0.1:8880:8880 -e KOKORO_VOICE=pf_dora -e KOKORO_LANG_CODE=p -e KOKORO_API_KEY="$KOKORO_API_KEY" hwdsl2/kokoro-server:latest
       - name: Wait for Kokoro readiness
         run: |
           for i in $(seq 1 90); do
-            if curl --fail --silent http://127.0.0.1:8880/v1/models > /dev/null; then exit 0; fi
+            if curl --fail --silent -H "Authorization: Bearer $KOKORO_API_KEY" http://127.0.0.1:8880/v1/models > /dev/null; then exit 0; fi
             sleep 5
           done
           docker logs arquivo-voz-kokoro
@@ -50,5 +52,6 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
           KOKORO_URL: http://127.0.0.1:8880
+          KOKORO_API_KEY: ${{ env.KOKORO_API_KEY }}
           RUN_ONCE: 'true'
         run: python -c 'import asyncio,sys;sys.path.insert(0,"arquivo-voz-cloud");from worker import loop;asyncio.run(loop())'
