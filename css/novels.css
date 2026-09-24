@@ -32,3 +32,28 @@ body.novels{background:radial-gradient(ellipse at 50% -160px,rgba(95,58,41,.17),
 
 /* Respect hidden state for detail and reader, including on mobile. */
 .novel-detail[hidden],.reader[hidden]{display:none!important}
+
+/* Reader comfort settings; scoped to chapter pages only. */
+body.novels:has(.reader:not([hidden])){--reader-bg:#171a1e;--reader-text:#dedbd4;--reader-ui:#24272b;background:var(--reader-bg);color:var(--reader-text)}
+body.novels[data-reader-theme="paper"]:has(.reader:not([hidden])){--reader-bg:#e9dfcd;--reader-text:#382f28;--reader-ui:#ddd0b9;--n-muted:#62564a;--n-line:rgba(56,47,40,.27);--n-paper:#382f28}
+body.novels[data-reader-theme="night"]:has(.reader:not([hidden])){--reader-bg:#0b0c0e;--reader-text:#c8c7c3;--reader-ui:#191a1c}
+body.novels:has(.reader:not([hidden])) .novel-top{border-color:var(--n-line)}
+body.novels:has(.reader:not([hidden])) .novel-brand,body.novels:has(.reader:not([hidden])) .novel-home,body.novels:has(.reader:not([hidden])) .novel-kicker{color:var(--reader-text)}
+.reader{width:min(100% - 44px,680px);padding:42px 0 100px}
+.reader h1{font:normal clamp(2rem,6vw,2.9rem)/1.18 Georgia,serif;letter-spacing:-.018em}
+.reader-body{color:var(--reader-text);line-height:1.75;letter-spacing:.003em;overflow-wrap:break-word}
+.reader-body p{margin:0 0 1.1em}
+.reader-body[data-spacing="compact"]{line-height:1.55}.reader-body[data-spacing="compact"] p{margin-bottom:.75em}
+.reader-body[data-spacing="wide"]{line-height:1.95}.reader-body[data-spacing="wide"] p{margin-bottom:1.5em}
+.reader-settings{padding:15px 0;border-block:1px solid var(--n-line)}
+.reader-settings button,.reader-settings select,.reader-preferences button,.reader-preferences select{background:var(--reader-ui,#11100e);color:var(--reader-text,#eee7dc);border:1px solid var(--n-line);border-radius:5px;padding:11px 12px;min-height:44px}
+.reader-settings button:focus-visible,.reader-preferences button:focus-visible,.reader-preferences select:focus-visible{outline:2px solid #b98f67;outline-offset:3px}
+.reader-preferences{border:1px solid var(--n-line);background:var(--reader-ui);padding:20px;margin:0 0 30px;border-radius:8px}
+.reader-preferences[hidden]{display:none!important}
+.reader-pref-row{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.reader-pref-row>div{display:flex;flex-wrap:wrap;gap:7px}
+.reader-preferences button[aria-pressed="true"],#reader-immersive[aria-pressed="true"]{outline:2px solid #ae8968;outline-offset:1px}
+body.reader-immersive .novel-top{display:none}
+body.reader-immersive .reader{padding-top:18px}
+body.reader-immersive .reader>.novel-home,body.reader-immersive .reader>.novel-kicker,body.reader-immersive .reader>h1{display:none}
+@media(max-width:700px){.reader{width:calc(100% - 40px);padding-top:30px}.reader-settings{gap:8px}.reader-settings select{flex-basis:calc(100% - 100px)}.reader-pref-row{align-items:flex-start;flex-direction:column}}
