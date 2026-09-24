@@ -412,7 +412,7 @@ async function openSimpleKokoro(panel,dossier){
    '<p>Um roteiro completo por arquivo. Edite aqui a versão que será narrada. O texto público e a Polly não são alterados.</p>'+
    (saved&&saved.source_snapshot!==original?'<p role="alert" style="color:#f0b477">O texto original mudou desde o último salvamento. Confira as alterações antes de aprovar.</p>':"")+
    '<label for="kokoro-full-text">Roteiro completo para narração</label><textarea id="kokoro-full-text" spellcheck="true" placeholder="Cole aqui o roteiro integral adaptado...">'+esc(saved?.script_text||"")+'</textarea>'+
-   '<div class="kokoro-toolbar"><button type="button" data-save-full-kokoro>Salvar rascunho</button><button type="button" data-queue-full-kokoro>Solicitar geração Kokoro</button><button type="button" data-preview-full-kokoro disabled><i class="fa-solid fa-headphones"></i> Ouvir prévia</button><span data-full-kokoro-status aria-live="polite">'+(saved?"Rascunho recuperado":"Nenhum roteiro salvo")+'</span></div>'+
+   '<div class="kokoro-toolbar"><button type="button" data-save-full-kokoro>Salvar rascunho</button><button type="button" data-queue-full-kokoro>Solicitar geração Kokoro</button><button type="button" data-preview-full-kokoro disabled><i class="fa-solid fa-headphones"></i> Ouvir prévia</button><button type="button" data-refresh-full-kokoro>Atualizar status</button><button type="button" data-approve-full-kokoro disabled>Aprovar prévia</button><button type="button" data-reopen-full-kokoro disabled>Voltar à revisão</button><span data-full-kokoro-status aria-live="polite">'+(saved?"Rascunho recuperado":"Nenhum roteiro salvo")+'</span></div>'+
    '<details><summary>Consultar texto original (somente leitura)</summary><textarea class="kokoro-source" readonly spellcheck="false" aria-label="Texto original para consulta">'+esc(original)+'</textarea></details></section>';
   const ta=host.querySelector("#kokoro-full-text"),status=host.querySelector("[data-full-kokoro-status]"),btn=host.querySelector("[data-save-full-kokoro]");
   // Native Ctrl+A selects only the focused textarea; keep the reference text focusable.
@@ -426,6 +426,23 @@ async function openSimpleKokoro(panel,dossier){
   });
   const queueBtn=host.querySelector("[data-queue-full-kokoro]");
   const previewBtn=host.querySelector("[data-preview-full-kokoro]");
+  const refreshBtn=host.querySelector("[data-refresh-full-kokoro]");
+  const approveBtn=host.querySelector("[data-approve-full-kokoro]");
+  const reopenBtn=host.querySelector("[data-reopen-full-kokoro]");
+  const statusNames={pending:"Na fila",running:"Gerando áudio",review:"Pronto para revisão",approved:"Prévia aprovada",failed:"Falha na geração",cancelled:"Cancelado"};
+  refreshBtn.onclick=async()=>{refreshBtn.disabled=true;try{await refreshQueueState();}finally{refreshBtn.disabled=false;}};
+  async function reviewAudio(approve){
+    if(!previewJobId)return;
+    const control=approve?approveBtn:reopenBtn;control.disabled=true;
+    try{
+      const r=await c.rpc("arquivo_voz_admin_review",{p_job_id:previewJobId,p_approve:approve});
+      if(r.error)throw r.error;
+      await refreshQueueState();
+      status.textContent=approve?"Prévia aprovada internamente. O áudio público não foi alterado.":"Áudio devolvido à revisão privada.";
+    }catch(e){status.textContent="Não foi possível atualizar a revisão: "+(e.message||e);await refreshQueueState();}
+  }
+  approveBtn.onclick=()=>reviewAudio(true);
+  reopenBtn.onclick=()=>reviewAudio(false);
   let previewJobId=null;
   const previewArea=document.createElement("div");previewArea.style.cssText="display:none;max-width:100%;margin:12px 0";
   const previewAudio=document.createElement("audio");previewAudio.controls=true;previewAudio.preload="none";previewAudio.style.width="100%";
@@ -444,20 +461,22 @@ async function openSimpleKokoro(panel,dossier){
   };
   let lastSaved=saved?.script_text||"";
   async function refreshQueueState(){
-    if(ta.value!==lastSaved){previewBtn.disabled=true;previewArea.style.display="none";previewAudio.pause();previewAudio.removeAttribute("src");queueBtn.disabled=true;queueBtn.textContent="Salve as alterações";return;}
-    if(!lastSaved.trim()){previewBtn.disabled=true;queueBtn.disabled=true;queueBtn.textContent="Salve o roteiro";return;}
+    if(ta.value!==lastSaved){approveBtn.disabled=true;reopenBtn.disabled=true;previewBtn.disabled=true;previewArea.style.display="none";previewAudio.pause();previewAudio.removeAttribute("src");queueBtn.disabled=true;queueBtn.textContent="Salve as alterações";return;}
+    if(!lastSaved.trim()){approveBtn.disabled=true;reopenBtn.disabled=true;previewBtn.disabled=true;queueBtn.disabled=true;queueBtn.textContent="Salve o roteiro";return;}
     queueBtn.disabled=true;
     const r=await c.rpc("arquivo_voz_full_script_queue_state",{p_project_id:project.id});
     if(r.error){status.textContent="Não foi possível consultar a fila: "+r.error.message;return;}
     previewJobId=r.data?.state==="existing"?r.data.job_id:null;
+    approveBtn.disabled=!(previewJobId&&r.data.status==="review");
+    reopenBtn.disabled=!(previewJobId&&r.data.status==="approved");
     previewBtn.disabled=!(previewJobId&&["review","approved"].includes(r.data.status));
     previewBtn.textContent=previewBtn.disabled?"Prévia indisponível":"Ouvir prévia";
     if(r.data?.state==="existing"){
       queueBtn.textContent="Geração já solicitada";
-      status.textContent="Este roteiro já possui uma solicitação ("+r.data.status+"). Altere e salve o texto para solicitar outra.";
+      status.textContent="Estado: "+(statusNames[r.data.status]||r.data.status)+". "+(r.data.status==="review"?"Escute antes de aprovar.":r.data.status==="approved"?"Aprovação interna, ainda não publicado.":"Aguarde ou consulte o status.");
     }else{queueBtn.textContent="Solicitar geração Kokoro";queueBtn.disabled=false;}
   }
-  ta.addEventListener("input",()=>{queueBtn.disabled=true;previewBtn.disabled=true;previewAudio.pause();previewArea.style.display="none";queueBtn.textContent="Salve as alterações";});
+  ta.addEventListener("input",()=>{queueBtn.disabled=true;approveBtn.disabled=true;reopenBtn.disabled=true;previewBtn.disabled=true;previewAudio.pause();previewArea.style.display="none";queueBtn.textContent="Salve as alterações";});
   refreshQueueState();
   queueBtn.onclick=async()=>{
     const current=ta.value;
