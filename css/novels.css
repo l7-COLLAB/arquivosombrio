@@ -70,3 +70,17 @@ body.reader-immersive.reader-controls-open .reader-settings{display:flex;margin-
 body.reader-immersive .reader-preferences:not([hidden]){display:none}
 body.reader-immersive.reader-controls-open .reader-preferences:not([hidden]){display:block}
 @media(max-width:700px){.reader-floating{left:8px;right:8px}.reader-floating>a,.reader-floating>button{width:38px;height:38px}}
+
+/* Personal continue-reading shelf; separate from the public catalogue. */
+.novel-continue[hidden]{display:none!important}
+.novel-continue{margin:35px 0 50px}
+.novel-continue .novel-section-head{margin-top:0}
+.novel-continue-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:16px;margin-top:24px}
+.novel-continue-card{display:grid;grid-template-columns:100px minmax(0,1fr);gap:18px;padding:16px;border:1px solid rgba(216,201,173,.24);background:linear-gradient(125deg,#231c17,#14110f)}
+.novel-continue-card .novel-cover{width:100px;aspect-ratio:2/3;box-shadow:0 8px 20px #0006}
+.novel-continue-card h3{font:normal 1.35rem/1.25 Georgia,serif;margin:2px 0 10px}
+.novel-continue-card p,.novel-continue-card small{color:#bda78a}
+.novel-continue-card .novel-button{margin:16px 0 0;background:#785a42;font-size:.85rem}
+.novel-progress-track{height:4px;border-radius:8px;overflow:hidden;background:#53463b;margin:15px 0 8px}
+.novel-progress-track span{display:block;height:100%;background:#d8c9ad;border-radius:8px}
+@media(max-width:500px){.novel-continue-card{grid-template-columns:80px minmax(0,1fr);gap:12px;padding:12px}.novel-continue-card .novel-cover{width:80px}.novel-continue-card h3{font-size:1.15rem}}
