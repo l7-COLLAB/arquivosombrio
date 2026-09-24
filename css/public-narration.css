@@ -174,3 +174,20 @@ body.case-reading .case-reader-toolbar .public-narration-progress{
 .narration-turnstile-overlay{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.88)}
 .narration-turnstile-box{display:grid;gap:14px;justify-items:center;padding:18px;border:1px solid rgba(181,157,122,.2);background:#120f0c;color:#e7ddcf}
 .narration-turnstile-box strong{font-size:.72rem;letter-spacing:.08em}
+
+/* Compact controls shared by light and dark reading themes */
+.public-narration-player{margin:.5rem 0 .7rem}
+.public-narration-main{padding:8px 11px;grid-template-columns:30px minmax(0,1fr) 30px;gap:9px}
+.public-narration-icon{width:30px;height:30px}
+.public-narration-action{width:28px;height:28px}
+.public-narration-copy em{display:none}
+.public-narration-progress{padding:0 11px 10px}
+.public-narration-timeline{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:9px;margin:7px 0 6px;font:500 .66rem/1.2 var(--font-mono);color:inherit}
+.public-narration-timeline input{width:100%;min-width:0;accent-color:#96312a;cursor:pointer;touch-action:pan-y}
+.public-narration-controls{display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap}
+.public-narration-controls button{min-height:32px;padding:4px 12px;border:1px solid currentColor;border-radius:4px;background:transparent;color:inherit;font:600 .7rem var(--font-mono);cursor:pointer}
+.public-narration-controls button:disabled{opacity:.4;cursor:not-allowed}
+.public-narration-controls label{font:500 .65rem var(--font-mono);color:inherit}
+.public-narration-controls select{margin-left:4px;padding:4px;border:1px solid currentColor;border-radius:4px;background:var(--reader-card,#171311);color:var(--reader-fg,#e7ded0);font:inherit}
+body.case-reading .case-reader-toolbar .public-narration-player{margin:2px auto 0}
+@media(max-width:600px){.public-narration-main{grid-template-columns:30px minmax(0,1fr) 28px;padding:8px 10px}.public-narration-progress{padding:0 10px 9px}.public-narration-controls{gap:9px}}
