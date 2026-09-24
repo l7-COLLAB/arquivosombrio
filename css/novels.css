@@ -57,3 +57,16 @@ body.reader-immersive .novel-top{display:none}
 body.reader-immersive .reader{padding-top:18px}
 body.reader-immersive .reader>.novel-home,body.reader-immersive .reader>.novel-kicker,body.reader-immersive .reader>h1{display:none}
 @media(max-width:700px){.reader{width:calc(100% - 40px);padding-top:30px}.reader-settings{gap:8px}.reader-settings select{flex-basis:calc(100% - 100px)}.reader-pref-row{align-items:flex-start;flex-direction:column}}
+
+/* Reader: discreet persistent navigation and collapsible immersive controls */
+.reader-floating{position:fixed;z-index:30;top:max(12px,env(safe-area-inset-top));left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+.reader-floating>a,.reader-floating>button{pointer-events:auto;display:grid;place-items:center;width:42px;height:42px;border:1px solid var(--n-line);border-radius:50%;background:var(--reader-ui,#24272b);color:var(--reader-text,#dedbd4);font:600 19px/1 Arial,sans-serif;text-decoration:none;box-shadow:0 3px 14px rgba(0,0,0,.15)}
+.reader-floating>a{font-size:24px}
+.reader-floating>button{display:none;font-size:14px}
+.reader-floating>a:focus-visible,.reader-floating>button:focus-visible{outline:2px solid #b98f67;outline-offset:3px}
+body.reader-immersive .reader-floating>button{display:grid}
+body.reader-immersive .reader-settings{display:none}
+body.reader-immersive.reader-controls-open .reader-settings{display:flex;margin-top:62px}
+body.reader-immersive .reader-preferences:not([hidden]){display:none}
+body.reader-immersive.reader-controls-open .reader-preferences:not([hidden]){display:block}
+@media(max-width:700px){.reader-floating{left:8px;right:8px}.reader-floating>a,.reader-floating>button{width:38px;height:38px}}
