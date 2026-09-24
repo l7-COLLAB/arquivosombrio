@@ -43,7 +43,7 @@ async def process(job):
     parts = chunks(job["narration_text"])
     if not parts: raise ValueError("Empty narration")
     audio = io.BytesIO()
-    async with httpx.AsyncClient(timeout=240) as client:
+    async with httpx.AsyncClient(timeout=240, headers={"Authorization": "Bearer " + os.environ["KOKORO_API_KEY"]}) as client:
         for i, part in enumerate(parts):
             response = await client.post(KOKORO+"/v1/audio/speech",json={
                 "model":"tts-1","input":part,"voice":job["voice"],
