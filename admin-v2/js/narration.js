@@ -387,12 +387,11 @@ function playAudio(url){
 
 
 function fullNarrationSource(d){
-  const type=String(d.__contentType||"dossie");
-  const title=String(d.titulo||"").trim();
-  const intro=String(d.resumo||d.introducao||"").trim();
-  const body=String(d.historia||d.conteudo||"").trim();
-  if(body)return [title,intro,body].filter(Boolean).join("\\n\\n").replace(/\\\\n/g,"\\n");
-  return sourceBlocks(d).filter(b=>!["titulo","resumo"].includes(b.key)||!body).map(b=>b.text).join("\\n\\n").replace(/\\\\n/g,"\\n");
+ const title=String(d.titulo||'').trim();
+ const intro=String(d.resumo||d.introducao||'').trim();
+ const body=String(d.historia||d.conteudo||'').trim();
+ if(body)return [title,intro,body].filter(Boolean).join('\n\n');
+ return sourceBlocks(d).map(b=>b.text).filter(Boolean).join('\n\n');
 }
 async function openSimpleKokoro(panel,dossier){
  const host=panel.querySelector("[data-narration-workspace]");
