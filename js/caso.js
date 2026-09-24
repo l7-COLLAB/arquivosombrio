@@ -1092,7 +1092,7 @@ function renderizarTeorias(teorias) {
                         <i class="fa-solid fa-circle-question"></i>
 
                         <p>
-                            ${escaparHTML(teoria)}
+                            ${escaparHTML(textoBlocoDossie(teoria))}
                         </p>
 
                     </div>
@@ -1306,7 +1306,24 @@ const TIPOS_BLOCO_DOSSIE = new Set([
 
 
 function textoBlocoDossie(valor) {
-    return String(valor ?? "").trim();
+    if (valor == null) return "";
+    if (typeof valor === "string" || typeof valor === "number") {
+        return String(valor).trim();
+    }
+    if (Array.isArray(valor)) {
+        return valor.map(textoBlocoDossie).filter(Boolean).join("\n");
+    }
+    if (typeof valor === "object") {
+        // Conteúdo importado pode conter campos aninhados em vez de texto puro.
+        for (const chave of ["texto", "titulo", "nome", "descricao", "detalhes", "resumo", "conteudo", "valor"]) {
+            if (valor[chave] != null) {
+                const texto = textoBlocoDossie(valor[chave]);
+                if (texto) return texto;
+            }
+        }
+        return "";
+    }
+    return "";
 }
 
 
