@@ -1,0 +1,43 @@
+name: Arquivo Voz - Kokoro to R2 (staging)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: arquivo-voz-staging
+  cancel-in-progress: false
+jobs:
+  narrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: arquivo-voz-staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: arquivo-voz-cloud/requirements.txt
+      - name: Install worker dependencies
+        run: pip install -r arquivo-voz-cloud/requirements.txt
+      - name: Start Kokoro
+        run: docker compose -f arquivo-voz-local/docker-compose.yml up -d kokoro
+      - name: Wait for Kokoro readiness
+        run: |
+          for i in $(seq 1 90); do
+            if curl --fail --silent http://127.0.0.1:8880/v1/models > /dev/null; then exit 0; fi
+            sleep 5
+          done
+          docker compose -f arquivo-voz-local/docker-compose.yml logs kokoro
+          exit 1
+      - name: Process one approved staging job
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          KOKORO_URL: http://127.0.0.1:8880
+          RUN_ONCE: 'true'
+        run: python -c 'import asyncio,sys;sys.path.insert(0,"arquivo-voz-cloud");from worker import loop;asyncio.run(loop())'
