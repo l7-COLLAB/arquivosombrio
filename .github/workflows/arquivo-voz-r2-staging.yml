@@ -1,6 +1,8 @@
 name: Arquivo Voz - Kokoro to R2 (staging)
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
 permissions:
   contents: read
 concurrency:
@@ -43,7 +45,7 @@ jobs:
           done
           docker logs arquivo-voz-kokoro
           exit 1
-      - name: Process one staging job
+      - name: Process one private audio job
         env:
           SUPABASE_URL: https://iuhotznurbyujzbyhizf.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
