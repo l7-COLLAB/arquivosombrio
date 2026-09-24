@@ -20,7 +20,7 @@ running = True
 
 def chunks(text: str, limit=900):
     """Preserve punctuation and UTF-8; never strip Portuguese diacritics."""
-    sentences = re.split(r"(?<=[.!?])\\s+", text.strip())
+    sentences = re.split(r"(?<=[.!?])\s+", text.strip())
     out, current = [], ""
     for sentence in sentences:
         if len(sentence) > limit:
