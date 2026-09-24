@@ -22,7 +22,7 @@ async function catalog(){
  if(error){root.innerHTML='<p class="empty">Não foi possível carregar o acervo.</p>';return}
  const books=data||[],input=document.querySelector("#novel-search"),genre=document.querySelector("#novel-genre");
  const gs=[...new Set(books.flatMap(x=>x.generos||[]))].sort();
- genre.innerHTML='<option value="">Todos os gêneros</option>'+gs.map(g=>'<option>'+esc(g)+'</option>').join("");
+ genre.innerHTML='<option value="">Todas as categorias</option>'+gs.map(g=>'<option>'+esc(g)+'</option>').join("");
  const draw=()=>{const q=(input.value||"").toLowerCase(),g=genre.value;const rows=books.filter(x=>(!q||[x.titulo,x.autor_nome,x.sinopse,...(x.tags||[])].join(" ").toLowerCase().includes(q))&&(!g||(x.generos||[]).includes(g)));root.innerHTML=rows.map(x=>'<a class="novel-card" href="novel.html?obra='+encodeURIComponent(x.slug)+'">'+cover(x)+'<h2>'+esc(x.titulo)+'</h2><p>'+esc(x.autor_nome)+' · '+esc((x.status_obra||"").replaceAll("_"," "))+'</p><div class="novel-tags">'+(x.generos||[]).slice(0,3).map(t=>'<span>'+esc(t)+'</span>').join("")+'</div></a>').join("")||'<p class="empty">Nenhuma obra encontrada.</p>'};
  input.oninput=draw;genre.onchange=draw;draw();
  const section=document.querySelector("#novel-continue");if(!section||!books.length)return;
