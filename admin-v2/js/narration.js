@@ -452,7 +452,7 @@ async function openSimpleKokoro(panel,dossier){
     previewBtn.disabled=true;status.textContent="Preparando link temporário da prévia privada...";
     try{
       const {data,error}=await c.functions.invoke("arquivo-voz-private-preview",{body:{job_id:previewJobId}});
-      if(error)throw Error(data?.error||error.message||"Erro na prévia");
+      if(error){let detail=data?.error||"";try{const body=await error.context?.json?.();detail=body?.error||detail;}catch(_){}throw Error(detail||error.message||"Erro na prévia");}
       if(!data?.url)throw Error(data?.error||"Link de prévia indisponível");
       previewAudio.src=data.url;previewArea.style.display="block";
       await previewAudio.play();status.textContent="Prévia privada disponível por 10 minutos. A Polly pública permanece inalterada.";
