@@ -412,7 +412,7 @@ async function openSimpleKokoro(panel,dossier){
    '<p>Um roteiro completo por arquivo. Edite aqui a versão que será narrada. O texto público e a Polly não são alterados.</p>'+
    (saved&&saved.source_snapshot!==original?'<p role="alert" style="color:#f0b477">O texto original mudou desde o último salvamento. Confira as alterações antes de aprovar.</p>':"")+
    '<label for="kokoro-full-text">Roteiro completo para narração</label><textarea id="kokoro-full-text" spellcheck="true" placeholder="Cole aqui o roteiro integral adaptado...">'+esc(saved?.script_text||"")+'</textarea>'+
-   '<div class="kokoro-toolbar"><button type="button" data-save-full-kokoro>Salvar rascunho</button><span data-full-kokoro-status aria-live="polite">'+(saved?"Rascunho recuperado":"Nenhum roteiro salvo")+'</span></div>'+
+   '<div class="kokoro-toolbar"><button type="button" data-save-full-kokoro>Salvar rascunho</button><button type="button" data-queue-full-kokoro>Solicitar geração Kokoro</button><span data-full-kokoro-status aria-live="polite">'+(saved?"Rascunho recuperado":"Nenhum roteiro salvo")+'</span></div>'+
    '<details><summary>Consultar texto original (somente leitura)</summary><textarea class="kokoro-source" readonly spellcheck="false" aria-label="Texto original para consulta">'+esc(original)+'</textarea></details></section>';
   const ta=host.querySelector("#kokoro-full-text"),status=host.querySelector("[data-full-kokoro-status]"),btn=host.querySelector("[data-save-full-kokoro]");
   // Native Ctrl+A selects only the focused textarea; keep the reference text focusable.
@@ -424,12 +424,28 @@ async function openSimpleKokoro(panel,dossier){
       }
     });
   });
+  const queueBtn=host.querySelector("[data-queue-full-kokoro]");
+  let lastSaved=saved?.script_text||"";
+  queueBtn.onclick=async()=>{
+    const current=ta.value.trim();
+    if(!current){status.textContent="Cole e salve o roteiro primeiro.";return;}
+    if(current!==lastSaved){status.textContent="Existem alterações não salvas. Salve o rascunho antes de solicitar.";return;}
+    queueBtn.disabled=true;status.textContent="Enviando roteiro para a fila privada...";
+    try{
+      const r=await c.rpc("queue_arquivo_voz_full_script",{p_project_id:project.id});
+      if(r.error)throw r.error;
+      const jobId=r.data;
+      status.textContent="Solicitação registrada. ID: "+jobId+". A geração depende da execução do trabalhador Kokoro na nuvem; o áudio não está publicado.";
+      queueBtn.textContent="Solicitação registrada";
+    }catch(e){status.textContent="Não foi possível solicitar: "+(e.message||e);}
+    finally{queueBtn.disabled=false;}
+  };
   btn.onclick=async()=>{
    const value=ta.value.trim();if(!value){status.textContent="Cole um roteiro antes de salvar.";return;}
    btn.disabled=true;status.textContent="Salvando...";
    try{
     const r=await c.from("arquivo_voz_full_scripts").upsert({project_id:project.id,source_snapshot:original,script_text:value,status:"draft",updated_at:new Date().toISOString()},{onConflict:"project_id"});
-    if(r.error)throw r.error;status.textContent="Rascunho salvo. Áudio ainda não publicado.";
+    if(r.error)throw r.error;lastSaved=value;queueBtn.textContent="Solicitar geração Kokoro";status.textContent="Rascunho salvo. Você já pode solicitar a geração.";
    }catch(e){status.textContent="Erro ao salvar: "+(e.message||e);}finally{btn.disabled=false;}
   };
  }catch(e){host.innerHTML='<p role="alert">Não foi possível abrir o editor: '+esc(e.message||e)+'</p>';}
