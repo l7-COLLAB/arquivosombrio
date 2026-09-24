@@ -1,5 +1,4 @@
--- STAGING ONLY. Apply after verifying narration_projects admin ownership model.
--- Private, per-block Kokoro script; no changes to Polly or public audio.
+-- Staging editor: admin-only Kokoro scripts, isolated from Polly and public player.
 create table if not exists public.arquivo_voz_scripts (
  block_id uuid primary key references public.narration_blocks(id) on delete cascade,
  project_id uuid not null references public.narration_projects(id) on delete cascade,
@@ -10,26 +9,17 @@ create table if not exists public.arquivo_voz_scripts (
 );
 create index if not exists arquivo_voz_scripts_project_idx on public.arquivo_voz_scripts(project_id);
 alter table public.arquivo_voz_scripts enable row level security;
--- Owner check uses the same narrator identity already recorded by the V2 editor.
--- Review existing admin authorization before production deployment.
-create policy "narrator reads own Kokoro scripts" on public.arquivo_voz_scripts
- for select to authenticated using (
- exists(select 1 from public.narration_projects p
-        where p.id=project_id and p.narrator_id=auth.uid())
- );
-create policy "narrator inserts own Kokoro scripts" on public.arquivo_voz_scripts
+create policy arquivo_voz_scripts_admin_select on public.arquivo_voz_scripts
+ for select to authenticated using ((select public.is_arquivo_sombrio_admin()));
+create policy arquivo_voz_scripts_admin_insert on public.arquivo_voz_scripts
  for insert to authenticated with check (
- exists(select 1 from public.narration_projects p
-        join public.narration_blocks b on b.project_id=p.id
-        where p.id=project_id and b.id=block_id and p.narrator_id=auth.uid())
+ (select public.is_arquivo_sombrio_admin()) and
+ exists(select 1 from public.narration_blocks b where b.id=block_id and b.project_id=project_id)
  );
-create policy "narrator updates own Kokoro scripts" on public.arquivo_voz_scripts
- for update to authenticated using (
- exists(select 1 from public.narration_projects p
-        where p.id=project_id and p.narrator_id=auth.uid())
- ) with check (
- exists(select 1 from public.narration_projects p
-        join public.narration_blocks b on b.project_id=p.id
-        where p.id=project_id and b.id=block_id and p.narrator_id=auth.uid())
+create policy arquivo_voz_scripts_admin_update on public.arquivo_voz_scripts
+ for update to authenticated using ((select public.is_arquivo_sombrio_admin()))
+ with check (
+ (select public.is_arquivo_sombrio_admin()) and
+ exists(select 1 from public.narration_blocks b where b.id=block_id and b.project_id=project_id)
  );
 grant select,insert,update on public.arquivo_voz_scripts to authenticated;
