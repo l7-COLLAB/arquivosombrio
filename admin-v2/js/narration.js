@@ -407,14 +407,23 @@ async function openSimpleKokoro(panel,dossier){
   const existing=await c.from("arquivo_voz_full_scripts").select("*").eq("project_id",project.id).maybeSingle();
   if(existing.error)throw existing.error;
   const saved=existing.data;
-  host.innerHTML='<style>.kokoro-simple{max-width:100%;min-width:0;padding:clamp(12px,2.5vw,30px)}.kokoro-simple *{box-sizing:border-box}.kokoro-simple textarea{display:block;width:100%;max-width:100%;min-width:0;min-height:clamp(380px,62vh,900px);resize:vertical;line-height:1.7;font:clamp(14px,1.2vw,17px)/1.7 Georgia,serif;padding:clamp(12px,2vw,24px);background:#171310;color:#f0e4cf;border:1px solid #705a40;overflow-wrap:anywhere}.kokoro-simple .kokoro-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0}.kokoro-simple button{padding:11px 16px;background:#302119;color:#f4ddbb;border:1px solid #765238;cursor:pointer}.kokoro-simple details{margin-top:16px;max-width:100%;overflow-wrap:anywhere}.kokoro-simple summary{cursor:pointer}.kokoro-simple .kokoro-source{white-space:pre-wrap;line-height:1.6;max-height:360px;overflow:auto;margin-top:12px}</style>'+
+  host.innerHTML='<style>.kokoro-simple{max-width:100%;min-width:0;padding:clamp(12px,2.5vw,30px)}.kokoro-simple *{box-sizing:border-box}.kokoro-simple textarea{display:block;width:100%;max-width:100%;min-width:0;min-height:clamp(380px,62vh,900px);resize:vertical;line-height:1.7;font:clamp(14px,1.2vw,17px)/1.7 Georgia,serif;padding:clamp(12px,2vw,24px);background:#171310;color:#f0e4cf;border:1px solid #705a40;overflow-wrap:anywhere}.kokoro-simple .kokoro-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0}.kokoro-simple button{padding:11px 16px;background:#302119;color:#f4ddbb;border:1px solid #765238;cursor:pointer}.kokoro-simple details{margin-top:16px;max-width:100%;overflow-wrap:anywhere}.kokoro-simple summary{cursor:pointer}.kokoro-simple .kokoro-source{display:block;width:100%;min-height:280px;max-height:60vh;resize:vertical;white-space:pre-wrap;line-height:1.6;overflow:auto;margin-top:12px;user-select:text;cursor:text}.kokoro-simple textarea:focus{outline:2px solid #a88456;outline-offset:2px}</style>'+
    '<section class="kokoro-simple"><small>ARQUIVO SOMBRIO · ROTEIRO KOKORO</small><h2>'+esc(dossier.titulo||"Arquivo")+'</h2>'+
    '<p>Um roteiro completo por arquivo. Edite aqui a versão que será narrada. O texto público e a Polly não são alterados.</p>'+
    (saved&&saved.source_snapshot!==original?'<p role="alert" style="color:#f0b477">O texto original mudou desde o último salvamento. Confira as alterações antes de aprovar.</p>':"")+
    '<label for="kokoro-full-text">Roteiro completo para narração</label><textarea id="kokoro-full-text" spellcheck="true" placeholder="Cole aqui o roteiro integral adaptado...">'+esc(saved?.script_text||"")+'</textarea>'+
    '<div class="kokoro-toolbar"><button type="button" data-save-full-kokoro>Salvar rascunho</button><span data-full-kokoro-status aria-live="polite">'+(saved?"Rascunho recuperado":"Nenhum roteiro salvo")+'</span></div>'+
-   '<details><summary>Consultar texto original (somente leitura)</summary><div class="kokoro-source">'+esc(original)+'</div></details></section>';
+   '<details><summary>Consultar texto original (somente leitura)</summary><textarea class="kokoro-source" readonly spellcheck="false" aria-label="Texto original para consulta">'+esc(original)+'</textarea></details></section>';
   const ta=host.querySelector("#kokoro-full-text"),status=host.querySelector("[data-full-kokoro-status]"),btn=host.querySelector("[data-save-full-kokoro]");
+  // Native Ctrl+A selects only the focused textarea; keep the reference text focusable.
+  host.querySelectorAll(".kokoro-simple textarea").forEach(field=>{
+    field.addEventListener("keydown",event=>{
+      if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="a"){
+        event.preventDefault();
+        field.select();
+      }
+    });
+  });
   btn.onclick=async()=>{
    const value=ta.value.trim();if(!value){status.textContent="Cole um roteiro antes de salvar.";return;}
    btn.disabled=true;status.textContent="Salvando...";
