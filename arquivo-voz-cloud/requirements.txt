@@ -3,3 +3,4 @@ uvicorn>=0.30,<1
 httpx>=0.27,<1
 supabase>=2.9,<3
 boto3>=1.35,<2
+mutagen>=1.47,<2
