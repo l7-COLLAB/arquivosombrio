@@ -1,0 +1,12 @@
+
+/* Optional novel narration: absent until a reviewed Kokoro file is approved. */
+.novel-audio-panel{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 24px;padding:12px 14px;border:1px solid rgba(216,201,173,.16);border-radius:8px;background:rgba(20,18,15,.55)}
+.novel-audio-label{font-size:.62rem;letter-spacing:.12em;color:#bda78a;width:100%}
+.novel-audio-toggle{border:1px solid rgba(216,201,173,.3);border-radius:5px;background:transparent;color:inherit;padding:9px 12px;cursor:pointer;white-space:nowrap}
+.novel-audio-seek{flex:1;min-width:100px;accent-color:#a58d70}
+.novel-audio-time{font-size:.7rem;color:#bda78a;font-variant-numeric:tabular-nums}
+.novel-audio-mini{border:1px solid rgba(216,201,173,.3);background:rgba(15,13,11,.8);color:#d8c9ad;border-radius:50%;width:34px;height:34px;cursor:pointer}
+.novel-audio-mini[hidden]{display:none!important}
+.reader-immersive .novel-audio-panel{display:none!important}
+.reader-body p.novel-audio-reading{text-decoration:underline;text-decoration-color:rgba(180,147,100,.25);text-decoration-thickness:1px;text-underline-offset:.23em}
+@media(max-width:500px){.novel-audio-panel{gap:9px}.novel-audio-time{width:100%;text-align:right}}
