@@ -47,7 +47,7 @@ async def process(job):
                 "response_format":"mp3","speed":float(job["speed"])
             })
             response.raise_for_status()
-            if not response.content.startswith(b"ID3") and response.content[:2] not in (b"\xff\\xfb",b"\xff\\xf3",b"\xff\\xf2"):
+            if not response.content.startswith(b"ID3") and response.content[:2] not in (bytes([255,251]), bytes([255,243]), bytes([255,242])):
                 raise ValueError("Kokoro returned non-MP3 response")
             audio.write(response.content)
             log.info("job %s segment %s/%s",job["id"],i+1,len(parts))
