@@ -16,18 +16,27 @@ if(!fonts.includes(prefs.font))prefs.font=defaults.font;
 if(!spacings.includes(prefs.spacing))prefs.spacing=defaults.spacing;
 prefs.size=Math.max(.95,Math.min(1.65,Number(prefs.size)||defaults.size));
 const settings=document.querySelector(".reader-settings");
+root.insertAdjacentHTML("afterbegin",'<div class="reader-floating"><a class="reader-exit" href="novels.html" aria-label="Sair da leitura e voltar à biblioteca" title="Voltar à biblioteca">←</a><button type="button" class="reader-menu-toggle" id="reader-menu-toggle" aria-label="Mostrar controles de leitura" aria-expanded="false" title="Controles de leitura">Aa</button></div>');
+const menuToggle=document.querySelector("#reader-menu-toggle");
+menuToggle.onclick=()=>{const opened=document.body.classList.toggle("reader-controls-open");menuToggle.setAttribute("aria-expanded",String(opened));menuToggle.setAttribute("aria-label",opened?"Ocultar controles de leitura":"Mostrar controles de leitura")};
+
 settings.insertAdjacentHTML("beforeend",'<button type="button" id="reader-options" aria-expanded="false" aria-controls="reader-preferences">Aa · Aparência</button><button type="button" id="reader-immersive" aria-pressed="false">Modo imersivo</button>');
 settings.insertAdjacentHTML("afterend",'<section id="reader-preferences" class="reader-preferences" hidden aria-label="Preferências de leitura"><div class="reader-pref-row"><span>Tema</span><div role="group" aria-label="Tema"><button data-reader-theme="archive">Arquivo</button><button data-reader-theme="paper">Papel antigo</button><button data-reader-theme="night">Noturno</button></div></div><div class="reader-pref-row"><label for="reader-font">Fonte</label><select id="reader-font"><option>Georgia</option><option>Verdana</option><option>Arial</option></select></div><div class="reader-pref-row"><label for="reader-spacing">Espaçamento</label><select id="reader-spacing"><option value="compact">Compacto</option><option value="comfortable">Confortável</option><option value="wide">Amplo</option></select></div><button type="button" id="reader-reset">Restaurar padrão</button></section>');
 const panel=document.querySelector("#reader-preferences"),bodyEl=document.querySelector("#reader-body"),immersiveButton=document.querySelector("#reader-immersive");
 const persist=()=>{try{localStorage.setItem(prefsKey,JSON.stringify(prefs))}catch{}};
 const apply=()=>{document.body.dataset.readerTheme=prefs.theme;document.body.classList.toggle("reader-immersive",!!prefs.immersive);bodyEl.style.fontSize=prefs.size+"rem";bodyEl.style.fontFamily=prefs.font+", Georgia, serif";bodyEl.dataset.spacing=prefs.spacing;document.querySelector("#reader-font").value=prefs.font;document.querySelector("#reader-spacing").value=prefs.spacing;document.querySelectorAll("[data-reader-theme]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.readerTheme===prefs.theme)));immersiveButton.setAttribute("aria-pressed",String(!!prefs.immersive));immersiveButton.textContent=prefs.immersive?"Sair do modo imersivo":"Modo imersivo";persist()};
-document.querySelector("#reader-options").onclick=()=>{panel.hidden=!panel.hidden;document.querySelector("#reader-options").setAttribute("aria-expanded",String(!panel.hidden))};
+const optionsButton=document.querySelector("#reader-options");
+const closeOptions=()=>{panel.hidden=true;optionsButton.setAttribute("aria-expanded","false")};
+optionsButton.onclick=()=>{panel.hidden=!panel.hidden;optionsButton.setAttribute("aria-expanded",String(!panel.hidden))};
+document.addEventListener("pointerdown",e=>{if(!panel.hidden&&!panel.contains(e.target)&&e.target!==optionsButton)closeOptions()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeOptions();document.body.classList.remove("reader-controls-open");menuToggle.setAttribute("aria-expanded","false")}});
+
 document.querySelectorAll("[data-reader-theme]").forEach(b=>b.onclick=()=>{prefs.theme=b.dataset.readerTheme;apply()});
 document.querySelector("#reader-font").onchange=e=>{prefs.font=e.target.value;apply()};
 document.querySelector("#reader-spacing").onchange=e=>{prefs.spacing=e.target.value;apply()};
 document.querySelector("#font-up").onclick=()=>{prefs.size=Math.min(1.65,Math.round((prefs.size+.08)*100)/100);apply()};
 document.querySelector("#font-down").onclick=()=>{prefs.size=Math.max(.95,Math.round((prefs.size-.08)*100)/100);apply()};
-immersiveButton.onclick=()=>{prefs.immersive=!prefs.immersive;apply()};
+immersiveButton.onclick=()=>{prefs.immersive=!prefs.immersive;closeOptions();document.body.classList.remove("reader-controls-open");menuToggle.setAttribute("aria-expanded","false");apply()};
 document.querySelector("#reader-reset").onclick=()=>{prefs={...defaults};apply()};
 apply();
 const {data:{user}}=await sb.auth.getUser();if(user){const save=()=>{const max=Math.max(1,document.documentElement.scrollHeight-innerHeight),pct=Math.min(100,Math.max(0,scrollY/max*100));sb.from("novel_progresso").upsert({user_id:user.id,novel_id:n.id,capitulo_id:c.id,percentual:pct,scroll_y:Math.round(scrollY)},{onConflict:"user_id,novel_id"}).then(()=>{})};let timer;addEventListener("scroll",()=>{clearTimeout(timer);timer=setTimeout(save,900)},{passive:true});const {data:p}=await sb.from("novel_progresso").select("scroll_y,capitulo_id").eq("user_id",user.id).eq("novel_id",n.id).maybeSingle();if(p?.capitulo_id===c.id&&p?.scroll_y)setTimeout(()=>scrollTo(0,p.scroll_y),150)}}
