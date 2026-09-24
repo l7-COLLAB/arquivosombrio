@@ -72,12 +72,17 @@ async def process_novel(job):
     source = chapter["conteudo"] or ""
     if hashlib.md5(source.encode("utf-8")).hexdigest() != job["texto_hash"]:
         raise ValueError("Chapter text changed; queue a fresh narration")
-    segments = chunks(source)
+    # Preserve chapter paragraph boundaries for genuine, audio-derived alignment.
+    from mutagen.mp3 import MP3
+    paragraphs = [p.strip() for p in re.split(r"\\n\\s*\\n", source) if p.strip()]
+    segments = [(index, part) for index, paragraph in enumerate(paragraphs) for part in chunks(paragraph)]
     if not segments:
         raise ValueError("Empty chapter")
     audio = io.BytesIO()
+    alignment = []
+    elapsed = 0.0
     async with httpx.AsyncClient(timeout=240, headers={"Authorization": "Bearer " + os.environ["KOKORO_API_KEY"]}) as client:
-        for index, part in enumerate(segments):
+        for index, (paragraph_index, part) in enumerate(segments):
             response = await client.post(KOKORO + "/v1/audio/speech", json={
                 "model": "tts-1", "input": part, "voice": job["voz"],
                 "response_format": "mp3", "speed": float(job["velocidade"])
@@ -85,16 +90,26 @@ async def process_novel(job):
             response.raise_for_status()
             if not response.content.startswith(b"ID3") and response.content[:2] not in (bytes([255,251]), bytes([255,243]), bytes([255,242])):
                 raise ValueError("Kokoro returned non-MP3 response")
+            duration = float(MP3(io.BytesIO(response.content)).info.length)
+            if duration <= 0:
+                raise ValueError("MP3 duration invalid")
+            if alignment and alignment[-1]["paragraph"] == paragraph_index:
+                alignment[-1]["end"] = round(elapsed + duration, 3)
+            else:
+                alignment.append({"paragraph": paragraph_index, "start": round(elapsed, 3),
+                                  "end": round(elapsed + duration, 3)})
             audio.write(response.content)
+            elapsed += duration
             log.info("novel audio %s segment %s/%s", job["id"], index+1, len(segments))
     if audio.tell() < 1024:
         raise ValueError("Audio too small")
     path = f'novel/{job["capitulo_id"]}/{job["texto_hash"]}/{job["id"]}.mp3'
     r2.put_object(Bucket=R2_BUCKET, Key=path, Body=audio.getvalue(),
                   ContentType="audio/mpeg", CacheControl="private, max-age=0")
-    # Accurate word timings require forced alignment. Never invent timings.
+    # Alignment is based on measured segment durations, not estimated word timing.
     db.table("novel_capitulo_audios").update({
-        "status": "review", "caminho_audio": path, "erro": None
+        "status": "review", "caminho_audio": path, "erro": None,
+        "alinhamento": alignment, "duracao_segundos": round(elapsed, 3)
     }).eq("id", job["id"]).execute()
 
 async def loop():
