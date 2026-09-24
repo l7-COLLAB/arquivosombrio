@@ -20,6 +20,8 @@ jobs:
           cache-dependency-path: arquivo-voz-cloud/requirements.txt
       - name: Install worker dependencies
         run: pip install -r arquivo-voz-cloud/requirements.txt
+      - name: Test narration preparation
+        run: python -m unittest discover -s arquivo-voz-cloud -p 'test_*.py'
       - name: Validate required credentials
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
