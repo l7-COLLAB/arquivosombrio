@@ -58,7 +58,7 @@ async def process(job):
     path = f'{job["content_type"]}/{job["content_id"]}/{job["source_hash"]}/{job["id"]}.mp3'
     r2.put_object(Bucket=R2_BUCKET, Key=path, Body=audio.getvalue(), ContentType="audio/mpeg", CacheControl="private, max-age=0")
     db.table("arquivo_voz_cloud_jobs").update({
-        "status":"review","audio_path":path,"error":None
+        "status":"approved" if job["content_type"]=="dossie" and int(job["content_id"])>0 else "review","audio_path":path,"error":None
     }).eq("id",job["id"]).execute()
 
 
