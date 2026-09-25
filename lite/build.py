@@ -30,10 +30,10 @@ def layout(title,body,depth=0):
     return ('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">'
       '<meta name="viewport" content="width=device-width,initial-scale=1">'
       '<meta name="robots" content="noindex,nofollow"><title>'+esc(title)+' · Arquivo Sombrio Lite</title>'
-      '<link rel="stylesheet" href="'+root+'lite.css?v=4"></head><body><div class="wrap">'
+      '<link rel="stylesheet" href="'+root+'lite.css?v=5"></head><body id="topo"><div class="wrap">'
       '<header><p class="eyebrow">EDIÇÃO DE LEITURA</p><h1>ARQUIVO SOMBRIO</h1>'
       '<p>Versão Lite</p></header><nav aria-label="Categorias">'+nav+'</nav><main>'+body+
-      '</main><footer><p><a href="'+root+'index.html">Início</a> · Arquivo Sombrio Lite</p></footer></div></body></html>')
+      '</main><a class="back-to-top" href="#topo" aria-label="Voltar ao topo" title="Voltar ao topo">↑<span> Topo</span></a><footer><p><a href="'+root+'index.html">Início</a> · Arquivo Sombrio Lite</p></footer></div></body></html>')
 def text_blocks(value):
     # Explicit plain-text blocks: never inject arbitrary HTML from editorial fields.
     if isinstance(value,str): value=[value]
