@@ -106,9 +106,10 @@ async def process_novel(job):
     path = f'novel/{job["capitulo_id"]}/{job["texto_hash"]}/{job["id"]}.mp3'
     r2.put_object(Bucket=R2_BUCKET, Key=path, Body=audio.getvalue(),
                   ContentType="audio/mpeg", CacheControl="private, max-age=0")
+    # User authorized publishing after technical checks; failures remain private.
     # Alignment is based on measured segment durations, not estimated word timing.
     db.table("novel_capitulo_audios").update({
-        "status": "review", "caminho_audio": path, "erro": None,
+        "status": "approved", "caminho_audio": path, "erro": None,
         "alinhamento": alignment, "duracao_segundos": round(elapsed, 3)
     }).eq("id", job["id"]).execute()
 
