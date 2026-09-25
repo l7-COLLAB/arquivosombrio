@@ -58,7 +58,7 @@ async def process(job):
     path = f'{job["content_type"]}/{job["content_id"]}/{job["source_hash"]}/{job["id"]}.mp3'
     r2.put_object(Bucket=R2_BUCKET, Key=path, Body=audio.getvalue(), ContentType="audio/mpeg", CacheControl="private, max-age=0")
     db.table("arquivo_voz_cloud_jobs").update({
-        "status":"approved" if job["content_type"]=="dossie" and int(job["content_id"])>0 else "review","audio_path":path,"error":None
+        "status":"approved" if job["content_type"] in ("dossie","garimpo","pericia","lenda","creepypasta") and int(job["content_id"])>0 else "review","audio_path":path,"error":None
     }).eq("id",job["id"]).execute()
 
 
@@ -117,6 +117,8 @@ async def loop():
     once = os.getenv("RUN_ONCE", "false").lower() == "true"
     while running:
         try:
+            db.rpc("enqueue_published_dossier_audio").execute()
+            db.rpc("enqueue_remaining_archive_kokoro").execute()
             result = db.rpc("claim_arquivo_voz_cloud_job").execute()
             jobs = result.data or []
             if jobs:
