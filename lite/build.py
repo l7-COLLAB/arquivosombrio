@@ -139,6 +139,18 @@ def build(src,out):
             pages[name]=layout(label,body)
         home.append("<section id=\""+category+"\"><h2>"+esc(label)+"</h2><p>"+str(len(entries))+" títulos</p><p><a href=\""+category+".html\">Explorar</a></p></section>")
     pages["index.html"]=layout("Acervo","<h2>Acervo</h2>"+"".join(home))
+    search_entries=[]
+    for item in items:
+        if not item.get("obra_id"): search_entries.append((item["titulo"],"arquivos/"+item["slug"]+".html",item["categoria"],item["publicado_em"],item.get("resumo","")))
+    for book_id,chapters in books.items():
+        first=chapters[0]
+        search_entries.append((first.get("obra_titulo") or first["titulo"],"livros/"+slug("livro-"+book_id)+".html","biblioteca",first["publicado_em"],""))
+    search_entries.sort(key=lambda x:x[0].casefold())
+    controls='<h2>Pesquisar no acervo</h2><form id="lite-search" action="pesquisa.html"><label for="lite-query">Título ou resumo</label> <input id="lite-query" type="search" placeholder="Pesquisar"> <button type="submit">Buscar</button></form>'
+    controls+='<p><label for="lite-category">Categoria</label> <select id="lite-category"><option value="all">Todas</option>'+"".join('<option value="'+key+'">'+esc(label)+"</option>" for key,label in CATEGORIES.items())+'</select> <label for="lite-sort">Ordenar</label> <select id="lite-sort"><option value="title">A-Z</option><option value="date">Mais recentes</option></select></p>'
+    results='<ul id="search-results">'+"".join('<li data-search="'+esc((title+" "+summary).lower())+'" data-category="'+esc(category)+'" data-title="'+esc(title.lower())+'" data-date="'+esc(date)+'"><a href="'+esc(path)+'">'+esc(title)+"</a> · "+esc(CATEGORIES[category])+"</li>" for title,path,category,date,summary in search_entries)+"</ul>"
+    pages["pesquisa.html"]=layout("Pesquisa",controls+results)
+    pages["lite.js"]=Path(__file__).with_name("lite.js").read_text(encoding="utf-8")
     css=Path(__file__).with_name("lite.css").read_text(encoding="utf-8")
     pages["lite.css"]=css
     out.mkdir(parents=True,exist_ok=True)
