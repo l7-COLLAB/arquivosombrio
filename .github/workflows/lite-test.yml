@@ -1,0 +1,38 @@
+name: Arquivo Sombrio Lite - testar previa
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter codigo isolado do Lite
+        uses: actions/checkout@v4
+        with:
+          ref: feature/arquivo-lite-ios9
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verificar secret configurado
+        env:
+          LITE_KEY: ${{ secrets.LITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          if [ -z "$LITE_KEY" ]; then
+            echo "::error::Cadastre LITE_SUPABASE_PUBLISHABLE_KEY nas configuracoes do repositorio"
+            exit 1
+          fi
+      - name: Testar gerador
+        run: python3 lite/test_build.py
+      - name: Exportar dados publicos
+        env:
+          SUPABASE_URL: https://iuhotznurbyujzbyhizf.supabase.co
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.LITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: python3 lite/export_public.py
+      - name: Gerar previa
+        run: python3 lite/build.py lite/publications.json lite/dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arquivo-sombrio-lite-preview
+          path: lite/dist/
+          retention-days: 3
