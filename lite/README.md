@@ -42,3 +42,10 @@ Categorias aceitas: dossies, garimpo, pericia, biblioteca, lendas. O gerador omi
 7. Configurar hospedagem/subdomínio somente após aprovação.
 
 Não mesclar a ramificação até a validação.
+
+## Exportação pública integrada (não ativada)
+`export_public.py` lê apenas as tabelas editoriais públicas via chave **publicável** e filtra novamente status/data antes de criar `publications.json`. Capítulos publicados são exportados individualmente. Campos HTML são convertidos em texto puro para não executar scripts no Lite. Dados de usuários e rascunhos não entram no exportador.
+
+Workflow manual: `.github/workflows/lite-preview.yml`. Antes de executá-lo, configurar no GitHub Actions o secret `LITE_SUPABASE_PUBLISHABLE_KEY` com a chave publicável, NUNCA service role. O workflow apenas gera um artefato temporário de prévia, não publica no domínio. Não versionar o JSON exportado, pois sua atualização deve acompanhar correções e remoções do acervo.
+
+A exportação ainda exige execução do workflow e revisão visual com os conteúdos reais. O fluxo de publicação automática e a compatibilidade física do iOS 9 não foram validados.
