@@ -49,21 +49,35 @@ def text_blocks(value):
                 p="\n".join(lines[1:]).strip()
             if p: parts.append("<p>"+esc(p).replace("\n","<br>")+"</p>")
     return "".join(parts)
-def item_page(item, previous=None, following=None):
+def item_page(item, previous=None, following=None, related=None):
     body='<p><a href="../index.html">← Acervo</a></p><h2>'+esc(item["titulo"])+'</h2>'
     if item.get("resumo"): body+='<p>'+esc(item["resumo"])+'</p>'
-    body+='<article>'+text_blocks(item["conteudo"])+'</article>'
+    rendered=text_blocks(item["conteudo"])
+    headings=re.findall(r'<h3 class="internal-heading">(.*?)</h3>',rendered)
+    toc=[]
+    for i,heading in enumerate(headings):
+        identifier="sec-"+str(i+1)
+        rendered=rendered.replace('<h3 class="internal-heading">'+heading+"</h3>",'<h3 id="'+identifier+'" class="internal-heading">'+heading+"</h3>",1)
+        toc.append((identifier,html.unescape(heading)))
+    for k,label in (("cronologia","Cronologia"),("evidencias","Evidências"),("fontes","Fontes")):
+        if item.get(k): toc.append((k,label))
+    if toc: body+='<details class="toc" open><summary>Sumário</summary><ul>'+"".join('<li><a href="#'+esc(k)+'">'+esc(label)+"</a></li>" for k,label in toc)+"</ul></details>"
+    body+='<p class="metadata">'+esc(CATEGORIES[item["categoria"]])+' · '+esc(item["publicado_em"][:10])+' · Aproximadamente '+str(max(1,len(str(item["conteudo"]).split())//200))+' min de leitura</p>'
+    body+='<p><button id="save-reading" type="button">Marcar leitura</button></p>'
+    body+="<article>"+rendered+"</article>"
     for key,label in (("cronologia","Cronologia"),("evidencias","Evidências"),("fontes","Fontes")):
         entries=item.get(key,[])
         if entries:
             if not isinstance(entries,list): raise ValueError(key+" deve ser lista")
-            body+='<section><h3>'+label+'</h3><ul>'+''.join('<li>'+esc(x)+'</li>' for x in entries)+'</ul></section>'
+            body+='<section id="'+key+'"><h3>'+label+'</h3><ul>'+''.join('<li>'+esc(x)+'</li>' for x in entries)+'</ul></section>'
     if item.get("obra_id"):
         body += '<p class="chapter-nav">'
         if previous: body += '<a href="'+esc(previous["slug"])+'.html">← Anterior</a> '
         if following: body += '<a href="'+esc(following["slug"])+'.html">Próximo →</a>'
         body += '</p>'
     body += '<p><a href="../'+esc(item["categoria"])+'.html">← Voltar à categoria</a></p>'
+    if related:
+        body+='<section><h3>Arquivos relacionados</h3><ul>'+"".join('<li><a href="'+esc(x["slug"])+'.html">'+esc(x["titulo"])+"</a></li>" for x in related)+"</ul></section>"
     return layout(item["titulo"],body,1)
 def build(src,out):
     records=json.loads(src.read_text(encoding="utf-8"))
@@ -94,7 +108,8 @@ def build(src,out):
             neighbors[chapter["slug"]]=(chapters[i-1] if i else None, chapters[i+1] if i+1<len(chapters) else None)
     for item in items:
         before,after=neighbors.get(item["slug"],(None,None))
-        pages["arquivos/"+item["slug"]+".html"]=item_page(item,before,after)
+        related=[x for x in groups[item["categoria"]] if x["slug"]!=item["slug"] and (not item.get("obra_id") or x.get("obra_id")!=item.get("obra_id"))][:3]
+        pages["arquivos/"+item["slug"]+".html"]=item_page(item,before,after,related)
     book_entries=[]
     for book_id,chapters in books.items():
         chapters.sort(key=lambda x:(int(x.get("numero_capitulo") or 0),x["slug"]))
