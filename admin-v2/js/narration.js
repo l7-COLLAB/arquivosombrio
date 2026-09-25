@@ -482,12 +482,13 @@ async function openSimpleKokoro(panel,dossier){
     if(r.error){status.textContent="Não foi possível consultar a fila: "+r.error.message;return;}
     previewJobId=r.data?.state==="existing"?r.data.job_id:null;
     approveBtn.disabled=!(previewJobId&&r.data.status==="review");
+    approveBtn.textContent=r.data.status==="approved"?"Prévia já aprovada":"Aprovar prévia";
     reopenBtn.disabled=!(previewJobId&&r.data.status==="approved");
     previewBtn.disabled=!(previewJobId&&["review","approved"].includes(r.data.status));
     previewBtn.textContent=previewBtn.disabled?"Prévia indisponível":"Ouvir prévia";
     if(r.data?.state==="existing"){
       queueBtn.textContent="Geração já solicitada";
-      status.textContent="Estado: "+(statusNames[r.data.status]||r.data.status)+". "+(r.data.status==="review"?"Escute antes de aprovar.":r.data.status==="approved"?"Aprovação interna, ainda não publicado.":"Aguarde ou consulte o status.");
+      status.textContent="Estado: "+(statusNames[r.data.status]||r.data.status)+". "+(r.data.status==="review"?"Escute antes de aprovar.":r.data.status==="approved"?"Este áudio já está aprovado. Não é necessário aprovar novamente.":"Aguarde ou consulte o status.");
     }else{queueBtn.textContent="Solicitar geração Kokoro";queueBtn.disabled=false;}
   }
   ta.addEventListener("input",()=>{queueBtn.disabled=true;approveBtn.disabled=true;reopenBtn.disabled=true;previewBtn.disabled=true;previewAudio.pause();previewArea.style.display="none";queueBtn.textContent="Salve as alterações";});
