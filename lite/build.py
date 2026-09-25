@@ -30,7 +30,7 @@ def layout(title,body,depth=0):
     return ('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">'
       '<meta name="viewport" content="width=device-width,initial-scale=1">'
       '<meta name="robots" content="noindex,nofollow"><title>'+esc(title)+' · Arquivo Sombrio Lite</title>'
-      '<link rel="stylesheet" href="'+root+'lite.css"></head><body><div class="wrap">'
+      '<link rel="stylesheet" href="'+root+'lite.css?v=4"></head><body><div class="wrap">'
       '<header><p class="eyebrow">EDIÇÃO DE LEITURA</p><h1>ARQUIVO SOMBRIO</h1>'
       '<p>Versão Lite</p></header><nav aria-label="Categorias">'+nav+'</nav><main>'+body+
       '</main><footer><p><a href="'+root+'index.html">Início</a> · Arquivo Sombrio Lite</p></footer></div></body></html>')
@@ -44,7 +44,7 @@ def text_blocks(value):
             p=p.strip()
             if not p: continue
             lines=p.splitlines()
-            if len(lines)>1 and 4<=len(lines[0])<=95 and lines[0].isupper() and not lines[0].endswith((".",":")):
+            if 4<=len(lines[0])<=95 and lines[0].isupper() and not lines[0].endswith((".",":")):
                 parts.append("<h3 class=\"internal-heading\">"+esc(lines[0])+"</h3>")
                 p="\n".join(lines[1:]).strip()
             if p: parts.append("<p>"+esc(p).replace("\n","<br>")+"</p>")
