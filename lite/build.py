@@ -38,7 +38,17 @@ def text_blocks(value):
     # Explicit plain-text blocks: never inject arbitrary HTML from editorial fields.
     if isinstance(value,str): value=[value]
     if not isinstance(value,list): raise ValueError("conteudo deve ser texto ou lista de parágrafos")
-    return "".join("<p>"+esc(p).replace("\n","<br>")+"</p>" for x in value if str(x).strip() for p in re.split(r"\n\s*\n",str(x)) if p.strip())
+    parts=[]
+    for x in value:
+        for p in re.split(r"\n\s*\n",str(x)):
+            p=p.strip()
+            if not p: continue
+            lines=p.splitlines()
+            if len(lines)>1 and 4<=len(lines[0])<=95 and lines[0].isupper() and not lines[0].endswith((".",":")):
+                parts.append("<h3 class=\"internal-heading\">"+esc(lines[0])+"</h3>")
+                p="\n".join(lines[1:]).strip()
+            if p: parts.append("<p>"+esc(p).replace("\n","<br>")+"</p>")
+    return "".join(parts)
 def item_page(item, previous=None, following=None):
     body='<p><a href="../index.html">← Acervo</a></p><h2>'+esc(item["titulo"])+'</h2>'
     if item.get("resumo"): body+='<p>'+esc(item["resumo"])+'</p>'
