@@ -838,18 +838,23 @@ function renderizarEvidencias(evidencias) {
                     }
 
 
-                    const titulo =
-                        evidencia.titulo ||
+                    // Título identifica a peça; conteúdo expandido deve acrescentar informação.
+                    // Dados antigos podem repetir o título em resumo/descrição.
+                    const textoLimpo = valor => String(valor ?? "").trim();
+                    const normalizarComparacao = valor => textoLimpo(valor)
+                        .normalize("NFD").replace(/[\\u0300-\\u036f]/g, "")
+                        .replace(/[^a-zA-Z0-9]+/g, " ").trim().toLowerCase();
+                    const titulo = textoLimpo(evidencia.titulo) ||
                         "Evidência sem título";
-
-                    const resumo =
-                        evidencia.resumo ||
-                        "";
-
-                    const detalhes =
-                        evidencia.detalhes ||
-                        evidencia.descricao ||
-                        "";
+                    const ehRepeticao = valor => !!textoLimpo(valor) &&
+                        normalizarComparacao(valor) === normalizarComparacao(titulo);
+                    const resumoBruto = textoLimpo(evidencia.resumo);
+                    const detalhesBrutos = textoLimpo(evidencia.detalhes) ||
+                        textoLimpo(evidencia.descricao);
+                    const resumo = ehRepeticao(resumoBruto) ? "" : resumoBruto;
+                    const detalhes = ehRepeticao(detalhesBrutos) ||
+                        (resumo && normalizarComparacao(detalhesBrutos) === normalizarComparacao(resumo))
+                            ? "" : detalhesBrutos;
 
                     const imagem =
                         evidencia.imagem ||
@@ -952,7 +957,7 @@ function renderizarEvidencias(evidencias) {
                                         : `
                                             <div class="evidence-text">
                                                 <p>
-                                                    Informações complementares desta evidência ainda não foram cadastradas.
+                                                    Descrição documental ainda não cadastrada. Consulte as fontes do dossiê; o título, isoladamente, não constitui a descrição da evidência.
                                                 </p>
                                             </div>
                                         `
