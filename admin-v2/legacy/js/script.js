@@ -1015,6 +1015,17 @@ function escaparHTML(valor) {
 }
 
 
+function recuperarNarrativaDossieAdmin(dados) {
+    const historia = String(dados?.historia || "").trim();
+    const blocos = Array.isArray(dados?.conteudo_blocos) ? dados.conteudo_blocos : [];
+    if (historia && !/^Dossiê documental organizado em blocos/i.test(historia)) return historia;
+    const narrativa = blocos.filter(b => ["paragrafo", "subtitulo"].includes(b?.tipo))
+        .sort((a,b) => (Number(a.ordem)||0)-(Number(b.ordem)||0))
+        .map(b => b.tipo === "subtitulo" ? "## " + String(b.dados?.texto||"").trim() : String(b.dados?.texto||"").trim())
+        .filter(Boolean);
+    return narrativa.join("\n\n") || historia;
+}
+
 function normalizarEvidencias(
     evidencias
 ) {
@@ -1028,9 +1039,17 @@ function normalizarEvidencias(
         return evidencias
             .map(
                 item =>
-                    String(
-                        item
-                    ).trim()
+                    typeof item === "string"
+                        ? item.trim()
+                        : item && typeof item === "object"
+                            ? [
+                                item.titulo || item.nome || item.title,
+                                item.descricao || item.detalhes || item.texto || item.resumo,
+                                item.relevancia || item.o_que_demonstra,
+                                item.limitacoes || item.limitacao,
+                                item.fonte
+                            ].filter(Boolean).join("\n").trim()
+                            : ""
             )
             .filter(
                 Boolean
@@ -8756,7 +8775,7 @@ const livro =
                         >${
                             dados
                                 ? escaparHTML(
-                                    dados.historia
+                                    recuperarNarrativaDossieAdmin(dados)
                                 )
                                 : ""
                         }</textarea>
