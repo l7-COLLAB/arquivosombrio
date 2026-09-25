@@ -1,20 +1,44 @@
-# Arquivo Sombrio Lite (protótipo isolado)
+# Arquivo Sombrio Lite — protótipo isolado
 
-Esta pasta é uma prévia visual HTML/CSS para Safari do iOS 9.3.5. Não está publicada e NÃO sincroniza o acervo ainda. Não incorporar na produção sem testes.
+Versão HTML/CSS de baixo consumo para Safari antigo. Esta ramificação NÃO está publicada. O gerador está implementado, mas a exportação automática do banco ainda NÃO está integrada.
 
-## Decisões
-- HTML sem JavaScript, fontes externas, animações ou imagens obrigatórias.
-- Mesmo projeto editorial, sem login, fórum, recompensas ou áudio automático.
-- CSS clássico e largura estreita para dispositivos antigos.
-- Páginas finais deverão ser geradas previamente a partir SOMENTE de publicações públicas, evitando Supabase JS e credenciais privadas no cliente.
-- O gerador futuro deverá escapar HTML, preservar a estrutura editorial (cronologia, fontes, evidências), gerar páginas por item, catálogo paginado e índice de busca estático ou pesquisa no servidor.
-- Não copiar páginas modernas por iframe ou linkar para elas como se fossem compatíveis.
-- Conferir política de direitos de imagem, noindex/canonical e publicação agendada antes de exportar.
-- Testar HTTPS/TLS e certificado em aparelho real com iOS 9.3.5; emulador não substitui aparelho.
+## Gerador estático
 
-## Próximas etapas
-1. Mapear tabelas/colunas públicas e regras RLS para cada categoria.
-2. Construir gerador de HTML estático no pipeline de publicação, sem expor service role.
-3. Implementar catálogo e páginas reais e atualizar a busca.
-4. Testar carga, imagens e navegação no dispositivo.
-5. Configurar hospedagem/subdomínio após validação.
+Execute na raiz do repositório:
+
+```sh
+python3 lite/test_build.py
+python3 lite/build.py lite/publications.json lite/dist
+```
+
+O arquivo `publications.json` está vazio intencionalmente. Nunca adicione rascunhos, dados privados ou chaves de serviço. Para validar manualmente, use exclusivamente registros editoriais públicos já revisados.
+
+Exemplo de estrutura de entrada (exemplo fictício, não publicar como caso real):
+
+```json
+[{
+  "slug": "exemplo",
+  "titulo": "Exemplo de estrutura",
+  "categoria": "dossies",
+  "status_publicacao": "publicado",
+  "publicado_em": "2026-09-01T12:00:00-03:00",
+  "resumo": "Resumo de exemplo.",
+  "conteudo": ["Primeiro parágrafo.", "Segundo parágrafo."],
+  "cronologia": ["01/09: exemplo."],
+  "evidencias": ["Exemplo."],
+  "fontes": ["Fonte de exemplo."]
+}]
+```
+
+Categorias aceitas: dossies, garimpo, pericia, biblioteca, lendas. O gerador omite tudo que não esteja publicado ou tenha data futura, valida slug e escapa o conteúdo para evitar injeção HTML. Gera arquivos individuais e índice paginado a cada 12 registros. Pesquisa ainda pendente.
+
+## Pendências obrigatórias antes de publicar
+1. Mapear tabelas e campos reais, incluindo textos completos, fontes, cronologia e capítulos de novels.
+2. Implementar exportação somente de conteúdo público no pipeline confiável, sem expor credenciais ou usar Supabase JS no iOS 9.
+3. Tratar formatação editorial revisada, imagens licenciadas e eventuais anexos.
+4. Adicionar pesquisa estática ou de servidor e teste de paginação com acervo real.
+5. Conferir cache, publicação agendada, remoção/correção de conteúdos e SEO/canonical.
+6. Testar Safari real iOS 9.3.5, TLS, memória e tempos de navegação.
+7. Configurar hospedagem/subdomínio somente após aprovação.
+
+Não mesclar a ramificação até a validação.
