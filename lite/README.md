@@ -49,3 +49,12 @@ Não mesclar a ramificação até a validação.
 Workflow manual: `.github/workflows/lite-preview.yml`. Antes de executá-lo, configurar no GitHub Actions o secret `LITE_SUPABASE_PUBLISHABLE_KEY` com a chave publicável, NUNCA service role. O workflow apenas gera um artefato temporário de prévia, não publica no domínio. Não versionar o JSON exportado, pois sua atualização deve acompanhar correções e remoções do acervo.
 
 A exportação ainda exige execução do workflow e revisão visual com os conteúdos reais. O fluxo de publicação automática e a compatibilidade física do iOS 9 não foram validados.
+
+## Recursos de leitura e navegação (nova versão)
+- Tema escuro/papel antigo e tamanho de fonte persistidos localmente, com JavaScript ES5 sem bibliotecas.
+- Pesquisa pré-gerada apenas com títulos e resumos públicos; filtros por categoria e ordenação por título/data.
+- Sumário de subtítulos detectados e seções cronologia/evidências/fontes.
+- Marcador local da última página aberta (não sincroniza contas nem posição de rolagem).
+- Sugestões de até três arquivos da mesma categoria e informações básicas de data e tempo aproximado.
+- Funcionalidade básica preservada quando JavaScript estiver desabilitado, exceto controles dinâmicos e busca por digitação.
+- Após mudanças, executar workflow lite-test.yml antes de lite-publish-preview.yml. Conferir no iOS 9.3.5. O aviso HTTPS continua pendente de diagnóstico.
