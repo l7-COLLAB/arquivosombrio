@@ -7,6 +7,7 @@ import json, sys, re, html
 from pathlib import Path
 from datetime import datetime, timezone
 from urllib.parse import quote
+from collections import defaultdict
 
 CATEGORIES = {"dossies":"Dossiês","garimpo":"Garimpo Sombrio","pericia":"Perícia Forense","biblioteca":"Biblioteca","lendas":"Lendas e Creepypastas"}
 PAGE_SIZE = 12
@@ -25,7 +26,7 @@ def published(item, now):
     return dt <= now
 def layout(title,body,depth=0):
     root="../"*depth
-    nav=" ".join('<a href="'+root+'index.html#'+key+'">'+esc(label)+'</a>' for key,label in CATEGORIES.items())
+    nav=" ".join('<a href="'+root+key+'.html'+'">'+esc(label)+'</a>' for key,label in CATEGORIES.items())
     return ('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">'
       '<meta name="viewport" content="width=device-width,initial-scale=1">'
       '<meta name="robots" content="noindex,nofollow"><title>'+esc(title)+' · Arquivo Sombrio Lite</title>'
@@ -37,7 +38,7 @@ def text_blocks(value):
     # Explicit plain-text blocks: never inject arbitrary HTML from editorial fields.
     if isinstance(value,str): value=[value]
     if not isinstance(value,list): raise ValueError("conteudo deve ser texto ou lista de parágrafos")
-    return "".join("<p>"+esc(x).replace("\n","<br>")+"</p>" for x in value if str(x).strip())
+    return "".join("<p>"+esc(p).replace("\n","<br>")+"</p>" for x in value if str(x).strip() for p in re.split(r"\n\s*\n",str(x)) if p.strip())
 def item_page(item):
     body='<p><a href="../index.html">← Acervo</a></p><h2>'+esc(item["titulo"])+'</h2>'
     if item.get("resumo"): body+='<p>'+esc(item["resumo"])+'</p>'
@@ -63,24 +64,43 @@ def build(src,out):
         if not isinstance(item.get("titulo"),str) or not item["titulo"].strip(): raise ValueError("Título ausente")
         if not item.get("conteudo"): raise ValueError("Conteúdo ausente: "+key)
         items.append(item)
-    # Render everything before touching output to avoid partially built releases.
     pages={}
-    for item in items: pages["arquivos/"+item["slug"]+".html"]=item_page(item)
-    items.sort(key=lambda x:x["publicado_em"],reverse=True)
-    total=max(1,(len(items)+PAGE_SIZE-1)//PAGE_SIZE)
-    for page in range(total):
-        current=items[page*PAGE_SIZE:(page+1)*PAGE_SIZE]
-        sections=[]
-        for key,label in CATEGORIES.items():
-            subset=[x for x in current if x["categoria"]==key]
-            listing=''.join('<p><a href="arquivos/'+quote(x["slug"])+'.html">'+esc(x["titulo"])+'</a><br>'+esc(x.get("resumo",""))+'</p>' for x in subset)
-            sections.append('<section id="'+key+'"><h3>'+label+'</h3>'+(listing or '<p>Nenhuma publicação nesta página.</p>')+'</section>')
-        pagination='<p> Página '+str(page+1)+' de '+str(total)+'. '
-        if page: pagination+='<a href="'+("index.html" if page==1 else "pagina-"+str(page)+".html")+'">Anterior</a> '
-        if page+1<total: pagination+='<a href="pagina-'+str(page+2)+'.html">Próxima</a>'
-        pagination+='</p>'
-        name="index.html" if page==0 else "pagina-"+str(page+1)+".html"
-        pages[name]=layout("Acervo",'<h2>Acervo</h2>'+''.join(sections)+pagination)
+    groups=defaultdict(list)
+    for item in items:
+        pages["arquivos/"+item["slug"]+".html"]=item_page(item)
+        groups[item["categoria"]].append(item)
+    books=defaultdict(list)
+    for item in groups["biblioteca"]:
+        if item.get("obra_id"): books[str(item["obra_id"])].append(item)
+    book_entries=[]
+    for book_id,chapters in books.items():
+        chapters.sort(key=lambda x:(int(x.get("numero_capitulo") or 0),x["slug"]))
+        title=chapters[0].get("obra_titulo") or chapters[0]["titulo"].split(" · Capítulo")[0]
+        filename="livros/"+slug("livro-"+book_id)+".html"
+        links="".join("<li><a href=\"../arquivos/"+esc(c["slug"])+".html\">"+esc(c.get("titulo_capitulo") or c["titulo"])+"</a></li>" for c in chapters)
+        pages[filename]=layout(title,"<h2>"+esc(title)+"</h2><ol>"+links+"</ol>",1)
+        book_entries.append((title,filename))
+    home=[]
+    for category,label in CATEGORIES.items():
+        if category=="biblioteca":
+            entries=book_entries+[(x["titulo"],"arquivos/"+x["slug"]+".html") for x in groups[category] if not x.get("obra_id")]
+            entries.sort(key=lambda x:x[0].casefold())
+        else:
+            groups[category].sort(key=lambda x:x["publicado_em"],reverse=True)
+            entries=[(x["titulo"],"arquivos/"+x["slug"]+".html") for x in groups[category]]
+        total=max(1,(len(entries)+PAGE_SIZE-1)//PAGE_SIZE)
+        for page in range(total):
+            subset=entries[page*PAGE_SIZE:(page+1)*PAGE_SIZE]
+            listing="".join("<li><a href=\""+esc(path)+"\">"+esc(title)+"</a></li>" for title,path in subset)
+            body="<h2>"+esc(label)+"</h2>"+("<ul>"+listing+"</ul>" if subset else "<p>Nenhuma publicação disponível.</p>")
+            body+="<p>Página "+str(page+1)+" de "+str(total)+". "
+            if page:body+="<a href=\""+(category+".html" if page==1 else category+"-"+str(page)+".html")+"\">Anterior</a> "
+            if page+1<total:body+="<a href=\""+category+"-"+str(page+2)+".html\">Próxima</a>"
+            body+="</p>"
+            name=category+".html" if page==0 else category+"-"+str(page+1)+".html"
+            pages[name]=layout(label,body)
+        home.append("<section id=\""+category+"\"><h2>"+esc(label)+"</h2><p>"+str(len(entries))+" títulos</p><p><a href=\""+category+".html\">Explorar</a></p></section>")
+    pages["index.html"]=layout("Acervo","<h2>Acervo</h2>"+"".join(home))
     css=Path(__file__).with_name("lite.css").read_text(encoding="utf-8")
     pages["lite.css"]=css
     out.mkdir(parents=True,exist_ok=True)
