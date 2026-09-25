@@ -131,22 +131,10 @@ async def loop():
                     }).eq("id",job["id"]).execute()
                 if once: return
             else:
-                # Existing dossier jobs keep priority. Novel chapters are a separate queue.
-                db.rpc("enqueue_published_novel_audio").execute()
-                novel_jobs = db.rpc("claim_novel_audio_job").execute().data or []
-                if novel_jobs:
-                    novel_job = novel_jobs[0]
-                    try:
-                        await process_novel(novel_job)
-                    except Exception as e:
-                        log.exception("novel audio job failed")
-                        db.table("novel_capitulo_audios").update({
-                            "status": "failed", "erro": str(e)[:400]
-                        }).eq("id", novel_job["id"]).execute()
-                    if once: return
-                else:
-                    if once: return
-                    await asyncio.sleep(POLL)
+                # Novel generation is paused by editorial decision.
+                # Do not enqueue or claim novel chapter jobs.
+                if once: return
+                await asyncio.sleep(POLL)
         except Exception:
             log.exception("worker loop error")
             if once: return
