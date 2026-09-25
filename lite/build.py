@@ -12,7 +12,7 @@ CATEGORIES = {"dossies":"Dossiês","garimpo":"Garimpo Sombrio","pericia":"Períc
 PAGE_SIZE = 12
 def esc(value): return html.escape(str(value or ""), quote=True)
 def slug(value):
-    value = str(value or "")
+    value = re.sub("-+", "-", str(value or ""))
     if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",value): raise ValueError("Slug inválido: "+repr(value))
     return value
 def published(item, now):
