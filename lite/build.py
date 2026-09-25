@@ -39,7 +39,7 @@ def text_blocks(value):
     if isinstance(value,str): value=[value]
     if not isinstance(value,list): raise ValueError("conteudo deve ser texto ou lista de parágrafos")
     return "".join("<p>"+esc(p).replace("\n","<br>")+"</p>" for x in value if str(x).strip() for p in re.split(r"\n\s*\n",str(x)) if p.strip())
-def item_page(item):
+def item_page(item, previous=None, following=None):
     body='<p><a href="../index.html">← Acervo</a></p><h2>'+esc(item["titulo"])+'</h2>'
     if item.get("resumo"): body+='<p>'+esc(item["resumo"])+'</p>'
     body+='<article>'+text_blocks(item["conteudo"])+'</article>'
@@ -48,6 +48,12 @@ def item_page(item):
         if entries:
             if not isinstance(entries,list): raise ValueError(key+" deve ser lista")
             body+='<section><h3>'+label+'</h3><ul>'+''.join('<li>'+esc(x)+'</li>' for x in entries)+'</ul></section>'
+    if item.get("obra_id"):
+        body += '<p class="chapter-nav">'
+        if previous: body += '<a href="'+esc(previous["slug"])+'.html">← Anterior</a> '
+        if following: body += '<a href="'+esc(following["slug"])+'.html">Próximo →</a>'
+        body += '</p>'
+    body += '<p><a href="../'+esc(item["categoria"])+'.html">← Voltar à categoria</a></p>'
     return layout(item["titulo"],body,1)
 def build(src,out):
     records=json.loads(src.read_text(encoding="utf-8"))
@@ -67,11 +73,18 @@ def build(src,out):
     pages={}
     groups=defaultdict(list)
     for item in items:
-        pages["arquivos/"+item["slug"]+".html"]=item_page(item)
         groups[item["categoria"]].append(item)
     books=defaultdict(list)
     for item in groups["biblioteca"]:
         if item.get("obra_id"): books[str(item["obra_id"])].append(item)
+    neighbors={}
+    for chapters in books.values():
+        chapters.sort(key=lambda x:(int(x.get("numero_capitulo") or 0),x["slug"]))
+        for i,chapter in enumerate(chapters):
+            neighbors[chapter["slug"]]=(chapters[i-1] if i else None, chapters[i+1] if i+1<len(chapters) else None)
+    for item in items:
+        before,after=neighbors.get(item["slug"],(None,None))
+        pages["arquivos/"+item["slug"]+".html"]=item_page(item,before,after)
     book_entries=[]
     for book_id,chapters in books.items():
         chapters.sort(key=lambda x:(int(x.get("numero_capitulo") or 0),x["slug"]))
