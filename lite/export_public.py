@@ -86,7 +86,12 @@ def run():
     "titulo":novel["titulo"]+" · Capítulo "+str(ch["numero"])+(" · "+ch["titulo"] if ch.get("titulo") else ""),
     "sinopse":novel.get("sinopse"),"conteudo":ch.get("conteudo"),"status_publicacao":"publicado",
     "publicado_em":ch.get("publicado_em") or novel.get("publicado_em"),"created_at":ch.get("created_at")},"biblioteca","novel","publicado_em",["conteudo"])
-   if item:results.append(item)
+   if item:
+    item["obra_id"]=str(novel["id"])
+    item["obra_titulo"]=novel["titulo"]
+    item["numero_capitulo"]=ch["numero"]
+    item["titulo_capitulo"]=ch.get("titulo") or ("Capítulo "+str(ch["numero"]))
+    results.append(item)
  # All requests must succeed before overwriting the reviewed export.
  from pathlib import Path
  target=Path(__file__).with_name("publications.json")
