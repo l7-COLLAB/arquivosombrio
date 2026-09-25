@@ -13229,7 +13229,23 @@ async function recuperarRascunhoAdmin(){
   const{data,error}=await cliente.from("admin_drafts").select("payload,updated_at")
    .eq("user_id",sessao.user.id).eq("draft_key",atual.chave).maybeSingle();
   if(error)throw error;if(!data?.payload||rascunhoAdmin!==atual)return;
-  aplicarCamposRascunhoAdmin(atual.form,data.payload.campos);aplicarExtrasRascunhoAdmin(atual.tipo,data.payload.extras);
+  // Preservar conteúdo publicado quando o rascunho legado contém campos vazios.
+  const camposPublicos=camposRascunhoAdmin(atual.form);
+  const chaveCampo=item=>item.base+":"+(item.indice||0);
+  const publicos=new Map(camposPublicos.map(item=>[chaveCampo(item),item]));
+  const vazio=valor=>!String(valor??"").trim()||/^(\\[object Object\\]\\s*)+$/i.test(String(valor).trim())||/^Dossiê documental organizado em blocos/i.test(String(valor).trim());
+  let campos=data.payload.campos;
+  if(atual.tipo==="dossie"){
+   campos=(Array.isArray(campos)?campos:[]).map(item=>{
+    const publico=publicos.get(chaveCampo(item));
+    return publico&&vazio(item.valor)&&!vazio(publico.valor)?{...item,valor:publico.valor}:item;
+   });
+  }
+  aplicarCamposRascunhoAdmin(atual.form,campos);
+  const extras=data.payload.extras;
+  if(atual.tipo==="dossie"&&Array.isArray(extras?.blocos)&&extras.blocos.length<(atual.blocosPublicos?.length||0))
+   aplicarExtrasRascunhoAdmin(atual.tipo,{...extras,blocos:atual.blocosPublicos});
+  else aplicarExtrasRascunhoAdmin(atual.tipo,extras);
   [["admin-image","#admin-image-preview"],["admin-book-cover","#admin-book-cover-preview"],["daily-cover","#daily-cover-preview"]].forEach(([id,seletor])=>{
    const valor=document.getElementById(id)?.value;if(valor)atualizarPreviewImagemAdmin(valor,seletor);
   });
@@ -13243,7 +13259,7 @@ function prepararRascunhoAdmin(tipo,id,form,modal,fechar){
  acoes.className="admin-draft-actions";acoes.style.cssText="display:flex;flex-wrap:wrap;gap:10px;align-items:center";
  acoes.innerHTML='<button type="button" class="admin-secondary-button" data-save-draft><i class="fa-regular fa-floppy-disk"></i> Salvar rascunho</button><button type="button" class="admin-secondary-button" data-discard-draft><i class="fa-regular fa-trash-can"></i> Descartar</button><small data-draft-status aria-live="polite"></small>';
  submit?.before(acoes);
- rascunhoAdmin={tipo,id,chave:chaveRascunhoAdmin(tipo,id),form,modal,restaurando:true,finalizado:false,salvando:false};
+ rascunhoAdmin={tipo,id,chave:chaveRascunhoAdmin(tipo,id),form,modal,restaurando:true,finalizado:false,salvando:false,blocosPublicos:tipo==="dossie"?coletarBlocosConteudoAdmin():[]};
  form.addEventListener("input",agendarRascunhoAdmin);form.addEventListener("change",agendarRascunhoAdmin);
  form.addEventListener("click",e=>{
   if(e.target.closest("[data-add-content-block],.admin-block-remove,.admin-document-remove,#admin-add-affiliate-link,.admin-affiliate-remove,#daily-add-image,.daily-remove-row"))setTimeout(agendarRascunhoAdmin,0);
