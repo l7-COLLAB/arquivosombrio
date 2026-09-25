@@ -1,0 +1,62 @@
+name: Publicar previa Lite para iPad antigo
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: lite-preview-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter repositorio principal
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+          path: site
+      - name: Obter codigo Lite isolado
+        uses: actions/checkout@v4
+        with:
+          ref: feature/arquivo-lite-ios9
+          path: lite-source
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Conferir chave configurada
+        env:
+          LITE_KEY: ${{ secrets.LITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: test -n "$LITE_KEY"
+      - name: Validar gerador
+        run: python3 lite-source/lite/test_build.py
+      - name: Exportar apenas publicacoes publicas
+        env:
+          SUPABASE_URL: https://iuhotznurbyujzbyhizf.supabase.co
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.LITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: python3 lite-source/lite/export_public.py
+      - name: Gerar paginas e validar arquivos
+        run: |
+          python3 lite-source/lite/build.py lite-source/lite/publications.json lite-source/lite/dist
+          test -s lite-source/lite/dist/index.html
+          test -s lite-source/lite/dist/lite.css
+          test -f lite-source/lite/dist/biblioteca.html
+          test -f lite-source/lite/dist/dossies.html
+      - name: Atualizar apenas a pasta lite-preview do site
+        working-directory: site
+        run: |
+          rm -rf lite-preview
+          mkdir -p lite-preview
+          cp -a ../lite-source/lite/dist/. lite-preview/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- lite-preview
+          if git diff --cached --quiet; then
+            echo "Previa sem alteracoes"
+          else
+            git commit -m "Atualizar previa estatica isolada do Arquivo Sombrio Lite"
+            git push origin HEAD:main
+          fi
+      - name: Endereco para testar
+        run: echo "Se GitHub Pages estiver servindo a branch main na raiz, abra https://arquivosombrio.net.br/lite-preview/"
