@@ -43,7 +43,7 @@ def fetch(table,fields,filters):
  rows=[];start=0
  while True:
   query=url+"?"+urlencode({"select":",".join(fields),**filters})
-  req=Request(query,headers={"apikey":key,"Authorization":"Bearer "+key,"Range":str(start)+"-"+str(start+499),"Accept":"application/json"})
+  req=Request(query,headers={"apikey":key,"Range":str(start)+"-"+str(start+499),"Accept":"application/json"})
   with urlopen(req,timeout=30) as response: batch=json.load(response)
   if not isinstance(batch,list):raise RuntimeError("Resposta inesperada de "+table)
   rows+=batch
