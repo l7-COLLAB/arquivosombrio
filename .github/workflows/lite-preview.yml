@@ -1,0 +1,28 @@
+name: Build Arquivo Sombrio Lite preview
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Testar gerador
+        run: python3 lite/test_build.py
+      - name: Exportar apenas dados públicos
+        env:
+          SUPABASE_URL: https://iuhotznurbyujzbyhizf.supabase.co
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.LITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: python3 lite/export_public.py
+      - name: Gerar HTML estático
+        run: python3 lite/build.py lite/publications.json lite/dist
+      - name: Disponibilizar prévia para inspeção (não publica)
+        uses: actions/upload-artifact@v4
+        with:
+          name: arquivo-sombrio-lite-preview
+          path: lite/dist/
+          retention-days: 3
