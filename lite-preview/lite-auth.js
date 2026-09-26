@@ -76,9 +76,38 @@ function submit(mode,ev){
   msg('Não foi possível '+(mode==='signup'?'criar a conta':'entrar')+'. Confira os dados e tente novamente.');
  });return false;
 }
-function show(mode){byId('login-form').style.display=mode==='login'?'block':'none';byId('signup-form').style.display=mode==='signup'?'block':'none';msg('Complete a verificação antes de continuar.')}
+function show(mode){byId('login-form').style.display=mode==='login'?'block':'none';byId('signup-form').style.display=mode==='signup'?'block':'none';msg('Complete a verificação para entrar com senha. Se o CAPTCHA não carregar neste iPad, utilize a opção de código por e-mail.')}
+function initOtp(){
+ var sendForm=byId('otp-request-form'),verifyForm=byId('otp-verify-form');
+ if(!sendForm||!verifyForm)return;
+ sendForm.onsubmit=function(e){
+  if(e&&e.preventDefault)e.preventDefault();
+  if(!challengeToken){msg('Para solicitar um código, abra esta página em um aparelho atualizado e conclua o CAPTCHA. No iPad antigo, use apenas o campo de confirmação do código.');return false}
+  var email=byId('otp-request-email').value.replace(/^\\s+|\\s+$/g,'');
+  msg('Solicitando código...');var captcha=challengeToken;resetChallenge();
+  request('POST','/auth/v1/otp',{email:email,create_user:false,gotrue_meta_security:{captcha_token:captcha}},function(status,result){
+   if(status>=200&&status<300)msg('Pedido enviado. Confira seu e-mail. Se receber apenas um link em vez de seis dígitos, o modelo de e-mail OTP do Supabase ainda precisa ser configurado.');
+   else if(status===429)msg('Aguarde antes de solicitar outro código.');
+   else msg('Não foi possível solicitar o código. Confira a verificação de segurança.');
+  });return false
+ };
+ verifyForm.onsubmit=function(e){
+  if(e&&e.preventDefault)e.preventDefault();
+  var email=byId('otp-email').value.replace(/^\\s+|\\s+$/g,'');
+  var code=byId('otp-code').value.replace(/\\s+/g,'');
+  if(!/^[0-9]{6}$/.test(code)){msg('Informe os seis dígitos recebidos no e-mail.');return false}
+  msg('Verificando seu código...');
+  request('POST','/auth/v1/verify',{type:'email',email:email,token:code},function(status,result){
+   byId('otp-code').value='';
+   if(status>=200&&status<300&&result.access_token&&save(result)){done();return}
+   if(status===429){msg('Muitas tentativas. Aguarde antes de tentar novamente.');return}
+   msg('O código não pôde ser confirmado. Confira se está correto e dentro da validade.');
+  });return false
+ };
+}
 function init(){
  if(!byId('auth-forms'))return;
+ initOtp();
  /* Supabase confirmation links can return an implicit session in the fragment. */
  if(w.location.hash&&w.location.hash.indexOf('access_token=')>=0){
   var parts=w.location.hash.replace(/^#/,'').split('&'),result={};
