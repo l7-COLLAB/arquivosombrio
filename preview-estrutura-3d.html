@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#080706"><title>Arquivo Sombrio · Prévia 3D da estrutura atual</title>
+<style>
+*{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:#080706;color:#d8c9ad;font-family:Georgia,serif}.toolbar{height:79px;display:flex;align-items:center;gap:9px;justify-content:space-between;padding:8px 12px;border-bottom:1px solid #927552;background:#0d0b09;position:relative;z-index:2;box-shadow:0 4px 18px #0009}.toolbar h1{font-size:13px;letter-spacing:.06em;margin:0 0 4px;font-weight:normal}.toolbar small{font:9px/1.4 monospace;color:#bba482}.controls{display:flex;gap:6px;align-items:center}.controls button{border:1px solid #a28a67;color:#dfcaa9;background:#1d1610;padding:9px 10px;min-height:37px;font:10px monospace;cursor:pointer}.controls button[aria-pressed=true]{background:#b59d7a;color:#18100b}.controls button:focus-visible{outline:2px solid white;outline-offset:2px}.preview{display:block;width:100%;height:calc(100dvh - 79px);border:0;background:#080706}.status{position:absolute;z-index:1;bottom:calc(11px + env(safe-area-inset-bottom));right:9px;max-width:230px;text-align:right;pointer-events:none;font:10px/1.5 monospace;color:#e3cba6;text-shadow:0 2px 4px black}.status span{background:#15100bd9;padding:5px 7px}.sr{position:absolute;left:-10000px}@media(max-width:405px){.toolbar{padding:7px 8px;gap:5px}.toolbar h1{font-size:11px}.controls button{padding:8px 7px;font-size:9px}.toolbar small{font-size:8px}}
+</style></head><body>
+<header class="toolbar"><div><h1>ARQUIVO SOMBRIO · 3D</h1><small>PRÉVIA DA ESTRUTURA ORIGINAL</small></div><div class="controls"><button type="button" id="toggle" aria-pressed="true" title="Ligar ou desligar o efeito">3D LIGADO</button><button type="button" id="move" title="Permitir movimento do telefone">SENSORES</button><button type="button" id="reset" title="Retornar ao início">REINICIAR</button></div></header>
+<iframe id="site" class="preview" title="Página inicial atual do Arquivo Sombrio com profundidade experimental" src="/?visual3d=teste" loading="eager"></iframe>
+<p class="status" id="status" aria-live="polite"><span>Carregando página original...</span></p>
+<script>
+(function(){'use strict';
+var frame=document.getElementById('site'),status=document.getElementById('status'),toggle=document.getElementById('toggle'),sensor=document.getElementById('move'),reset=document.getElementById('reset');
+var enabled=true,ready=false,angleX=-2,angleY=0,originX=0,originY=0,touchX=0,touchY=0,tracking=false,scrolling=false,target=null,doc=null,viewer=null,sensorActive=false;
+function message(s){status.firstElementChild.textContent=s}
+var styles=[
+'html{scroll-behavior:smooth}',
+'body.as3d-preview .hero-dossier{perspective:1200px!important;overflow:visible!important;isolation:isolate}',
+'body.as3d-preview .hero-editorial-frame{transform-style:preserve-3d!important;--as3rx:-2deg;--as3ry:0deg;transform:rotateX(var(--as3rx)) rotateY(var(--as3ry)) translateZ(0)!important;transition:transform 160ms ease-out,filter .3s ease!important;box-shadow:0 22px 44px #0009,15px 19px 37px #a0804320!important;will-change:transform}',
+'body.as3d-preview .hero-editorial-feature{transform:translateZ(29px)!important;transform-style:preserve-3d!important;box-shadow:0 13px 22px #0009!important}',
+'body.as3d-preview .hero-editorial-feature-copy{transform:translateZ(26px)!important}',
+'body.as3d-preview .hero-editorial-image img{transform:translateZ(12px) scale(1.02)!important}',
+'body.as3d-preview .hero-editorial-rail{transform:translateZ(13px)!important;transform-style:preserve-3d!important}',
+'body.as3d-preview .hero-editorial-footer{transform:translateZ(6px)!important}',
+'body.as3d-preview .home-directory>a{transform:perspective(750px) rotateX(4deg) translateZ(8px);box-shadow:0 13px 18px #0006!important;transition:transform .5s,box-shadow .5s}',
+'body.as3d-preview .home-directory>a:nth-child(even){transform:perspective(750px) rotateY(-5deg) translateZ(7px)}',
+'body.as3d-preview .home-directory>a:active{transform:perspective(750px) scale(.98) translateZ(1px)}',
+'body.as3d-preview .hero-section .hero-background-decoration{filter:drop-shadow(0 0 18px #976b392b)}',
+'@media(prefers-reduced-motion:reduce){body.as3d-preview .hero-editorial-frame,body.as3d-preview .home-directory>a{transition:none!important}}'
+].join('\n');
+function apply(x,y){angleX=Math.max(-13,Math.min(13,x));angleY=Math.max(-19,Math.min(19,y));if(target&&enabled){target.style.setProperty('--as3rx',angleX.toFixed(1)+'deg');target.style.setProperty('--as3ry',angleY.toFixed(1)+'deg')}}
+function switchEffect(on){enabled=on;toggle.setAttribute('aria-pressed',String(on));toggle.textContent=on?'3D LIGADO':'3D DESLIGADO';if(!doc)return;doc.body.classList.toggle('as3d-preview',on);if(on){apply(angleX,angleY);message('Arraste o painel em destaque para incliná-lo.')}else{target.style.removeProperty('--as3rx');target.style.removeProperty('--as3ry');message('Efeito desligado. Interface original.')}} 
+function attach(){try{doc=frame.contentDocument;if(!doc||!doc.body)throw Error('Página ainda não disponível');if(!doc.getElementById('as3d-styles')){var style=doc.createElement('style');style.id='as3d-styles';style.textContent=styles;doc.head.appendChild(style)}target=doc.querySelector('.hero-editorial-frame');viewer=doc.querySelector('.hero-dossier');if(!target||!viewer)throw Error('Painel original indisponível');ready=true;switchEffect(enabled);
+viewer.style.touchAction='pan-y';
+viewer.addEventListener('pointerdown',function(e){if(!enabled)return;tracking=true;scrolling=false;touchX=e.clientX;touchY=e.clientY;originX=angleX;originY=angleY},{passive:true});
+viewer.addEventListener('pointermove',function(e){if(!tracking||!enabled)return;var dx=e.clientX-touchX,dy=e.clientY-touchY;if(!scrolling&&Math.abs(dy)>Math.abs(dx)+10){tracking=false;return}if(Math.abs(dx)<5&&Math.abs(dy)<5)return;scrolling=true;apply(originX-dy*.18,originY+dx*.24)},{passive:true});
+viewer.addEventListener('pointerup',function(){tracking=false},{passive:true});viewer.addEventListener('pointercancel',function(){tracking=false},{passive:true});
+viewer.addEventListener('pointerleave',function(e){if(e.pointerType==='mouse')tracking=false},{passive:true});
+if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){message('Movimento reduzido está ativo; o 3D responde somente ao toque.')}else{message('Arraste o painel em destaque para incliná-lo.')}
+}catch(e){message('Não foi possível carregar o painel original nesta visualização.');ready=false}}
+frame.addEventListener('load',attach);
+toggle.addEventListener('click',function(){switchEffect(!enabled)});
+reset.addEventListener('click',function(){if(ready){apply(-2,0);frame.contentWindow.scrollTo({top:0,behavior:'smooth'})}});
+sensor.addEventListener('click',async function(){if(!ready)return;if(sensorActive){sensorActive=false;sensor.textContent='SENSORES';message('Sensor desativado; arraste para girar.');return}
+try{if(typeof DeviceOrientationEvent==='undefined')throw Error('Não disponível');if(typeof DeviceOrientationEvent.requestPermission==='function'){var permission=await DeviceOrientationEvent.requestPermission();if(permission!=='granted')throw Error('Permissão negada')}
+sensorActive=true;sensor.textContent='SENSOR ATIVO';message('Incline seu telefone para testar a profundidade.');
+}catch(e){sensorActive=false;message('Sensor indisponível. Arraste o painel com o dedo.')}});
+window.addEventListener('deviceorientation',function(e){if(!sensorActive||!enabled||!ready||e.beta==null||e.gamma==null)return;apply(Math.max(-12,Math.min(12,(e.beta-45)*.16)),Math.max(-18,Math.min(18,e.gamma*.4)))},{passive:true});
+})();
+</script></body></html>
