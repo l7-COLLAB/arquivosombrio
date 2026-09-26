@@ -7,8 +7,8 @@ const equal=(a:string,b:string)=>{let diff=a.length^b.length;for(let i=0;i<Math.
 Deno.serve(async(req)=>{
  if(req.method==="OPTIONS")return new Response(null,{status:204,headers});
  if(req.method!=="POST"||req.headers.get("origin")!==origin)return respond(403,{error:"Origem não autorizada"});
- const expected=Deno.env.get("LITE_ADMIN_PASSWORD_SHA256"),key=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),url=Deno.env.get("SUPABASE_URL");
- if(!expected||!/^[a-f0-9]{64}$/.test(expected)||!key||!url)return respond(503,{error:"Acesso ainda não configurado"});
+ const configuredPassword=Deno.env.get("LITE_ADMIN_PASSWORD");const expected=configuredPassword?await sha(configuredPassword):"";const key=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),url=Deno.env.get("SUPABASE_URL");
+ if(!configuredPassword||configuredPassword.length<16||!key||!url)return respond(503,{error:"Acesso ainda não configurado"});
  if(Number(req.headers.get("content-length")||0)>1200000)return respond(413,{error:"Requisição muito grande"});
  let body:any;try{body=await req.json()}catch{return respond(400,{error:"JSON inválido"})}
  const client=async(path:string,method="GET",payload?:unknown,prefer?:string)=>{const h:Record<string,string>={apikey:key,Authorization:"Bearer "+key,"Content-Type":"application/json"};if(prefer)h.Prefer=prefer;const r=await fetch(url+"/rest/v1/"+path,{method,headers:h,body:payload===undefined?undefined:JSON.stringify(payload)});if(!r.ok)throw new Error("Database "+r.status);return r.status===204?[]:await r.json()};
