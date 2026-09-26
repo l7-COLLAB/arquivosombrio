@@ -1,0 +1,60 @@
+# Arquivo Sombrio Lite — protótipo isolado
+
+Versão HTML/CSS de baixo consumo para Safari antigo. Esta ramificação NÃO está publicada. O gerador está implementado, mas a exportação automática do banco ainda NÃO está integrada.
+
+## Gerador estático
+
+Execute na raiz do repositório:
+
+```sh
+python3 lite/test_build.py
+python3 lite/build.py lite/publications.json lite/dist
+```
+
+O arquivo `publications.json` está vazio intencionalmente. Nunca adicione rascunhos, dados privados ou chaves de serviço. Para validar manualmente, use exclusivamente registros editoriais públicos já revisados.
+
+Exemplo de estrutura de entrada (exemplo fictício, não publicar como caso real):
+
+```json
+[{
+  "slug": "exemplo",
+  "titulo": "Exemplo de estrutura",
+  "categoria": "dossies",
+  "status_publicacao": "publicado",
+  "publicado_em": "2026-09-01T12:00:00-03:00",
+  "resumo": "Resumo de exemplo.",
+  "conteudo": ["Primeiro parágrafo.", "Segundo parágrafo."],
+  "cronologia": ["01/09: exemplo."],
+  "evidencias": ["Exemplo."],
+  "fontes": ["Fonte de exemplo."]
+}]
+```
+
+Categorias aceitas: dossies, garimpo, pericia, biblioteca, lendas. O gerador omite tudo que não esteja publicado ou tenha data futura, valida slug e escapa o conteúdo para evitar injeção HTML. Gera arquivos individuais e índice paginado a cada 12 registros. Pesquisa ainda pendente.
+
+## Pendências obrigatórias antes de publicar
+1. Mapear tabelas e campos reais, incluindo textos completos, fontes, cronologia e capítulos de novels.
+2. Implementar exportação somente de conteúdo público no pipeline confiável, sem expor credenciais ou usar Supabase JS no iOS 9.
+3. Tratar formatação editorial revisada, imagens licenciadas e eventuais anexos.
+4. Adicionar pesquisa estática ou de servidor e teste de paginação com acervo real.
+5. Conferir cache, publicação agendada, remoção/correção de conteúdos e SEO/canonical.
+6. Testar Safari real iOS 9.3.5, TLS, memória e tempos de navegação.
+7. Configurar hospedagem/subdomínio somente após aprovação.
+
+Não mesclar a ramificação até a validação.
+
+## Exportação pública integrada (não ativada)
+`export_public.py` lê apenas as tabelas editoriais públicas via chave **publicável** e filtra novamente status/data antes de criar `publications.json`. Capítulos publicados são exportados individualmente. Campos HTML são convertidos em texto puro para não executar scripts no Lite. Dados de usuários e rascunhos não entram no exportador.
+
+Workflow manual: `.github/workflows/lite-preview.yml`. Antes de executá-lo, configurar no GitHub Actions o secret `LITE_SUPABASE_PUBLISHABLE_KEY` com a chave publicável, NUNCA service role. O workflow apenas gera um artefato temporário de prévia, não publica no domínio. Não versionar o JSON exportado, pois sua atualização deve acompanhar correções e remoções do acervo.
+
+A exportação ainda exige execução do workflow e revisão visual com os conteúdos reais. O fluxo de publicação automática e a compatibilidade física do iOS 9 não foram validados.
+
+## Recursos de leitura e navegação (nova versão)
+- Tema escuro/papel antigo e tamanho de fonte persistidos localmente, com JavaScript ES5 sem bibliotecas.
+- Pesquisa pré-gerada apenas com títulos e resumos públicos; filtros por categoria e ordenação por título/data.
+- Sumário de subtítulos detectados e seções cronologia/evidências/fontes.
+- Marcador local da última página aberta (não sincroniza contas nem posição de rolagem).
+- Sugestões de até três arquivos da mesma categoria e informações básicas de data e tempo aproximado.
+- Funcionalidade básica preservada quando JavaScript estiver desabilitado, exceto controles dinâmicos e busca por digitação.
+- Após mudanças, executar workflow lite-test.yml antes de lite-publish-preview.yml. Conferir no iOS 9.3.5. O aviso HTTPS continua pendente de diagnóstico.
