@@ -30,10 +30,10 @@ def layout(title,body,depth=0):
     return ('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">'
       '<meta name="viewport" content="width=device-width,initial-scale=1">'
       '<meta name="robots" content="noindex,nofollow"><title>'+esc(title)+' · Arquivo Sombrio Lite</title>'
-      '<link rel="stylesheet" href="'+root+'lite.css?v=8"></head><body id="topo"><div class="wrap">'
+      '<link rel="stylesheet" href="'+root+'lite.css?v=8"><link rel="stylesheet" href="'+root+'audio.css?v=1"></head><body id="topo"><div class="wrap">'
       '<header><p class="eyebrow">EDIÇÃO DE LEITURA</p><h1>ARQUIVO SOMBRIO</h1>'
       '<p>Versão Lite</p></header><nav aria-label="Categorias">'+nav+'</nav><div class="reader-tools"><button type="button" data-lite-setting="theme">Papel / Escuro</button> <button type="button" data-lite-setting="size">Tamanho da letra</button> <a href="'+root+'pesquisa.html">Pesquisar</a> <a id="resume-reading" style="display:none" href="'+root+'index.html">Continuar leitura</a></div><main>'+body+
-      '</main><script src="'+root+'lite.js?v=7"></script><a class="back-to-top" href="#topo" aria-label="Voltar ao topo" title="Voltar ao topo">↑<span> Topo</span></a><footer><p><a href="'+root+'index.html">Início</a> · Arquivo Sombrio Lite</p></footer></div></body></html>')
+      '</main><script src="'+root+'lite.js?v=7"></script><script src="'+root+'audio.js?v=1"></script><a class="back-to-top" href="#topo" aria-label="Voltar ao topo" title="Voltar ao topo">↑<span> Topo</span></a><footer><p><a href="'+root+'index.html">Início</a> · Arquivo Sombrio Lite</p></footer></div></body></html>')
 def text_blocks(value):
     # Explicit plain-text blocks: never inject arbitrary HTML from editorial fields.
     if isinstance(value,str): value=[value]
@@ -69,7 +69,7 @@ def item_page(item, previous=None, following=None, related=None):
     if source_id is not None and str(source_id).isdigit() and not item.get("obra_id"):
         route={"dossios":"caso.html","dossies":"caso.html","garimpo":"garimpo.html","pericia":"pericia.html","lendas":"creepypastas.html" if item["slug"].startswith("creepypasta-") else "lendas.html"}.get(item["categoria"])
         if route:
-            body+='<aside class="notice"><strong>Narração em áudio</strong><p>Ouça na versão completa quando houver áudio aprovado. Pode ser necessário entrar na sua conta.</p><a href="https://arquivosombrio.net.br/'+route+'?id='+str(source_id)+'">Verificar áudio disponível →</a></aside>'
+            body+='<section id="lite-audio" class="lite-audio" data-main-url="https://arquivosombrio.net.br/'+route+'?id='+str(source_id)+'"></section>'
     body+='<p><button id="save-reading" type="button">Marcar leitura</button></p>'
     body+="<article>"+rendered+"</article>"
     for key,label in (("cronologia","Cronologia"),("evidencias","Evidências"),("fontes","Fontes")):
@@ -158,6 +158,8 @@ def build(src,out):
     results='<ul id="search-results">'+"".join('<li data-search="'+esc((title+" "+summary).lower())+'" data-category="'+esc(category)+'" data-title="'+esc(title.lower())+'" data-date="'+esc(date)+'"><a href="'+esc(path)+'">'+esc(title)+"</a> · "+esc(CATEGORIES[category])+"</li>" for title,path,category,date,summary in search_entries)+"</ul>"
     pages["pesquisa.html"]=layout("Pesquisa",controls+results)
     pages["lite.js"]=Path(__file__).with_name("lite.js").read_text(encoding="utf-8")
+    pages["audio.js"]=Path(__file__).with_name("audio.js").read_text(encoding="utf-8")
+    pages["audio.css"]=Path(__file__).with_name("audio.css").read_text(encoding="utf-8")
     css=Path(__file__).with_name("lite.css").read_text(encoding="utf-8")
     pages["lite.css"]=css
     out.mkdir(parents=True,exist_ok=True)
