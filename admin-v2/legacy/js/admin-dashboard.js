@@ -49,7 +49,7 @@ async function load(v,force){
 }
 
 
-var liteReviewTypes={dossies:"dossie",garimpo:"caso_diario",pericia:"pericia",novels:"livro",lendas:"lendas",creepypastas:"creepypastas"};
+var liteReviewTypes={dossies:"dossie",garimpo:"caso_diario",pericia:"pericia",novels:"livro",capitulos:"capitulo",lendas:"lendas",creepypastas:"creepypastas"};
 function liteString(v){if(v==null)return"";return typeof v==="string"?v:JSON.stringify(v,null,2);}
 function liteFields(payload,category){
  var p=payload||{},map={
@@ -74,8 +74,9 @@ function liteLiteraryPayload(payload,category){
 }
 async function importLiteToV2(item){
  var type=liteReviewTypes[item.category];
- if(!type)throw new Error("Este tipo de capítulo ainda não possui editor de revisão correspondente no V2.");
+ if(!type)throw new Error("Categoria Lite sem destino de revisão no V2.");
  var user=state.session.user.id,p=item.payload||{},key;
+ if(item.category==="novels"||item.category==="capitulos"){var transfer={owner:user,kind:item.category==="novels"?"book":"chapter",staging_id:item.id,payload:p,saved_at:new Date().toISOString()};if(item.category==="capitulos"){transfer.novel_id=p.novel_id||"";transfer.chapter_id=p._source&&p._source.snapshot?p._source.snapshot.id||null:null;}try{localStorage.setItem("arquivo-sombrio-lite-v2-transfer:"+user,JSON.stringify(transfer))}catch(e){throw new Error("O navegador não permitiu guardar a transferência temporária. O rascunho Lite continua salvo.")}window.location.href="./novels.html?lite="+transfer.kind;return type;}
  var body;
  if(type==="lendas"||type==="creepypastas"){
   key="literario:"+type+":novo";
@@ -99,7 +100,7 @@ async function liteDrafts(p){
  p.innerHTML=heading("PREPARAÇÃO EDITORIAL","Rascunhos do iPad","Os conteúdos continuam privados até serem importados para um rascunho do V2. Importar não publica nem agenda.")+
  (rows.length?'<div class="admin-hub-record-list">'+rows.map(function(x){return '<article class="admin-hub-record"><div class="admin-hub-record-main"><div class="admin-hub-record-meta"><span>'+esc(x.category)+'</span><time>'+esc(date(x.updated_at))+'</time></div><h3>'+esc(x.title||"Sem título")+'</h3><p>'+esc(short((x.payload||{}).resumo||(x.payload||{}).conteudo||(x.payload||{}).historia||"",220))+'</p></div><div class="admin-hub-record-actions"><button type="button" data-lite-preview="'+esc(x.id)+'">Ver dados</button>'+(liteReviewTypes[x.category]?'<button type="button" data-lite-import="'+esc(x.id)+'">Preparar no V2</button>':'<small>Capítulos: revisão V2 ainda indisponível</small>')+'</div></article>';}).join("")+'</div>':empty("Nenhum rascunho Lite recebido."));
  p.querySelectorAll("[data-lite-preview]").forEach(function(b){b.onclick=function(){var x=rows.find(function(y){return String(y.id)===b.dataset.litePreview;});if(!x)return;var w=window.open("","_blank");if(!w){alert("Permita a abertura da janela para visualizar o conteúdo.");return;}w.document.write("<pre style='white-space:pre-wrap;font:16px/1.5 monospace;padding:20px'>"+esc(JSON.stringify(x.payload,null,2))+"</pre>");w.document.close();};});
- p.querySelectorAll("[data-lite-import]").forEach(function(b){b.onclick=async function(){var item=rows.find(function(y){return String(y.id)===b.dataset.liteImport;});if(!item)return;if(!confirm("Copiar este rascunho para o V2? O original Lite será mantido e nenhum conteúdo será publicado."))return;b.disabled=true;try{var type=await importLiteToV2(item);alert("Rascunho copiado para o V2. Abra a criação de "+(type==="dossie"?"Dossiê":type==="caso_diario"?"Garimpo":type==="pericia"?"Perícia":type==="livro"?"Livro":"conteúdo literário")+" para recuperar o rascunho. O registro Lite original foi preservado.");}catch(e){alert(e.message||"Não foi possível preparar o rascunho no V2.");}finally{b.disabled=false;}};});
+ p.querySelectorAll("[data-lite-import]").forEach(function(b){b.onclick=async function(){var item=rows.find(function(y){return String(y.id)===b.dataset.liteImport;});if(!item)return;if(!confirm("Copiar este rascunho para o V2? O original Lite será mantido e nenhum conteúdo será publicado."))return;b.disabled=true;try{var type=await importLiteToV2(item);alert("Rascunho copiado para o V2. Abra a criação de "+(type==="dossie"?"Dossiê":type==="caso_diario"?"Garimpo":type==="pericia"?"Perícia":type==="livro"?"Livro":type==="capitulo"?"Capítulo":"conteúdo literário")+" para recuperar o rascunho. O registro Lite original foi preservado.");}catch(e){alert(e.message||"Não foi possível preparar o rascunho no V2.");}finally{b.disabled=false;}};});
  setCount("liteDrafts",rows.length);
 }
 
