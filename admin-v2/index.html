@@ -63,7 +63,7 @@ await load("o módulo de narração","./js/narration.js?v=narration-reliability-
 set("Preparando o Arquivo Voz...");
 await load("o Arquivo Voz","./js/voice-studio.js?v=audio-metrics-1",12000);
 set("Preparando a central administrativa...");
-await load("a central administrativa","./legacy/js/admin-dashboard.js?v=home-published-at-2",12000);
+await load("a central administrativa","./legacy/js/admin-dashboard.js?v=lite-inbox-2",12000);
 if(typeof abrirPainelAdmin!=="function")throw new Error("A função principal do painel não ficou disponível.");
 set("Montando a Central de Arquivo...");
 await abrirPainelAdmin(sessao);
