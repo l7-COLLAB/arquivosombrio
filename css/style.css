@@ -485,3 +485,32 @@ body.garimpo-story-open{overflow:hidden}
     .garimpo-story-bubble{flex-basis:72px;width:72px}
     .garimpo-story-bubble>span{width:58px;height:58px}
 }
+
+
+/* Hierarquia editorial para Garimpo Sombrio e artigos de perícia. */
+.daily-reader-text .archive-editorial-heading,
+.forensic-detail-content .archive-editorial-heading {
+    color: var(--paper, #d8c9ad);
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: 1.32;
+    letter-spacing: .012em;
+    text-wrap: pretty;
+}
+.daily-reader-text .archive-editorial-heading--h3,
+.forensic-detail-content .archive-editorial-heading--h3 {
+    font-size: clamp(1.24rem, 3vw, 1.58rem);
+    font-weight: 700;
+    margin: 2.2rem 0 .75rem;
+    padding-left: .8rem;
+    border-left: 3px solid #a18b63;
+}
+.daily-reader-text .archive-editorial-heading--h4,
+.forensic-detail-content .archive-editorial-heading--h4 {
+    font-size: clamp(1.06rem, 2.5vw, 1.25rem);
+    font-weight: 650;
+    margin: 1.65rem 0 .55rem;
+}
+.daily-reader-text .archive-editorial-heading + p,
+.forensic-detail-content .archive-editorial-heading + p {
+    margin-top: .45rem;
+}
