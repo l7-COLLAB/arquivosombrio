@@ -60,7 +60,7 @@ function submit(mode,ev){
   if(!byId('signup-age').checked||!byId('signup-legal').checked){msg('Confirme a idade e aceite os documentos legais.');return false}
   var name=byId('signup-name').value.replace(/^\s+|\s+$/g,'');if(!name){msg('Informe seu nome ou codinome.');return false}
   data.data={display_name:name,age_18_confirmed:true,legal_acceptance:true,terms_version:'1.1',privacy_version:'1.2',guidelines_version:'1.0',legal_accepted_at:new Date().toISOString()};
-  path='/auth/v1/signup';
+  path='/auth/v1/signup?redirect_to='+encodeURIComponent('https://arquivosombrio.net.br/lite-preview/conta.html');
  }
  setBusy(true);msg(mode==='signup'?'Criando sua conta...':'Verificando sua conta...');
  request('POST',path,data,function(status,result){
@@ -85,7 +85,7 @@ function init(){
  byId('auth-show-signup').onclick=function(){show('signup')};
  byId('auth-signout').onclick=function(){
   access(function(t){if(t)request('POST','/auth/v1/logout',{},function(){},t)});
-  clear();byId('auth-forms').style.display='block';byId('auth-account').style.display='none';resetChallenge();show('login');
+  clear();byId('auth-forms').style.display='block';byId('auth-account').style.display='none';resetChallenge();show('login');if(widget===null)loadCaptcha();
  };
  access(function(t){if(t)done();else{show('login');loadCaptcha()}});
 }
