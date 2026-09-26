@@ -1,27 +1,38 @@
-# Administração Lite para iOS 9.3.5
-Protótipo local em admin-lite-preview/. Não é um painel autenticado. A página será pública se for publicada no GitHub Pages.
+# Administração Lite · iOS 9.3.5
 
-## Próxima fase
-1. Validar código forte exclusivamente no servidor com hash, limite de tentativas e auditoria.
-2. Vincular código a identidade administrativa preexistente; emitir sessão curta e restrita à edição de rascunhos.
-3. Validar permissões no servidor, não no JavaScript do iPad. Nunca incluir chaves secretas ou service_role no frontend.
-4. Verificar compatibilidade HTTPS/TLS do Safari 9 antes de solicitar credenciais.
-5. Criar sincronização autorizada de rascunhos com histórico de versões e proteção contra substituição concorrente.
-6. Testar no iPad antigo antes de habilitar qualquer escrita remota.
+A Administração Lite é um editor remoto de rascunhos. A senha é lida apenas pela Edge Function `lite-admin` por meio do segredo `LITE_ADMIN_PASSWORD`. Não inserir senhas ou chaves administrativas no HTML, JavaScript, histórico ou armazenamento local.
 
-## Melhorias
-Checklist editorial, aviso de mudanças não salvas, exportação de segurança e navegação por seções.
+## Categorias
 
-Não habilitar publicação definitiva ou escrita pública nesta fase.
+Dossiês, Garimpo Sombrio, Perícia Forense, Lendas, Creepypastas, livros e capítulos têm campos próprios. Os campos estruturados aceitam JSON para preservar listas, blocos e relacionamentos. Capítulos são registros independentes e usam o ID da obra.
 
-## Etapa concluída nesta revisão
-- Autosave local de 15 segundos, indicador de alterações pendentes e aviso ao sair.
-- Importação de backup JSON limitado a 2 MB, com verificação de formato e confirmação antes de substituir.
-- Checklist editorial e prévia local.
-- Nenhuma operação de escrita remota foi habilitada. O PIN deve ser verificado no servidor, com limite de tentativas persistente e sessão curta. Não criar PIN no GitHub ou no HTML.
+## Fluxo
 
-## Bloqueios antes da publicação autenticada
-- Configurar segredo de acesso no ambiente seguro do Supabase, fora do repositório, e vincular ao administrador autorizado.
-- Implementar/verificar limitação de tentativas no servidor e revogação de sessões; registrar auditoria sem salvar o código.
-- Testar HTTPS no Safari iOS 9.3.5 antes de enviar qualquer credencial.
-- Testar integração com admin_drafts sem expor rascunhos de outros usuários; manter publicação desativada.
+1. Entrar com o código administrativo no servidor.
+2. Criar rascunho ou copiar um registro existente para uma cópia isolada.
+3. Salvar na tabela `lite_admin_staging`. Edições condicionais verificam `updated_at` para impedir sobrescrita silenciosa.
+4. Na Central Administrativa V2, abrir **Rascunhos do iPad** e importar uma cópia para o fluxo de rascunhos do V2.
+5. Revisar, editar e decidir publicação ou agendamento exclusivamente pelo painel V2.
+
+A importação não remove o rascunho Lite e não altera tabelas de conteúdo público.
+
+## Segurança e compatibilidade
+
+- RLS permanece ativa nas tabelas auxiliares. O service role é usado somente no servidor.
+- O V2 pode ler `lite_admin_staging` apenas quando `is_arquivo_sombrio_admin()` aprova a sessão.
+- A função Lite não aceita publicação nem agendamento.
+- A senha não é persistida no navegador; o token de sessão fica somente em memória e dura 45 minutos.
+- A interface usa HTML convencional, CSS simples, JavaScript ES5 e `XMLHttpRequest`.
+- CORS permite apenas `https://arquivosombrio.net.br`.
+- O limite é de cinco tentativas por IP no intervalo de 15 minutos.
+
+## Migrações relacionadas
+
+- `20260926014429_lite_admin_private_staging_and_sessions.sql`
+- `20260926020815_lite_admin_explicit_service_role_permissions.sql`
+- `20260926021744_lite_admin_v2_inbox_and_read_catalog_grants.sql`
+- `20260926021958_admin_drafts_literary_types_for_lite_review.sql`
+
+## Estado dos testes
+
+Validação de sintaxe JavaScript concluída para os arquivos alterados. Permissões e política RLS confirmadas no Supabase. Ainda é necessário testar login com o código válido, limite de tentativas, sessão, criação/recuperação/conflito de rascunhos, importação no V2 e Safari do iPad com iOS 9.3.5. Não liberar a publicação do branch antes desses testes físicos e de integração.
