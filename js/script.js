@@ -4238,8 +4238,26 @@ function criarCardPericia(pericia) {
         '<p class="card-summary">' + escaparHTML(pericia.resumo || "Sem resumo disponível.") + '</p><span class="btn-read-more">Abrir perícia <i class="fa-solid fa-arrow-right"></i></span></div></a></article>';
 }
 
+// Interpreta somente marcadores Markdown no início de um parágrafo.
+// Todos os textos passam por escaparHTML para impedir injeção de HTML.
+function renderizarTextoEditorialComTitulos(valor) {
+    return String(valor || "")
+        .split(/\n\s*\n/)
+        .map(trecho => trecho.trim())
+        .filter(Boolean)
+        .map(trecho => {
+            const titulo = trecho.match(/^(#{2,3})[ \t]+([^\n]+)$/);
+            if (titulo) {
+                const nivel = titulo[1].length === 2 ? "h3" : "h4";
+                return "<" + nivel + ' class="archive-editorial-heading archive-editorial-heading--' +
+                    nivel + '">' + escaparHTML(titulo[2]) + "</" + nivel + ">";
+            }
+            return "<p>" + escaparHTML(trecho).replace(/\n/g, "<br>") + "</p>";
+        }).join("");
+}
+
 function paragrafosPericia(valor) {
-    return String(valor || "").split(/\n\s*\n/).map(p => p.trim()).filter(Boolean).map(p => "<p>" + escaparHTML(p).replace(/\n/g, "<br>") + "</p>").join("");
+    return renderizarTextoEditorialComTitulos(valor);
 }
 
 function renderizarDetalhePericia(grid, pericia) {
@@ -12929,7 +12947,7 @@ function renderizarDetalheCasoDiario(container, caso) {
             </header>
             ${caso.imagem_capa ? `<img class="daily-reader-cover" src="${escaparHTML(caso.imagem_capa)}" alt="${escaparHTML(caso.titulo || "Imagem de capa do registro")}" loading="eager">` : ""}
             <p class="daily-reader-lead">${escaparHTML(caso.resumo || "")}</p>
-            <div class="daily-reader-text">${escaparHTML(caso.conteudo || "").split(/\n{2,}/).map(paragrafo => `<p>${paragrafo.replace(/\n/g, "<br>")}</p>`).join("")}</div>
+            <div class="daily-reader-text">${renderizarTextoEditorialComTitulos(caso.conteudo || "")}</div>
             ${renderizarCronologiaGarimpo(caso.cronologia)}
             ${renderizarSecaoDocumentalGarimpo("daily-reader-evidence", "VESTÍGIOS E ELEMENTOS", "Evidências", caso.evidencias)}
             ${renderizarSecaoDocumentalGarimpo("daily-reader-hypotheses", "LEITURAS DO CASO", "Hipóteses e controvérsias", caso.hipoteses)}
