@@ -43,10 +43,11 @@ function loadCaptcha(){
  if(!byId('lite-turnstile'))return;
  var s=d.createElement('script');s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';s.async=true;
  s.onload=function(){if(w.turnstile)captchaLoaded();else msg('A verificação de segurança não carregou.')};
- s.onerror=function(){msg('A verificação de segurança não carregou. Sem ela, o acesso fica bloqueado.')};
+ s.onerror=function(){msg('O CAPTCHA não abriu neste navegador. Você pode confirmar um código recebido por e-mail abaixo, sem carregar o desafio no iPad.')};
  d.getElementsByTagName('head')[0].appendChild(s);
+ w.setTimeout(function(){if(!challengeToken&&!w.turnstile)msg('Este navegador pode não carregar o CAPTCHA. Para entrar com código, solicite-o em um aparelho moderno e confirme abaixo no iPad.')},9000);
 }
-function pending(){var value='';try{value=w.sessionStorage.getItem('as-lite-return')||''}catch(e){}return /^arquivos\/[a-z0-9-]+\.html$/i.test(value)?value:'index.html'}
+function pending(){var value='';try{value=w.sessionStorage.getItem('as-lite-return')||''}catch(e){}try{var match=/(?:^|[?&])return=([^&]+)/.exec(w.location.search);if(match)value=decodeURIComponent(match[1])}catch(e){}return /^arquivos\/[a-z0-9-]+\.html$/i.test(value)?value:'index.html'}
 function done(){if(byId('auth-forms'))byId('auth-forms').style.display='none';if(byId('auth-account'))byId('auth-account').style.display='block';msg('Conta conectada. Você já pode ouvir os áudios disponíveis.');var a=byId('auth-back');if(a)a.href=pending()}
 function setBusy(on){loading=on;var btns=d.querySelectorAll('#auth-forms button');for(var i=0;i<btns.length;i++)btns[i].disabled=on}
 function submit(mode,ev){
