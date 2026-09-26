@@ -63,6 +63,13 @@ def item_page(item, previous=None, following=None, related=None):
         if item.get(k): toc.append((k,label))
     if toc: body+='<details class="toc" open><summary>Sumário</summary><ul>'+"".join('<li><a href="#'+esc(k)+'">'+esc(label)+"</a></li>" for k,label in toc)+"</ul></details>"
     body+='<p class="metadata">'+esc(CATEGORIES[item["categoria"]])+' · '+esc(item["publicado_em"][:10])+' · Aproximadamente '+str(max(1,len(str(item["conteudo"]).split())//200))+' min de leitura</p>'
+    # Public narration remains protected by the main site's authentication and approval rules.
+    # Do not embed or expose private R2 URLs in the static Lite export.
+    source_id=item.get("source_id")
+    if source_id is not None and str(source_id).isdigit() and not item.get("obra_id"):
+        route={"dossios":"caso.html","dossies":"caso.html","garimpo":"garimpo.html","pericia":"pericia.html","lendas":"creepypastas.html" if item["slug"].startswith("creepypasta-") else "lendas.html"}.get(item["categoria"])
+        if route:
+            body+='<aside class="notice"><strong>Narração em áudio</strong><p>Ouça na versão completa quando houver áudio aprovado. Pode ser necessário entrar na sua conta.</p><a href="https://arquivosombrio.net.br/'+route+'?id='+str(source_id)+'">Verificar áudio disponível →</a></aside>'
     body+='<p><button id="save-reading" type="button">Marcar leitura</button></p>'
     body+="<article>"+rendered+"</article>"
     for key,label in (("cronologia","Cronologia"),("evidencias","Evidências"),("fontes","Fontes")):
