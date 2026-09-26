@@ -3,11 +3,11 @@
 "use strict";
 var state = { client:null, session:null, mounted:false, view:"overview" };
 var labels = {
-  overview:"Visão geral", content:"Conteúdos e edição", schedule:"Agendamentos", feature:"Destaque da Home", narration:"Narração do Arquivo", voiceStudio:"Arquivo Voz", community:"Comunidade",
+  overview:"Visão geral", content:"Conteúdos e edição", liteDrafts:"Rascunhos do iPad", schedule:"Agendamentos", feature:"Destaque da Home", narration:"Narração do Arquivo", voiceStudio:"Arquivo Voz", community:"Comunidade",
   users:"Usuários", requests:"Solicitações", activity:"Histórico administrativo"
 };
 var icons = {
-  overview:"fa-chart-line", content:"fa-folder-tree", schedule:"fa-calendar-check", feature:"fa-star", narration:"fa-microphone-lines", voiceStudio:"fa-wave-square", community:"fa-comments",
+  overview:"fa-chart-line", content:"fa-folder-tree", liteDrafts:"fa-tablet-screen-button", schedule:"fa-calendar-check", feature:"fa-star", narration:"fa-microphone-lines", voiceStudio:"fa-wave-square", community:"fa-comments",
   users:"fa-users", requests:"fa-inbox", activity:"fa-clock-rotate-left"
 };
 function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
@@ -28,7 +28,7 @@ function shell(manager){
   Array.from(manager.children).forEach(function(c){if(c!==close)legacy.appendChild(c);});
   var root=document.createElement("div");root.className="admin-hub-shell";
   var nav=Object.keys(labels).map(function(v){return '<button type="button" data-admin-hub-view="'+v+'"><i class="fa-solid '+icons[v]+'"></i><span>'+labels[v]+'</span><small data-admin-hub-count="'+v+'"></small></button>';}).join("");
-  root.innerHTML='<aside class="admin-hub-sidebar"><div class="admin-hub-brand"><span>ÁREA RESTRITA</span><strong>Central Administrativa</strong><small>Arquivo Sombrio</small></div><nav aria-label="Menu administrativo">'+nav+'</nav><div class="admin-hub-sidebar-footer"><p><i class="fa-solid fa-shield-halved"></i> Acesso protegido</p><button type="button" data-admin-hub-logout><i class="fa-solid fa-right-from-bracket"></i> Sair</button></div></aside><div class="admin-hub-main"><header class="admin-hub-topbar"><button type="button" class="admin-hub-menu-toggle" aria-label="Abrir menu"><i class="fa-solid fa-bars"></i></button><div><span>PAINEL ADMINISTRATIVO</span><h1 data-admin-hub-title>Visão geral</h1></div><button type="button" class="admin-hub-refresh" aria-label="Atualizar"><i class="fa-solid fa-rotate"></i></button></header><div class="admin-hub-panels"><section class="admin-hub-panel" data-admin-hub-panel="overview"></section><section class="admin-hub-panel" data-admin-hub-panel="schedule" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="feature" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="narration" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="voiceStudio" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="community" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="users" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="requests" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="activity" hidden></section></div></div>';
+  root.innerHTML='<aside class="admin-hub-sidebar"><div class="admin-hub-brand"><span>ÁREA RESTRITA</span><strong>Central Administrativa</strong><small>Arquivo Sombrio</small></div><nav aria-label="Menu administrativo">'+nav+'</nav><div class="admin-hub-sidebar-footer"><p><i class="fa-solid fa-shield-halved"></i> Acesso protegido</p><button type="button" data-admin-hub-logout><i class="fa-solid fa-right-from-bracket"></i> Sair</button></div></aside><div class="admin-hub-main"><header class="admin-hub-topbar"><button type="button" class="admin-hub-menu-toggle" aria-label="Abrir menu"><i class="fa-solid fa-bars"></i></button><div><span>PAINEL ADMINISTRATIVO</span><h1 data-admin-hub-title>Visão geral</h1></div><button type="button" class="admin-hub-refresh" aria-label="Atualizar"><i class="fa-solid fa-rotate"></i></button></header><div class="admin-hub-panels"><section class="admin-hub-panel" data-admin-hub-panel="liteDrafts" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="overview"></section><section class="admin-hub-panel" data-admin-hub-panel="schedule" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="feature" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="narration" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="voiceStudio" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="community" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="users" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="requests" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="activity" hidden></section></div></div>';
   root.querySelector(".admin-hub-panels").appendChild(legacy);manager.appendChild(root);
   if(close){close.classList.add("admin-hub-native-close");root.querySelector(".admin-hub-topbar").appendChild(close);}
   root.querySelectorAll("[data-admin-hub-view]").forEach(function(b){b.onclick=function(){open(b.dataset.adminHubView);};});
@@ -44,8 +44,63 @@ function open(v){
 }
 async function load(v,force){
   if(v==="content")return;var p=panel(v);if(!p||(p.dataset.loaded&&!force))return;loading(v);
-  try{if(v==="overview")await overview(p);if(v==="schedule")await scheduleCenter(p);if(v==="feature")await homeFeature(p);if(v==="narration"){if(!window.ArquivoNarracao?.render)throw new Error("O módulo de narração não carregou.");await window.ArquivoNarracao.render(p);}if(v==="voiceStudio"){if(!window.ArquivoVozStudio?.render)throw new Error("O Arquivo Voz não carregou.");await window.ArquivoVozStudio.render(p);}if(v==="community")await community(p);if(v==="users")await users(p);if(v==="requests")await requests(p);if(v==="activity")await activity(p);p.dataset.loaded="1";}
+  try{if(v==="liteDrafts")await liteDrafts(p);if(v==="overview")await overview(p);if(v==="schedule")await scheduleCenter(p);if(v==="feature")await homeFeature(p);if(v==="narration"){if(!window.ArquivoNarracao?.render)throw new Error("O módulo de narração não carregou.");await window.ArquivoNarracao.render(p);}if(v==="voiceStudio"){if(!window.ArquivoVozStudio?.render)throw new Error("O Arquivo Voz não carregou.");await window.ArquivoVozStudio.render(p);}if(v==="community")await community(p);if(v==="users")await users(p);if(v==="requests")await requests(p);if(v==="activity")await activity(p);p.dataset.loaded="1";}
   catch(e){console.error(e);p.innerHTML='<div class="admin-hub-error"><i class="fa-solid fa-triangle-exclamation"></i><p>'+esc(e.message||"Não foi possível carregar esta área.")+"</p></div>";}
+}
+
+
+var liteReviewTypes={dossies:"dossie",garimpo:"caso_diario",pericia:"pericia",novels:"livro",lendas:"lendas",creepypastas:"creepypastas"};
+function liteString(v){if(v==null)return"";return typeof v==="string"?v:JSON.stringify(v,null,2);}
+function liteFields(payload,category){
+ var p=payload||{},map={
+  dossies:[["titulo","admin-title"],["categoria","admin-category"],["local","admin-location"],["ano","admin-year"],["status","admin-status"],["imagem","admin-image"],["resumo","admin-summary"],["conteudo","admin-history"],["cronologia","admin-chronology"],["evidencias","admin-evidence"],["teorias","admin-theories"],["situacao_oficial","admin-official-status"],["fontes","admin-sources"]],
+  garimpo:[["titulo","daily-title"],["categoria","daily-category"],["local","daily-location"],["data_caso","daily-date"],["status_caso","daily-case-status"],["resumo","daily-summary"],["conteudo","daily-content"],["cronologia","daily-chronology"],["evidencias","daily-evidence"],["hipoteses","daily-theories"],["situacao_oficial","daily-official-status"],["fontes","daily-sources-text"]],
+  pericia:[["titulo","admin-forensic-title"],["categoria","admin-forensic-category"],["resumo","admin-forensic-summary"],["legenda_imagem","admin-forensic-image-caption"],["fonte_imagem","admin-forensic-image-source"],["introducao","admin-forensic-introduction"],["como_funciona","admin-forensic-method"]],
+  novels:[["titulo","admin-book-title"],["autor_nome","admin-book-author"],["ano","admin-book-year"],["editora","admin-book-publisher"],["imagem_capa","admin-book-cover"],["sinopse","admin-book-description"],["generos","admin-book-tag"]]
+ };
+ var aliases={dossies:{conteudo:["historia","conteudo"]},garimpo:{conteudo:["conteudo","historia"]},novels:{autor_nome:["autor_nome","autor"],sinopse:["sinopse","descricao"],imagem_capa:["imagem_capa","capa"]}};
+ var a=map[category]||[],out=[];
+ a.forEach(function(pair){var key=pair[0],id=pair[1],v=p[key];if(v==null&&aliases[category]&&aliases[category][key]){for(var i=0;i<aliases[category][key].length;i++){if(p[aliases[category][key][i]]!=null){v=p[aliases[category][key][i]];break;}}}if(v!=null&&v!=="")out.push({base:"#"+id,indice:0,valor:liteString(v),marcado:false});});
+ return out;
+}
+function liteLiteraryPayload(payload,category){
+ var p=payload||{},out={};
+ ["titulo","subtitulo","titulo_alternativo","resumo","conteudo","origem","periodo","categoria","contexto_historico","introducao","versoes","elementos_reais","fontes","classificacao","pais","regiao","cidade","nota_editorial","autor_credito","autor_nome","subgenero","realidade_ficcao","conclusao_arquivo","cronologia","hipoteses","personagens","seo","metadata","exibir_aviso_ficcao"].forEach(function(k){if(p[k]!=null)out[k]=p[k];});
+ if(!out.titulo)out.titulo=p.titulo||"";
+ if(!out.conteudo)out.conteudo=p.conteudo||p.historia||"";
+ if(category==="lendas"&&!out.contexto_historico)out.contexto_historico=p.contexto||"";
+ if(category==="creepypastas"&&!out.nota_editorial)out.nota_editorial=p.contexto||"";
+ return out;
+}
+async function importLiteToV2(item){
+ var type=liteReviewTypes[item.category];
+ if(!type)throw new Error("Este tipo de capítulo ainda não possui editor de revisão correspondente no V2.");
+ var user=state.session.user.id,p=item.payload||{},key;
+ var body;
+ if(type==="lendas"||type==="creepypastas"){
+  key="literario:"+type+":novo";
+  body=liteLiteraryPayload(p,type);
+ }else{
+  key=type+":novo";
+  body={versao:2,salvo_em:new Date().toISOString(),campos:liteFields(p,item.category),extras:{lite_admin_staging_id:item.id,lite_category:item.category,lite_payload:p}};
+ }
+ var existing=await state.client.from("admin_drafts").select("id").eq("user_id",user).eq("draft_key",key).maybeSingle();
+ if(existing.error)throw existing.error;
+ if(existing.data)throw new Error("Já existe um rascunho novo dessa categoria no V2. Abra ou conclua esse rascunho antes de importar outro.");
+ var r=await state.client.from("admin_drafts").insert({user_id:user,draft_key:key,content_type:type,record_id:null,title:item.title||p.titulo||"Rascunho Lite",payload:body,updated_at:new Date().toISOString()});
+ if(r.error)throw r.error;
+ await audit("import_lite_draft_to_v2","lite_admin_staging",item.id,{category:item.category});
+ return type;
+}
+async function liteDrafts(p){
+ var r=await state.client.from("lite_admin_staging").select("id,category,title,payload,updated_at").order("updated_at",{ascending:false}).limit(100);
+ if(r.error)throw r.error;
+ var rows=r.data||[];
+ p.innerHTML=heading("PREPARAÇÃO EDITORIAL","Rascunhos do iPad","Os conteúdos continuam privados até serem importados para um rascunho do V2. Importar não publica nem agenda.")+
+ (rows.length?'<div class="admin-hub-record-list">'+rows.map(function(x){return '<article class="admin-hub-record"><div class="admin-hub-record-main"><div class="admin-hub-record-meta"><span>'+esc(x.category)+'</span><time>'+esc(date(x.updated_at))+'</time></div><h3>'+esc(x.title||"Sem título")+'</h3><p>'+esc(short((x.payload||{}).resumo||(x.payload||{}).conteudo||(x.payload||{}).historia||"",220))+'</p></div><div class="admin-hub-record-actions"><button type="button" data-lite-preview="'+esc(x.id)+'">Ver dados</button>'+(liteReviewTypes[x.category]?'<button type="button" data-lite-import="'+esc(x.id)+'">Preparar no V2</button>':'<small>Capítulos: revisão V2 ainda indisponível</small>')+'</div></article>';}).join("")+'</div>':empty("Nenhum rascunho Lite recebido."));
+ p.querySelectorAll("[data-lite-preview]").forEach(function(b){b.onclick=function(){var x=rows.find(function(y){return String(y.id)===b.dataset.litePreview;});if(!x)return;var w=window.open("","_blank");if(!w){alert("Permita a abertura da janela para visualizar o conteúdo.");return;}w.document.write("<pre style='white-space:pre-wrap;font:16px/1.5 monospace;padding:20px'>"+esc(JSON.stringify(x.payload,null,2))+"</pre>");w.document.close();};});
+ p.querySelectorAll("[data-lite-import]").forEach(function(b){b.onclick=async function(){var item=rows.find(function(y){return String(y.id)===b.dataset.liteImport;});if(!item)return;if(!confirm("Copiar este rascunho para o V2? O original Lite será mantido e nenhum conteúdo será publicado."))return;b.disabled=true;try{var type=await importLiteToV2(item);alert("Rascunho copiado para o V2. Abra a criação de "+(type==="dossie"?"Dossiê":type==="caso_diario"?"Garimpo":type==="pericia"?"Perícia":type==="livro"?"Livro":"conteúdo literário")+" para recuperar o rascunho. O registro Lite original foi preservado.");}catch(e){alert(e.message||"Não foi possível preparar o rascunho no V2.");}finally{b.disabled=false;}};});
+ setCount("liteDrafts",rows.length);
 }
 
 function scheduleDate(v){
