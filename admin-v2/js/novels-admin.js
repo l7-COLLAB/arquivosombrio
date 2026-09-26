@@ -57,7 +57,7 @@ if(liteTransfer&&liteTransfer.owner===user.id&&liteTransfer.kind===liteMode&&lit
  form.elements.generos.value=Array.isArray(p.generos)?p.generos.join(", "):String(p.generos||p.tags||"");
  form.elements.sinopse.value=p.sinopse||p.resumo||"";
  form.elements.status_publicacao.value="rascunho";
- status("Rascunho Lite carregado no formulário do V2. Nada foi gravado. Confira os campos e pressione Salvar obra para criar o rascunho.");
+ status(p._source&&p._source.snapshot&&p._source.snapshot.id?"Cópia do acervo preparada como nova obra em rascunho; a obra original permanece intacta. Confira e pressione Salvar obra no V2 para gravar.":"Rascunho Lite carregado no formulário do V2. Nada foi gravado. Confira os campos e pressione Salvar obra para criar o rascunho.");
 }
 if(liteTransfer&&liteTransfer.owner===user.id&&liteTransfer.kind===liteMode&&liteMode==="chapter"){
  if(!liteTransfer.novel_id){status("Este capítulo ainda não está associado a uma obra existente no V2. O rascunho Lite continua salvo.");}
@@ -74,7 +74,7 @@ if(liteTransfer&&liteTransfer.owner===user.id&&liteTransfer.kind===liteMode&&lit
   f.elements.agendado_para.value="";
   $("#chapter-schedule-wrap").hidden=true;$("#chapter-schedule-note").hidden=true;
   if(draftKey)saveDraftNow();
-  status("Rascunho Lite carregado no editor do V2. Nada foi gravado. Confira o capítulo e pressione Salvar capítulo para continuar.");
+  status(liteTransfer.chapter_id&&p._source&&p._source.snapshot&&p._source.snapshot.status_publicacao==="publicado"?"Cópia de capítulo carregada; o original permanece público. Nada foi gravado. Salvar capítulo no V2 pedirá confirmação antes de substituir o registro.":"Rascunho Lite carregado no editor do V2. Nada foi gravado. Confira o capítulo e pressione Salvar capítulo para continuar.");
  }
 }
 });
