@@ -36,6 +36,19 @@ Deno.serve(async(req)=>{
  if(body.action==="logout"){await client("lite_admin_sessions?token_hash=eq."+hash,"DELETE");return respond(200,{ok:true})}
  if(body.action==="list"){const rows=await client("lite_admin_staging?select=id,category,title,updated_at&order=updated_at.desc&limit=100");return respond(200,{items:rows})}
  if(body.action==="get"){if(!/^[0-9a-f-]{36}$/i.test(body.id||""))return respond(400,{error:"ID inválido"});const rows=await client("lite_admin_staging?select=*&id=eq."+body.id+"&limit=1");return respond(200,{item:rows[0]||null})}
+ if(body.action==="catalog"){
+  const tables:Record<string,string>={dossies:"Casos",garimpo:"casos_diarios",pericia:"pericias",lendas:"lendas",creepypastas:"creepypastas",novels:"novels",capitulos:"novel_capitulos"};
+  const table=tables[String(body.category||"")];if(!table)return respond(400,{error:"Categoria inválida"});
+  const rows=await client(table+"?select=id,titulo&order=created_at.desc&limit=100");return respond(200,{items:rows});
+ }
+ if(body.action==="copy"){
+  const tables:Record<string,string>={dossies:"Casos",garimpo:"casos_diarios",pericia:"pericias",lendas:"lendas",creepypastas:"creepypastas",novels:"novels",capitulos:"novel_capitulos"};
+  const cat=String(body.category||""),table=tables[cat],id=String(body.id||"");
+  if(!table||!/^(?:[0-9]+|[a-f0-9-]{36})$/i.test(id))return respond(400,{error:"Referência inválida"});
+  const rows=await client(table+"?select=*&id=eq."+id+"&limit=1");if(!rows.length)return respond(404,{error:"Arquivo não encontrado"});
+  const o=rows[0],p={titulo:o.titulo||"",subtitulo:o.subtitulo||"",resumo:o.resumo||o.sinopse||"",situacao:o.status_caso||o.status||o.status_obra||"",local:o.local||o.origem||"",data:o.ano||o.data_caso||o.periodo||"",conteudo:o.historia||o.conteudo||o.introducao||"",cronologia:typeof o.cronologia==="string"?o.cronologia:JSON.stringify(o.cronologia||[]),evidencias:JSON.stringify(o.evidencias||[]),teorias:JSON.stringify(o.teorias||o.hipoteses||[]),contexto:o.contexto_historico||o.como_funciona||"",fontes:JSON.stringify(o.fontes||[]),livro:o.novel_id||"",numero:String(o.numero||""),notas:"Cópia de preparação do registro "+id,pendencias:"",_source:{table,id,snapshot:o}};
+  const inserted=await client("lite_admin_staging","POST",{category:cat,title:p.titulo||"Sem título",payload:p},"return=representation");return respond(200,{item:inserted[0]});
+ }
  if(body.action==="save"){
   const category=String(body.category||""),title=String(body.title||"").trim(),payload=body.payload;
   if(!["dossies","garimpo","pericia","lendas","creepypastas","novels","capitulos"].includes(category)||!title||title.length>250||!payload||typeof payload!=="object"||JSON.stringify(payload).length>900000)return respond(400,{error:"Dados inválidos"});
