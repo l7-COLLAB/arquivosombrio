@@ -1,0 +1,33 @@
+/* Arquivo Sombrio — camada experimental de profundidade sobre a interface ORIGINAL.
+   Não substitui layout, fontes, cores, conteúdo, links ou componentes. */
+@supports (perspective: 900px) {
+  .home-page.as-depth-on .hero-section { perspective: 1400px; perspective-origin: 72% 45%; }
+  .home-page.as-depth-on .hero-layout { transform-style: preserve-3d; }
+  .home-page.as-depth-on .hero-dossier { perspective: 1150px; transform-style: preserve-3d; }
+  .home-page.as-depth-on .hero-editorial-frame {
+    --depth-x:0deg; --depth-y:0deg;
+    position:relative;
+    transform-style:preserve-3d;
+    transform: rotateX(var(--depth-x)) rotateY(var(--depth-y));
+    transition:transform 480ms cubic-bezier(.2,.65,.2,1),box-shadow 480ms ease;
+    will-change:transform;
+    box-shadow:0 24px 60px rgba(0,0,0,.37),0 12px 100px rgba(161,113,54,.07);
+  }
+  .home-page.as-depth-on .hero-editorial-feature { transform:translateZ(24px);transform-style:preserve-3d;transition:transform .4s ease,filter .4s ease; }
+  .home-page.as-depth-on .hero-editorial-feature:hover,.home-page.as-depth-on .hero-editorial-feature:focus-visible {transform:translateZ(37px);filter:brightness(1.06)}
+  .home-page.as-depth-on .hero-editorial-image { transform:translateZ(12px); }
+  .home-page.as-depth-on .hero-editorial-feature-copy { transform:translateZ(29px); }
+  .home-page.as-depth-on .hero-editorial-rail { transform:translateZ(14px);transform-style:preserve-3d; }
+  .home-page.as-depth-on .hero-editorial-strip { transition:transform .28s ease,background .28s ease; }
+  .home-page.as-depth-on .hero-editorial-strip:hover,.home-page.as-depth-on .hero-editorial-strip:focus-visible {transform:translateZ(18px)}
+  .home-page.as-depth-on .hero-editorial-footer { transform:translateZ(7px); }
+  .home-page.as-depth-on .hero-content { transform:translateZ(8px); }
+  .home-page.as-depth-on .home-directory a { transition:transform .28s ease,box-shadow .28s ease; }
+  .home-page.as-depth-on .home-directory a:hover,.home-page.as-depth-on .home-directory a:focus-visible { transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.26) }
+}
+/* Em dispositivos móveis, os mesmos componentes originais ganham apenas relevo estático.
+   Nenhuma animação dependente de movimento ou de WebGL. */
+@media (max-width:760px),(prefers-reduced-motion:reduce) {
+  .home-page.as-depth-on .hero-editorial-frame {--depth-x:0deg!important;--depth-y:0deg!important;transform:none!important;transition:none!important;will-change:auto!important;}
+  .home-page.as-depth-on .hero-editorial-feature,.home-page.as-depth-on .hero-editorial-image,.home-page.as-depth-on .hero-editorial-feature-copy,.home-page.as-depth-on .hero-editorial-rail,.home-page.as-depth-on .hero-editorial-footer,.home-page.as-depth-on .hero-content {transform:none!important}
+}
