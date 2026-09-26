@@ -51,7 +51,7 @@ if(liteTransfer&&liteTransfer.owner===user.id&&liteTransfer.kind===liteMode&&lit
  form.elements.idioma.value=p.idioma||"";
  form.elements.tags.value=Array.isArray(p.tags)?p.tags.join(", "):String(p.tags||"");
  form.elements.imagem_capa.value=p.imagem_capa||p.capa||"";
- var liteSlug=String(p.titulo||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,150);
+ var liteSlug=String(p.titulo||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,150);
  if(p._source&&p._source.snapshot&&p._source.snapshot.id&&liteTransfer.staging_id)liteSlug=liteSlug.slice(0,130)+"-lite-"+String(liteTransfer.staging_id).replace(/-/g,"").slice(0,12);
  form.elements.slug.value=liteSlug;
  form.elements.generos.value=Array.isArray(p.generos)?p.generos.join(", "):String(p.generos||p.tags||"");
