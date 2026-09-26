@@ -48,10 +48,10 @@ jobs:
         run: |
           mkdir -p lite-preview/arquivos lite-preview/livros
           # Preserve the approved vintage home, category layouts and reader enhancements.
-          # Generated articles, books, search and lightweight audio assets are refreshed.
+          # Generated articles, books and search are refreshed; Lite has no narration or account access.
           cp -a ../lite-source/lite/dist/arquivos/. lite-preview/arquivos/
           cp -a ../lite-source/lite/dist/livros/. lite-preview/livros/
-          cp ../lite-source/lite/dist/pesquisa.html ../lite-source/lite/dist/lite.js ../lite-source/lite/dist/audio.js ../lite-source/lite/dist/audio.css lite-preview/
+          cp ../lite-source/lite/dist/pesquisa.html ../lite-source/lite/dist/lite.js lite-preview/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A -- lite-preview
