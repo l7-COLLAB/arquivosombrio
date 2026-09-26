@@ -37,4 +37,36 @@ $("#work-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,ro
 $("#novel-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,row=Object.fromEntries(new FormData(f)),file=$("#novel-cover-file").files?.[0];delete row.capa_arquivo;row.generos=row.generos.split(",").map(s=>s.trim()).filter(Boolean);if(row.status_publicacao==="publicado")row.publicado_em=new Date().toISOString();try{row.imagem_capa=await uploadCover(file,row.slug);const {error}=await sb.from("novels").insert(row);if(error)throw error;f.reset();$("#novel-cover-preview").hidden=true;await load();status("Obra cadastrada.")}catch(err){status("Falha ao salvar: "+err.message)}};
 $("#chapter-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,row=Object.fromEntries(new FormData(f)),id=row.id;delete row.id;row.numero=Number(row.numero);if(row.status_publicacao==="agendado"){if(!row.agendado_para){status("Informe a data e o horário do agendamento.");return}row.agendado_para=new Date(row.agendado_para).toISOString()}else row.agendado_para=null;row.palavras=row.conteudo.trim().split(/\s+/).filter(Boolean).length;if(row.status_publicacao==="publicado")row.publicado_em=new Date().toISOString();if(id){const previous=chapters.find(c=>c.id===id);if(previous)backupChapter(previous)}const query=id?sb.from("novel_capitulos").update(row).eq("id",id):sb.from("novel_capitulos").insert(row);const {error}=await query;if(error){status("Erro no capítulo: "+error.message);return}clearTimeout(draftTimer);if(draftKey){try{localStorage.removeItem(draftKey)}catch(e){}}stopDraft();$("#chapter-editor").hidden=true;await showChapters(row.novel_id);status("Capítulo salvo.")};
 await load();
+const liteMode=new URLSearchParams(location.search).get("lite");
+let liteTransfer=null;
+try{liteTransfer=JSON.parse(localStorage.getItem("arquivo-sombrio-lite-v2-transfer:"+user.id)||"null")}catch(e){}
+if(liteTransfer&&liteTransfer.owner===user.id&&liteTransfer.kind===liteMode&&liteMode==="book"){
+ const p=liteTransfer.payload||{},form=$("#novel-form"),details=$("#novel-create details");
+ details.open=true;
+ form.elements.titulo.value=p.titulo||"";
+ form.elements.autor_nome.value=p.autor_nome||p.autor||"";
+ form.elements.slug.value=String(p.titulo||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,150);
+ form.elements.generos.value=Array.isArray(p.generos)?p.generos.join(", "):String(p.generos||p.tags||"");
+ form.elements.sinopse.value=p.sinopse||p.resumo||"";
+ form.elements.status_publicacao.value="rascunho";
+ status("Rascunho Lite carregado no formulário do V2. Nada foi gravado. Confira os campos e pressione Salvar obra para criar o rascunho.");
+}
+if(liteTransfer&&liteTransfer.owner===user.id&&liteTransfer.kind===liteMode&&liteMode==="chapter"){
+ if(!liteTransfer.novel_id){status("Este capítulo ainda não está associado a uma obra existente no V2. O rascunho Lite continua salvo.");}
+ else{
+  await showChapters(liteTransfer.novel_id);
+  const f=$("#chapter-form"),p=liteTransfer.payload||{};
+  if(liteTransfer.chapter_id){const btn=$("#chapter-list").querySelector('[data-chapter="'+CSS.escape(String(liteTransfer.chapter_id))+'"]');if(!btn){status("O capítulo de origem não foi encontrado no V2. O rascunho Lite continua salvo.");return;}btn.click();}
+  else $("#new-chapter")?.click();
+  f.elements.novel_id.value=liteTransfer.novel_id;
+  f.elements.numero.value=p.numero||"";
+  f.elements.titulo.value=p.titulo||"";
+  f.elements.conteudo.value=p.conteudo||"";
+  f.elements.status_publicacao.value="rascunho";
+  f.elements.agendado_para.value="";
+  $("#chapter-schedule-wrap").hidden=true;$("#chapter-schedule-note").hidden=true;
+  if(draftKey)saveDraftNow();
+  status("Rascunho Lite carregado no editor do V2. Nada foi gravado. Confira o capítulo e pressione Salvar capítulo para continuar.");
+ }
+}
 });
