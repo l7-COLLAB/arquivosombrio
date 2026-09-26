@@ -79,6 +79,13 @@ function submit(mode,ev){
 function show(mode){byId('login-form').style.display=mode==='login'?'block':'none';byId('signup-form').style.display=mode==='signup'?'block':'none';msg('Complete a verificação antes de continuar.')}
 function init(){
  if(!byId('auth-forms'))return;
+ /* Supabase confirmation links can return an implicit session in the fragment. */
+ if(w.location.hash&&w.location.hash.indexOf('access_token=')>=0){
+  var parts=w.location.hash.replace(/^#/,'').split('&'),result={};
+  for(var k=0;k<parts.length;k++){var pair=parts[k].split('=');try{result[decodeURIComponent(pair[0])]=decodeURIComponent((pair[1]||'').replace(/\\+/g,' '))}catch(e){}}
+  if(result.access_token&&result.refresh_token){if(save(result)){try{w.history.replaceState(null,d.title,w.location.pathname)}catch(e){w.location.hash=''}}}
+ }
+
  byId('login-form').onsubmit=function(e){return submit('login',e)};
  byId('signup-form').onsubmit=function(e){return submit('signup',e)};
  byId('auth-show-login').onclick=function(){show('login')};
