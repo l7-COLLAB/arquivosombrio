@@ -3,7 +3,7 @@ var endpoint="https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/lite-admin",
 var types=[["dossies","Dossiês"],["garimpo","Garimpo"],["pericia","Perícia"],["lendas","Lendas"],["creepypastas","Creepypastas"],["novels","Livros"],["capitulos","Capítulos"]];
 var fields=["titulo","subtitulo","resumo","situacao","local","data","conteudo","cronologia","evidencias","teorias","contexto","fontes","livro","numero","notas","pendencias"];
 function el(id){return document.getElementById(id)}function txt(id,s){el(id).textContent=s}function show(id,yes){el(id).className=yes?el(id).className.replace(/\bhidden\b/g,"").replace(/\s+/g," "):"hidden"}
-function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;/g,"&quot;")}
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function request(action,data,cb){var xhr=new XMLHttpRequest();xhr.open("POST",endpoint,true);xhr.setRequestHeader("Content-Type","application/json");xhr.timeout=20000;xhr.onreadystatechange=function(){if(xhr.readyState!==4)return;var v={};try{v=JSON.parse(xhr.responseText)}catch(e){}if(xhr.status===401&&action!=="login"){token="";show("panel",false);show("login",true)}cb(xhr.status,v)};xhr.onerror=function(){cb(0,{error:"Falha de conexão. Verifique o HTTPS e tente novamente."})};xhr.ontimeout=function(){cb(0,{error:"Tempo esgotado"})};var v=data||{};v.action=action;v.token=token;xhr.send(JSON.stringify(v))}
 function values(){var v={};for(var i=0;i<fields.length;i++)v[fields[i]]=el(fields[i]).value;return v}
 function fill(v){for(var i=0;i<fields.length;i++)el(fields[i]).value=typeof v[fields[i]]==="string"?v[fields[i]]:""}
