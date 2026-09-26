@@ -60,7 +60,7 @@ def record(row,category,prefix,date,body,extra=None):
  if not text:return None
  out={"slug":slug(row.get("slug"),prefix,row["id"]),"titulo":row["titulo"],"categoria":category,
  "status_publicacao":"publicado","publicado_em":row.get(date) or row.get("created_at"),
- "resumo":plain(row.get("resumo") or row.get("sinopse")),"conteudo":text}
+ "resumo":plain(row.get("resumo") or row.get("sinopse")),"conteudo":text,"source_id":row.get("id")}
  if extra:
   for dest,key in extra.items():out[dest]=entries(row.get(key))
  return out
