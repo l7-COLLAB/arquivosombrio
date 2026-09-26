@@ -8,7 +8,7 @@ Deno.serve(async(req)=>{
  if(req.method==="OPTIONS")return new Response(null,{status:204,headers});
  if(req.method!=="POST"||req.headers.get("origin")!==origin)return respond(403,{error:"Origem não autorizada"});
  const configuredPassword=Deno.env.get("LITE_ADMIN_PASSWORD");const expected=configuredPassword?await sha(configuredPassword):"";const key=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),url=Deno.env.get("SUPABASE_URL");
- if(!configuredPassword||configuredPassword.length<16||!key||!url)return respond(503,{error:"Acesso ainda não configurado"});
+ if(!configuredPassword||configuredPassword.length<16||!key||!url){const missing=[!configuredPassword?"password_absent":configuredPassword.length<16?"password_too_short":"",!key?"service_key_absent":"",!url?"project_url_absent":""].filter(Boolean);console.error("lite-admin configuration:",missing.join(","));return respond(503,{error:!configuredPassword?"Senha administrativa não encontrada no ambiente da função":configuredPassword.length<16?"Senha administrativa deve ter ao menos 16 caracteres":"Configuração interna do Supabase indisponível; não altere sua senha"});}
  if(Number(req.headers.get("content-length")||0)>1200000)return respond(413,{error:"Requisição muito grande"});
  let body:any;try{body=await req.json()}catch{return respond(400,{error:"JSON inválido"})}
  const client=async(path:string,method="GET",payload?:unknown,prefer?:string)=>{const h:Record<string,string>={apikey:key,Authorization:"Bearer "+key,"Content-Type":"application/json"};if(prefer)h.Prefer=prefer;const r=await fetch(url+"/rest/v1/"+path,{method,headers:h,body:payload===undefined?undefined:JSON.stringify(payload)});if(!r.ok)throw new Error("Database "+r.status);return r.status===204?[]:await r.json()};
