@@ -53,9 +53,9 @@ var liteReviewTypes={dossies:"dossie",garimpo:"caso_diario",pericia:"pericia",no
 function liteString(v){if(v==null)return"";return typeof v==="string"?v:JSON.stringify(v,null,2);}
 function liteFields(payload,category){
  var p=payload||{},map={
-  dossies:[["titulo","admin-title"],["categoria","admin-category"],["local","admin-location"],["ano","admin-year"],["status","admin-status"],["imagem","admin-image"],["resumo","admin-summary"],["conteudo","admin-history"],["cronologia","admin-chronology"],["evidencias","admin-evidence"],["teorias","admin-theories"],["situacao_oficial","admin-official-status"],["fontes","admin-sources"]],
-  garimpo:[["titulo","daily-title"],["categoria","daily-category"],["local","daily-location"],["data_caso","daily-date"],["status_caso","daily-case-status"],["resumo","daily-summary"],["conteudo","daily-content"],["cronologia","daily-chronology"],["evidencias","daily-evidence"],["hipoteses","daily-theories"],["situacao_oficial","daily-official-status"],["fontes","daily-sources-text"]],
-  pericia:[["titulo","admin-forensic-title"],["categoria","admin-forensic-category"],["resumo","admin-forensic-summary"],["legenda_imagem","admin-forensic-image-caption"],["fonte_imagem","admin-forensic-image-source"],["introducao","admin-forensic-introduction"],["como_funciona","admin-forensic-method"]],
+  dossies:[["titulo","admin-title"],["categoria","admin-category"],["local","admin-location"],["ano","admin-year"],["status","admin-status"],["imagem","admin-image"],["resumo","admin-summary"],["historia","admin-history"],["cronologia","admin-chronology"],["evidencias","admin-evidence"],["teorias","admin-theories"],["situacao_oficial","admin-official-status"],["fontes","admin-sources"]],
+  garimpo:[["titulo","daily-title"],["categoria","daily-category"],["local","daily-location"],["data_caso","daily-date"],["status_caso","daily-case-status"],["imagem_capa","daily-cover"],["resumo","daily-summary"],["conteudo","daily-content"],["cronologia","daily-chronology"],["evidencias","daily-evidence"],["hipoteses","daily-theories"],["situacao_oficial","daily-official-status"],["fontes","daily-sources-text"]],
+  pericia:[["titulo","admin-forensic-title"],["categoria","admin-forensic-category"],["resumo","admin-forensic-summary"],["imagem","admin-image"],["legenda_imagem","admin-forensic-image-caption"],["fonte_imagem","admin-forensic-image-source"],["introducao","admin-forensic-introduction"],["como_funciona","admin-forensic-operation"],["historia_tecnica","admin-forensic-history"],["aplicacao_casos_reais","admin-forensic-real-cases"],["limitacoes_controversias","admin-forensic-limitations"],["curiosidades","admin-forensic-curiosities"],["fontes","admin-forensic-sources"],["casos_relacionados","admin-forensic-related-cases"]],
   novels:[["titulo","admin-book-title"],["autor_nome","admin-book-author"],["ano","admin-book-year"],["editora","admin-book-publisher"],["imagem_capa","admin-book-cover"],["sinopse","admin-book-description"],["generos","admin-book-tag"]]
  };
  var aliases={dossies:{conteudo:["historia","conteudo"]},garimpo:{conteudo:["conteudo","historia"]},novels:{autor_nome:["autor_nome","autor"],sinopse:["sinopse","descricao"],imagem_capa:["imagem_capa","capa"]}};
@@ -82,7 +82,7 @@ async function importLiteToV2(item){
   body=liteLiteraryPayload(p,type);
  }else{
   key=type+":novo";
-  body={versao:2,salvo_em:new Date().toISOString(),campos:liteFields(p,item.category),extras:{lite_admin_staging_id:item.id,lite_category:item.category,lite_payload:p}};
+  body={versao:2,salvo_em:new Date().toISOString(),campos:liteFields(p,item.category),extras:{lite_admin_staging_id:item.id,lite_category:item.category,lite_payload:p}};if(item.category==="dossies"){body.extras.blocos=p.conteudo_blocos||[];body.extras.documentos=p.documentos||[]}if(item.category==="garimpo"){body.extras.imagens=p.imagens||[];body.extras.fontes=p.fontes||[]}
  }
  var existing=await state.client.from("admin_drafts").select("id").eq("user_id",user).eq("draft_key",key).maybeSingle();
  if(existing.error)throw existing.error;
