@@ -14,7 +14,7 @@ Deno.serve(async(req)=>{
  const client=async(path:string,method="GET",payload?:unknown,prefer?:string)=>{const h:Record<string,string>={apikey:key,Authorization:"Bearer "+key,"Content-Type":"application/json"};if(prefer)h.Prefer=prefer;const r=await fetch(url+"/rest/v1/"+path,{method,headers:h,body:payload===undefined?undefined:JSON.stringify(payload)});if(!r.ok)throw new Error("Database "+r.status);return r.status===204?[]:await r.json()};
  try{
  if(body.action==="login"){
-  const ip=req.headers.get("cf-connecting-ip")||req.headers.get("x-forwarded-for")?.split(",")[0]||"unknown";
+  const ip=req.headers.get("cf-connecting-ip")||"unknown";
   const ipHash=await sha((Deno.env.get("LITE_ADMIN_IP_PEPPER")||expected)+ip);
   const since=new Date(Date.now()-15*60000).toISOString();
   const attempts=await client("lite_admin_access_attempts?select=id&ip_hash=eq."+ipHash+"&attempted_at=gte."+encodeURIComponent(since)+"&limit=8");
