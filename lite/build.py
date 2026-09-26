@@ -69,7 +69,7 @@ def item_page(item, previous=None, following=None, related=None):
     if source_id is not None and str(source_id).isdigit() and not item.get("obra_id"):
         route={"dossios":"caso.html","dossies":"caso.html","garimpo":"garimpo.html","pericia":"pericia.html","lendas":"creepypastas.html" if item["slug"].startswith("creepypasta-") else "lendas.html"}.get(item["categoria"])
         if route:
-            body+='<section id="lite-audio" class="lite-audio" data-main-url="https://arquivosombrio.net.br/'+route+'?id='+str(source_id)+'"></section>'
+            body+='<section id="lite-audio" class="lite-audio" data-type="'+('creepypasta' if item["slug"].startswith("creepypasta-") else 'lenda' if item["categoria"]=="lendas" else 'dossie' if item["categoria"]=="dossies" else item["categoria"])+'" data-id="'+str(source_id)+'" data-main-url="https://arquivosombrio.net.br/'+route+'?id='+str(source_id)+'"></section>'
     body+='<p><button id="save-reading" type="button">Marcar leitura</button></p>'
     body+="<article>"+rendered+"</article>"
     for key,label in (("cronologia","Cronologia"),("evidencias","Evidências"),("fontes","Fontes")):
