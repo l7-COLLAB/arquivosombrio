@@ -75,19 +75,17 @@ function liteLiteraryPayload(payload,category){
 async function importLiteToV2(item){
  var type=liteReviewTypes[item.category];
  if(!type)throw new Error("Categoria Lite sem destino de revisão no V2.");
- var user=state.session.user.id,p=item.payload||{},key;
+ var user=state.session.user.id,p=item.payload||{},key="lite:"+String(item.id);
  if(item.category==="novels"||item.category==="capitulos"){var transfer={owner:user,kind:item.category==="novels"?"book":"chapter",staging_id:item.id,payload:p,saved_at:new Date().toISOString()};if(item.category==="capitulos"){transfer.novel_id=p.novel_id||"";transfer.chapter_id=p._source&&p._source.snapshot?p._source.snapshot.id||null:null;}try{localStorage.setItem("arquivo-sombrio-lite-v2-transfer:"+user,JSON.stringify(transfer))}catch(e){throw new Error("O navegador não permitiu guardar a transferência temporária. O rascunho Lite continua salvo.")}window.location.href="./novels.html?lite="+transfer.kind;return type;}
  var body;
  if(type==="lendas"||type==="creepypastas"){
-  key="literario:"+type+":novo";
   body=liteLiteraryPayload(p,type);
  }else{
-  key=type+":novo";
   body={versao:2,salvo_em:new Date().toISOString(),campos:liteFields(p,item.category),extras:{lite_admin_staging_id:item.id,lite_category:item.category,lite_payload:p}};if(item.category==="dossies"){body.extras.blocos=p.conteudo_blocos||[];body.extras.documentos=p.documentos||[]}if(item.category==="garimpo"){body.extras.imagens=p.imagens||[];body.extras.fontes=p.fontes||[]}
  }
  var existing=await state.client.from("admin_drafts").select("id").eq("user_id",user).eq("draft_key",key).maybeSingle();
  if(existing.error)throw existing.error;
- if(existing.data)throw new Error("Já existe um rascunho novo dessa categoria no V2. Abra ou conclua esse rascunho antes de importar outro.");
+ if(existing.data)return type;
  var r=await state.client.from("admin_drafts").insert({user_id:user,draft_key:key,content_type:type,record_id:null,title:item.title||p.titulo||"Rascunho Lite",payload:body,updated_at:new Date().toISOString()});
  if(r.error)throw r.error;
  await audit("import_lite_draft_to_v2","lite_admin_staging",item.id,{category:item.category});
@@ -96,12 +94,14 @@ async function importLiteToV2(item){
 async function liteDrafts(p){
  var r=await state.client.from("lite_admin_staging").select("id,category,title,payload,updated_at").order("updated_at",{ascending:false}).limit(100);
  if(r.error)throw r.error;
- var rows=r.data||[];
+ var rows=r.data||[],importedResult=await state.client.from("admin_drafts").select("draft_key").eq("user_id",state.session.user.id).like("draft_key","lite:%");
+ if(importedResult.error)throw importedResult.error;
+ var imported={};(importedResult.data||[]).forEach(function(x){imported[x.draft_key]=true;});
  p.innerHTML=heading("PREPARAÇÃO EDITORIAL","Rascunhos do iPad","Salve primeiro no iPad e aguarde “Salvo com sucesso”. Atualize esta lista para buscar os rascunhos privados; importar não publica nem agenda.")+'<div class="admin-hub-record-actions"><button type="button" data-lite-refresh>Atualizar lista</button></div>'+
- (rows.length?'<div class="admin-hub-record-list">'+rows.map(function(x){return '<article class="admin-hub-record"><div class="admin-hub-record-main"><div class="admin-hub-record-meta"><span>'+esc(x.category)+'</span><time>'+esc(date(x.updated_at))+'</time></div><h3>'+esc(x.title||"Sem título")+'</h3><p>'+esc(short((x.payload||{}).resumo||(x.payload||{}).conteudo||(x.payload||{}).historia||"",220))+'</p></div><div class="admin-hub-record-actions"><button type="button" data-lite-preview="'+esc(x.id)+'">Ver dados</button>'+(liteReviewTypes[x.category]?'<button type="button" data-lite-import="'+esc(x.id)+'">Preparar no V2</button>':'<small>Capítulos: revisão V2 ainda indisponível</small>')+'</div></article>';}).join("")+'</div>':empty("Ainda não há rascunhos salvos na Administração Lite. No iPad, toque em Salvar rascunho remoto e aguarde a confirmação antes de voltar aqui."));
+ (rows.length?'<div class="admin-hub-record-list">'+rows.map(function(x){return '<article class="admin-hub-record"><div class="admin-hub-record-main"><div class="admin-hub-record-meta"><span>'+esc(x.category)+'</span><time>'+esc(date(x.updated_at))+'</time></div><h3>'+esc(x.title||"Sem título")+'</h3><p>'+esc(short((x.payload||{}).resumo||(x.payload||{}).conteudo||(x.payload||{}).historia||"",220))+'</p></div><div class="admin-hub-record-actions"><button type="button" data-lite-preview="'+esc(x.id)+'">Ver dados</button>'+(liteReviewTypes[x.category]?(imported["lite:"+String(x.id)]?'<button type="button" disabled>Já preparado no V2</button>':'<button type="button" data-lite-import="'+esc(x.id)+'">Preparar no V2</button>'):'<small>Capítulos: revisão V2 ainda indisponível</small>')+'</div></article>';}).join("")+'</div>':empty("Ainda não há rascunhos salvos na Administração Lite. No iPad, toque em Salvar rascunho remoto e aguarde a confirmação antes de voltar aqui."));
  p.querySelector("[data-lite-refresh]").onclick=async function(){var b=this;b.disabled=true;try{await liteDrafts(p)}catch(e){alert(e.message||"Não foi possível atualizar os rascunhos.")}finally{b.disabled=false}};
  p.querySelectorAll("[data-lite-preview]").forEach(function(b){b.onclick=function(){var x=rows.find(function(y){return String(y.id)===b.dataset.litePreview;});if(!x)return;var w=window.open("","_blank");if(!w){alert("Permita a abertura da janela para visualizar o conteúdo.");return;}w.document.write("<pre style='white-space:pre-wrap;font:16px/1.5 monospace;padding:20px'>"+esc(JSON.stringify(x.payload,null,2))+"</pre>");w.document.close();};});
- p.querySelectorAll("[data-lite-import]").forEach(function(b){b.onclick=async function(){var item=rows.find(function(y){return String(y.id)===b.dataset.liteImport;});if(!item)return;if(!confirm("Copiar este rascunho para o V2? O original Lite será mantido e nenhum conteúdo será publicado."))return;b.disabled=true;try{var type=await importLiteToV2(item);alert("Rascunho copiado para o V2. Abra a criação de "+(type==="dossie"?"Dossiê":type==="caso_diario"?"Garimpo":type==="pericia"?"Perícia":type==="livro"?"Livro":type==="capitulo"?"Capítulo":"conteúdo literário")+" para recuperar o rascunho. O registro Lite original foi preservado.");}catch(e){alert(e.message||"Não foi possível preparar o rascunho no V2.");}finally{b.disabled=false;}};});
+ p.querySelectorAll("[data-lite-import]").forEach(function(b){b.onclick=async function(){var item=rows.find(function(y){return String(y.id)===b.dataset.liteImport;});if(!item)return;if(!confirm("Copiar este rascunho para o V2? O original Lite será mantido e nenhum conteúdo será publicado."))return;b.disabled=true;try{var type=await importLiteToV2(item);alert(type==="livro"||type==="capitulo"?"O editor de Biblioteca do V2 foi aberto com o rascunho. Confira os campos e salve como rascunho no V2; o original Lite continua salvo.":"Rascunho preparado na fila privada do V2. O rascunho original do Lite foi preservado. Nenhum conteúdo foi publicado ou agendado.");}catch(e){alert(e.message||"Não foi possível preparar o rascunho no V2.");}finally{b.disabled=false;}};});
  setCount("liteDrafts",rows.length);
 }
 
