@@ -64,7 +64,8 @@ function liteFields(payload,category){
  return out;
 }
 function liteLiteraryPayload(payload,category){
- var p=payload||{},out={};
+ var p=payload||{},out={},k;
+ for(k in p)if(Object.prototype.hasOwnProperty.call(p,k))out[k]=p[k];
  ["titulo","subtitulo","titulo_alternativo","resumo","conteudo","origem","periodo","categoria","contexto_historico","introducao","versoes","elementos_reais","fontes","classificacao","pais","regiao","cidade","nota_editorial","autor_credito","autor_nome","subgenero","realidade_ficcao","conclusao_arquivo","cronologia","hipoteses","personagens","seo","metadata","exibir_aviso_ficcao"].forEach(function(k){if(p[k]!=null)out[k]=p[k];});
  if(!out.versoes&&p.versoes_itens!=null)out.versoes=p.versoes_itens;if(!out.titulo)out.titulo=p.titulo||"";
  if(!out.conteudo)out.conteudo=p.conteudo||p.historia||"";
