@@ -66,7 +66,7 @@ function liteFields(payload,category){
 function liteLiteraryPayload(payload,category){
  var p=payload||{},out={};
  ["titulo","subtitulo","titulo_alternativo","resumo","conteudo","origem","periodo","categoria","contexto_historico","introducao","versoes","elementos_reais","fontes","classificacao","pais","regiao","cidade","nota_editorial","autor_credito","autor_nome","subgenero","realidade_ficcao","conclusao_arquivo","cronologia","hipoteses","personagens","seo","metadata","exibir_aviso_ficcao"].forEach(function(k){if(p[k]!=null)out[k]=p[k];});
- if(!out.titulo)out.titulo=p.titulo||"";
+ if(!out.versoes&&p.versoes_itens!=null)out.versoes=p.versoes_itens;if(!out.titulo)out.titulo=p.titulo||"";
  if(!out.conteudo)out.conteudo=p.conteudo||p.historia||"";
  if(category==="lendas"&&!out.contexto_historico)out.contexto_historico=p.contexto||"";
  if(category==="creepypastas"&&!out.nota_editorial)out.nota_editorial=p.contexto||"";
