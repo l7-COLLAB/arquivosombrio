@@ -1,0 +1,55 @@
+/* Cronologias e referências editoriais; respeita o mesmo DOM usado no modo livro. */
+.case-page #caso-historia .dossier-document-quicknav {
+ display:flex;align-items:center;flex-wrap:wrap;gap:.6rem 1.2rem;
+ margin:0 0 1.75rem;padding:.9rem 1rem;
+ background:rgba(171,145,100,.06);border-top:1px solid rgba(196,170,112,.28);
+ border-bottom:1px solid rgba(196,170,112,.22);
+}
+.case-page #caso-historia .dossier-document-quicknav strong {
+ font:600 .76rem/1.4 var(--font-mono,monospace);letter-spacing:.075em;
+ color:#cdb994;
+}
+.case-page #caso-historia .dossier-document-quicknav a {
+ font:600 .91rem/1.5 var(--font-body,Georgia,serif);color:#ead6b1;
+ text-decoration:underline;text-underline-offset:4px;
+}
+.case-page #caso-historia .case-content-timeline,
+.case-page #caso-historia .case-content-sources {
+ scroll-margin-top:90px;
+}
+.case-page #caso-historia .case-content-timeline time {
+ font-size:.84rem;line-height:1.6;overflow-wrap:anywhere;
+}
+.case-page #caso-historia .case-content-timeline p {
+ font-family:var(--font-body,Georgia,serif);font-size:.98rem;line-height:1.75;
+}
+.case-page #caso-historia .case-timeline-source {
+ display:flex;flex-wrap:wrap;gap:.25rem .7rem;grid-column:2;
+ margin-top:.2rem;font:500 .76rem/1.5 var(--font-mono,monospace);color:#b7a58b;
+}
+.case-page #caso-historia .case-source-explainer {
+ font-size:.84rem;line-height:1.7;color:var(--case-block-muted,#b8aa98);
+ margin:0 0 1rem;
+}
+.case-page #caso-historia .case-content-sources li {
+ font-size:.94rem;line-height:1.65;overflow-wrap:anywhere;
+}
+.case-page #caso-historia .case-content-sources small {
+ font-size:.77rem;line-height:1.65;
+}
+@media(max-width:680px){
+ .case-page #caso-historia .case-content-timeline li {
+  grid-template-columns:minmax(0,1fr);gap:.35rem;padding-left:1.15rem;
+ }
+ .case-page #caso-historia .case-timeline-source {grid-column:1}
+ .case-page #caso-historia .dossier-document-quicknav {padding:.75rem}
+}
+body[data-reader-theme="papel"] #caso-historia .dossier-document-quicknav{
+ background:rgba(100,70,30,.065);border-color:rgba(90,60,25,.26);
+}
+body[data-reader-theme="papel"] #caso-historia .dossier-document-quicknav strong,
+body[data-reader-theme="papel"] #caso-historia .dossier-document-quicknav a{
+ color:#584025;
+}
+body[data-reader-theme="papel"] #caso-historia .case-timeline-source,
+body[data-reader-theme="papel"] #caso-historia .case-source-explainer {color:#69543c}

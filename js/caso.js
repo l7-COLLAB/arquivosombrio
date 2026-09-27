@@ -632,6 +632,9 @@ function renderizarCaso(caso) {
         renderizarTeorias(caso.teorias);
     }
 
+    // Integra campos editoriais existentes à leitura sem duplicar blocos.
+    completarCronologiaEReferenciasDossie(caso);
+
     /*
      * Os recursos de leitura são iniciados somente depois que o conteúdo
      * definitivo foi colocado no documento. Assim, paginação, sumário e
@@ -2338,6 +2341,20 @@ function renderizarCronologiaBlocoDossie(dados) {
                     )
                 );
             }
+            // Referências por evento são adicionadas somente se o editor informou URL.
+            const fonte = obterCampoItemDossie(item, ["fonte", "referencia"]);
+            const link = criarLinkExternoDossie(
+                item.link_fonte || item.fonte_url || item.url_fonte,
+                "Consultar fonte do evento",
+                "case-timeline-source-link"
+            );
+            if (fonte || link) {
+                const referencia = document.createElement("div");
+                referencia.className = "case-timeline-source";
+                if (fonte) referencia.appendChild(criarElementoTextoDossie("span", fonte));
+                if (link) referencia.appendChild(link);
+                linha.appendChild(referencia);
+            }
         }
 
         if (linha.childNodes.length) {
@@ -2797,6 +2814,11 @@ function renderizarFontesBlocoDossie(dados) {
     secao.className =
         "case-content-sources";
 
+    const contexto = criarElementoTextoDossie("p",
+        "Fontes cadastradas para consulta. A presença nesta lista não significa que cada informação do dossiê foi verificada individualmente.",
+        "case-source-explainer"
+    );
+
     secao.appendChild(
         criarElementoTextoDossie(
             "h3",
@@ -2897,8 +2919,89 @@ function renderizarFontesBlocoDossie(dados) {
         return null;
     }
 
+    secao.appendChild(contexto);
     secao.appendChild(lista);
     return secao;
+}
+
+
+/* Integração editorial: blocos já existentes têm precedência.
+   Não inferir datas, não criar fontes ou completar lacunas com texto genérico. */
+function completarCronologiaEReferenciasDossie(caso) {
+    const historia = document.getElementById("caso-historia");
+    if (!historia) return;
+
+    const dados = caso && typeof caso.editor_v2 === "object" && caso.editor_v2
+        ? caso.editor_v2 : {};
+    const temSecao = classe => Boolean(historia.querySelector("." + classe));
+
+    // Se o editor já publicou uma cronologia estruturada, não a repetimos.
+    if (!temSecao("case-content-timeline")) {
+        const texto = typeof dados.cronologia === "string" ? dados.cronologia.trim() : "";
+        const itens = texto.split(/\n\s*\n/g).map(x => x.trim()).filter(Boolean);
+        if (itens.length) {
+            const secao = renderizarCronologiaBlocoDossie({
+                titulo: "Cronologia documentada", itens: itens
+            });
+            if (secao) {
+                secao.id = "cronologia-documental";
+                historia.appendChild(secao);
+            }
+        }
+    }
+
+    // Fontes completas do formulário editorial prevalecem sobre linhas legadas.
+    if (!temSecao("case-content-sources")) {
+        const estruturadas = Array.isArray(dados.fontes_estruturadas)
+            ? dados.fontes_estruturadas.filter(x =>
+                x && typeof x === "object" &&
+                (textoBlocoDossie(x.titulo) || textoBlocoDossie(x.url))
+              )
+            : [];
+        const antigas = typeof dados.fontes === "string"
+            ? dados.fontes.split(/\n+/g).map(x => x.trim()).filter(Boolean).map(linha => {
+                const pos = linha.indexOf("|");
+                if (pos < 0) return linha;
+                const titulo = linha.slice(0, pos).trim();
+                const url = linha.slice(pos + 1).trim();
+                return validarUrlPublicaDossie(url) ? {titulo, url} : linha;
+            }) : [];
+        const itens = estruturadas.length ? estruturadas : antigas;
+        if (itens.length) {
+            const secao = renderizarFontesBlocoDossie({
+                titulo: "Referências consultadas", itens: itens
+            });
+            if (secao) {
+                secao.id = "referencias-documentais";
+                historia.appendChild(secao);
+            }
+        }
+    }
+
+    // Âncoras e rótulos apenas para o que realmente existe no documento.
+    const cronologia = historia.querySelector(".case-content-timeline");
+    const fontes = historia.querySelector(".case-content-sources");
+    if (cronologia) cronologia.id = cronologia.id || "cronologia-documental";
+    if (fontes) fontes.id = fontes.id || "referencias-documentais";
+    let sumario = historia.querySelector(".dossier-document-quicknav");
+    if (!sumario && (cronologia || fontes)) {
+        sumario = document.createElement("nav");
+        sumario.className = "dossier-document-quicknav";
+        sumario.setAttribute("aria-label", "Navegar pelo material documental");
+        const titulo = criarElementoTextoDossie("strong", "NESTE DOSSIÊ");
+        sumario.appendChild(titulo);
+        if (cronologia) {
+            const a = criarElementoTextoDossie("a", "Cronologia");
+            a.href = "#" + cronologia.id;
+            sumario.appendChild(a);
+        }
+        if (fontes) {
+            const a = criarElementoTextoDossie("a", "Referências");
+            a.href = "#" + fontes.id;
+            sumario.appendChild(a);
+        }
+        historia.prepend(sumario);
+    }
 }
 
 
