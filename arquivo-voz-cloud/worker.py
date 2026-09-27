@@ -244,6 +244,9 @@ async def loop():
                     db.table("arquivo_voz_cloud_jobs").update({
                         "status":"failed","error":str(e)[:400]
                     }).eq("id",job["id"]).execute()
+                    # A failed scheduled run must be visibly failed in GitHub Actions.
+                    if once:
+                        raise
                 processed += 1
                 if once and (test_job_id or processed >= max_jobs or time.monotonic() >= deadline): return
             else:
@@ -253,7 +256,8 @@ async def loop():
                 await asyncio.sleep(POLL)
         except Exception:
             log.exception("worker loop error")
-            if once: return
+            if once:
+                raise
             await asyncio.sleep(POLL)
 
 @asynccontextmanager
