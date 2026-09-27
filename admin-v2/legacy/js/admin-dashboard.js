@@ -3,11 +3,11 @@
 "use strict";
 var state = { client:null, session:null, mounted:false, view:"overview" };
 var labels = {
-  overview:"Visão geral", content:"Conteúdos e edição", liteDrafts:"Rascunhos do iPad", schedule:"Agendamentos", feature:"Destaque da Home", narration:"Narração do Arquivo", voiceStudio:"Arquivo Voz", community:"Comunidade",
+  overview:"Visão geral", intelligence:"Inteligência do Arquivo", content:"Conteúdos e edição", liteDrafts:"Rascunhos do iPad", schedule:"Agendamentos", feature:"Destaque da Home", narration:"Narração do Arquivo", voiceStudio:"Arquivo Voz", community:"Comunidade",
   users:"Usuários", requests:"Solicitações", activity:"Histórico administrativo"
 };
 var icons = {
-  overview:"fa-chart-line", content:"fa-folder-tree", liteDrafts:"fa-tablet-screen-button", schedule:"fa-calendar-check", feature:"fa-star", narration:"fa-microphone-lines", voiceStudio:"fa-wave-square", community:"fa-comments",
+  overview:"fa-chart-line", intelligence:"fa-chart-simple", content:"fa-folder-tree", liteDrafts:"fa-tablet-screen-button", schedule:"fa-calendar-check", feature:"fa-star", narration:"fa-microphone-lines", voiceStudio:"fa-wave-square", community:"fa-comments",
   users:"fa-users", requests:"fa-inbox", activity:"fa-clock-rotate-left"
 };
 function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
@@ -28,7 +28,7 @@ function shell(manager){
   Array.from(manager.children).forEach(function(c){if(c!==close)legacy.appendChild(c);});
   var root=document.createElement("div");root.className="admin-hub-shell";
   var nav=Object.keys(labels).map(function(v){return '<button type="button" data-admin-hub-view="'+v+'"><i class="fa-solid '+icons[v]+'"></i><span>'+labels[v]+'</span><small data-admin-hub-count="'+v+'"></small></button>';}).join("");
-  root.innerHTML='<aside class="admin-hub-sidebar"><div class="admin-hub-brand"><span>ÁREA RESTRITA</span><strong>Central Administrativa</strong><small>Arquivo Sombrio</small></div><nav aria-label="Menu administrativo">'+nav+'</nav><div class="admin-hub-sidebar-footer"><p><i class="fa-solid fa-shield-halved"></i> Acesso protegido</p><button type="button" data-admin-hub-logout><i class="fa-solid fa-right-from-bracket"></i> Sair</button></div></aside><div class="admin-hub-main"><header class="admin-hub-topbar"><button type="button" class="admin-hub-menu-toggle" aria-label="Abrir menu"><i class="fa-solid fa-bars"></i></button><div><span>PAINEL ADMINISTRATIVO</span><h1 data-admin-hub-title>Visão geral</h1></div><button type="button" class="admin-hub-refresh" aria-label="Atualizar"><i class="fa-solid fa-rotate"></i></button></header><div class="admin-hub-panels"><section class="admin-hub-panel" data-admin-hub-panel="liteDrafts" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="overview"></section><section class="admin-hub-panel" data-admin-hub-panel="schedule" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="feature" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="narration" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="voiceStudio" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="community" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="users" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="requests" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="activity" hidden></section></div></div>';
+  root.innerHTML='<aside class="admin-hub-sidebar"><div class="admin-hub-brand"><span>ÁREA RESTRITA</span><strong>Central Administrativa</strong><small>Arquivo Sombrio</small></div><nav aria-label="Menu administrativo">'+nav+'</nav><div class="admin-hub-sidebar-footer"><p><i class="fa-solid fa-shield-halved"></i> Acesso protegido</p><button type="button" data-admin-hub-logout><i class="fa-solid fa-right-from-bracket"></i> Sair</button></div></aside><div class="admin-hub-main"><header class="admin-hub-topbar"><button type="button" class="admin-hub-menu-toggle" aria-label="Abrir menu"><i class="fa-solid fa-bars"></i></button><div><span>PAINEL ADMINISTRATIVO</span><h1 data-admin-hub-title>Visão geral</h1></div><button type="button" class="admin-hub-refresh" aria-label="Atualizar"><i class="fa-solid fa-rotate"></i></button></header><div class="admin-hub-panels"><section class="admin-hub-panel" data-admin-hub-panel="liteDrafts" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="overview"></section><section class="admin-hub-panel" data-admin-hub-panel="intelligence" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="schedule" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="feature" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="narration" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="voiceStudio" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="community" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="users" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="requests" hidden></section><section class="admin-hub-panel" data-admin-hub-panel="activity" hidden></section></div></div>';
   root.querySelector(".admin-hub-panels").appendChild(legacy);manager.appendChild(root);
   if(close){close.classList.add("admin-hub-native-close");root.querySelector(".admin-hub-topbar").appendChild(close);}
   root.querySelectorAll("[data-admin-hub-view]").forEach(function(b){b.onclick=function(){open(b.dataset.adminHubView);};});
@@ -44,7 +44,7 @@ function open(v){
 }
 async function load(v,force){
   if(v==="content")return;var p=panel(v);if(!p||(p.dataset.loaded&&!force))return;loading(v);
-  try{if(v==="liteDrafts")await liteDrafts(p);if(v==="overview")await overview(p);if(v==="schedule")await scheduleCenter(p);if(v==="feature")await homeFeature(p);if(v==="narration"){if(!window.ArquivoNarracao?.render)throw new Error("O módulo de narração não carregou.");await window.ArquivoNarracao.render(p);}if(v==="voiceStudio"){if(!window.ArquivoVozStudio?.render)throw new Error("O Arquivo Voz não carregou.");await window.ArquivoVozStudio.render(p);}if(v==="community")await community(p);if(v==="users")await users(p);if(v==="requests")await requests(p);if(v==="activity")await activity(p);p.dataset.loaded="1";}
+  try{if(v==="liteDrafts")await liteDrafts(p);if(v==="overview")await overview(p);if(v==="intelligence")await intelligence(p);if(v==="schedule")await scheduleCenter(p);if(v==="feature")await homeFeature(p);if(v==="narration"){if(!window.ArquivoNarracao?.render)throw new Error("O módulo de narração não carregou.");await window.ArquivoNarracao.render(p);}if(v==="voiceStudio"){if(!window.ArquivoVozStudio?.render)throw new Error("O Arquivo Voz não carregou.");await window.ArquivoVozStudio.render(p);}if(v==="community")await community(p);if(v==="users")await users(p);if(v==="requests")await requests(p);if(v==="activity")await activity(p);p.dataset.loaded="1";}
   catch(e){console.error(e);p.innerHTML='<div class="admin-hub-error"><i class="fa-solid fa-triangle-exclamation"></i><p>'+esc(e.message||"Não foi possível carregar esta área.")+"</p></div>";}
 }
 
@@ -334,6 +334,28 @@ async function homeFeature(p){
     }catch(e){alert(e.message||"Não foi possível restaurar o destaque automático.");}
     finally{auto.disabled=false;}
   };
+}
+
+async function intelligence(p){
+ var days=Number(p.dataset.days||7),since=new Date(Date.now()-days*86400000).toISOString(),rows=[],offset=0;
+ while(offset<10000){
+  var r=await state.client.from("reader_analytics").select("page_instance,session_id,content_type,content_id,content_title,active_seconds,scroll_percent,registered,updated_at,created_at")
+   .gte("created_at",since).order("created_at",{ascending:false}).range(offset,offset+999);
+  if(r.error)throw r.error;var part=r.data||[];rows=rows.concat(part);if(part.length<1000)break;offset+=1000;
+ }
+ var latest=new Map();rows.forEach(function(x){var old=latest.get(x.page_instance);if(!old||new Date(x.updated_at)>new Date(old.updated_at))latest.set(x.page_instance,x);});
+ var views=Array.from(latest.values()),sessions=new Set(views.map(function(x){return x.session_id;})),duration=views.reduce(function(n,x){return n+x.active_seconds;},0);
+ var by={};views.forEach(function(x){var k=x.content_type+":"+x.content_id,o=by[k]||(by[k]={title:x.content_title,type:x.content_type,n:0,total:0,scroll:0,anonymous:0,registered:0});
+ o.n++;o.total+=x.active_seconds;o.scroll+=x.scroll_percent;o[x.registered?"registered":"anonymous"]++;});
+ var list=Object.keys(by).map(function(k){return by[k];}).sort(function(a,b){return b.n-a.n;});
+ var html=heading("INTELIGÊNCIA DO ARQUIVO","Leituras e audiência","Dados coletados apenas de visitantes que permitiram métricas. Sessões são uma estimativa, não uma identificação pessoal.");
+ html+='<div style="margin:14px 0"><label>Período: <select data-reader-days><option value="7"'+(days===7?" selected":"")+'>7 dias</option><option value="30"'+(days===30?" selected":"")+'>30 dias</option><option value="90"'+(days===90?" selected":"")+'>90 dias</option></select></label></div>';
+ html+='<div class="admin-hub-stats"><div><strong>'+views.length+'</strong><span>Leituras medidas</span></div><div><strong>'+sessions.size+'</strong><span>Sessões estimadas</span></div><div><strong>'+Math.round(duration/Math.max(1,views.length))+'s</strong><span>Tempo ativo médio</span></div><div><strong>'+views.filter(function(x){return !x.registered;}).length+'</strong><span>Leituras sem login</span></div></div>';
+ if(rows.length>=10000)html+='<p>Limite de dez mil eventos alcançado. Reduza o período para visualizar dados completos.</p>';
+ html+='<div class="admin-hub-table-wrap"><table class="admin-hub-table"><thead><tr><th>Conteúdo</th><th>Leituras</th><th>Tempo médio</th><th>Rolagem média</th><th>Sem login</th><th>Com login</th></tr></thead><tbody>';
+ html+=list.length?list.map(function(x){return '<tr><td><strong>'+esc(x.title)+'</strong><br><small>'+esc(x.type)+'</small></td><td>'+x.n+'</td><td>'+Math.round(x.total/x.n)+'s</td><td>'+Math.round(x.scroll/x.n)+'%</td><td>'+x.anonymous+'</td><td>'+x.registered+'</td></tr>';}).join(""):'<tr><td colspan="6">Ainda não existem leituras consentidas neste período.</td></tr>';
+ p.innerHTML=html+'</tbody></table></div><p>Tempo ativo aproximado. Pessoas que recusarem as métricas não aparecem neste relatório.</p>';
+ p.querySelector("[data-reader-days]").onchange=function(e){p.dataset.days=e.target.value;p.dataset.loaded="";intelligence(p).catch(function(error){p.innerHTML=esc(error.message);});};
 }
 
 async function overview(p){
