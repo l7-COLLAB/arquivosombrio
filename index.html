@@ -2847,6 +2847,23 @@
         });
     </script>
 \n<script src="js/reader-analytics.js?v=20260927-secure" defer></script>
+
+<script>
+/* Aciona o cadastro apenas quando o visitante solicitou explicitamente pelo convite. */
+window.addEventListener("load",function(){
+ if(new URLSearchParams(location.search).get("cadastro")!=="1")return;
+ var n=0;
+ var timer=setInterval(function(){
+  n++;
+  var button=document.getElementById("forum-btn-signup");
+  if(button && !button.disabled && button.getAttribute("data-ready")!=="false"){
+    clearInterval(timer);
+    history.replaceState(history.state,"",location.pathname+"#forum-auth-area");
+    button.click();
+  }else if(n>=12)clearInterval(timer);
+ },350);
+});
+</script>
 </body>
 
 </html>
