@@ -29,7 +29,7 @@ function measure(){
  try{fetch(endpoint,{method:"POST",mode:"cors",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify(record)}).then(function(r){if(r.ok)sent=active}).catch(function(){}).then(function(){sending=false})}catch(e){sending=false}
 }
 function isRegistered(){try{if(window.supabase&&window.supabase.createClient){window.supabase.createClient("https://iuhotznurbyujzbyhizf.supabase.co",key).auth.getSession().then(function(x){registered=!!(x.data&&x.data.session&&x.data.session.user&&!x.data.session.user.is_anonymous)})}}catch(e){}}
-function start(){if(running)return;running=true;last=Date.now();isRegistered();setTimeout(measure,5000);setInterval(function(){if(document.visibilityState==="visible"&&Date.now()-last<120000&&active<1800)active++;if(active>0&&active%20===0)measure()},1000)}
+function start(){if(running)return;running=true;last=Date.now();isRegistered();setTimeout(isRegistered,3000);setTimeout(measure,5000);setInterval(function(){if(document.visibilityState==="visible"&&Date.now()-last<120000&&active<1800)active++;if(active>0&&active%20===0)measure()},1000)}
 addEventListener("pagehide",measure);
 document.addEventListener("visibilitychange",function(){if(document.hidden)measure();else touch()});
 function banner(){
