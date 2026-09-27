@@ -890,6 +890,17 @@ function renderizarHistoria(caso) {
 }
 
 
+function separarTituloDescricaoEvidencia(valor) {
+    const texto = String(valor ?? "").trim();
+    const partes = texto.split(/\r?\n+/).map(parte => parte.trim()).filter(Boolean);
+    // Alguns registros antigos guardam título e explicação no mesmo texto.
+    // A primeira linha é o título, nunca a descrição inteira.
+    if (partes.length > 1) {
+        return { titulo: partes[0], detalhes: partes.slice(1).join("\n") };
+    }
+    return { titulo: texto, detalhes: "" };
+}
+
 function renderizarEvidencias(evidencias) {
 
     const container =
@@ -937,16 +948,10 @@ function renderizarEvidencias(evidencias) {
                         typeof evidencia ===
                         "string"
                     ) {
-                        const textoEvidencia =
-                            evidencia.trim();
-
+                        const campos = separarTituloDescricaoEvidencia(evidencia);
                         evidencia = {
-                            titulo:
-                                textoEvidencia.length > 110
-                                    ? textoEvidencia.slice(0, 107).trimEnd() + "..."
-                                    : textoEvidencia,
-                            detalhes:
-                                textoEvidencia
+                            titulo: campos.titulo,
+                            detalhes: campos.detalhes
                         };
                     }
 
@@ -957,17 +962,24 @@ function renderizarEvidencias(evidencias) {
                     const normalizarComparacao = valor => textoLimpo(valor)
                         .normalize("NFD").replace(/[\\u0300-\\u036f]/g, "")
                         .replace(/[^a-zA-Z0-9]+/g, " ").trim().toLowerCase();
-                    const titulo = textoLimpo(evidencia.titulo) ||
-                        "Evidência sem título";
+                    const camposTitulo = separarTituloDescricaoEvidencia(evidencia.titulo);
+                    const titulo = (camposTitulo.titulo.length > 110
+                        ? camposTitulo.titulo.slice(0, 107).trimEnd() + "..."
+                        : camposTitulo.titulo) || "Evidência sem título";
                     const ehRepeticao = valor => !!textoLimpo(valor) &&
                         normalizarComparacao(valor) === normalizarComparacao(titulo);
                     const resumoBruto = textoLimpo(evidencia.resumo);
                     const detalhesBrutos = textoLimpo(evidencia.detalhes) ||
                         textoLimpo(evidencia.descricao);
                     const resumo = ehRepeticao(resumoBruto) ? "" : resumoBruto;
-                    const detalhes = ehRepeticao(detalhesBrutos) ||
-                        (resumo && normalizarComparacao(detalhesBrutos) === normalizarComparacao(resumo))
-                            ? "" : detalhesBrutos;
+                    // Todas as informações ficam exclusivamente dentro do acordeão.
+                    const detalhes = [camposTitulo.detalhes, resumo, detalhesBrutos]
+                        .filter(parte => parte && !ehRepeticao(parte))
+                        .filter((parte, indice, lista) =>
+                            lista.findIndex(outro =>
+                                normalizarComparacao(outro) === normalizarComparacao(parte)
+                            ) === indice
+                        ).join("\n\n");
 
                     const imagem =
                         evidencia.imagem ||
@@ -1003,16 +1015,6 @@ function renderizarEvidencias(evidencias) {
                                         <h3>
                                             ${escaparHTML(titulo)}
                                         </h3>
-
-                                        ${
-                                            resumo
-                                                ? `
-                                                    <p>
-                                                        ${escaparHTML(resumo)}
-                                                    </p>
-                                                `
-                                                : ""
-                                        }
 
                                     </div>
 
@@ -2513,21 +2515,21 @@ function renderizarCardsBlocoDossie(
                         ["detalhes", "descricao", "texto", "resumo"]
                     );
 
-            const tituloOriginal =
-                obterCampoItemDossie(
-                    objeto,
-                    ["titulo", "nome"]
-                ) ||
-                textoCompleto ||
-                `Evidência ${indice + 1}`;
-
-            const titulo =
-                tituloOriginal.length > 110
-                    ? tituloOriginal.slice(0, 107).trimEnd() + "..."
-                    : tituloOriginal;
-
-            const resumo =
-                obterCampoItemDossie(objeto, ["resumo"]);
+            const tituloDeclarado = obterCampoItemDossie(
+                objeto, ["titulo", "nome"]
+            );
+            const campos = separarTituloDescricaoEvidencia(
+                tituloDeclarado || textoCompleto
+            );
+            const tituloOriginal = campos.titulo || `Evidência ${indice + 1}`;
+            const titulo = tituloOriginal.length > 110
+                ? tituloOriginal.slice(0, 107).trimEnd() + "..."
+                : tituloOriginal;
+            const resumo = obterCampoItemDossie(objeto, ["resumo"]);
+            const descricaoExpandida = [campos.detalhes, textoCompleto]
+                .filter(parte => parte && parte.trim() !== tituloOriginal.trim())
+                .filter((parte, index, lista) => lista.indexOf(parte) === index)
+                .join("\n\n") || resumo;
 
             const classificacao =
                 obterCampoItemDossie(
@@ -2569,15 +2571,6 @@ function renderizarCardsBlocoDossie(
                 criarElementoTextoDossie("h3", titulo)
             );
 
-            if (
-                resumo &&
-                resumo !== textoCompleto
-            ) {
-                cabecalhoTexto.appendChild(
-                    criarElementoTextoDossie("p", resumo)
-                );
-            }
-
             const rotulo =
                 document.createElement("span");
 
@@ -2603,7 +2596,7 @@ function renderizarCardsBlocoDossie(
             texto.appendChild(
                 criarElementoTextoDossie(
                     "p",
-                    textoCompleto ||
+                    descricaoExpandida ||
                     "Informações complementares desta evidência ainda não foram cadastradas."
                 )
             );
