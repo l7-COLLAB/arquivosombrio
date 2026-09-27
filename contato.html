@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,follow"><title>Feedback e problemas | Arquivo Sombrio</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{background:#0b0d10;color:#e0d4c2;font:16px/1.6 system-ui,Arial,sans-serif;margin:0}main{width:min(100% - 32px,640px);margin:55px auto 65px}a{color:#ddca9d}header{border-bottom:1px solid #554c3f;padding-bottom:20px}.brand{font:700 19px Georgia,serif;letter-spacing:3px;text-decoration:none}h1{font:500 34px Georgia,serif;color:#e9d8bd;margin:28px 0 8px}.hint{color:#b9b0a4;font-size:14px}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:24px 0}.tabs button,button[type=submit]{cursor:pointer;color:#e9dcc4;background:#171a1e;border:1px solid #7d705c;padding:13px;font:600 14px system-ui;border-radius:4px}.tabs button[aria-pressed=true]{background:#5a3a30;border-color:#d5bc88}label{display:block;font-weight:600;font-size:14px;margin:18px 0 7px}select,textarea,input{display:block;width:100%;padding:12px;background:#171a1e;color:#eee5d7;border:1px solid #706553;border-radius:3px;font:16px system-ui}textarea{min-height:150px;resize:vertical}small{font-size:12px;color:#b8ac9a}button[type=submit]{margin-top:23px;width:100%;background:#70523d}.note{padding:10px 13px;border-left:2px solid #ab9373;background:#171a1e;margin:20px 0;font-size:13px}.msg{font-size:14px;min-height:25px;margin-top:14px}.msg.error{color:#f0aaa4}.msg.ok{color:#b9d7b0}.honey{position:absolute;left:-9999px;opacity:0}
+</style></head><body><main><header><a class="brand" href="/">ARQUIVO SOMBRIO</a><p class="hint">CANAL DO LEITOR · REGISTRO DE MENSAGENS</p></header>
+<h1 id="title">Sua mensagem ao Arquivo</h1><p class="hint" id="subtitle">Ajude a melhorar a experiência de leitura.</p>
+<div class="tabs" role="group" aria-label="Tipo de mensagem"><button id="tab-feedback" type="button" aria-pressed="true">Enviar feedback</button><button id="tab-problem" type="button" aria-pressed="false">Relatar problema</button></div>
+<form id="contact-form"><label for="category">Assunto</label><select id="category" required><option value="geral">Opinião ou sugestão geral</option><option value="conteudo">Conteúdo, fontes ou informações</option><option value="navegacao">Navegação e aparência</option><option value="audio">Narração ou áudio</option><option value="acessibilidade">Acessibilidade</option><option value="login">Login ou cadastro</option><option value="outro">Outro</option></select>
+<label for="message">Mensagem *</label><textarea id="message" required minlength="10" maxlength="3000" placeholder="Descreva sua sugestão ou o que aconteceu..."></textarea><small>De 10 a 3.000 caracteres. Não envie senhas, dados pessoais ou informações sensíveis.</small>
+<label for="source">Página relacionada (opcional)</label><input id="source" type="url" maxlength="800" placeholder="https://arquivosombrio.net.br/..." autocomplete="off">
+<label for="email">E-mail para resposta (opcional)</label><input id="email" type="email" maxlength="254" placeholder="seuemail@exemplo.com" autocomplete="email">
+<div class="honey" aria-hidden="true"><label for="website">Deixe este campo vazio</label><input id="website" type="text" tabindex="-1" autocomplete="off"></div>
+<p class="note">Não é necessário criar uma conta. Sua mensagem será vista apenas pela administração. O e-mail é opcional e será usado somente para responder, caso você o informe.</p>
+<button type="submit" id="send">Enviar mensagem</button><p id="result" class="msg" role="status" aria-live="polite"></p></form><p><a href="/">← Voltar ao site</a></p></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.min.js"></script>
+<script>
+(function(){ "use strict";
+var api=null,kind="feedback",qs=new URLSearchParams(location.search);
+var title=document.getElementById("title"),subtitle=document.getElementById("subtitle"),category=document.getElementById("category"),msg=document.getElementById("result"),send=document.getElementById("send");
+function setKind(next){kind=next;var problem=kind==="problem";
+document.getElementById("tab-feedback").setAttribute("aria-pressed",String(!problem));
+document.getElementById("tab-problem").setAttribute("aria-pressed",String(problem));
+title.textContent=problem?"Relatar um problema":"Enviar feedback";
+subtitle.textContent=problem?"Encontrou um erro? Descreva o problema para que possamos investigar.":"Conte sua opinião ou envie uma sugestão para o Arquivo Sombrio.";
+category.options[0].text=problem?"Problema geral":"Opinião ou sugestão geral";
+msg.textContent="";msg.className="msg";
+}
+document.getElementById("tab-feedback").addEventListener("click",function(){setKind("feedback")});
+document.getElementById("tab-problem").addEventListener("click",function(){setKind("problem")});
+var origin=qs.get("origem")||"";
+try{var url=new URL(origin);if((url.protocol==="https:"||url.protocol==="http:")&&url.hostname==="arquivosombrio.net.br")document.getElementById("source").value=url.href.slice(0,800);}catch(e){}
+setKind(qs.get("tipo")==="problem"?"problem":"feedback");
+var started=Date.now();
+document.getElementById("contact-form").addEventListener("submit",async function(ev){ev.preventDefault();
+if(document.getElementById("website").value||Date.now()-started<1800){msg.textContent="Confira os campos e tente novamente.";msg.className="msg error";return;}
+var content=document.getElementById("message").value.trim(),email=document.getElementById("email").value.trim(),source=document.getElementById("source").value.trim();
+if(content.length<10||content.length>3000){msg.textContent="A mensagem deve ter de 10 a 3.000 caracteres.";msg.className="msg error";return;}
+if(source){try{var u=new URL(source);if(!["https:","http:"].includes(u.protocol))throw Error("invalid");}catch(e){msg.textContent="Informe um link válido ou deixe o campo de página em branco.";msg.className="msg error";return;}}
+send.disabled=true;send.textContent="Enviando...";msg.textContent="";
+try{
+if(!window.supabase||!window.supabase.createClient)throw Error("Sem conexão com o serviço de envio.");
+if(!api)api=window.supabase.createClient("https://iuhotznurbyujzbyhizf.supabase.co","sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj",{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+var result=await api.from("visitor_messages").insert({kind:kind,category:category.value,message:content,source_url:source||null,contact_email:email||null});
+if(result.error)throw result.error;
+document.getElementById("message").value="";msg.textContent="Mensagem recebida. Obrigado por contribuir com o Arquivo Sombrio.";msg.className="msg ok";started=Date.now();
+}catch(e){console.warn("Falha no envio de mensagem.",e);msg.textContent="Não foi possível enviar agora. Tente novamente ou escreva para arquivosombrio3108@gmail.com.";msg.className="msg error";}
+finally{send.disabled=false;send.textContent="Enviar mensagem";}
+});
+})();
+</script></body></html>
