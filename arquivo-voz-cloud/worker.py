@@ -67,7 +67,7 @@ def finalize_verified_mp3(segments: list[bytes], expected_duration: float) -> tu
         root = Path(folder)
         manifest = root / "segments.txt"
         manifest.write_text(
-            "".join(f"file '{(root / f'segment-{i:04d}.mp3').as_posix()}'\\n"
+            "".join(f"file '{(root / f'segment-{i:04d}.mp3').as_posix()}'\n"
                     for i in range(len(segments))), encoding="utf-8"
         )
         for i, payload in enumerate(segments):
@@ -135,7 +135,20 @@ async def process(job):
     remote_size = int(object_info.get("ContentLength", 0))
     remote_digest = (object_info.get("Metadata") or {}).get("sha256")
     if remote_size != len(audio) or remote_digest != digest:
-        raise ValueError("R2 upload verification failed: size or digest mismatch")
+        raise ValueError("R2 upload verification failed: size or metadata mismatch")
+    # HEAD metadata alone is not proof of content integrity: hash the stored bytes.
+    remote = r2.get_object(Bucket=R2_BUCKET, Key=path)
+    stored_hash = hashlib.sha256()
+    stored_size = 0
+    try:
+        for block in remote["Body"].iter_chunks(chunk_size=1024 * 1024):
+            if block:
+                stored_hash.update(block)
+                stored_size += len(block)
+    finally:
+        remote["Body"].close()
+    if stored_size != len(audio) or stored_hash.hexdigest() != digest:
+        raise ValueError("R2 stored MP3 failed SHA-256 readback verification")
     result = db.table("arquivo_voz_cloud_jobs").update({
         "status": "approved" if job["content_type"] in ("dossie", "garimpo", "pericia", "lenda", "creepypasta") and int(job["content_id"]) > 0 else "review",
         "audio_path": path, "error": None
