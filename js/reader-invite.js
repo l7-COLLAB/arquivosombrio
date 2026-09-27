@@ -17,6 +17,8 @@
   e.setAttribute("aria-label","Seu arquivo pessoal");
   e.innerHTML='<small>MEU ARQUIVO · GRATUITO</small><h2>Continue sua investigação quando quiser.</h2><p>Salve os casos que despertaram seu interesse e mantenha suas leituras e observações organizadas em um só lugar. O cadastro é opcional: você pode continuar lendo sem uma conta.</p><a href="/index.html?cadastro=1#forum-auth-area">Criar meu arquivo gratuito</a><footer>Você não precisa criar uma conta para acessar este conteúdo.</footer>';
   target.appendChild(e);
+  var link=e.querySelector("a");
+  if(link)link.addEventListener("click",function(){if(window.ArquivoMetricas&&window.ArquivoMetricas.registrarInteresse)window.ArquivoMetricas.registrarInteresse();});
  }
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",show);else show();
  var timer;new MutationObserver(function(){clearTimeout(timer);timer=setTimeout(show,250)}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["hidden"]});
