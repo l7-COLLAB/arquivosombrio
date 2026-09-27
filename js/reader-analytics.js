@@ -74,7 +74,7 @@ function banner(){
 }
 if(choice==="yes")start();else if(choice!=="no"){if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",banner);else banner()}
 window.ArquivoMetricas={
- alterarPreferencia:function(){try{localStorage.removeItem(consentKey)}catch(e){}location.reload()},
+ alterarPreferencia:function(){try{localStorage.removeItem(consentKey);sessionStorage.removeItem(sessionKey);sessionStorage.removeItem(attributionKey)}catch(e){}location.reload()},
  registrarInteresse:function(){
    if(choice!=="yes")return;
    var data=info();
