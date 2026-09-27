@@ -2938,7 +2938,7 @@ function completarCronologiaEReferenciasDossie(caso) {
     // Se o editor já publicou uma cronologia estruturada, não a repetimos.
     if (!temSecao("case-content-timeline")) {
         const texto = typeof dados.cronologia === "string" ? dados.cronologia.trim() : "";
-        const itens = texto.split(/\n\s*\n/g).map(x => x.trim()).filter(Boolean);
+        const itens = texto.split(/\n\s*\n|\n(?=(?:\d{4}(?:\s*[-–:]|\b)|\d{1,2}[\/.\-]\d{1,2}))/g).map(x => x.trim()).filter(Boolean);
         if (itens.length) {
             const secao = renderizarCronologiaBlocoDossie({
                 titulo: "Cronologia documentada", itens: itens
