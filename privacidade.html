@@ -789,7 +789,7 @@
 
             <h3>Medição opcional de audiência</h3>
 <p>Com sua autorização, o Arquivo Sombrio registra a categoria e o identificador do conteúdo acessado, o título, o tempo aproximado de leitura ativa, a porcentagem de rolagem e se a leitura ocorreu com ou sem login. Um código aleatório temporário permite estimar sessões e evitar a contagem repetida de uma mesma abertura de página. Não armazenamos nesses relatórios seu nome, endereço de e-mail, identificador da conta ou endereço IP.</p>
-<p>As medições são enviadas ao banco de dados Supabase e utilizadas exclusivamente para relatórios internos de audiência e melhoria editorial. Esses identificadores aleatórios podem ser considerados dados pessoais pseudonimizados. Os registros são eliminados automaticamente após 90 dias. A medição é desativada por padrão e só começa quando o visitante escolhe “Permitir métricas”. Recusar não impede a leitura.</p>
+<p>As medições são enviadas ao banco de dados Supabase e utilizadas exclusivamente para relatórios internos de audiência e melhoria editorial. Quando você aceita as métricas e clica em um convite para criar conta, também podemos contar esse clique como interesse no cadastro. Esse registro não comprova a criação de conta e não inclui nome ou e-mail. Esses identificadores aleatórios podem ser considerados dados pessoais pseudonimizados. Os registros são eliminados automaticamente após 90 dias. A medição é desativada por padrão e só começa quando o visitante escolhe “Permitir métricas”. Recusar não impede a leitura.</p>
 <p>Sua escolha é lembrada neste navegador. Você pode revogá-la ou modificá-la a qualquer momento pelo botão abaixo. A revogação interrompe novas medições, mas não apaga automaticamente registros já recebidos; solicitações relativas aos seus dados podem ser enviadas pelo canal de privacidade indicado nesta política.</p>
 <p><button type="button" id="reader-privacy-settings" style="padding:10px 16px;border:1px solid #a58e6e;background:#1b1713;color:#ede0c8;cursor:pointer;border-radius:4px">Alterar preferência de métricas</button></p>
 <div class="legal-warning">
@@ -1302,7 +1302,7 @@
 
     </footer>
 
-<script src="js/reader-analytics.js?v=1" defer></script>
+<script src="js/reader-analytics.js?v=20260927-funnel" defer></script>
 <script>document.getElementById("reader-privacy-settings").addEventListener("click",function(){if(window.ArquivoMetricas)window.ArquivoMetricas.alterarPreferencia();});</script>
 </body>
 
