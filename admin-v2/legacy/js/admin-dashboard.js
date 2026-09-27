@@ -339,7 +339,7 @@ async function homeFeature(p){
 async function intelligence(p){
  var days=Number(p.dataset.days||7),since=new Date(Date.now()-days*86400000).toISOString(),rows=[],offset=0;
  while(offset<10000){
-  var r=await state.client.from("reader_analytics").select("page_instance,session_id,content_type,content_id,content_title,active_seconds,scroll_percent,registered,event_type,traffic_source,updated_at,created_at")
+  var r=await state.client.from("reader_analytics").select("page_instance,session_id,content_type,content_id,content_title,active_seconds,scroll_percent,registered,event_type,traffic_source,traffic_medium,updated_at,created_at")
    .gte("created_at",since).order("created_at",{ascending:false}).range(offset,offset+999);
   if(r.error)throw r.error;var part=r.data||[];rows=rows.concat(part);if(part.length<1000)break;offset+=1000;
  }
@@ -350,6 +350,8 @@ async function intelligence(p){
  var list=Object.keys(by).map(function(k){return by[k];}).sort(function(a,b){return b.n-a.n;});
  var sources={};views.forEach(function(x){var k=x.traffic_source||"direct";sources[k]=(sources[k]||0)+1;});
  var sourceList=Object.keys(sources).map(function(k){return {name:k,n:sources[k]};}).sort(function(a,b){return b.n-a.n;});
+ var formats={};views.filter(function(x){return x.traffic_source==="instagram";}).forEach(function(x){var k=x.traffic_medium||"unspecified";formats[k]=(formats[k]||0)+1;});
+ var formatList=Object.keys(formats).map(function(k){return {name:k,n:formats[k]};}).sort(function(a,b){return b.n-a.n;});
  var html=heading("INTELIGÊNCIA DO ARQUIVO","Leituras e audiência","Dados coletados apenas de visitantes que permitiram métricas. Sessões são uma estimativa, não uma identificação pessoal.");
  html+='<div style="margin:14px 0"><label>Período: <select data-reader-days><option value="7"'+(days===7?" selected":"")+'>7 dias</option><option value="30"'+(days===30?" selected":"")+'>30 dias</option><option value="90"'+(days===90?" selected":"")+'>90 dias</option></select></label></div>';
  html+='<div class="admin-hub-stats"><div><strong>'+views.length+'</strong><span>Leituras medidas</span></div><div><strong>'+sessions.size+'</strong><span>Sessões estimadas</span></div><div><strong>'+Math.round(duration/Math.max(1,views.length))+'s</strong><span>Tempo ativo médio</span></div><div><strong>'+views.filter(function(x){return !x.registered;}).length+'</strong><span>Leituras sem login</span></div><div><strong>'+intents.length+'</strong><span>Cliques nos convites de cadastro</span></div></div>';
@@ -358,8 +360,14 @@ async function intelligence(p){
  html+=list.length?list.map(function(x){return '<tr><td><strong>'+esc(x.title)+'</strong><br><small>'+esc(x.type)+'</small></td><td>'+x.n+'</td><td>'+Math.round(x.total/x.n)+'s</td><td>'+Math.round(x.scroll/x.n)+'%</td><td>'+x.anonymous+'</td><td>'+x.registered+'</td></tr>';}).join(""):'<tr><td colspan="6">Ainda não existem leituras consentidas neste período.</td></tr>';
  html+='</tbody></table></div>';
  html+='<h3>Origem das leituras</h3><div class="admin-hub-table-wrap"><table class="admin-hub-table"><thead><tr><th>Origem</th><th>Leituras</th><th>Participação</th></tr></thead><tbody>'+(sourceList.length?sourceList.map(function(x){return '<tr><td>'+esc(x.name)+'</td><td>'+x.n+'</td><td>'+Math.round(x.n/Math.max(1,views.length)*100)+'%</td></tr>';}).join(""):'<tr><td colspan="3">Ainda sem dados de origem.</td></tr>')+'</tbody></table></div>';
+ html+='<h3>Instagram por formato</h3><div class="admin-hub-table-wrap"><table class="admin-hub-table"><thead><tr><th>Formato</th><th>Leituras</th></tr></thead><tbody>'+(formatList.length?formatList.map(function(x){return '<tr><td>'+esc(x.name)+'</td><td>'+x.n+'</td></tr>';}).join(""):'<tr><td colspan="2">Sem leituras consentidas atribuídas ao Instagram.</td></tr>')+'</tbody></table></div>';
  html+='<h3>Interesse em criar conta</h3><p>'+intents.length+' clique(s) nos convites de cadastro, entre visitantes que autorizaram as métricas. Cliques não são cadastros concluídos.</p>';
+ html+='<section class="admin-hub-campaign" style="margin:24px 0;padding:18px;border:1px solid #97805a"><h3>Links para divulgação</h3><p>Selecione um arquivo publicado do Garimpo e o formato. Cada link aponta diretamente para o conteúdo e identifica sua origem. Compartilhe apenas após conferir que o arquivo abre normalmente.</p><label>Arquivo <select data-campaign-content style="max-width:100%"><option value="12">Hana Williams</option><option value="11">Jennifer Schuett</option><option value="10">Erica Parsons</option><option value="9">Marcus Fiesel</option><option value="8">Zahra Baker</option></select></label> <label>Formato <select data-campaign-medium><option value="stories">Stories</option><option value="reels">Reels</option><option value="carousel">Carrossel</option><option value="bio">Bio</option><option value="post">Publicação</option></select></label><div style="margin:12px 0;display:flex;flex-wrap:wrap;gap:8px"><input type="text" data-campaign-url readonly aria-label="Link de divulgação" style="flex:1;min-width:230px;padding:8px"><button type="button" data-campaign-copy>Copiar link</button></div><small data-campaign-feedback aria-live="polite"></small></section>';
  p.innerHTML=html+'<p>Tempo ativo aproximado. Pessoas que recusarem as métricas não aparecem neste relatório.</p>';
+ var campaignContent=p.querySelector("[data-campaign-content]"),campaignMedium=p.querySelector("[data-campaign-medium]"),campaignUrl=p.querySelector("[data-campaign-url]");
+ function refreshCampaign(){campaignUrl.value="https://arquivosombrio.net.br/garimpo.html?id="+campaignContent.value+"&utm_source=instagram&utm_medium="+campaignMedium.value+"&utm_campaign=primeiros_leitores_2026";}
+ campaignContent.onchange=refreshCampaign;campaignMedium.onchange=refreshCampaign;refreshCampaign();
+ p.querySelector("[data-campaign-copy]").onclick=function(){campaignUrl.focus();campaignUrl.select();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(campaignUrl.value).then(function(){p.querySelector("[data-campaign-feedback]").textContent="Link copiado.";}).catch(function(){p.querySelector("[data-campaign-feedback]").textContent="Selecione e copie o link exibido.";});}else{p.querySelector("[data-campaign-feedback]").textContent="Selecione e copie o link exibido.";}};
  p.querySelector("[data-reader-days]").onchange=function(e){p.dataset.days=e.target.value;p.dataset.loaded="";intelligence(p).catch(function(error){p.innerHTML=esc(error.message);});};
 }
 
