@@ -555,11 +555,8 @@
 
 
 <body class="home-page">
-<a href="/lite-preview/index.html" class="arquivo-lite-access" aria-label="Abrir versão Lite do Arquivo Sombrio, adequada para aparelhos antigos">◈ Versão Lite · Leitura acessível</a>
-<style>.arquivo-lite-access{position:fixed;bottom:16px;left:16px;z-index:9000;display:inline-block;max-width:220px;padding:10px 13px;background:#271714;color:#f5d5a4!important;border:1px solid #b48c5c;border-radius:3px;font:600 12px/1.4 Georgia,serif;box-shadow:0 3px 15px rgba(0,0,0,.5);text-decoration:none}.arquivo-lite-access:focus{outline:3px solid #f4c27a;outline-offset:3px}@media(max-width:600px){.arquivo-lite-access{bottom:12px;left:10px;font-size:11px;padding:8px 10px}}</style>
 
-
-    <!-- ================================================================
+<!-- ================================================================
          CABEÇALHO
          ================================================================ -->
 
@@ -2245,91 +2242,52 @@
          APOIO AO ARQUIVO
          ================================================================ -->
 
-    <section
-        class="archive-support"
-        id="apoie-o-arquivo"
-        aria-labelledby="archive-support-title"
-    >
-        <div class="container">
-            <div class="archive-support-card">
-                <span class="archive-support-label">
-                    PROJETO EDITORIAL • REGISTRO DE MANUTENÇÃO
-                </span>
-
-                <h2 id="archive-support-title">
-                    ESTE ARQUIVO É INDEPENDENTE
-                </h2>
-
-                <p class="archive-support-copy">
-                    Cada dossiê exige horas de pesquisa, consulta a fontes,
-                    organização de documentos e manutenção do acervo.
-                </p>
-
-                <p class="archive-support-copy">
-                    O Arquivo Sombrio é um projeto independente. Se este trabalho
-                    tem valor para você e quiser contribuir para que novos arquivos
-                    continuem sendo abertos, é possível apoiar a manutenção do projeto.
-                </p>
-
-                <div class="archive-support-actions">
-                    <a
-                        class="archive-support-button"
-                        href="#archive-support-pix"
-                    >
-                        <i class="fa-solid fa-box-archive" aria-hidden="true"></i>
-                        APOIAR O ARQUIVO
-                    </a>
-                </div>
-
-                <div
-                    class="archive-support-pix"
-                    id="archive-support-pix"
-                >
-                    <strong class="archive-support-pix-title">
-                        CONTRIBUIÇÃO VIA PIX
-                    </strong>
-
-                    <dl>
-                        <dt>Instituição:</dt>
-                        <dd>Mercado Pago</dd>
-
-                        <dt>Recebedora:</dt>
-                        <dd>Leticia Da Silva Rodrigues</dd>
-
-                        <dt>Tipo de chave:</dt>
-                        <dd>Chave aleatória</dd>
-
-                        <dt>Chave Pix:</dt>
-                        <dd>eb22f557-822b-4a1a-b66a-90ca36e3de43</dd>
-                    </dl>
-
-                    <div class="archive-support-actions">
-                        <button
-                            class="archive-support-button"
-                            id="copy-archive-pix"
-                            type="button"
-                            data-pix-key="eb22f557-822b-4a1a-b66a-90ca36e3de43"
-                        >
-                            <i class="fa-regular fa-copy" aria-hidden="true"></i>
-                            <span>COPIAR CHAVE PIX</span>
-                        </button>
-
-                        <span
-                            class="archive-support-status"
-                            id="archive-support-status"
-                            role="status"
-                            aria-live="polite"
-                        ></span>
-                    </div>
-                </div>
-
-                <p class="archive-support-note">
-                    O acesso ao Arquivo Sombrio continua livre. O apoio é inteiramente opcional.
-                </p>
+    <section class="archive-support" id="apoie-o-arquivo" aria-labelledby="archive-support-title">
+      <div class="container">
+        <div class="archive-support-card">
+          <span class="archive-support-label">APOIO AO ARQUIVO</span>
+          <h2 id="archive-support-title">Ajude a manter o acervo</h2>
+          <p class="archive-support-copy">O Arquivo Sombrio é independente. Seu apoio opcional contribui para a pesquisa e a manutenção do site.</p>
+          <details class="archive-support-details" id="archive-support-details">
+            <summary class="archive-support-button"><i class="fa-solid fa-box-archive" aria-hidden="true"></i> Ver dados para apoiar</summary>
+            <div class="archive-support-pix" id="archive-support-pix">
+              <strong class="archive-support-pix-title">CONTRIBUIÇÃO VIA PIX</strong>
+              <dl>
+                <dt>Instituição:</dt><dd>Mercado Pago</dd>
+                <dt>Recebedora:</dt><dd>Leticia Da Silva Rodrigues</dd>
+                <dt>Tipo de chave:</dt><dd>Chave aleatória</dd>
+                <dt>Chave Pix:</dt><dd>eb22f557-822b-4a1a-b66a-90ca36e3de43</dd>
+              </dl>
+              <div class="archive-support-actions">
+                <button class="archive-support-button" id="copy-archive-pix" type="button" data-pix-key="eb22f557-822b-4a1a-b66a-90ca36e3de43">
+                  <i class="fa-regular fa-copy" aria-hidden="true"></i><span>COPIAR CHAVE PIX</span>
+                </button>
+                <span class="archive-support-status" id="archive-support-status" role="status" aria-live="polite"></span>
+              </div>
             </div>
+          </details>
+          <p class="archive-support-note">O acesso permanece gratuito. Contribuir é opcional.</p>
         </div>
+      </div>
     </section>
-
+<style>
+/* Cartão de apoio compacto, particularmente em telas pequenas. */
+.archive-support{padding:1.5rem 0!important}
+.archive-support::before{display:none!important}
+.archive-support-card{max-width:590px!important;padding:1.1rem 1.2rem!important;box-shadow:none!important}
+.archive-support-card::after{display:none!important}
+.archive-support-card h2{font-size:clamp(1.12rem,4vw,1.55rem)!important;margin:.35rem 0 .55rem!important;letter-spacing:.035em!important}
+.archive-support-copy{font-size:.84rem!important;line-height:1.55!important;margin:.5rem 0 .85rem!important}
+.archive-support-details{margin-top:.7rem}
+.archive-support-details>summary{display:inline-flex;width:auto!important;min-height:39px;padding:.6rem .85rem!important;list-style:none;font-size:.65rem!important;user-select:none;cursor:pointer}
+.archive-support-details>summary::-webkit-details-marker{display:none}
+.archive-support-details[open]>.archive-support-pix{margin-top:.9rem;padding:.95rem}
+.archive-support-pix-title{margin-bottom:.5rem}
+.archive-support-pix dl{margin-bottom:.6rem;gap:.35rem .6rem}
+.archive-support-pix .archive-support-actions{margin:.6rem 0 0!important}
+.archive-support-note{margin:.75rem 0 0!important;font-size:.61rem!important}
+@media(max-width:600px){.archive-support{padding:1rem 0!important}.archive-support-card{padding:.95rem .9rem!important}.archive-support-details>summary{width:auto!important}.archive-support-pix dl{grid-template-columns:max-content minmax(0,1fr)!important;gap:.3rem .6rem!important;font-size:.62rem}.archive-support-pix dd+dt{margin-top:0!important}.archive-support-pix .archive-support-button{width:auto!important}}
+</style>
     <!-- ================================================================
          RODAPÉ
          ================================================================ -->
