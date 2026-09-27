@@ -539,6 +539,18 @@
     </style>
 
 <link rel="stylesheet" href="css/home-novels.css?v=3">
+<style>
+#arquivo-cadastro-beneficios[hidden]{display:none!important}
+#arquivo-cadastro-beneficios{background:#12110e;color:#e5d7c0;border-bottom:1px solid #67563e;padding:26px 10px}
+.arquivo-cadastro-box{max-width:900px;margin:auto;border:1px solid #877657;padding:28px;background:#191713;box-sizing:border-box}
+.arquivo-cadastro-box small{font:600 11px Arial,sans-serif;letter-spacing:.18em;color:#c7aa78}
+.arquivo-cadastro-box h1{font:600 clamp(27px,6vw,45px)/1.15 Georgia,serif;color:#f2e5cc;margin:13px 0}
+.arquivo-cadastro-box p{font:15px/1.7 Arial,sans-serif;max-width:700px;color:#ddd0b7}
+.arquivo-cadastro-beneficios{display:flex;flex-wrap:wrap;gap:10px 25px;margin:20px 0;font:13px/1.6 Arial,sans-serif;color:#d0b98c}
+.arquivo-cadastro-acoes{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.arquivo-cadastro-acoes button{padding:12px 17px;cursor:pointer;background:#d5be92;border:1px solid #d5be92;color:#18130d;font:700 13px Arial,sans-serif;border-radius:3px}
+.arquivo-cadastro-acoes a{color:#e7d9c1!important;font:13px Arial,sans-serif;text-decoration:underline}
+</style>
 </head>
 
 
@@ -889,6 +901,23 @@
          ================================================================ -->
 
     <main>
+<section id="arquivo-cadastro-beneficios" aria-labelledby="arquivo-cadastro-titulo" hidden>
+    <div class="container arquivo-cadastro-box">
+      <small>ARQUIVO SOMBRIO · SEU ESPAÇO</small>
+      <h1 id="arquivo-cadastro-titulo">Organize suas investigações.</h1>
+      <p>Crie uma conta gratuita para salvar seus casos favoritos, continuar leituras e registrar observações. Você também pode continuar lendo sem cadastro.</p>
+      <div class="arquivo-cadastro-beneficios">
+        <span>✓ Favoritos em um só lugar</span>
+        <span>✓ Leitura para continuar depois</span>
+        <span>✓ Observações e trechos salvos</span>
+      </div>
+      <div class="arquivo-cadastro-acoes">
+        <button type="button" id="arquivo-cadastro-confirmar">Criar meu Arquivo gratuitamente</button>
+        <a href="index.html#casos">Continuar explorando sem conta</a>
+      </div>
+      <p id="arquivo-cadastro-feedback" role="status" aria-live="polite"></p>
+    </div>
+  </section>
 
         <!-- ============================================================
              HERO
@@ -2849,20 +2878,31 @@
 \n<script src="js/reader-analytics.js?v=20260927-secure" defer></script>
 
 <script>
-/* Aciona o cadastro apenas quando o visitante solicitou explicitamente pelo convite. */
-window.addEventListener("load",function(){
- if(new URLSearchParams(location.search).get("cadastro")!=="1")return;
- var n=0;
- var timer=setInterval(function(){
-  n++;
-  var button=document.getElementById("forum-btn-signup");
-  if(button && !button.disabled && button.getAttribute("data-ready")!=="false"){
-    clearInterval(timer);
-    history.replaceState(history.state,"",location.pathname+"#forum-auth-area");
-    button.click();
-  }else if(n>=12)clearInterval(timer);
- },350);
-});
+/* Cadastro contextual: abre o fluxo somente em clique real do visitante. */
+(function(){
+  function init(){
+    if(new URLSearchParams(location.search).get("cadastro")!=="1")return;
+    var box=document.getElementById("arquivo-cadastro-beneficios");
+    var button=document.getElementById("arquivo-cadastro-confirmar");
+    var feedback=document.getElementById("arquivo-cadastro-feedback");
+    if(!box||!button)return;
+    box.hidden=false;
+    box.scrollIntoView({block:"start"});
+    history.replaceState(history.state,"",location.pathname+"#arquivo-cadastro-beneficios");
+    button.addEventListener("click",function(){
+      var cadastro=document.getElementById("forum-btn-signup");
+      if(cadastro&&!cadastro.disabled)cadastro.click();
+      else if(feedback)feedback.textContent="O cadastro não está disponível neste momento. Tente novamente pelo acesso à comunidade.";
+    });
+    var logged=document.getElementById("forum-user-area");
+    if(logged){
+      var refresh=function(){if(!logged.hidden&&logged.getAttribute("hidden")===null){box.hidden=true;}};
+      new MutationObserver(refresh).observe(logged,{attributes:true,attributeFilter:["hidden"]});
+      refresh();
+    }
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+})();
 </script>
 </body>
 
