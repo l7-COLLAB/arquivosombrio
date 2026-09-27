@@ -23,6 +23,8 @@
     return null;
   }
 
+  const GUEST_KOKORO_DOSSIERS=new Set([2,4,6,7,8,10,13,15,16]);
+  function publicKokoroEligible(ctx){return ctx.type==="dossie"&&GUEST_KOKORO_DOSSIERS.has(Number(ctx.id))}
   function contextKey(ctx){return ctx.type+":"+ctx.id}
 
   async function loadSupabaseSDK(){
@@ -284,7 +286,7 @@
         <span class="public-narration-copy">
           <small>ÁUDIO DOCUMENTAL</small>
           <strong>Ouvir este arquivo</strong>
-          <em>Disponível para contas do Arquivo Sombrio</em>
+          <em>${publicKokoroEligible(ctx)?"Narração Kokoro liberada para todos":"Disponível para contas do Arquivo Sombrio"}</em>
         </span>
         <span class="public-narration-action"><i class="fa-solid fa-play"></i></span>
       </button>
@@ -397,14 +399,16 @@
 
     async function callNarration(body){
       const session=await getSession();
-      if(!session?.access_token){
+      if(!session?.access_token&&!publicKokoroEligible(ctx)){
         const err=new Error("Entre na sua conta para ouvir este arquivo.");
         err.code="LOGIN_REQUIRED";
         throw err;
       }
+      const headers={"Content-Type":"application/json",apikey:KEY};
+      if(session?.access_token)headers.Authorization="Bearer "+session.access_token;
       const r=await fetch(FN_URL,{
         method:"POST",
-        headers:{"Content-Type":"application/json",apikey:KEY,Authorization:"Bearer "+session.access_token},
+        headers,
         body:JSON.stringify({...ctx,...body})
       });
       const data=await r.json().catch(()=>({}));
@@ -515,7 +519,7 @@
       if(loading)return;
       logMetric(ctx,"audio_click");
       const session=await getSession().catch(()=>null);
-      if(!session?.user){
+      if(!session?.user&&!publicKokoroEligible(ctx)){
         resumeAfterAuth=true;
         localStorage.setItem(PENDING_KEY,contextKey(ctx));
         authGate._open("login");
