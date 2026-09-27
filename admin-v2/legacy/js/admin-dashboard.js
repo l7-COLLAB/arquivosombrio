@@ -353,6 +353,7 @@ async function intelligence(p){
  var formats={};views.filter(function(x){return x.traffic_source==="instagram";}).forEach(function(x){var k=x.traffic_medium||"unspecified";formats[k]=(formats[k]||0)+1;});
  var formatList=Object.keys(formats).map(function(k){return {name:k,n:formats[k]};}).sort(function(a,b){return b.n-a.n;});
  var html=heading("INTELIGÊNCIA DO ARQUIVO","Leituras e audiência","Dados coletados apenas de visitantes que permitiram métricas. Sessões são uma estimativa, não uma identificação pessoal.");
+ html+='<section style="padding:13px;border:1px solid #857454;margin:12px 0"><h3>Diagnóstico da coleta</h3><p>Verifique a conexão com o coletor e o banco, sem inserir visitas de teste nas estatísticas.</p><button type="button" data-reader-diagnostic>Verificar conexão</button> <span data-reader-diagnostic-status role="status" aria-live="polite">Ainda não verificado neste dispositivo.</span></section>';
  html+='<div style="margin:14px 0"><label>Período: <select data-reader-days><option value="7"'+(days===7?" selected":"")+'>7 dias</option><option value="30"'+(days===30?" selected":"")+'>30 dias</option><option value="90"'+(days===90?" selected":"")+'>90 dias</option></select></label></div>';
  html+='<div class="admin-hub-stats"><div><strong>'+views.length+'</strong><span>Leituras medidas</span></div><div><strong>'+sessions.size+'</strong><span>Sessões estimadas</span></div><div><strong>'+Math.round(duration/Math.max(1,views.length))+'s</strong><span>Tempo ativo médio</span></div><div><strong>'+views.filter(function(x){return !x.registered;}).length+'</strong><span>Leituras sem login</span></div><div><strong>'+intents.length+'</strong><span>Cliques nos convites de cadastro</span></div></div>';
  if(rows.length>=10000)html+='<p>Limite de dez mil eventos alcançado. Reduza o período para visualizar dados completos.</p>';
@@ -368,6 +369,18 @@ async function intelligence(p){
  function refreshCampaign(){campaignUrl.value="https://arquivosombrio.net.br/garimpo.html?id="+campaignContent.value+"&utm_source=instagram&utm_medium="+campaignMedium.value+"&utm_campaign=primeiros_leitores_2026";}
  campaignContent.onchange=refreshCampaign;campaignMedium.onchange=refreshCampaign;refreshCampaign();
  p.querySelector("[data-campaign-copy]").onclick=function(){campaignUrl.focus();campaignUrl.select();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(campaignUrl.value).then(function(){p.querySelector("[data-campaign-feedback]").textContent="Link copiado.";}).catch(function(){p.querySelector("[data-campaign-feedback]").textContent="Selecione e copie o link exibido.";});}else{p.querySelector("[data-campaign-feedback]").textContent="Selecione e copie o link exibido.";}};
+ var diagnosticButton=p.querySelector("[data-reader-diagnostic]");
+ diagnosticButton.onclick=async function(){
+  diagnosticButton.disabled=true;
+  var status=p.querySelector("[data-reader-diagnostic-status]");
+  status.textContent="Verificando...";
+  try{
+    var check=await fetch("https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/reader-analytics",{method:"GET",mode:"cors",cache:"no-store"});
+    var response=await check.json();
+    status.textContent=check.ok&&response.ok&&response.database==="reachable"?"Conexão com a função e banco confirmada. Isso não comprova visitas reais.":"Falha no coletor ou no banco (HTTP "+check.status+").";
+  }catch(e){status.textContent="Falha ao acessar o coletor a partir deste navegador."; }
+  finally{diagnosticButton.disabled=false;}
+ };
  p.querySelector("[data-reader-days]").onchange=function(e){p.dataset.days=e.target.value;p.dataset.loaded="";intelligence(p).catch(function(error){p.innerHTML=esc(error.message);});};
 }
 
