@@ -6532,82 +6532,83 @@ async function cadastrarForum() {
 }
 
 async function cadastrarForumComEmail() {
-
-    const nome =
-        prompt(
-            "Escolha seu nome ou codinome no Arquivo Sombrio:"
-        )?.trim();
-
-    if (!nome) {
-        return;
-    }
-
-
-    const email =
-        prompt(
-            "Digite seu e-mail:"
-        )?.trim();
-
-    if (!email) {
-        return;
-    }
-
-
-    const senha =
-        prompt(
-            "Crie uma senha com pelo menos 6 caracteres:"
-        );
-
-
-    if (!senha || senha.length < 6) {
-
-        alert(
-            "A senha precisa ter pelo menos 6 caracteres."
-        );
-
-        return;
-    }
-
-
-    const confirmouMaioridade =
-        confirm(
-            "CONFIRMAÇÃO DE IDADE\n\n" +
-            "A Comunidade do Arquivo Sombrio é destinada exclusivamente a pessoas com 18 anos ou mais.\n\n" +
-            "Você confirma que possui 18 anos ou mais?"
-        );
-
-
-    if (!confirmouMaioridade) {
-
-        alert(
-            "Não é possível criar uma conta na Comunidade sem confirmar que você possui 18 anos ou mais."
-        );
-
-        return;
-    }
-
-
-    const aceitouPoliticas =
-        confirm(
-            "TERMOS E POLÍTICAS\n\n" +
-            "Antes de criar sua conta, consulte:\n" +
-            "Termos: https://arquivosombrio.net.br/termos.html\n" +
-            "Privacidade: https://arquivosombrio.net.br/privacidade.html\n" +
-            "Diretrizes: https://arquivosombrio.net.br/diretrizes.html\n\n" +
-            "Você declara que leu e aceita os Termos de Uso e as Diretrizes, e que tomou ciência da Política de Privacidade vigente?\n\n" +
-            "Você concorda com esses documentos?"
-        );
-
-
-    if (!aceitouPoliticas) {
-
-        alert(
-            "Para criar uma conta, é necessário aceitar os Termos de Uso, a Política de Privacidade e as Diretrizes da Comunidade."
-        );
-
-        return;
-    }
-
+    /* Formulário acessível: substitui prompt/confirm, sobretudo no iPhone. */
+    const dados = await new Promise((resolve) => {
+        document.getElementById("arquivo-signup-form-modal")?.remove();
+        if (!document.getElementById("arquivo-signup-form-style")) {
+            const style = document.createElement("style");
+            style.id = "arquivo-signup-form-style";
+            style.textContent = `
+              #arquivo-signup-form-modal{position:fixed;inset:0;z-index:100001;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.84);font-family:Arial,sans-serif;overflow-y:auto}
+              .as-signup-form{background:#1a1713;color:#e8dcc9;border:1px solid #947d58;border-radius:6px;width:min(100%,470px);max-height:calc(100dvh - 24px);overflow-y:auto;box-sizing:border-box;padding:22px}
+              .as-signup-form h2{font:600 27px/1.2 Georgia,serif;margin:5px 0 12px;color:#f3e3c6}
+              .as-signup-form p{font:14px/1.55 Arial,sans-serif;color:#d7c6a9}
+              .as-signup-form label.as-field{display:block;font-size:13px;margin:12px 0}
+              .as-signup-form .as-field input{display:block;box-sizing:border-box;margin-top:6px;width:100%;padding:11px;background:#100f0d;color:#fff;border:1px solid #857354;border-radius:3px;font:16px Arial,sans-serif}
+              .as-signup-form label.as-check{display:flex;gap:9px;align-items:flex-start;margin:12px 0;font:13px/1.5 Arial,sans-serif}
+              .as-signup-form .as-check input{min-width:18px;min-height:18px;margin:0;accent-color:#c4a675}
+              .as-signup-form a{color:#e4c78d;text-decoration:underline}
+              .as-signup-form .as-signup-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+              .as-signup-form button{padding:11px 15px;border-radius:3px;border:1px solid #c8ae81;cursor:pointer;font:600 13px Arial,sans-serif}
+              .as-signup-form [type=submit]{background:#d4bd91;color:#241c12}
+              .as-signup-form [data-as-cancel]{background:transparent;color:#e8dcc9}
+              .as-signup-form [data-as-error]{color:#ffd2bd;min-height:1em;font-size:13px}
+            `;
+            document.head.appendChild(style);
+        }
+        const modal = document.createElement("div");
+        modal.id = "arquivo-signup-form-modal";
+        modal.setAttribute("role","dialog");
+        modal.setAttribute("aria-modal","true");
+        modal.setAttribute("aria-labelledby","arquivo-signup-heading");
+        modal.innerHTML = `
+          <form class="as-signup-form" autocomplete="on">
+            <h2 id="arquivo-signup-heading">Criar meu Arquivo</h2>
+            <p>Cadastro gratuito para maiores de 18 anos. Seus dossiês continuam disponíveis sem conta.</p>
+            <label class="as-field">Nome ou codinome
+              <input name="display_name" type="text" maxlength="60" autocomplete="nickname" required placeholder="Como deseja aparecer no Arquivo">
+            </label>
+            <label class="as-field">E-mail
+              <input name="email" type="email" maxlength="254" autocomplete="email" required placeholder="voce@exemplo.com">
+            </label>
+            <label class="as-field">Senha
+              <input name="password" type="password" minlength="6" maxlength="128" autocomplete="new-password" required placeholder="Pelo menos 6 caracteres">
+            </label>
+            <label class="as-field">Confirmar senha
+              <input name="password_confirm" type="password" minlength="6" maxlength="128" autocomplete="new-password" required>
+            </label>
+            <label class="as-check"><input type="checkbox" name="adult" required> <span>Confirmo que tenho 18 anos ou mais.</span></label>
+            <label class="as-check"><input type="checkbox" name="legal" required>
+              <span>Li e aceito os <a href="/termos.html" target="_blank" rel="noopener">Termos de Uso</a> e as <a href="/diretrizes.html" target="_blank" rel="noopener">Diretrizes</a>, e estou ciente da <a href="/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>.</span>
+            </label>
+            <p data-as-error role="alert" aria-live="assertive"></p>
+            <div class="as-signup-actions">
+              <button type="submit">Criar conta</button>
+              <button type="button" data-as-cancel>Cancelar</button>
+            </div>
+          </form>`;
+        document.body.appendChild(modal);
+        const form = modal.querySelector("form"), first = form.elements.namedItem("display_name");
+        const finish = (value) => {document.removeEventListener("keydown",onEsc);modal.remove();resolve(value);};
+        const onEsc = (event) => {if(event.key==="Escape")finish(null);};
+        document.addEventListener("keydown",onEsc);
+        modal.querySelector("[data-as-cancel]").addEventListener("click",()=>finish(null));
+        form.addEventListener("submit",(event)=>{
+            event.preventDefault();
+            const nome = form.elements.namedItem("display_name").value.trim();
+            const email = form.elements.namedItem("email").value.trim();
+            const senha = form.elements.namedItem("password").value;
+            const confirmacao = form.elements.namedItem("password_confirm").value;
+            const error = form.querySelector("[data-as-error]");
+            if (!nome || !email || senha.length<6) {error.textContent="Preencha todos os campos obrigatórios.";return;}
+            if (senha!==confirmacao) {error.textContent="As senhas não coincidem.";return;}
+            if (!form.elements.namedItem("adult").checked || !form.elements.namedItem("legal").checked) {error.textContent="Confirme a idade e a leitura dos documentos.";return;}
+            finish({nome,email,senha});
+        });
+        first.focus();
+    });
+    if (!dados) return;
+    const {nome,email,senha} = dados;
 
     try {
 
