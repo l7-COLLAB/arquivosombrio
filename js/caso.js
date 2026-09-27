@@ -553,6 +553,7 @@ function exibirAvisoRascunho(caso) {
 function renderizarCaso(caso) {
 
     exibirAvisoRascunho(caso);
+    preencherCabecalhoDocumental(caso);
 
     preencherTexto(
         "caso-titulo",
@@ -658,6 +659,45 @@ function renderizarCaso(caso) {
     }
 
     finalizarAberturaDoCaso();
+}
+
+
+/* Cabeçalho editorial: nenhum número de ocorrência ou data é inventado.
+   O identificador apresentado é somente uma referência técnica do site. */
+function preencherCabecalhoDocumental(caso) {
+    const registro = document.getElementById("dossier-record-wrap");
+    const registroValor = document.getElementById("dossier-record-id");
+    const atualizacao = document.getElementById("dossier-updated-wrap");
+    const atualizacaoValor = document.getElementById("dossier-updated-date");
+    const id = String(caso?.id ?? "").trim();
+    if (registro && registroValor) {
+        if (id) {
+            registroValor.textContent = id;
+            registro.hidden = false;
+        } else {
+            registroValor.textContent = "";
+            registro.hidden = true;
+        }
+    }
+    // A data é exibida apenas quando registrada na fonte do conteúdo.
+    const dataOriginal = caso?.updated_at || caso?.published_at || caso?.publicado_em || caso?.created_at;
+    const data = dataOriginal ? new Date(dataOriginal) : null;
+    if (atualizacao && atualizacaoValor) {
+        if (data && !Number.isNaN(data.getTime())) {
+            atualizacaoValor.textContent = new Intl.DateTimeFormat("pt-BR", {
+                day: "2-digit", month: "long", year: "numeric",
+                timeZone: "America/Sao_Paulo"
+            }).format(data);
+            // Uma data inicial não deve ser rotulada como revisão editorial.
+            const possuiAtualizacao = Boolean(caso?.updated_at);
+            const rotulo = atualizacao.querySelector("dt");
+            if (rotulo) rotulo.textContent = possuiAtualizacao ? "ÚLTIMA ATUALIZAÇÃO" : "DATA DO REGISTRO";
+            atualizacao.hidden = false;
+        } else {
+            atualizacaoValor.textContent = "";
+            atualizacao.hidden = true;
+        }
+    }
 }
 
 

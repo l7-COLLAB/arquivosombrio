@@ -77,6 +77,7 @@
     href="css/caso.css?v=20260913-2"
     >
     <link rel="stylesheet" href="css/public-narration.css?v=mini-player-2">
+    <link rel="stylesheet" href="css/dossier-document-head.css?v=20260927-1">
 </head>
 
 
@@ -151,6 +152,26 @@
         >
 
             <div class="container">
+
+                <div class="dossier-document-head" aria-label="Identificação editorial do dossiê">
+                    <div class="dossier-document-head-brand">
+                        <span class="dossier-document-mark" aria-hidden="true">AS</span>
+                        <div class="dossier-document-brand-copy">
+                            <strong>ARQUIVO SOMBRIO</strong>
+                            <span>ACERVO DOCUMENTAL · DOSSIÊS</span>
+                        </div>
+                    </div>
+                    <dl class="dossier-document-register">
+                        <div id="dossier-record-wrap" hidden>
+                            <dt>REFERÊNCIA INTERNA</dt>
+                            <dd id="dossier-record-id"></dd>
+                        </div>
+                        <div id="dossier-updated-wrap" hidden>
+                            <dt>ÚLTIMA ATUALIZAÇÃO</dt>
+                            <dd id="dossier-updated-date"></dd>
+                        </div>
+                    </dl>
+                </div>
 
                 <div
                     class="case-classification-row"
@@ -246,7 +267,7 @@
                         >
 
                         <figcaption class="case-photo-label">
-                            REGISTRO FOTOGRÁFICO
+                            IMAGEM ASSOCIADA AO DOSSIÊ
                         </figcaption>
 
                     </figure>
@@ -534,7 +555,7 @@
     ></script>
 
     <script
-       src="js/caso.js?v=20260919-2"
+       src="js/caso.js?v=20260927-document-1"
         defer
     ></script>
 
