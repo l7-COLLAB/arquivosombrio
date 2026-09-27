@@ -2,7 +2,7 @@
 (function () {
 "use strict";
 if(location.pathname.indexOf("/admin")>=0)return;
-var endpoint="https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/reader_analytics";
+var endpoint="https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/reader-analytics";
 var key="sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj";
 var consentKey="arquivo_analytics_consent_v1",sessionKey="arquivo_analytics_session_v1";
 function id(){if(crypto.randomUUID)return crypto.randomUUID();var b=new Uint8Array(16);crypto.getRandomValues(b);b[6]=b[6]&15|64;b[8]=b[8]&63|128;var v=Array.prototype.map.call(b,function(x){return("0"+x.toString(16)).slice(-2)}).join("");return v.slice(0,8)+"-"+v.slice(8,12)+"-"+v.slice(12,16)+"-"+v.slice(16,20)+"-"+v.slice(20);}
@@ -26,7 +26,7 @@ function measure(){
  if(!running||sending||sent===active)return;
  var c=info(),record={page_instance:pid,session_id:sid,content_type:c.content_type,content_id:c.content_id,content_title:c.content_title,active_seconds:Math.min(1800,active),scroll_percent:Math.max(scroll,percent()),registered:registered};
  sending=true;
- try{fetch(endpoint,{method:"POST",mode:"cors",keepalive:true,headers:{"apikey":key,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify(record)}).then(function(r){if(r.ok)sent=active}).catch(function(){}).then(function(){sending=false})}catch(e){sending=false}
+ try{fetch(endpoint,{method:"POST",mode:"cors",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify(record)}).then(function(r){if(r.ok)sent=active}).catch(function(){}).then(function(){sending=false})}catch(e){sending=false}
 }
 function isRegistered(){try{if(window.supabase&&window.supabase.createClient){window.supabase.createClient("https://iuhotznurbyujzbyhizf.supabase.co",key).auth.getSession().then(function(x){registered=!!(x.data&&x.data.session&&x.data.session.user&&!x.data.session.user.is_anonymous)})}}catch(e){}}
 function start(){if(running)return;running=true;last=Date.now();isRegistered();setTimeout(measure,5000);setInterval(function(){if(document.visibilityState==="visible"&&Date.now()-last<120000&&active<1800)active++;if(active>0&&active%20===0)measure()},1000)}
