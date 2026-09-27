@@ -4,6 +4,7 @@ import io
 import logging
 import os
 import re
+import time
 from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
@@ -115,6 +116,10 @@ async def process_novel(job):
 
 async def loop():
     once = os.getenv("RUN_ONCE", "false").lower() == "true"
+    # Scheduled runners can drain more than one Kokoro job without running indefinitely.
+    max_jobs = max(1, min(3, int(os.getenv("MAX_JOBS_PER_RUN", "2")))) if once else 0
+    deadline = time.monotonic() + max(60, int(os.getenv("MAX_RUN_SECONDS", "5400"))) if once else None
+    processed = 0
     while running:
         try:
             db.rpc("enqueue_published_dossier_audio").execute()
@@ -129,7 +134,8 @@ async def loop():
                     db.table("arquivo_voz_cloud_jobs").update({
                         "status":"failed","error":str(e)[:400]
                     }).eq("id",job["id"]).execute()
-                if once: return
+                processed += 1
+                if once and (processed >= max_jobs or time.monotonic() >= deadline): return
             else:
                 # Novel generation is paused by editorial decision.
                 # Do not enqueue or claim novel chapter jobs.
