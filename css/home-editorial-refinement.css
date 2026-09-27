@@ -195,3 +195,143 @@
 @media(prefers-reduced-motion:reduce){
  .home-page .home-featured .hero-editorial-image img{transition:none}
 }
+
+/* ==============================================================
+   HIERARQUIA TIPOGRÁFICA EDITORIAL · PÁGINA INICIAL
+   Três papéis: Cinzel em títulos, Libre Baskerville em leitura,
+   DM Mono somente em classificação, navegação e metadados.
+   Escalas fluidas sem comprometer títulos longos e o iPhone.
+   ============================================================== */
+.home-page {
+  --as-type-hero: clamp(2.35rem, 5.3vw, 4.25rem);
+  --as-type-lead: clamp(1.85rem, 3.6vw, 3.05rem);
+  --as-type-section: clamp(1.75rem, 3vw, 2.55rem);
+  --as-type-article: clamp(1.05rem, 1.45vw, 1.3rem);
+  --as-type-body: clamp(.95rem, 1.05vw, 1.06rem);
+  --as-type-kicker: .77rem;
+  --as-type-meta: .78rem;
+}
+/* Nível 1 — apresentação editorial. */
+.home-page .hero-content h1 {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: var(--as-type-hero);
+  line-height: 1.13;
+  font-weight: 600;
+  letter-spacing: -.018em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  max-width: 17ch;
+}
+/* Nível 2 — dossiê em destaque, sem impor maiúsculas aos nomes. */
+.home-page .home-featured .hero-editorial-feature-copy strong {
+  max-width: 25ch;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: var(--as-type-lead);
+  font-weight: 600;
+  line-height: 1.19;
+  letter-spacing: -.012em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+/* Nível 3 — títulos que orientam entre as editorias. */
+.home-page .home-featured-heading h2,
+.home-page .cases-section .section-header h2,
+.home-page .books-section .section-header h2,
+.home-page .forum-section .section-header h2,
+.home-page .forensic-section .section-header h2,
+.home-page .home-compact-heading h2 {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: var(--as-type-section);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -.012em;
+  text-wrap: balance;
+}
+.home-page .hero-description,
+.home-page .section-description {
+  font-family: var(--font-body, Georgia, serif);
+  font-size: var(--as-type-body);
+  line-height: 1.7;
+  color: #cfc3b2;
+}
+/* Artigos e chamadas recebem o peso que faltava, sem parecer botões. */
+.home-page #grid-casos .card-content h3,
+.home-page .home-daily-card strong,
+.home-page .home-featured .hero-editorial-strip-copy strong {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: var(--as-type-article);
+  line-height: 1.33;
+  font-weight: 600;
+  letter-spacing: 0;
+  overflow-wrap: break-word;
+}
+.home-page #grid-casos .card-summary,
+.home-page .home-daily-card p {
+  font-family: var(--font-body, Georgia, serif);
+  font-size: .88rem;
+  line-height: 1.65;
+}
+/* Nível informativo: maiúsculas apenas em elementos curtos. */
+.home-page .hero-eyebrow,
+.home-page .section-eyebrow,
+.home-page .home-featured-heading span,
+.home-page .home-featured .hero-editorial-kicker,
+.home-page .home-featured .hero-editorial-strip-copy small,
+.home-page .home-compact-heading span,
+.home-page .home-directory-label {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--as-type-kicker);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: .075em;
+  text-transform: uppercase;
+}
+.home-page .home-featured .hero-editorial-feature-copy small,
+.home-page .home-daily-card small {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--as-type-meta);
+  line-height: 1.55;
+  letter-spacing: .025em;
+}
+/* O diretório é navegação, não uma nova coleção de títulos. */
+.home-page .home-directory>a {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(.9rem, 1.1vw, 1.05rem);
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: .015em;
+  text-transform: uppercase;
+}
+.home-page .home-featured-heading a,
+.home-page .home-section-link,
+.home-page .home-compact-heading>a {
+  font-size: .83rem;
+  line-height: 1.5;
+  letter-spacing: .025em;
+}
+@media (max-width:760px) {
+  .home-page {
+    --as-type-hero: clamp(2.05rem, 8.4vw, 2.85rem);
+    --as-type-lead: clamp(1.58rem, 6.4vw, 2.2rem);
+    --as-type-section: clamp(1.65rem, 6.6vw, 2.1rem);
+    --as-type-article: 1.05rem;
+    --as-type-body: 1rem;
+    --as-type-kicker: .74rem;
+    --as-type-meta: .76rem;
+  }
+  .home-page .hero-content h1 { max-width: 19ch; }
+  .home-page .home-featured .hero-editorial-feature-copy strong {max-width: 24ch;}
+  .home-page .home-featured-heading {gap: .7rem;}
+  .home-page .home-featured-heading a {font-size:.78rem;max-width:145px;}
+  .home-page .home-directory>a {font-size:clamp(.88rem,3.7vw,1rem);}
+  .home-page .section-description {font-size:.98rem;line-height:1.62;}
+  .home-page #grid-casos .card-content h3 {font-size:1.09rem;line-height:1.35;}
+  .home-page .home-daily-card strong {font-size:1.04rem;}
+  .home-page .home-daily-card p,
+  .home-page #grid-casos .card-summary {font-size:.88rem;line-height:1.55;}
+}
+@media (max-width:380px) {
+  .home-page {--as-type-hero:2.03rem;--as-type-lead:1.52rem;}
+  .home-page .home-featured-heading h2 {font-size:1.67rem;}
+  .home-page .home-directory>a {font-size:.85rem;}
+}
