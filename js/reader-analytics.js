@@ -19,12 +19,23 @@ function info(){
  title=(title&&title.textContent||document.title||"Arquivo Sombrio").replace(/\s+/g," ").trim().slice(0,160);
  return {content_type:type,content_id:String(cid).slice(0,120),content_title:title||"Arquivo Sombrio"};
 }
+function trafficSource(){
+ try{
+  var u=new URL(location.href),utm=(u.searchParams.get("utm_source")||"").toLowerCase(),ref=(document.referrer||"").toLowerCase();
+  if(/instagram|ig/.test(utm)||ref.indexOf("instagram.")>=0)return "instagram";
+  if(/google/.test(utm)||ref.indexOf("google.")>=0)return "google";
+  if(/facebook|fb/.test(utm)||ref.indexOf("facebook.")>=0)return "facebook";
+  if(/whatsapp|wa/.test(utm)||ref.indexOf("whatsapp.")>=0)return "whatsapp";
+  if(ref&&ref.indexOf(location.hostname)>=0)return "internal";
+  return ref?"other":"direct";
+ }catch(e){return "direct";}
+}
 function percent(){var d=document.documentElement,n=d.scrollHeight-innerHeight;return n<=0?100:Math.min(100,Math.max(0,Math.round(scrollY/n*100)))}
 function touch(){last=Date.now();scroll=Math.max(scroll,percent())}
 ["scroll","click","touchstart","keydown"].forEach(function(t){addEventListener(t,touch,{passive:true})});
 function measure(){
  if(!running||sending||sent===active)return;
- var c=info(),record={page_instance:pid,session_id:sid,content_type:c.content_type,content_id:c.content_id,content_title:c.content_title,active_seconds:Math.min(1800,active),scroll_percent:Math.max(scroll,percent()),registered:registered,event_type:"read"};
+ var c=info(),record={page_instance:pid,session_id:sid,content_type:c.content_type,content_id:c.content_id,content_title:c.content_title,active_seconds:Math.min(1800,active),scroll_percent:Math.max(scroll,percent()),registered:registered,event_type:"read",traffic_source:trafficSource()};
  sending=true;
  try{fetch(endpoint,{method:"POST",mode:"cors",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify(record)}).then(function(r){if(r.ok)sent=active}).catch(function(){}).then(function(){sending=false})}catch(e){sending=false}
 }
@@ -44,7 +55,7 @@ window.ArquivoMetricas={
  registrarInteresse:function(){
    if(choice!=="yes")return;
    var data=info();
-   var record={page_instance:id(),session_id:sid,content_type:data.content_type,content_id:data.content_id,content_title:data.content_title,active_seconds:0,scroll_percent:0,registered:registered,event_type:"signup_intent"};
+   var record={page_instance:id(),session_id:sid,content_type:data.content_type,content_id:data.content_id,content_title:data.content_title,active_seconds:0,scroll_percent:0,registered:registered,event_type:"signup_intent",traffic_source:trafficSource()};
    try {
      var body=JSON.stringify(record);
      if(navigator.sendBeacon){
