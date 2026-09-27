@@ -104,7 +104,21 @@ def finalize_verified_mp3(segments: list[bytes], expected_duration: float) -> tu
             raise ValueError("Final recording is unexpectedly small")
         return payload, duration
 
+class StaleNarrationSnapshot(Exception):
+    """The editorial text changed during generation; do not publish this MP3."""
+
+
+def assert_current_snapshot(job_id: str) -> None:
+    result = db.rpc("is_kokoro_job_snapshot_current", {"p_job_id": job_id}).execute()
+    if result.data is not True:
+        raise StaleNarrationSnapshot(
+            "Conteúdo alterado ou despublicado; descarte a gravação antiga e gere a nova versão."
+        )
+
+
 async def process(job):
+    # Check the editorial snapshot before spending synthesis resources.
+    assert_current_snapshot(job["id"])
     parts = chunks(job["narration_text"])
     if not parts:
         raise ValueError("Empty narration")
@@ -123,6 +137,8 @@ async def process(job):
             log.info("job %s validated segment %s/%s (%.2fs)", job["id"], i+1, len(parts), segment_duration)
 
     audio, duration = finalize_verified_mp3(segments, expected_duration)
+    # Editors may revise the article while a long generation is running.
+    assert_current_snapshot(job["id"])
     digest = hashlib.sha256(audio).hexdigest()
     path = f'{job["content_type"]}/{job["content_id"]}/{job["source_hash"]}/{job["id"]}.mp3'
     r2.put_object(
@@ -149,6 +165,7 @@ async def process(job):
         remote["Body"].close()
     if stored_size != len(audio) or stored_hash.hexdigest() != digest:
         raise ValueError("R2 stored MP3 failed SHA-256 readback verification")
+    assert_current_snapshot(job["id"])
     result = db.table("arquivo_voz_cloud_jobs").update({
         # Production files require editorial review; approved audio remains untouched.
         "status": "review",
@@ -239,14 +256,30 @@ async def loop():
             if jobs:
                 job = jobs[0]
                 try: await process(job)
-                except Exception as e:
-                    log.exception("job failed")
+                except StaleNarrationSnapshot as e:
+                    log.warning("job %s cancelled: outdated narration snapshot", job["id"])
                     db.table("arquivo_voz_cloud_jobs").update({
-                        "status":"failed","error":str(e)[:400]
-                    }).eq("id",job["id"]).execute()
-                    # A failed scheduled run must be visibly failed in GitHub Actions.
-                    if once:
-                        raise
+                        "status": "cancelled", "error": str(e)[:400]
+                    }).eq("id", job["id"]).eq("status", "running").execute()
+                    # A cancelled obsolete snapshot is not an infrastructure failure.
+                except Exception as e:
+                    # Revision might have changed between final verification and
+                    # the database's atomic approval/review trigger.
+                    try:
+                        assert_current_snapshot(job["id"])
+                    except StaleNarrationSnapshot as stale:
+                        log.warning("job %s cancelled after a concurrent edit", job["id"])
+                        db.table("arquivo_voz_cloud_jobs").update({
+                            "status": "cancelled", "error": str(stale)[:400]
+                        }).eq("id", job["id"]).eq("status", "running").execute()
+                    else:
+                        log.exception("job failed")
+                        db.table("arquivo_voz_cloud_jobs").update({
+                            "status":"failed","error":str(e)[:400]
+                        }).eq("id",job["id"]).execute()
+                        # A failed scheduled run must be visibly failed in GitHub Actions.
+                        if once:
+                            raise
                 processed += 1
                 if once and (test_job_id or processed >= max_jobs or time.monotonic() >= deadline): return
             else:
