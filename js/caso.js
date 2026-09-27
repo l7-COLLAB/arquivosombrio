@@ -2526,7 +2526,9 @@ function renderizarCardsBlocoDossie(
                 ? tituloOriginal.slice(0, 107).trimEnd() + "..."
                 : tituloOriginal;
             const resumo = obterCampoItemDossie(objeto, ["resumo"]);
-            const descricaoExpandida = [campos.detalhes, textoCompleto]
+            const descricaoExpandida = (tituloDeclarado
+                ? [campos.detalhes, textoCompleto]
+                : [campos.detalhes || textoCompleto])
                 .filter(parte => parte && parte.trim() !== tituloOriginal.trim())
                 .filter((parte, index, lista) => lista.indexOf(parte) === index)
                 .join("\n\n") || resumo;
