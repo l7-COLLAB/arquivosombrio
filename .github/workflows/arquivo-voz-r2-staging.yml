@@ -1,6 +1,15 @@
 name: Arquivo Voz - Kokoro to R2 (staging)
 on:
   workflow_dispatch:
+    inputs:
+      job_id:
+        description: 'Optional existing pending job UUID for isolated one-job test'
+        required: false
+        type: string
+  # One isolated smoke test is launched when this workflow configuration changes.
+  push:
+    paths:
+      - '.github/workflows/arquivo-voz-r2-staging.yml'
   schedule:
     - cron: '17 * * * *'
 permissions:
@@ -33,6 +42,29 @@ jobs:
           for key in SUPABASE_SERVICE_ROLE_KEY R2_ENDPOINT R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET; do
             if [ -z "${!key}" ]; then echo "Missing required environment secret: $key"; exit 1; fi
           done
+      - name: Check Python worker syntax and cloud access
+        env:
+          SUPABASE_URL: https://iuhotznurbyujzbyhizf.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          python -m py_compile arquivo-voz-cloud/worker.py
+          python - <<'PY'
+          import os, boto3
+          from supabase import create_client
+          db = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_SERVICE_ROLE_KEY"])
+          result = db.table("arquivo_voz_cloud_jobs").select("id").limit(1).execute()
+          print("SUPABASE_READ_OK")
+          r2 = boto3.client("s3", endpoint_url=os.environ["R2_ENDPOINT"],
+                           aws_access_key_id=os.environ["R2_ACCESS_KEY_ID"],
+                           aws_secret_access_key=os.environ["R2_SECRET_ACCESS_KEY"],
+                           region_name="auto")
+          r2.list_objects_v2(Bucket=os.environ["R2_BUCKET"], MaxKeys=1)
+          print("R2_READ_OK")
+          PY
       - name: Generate temporary Kokoro API key
         run: echo "KOKORO_API_KEY=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
       - name: Start Kokoro
@@ -61,4 +93,6 @@ jobs:
           KOKORO_URL: http://127.0.0.1:8880
           KOKORO_API_KEY: ${{ env.KOKORO_API_KEY }}
           RUN_ONCE: 'true'
+          MAX_JOBS_PER_RUN: '2'
+          TEST_JOB_ID: ${{ github.event_name == 'push' && 'a7b23581-8268-49d0-ab92-c52a1dda16a9' || inputs.job_id || '' }}
         run: python -c 'import asyncio,sys;sys.path.insert(0,"arquivo-voz-cloud");from worker import loop;asyncio.run(loop())'
