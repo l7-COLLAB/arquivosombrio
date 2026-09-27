@@ -53,3 +53,42 @@ body[data-reader-theme="papel"] #caso-historia .dossier-document-quicknav a{
 }
 body[data-reader-theme="papel"] #caso-historia .case-timeline-source,
 body[data-reader-theme="papel"] #caso-historia .case-source-explainer {color:#69543c}
+
+/* LEGACY-APPENDIX: campos do editor publicados ao final da narrativa antiga.
+   Mantém o desenho documental mesmo sem conteudo_blocos. */
+.case-page #caso-historia:not([data-content-format="blocks"]) .case-content-timeline,
+.case-page #caso-historia:not([data-content-format="blocks"]) .case-content-sources {
+ margin:2.1rem 0;padding:clamp(1rem,3vw,1.5rem);
+ border:1px solid rgba(196,170,112,.26);
+ background:rgba(196,170,112,.035);
+}
+.case-page #caso-historia:not([data-content-format="blocks"]) .case-content-timeline h3,
+.case-page #caso-historia:not([data-content-format="blocks"]) .case-content-sources h3 {
+ margin:0 0 1rem;font:600 clamp(1.2rem,3vw,1.65rem)/1.35 var(--font-display,Georgia,serif);
+ color:var(--paper,#eee5d7);
+}
+.case-page #caso-historia:not([data-content-format="blocks"]) .case-content-timeline ol {
+ display:grid;gap:0;list-style:none;padding:0;margin:0;
+}
+.case-page #caso-historia:not([data-content-format="blocks"]) .case-content-timeline li {
+ display:grid;grid-template-columns:minmax(6rem,.28fr) minmax(0,1fr);
+ gap:.6rem 1rem;border-left:1px solid rgba(196,170,112,.3);
+ padding:.35rem .4rem 1.3rem 1.1rem;margin:0;
+}
+.case-page #caso-historia:not([data-content-format="blocks"]) .case-content-timeline time {
+ color:var(--gold-light,#c4aa70);font-family:var(--font-mono,monospace);
+}
+.case-page #caso-historia:not([data-content-format="blocks"]) .case-content-sources ol {
+ display:grid;gap:.8rem;padding-left:1.6rem;
+}
+.case-page #caso-historia:not([data-content-format="blocks"]) .case-content-sources li {
+ border-bottom:1px solid rgba(196,170,112,.16);padding:.5rem .25rem .85rem;
+}
+.case-page #caso-historia:not([data-content-format="blocks"]) .case-content-sources li>* {
+ display:block;margin:.25rem 0;
+}
+@media(max-width:680px){
+ .case-page #caso-historia:not([data-content-format="blocks"]) .case-content-timeline li {
+  grid-template-columns:minmax(0,1fr);
+ }
+}
