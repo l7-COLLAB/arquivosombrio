@@ -14,7 +14,7 @@ var pid=id(),active=0,sent=-1,scroll=0,registered=false,last=Date.now(),sending=
 function info(){
  var name=location.pathname.split("/").pop()||"index.html",q=new URLSearchParams(location.search);
  var types={"index.html":"inicio","dossies.html":"dossies","garimpo.html":"garimpo","pericia.html":"pericia","lendas.html":"lendas","creepypastas.html":"creepypastas","novels.html":"novels","novel.html":"novels","livros.html":"biblioteca"};
- var nested=location.pathname.indexOf("/dossies/")>=0;var type=nested||name==="caso.html"?"dossies":(types[name]||"outros"),cid=q.get("id")||(nested?name.replace(/\\.html$/,""):(name==="novel.html"?(q.get("obra")||"catalogo")+(q.has("capitulo")?":capitulo-"+q.get("capitulo"):""):"catalogo"));
+ var nested=location.pathname.indexOf("/dossies/")>=0;var type=nested||name==="caso.html"?"dossies":(types[name]||"outros"),cid=q.get("id")||(nested?name.replace(/\.html$/,""):(name==="novel.html"?(q.get("obra")||"catalogo")+(q.has("capitulo")?":capitulo-"+q.get("capitulo"):""):"catalogo"));
  var title=document.querySelector("#literary-detail h1,#daily-case-detail h1,#grid-forense h1,#novel-reader h1,#novel-detail h1,h1");
  title=(title&&title.textContent||document.title||"Arquivo Sombrio").replace(/\s+/g," ").trim().slice(0,160);
  return {content_type:type,content_id:String(cid).slice(0,120),content_title:title||"Arquivo Sombrio"};
