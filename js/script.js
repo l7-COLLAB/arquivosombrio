@@ -4221,7 +4221,7 @@ function identificarTipoForense(caso) {
 const estadoFiltroForense = { busca: "", tipo: "todos", ordem: "recentes" };
 
 function obterPericiasParaGrade() {
-    const novas = (Array.isArray(periciasSupabase) ? periciasSupabase : []).map(item => ({ ...item, origem_forense: "nova" }));
+    const novas = (Array.isArray(periciasSupabase) ? periciasSupabase : []).filter(item => String(item.status_publicacao || "").trim().toLowerCase() === "publicado").map(item => ({ ...item, origem_forense: "nova" }));
     const legadas = obterTodosCasos().filter(item => String(item.categoria).toUpperCase() === "PERÍCIA").map(item => ({ ...item, origem_forense: "legada" }));
     const titulosNovos = new Set(novas.map(item => normalizarTextoForense(item.titulo)));
     return novas.concat(legadas.filter(item => !titulosNovos.has(normalizarTextoForense(item.titulo))));
@@ -4297,7 +4297,7 @@ function carregarForense() {
     const secaoForense = grid.closest(".forensic-section");
     const id = new URLSearchParams(location.search).get("id");
     if (id) {
-        const selecionada = (Array.isArray(periciasSupabase) ? periciasSupabase : []).find(item => String(item.id) === String(id));
+        const selecionada = (Array.isArray(periciasSupabase) ? periciasSupabase : []).find(item => String(item.id) === String(id) && String(item.status_publicacao || "").trim().toLowerCase() === "publicado");
         if (selecionada) {
             secaoForense?.classList.add("forensic-detail-mode");
             renderizarDetalhePericia(grid, selecionada);
