@@ -82,7 +82,7 @@ jobs:
           command -v ffmpeg
           command -v ffprobe
           ffmpeg -hide_banner -encoders | grep -q libmp3lame
-      - name: Process up to two private audio jobs
+      - name: Process and verify Kokoro audio jobs
         env:
           SUPABASE_URL: https://iuhotznurbyujzbyhizf.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -96,3 +96,8 @@ jobs:
           MAX_JOBS_PER_RUN: '2'
           TEST_JOB_ID: ${{ github.event_name == 'push' && 'a7b23581-8268-49d0-ab92-c52a1dda16a9' || inputs.job_id || '' }}
         run: python -c 'import asyncio,sys;sys.path.insert(0,"arquivo-voz-cloud");from worker import loop;asyncio.run(loop())'
+      - name: Report safe diagnostics when processing fails
+        if: failure()
+        run: |
+          echo "Kokoro workflow failed. Check the preceding step for the exact error."
+          docker ps -a --format 'container={{.Names}} status={{.Status}}'
