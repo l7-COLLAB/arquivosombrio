@@ -24,7 +24,7 @@ function touch(){last=Date.now();scroll=Math.max(scroll,percent())}
 ["scroll","click","touchstart","keydown"].forEach(function(t){addEventListener(t,touch,{passive:true})});
 function measure(){
  if(!running||sending||sent===active)return;
- var c=info(),record={page_instance:pid,session_id:sid,content_type:c.content_type,content_id:c.content_id,content_title:c.content_title,active_seconds:Math.min(1800,active),scroll_percent:Math.max(scroll,percent()),registered:registered};
+ var c=info(),record={page_instance:pid,session_id:sid,content_type:c.content_type,content_id:c.content_id,content_title:c.content_title,active_seconds:Math.min(1800,active),scroll_percent:Math.max(scroll,percent()),registered:registered,event_type:"read"};
  sending=true;
  try{fetch(endpoint,{method:"POST",mode:"cors",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify(record)}).then(function(r){if(r.ok)sent=active}).catch(function(){}).then(function(){sending=false})}catch(e){sending=false}
 }
@@ -39,5 +39,19 @@ function banner(){
  document.body.appendChild(b);
 }
 if(choice==="yes")start();else if(choice!=="no"){if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",banner);else banner()}
-window.ArquivoMetricas={alterarPreferencia:function(){try{localStorage.removeItem(consentKey)}catch(e){}location.reload()}};
+window.ArquivoMetricas={
+ alterarPreferencia:function(){try{localStorage.removeItem(consentKey)}catch(e){}location.reload()},
+ registrarInteresse:function(){
+   if(choice!=="yes")return;
+   var data=info();
+   var record={page_instance:id(),session_id:sid,content_type:data.content_type,content_id:data.content_id,content_title:data.content_title,active_seconds:0,scroll_percent:0,registered:registered,event_type:"signup_intent"};
+   try {
+     var body=JSON.stringify(record);
+     if(navigator.sendBeacon){
+       if(navigator.sendBeacon(endpoint,new Blob([body],{type:"text/plain"})))return;
+     }
+     fetch(endpoint,{method:"POST",mode:"cors",keepalive:true,headers:{"Content-Type":"application/json"},body:body}).catch(function(){});
+   }catch(e){}
+ }
+};
 })();
