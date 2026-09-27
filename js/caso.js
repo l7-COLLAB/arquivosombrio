@@ -554,6 +554,9 @@ function renderizarCaso(caso) {
 
     exibirAvisoRascunho(caso);
     preencherCabecalhoDocumental(caso);
+    const registroEditorial = document.getElementById('dossier-editorial-record');
+    if (registroEditorial) registroEditorial.dataset.dossierId = String(caso.id);
+    carregarExpedienteEditorialDossie(caso);
 
     preencherTexto(
         "caso-titulo",
@@ -667,6 +670,73 @@ function renderizarCaso(caso) {
 
 /* Cabeçalho editorial: nenhum número de ocorrência ou data é inventado.
    O identificador apresentado é somente uma referência técnica do site. */
+/* Expediente editorial e log verificável. Não cria autor ou revisões fictícios. */
+async function carregarExpedienteEditorialDossie(caso) {
+    const expediente = document.getElementById("dossier-editorial-expediente");
+    const revisoes = document.getElementById("dossier-revision-history");
+    const registro = document.getElementById("dossier-editorial-record");
+    if (!expediente || !revisoes || !registro) return;
+    expediente.hidden = true;
+    revisoes.hidden = true;
+    registro.hidden = true;
+    const id = Number(caso && caso.id);
+    if (!Number.isSafeInteger(id) || id < 1) return;
+    try {
+        const cliente = await obterClienteSupabaseCaso();
+        const [identidade, historico] = await Promise.all([
+            cliente.from("dossier_editorial_identity")
+                .select("editorial_responsible,research_credit,review_credit,editorial_method")
+                .eq("dossier_id",id).maybeSingle(),
+            cliente.from("dossier_editorial_revisions")
+                .select("id,revision_date,revision_type,description")
+                .eq("dossier_id",id).order("revision_date",{ascending:false})
+                .order("id",{ascending:false}).limit(50)
+        ]);
+        if (identidade.error || historico.error) throw (identidade.error || historico.error);
+        // Impede que uma resposta tardia de outra navegação altere o registro atual.
+        if (String(document.getElementById("dossier-editorial-record")?.dataset.dossierId) !== String(id)) return;
+        const pessoa = identidade.data || {};
+        const campos = [
+            ["Responsável editorial",pessoa.editorial_responsible],
+            ["Pesquisa",pessoa.research_credit],
+            ["Revisão",pessoa.review_credit]
+        ].filter(item => typeof item[1] === "string" && item[1].trim());
+        const lista = document.getElementById("dossier-editorial-credits");
+        lista.replaceChildren();
+        campos.forEach(([rotulo,valor]) => {
+            const item=document.createElement("div");
+            const dt=document.createElement("dt"),dd=document.createElement("dd");
+            dt.textContent=rotulo;dd.textContent=valor;item.append(dt,dd);lista.appendChild(item);
+        });
+        const metodo=document.getElementById("dossier-editorial-method");
+        metodo.textContent=typeof pessoa.editorial_method==="string" ? pessoa.editorial_method.trim() : "";
+        metodo.hidden=!metodo.textContent;
+        expediente.hidden = campos.length===0 && !metodo.textContent;
+        const itens=Array.isArray(historico.data)?historico.data:[];
+        const listaRev=document.getElementById("dossier-revision-list");
+        listaRev.replaceChildren();
+        const rotulos={correcao:"Correção",atualizacao:"Atualização",fontes:"Fontes e referências",estrutura:"Estrutura editorial"};
+        const formato=new Intl.DateTimeFormat("pt-BR",{day:"2-digit",month:"long",year:"numeric",timeZone:"UTC"});
+        itens.forEach(item=>{
+            if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(item.revision_date||"")) return;
+            const data=new Date(item.revision_date+"T12:00:00Z");
+            if (Number.isNaN(data.getTime()))return;
+            const li=document.createElement("li"),cab=document.createElement("div"),
+                time=document.createElement("time"),tipo=document.createElement("span"),
+                desc=document.createElement("p");
+            time.dateTime=item.revision_date;time.textContent=formato.format(data);
+            tipo.textContent=rotulos[item.revision_type]||"Alteração editorial";
+            desc.textContent=item.description||"";
+            cab.append(time,tipo);li.append(cab,desc);listaRev.appendChild(li);
+        });
+        revisoes.hidden=listaRev.children.length===0;
+        registro.hidden=expediente.hidden && revisoes.hidden;
+    } catch(erro){
+        console.warn("Informações editoriais temporariamente indisponíveis.",erro);
+    }
+}
+
+
 function preencherCabecalhoDocumental(caso) {
     const registro = document.getElementById("dossier-record-wrap");
     const registroValor = document.getElementById("dossier-record-id");

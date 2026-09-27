@@ -79,6 +79,7 @@
     <link rel="stylesheet" href="css/public-narration.css?v=mini-player-2">
     <link rel="stylesheet" href="css/dossier-document-head.css?v=20260927-1">
     <link rel="stylesheet" href="css/dossier-timeline-references.css?v=20260927-2">
+    <link rel="stylesheet" href="css/dossier-editorial-record.css?v=20260927-1">
 </head>
 
 
@@ -279,6 +280,25 @@
 
         </section>
 
+        <section class="dossier-editorial-record" id="dossier-editorial-record" hidden aria-label="Expediente e revisões editoriais">
+            <div class="container">
+                <section class="dossier-editorial-expediente" id="dossier-editorial-expediente" hidden>
+                    <div class="dossier-record-heading">
+                        <span>EXPEDIENTE</span>
+                        <h2>Informações editoriais</h2>
+                    </div>
+                    <dl id="dossier-editorial-credits"></dl>
+                    <p id="dossier-editorial-method" hidden></p>
+                </section>
+                <section class="dossier-revision-history" id="dossier-revision-history" hidden>
+                    <div class="dossier-record-heading">
+                        <span>TRANSPARÊNCIA EDITORIAL</span>
+                        <h2>Histórico de revisões</h2>
+                    </div>
+                    <ol id="dossier-revision-list"></ol>
+                </section>
+            </div>
+        </section>
 
         <section
             class="case-content-section"
@@ -556,7 +576,7 @@
     ></script>
 
     <script
-       src="js/caso.js?v=20260927-references-2"
+       src="js/caso.js?v=20260927-editorial-1"
         defer
     ></script>
 
