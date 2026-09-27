@@ -150,7 +150,8 @@ async def process(job):
     if stored_size != len(audio) or stored_hash.hexdigest() != digest:
         raise ValueError("R2 stored MP3 failed SHA-256 readback verification")
     result = db.table("arquivo_voz_cloud_jobs").update({
-        "status": "approved" if job["content_type"] in ("dossie", "garimpo", "pericia", "lenda", "creepypasta") and int(job["content_id"]) > 0 else "review",
+        # Production files require editorial review; approved audio remains untouched.
+        "status": "review",
         "audio_path": path, "error": None
     }).eq("id", job["id"]).execute()
     if not result.data:
@@ -216,12 +217,25 @@ async def loop():
     max_jobs = max(1, min(3, int(os.getenv("MAX_JOBS_PER_RUN", "2")))) if once else 0
     deadline = time.monotonic() + max(60, int(os.getenv("MAX_RUN_SECONDS", "5400"))) if once else None
     processed = 0
+    test_job_id = os.getenv("TEST_JOB_ID", "").strip()
+    if test_job_id and not once:
+        raise ValueError("TEST_JOB_ID requires RUN_ONCE=true")
     while running:
         try:
-            db.rpc("enqueue_published_dossier_audio").execute()
-            db.rpc("enqueue_remaining_archive_kokoro").execute()
-            result = db.rpc("claim_arquivo_voz_cloud_job").execute()
-            jobs = result.data or []
+            if test_job_id:
+                # Run exactly one existing approved-text test candidate without consuming
+                # other pending content or auto-enqueuing new jobs.
+                candidate = db.table("arquivo_voz_cloud_jobs").update({
+                    "status": "running", "error": None
+                }).eq("id", test_job_id).eq("status", "pending").execute()
+                jobs = candidate.data or []
+                if len(jobs) != 1:
+                    raise RuntimeError("Test job is absent or no longer pending")
+            else:
+                db.rpc("enqueue_published_dossier_audio").execute()
+                db.rpc("enqueue_remaining_archive_kokoro").execute()
+                result = db.rpc("claim_arquivo_voz_cloud_job").execute()
+                jobs = result.data or []
             if jobs:
                 job = jobs[0]
                 try: await process(job)
@@ -231,7 +245,7 @@ async def loop():
                         "status":"failed","error":str(e)[:400]
                     }).eq("id",job["id"]).execute()
                 processed += 1
-                if once and (processed >= max_jobs or time.monotonic() >= deadline): return
+                if once and (test_job_id or processed >= max_jobs or time.monotonic() >= deadline): return
             else:
                 # Novel generation is paused by editorial decision.
                 # Do not enqueue or claim novel chapter jobs.
