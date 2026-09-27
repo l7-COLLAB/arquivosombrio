@@ -45,7 +45,12 @@ jobs:
           done
           docker logs arquivo-voz-kokoro
           exit 1
-      - name: Process one private audio job
+      - name: Verify MP3 validation tools
+        run: |
+          command -v ffmpeg
+          command -v ffprobe
+          ffmpeg -hide_banner -encoders | grep -q libmp3lame
+      - name: Process up to two private audio jobs
         env:
           SUPABASE_URL: https://iuhotznurbyujzbyhizf.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
