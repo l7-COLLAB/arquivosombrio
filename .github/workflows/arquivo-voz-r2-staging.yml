@@ -6,12 +6,8 @@ on:
         description: 'Optional existing pending job UUID for isolated one-job test'
         required: false
         type: string
-  # One isolated smoke test is launched when this workflow configuration changes.
-  push:
-    paths:
-      - '.github/workflows/arquivo-voz-r2-staging.yml'
   schedule:
-    - cron: '17 * * * *'
+    - cron: '7,37 * * * *'
 permissions:
   contents: read
 concurrency:
@@ -93,9 +89,8 @@ jobs:
           KOKORO_URL: http://127.0.0.1:8880
           KOKORO_API_KEY: ${{ env.KOKORO_API_KEY }}
           RUN_ONCE: 'true'
-          MAX_JOBS_PER_RUN: '1'
           MAX_JOBS_PER_RUN: '2'
-          TEST_JOB_ID: ${{ github.event_name == 'push' && 'a7b23581-8268-49d0-ab92-c52a1dda16a9' || inputs.job_id || '' }}
+          TEST_JOB_ID: ${{ inputs.job_id || '' }}
         run: python -c 'import asyncio,sys;sys.path.insert(0,"arquivo-voz-cloud");from worker import loop;asyncio.run(loop())'
       - name: Report safe diagnostics when processing fails
         if: failure()
