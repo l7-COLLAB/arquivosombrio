@@ -1,6 +1,13 @@
 """Cloud Kokoro worker. Run as a single private process, never in the browser."""
 import asyncio
 import io
+import hashlib
+import json
+import math
+import subprocess
+import tempfile
+from pathlib import Path
+from mutagen.mp3 import MP3, HeaderNotFoundError
 import logging
 import os
 import re
@@ -38,29 +45,105 @@ def chunks(text: str, limit=900):
     if current: out.append(current)
     return out
 
+
+def validated_segment(raw: bytes, label: str) -> float:
+    """Reject empty, truncated, or implausibly short Kokoro segments."""
+    if len(raw) < 1024:
+        raise ValueError(f"{label}: MP3 segment is too small")
+    try:
+        info = MP3(io.BytesIO(raw)).info
+        duration = float(info.length)
+        bitrate = int(info.bitrate)
+    except (HeaderNotFoundError, ValueError, TypeError, AttributeError) as exc:
+        raise ValueError(f"{label}: malformed MP3 segment") from exc
+    if not math.isfinite(duration) or duration < 0.25 or bitrate <= 0:
+        raise ValueError(f"{label}: invalid MP3 duration or bitrate")
+    return duration
+
+
+def finalize_verified_mp3(segments: list[bytes], expected_duration: float) -> tuple[bytes, float]:
+    """Decode and re-encode segments as one seekable MP3; probe the entire output."""
+    with tempfile.TemporaryDirectory(prefix="arquivo-voz-") as folder:
+        root = Path(folder)
+        manifest = root / "segments.txt"
+        manifest.write_text(
+            "".join(f"file '{(root / f'segment-{i:04d}.mp3').as_posix()}'\\n"
+                    for i in range(len(segments))), encoding="utf-8"
+        )
+        for i, payload in enumerate(segments):
+            (root / f"segment-{i:04d}.mp3").write_bytes(payload)
+        target = root / "verified.mp3"
+        subprocess.run(
+            ["ffmpeg", "-hide_banner", "-loglevel", "error", "-nostdin", "-y",
+             "-f", "concat", "-safe", "0", "-i", str(manifest),
+             "-vn", "-c:a", "libmp3lame", "-q:a", "3", str(target)],
+            check=True, capture_output=True, text=True, timeout=900
+        )
+        probe = subprocess.run(
+            ["ffprobe", "-v", "error", "-select_streams", "a:0",
+             "-show_entries", "stream=codec_name:format=duration",
+             "-of", "json", str(target)],
+            check=True, capture_output=True, text=True, timeout=90
+        )
+        info = json.loads(probe.stdout)
+        streams = info.get("streams") or []
+        duration = float((info.get("format") or {}).get("duration") or 0)
+        if not streams or streams[0].get("codec_name") != "mp3":
+            raise ValueError("Final recording does not have an MP3 audio stream")
+        if not math.isfinite(duration) or duration < 0.25:
+            raise ValueError("Final MP3 duration is invalid")
+        # Detect major truncation or unexpected concatenation/encoding failures.
+        if duration < expected_duration * 0.90 or duration > expected_duration * 1.10 + 2:
+            raise ValueError(
+                f"Final MP3 duration mismatch: expected {expected_duration:.1f}s; "
+                f"got {duration:.1f}s"
+            )
+        payload = target.read_bytes()
+        validated_segment(payload, "final recording")
+        if len(payload) < 1024:
+            raise ValueError("Final recording is unexpectedly small")
+        return payload, duration
+
 async def process(job):
-    # Each segment is synthesized as MP3. MP3 concatenation is supported by
-    # most players, but production should validate duration and seek behavior.
     parts = chunks(job["narration_text"])
-    if not parts: raise ValueError("Empty narration")
-    audio = io.BytesIO()
+    if not parts:
+        raise ValueError("Empty narration")
+    segments = []
+    expected_duration = 0.0
     async with httpx.AsyncClient(timeout=240, headers={"Authorization": "Bearer " + os.environ["KOKORO_API_KEY"]}) as client:
         for i, part in enumerate(parts):
-            response = await client.post(KOKORO+"/v1/audio/speech",json={
-                "model":"tts-1","input":part,"voice":job["voice"],
-                "response_format":"mp3","speed":float(job["speed"])
+            response = await client.post(KOKORO + "/v1/audio/speech", json={
+                "model": "tts-1", "input": part, "voice": job["voice"],
+                "response_format": "mp3", "speed": float(job["speed"])
             })
             response.raise_for_status()
-            if not response.content.startswith(b"ID3") and response.content[:2] not in (bytes([255,251]), bytes([255,243]), bytes([255,242])):
-                raise ValueError("Kokoro returned non-MP3 response")
-            audio.write(response.content)
-            log.info("job %s segment %s/%s",job["id"],i+1,len(parts))
-    if audio.tell() < 1024: raise ValueError("Audio too small")
+            segment_duration = validated_segment(response.content, f"segment {i+1}")
+            expected_duration += segment_duration
+            segments.append(response.content)
+            log.info("job %s validated segment %s/%s (%.2fs)", job["id"], i+1, len(parts), segment_duration)
+
+    audio, duration = finalize_verified_mp3(segments, expected_duration)
+    digest = hashlib.sha256(audio).hexdigest()
     path = f'{job["content_type"]}/{job["content_id"]}/{job["source_hash"]}/{job["id"]}.mp3'
-    r2.put_object(Bucket=R2_BUCKET, Key=path, Body=audio.getvalue(), ContentType="audio/mpeg", CacheControl="private, max-age=0")
-    db.table("arquivo_voz_cloud_jobs").update({
-        "status":"approved" if job["content_type"] in ("dossie","garimpo","pericia","lenda","creepypasta") and int(job["content_id"])>0 else "review","audio_path":path,"error":None
-    }).eq("id",job["id"]).execute()
+    r2.put_object(
+        Bucket=R2_BUCKET, Key=path, Body=audio, ContentType="audio/mpeg",
+        CacheControl="private, max-age=0",
+        Metadata={"sha256": digest, "duration-seconds": f"{duration:.3f}"}
+    )
+    # Never publish an object unless R2 confirms the uploaded size and digest.
+    object_info = r2.head_object(Bucket=R2_BUCKET, Key=path)
+    remote_size = int(object_info.get("ContentLength", 0))
+    remote_digest = (object_info.get("Metadata") or {}).get("sha256")
+    if remote_size != len(audio) or remote_digest != digest:
+        raise ValueError("R2 upload verification failed: size or digest mismatch")
+    result = db.table("arquivo_voz_cloud_jobs").update({
+        "status": "approved" if job["content_type"] in ("dossie", "garimpo", "pericia", "lenda", "creepypasta") and int(job["content_id"]) > 0 else "review",
+        "audio_path": path, "error": None
+    }).eq("id", job["id"]).execute()
+    if not result.data:
+        raise RuntimeError("Audio verified but job database update failed")
+    log.info("job %s verified and stored: %s bytes, %.2fs, sha256=%s", job["id"], len(audio), duration, digest)
+
 
 
 async def process_novel(job):
