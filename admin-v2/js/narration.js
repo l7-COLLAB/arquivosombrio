@@ -11,7 +11,7 @@ async function secureRpc(c,operation,args){
  if(data?.error)return {data:null,error:new Error(data.error)};
  return {data:data?.data??null,error:null};
 }
-\nfunction client(){return window.obterClienteAdminIsolado?.()||window.arquivoAdminSupabaseClient||null;}
+function client(){return window.obterClienteAdminIsolado?.()||window.arquivoAdminSupabaseClient||null;}
 async function session(){return await window.obterSessaoAdminIsolada?.();}
 
 function textFromValue(v){
