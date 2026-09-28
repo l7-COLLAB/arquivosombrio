@@ -12,28 +12,6 @@
   carregar("js/home-lendas-creepypastas.js?v=20260915-1", "js");
 
   function adicionarLinks() {
-    const dir = document.querySelector(".home-directory");
-    if (dir) {
-      const biblioteca = dir.querySelector('a[href="#livros"]');
-      if (biblioteca && !dir.querySelector('a[href="lendas.html"]')) {
-        const lenda = document.createElement("a");
-        lenda.href = "lendas.html";
-        lenda.innerHTML = '<i class="fa-solid fa-book-skull"></i><span><small>FOLCLORE & TRADIÇÃO</small><strong>Lendas</strong></span><i class="fa-solid fa-arrow-right"></i>';
-        dir.insertBefore(lenda, biblioteca);
-      }
-      if (biblioteca && !dir.querySelector('a[href="creepypastas.html"]')) {
-        const creep = document.createElement("a");
-        creep.href = "creepypastas.html";
-        creep.innerHTML = '<i class="fa-solid fa-ghost"></i><span><small>HORROR DA INTERNET</small><strong>Creepypastas</strong></span><i class="fa-solid fa-arrow-right"></i>';
-        dir.insertBefore(creep, biblioteca);
-      }
-      if (biblioteca && !dir.querySelector('a[href="novels.html"]')) {
-        const novel = document.createElement("a");
-        novel.href = "novels.html";
-        novel.innerHTML = '<i class="fa-solid fa-feather-pointed"></i><span><small>LEITURA SERIADA</small><strong>Novels</strong></span><i class="fa-solid fa-arrow-right"></i>';
-        dir.insertBefore(novel, biblioteca);
-      }
-    }
     document.querySelectorAll(".sidebar-links").forEach(nav => {
       const biblioteca = nav.querySelector('a[href="#livros"]');
       if (!biblioteca) return;
