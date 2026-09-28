@@ -460,7 +460,7 @@ async function openSimpleKokoro(panel,dossier){
       const init=await manualApi("init",{content_type:type,content_id:dossier.id,project_id:project.id,size:file.size});
       manualId=init.upload_id;
       manualStatus.textContent="Enviando áudio para armazenamento privado...";
-      const put=await fetch(init.upload_url,{method:"PUT",headers:{"Content-Type":"audio/mpeg"},body:file});
+      let put;try{put=await fetch(init.upload_url,{method:"PUT",headers:{"Content-Type":"audio/mpeg"},body:file});}catch(uploadError){throw Error("Conexão direta com R2 bloqueada pelo navegador (possível CORS). Configure CORS do bucket para permitir PUT de https://arquivosombrio.net.br com Content-Type: audio/mpeg. Detalhe: "+uploadError.message);}
       if(!put.ok)throw Error("O armazenamento recusou o envio ("+put.status+"). Verifique a configuração CORS do bucket R2.");
       await manualApi("finish");
       manualStatus.textContent="MP3 recebido. Ouça a prévia antes de aprovar.";
