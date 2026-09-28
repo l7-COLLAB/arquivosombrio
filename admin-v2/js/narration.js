@@ -431,6 +431,16 @@ async function openSimpleKokoro(panel,dossier){
   const manualReject=host.querySelector("[data-manual-reject]");
   const manualPlayer=host.querySelector("[data-manual-player]");
   let manualId=null;
+  const drafts=document.createElement("section");drafts.innerHTML='<h3>Áudios rascunho privados</h3><p data-drafts-state>Consultando áudios enviados...</p><div data-drafts-list></div>';
+  host.querySelector(".kokoro-manual-import").append(drafts);
+  async function loadManualDrafts(){
+    const state=drafts.querySelector("[data-drafts-state]"),list=drafts.querySelector("[data-drafts-list]");
+    const q=await c.from("arquivo_voz_manual_imports").select("id,status,created_at,file_size").eq("project_id",project.id).in("status",["review","approved"]).order("created_at",{ascending:false}).limit(20);
+    if(q.error){state.textContent="Não foi possível recuperar os rascunhos: "+q.error.message;return;}
+    list.replaceChildren();state.textContent=q.data?.length?"Selecione um áudio para ouvir e avaliar, inclusive pelo celular.":"Nenhum áudio rascunho disponível.";
+    for(const item of q.data||[]){const row=document.createElement("div");row.style.cssText="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0";const label=document.createElement("span");label.textContent=new Date(item.created_at).toLocaleString("pt-BR")+" · "+(item.status==="approved"?"Publicado":"Rascunho privado");const listen=document.createElement("button");listen.type="button";listen.textContent="Ouvir rascunho";listen.onclick=()=>{manualId=item.id;manualPreview.disabled=false;manualPreview.click();};const choose=document.createElement("button");choose.type="button";choose.textContent="Selecionar para avaliação";choose.onclick=()=>{manualId=item.id;manualPreview.disabled=false;manualApprove.disabled=item.status!=="review";manualReject.disabled=item.status!=="review";manualStatus.textContent=item.status==="review"?"Rascunho selecionado. Ouça antes de aprovar.":"Áudio já publicado.";};row.append(label,listen,choose);list.append(row);}
+  }
+  loadManualDrafts();
   async function manualApi(action,extra={}){
     const {data,error}=await c.functions.invoke("arquivo-voz-manual-import",{body:{action,upload_id:manualId,...extra}});
     if(error){let detail=data?.error;try{detail=(await error.context?.json?.())?.error||detail;}catch(_){}throw Error(detail||error.message);}
@@ -451,7 +461,7 @@ async function openSimpleKokoro(panel,dossier){
       if(!put.ok)throw Error("O armazenamento recusou o envio ("+put.status+"). Verifique a configuração CORS do bucket R2.");
       await manualApi("finish");
       manualStatus.textContent="MP3 recebido. Ouça a prévia antes de aprovar.";
-      manualPreview.disabled=false;manualApprove.disabled=false;manualReject.disabled=false;
+      manualPreview.disabled=false;manualApprove.disabled=false;manualReject.disabled=false;await loadManualDrafts();
     }catch(e){manualStatus.textContent="Falha na importação: "+(e.message||e);}
     finally{manualUpload.disabled=false;}
   };
@@ -469,13 +479,13 @@ async function openSimpleKokoro(panel,dossier){
   manualApprove.onclick=async()=>{
     if(!manualId||!confirm("Aprovar este MP3 e disponibilizá-lo no player público deste arquivo?"))return;
     manualApprove.disabled=true;
-    try{await manualApi("approve");manualReject.disabled=true;manualStatus.textContent="Importação aprovada. O player público usará este áudio enquanto o texto do arquivo permanecer inalterado.";}
+    try{await manualApi("approve");await loadManualDrafts();manualReject.disabled=true;manualStatus.textContent="Importação aprovada. O player público usará este áudio enquanto o texto do arquivo permanecer inalterado.";}
     catch(e){manualStatus.textContent="Falha na aprovação: "+(e.message||e);manualApprove.disabled=false;}
   };
   manualReject.onclick=async()=>{
     if(!manualId||!confirm("Rejeitar esta importação?"))return;
     manualReject.disabled=true;
-    try{await manualApi("reject");manualApprove.disabled=true;manualPreview.disabled=true;manualStatus.textContent="Importação rejeitada. O áudio público anterior foi preservado.";}
+    try{await manualApi("reject");await loadManualDrafts();manualApprove.disabled=true;manualPreview.disabled=true;manualStatus.textContent="Importação rejeitada. O áudio público anterior foi preservado.";}
     catch(e){manualStatus.textContent="Falha na rejeição: "+(e.message||e);manualReject.disabled=false;}
   };
   // Native Ctrl+A selects only the focused textarea; keep the reference text focusable.
