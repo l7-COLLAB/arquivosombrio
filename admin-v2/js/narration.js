@@ -5,7 +5,13 @@ const STATUS_LABELS={nao_gravado:"NÃO GRAVADO",gravado:"GRAVADO",desatualizado:
 const STATUS_ICONS={nao_gravado:"fa-circle",gravado:"fa-circle-check",desatualizado:"fa-triangle-exclamation"};
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function client(){return window.obterClienteAdminIsolado?.()||window.arquivoAdminSupabaseClient||null;}
+async function secureRpc(c,operation,args){
+ const {data,error}=await c.functions.invoke("admin-secure-rpc",{body:{operation,args}});
+ if(error)return {data:null,error};
+ if(data?.error)return {data:null,error:new Error(data.error)};
+ return {data:data?.data??null,error:null};
+}
+\nfunction client(){return window.obterClienteAdminIsolado?.()||window.arquivoAdminSupabaseClient||null;}
 async function session(){return await window.obterSessaoAdminIsolada?.();}
 
 function textFromValue(v){
@@ -506,7 +512,7 @@ async function openSimpleKokoro(panel,dossier){
     if(!previewJobId)return;
     const control=approve?approveBtn:reopenBtn;control.disabled=true;
     try{
-      const r=await c.rpc("arquivo_voz_admin_review",{p_job_id:previewJobId,p_approve:approve});
+      const r=await secureRpc(c,"arquivo_voz_admin_review",{p_job_id:previewJobId,p_approve:approve});
       if(r.error)throw r.error;
       await refreshQueueState();
       status.textContent=approve?"Prévia aprovada internamente. O áudio público não foi alterado.":"Áudio devolvido à revisão privada.";
@@ -535,7 +541,7 @@ async function openSimpleKokoro(panel,dossier){
     if(ta.value!==lastSaved){approveBtn.disabled=true;reopenBtn.disabled=true;previewBtn.disabled=true;previewArea.style.display="none";previewAudio.pause();previewAudio.removeAttribute("src");queueBtn.disabled=true;queueBtn.textContent="Salve as alterações";return;}
     if(!lastSaved.trim()){approveBtn.disabled=true;reopenBtn.disabled=true;previewBtn.disabled=true;queueBtn.disabled=true;queueBtn.textContent="Salve o roteiro";return;}
     queueBtn.disabled=true;
-    const r=await c.rpc("arquivo_voz_full_script_queue_state",{p_project_id:project.id});
+    const r=await secureRpc(c,"arquivo_voz_full_script_queue_state",{p_project_id:project.id});
     if(r.error){status.textContent="Não foi possível consultar a fila: "+r.error.message;return;}
     previewJobId=r.data?.state==="existing"?r.data.job_id:null;
     approveBtn.disabled=!(previewJobId&&r.data.status==="review");
@@ -556,7 +562,7 @@ async function openSimpleKokoro(panel,dossier){
     if(current!==lastSaved){status.textContent="Existem alterações não salvas. Salve o rascunho antes de solicitar.";return;}
     queueBtn.disabled=true;status.textContent="Enviando roteiro para a fila privada...";
     try{
-      const r=await c.rpc("queue_arquivo_voz_full_script",{p_project_id:project.id});
+      const r=await secureRpc(c,"queue_arquivo_voz_full_script",{p_project_id:project.id});
       if(r.error)throw r.error;
       const jobId=r.data?.job_id;
       status.textContent=(r.data?.created?"Solicitação registrada. ":"Este roteiro já foi solicitado anteriormente. ")+"ID: "+jobId+". Nenhuma geração duplicada será criada.";
