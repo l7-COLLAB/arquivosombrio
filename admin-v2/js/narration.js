@@ -447,9 +447,10 @@ async function openSimpleKokoro(panel,dossier){
     if(data?.error)throw Error(data.error);
     return data;
   }
+  manualFile.addEventListener("change",()=>{manualStatus.textContent=manualFile.files?.[0]?"Arquivo selecionado: "+manualFile.files[0].name+". Clique em Enviar MP3.":"Selecione um arquivo MP3.";});
   manualUpload.onclick=async()=>{
     const file=manualFile.files?.[0];
-    if(!file||!/\\.mp3$/i.test(file.name)||!["audio/mpeg","audio/mp3",""].includes(file.type)){manualStatus.textContent="Selecione um arquivo MP3.";return;}
+    if(!file||!/\.mp3$/i.test(file.name)||!["audio/mpeg","audio/mp3",""].includes(file.type)){manualStatus.textContent="Selecione um arquivo MP3.";return;}
     if(file.size<1024||file.size>100*1024*1024){manualStatus.textContent="O MP3 deve ter entre 1 KB e 100 MB.";return;}
     manualUpload.disabled=true;manualPreview.disabled=true;manualApprove.disabled=true;manualReject.disabled=true;
     manualStatus.textContent="Preparando envio privado...";
