@@ -550,3 +550,24 @@ body.garimpo-story-open{overflow:hidden}
     background:rgba(181,157,122,.13); color:var(--paper);
   }
 }
+
+/* Stories 24h: manter a miniatura integralmente dentro do anel circular. */
+.garimpo-story-slot .garimpo-story-bubble > span{
+    display:block;
+    position:relative;
+    flex:0 0 auto;
+    aspect-ratio:1 / 1;
+    overflow:hidden;
+    border-radius:50%;
+}
+.garimpo-story-slot .garimpo-story-bubble > span > img{
+    display:block;
+    width:100%!important;
+    height:100%!important;
+    max-width:none;
+    max-height:none;
+    aspect-ratio:1 / 1;
+    object-fit:cover!important;
+    object-position:center;
+    border-radius:50%;
+}
