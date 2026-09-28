@@ -687,7 +687,7 @@ async function carregarExpedienteEditorialDossie(caso) {
             cliente.from("dossier_editorial_identity")
                 .select("editorial_responsible,research_credit,review_credit,editorial_method")
                 .eq("dossier_id",id).maybeSingle(),
-            cliente.from("dossier_editorial_revisions")
+            cliente.from("dossier_public_revision_history")
                 .select("id,revision_date,revision_type,description")
                 .eq("dossier_id",id).order("revision_date",{ascending:false})
                 .order("id",{ascending:false}).limit(50)
