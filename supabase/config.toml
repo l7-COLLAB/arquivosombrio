@@ -1,0 +1,38 @@
+# Arquivo Sombrio: security policy for Supabase CLI deployments.
+# JWT is mandatory for account, admin and direct Polly endpoints.
+[functions.admin-secure-rpc]
+verify_jwt = true
+
+[functions.delete-own-account]
+verify_jwt = true
+
+[functions.arquivo-voz-manual-import]
+verify_jwt = true
+
+[functions.narration-polly]
+verify_jwt = true
+
+# Public endpoints or endpoints with explicit custom authentication.
+[functions.narrar-arquivo]
+verify_jwt = false # retired: all synthesis requests return HTTP 410
+
+[functions.leitor-preview]
+verify_jwt = false # static preview only
+
+[functions.public-narration]
+verify_jwt = false # checks user JWT or internal service key in handler
+
+[functions.narration-prewarm]
+verify_jwt = false # cron token or internal service key
+
+[functions.arquivo-voz-private-preview]
+verify_jwt = false # handler validates user session and admin status
+
+[functions.novel-narration]
+verify_jwt = false # handler validates user JWT
+
+[functions.lite-admin]
+verify_jwt = false # legacy device uses its own password/session auth
+
+[functions.reader-analytics]
+verify_jwt = false # anonymous event ingestion; payload capped
