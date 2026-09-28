@@ -514,3 +514,39 @@ body.garimpo-story-open{overflow:hidden}
 .forensic-detail-content .archive-editorial-heading + p {
     margin-top: .45rem;
 }
+
+
+/* Navegação principal da home: um único menu, com áreas secundárias agrupadas. */
+@media (min-width:1181px) {
+  .home-page .nav-menu { gap:clamp(12px,1.15vw,21px); }
+  .home-page .nav-menu > a { font-size:clamp(.70rem,.76vw,.79rem); letter-spacing:.035em; }
+  .home-page .home-nav-more { position:relative; flex:0 0 auto; }
+  .home-page .home-nav-more > summary {
+    display:flex; align-items:center; gap:7px; cursor:pointer; list-style:none;
+    color:var(--paper-soft); font-family:var(--font-mono);
+    font-size:clamp(.70rem,.76vw,.79rem); font-weight:500; letter-spacing:.035em;
+    text-transform:uppercase; white-space:nowrap;
+  }
+  .home-page .home-nav-more > summary::-webkit-details-marker { display:none; }
+  .home-page .home-nav-more > summary:hover,
+  .home-page .home-nav-more[open] > summary { color:var(--paper); }
+  .home-page .home-nav-more > summary:focus-visible {
+    outline:2px solid var(--gold); outline-offset:5px;
+  }
+  .home-page .home-nav-more > summary i { font-size:.62rem; }
+  .home-page .home-nav-more-links {
+    position:absolute; z-index:50; right:0; top:calc(100% + 15px);
+    display:grid; gap:0; min-width:205px; padding:7px;
+    background:#171410; border:1px solid rgba(181,157,122,.38);
+    box-shadow:0 16px 35px rgba(0,0,0,.45);
+  }
+  .home-page .home-nav-more-links a {
+    display:block; padding:12px 13px; font-size:.75rem; line-height:1.4;
+    letter-spacing:.04em; white-space:nowrap;
+  }
+  .home-page .home-nav-more-links a::after { display:none; }
+  .home-page .home-nav-more-links a:hover,
+  .home-page .home-nav-more-links a:focus-visible {
+    background:rgba(181,157,122,.13); color:var(--paper);
+  }
+}
