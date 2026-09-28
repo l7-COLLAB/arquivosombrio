@@ -3048,25 +3048,9 @@ function completarCronologiaEReferenciasDossie(caso) {
     const fontes = historia.querySelector(".case-content-sources");
     if (cronologia) cronologia.id = cronologia.id || "cronologia-documental";
     if (fontes) fontes.id = fontes.id || "referencias-documentais";
-    let sumario = historia.querySelector(".dossier-document-quicknav");
-    if (!sumario && (cronologia || fontes)) {
-        sumario = document.createElement("nav");
-        sumario.className = "dossier-document-quicknav";
-        sumario.setAttribute("aria-label", "Navegar pelo material documental");
-        const titulo = criarElementoTextoDossie("strong", "NESTE DOSSIÊ");
-        sumario.appendChild(titulo);
-        if (cronologia) {
-            const a = criarElementoTextoDossie("a", "Cronologia");
-            a.href = "#" + cronologia.id;
-            sumario.appendChild(a);
-        }
-        if (fontes) {
-            const a = criarElementoTextoDossie("a", "Referências");
-            a.href = "#" + fontes.id;
-            sumario.appendChild(a);
-        }
-        historia.prepend(sumario);
-    }
+    // A navegação por cronologia e referências permanece no sumário principal.
+    // Não duplicar atalhos no corpo do dossiê.
+    historia.querySelectorAll(".dossier-document-quicknav").forEach(nav => nav.remove());
 }
 
 
