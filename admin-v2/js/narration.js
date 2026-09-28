@@ -448,6 +448,8 @@ async function openSimpleKokoro(panel,dossier){
     return data;
   }
   manualFile.addEventListener("change",()=>{manualStatus.textContent=manualFile.files?.[0]?"Arquivo selecionado: "+manualFile.files[0].name+". Clique em Enviar MP3.":"Selecione um arquivo MP3.";});
+  let localPreviewUrl=null;
+  manualFile.addEventListener("change",()=>{if(localPreviewUrl)URL.revokeObjectURL(localPreviewUrl);const f=manualFile.files?.[0];if(f){localPreviewUrl=URL.createObjectURL(f);manualPlayer.src=localPreviewUrl;manualPlayer.style.display="block";manualPreview.disabled=false;manualStatus.textContent="Prévia local pronta. Clique em Ouvir importação ou Enviar MP3.";}});
   manualUpload.onclick=async()=>{
     const file=manualFile.files?.[0];
     if(!file||!/\.mp3$/i.test(file.name)||!["audio/mpeg","audio/mp3",""].includes(file.type)){manualStatus.textContent="Selecione um arquivo MP3.";return;}
@@ -467,7 +469,7 @@ async function openSimpleKokoro(panel,dossier){
     finally{manualUpload.disabled=false;}
   };
   manualPreview.onclick=async()=>{
-    if(!manualId)return;
+    if(!manualId){if(localPreviewUrl){manualPlayer.src=localPreviewUrl;manualPlayer.style.display="block";try{await manualPlayer.play();manualStatus.textContent="Prévia local neste computador. Envie para ouvir também no celular.";}catch(e){manualStatus.textContent="Não foi possível reproduzir o arquivo: "+e.message;}}else manualStatus.textContent="Selecione um MP3.";return;}
     manualPreview.disabled=true;
     try{
       const data=await manualApi("preview");
