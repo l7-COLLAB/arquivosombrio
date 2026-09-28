@@ -460,8 +460,8 @@ async function openSimpleKokoro(panel,dossier){
       const init=await manualApi("init",{content_type:type,content_id:dossier.id,project_id:project.id,size:file.size});
       manualId=init.upload_id;
       manualStatus.textContent="Enviando áudio para armazenamento privado...";
-      let put;try{put=await fetch(init.upload_url,{method:"PUT",headers:{"Content-Type":"audio/mpeg"},body:file});}catch(uploadError){throw Error("Conexão direta com R2 bloqueada pelo navegador (possível CORS). Configure CORS do bucket para permitir PUT de https://arquivosombrio.net.br com Content-Type: audio/mpeg. Detalhe: "+uploadError.message);}
-      if(!put.ok)throw Error("O armazenamento recusou o envio ("+put.status+"). Verifique a configuração CORS do bucket R2.");
+      let directOk=false;try{const put=await fetch(init.upload_url,{method:"PUT",headers:{"Content-Type":"audio/mpeg"},body:file});directOk=put.ok;}catch(_){}
+      if(!directOk){if(file.size>10*1024*1024)throw Error("O envio direto ao R2 foi bloqueado. Para MP3 acima de 10 MB, configure o CORS do bucket R2.");manualStatus.textContent="Envio direto indisponível. Tentando envio seguro pelo servidor...";const bytes=new Uint8Array(await file.arrayBuffer());let binary="";for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));await manualApi("proxy_upload",{base64:btoa(binary)});}
       await manualApi("finish");
       manualStatus.textContent="MP3 recebido. Ouça a prévia antes de aprovar.";
       manualPreview.disabled=false;manualApprove.disabled=false;manualReject.disabled=false;await loadManualDrafts();
