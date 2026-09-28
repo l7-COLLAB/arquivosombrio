@@ -413,8 +413,65 @@ async function openSimpleKokoro(panel,dossier){
    (saved&&saved.source_snapshot!==original?'<p role="alert" style="color:#f0b477">O texto original mudou desde o último salvamento. Confira as alterações antes de aprovar.</p>':"")+
    '<label for="kokoro-full-text">Roteiro completo para narração</label><textarea id="kokoro-full-text" spellcheck="true" placeholder="Cole aqui o roteiro integral adaptado...">'+esc(saved?.script_text||"")+'</textarea>'+
    '<div class="kokoro-toolbar"><button type="button" data-save-full-kokoro>Salvar rascunho</button><button type="button" data-queue-full-kokoro>Solicitar geração Kokoro</button><button type="button" data-preview-full-kokoro disabled><i class="fa-solid fa-headphones"></i> Ouvir prévia</button><button type="button" data-compare-a>Teste A · voz atual</button><button type="button" data-compare-b>Teste B · outra voz</button><button type="button" data-refresh-full-kokoro>Atualizar status</button><button type="button" data-approve-full-kokoro disabled>Aprovar prévia</button><button type="button" data-reopen-full-kokoro disabled>Voltar à revisão</button><span data-full-kokoro-status aria-live="polite">'+(saved?"Rascunho recuperado":"Nenhum roteiro salvo")+'</span></div>'+
+   '<section class="kokoro-manual-import" style="margin:18px 0;padding:16px;border:1px solid #765238;border-radius:8px"><h3>Importar narração do computador</h3><p>Envie um MP3 pronto. A narração pública só será substituída depois da sua aprovação.</p><input type="file" accept=".mp3,audio/mpeg" data-manual-audio-file aria-label="Selecionar áudio MP3"><div class="kokoro-toolbar"><button type="button" data-manual-upload>Enviar MP3</button><button type="button" data-manual-preview disabled>Ouvir importação</button><button type="button" data-manual-approve disabled>Aprovar e publicar</button><button type="button" data-manual-reject disabled>Rejeitar</button></div><audio controls preload="none" data-manual-player style="display:none;width:100%"></audio><p data-manual-status role="status" aria-live="polite">Nenhum arquivo selecionado.</p></section>'+
    '<details><summary>Consultar texto original (somente leitura)</summary><textarea class="kokoro-source" readonly spellcheck="false" aria-label="Texto original para consulta">'+esc(original)+'</textarea></details></section>';
   const ta=host.querySelector("#kokoro-full-text"),status=host.querySelector("[data-full-kokoro-status]"),btn=host.querySelector("[data-save-full-kokoro]");
+  // Importação manual: a API valida a sessão administrativa e o arquivo no R2.
+  const manualFile=host.querySelector("[data-manual-audio-file]");
+  const manualStatus=host.querySelector("[data-manual-status]");
+  const manualUpload=host.querySelector("[data-manual-upload]");
+  const manualPreview=host.querySelector("[data-manual-preview]");
+  const manualApprove=host.querySelector("[data-manual-approve]");
+  const manualReject=host.querySelector("[data-manual-reject]");
+  const manualPlayer=host.querySelector("[data-manual-player]");
+  let manualId=null;
+  async function manualApi(action,extra={}){
+    const {data,error}=await c.functions.invoke("arquivo-voz-manual-import",{body:{action,upload_id:manualId,...extra}});
+    if(error){let detail=data?.error;try{detail=(await error.context?.json?.())?.error||detail;}catch(_){}throw Error(detail||error.message);}
+    if(data?.error)throw Error(data.error);
+    return data;
+  }
+  manualUpload.onclick=async()=>{
+    const file=manualFile.files?.[0];
+    if(!file||!/\\.mp3$/i.test(file.name)||!["audio/mpeg","audio/mp3",""].includes(file.type)){manualStatus.textContent="Selecione um arquivo MP3.";return;}
+    if(file.size<1024||file.size>100*1024*1024){manualStatus.textContent="O MP3 deve ter entre 1 KB e 100 MB.";return;}
+    manualUpload.disabled=true;manualPreview.disabled=true;manualApprove.disabled=true;manualReject.disabled=true;
+    manualStatus.textContent="Preparando envio privado...";
+    try{
+      const init=await manualApi("init",{content_type:type,content_id:dossier.id,project_id:project.id,size:file.size});
+      manualId=init.upload_id;
+      manualStatus.textContent="Enviando áudio para armazenamento privado...";
+      const put=await fetch(init.upload_url,{method:"PUT",headers:{"Content-Type":"audio/mpeg"},body:file});
+      if(!put.ok)throw Error("O armazenamento recusou o envio ("+put.status+"). Verifique a configuração CORS do bucket R2.");
+      await manualApi("finish");
+      manualStatus.textContent="MP3 recebido. Ouça a prévia antes de aprovar.";
+      manualPreview.disabled=false;manualApprove.disabled=false;manualReject.disabled=false;
+    }catch(e){manualStatus.textContent="Falha na importação: "+(e.message||e);}
+    finally{manualUpload.disabled=false;}
+  };
+  manualPreview.onclick=async()=>{
+    if(!manualId)return;
+    manualPreview.disabled=true;
+    try{
+      const data=await manualApi("preview");
+      manualPlayer.src=data.url;manualPlayer.style.display="block";
+      await manualPlayer.play();
+      manualStatus.textContent="Prévia privada. A narração pública ainda não foi alterada.";
+    }catch(e){manualStatus.textContent="Falha na prévia: "+(e.message||e);}
+    finally{manualPreview.disabled=false;}
+  };
+  manualApprove.onclick=async()=>{
+    if(!manualId||!confirm("Aprovar este MP3 e disponibilizá-lo no player público deste arquivo?"))return;
+    manualApprove.disabled=true;
+    try{await manualApi("approve");manualReject.disabled=true;manualStatus.textContent="Importação aprovada. O player público usará este áudio enquanto o texto do arquivo permanecer inalterado.";}
+    catch(e){manualStatus.textContent="Falha na aprovação: "+(e.message||e);manualApprove.disabled=false;}
+  };
+  manualReject.onclick=async()=>{
+    if(!manualId||!confirm("Rejeitar esta importação?"))return;
+    manualReject.disabled=true;
+    try{await manualApi("reject");manualApprove.disabled=true;manualPreview.disabled=true;manualStatus.textContent="Importação rejeitada. O áudio público anterior foi preservado.";}
+    catch(e){manualStatus.textContent="Falha na rejeição: "+(e.message||e);manualReject.disabled=false;}
+  };
   // Native Ctrl+A selects only the focused textarea; keep the reference text focusable.
   host.querySelectorAll(".kokoro-simple textarea").forEach(field=>{
     field.addEventListener("keydown",event=>{
