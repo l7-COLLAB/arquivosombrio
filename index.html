@@ -583,6 +583,29 @@
         .home-page .hero-content .hero-rotating-title .hero-title-accent { font-size: 0.84em; }
       }
     </style>
+
+    <style>
+      /* Stories e autenticação na mesma faixa, sem título duplicado. */
+      .home-page .home-header-utility { border-bottom:1px solid rgba(181,157,122,.15); background:linear-gradient(180deg,#100d0b,#090807); }
+      .home-page .home-header-utility-inner { display:flex; align-items:center; justify-content:space-between; gap:24px; min-height:112px; }
+      .home-page .home-header-utility .garimpo-stories-bar { flex:1 1 auto; min-width:0; border:0; background:transparent; }
+      .home-page .home-header-utility .garimpo-stories-inner { padding-left:0; padding-right:0; }
+      .home-page .home-header-utility .community-access { flex:0 0 auto; border:0; background:transparent; }
+      .home-page .home-header-utility #forum-auth-area { display:flex; align-items:center; }
+      .home-page .home-header-utility .forum-auth-intro { display:none; }
+      .home-page .home-header-utility .forum-auth-actions { display:flex; align-items:center; flex-wrap:wrap; justify-content:flex-end; gap:10px; }
+      .home-page .home-header-utility .community-access .btn-form { width:auto; margin:0; min-height:38px; white-space:nowrap; }
+      @media(max-width:700px) {
+        .home-page .home-header-utility-inner { align-items:stretch; flex-wrap:wrap; gap:4px 12px; padding-top:10px; padding-bottom:10px; }
+        .home-page .home-header-utility .garimpo-stories-bar { flex-basis:100%; }
+        .home-page .home-header-utility .garimpo-stories-inner { min-height:80px; }
+        .home-page .home-header-utility .community-access { margin-left:auto; }
+      }
+      @media(min-width:701px) and (max-width:950px) {
+        .home-page .home-header-utility-inner { gap:12px; }
+        .home-page .home-header-utility .garimpo-stories-label { min-width:105px; }
+      }
+    </style>
 </head>
 
 
@@ -676,15 +699,100 @@
 
     </header>
 
-    <section class="garimpo-stories-bar" data-garimpo-stories-bar hidden aria-label="Stories do Garimpo Sombrio">
-        <div class="container garimpo-stories-inner">
+    <div class="home-header-utility">
+      <div class="container home-header-utility-inner">
+        <section class="garimpo-stories-bar" data-garimpo-stories-bar hidden aria-label="Stories do Garimpo Sombrio">
+          <div class="garimpo-stories-inner">
             <div class="garimpo-stories-label">
-                <small>GARIMPO DE HOJE</small>
-                <strong>Stories 24h</strong>
+              <small>GARIMPO DE HOJE</small>
+              <strong>Stories 24h</strong>
             </div>
             <div id="garimpo-story-slot" class="garimpo-story-slot" hidden aria-live="polite"></div>
+          </div>
+        </section>
+        <div class="community-access" aria-label="Acesso à conta">
+            <div id="forum-auth-area">
+
+
+                <!-- VISITANTE -->
+
+                <div id="forum-guest-area">
+
+                    <p class="forum-auth-intro">
+
+                        Para publicar análises e participar das discussões,
+                        entre na sua conta ou crie um cadastro gratuito.
+
+                    </p>
+
+
+                    <div class="forum-auth-actions">
+
+                        <button
+                            type="button"
+                            class="btn-primary btn-form"
+                            id="forum-btn-login"
+                        >
+
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            Entrar
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="btn-secondary btn-form"
+                            id="forum-btn-signup"
+                        >
+
+                            <i class="fa-solid fa-user-plus"></i>
+                            Criar conta
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- USUÁRIO AUTENTICADO -->
+
+                <div
+                    id="forum-user-area"
+                    hidden
+                >
+
+                    <div class="forum-user-status">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <div>
+
+                            <small>
+                                IDENTIFICADO COMO
+                            </small>
+
+                            <strong id="forum-user-name">
+                                Investigador
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    
+
+                    
+
+                </div>
+
+            </div>
+
         </div>
-    </section>
+      </div>
+    </div>
 
 
     <!-- ================================================================
@@ -808,117 +916,6 @@
         </nav>
 
     </aside>
-
-
-    <!-- ================================================================
-         ACESSO À COMUNIDADE
-         ================================================================ -->
-
-    <div
-        class="community-access"
-        aria-label="Acesso à comunidade"
-    >
-
-        <div class="container community-access-inner">
-
-            <div class="community-access-copy">
-
-                <i class="fa-solid fa-user-secret"></i>
-
-                <span>
-                    Comunidade do Arquivo
-                </span>
-
-            </div>
-
-
-            <!-- ========================================================
-                 AUTENTICAÇÃO DA COMUNIDADE
-                 IDs preservados para o script.js atual
-                 ======================================================== -->
-
-            <div id="forum-auth-area">
-
-
-                <!-- VISITANTE -->
-
-                <div id="forum-guest-area">
-
-                    <p class="forum-auth-intro">
-
-                        Para publicar análises e participar das discussões,
-                        entre na sua conta ou crie um cadastro gratuito.
-
-                    </p>
-
-
-                    <div class="forum-auth-actions">
-
-                        <button
-                            type="button"
-                            class="btn-primary btn-form"
-                            id="forum-btn-login"
-                        >
-
-                            <i class="fa-solid fa-right-to-bracket"></i>
-                            Entrar
-
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="btn-secondary btn-form"
-                            id="forum-btn-signup"
-                        >
-
-                            <i class="fa-solid fa-user-plus"></i>
-                            Criar conta
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- USUÁRIO AUTENTICADO -->
-
-                <div
-                    id="forum-user-area"
-                    hidden
-                >
-
-                    <div class="forum-user-status">
-
-                        <i class="fa-solid fa-circle-check"></i>
-
-                        <div>
-
-                            <small>
-                                IDENTIFICADO COMO
-                            </small>
-
-                            <strong id="forum-user-name">
-                                Investigador
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    
-
-                    
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
 
 
     <!-- ================================================================
