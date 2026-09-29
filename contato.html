@@ -41,7 +41,7 @@ send.disabled=true;send.textContent="Enviando...";msg.textContent="";
 try{
 if(!window.supabase||!window.supabase.createClient)throw Error("Sem conexão com o serviço de envio.");
 if(!api)api=window.supabase.createClient("https://iuhotznurbyujzbyhizf.supabase.co","sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj",{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
-var result=await api.from("visitor_messages").insert({kind:kind,category:category.value,message:content,source_url:source||null,contact_email:email||null});
+var result=await api.functions.invoke("public-contact-submit",{body:{kind:kind,category:category.value,message:content,source_url:source||null,contact_email:email||null}});
 if(result.error)throw result.error;
 document.getElementById("message").value="";msg.textContent="Mensagem recebida. Obrigado por contribuir com o Arquivo Sombrio.";msg.className="msg ok";started=Date.now();
 }catch(e){console.warn("Falha no envio de mensagem.",e);msg.textContent="Não foi possível enviar agora. Tente novamente ou escreva para arquivosombrio3108@gmail.com.";msg.className="msg error";}
