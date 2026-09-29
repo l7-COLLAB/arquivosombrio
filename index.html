@@ -82,7 +82,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cinzel:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:wght@400;700&family=Oswald:wght@500;600;700&display=swap"
         rel="stylesheet"
     >
 
@@ -552,6 +552,37 @@
 .arquivo-cadastro-acoes a{color:#e7d9c1!important;font:13px Arial,sans-serif;text-decoration:underline}
 </style>
 <link rel="stylesheet" href="css/home-editorial-refinement.css?v=20260927-type-1">
+
+    <!-- Identidade tipográfica exclusiva do hero da home -->
+    <style>
+      .home-page .hero-content .hero-rotating-title {
+        font-family: 'Oswald', 'Arial Narrow', sans-serif;
+        font-weight: 600;
+        font-size: clamp(2.65rem, 5.1vw, 5.1rem);
+        line-height: 1.12;
+        letter-spacing: -0.018em;
+        text-transform: uppercase;
+        text-wrap: balance;
+      }
+      .home-page .hero-content .hero-rotating-title .hero-title-accent {
+        display: block;
+        font-family: 'Archivo Black', Impact, sans-serif;
+        font-weight: 400;
+        font-size: 0.92em;
+        line-height: 1.18;
+        letter-spacing: -0.035em;
+        color: #af2929;
+      }
+      .home-page .hero-content .hero-description { margin-top: clamp(1.2rem, 3vw, 2.2rem); }
+      @media (max-width: 600px) {
+        .home-page .hero-content .hero-rotating-title {
+          font-size: clamp(2.2rem, 9vw, 3.35rem);
+          line-height: 1.13;
+          overflow-wrap: break-word;
+        }
+        .home-page .hero-content .hero-rotating-title .hero-title-accent { font-size: 0.84em; }
+      }
+    </style>
 </head>
 
 
