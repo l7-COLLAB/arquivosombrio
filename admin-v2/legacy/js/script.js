@@ -7935,8 +7935,8 @@ const pericias =
                 </label>
                 <select id="admin-content-order" aria-label="Ordenar registros">
                     <option value="recentes">Mais recentes</option>
-                    <option value="az">Nome: A–Z</option>
-                    <option value="za">Nome: Z–A</option>
+                    <option value="programados">Próximas publicações</option>
+                    <option value="programados_futuros">Publicações mais distantes</option>
                 </select>
             </div>
 
@@ -8004,7 +8004,7 @@ const pericias =
 
                         : casos.map(caso => `
 
-                            <div class="admin-item" data-admin-title="${escaparHTML(caso.titulo || "")}" data-admin-date="${escaparHTML(caso.created_at || "")}">
+                            <div class="admin-item" data-admin-title="${escaparHTML(caso.titulo || "")}" data-admin-date="${escaparHTML(caso.created_at || "")}" data-admin-type="dossie" data-admin-id="${escaparHTML(caso.id)}">
 
                                 <div>
 
@@ -8071,7 +8071,7 @@ const pericias =
 
                         : pericias.map(pericia => `
 
-                            <div class="admin-item" data-admin-title="${escaparHTML(pericia.titulo || "")}" data-admin-date="${escaparHTML(pericia.created_at || "")}">
+                            <div class="admin-item" data-admin-title="${escaparHTML(pericia.titulo || "")}" data-admin-date="${escaparHTML(pericia.created_at || "")}" data-admin-type="pericia" data-admin-id="${escaparHTML(pericia.id)}">
 
                                 <div>
 
@@ -12125,8 +12125,13 @@ function aplicarOrganizacaoAdmin() {
     itens.sort((a, b) => {
         const tituloA = normalizarBuscaAdmin(a.dataset.adminTitle || a.textContent);
         const tituloB = normalizarBuscaAdmin(b.dataset.adminTitle || b.textContent);
-        if (ordem === "az") return tituloA.localeCompare(tituloB, "pt-BR");
-        if (ordem === "za") return tituloB.localeCompare(tituloA, "pt-BR");
+        if (ordem === "programados" || ordem === "programados_futuros") {
+            const da = Date.parse(a.dataset.adminScheduled || "");
+            const db = Date.parse(b.dataset.adminScheduled || "");
+            const va = Number.isFinite(da), vb = Number.isFinite(db);
+            if (va !== vb) return va ? -1 : 1;
+            if (va && vb) return ordem === "programados" ? da - db : db - da;
+        }
         return String(b.dataset.adminDate || "").localeCompare(String(a.dataset.adminDate || ""));
     }).forEach(item => lista?.appendChild(item));
 
@@ -12145,6 +12150,50 @@ function aplicarOrganizacaoAdmin() {
         lista?.appendChild(vazio);
     }
     vazio.hidden = visiveis > 0 || itens.length === 0;
+}
+
+
+// Populate schedule dates across editor categories without changing publication state.
+let adminScheduleLookupVersion = 0;
+async function carregarDatasProgramadasEditor() {
+    const painel = document.querySelector("#admin-manager .admin-manager");
+    if (!painel) return;
+    const version = ++adminScheduleLookupVersion;
+    const itens = [...painel.querySelectorAll(".admin-item[data-admin-type][data-admin-id]")];
+    const porTipo = new Map();
+    itens.forEach(item => {
+        const tipo = item.dataset.adminType;
+        if (!porTipo.has(tipo)) porTipo.set(tipo, new Map());
+        porTipo.get(tipo).set(item.dataset.adminId, item);
+    });
+    try {
+        const cliente = await obterClienteSupabase();
+        for (const [tipo, mapa] of porTipo) {
+            const ids = [...mapa.keys()];
+            for (let i = 0; i < ids.length; i += 100) {
+                const {data,error} = await cliente.from("admin_v2_content_state")
+                    .select("record_id,scheduled_for,schedule_status")
+                    .eq("content_type",tipo).in("record_id",ids.slice(i,i+100));
+                if (error) throw error;
+                if (version !== adminScheduleLookupVersion) return;
+                (data || []).forEach(agenda => {
+                    const item = mapa.get(String(agenda.record_id));
+                    if (!item || !item.isConnected) return;
+                    if (agenda.schedule_status === "scheduled" && agenda.scheduled_for) {
+                        item.dataset.adminScheduled = agenda.scheduled_for;
+                        const descricao = item.querySelector("small");
+                        if (descricao && !descricao.dataset.agendaMarcada) {
+                            descricao.appendChild(document.createTextNode(" · PUBLICAÇÃO: " + formatarAgendamentoLegivel(agenda.scheduled_for)));
+                            descricao.dataset.agendaMarcada = "true";
+                        }
+                    }
+                });
+            }
+        }
+        if (version === adminScheduleLookupVersion) aplicarOrganizacaoAdmin();
+    } catch (erro) {
+        console.error("Não foi possível carregar as datas programadas no editor.",erro);
+    }
 }
 
 function inicializarOrganizacaoAdmin() {
@@ -12256,7 +12305,7 @@ function injetarCasosDiariosNoGerenciador() {
                 : casosDiariosAdmin.length === 0
                     ? '<p class="admin-empty">Nenhum caso diário cadastrado.</p>'
                     : casosDiariosAdmin.map(caso => `
-                        <div class="admin-item" data-admin-title="${escaparHTML(caso.titulo || "")}" data-admin-date="${escaparHTML(caso.created_at || caso.publicado_em || "")}">
+                        <div class="admin-item" data-admin-title="${escaparHTML(caso.titulo || "")}" data-admin-date="${escaparHTML(caso.created_at || caso.publicado_em || "")}" data-admin-type="caso_diario" data-admin-id="${escaparHTML(caso.id)}" data-admin-scheduled="${escaparHTML(caso._scheduled_for || "")}">
                             <div>
                                 <strong>${escaparHTML(caso.titulo || "Caso sem título")}</strong>
                                 <small>${escaparHTML(caso.status_publicacao === "publicado" ? "PUBLICADO" : caso.status_publicacao === "agendado" ? "AGENDADO" : "RASCUNHO")}${caso.status_publicacao === "agendado" && caso._scheduled_for ? " · " + escaparHTML(formatarAgendamentoLegivel(caso._scheduled_for)) : ""} · ${escaparHTML(caso.categoria || "GARIMPO SOMBRIO")}</small>
@@ -12286,6 +12335,7 @@ function injetarCasosDiariosNoGerenciador() {
     });
 
     inicializarOrganizacaoAdmin();
+    carregarDatasProgramadasEditor();
 }
 
 const renderizarGerenciadorAdminBase = renderizarGerenciadorAdmin;
@@ -12293,6 +12343,7 @@ renderizarGerenciadorAdmin = function renderizarGerenciadorAdminComCasosDiarios(
     renderizarGerenciadorAdminBase();
     injetarCasosDiariosNoGerenciador();
     inicializarOrganizacaoAdmin();
+    carregarDatasProgramadasEditor();
     if (!casosDiariosAdminCarregados) carregarCasosDiariosAdmin();
 };
 
