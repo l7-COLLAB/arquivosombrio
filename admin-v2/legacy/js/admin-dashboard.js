@@ -161,20 +161,25 @@ async function scheduleCenter(p){
   var rows=await hydrateScheduleTitles(r.data||[]);
   p.innerHTML=heading("PUBLICAÇÃO","Central de Agendamentos","Controle todas as publicações programadas em um único lugar.")+
   '<div class="admin-schedule-center-toolbar">'+
-    '<label>Tipo<select data-schedule-filter-type><option value="all">Todos</option><option value="dossie">Dossiês</option><option value="caso_diario">Garimpo</option><option value="pericia">Perícias</option><option value="livro">Livros</option><option value="lenda">Lendas</option><option value="creepypasta">Creepypastas</option></select></label>'+
+    '<label>Pesquisar<input type="search" data-schedule-search placeholder="Nome do caso ou arquivo" autocomplete="off"></label>'+ 
+    '<label>Categoria<select data-schedule-filter-type><option value="all">Todos</option><option value="dossie">Dossiês</option><option value="caso_diario">Garimpo</option><option value="pericia">Perícias</option><option value="livro">Livros</option><option value="lenda">Lendas</option><option value="creepypasta">Creepypastas</option></select></label>'+
     '<label>Status<select data-schedule-filter-status><option value="all">Todos</option><option value="scheduled">Agendados</option><option value="failed">Falharam</option><option value="executed">Publicados</option><option value="cancelled">Cancelados</option></select></label>'+
+    '<label>Ordenar<select data-schedule-order><option value="next">Próximas publicações</option><option value="newest">Programados mais recentes</option><option value="updated">Editados recentemente</option></select></label>'+ 
     '<label>Período<select data-schedule-filter-date><option value="all">Todas as datas</option><option value="today">Hoje</option><option value="7d">Próximos 7 dias</option><option value="future">Futuros</option></select></label>'+
   '</div><div data-schedule-list></div>';
 
   var box=p.querySelector("[data-schedule-list]");
   function render(){
     var type=p.querySelector("[data-schedule-filter-type]").value;
+    var search=p.querySelector("[data-schedule-search]").value.trim().toLocaleLowerCase("pt-BR");
+    var order=p.querySelector("[data-schedule-order]").value;
     var status=p.querySelector("[data-schedule-filter-status]").value;
     var period=p.querySelector("[data-schedule-filter-date]").value;
     var now=new Date(),todayKey=new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo"}).format(now);
     var end7=new Date(now.getTime()+7*86400000);
     var list=rows.filter(function(x){
       if(type!=="all"&&x.content_type!==type)return false;
+      if(search&&!String(x._title||"").toLocaleLowerCase("pt-BR").includes(search))return false;
       if(status!=="all"&&x.schedule_status!==status)return false;
       if(period==="all")return true;
       if(!x.scheduled_for)return false;
@@ -184,8 +189,20 @@ async function scheduleCenter(p){
       if(period==="future")return d>=now;
       return true;
     });
+    list.sort(function(a,b){
+      if(order==="updated")return new Date(b.updated_at||0)-new Date(a.updated_at||0);
+      if(order==="newest")return new Date(b.scheduled_for||0)-new Date(a.scheduled_for||0);
+      var aActive=a.schedule_status==="scheduled"||a.schedule_status==="failed";
+      var bActive=b.schedule_status==="scheduled"||b.schedule_status==="failed";
+      if(aActive!==bActive)return aActive?-1:1;
+      var ad=new Date(a.scheduled_for||0).getTime(),bd=new Date(b.scheduled_for||0).getTime();
+      var nowMs=now.getTime(),af=ad>=nowMs,bf=bd>=nowMs;
+      if(af!==bf)return af?-1:1;
+      return af?ad-bd:bd-ad;
+    });
     var waiting=list.filter(function(x){return x.schedule_status==="scheduled";}).length;
     var failed=list.filter(function(x){return x.schedule_status==="failed";}).length;
+    var next=list.find(function(x){return x.schedule_status==="scheduled"&&x.scheduled_for&&new Date(x.scheduled_for)>=now;});
     box.innerHTML='<div class="admin-schedule-summary"><div><strong>'+waiting+'</strong><span>aguardando publicação</span></div><div><strong>'+failed+'</strong><span>com falha</span></div><div><strong>'+list.length+'</strong><span>itens exibidos</span></div></div>'+
       (list.length?'<div class="admin-schedule-center-list">'+list.map(function(x){
         var overdue=x.schedule_status==="scheduled"&&x.scheduled_for&&new Date(x.scheduled_for)<new Date();
@@ -201,6 +218,7 @@ async function scheduleCenter(p){
     box.querySelectorAll("[data-schedule-action]").forEach(function(b){b.onclick=function(){scheduleAction(b,p);};});
   }
   p.querySelectorAll(".admin-schedule-center-toolbar select").forEach(function(s){s.onchange=render;});
+  p.querySelector("[data-schedule-search]").oninput=render;
   render();
   setCount("schedule",rows.filter(function(x){return x.schedule_status==="scheduled";}).length);
 }
