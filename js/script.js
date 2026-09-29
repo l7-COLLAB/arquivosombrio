@@ -12896,8 +12896,20 @@ function renderizarSecaoDocumentalGarimpo(classe, rotulo, titulo, itens) {
                     <article>
                         <span>${String(indice + 1).padStart(2, "0")}</span>
                         <div>
-                            ${typeof item === "object" && (item.titulo || item.nome || item.label) ? `<h3>${escaparHTML(tituloItemGarimpo(item, indice))}</h3>` : ""}
-                            <p>${escaparHTML(textoItemGarimpo(item) || (typeof item === "string" ? item : "")).replace(/\n/g, "<br>")}</p>
+                            ${(() => {
+                                const texto = textoItemGarimpo(item) || (typeof item === "string" ? item : "");
+                                const tituloExplicito = typeof item === "object" && (item.titulo || item.nome || item.label)
+                                    ? tituloItemGarimpo(item, indice) : "";
+                                // Itens legados usam "Título: explicação"; separamos apenas
+                                // nas seções de evidências e hipóteses, sem alterar os dados.
+                                const separar = classe === "daily-reader-evidence" || classe === "daily-reader-hypotheses";
+                                const partes = !tituloExplicito && separar && typeof item === "string"
+                                    ? texto.match(/^([^:\n]{3,85}):\s+([\s\S]+)$/) : null;
+                                const cabecalho = tituloExplicito || (partes ? partes[1] : "");
+                                const corpo = partes ? partes[2] : texto;
+                                return `${cabecalho ? `<h3>${escaparHTML(cabecalho)}</h3>` : ""}
+                                    <p>${escaparHTML(corpo).replace(/\n/g, "<br>")}</p>`;
+                            })()}
                         </div>
                     </article>`).join("")}
             </div>
