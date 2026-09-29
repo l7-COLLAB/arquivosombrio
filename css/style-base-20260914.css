@@ -7425,3 +7425,9 @@ select:focus-visible {
         display:none!important;
     }
 }
+
+/* Arquivo Sombrio: retorno legível nos arquivos */
+.garimpo-main .archive-back,.daily-case-detail .archive-back{display:inline-flex;align-items:center;gap:.7rem;min-height:44px;padding:10px 14px;margin-bottom:2rem;color:var(--paper,#eee6d8);font:600 12px/1.4 var(--font-mono,monospace);letter-spacing:.075em;text-transform:uppercase;text-decoration:none;background:rgba(168,140,85,.09);border:1px solid rgba(168,140,85,.38);border-radius:3px;transition:background .2s,border-color .2s,color .2s}
+.garimpo-main .archive-back i,.daily-case-detail .archive-back i{font-size:13px;color:var(--gold-light,#c4aa70)}
+.garimpo-main .archive-back:hover,.garimpo-main .archive-back:focus-visible,.daily-case-detail .archive-back:hover,.daily-case-detail .archive-back:focus-visible{color:#fff;background:rgba(168,140,85,.2);border-color:var(--gold-light,#c4aa70);outline-offset:3px}
+@media(max-width:600px){.garimpo-main .archive-back,.daily-case-detail .archive-back{font-size:12px;padding:12px 14px}}
