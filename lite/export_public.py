@@ -71,7 +71,7 @@ def run():
  ("casos_diarios","garimpo","garimpo","publicado_em",["conteudo","situacao_oficial"],{"cronologia":"cronologia","evidencias":"evidencias","fontes":"fontes"},["id","slug","titulo","resumo","conteudo","situacao_oficial","cronologia","evidencias","fontes","status_publicacao","publicado_em","created_at"]),
  ("pericias","pericia","pericia","publicado_em",["introducao","como_funciona","historia_tecnica","aplicacao_casos_reais","limitacoes_controversias","curiosidades"],{"fontes":"fontes"},["id","titulo","resumo","introducao","como_funciona","historia_tecnica","aplicacao_casos_reais","limitacoes_controversias","curiosidades","fontes","status_publicacao","publicado_em","created_at"]),
  ("lendas","lendas","lenda","publicado_em",["introducao","conteudo","contexto_historico","conclusao_arquivo"],{"cronologia":"cronologia","fontes":"fontes"},["id","slug","titulo","resumo","introducao","conteudo","contexto_historico","conclusao_arquivo","cronologia","fontes","status_publicacao","publicado_em","created_at"]),
- ("creepypastas","lendas","creepypasta","publicado_em",["introducao","conteudo","nota_editorial"],{"fontes":"fontes"},["id","slug","titulo","resumo","introducao","conteudo","nota_editorial","fontes","status_publicacao","publicado_em","created_at"])]
+ ("creepypastas","creepypastas","creepypasta","publicado_em",["introducao","conteudo","nota_editorial"],{"fontes":"fontes"},["id","slug","titulo","resumo","introducao","conteudo","nota_editorial","fontes","status_publicacao","publicado_em","created_at"])]
  for table,category,prefix,date,body,extra,fields in configs:
   for row in fetch(table,fields,{"status_publicacao":"eq.publicado"}):
    item=record(row,category,prefix,date,body,extra)
