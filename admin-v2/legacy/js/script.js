@@ -12582,8 +12582,8 @@ function abrirFormularioCasoDiario(dados = null) {
                 <label>Resumo curto<textarea id="daily-summary" rows="4" maxlength="700" required>${escaparHTML(dados?.resumo || "")}</textarea></label>
                 <label>Relato do caso<textarea id="daily-content" rows="14" required placeholder="Escreva o caso de forma curta, imersiva e objetiva.">${escaparHTML(dados?.conteudo || "")}</textarea></label>
                 <label>Cronologia opcional<textarea id="daily-chronology" rows="5">${escaparHTML(dados?.cronologia || "")}</textarea></label>
-                <label>Evidências<textarea id="daily-evidence" rows="5" placeholder="Separe os itens com uma linha em branco.">${escaparHTML(Array.isArray(dados?.evidencias) ? dados.evidencias.join("\n\n") : "")}</textarea></label>
-                <label>Hipóteses e controvérsias<textarea id="daily-theories" rows="5" placeholder="Separe os itens com uma linha em branco.">${escaparHTML(Array.isArray(dados?.hipoteses) ? dados.hipoteses.join("\n\n") : "")}</textarea></label>
+                <label>Evidências<textarea id="daily-evidence" rows="5" placeholder="Separe os itens com uma linha em branco.">${escaparHTML(normalizarEvidencias(dados?.evidencias).join("\n\n"))}</textarea></label>
+                <label>Hipóteses e controvérsias<textarea id="daily-theories" rows="5" placeholder="Separe os itens com uma linha em branco.">${escaparHTML(normalizarEvidencias(dados?.hipoteses).join("\n\n"))}</textarea></label>
                 <label>Situação oficial<textarea id="daily-official-status" rows="4">${escaparHTML(dados?.situacao_oficial || "")}</textarea></label>
 
                 <section class="daily-admin-repeat-section garimpo-story-admin">
