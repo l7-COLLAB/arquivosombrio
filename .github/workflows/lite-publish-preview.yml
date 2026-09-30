@@ -50,6 +50,10 @@ jobs:
           test -f lite-source/lite/dist/biblioteca.html
           test -f lite-source/lite/dist/novels.html
           test -f lite-source/lite/dist/dossies.html
+          test -f lite-source/lite/dist/garimpo.html
+          test -f lite-source/lite/dist/pericia.html
+          test -f lite-source/lite/dist/lendas.html
+          test -f lite-source/lite/dist/creepypastas.html
       - name: Atualizar apenas a pasta lite-preview do site
         working-directory: site
         run: |
@@ -58,7 +62,13 @@ jobs:
           # Generated articles, books and search are refreshed; Lite has no narration or account access.
           cp -a ../lite-source/lite/dist/arquivos/. lite-preview/arquivos/
           cp -a ../lite-source/lite/dist/livros/. lite-preview/livros/
-          cp ../lite-source/lite/dist/biblioteca.html ../lite-source/lite/dist/novels.html lite-preview/
+          rm -f lite-preview/dossies*.html lite-preview/garimpo*.html lite-preview/pericia*.html lite-preview/lendas*.html lite-preview/creepypastas*.html lite-preview/biblioteca*.html
+          cp ../lite-source/lite/dist/dossies*.html lite-preview/
+          cp ../lite-source/lite/dist/garimpo*.html lite-preview/
+          cp ../lite-source/lite/dist/pericia*.html lite-preview/
+          cp ../lite-source/lite/dist/lendas*.html lite-preview/
+          cp ../lite-source/lite/dist/creepypastas*.html lite-preview/
+          cp ../lite-source/lite/dist/biblioteca*.html ../lite-source/lite/dist/novels.html lite-preview/
           cp ../lite-source/lite/dist/pesquisa.html ../lite-source/lite/dist/lite.js lite-preview/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
