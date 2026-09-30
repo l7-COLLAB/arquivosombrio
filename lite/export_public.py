@@ -76,7 +76,7 @@ def run():
   for row in fetch(table,fields,{"status_publicacao":"eq.publicado"}):
    item=record(row,category,prefix,date,body,extra)
    if item:results.append(item)
- novels=fetch("novels",["id","slug","titulo","sinopse","status_publicacao","publicado_em","created_at"],{"status_publicacao":"eq.publicado"})
+ novels=fetch("novels",["id","slug","titulo","sinopse","autor_nome","status_publicacao","publicado_em","created_at"],{"status_publicacao":"eq.publicado"})
  for novel in novels:
   if not public(novel,"publicado_em"):continue
   chapters=fetch("novel_capitulos",["id","novel_id","numero","titulo","conteudo","status_publicacao","publicado_em","created_at"],{"novel_id":"eq."+str(novel["id"]),"status_publicacao":"eq.publicado"})
@@ -89,6 +89,8 @@ def run():
    if item:
     item["obra_id"]=str(novel["id"])
     item["obra_titulo"]=novel["titulo"]
+    item["obra_autor"]=plain(novel.get("autor_nome"))
+    item["obra_sinopse"]=plain(novel.get("sinopse"))
     item["numero_capitulo"]=ch["numero"]
     item["titulo_capitulo"]=ch.get("titulo") or ("Capítulo "+str(ch["numero"]))
     results.append(item)
