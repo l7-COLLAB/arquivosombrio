@@ -36,4 +36,6 @@ with tempfile.TemporaryDirectory() as temp:
     assert "Sumário" in chapter and "sec-1" in chapter
     assert "Arquivos relacionados" not in chapter
     assert "Livro" in (out/"biblioteca.html").read_text(encoding="utf-8")
+    assert "Livro" in (out/"novels.html").read_text(encoding="utf-8")
+    assert "CONSULTAR OBRA E CAPÍTULOS" in (out/"novels.html").read_text(encoding="utf-8")
 print("OK: pesquisa, sumário, navegação e filtros de publicação.")
