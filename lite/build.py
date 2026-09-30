@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from urllib.parse import quote
 from collections import defaultdict
 
-CATEGORIES = {"dossies":"Dossiês","garimpo":"Garimpo Sombrio","pericia":"Perícia Forense","biblioteca":"Biblioteca","lendas":"Lendas e Creepypastas"}
+CATEGORIES = {"dossies":"Dossiês","garimpo":"Garimpo Sombrio","pericia":"Perícia Forense","biblioteca":"Biblioteca","lendas":"Lendas","creepypastas":"Creepypastas"}
 PAGE_SIZE = 12
 def esc(value): return html.escape(str(value or ""), quote=True)
 def slug(value):
