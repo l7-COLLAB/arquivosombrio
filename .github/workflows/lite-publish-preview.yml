@@ -1,6 +1,8 @@
 name: Publicar previa Lite para iPad antigo
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '17,47 * * * *'
 permissions:
   contents: write
 concurrency:
@@ -42,6 +44,7 @@ jobs:
           test -s lite-source/lite/dist/index.html
           test -s lite-source/lite/dist/lite.css
           test -f lite-source/lite/dist/biblioteca.html
+          test -f lite-source/lite/dist/novels.html
           test -f lite-source/lite/dist/dossies.html
       - name: Atualizar apenas a pasta lite-preview do site
         working-directory: site
@@ -51,6 +54,7 @@ jobs:
           # Generated articles, books and search are refreshed; Lite has no narration or account access.
           cp -a ../lite-source/lite/dist/arquivos/. lite-preview/arquivos/
           cp -a ../lite-source/lite/dist/livros/. lite-preview/livros/
+          cp ../lite-source/lite/dist/biblioteca.html ../lite-source/lite/dist/novels.html lite-preview/
           cp ../lite-source/lite/dist/pesquisa.html ../lite-source/lite/dist/lite.js lite-preview/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
