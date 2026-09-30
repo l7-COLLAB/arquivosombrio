@@ -39,3 +39,17 @@ with tempfile.TemporaryDirectory() as temp:
     assert "Livro" in (out/"novels.html").read_text(encoding="utf-8")
     assert "CONSULTAR OBRA E CAPÍTULOS" in (out/"novels.html").read_text(encoding="utf-8")
 print("OK: pesquisa, sumário, navegação e filtros de publicação.")
+
+with tempfile.TemporaryDirectory() as temp:
+    root=Path(temp);source=root/"input.json";out=root/"dist"
+    past=(datetime.now(timezone.utc)-timedelta(days=1)).isoformat()
+    data=[
+      {"slug":"lenda-teste","titulo":"Lenda Teste","categoria":"lendas","status_publicacao":"publicado","publicado_em":past,"conteudo":"Texto"},
+      {"slug":"creepypasta-teste","titulo":"Creepypasta Teste","categoria":"creepypastas","status_publicacao":"publicado","publicado_em":past,"conteudo":"Texto"}
+    ]
+    source.write_text(json.dumps(data),encoding="utf-8")
+    build(source,out)
+    assert "Lenda Teste" in (out/"lendas.html").read_text(encoding="utf-8")
+    assert "Creepypasta Teste" not in (out/"lendas.html").read_text(encoding="utf-8")
+    assert "Creepypasta Teste" in (out/"creepypastas.html").read_text(encoding="utf-8")
+print("OK: lendas e creepypastas permanecem em categorias separadas.")
