@@ -118,6 +118,30 @@ def build(src,out):
         links="".join("<li><a href=\"../arquivos/"+esc(c["slug"])+".html\">"+esc(c.get("titulo_capitulo") or c["titulo"])+"</a></li>" for c in chapters)
         pages[filename]=layout(title,"<h2>"+esc(title)+"</h2><ol>"+links+"</ol>",1)
         book_entries.append((title,filename))
+    # Generate the literary indexes from the same exported public novels used for chapter pages.
+    # These pages intentionally stay static and dependency-free for iOS 9 compatibility.
+    literary_entries=sorted(book_entries,key=lambda x:x[0].casefold())
+    literary_list="".join(
+        '<li><a href="'+esc(path)+'"><span class="item-code">'+str(i).zfill(2)+' / LITERATURA</span><strong class="item-title">'+esc(title)+'</strong><span class="item-arrow" aria-hidden="true">→</span><span class="item-foot">CONSULTAR OBRA E CAPÍTULOS</span></a></li>'
+        for i,(title,path) in enumerate(literary_entries,1)
+    )
+    pages["novels.html"]=(
+        '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+        '<meta name="robots" content="noindex,nofollow"><title>Histórias do Arquivo · Lite</title>'
+        '<link rel="stylesheet" href="lite.css"><link rel="stylesheet" href="lite-novels.css"><link rel="stylesheet" href="lite-index.css?v=1"><link rel="stylesheet" href="lite-pulp.css?v=1">'
+        '</head><body class="lite-index"><div class="wrap"><header><p class="eyebrow">ARQUIVO 02 · LITERATURA</p><h1>HISTÓRIAS DO ARQUIVO</h1><p>Toda ficção esconde um universo.</p></header>'
+        '<nav><a href="index.html">Início</a><a href="biblioteca.html">Biblioteca</a></nav><main><div class="index-intro"><p class="eyebrow">ARQUIVO SOMBRIO · LITERATURA</p><h2>Acervo literário</h2><p>Escolha uma obra e consulte seus capítulos.</p></div>'
+        '<p class="notice">Edição de leitura leve para dispositivos antigos.</p><ul class="index-grid">'+literary_list+'</ul></main><footer><p><a href="index.html">← Voltar ao acervo</a></p></footer></div></body></html>'
+    )
+    library_list="".join('<li><a href="'+esc(path)+'">'+esc(title)+'</a></li>' for title,path in literary_entries)
+    pages["biblioteca.html"]=(
+        '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">'
+        '<title>Biblioteca · Arquivo Sombrio Lite</title><link rel="stylesheet" href="lite.css"><link rel="stylesheet" href="lite-novels.css"><link rel="stylesheet" href="lite-index.css?v=1"><link rel="stylesheet" href="lite-pulp.css?v=1"></head>'
+        '<body><div class="wrap"><header><p class="eyebrow">EDIÇÃO DE LEITURA</p><h1>ARQUIVO SOMBRIO</h1><p>Versão Lite</p></header><nav aria-label="Categorias"><a href="dossies.html">Dossiês</a> <a href="garimpo.html">Garimpo Sombrio</a> <a href="pericia.html">Perícia Forense</a> <a href="biblioteca.html">Biblioteca</a> <a href="novels.html">Novels</a> <a href="lendas.html">Lendas e Creepypastas</a></nav><main>'
+        '<h2>Biblioteca</h2><p><a class="lite-literary" href="novels.html"><small>COLEÇÃO LITERÁRIA</small><strong>Histórias do Arquivo →</strong><em>Romances, suspense e mistérios.</em></a></p><ul>'+library_list+'</ul><p>'+str(len(literary_entries))+' obras disponíveis.</p>'
+        '</main><footer><p><a href="index.html">Início</a> · Arquivo Sombrio Lite</p></footer></div></body></html>'
+    )
+
     home=[]
     for category,label in CATEGORIES.items():
         if category=="biblioteca":
