@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/workflows/lite-publish-preview.yml'
   schedule:
-    - cron: '17,47 * * * *'
+    - cron: '*/5 * * * *'
 permissions:
   contents: write
 concurrency:
