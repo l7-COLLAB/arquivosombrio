@@ -162,6 +162,14 @@ def build(src,out):
             name=category+".html" if page==0 else category+"-"+str(page+1)+".html"
             pages[name]=layout(label,body)
         home.append("<section id=\""+category+"\"><h2>"+esc(label)+"</h2><p>"+str(len(entries))+" títulos</p><p><a href=\""+category+".html\">Explorar</a></p></section>")
+    # Restore the approved Lite Biblioteca layout after the generic category pagination is built.
+    pages["biblioteca.html"]=(
+        '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">'
+        '<title>Biblioteca · Arquivo Sombrio Lite</title><link rel="stylesheet" href="lite.css"><link rel="stylesheet" href="lite-novels.css"><link rel="stylesheet" href="lite-index.css?v=1"><link rel="stylesheet" href="lite-pulp.css?v=1"></head>'
+        '<body><div class="wrap"><header><p class="eyebrow">EDIÇÃO DE LEITURA</p><h1>ARQUIVO SOMBRIO</h1><p>Versão Lite</p></header><nav aria-label="Categorias"><a href="dossies.html">Dossiês</a> <a href="garimpo.html">Garimpo Sombrio</a> <a href="pericia.html">Perícia Forense</a> <a href="biblioteca.html">Biblioteca</a> <a href="novels.html">Novels</a> <a href="lendas.html">Lendas e Creepypastas</a></nav><main>'
+        '<h2>Biblioteca</h2><p><a class="lite-literary" href="novels.html"><small>COLEÇÃO LITERÁRIA</small><strong>Histórias do Arquivo →</strong><em>Romances, suspense e mistérios.</em></a></p><ul>'+library_list+'</ul><p>'+str(len(literary_entries))+' obras disponíveis.</p>'
+        '</main><footer><p><a href="index.html">Início</a> · Arquivo Sombrio Lite</p></footer></div></body></html>'
+    )
     pages["index.html"]=layout("Acervo","<h2>Acervo</h2>"+"".join(home))
     search_entries=[]
     for item in items:
