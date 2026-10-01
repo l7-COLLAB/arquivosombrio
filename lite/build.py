@@ -65,7 +65,7 @@ def layout(title,body,depth=0):
       '<meta name="robots" content="noindex,nofollow"><title>'+esc(title)+' · Arquivo Sombrio Lite</title>'
       '<link rel="stylesheet" href="'+root+'lite.css?v=8"></head><body id="topo"><div class="wrap">'
       '<header><p class="eyebrow">EDIÇÃO DE LEITURA</p><h1>ARQUIVO SOMBRIO</h1>'
-      '<p>Versão Lite</p></header><nav aria-label="Categorias">'+nav+'</nav><div class="reader-tools"><button type="button" data-lite-setting="theme">Papel / Escuro</button> <button type="button" data-lite-setting="size">Tamanho da letra</button> <a href="'+root+'pesquisa.html">Pesquisar</a> <a id="resume-reading" style="display:none" href="'+root+'index.html">Continuar leitura</a></div><main>'+body+
+      '<p>Versão Lite</p></header><nav aria-label="Categorias">'+nav+'</nav><div class="reader-tools"><button type="button" data-lite-setting="theme">Papel / Escuro</button> <button type="button" data-lite-setting="size">Tamanho da letra</button> <a href="'+root+'pesquisa.html">Pesquisar</a> <a href="'+root+'conta.html" data-lite-account-link>Conta</a> <a id="resume-reading" style="display:none" href="'+root+'index.html">Continuar leitura</a></div><main>'+body+
       '</main><script src="'+root+'lite.js?v=7"></script><a class="back-to-top" href="#topo" aria-label="Voltar ao topo" title="Voltar ao topo">↑<span> Topo</span></a><footer><p><a href="'+root+'index.html">Início</a> · Arquivo Sombrio Lite</p></footer></div></body></html>')
 def text_blocks(value):
     # Explicit plain-text blocks: never inject arbitrary HTML from editorial fields.
@@ -249,6 +249,17 @@ def build(src,out):
     controls+='<p><label for="lite-category">Categoria</label> <select id="lite-category"><option value="all">Todas</option>'+"".join('<option value="'+key+'">'+esc(label)+"</option>" for key,label in CATEGORIES.items())+'</select> <label for="lite-sort">Ordenar</label> <select id="lite-sort"><option value="title">A-Z</option><option value="date">Mais recentes</option></select></p>'
     results='<ul id="search-results">'+"".join('<li data-search="'+esc((title+" "+summary).lower())+'" data-category="'+esc(category)+'" data-title="'+esc(title.lower())+'" data-date="'+esc(date)+'"><a href="'+esc(path)+'">'+esc(title)+"</a> · "+esc(CATEGORIES[category])+"</li>" for title,path,category,date,summary in search_entries)+"</ul>"
     pages["pesquisa.html"]=layout("Pesquisa",controls+results)
+    account_body=(
+        '<section class="lite-account"><p class="eyebrow">CONTA ARQUIVO SOMBRIO</p><h2>Acesso Lite</h2>'
+        '<p>Use a mesma conta do site principal. Se este dispositivo já estiver conectado, a Lite reconhece a sessão automaticamente.</p>'
+        '<div data-lite-account-current hidden><p><strong data-lite-account-name>Conta conectada</strong></p><p data-lite-account-email></p><button type="button" data-lite-logout>Sair deste dispositivo</button></div>'
+        '<form data-lite-login><label for="lite-login-email">E-mail</label><input id="lite-login-email" name="email" type="email" autocomplete="email" required>'
+        '<label for="lite-login-password">Senha</label><input id="lite-login-password" name="password" type="password" autocomplete="current-password" required>'
+        '<button type="submit">Entrar</button><p data-lite-login-state role="status"></p></form>'
+        '<p class="notice">Ainda não tem conta? Crie sua conta no site principal e depois use o mesmo e-mail e senha aqui.</p>'
+        '<p><a href="https://arquivosombrio.net.br/" rel="external">Abrir site principal</a></p></section>'
+    )
+    pages["conta.html"]=layout("Conta",account_body)
     pages["lite.js"]=Path(__file__).with_name("lite.js").read_text(encoding="utf-8")
     css=Path(__file__).with_name("lite.css").read_text(encoding="utf-8")
     pages["lite.css"]=css
