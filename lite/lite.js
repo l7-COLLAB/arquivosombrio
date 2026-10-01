@@ -7,6 +7,24 @@ function init(){apply();var buttons=document.querySelectorAll("[data-lite-settin
 var save=document.getElementById("save-reading"),resume=document.getElementById("resume-reading");
 if(save){save.onclick=function(){put("last",location.href.split("#")[0]);this.innerHTML="Leitura marcada";return false;};}
 if(resume){var last=get("last");if(last&&last.indexOf(location.origin+location.pathname.split("/").slice(0,-1).join("/"))===0){resume.href=last;resume.style.display="inline-block";}}
+var audioBox=document.querySelector("[data-lite-audio]");
+if(audioBox){
+  var audioType=audioBox.getAttribute("data-type"),audioId=audioBox.getAttribute("data-id"),audioState=audioBox.querySelector("[data-lite-audio-state]"),audioPlayer=audioBox.querySelector("[data-lite-audio-player]");
+  var audioBase="https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/lite-approved-audio";
+  try{
+    var xhr=new XMLHttpRequest();
+    xhr.open("GET",audioBase+"?check=1&type="+encodeURIComponent(audioType)+"&id="+encodeURIComponent(audioId),true);
+    xhr.onreadystatechange=function(){
+      if(xhr.readyState!==4)return;
+      if(xhr.status>=200&&xhr.status<300){
+        audioBox.hidden=false;
+        audioPlayer.src=audioBase+"?type="+encodeURIComponent(audioType)+"&id="+encodeURIComponent(audioId);
+        audioState.innerHTML="Narração Kokoro aprovada e pronta para reprodução.";
+      }
+    };
+    xhr.send(null);
+  }catch(e){}
+}
 var q=document.getElementById("lite-query"),form=document.getElementById("lite-search"),rows=document.querySelectorAll("[data-search]"),category=document.getElementById("lite-category"),sort=document.getElementById("lite-sort");
 function filter(){if(!rows.length)return;var term=q?q.value.toLowerCase():"",cat=category?category.value:"all";for(var i=0;i<rows.length;i++){var row=rows[i],show=(cat==="all"||row.getAttribute("data-category")===cat)&&row.getAttribute("data-search").indexOf(term)!==-1;row.style.display=show?"":"none";}}
 if(form)form.onsubmit=function(){filter();return false};if(q)q.onkeyup=filter;if(category)category.onchange=filter;
