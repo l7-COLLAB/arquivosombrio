@@ -96,6 +96,10 @@ def item_page(item, previous=None, following=None, related=None):
         if item.get(k): toc.append((k,label))
     if toc: body+='<details class="toc" open><summary>Sumário</summary><ul>'+"".join('<li><a href="#'+esc(k)+'">'+esc(label)+"</a></li>" for k,label in toc)+"</ul></details>"
     body+='<p class="metadata">'+esc(CATEGORIES[item["categoria"]])+' · '+esc(item["publicado_em"][:10])+' · Aproximadamente '+str(max(1,len(str(item["conteudo"]).split())//200))+' min de leitura</p>'
+    audio_types={"dossies":"dossie","garimpo":"garimpo","pericia":"pericia","lendas":"lenda","creepypastas":"creepypasta"}
+    audio_type=audio_types.get(item["categoria"])
+    if audio_type and item.get("source_id"):
+        body+='<section class="lite-audio" data-lite-audio data-type="'+esc(audio_type)+'" data-id="'+esc(item["source_id"])+'" hidden><p class="eyebrow">ÁUDIO DOCUMENTAL</p><h3>Ouvir este arquivo</h3><p data-lite-audio-state>Verificando áudio aprovado...</p><audio controls preload="none" data-lite-audio-player style="width:100%"></audio></section>'
     body+='<p><button id="save-reading" type="button">Marcar leitura</button></p>'
     body+="<article>"+rendered+"</article>"
     for key,label in (("cronologia","Cronologia"),("evidencias","Evidências"),("fontes","Fontes")):
