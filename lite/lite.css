@@ -42,3 +42,13 @@ body.large .category-card-summary{font-size:18px}
 body.small .category-card-title{font-size:16px}
 body.small .category-card-summary{font-size:14px}
 @media(max-width:560px){.category-grid>li{display:block;width:100%;margin:0 0 14px}.category-card{min-height:0}.category-card-summary{padding-bottom:42px}.category-intro{padding:22px 16px}.category-intro h2{font-size:23px}}
+
+/* Player Lite: somente MP3 Kokoro previamente aprovado. */
+.lite-audio{margin:18px 0;padding:15px 16px;border:1px solid #765b3d;background:#151719}
+.lite-audio .eyebrow{margin:0 0 5px;color:#b89467}
+.lite-audio h3{margin:0 0 5px;color:#e5d4b8}
+.lite-audio p[data-lite-audio-state]{margin:0 0 12px;color:#b6a58e;font:13px/1.5 Arial,sans-serif}
+.lite-audio audio{display:block;width:100%;max-width:100%}
+body.paper .lite-audio{background:#e9dec9;border-color:#87765e;color:#30251a}
+body.paper .lite-audio h3{color:#3b2b1f}
+body.paper .lite-audio p[data-lite-audio-state]{color:#6e5b47}
