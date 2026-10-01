@@ -11,6 +11,39 @@ from collections import defaultdict
 
 CATEGORIES = {"dossies":"Dossiês","garimpo":"Garimpo Sombrio","pericia":"Perícia Forense","biblioteca":"Biblioteca","lendas":"Lendas","creepypastas":"Creepypastas"}
 PAGE_SIZE = 12
+CATEGORY_META = {
+    "dossies": {
+        "hero": "ARQUIVO SOMBRIO · INVESTIGAÇÃO",
+        "description": "Casos criminais, cronologias, evidências e arquivos documentados para leitura.",
+        "cta": "CONSULTAR DOSSIÊ →",
+        "fallback": "Dossiê disponível para leitura na edição Lite."
+    },
+    "garimpo": {
+        "hero": "ARQUIVO SOMBRIO · GARIMPO",
+        "description": "Casos menos conhecidos, desaparecimentos, investigações e histórias sombrias.",
+        "cta": "CONSULTAR ARQUIVO →",
+        "fallback": "Arquivo disponível para leitura na edição Lite."
+    },
+    "pericia": {
+        "hero": "ARQUIVO SOMBRIO · CIÊNCIA FORENSE",
+        "description": "Métodos, limites e aplicações da perícia forense em linguagem acessível.",
+        "cta": "CONSULTAR ARQUIVO →",
+        "fallback": "Conteúdo forense disponível para leitura na edição Lite."
+    },
+    "lendas": {
+        "hero": "ARQUIVO SOMBRIO · FOLCLORE",
+        "description": "Lendas, tradições e narrativas sombrias reunidas em formato de leitura.",
+        "cta": "CONSULTAR LENDA →",
+        "fallback": "Lenda disponível para leitura na edição Lite."
+    },
+    "creepypastas": {
+        "hero": "ARQUIVO SOMBRIO · CREEPYPASTAS",
+        "description": "Relatos, ficções e histórias sombrias da internet em formato de arquivo.",
+        "cta": "CONSULTAR CREEPYPASTA →",
+        "fallback": "Creepypasta disponível para leitura na edição Lite."
+    },
+}
+CARD_TONES = ("tone-bronze", "tone-wine", "tone-teal")
 def esc(value): return html.escape(str(value or ""), quote=True)
 def slug(value):
     value = re.sub("-+", "-", str(value or ""))
@@ -79,6 +112,35 @@ def item_page(item, previous=None, following=None, related=None):
     if related:
         body+='<section><h3>Arquivos relacionados</h3><ul>'+"".join('<li><a href="'+esc(x["slug"])+'.html">'+esc(x["titulo"])+"</a></li>" for x in related)+"</ul></section>"
     return layout(item["titulo"],body,1)
+def category_cards_page(category, label, entries, page, total):
+    meta = CATEGORY_META[category]
+    start = page * PAGE_SIZE
+    subset = entries[start:start + PAGE_SIZE]
+    cards = []
+    for index, item in enumerate(subset, start + 1):
+        tone = CARD_TONES[(index - 1) % len(CARD_TONES)]
+        cards.append(
+            '<li><a class="category-card '+tone+'" href="'+esc(item["path"])+'">'
+            '<span class="category-card-kicker">'+str(index).zfill(2)+' / '+esc(label.upper())+'</span>'
+            '<strong class="category-card-title">'+esc(item["title"])+'</strong>'
+            '<span class="category-card-summary">'+esc(item["summary"])+'</span>'
+            '<span class="category-card-open">'+esc(meta["cta"])+'</span>'
+            '</a></li>'
+        )
+    body=(
+        '<div class="category-intro"><p class="eyebrow">'+esc(meta["hero"])+'</p>'
+        '<h2>'+esc(label)+'</h2><p>'+esc(meta["description"])+'</p></div>'
+        '<p class="notice">Edição de leitura leve para dispositivos antigos.</p>'
+        '<ul class="category-grid">'+''.join(cards)+'</ul>'
+    )
+    body+='<p class="category-pagination">Página '+str(page+1)+' de '+str(total)+'. '
+    if page:
+        body+='<a href="'+(category+'.html' if page==1 else category+'-'+str(page)+'.html')+'">Anterior</a> '
+    if page+1<total:
+        body+='<a href="'+category+'-'+str(page+2)+'.html">Próxima</a>'
+    body+='</p>'
+    return layout(label,body)
+
 def build(src,out):
     records=json.loads(src.read_text(encoding="utf-8"))
     if not isinstance(records,list): raise ValueError("A raiz JSON deve ser uma lista")
@@ -152,21 +214,23 @@ def build(src,out):
         if category=="biblioteca":
             entries=book_entries+[(x["titulo"],"arquivos/"+x["slug"]+".html") for x in groups[category] if not x.get("obra_id")]
             entries.sort(key=lambda x:x[0].casefold())
+            entry_count=len(entries)
         else:
             groups[category].sort(key=lambda x:x["publicado_em"],reverse=True)
-            entries=[(x["titulo"],"arquivos/"+x["slug"]+".html") for x in groups[category]]
-        total=max(1,(len(entries)+PAGE_SIZE-1)//PAGE_SIZE)
-        for page in range(total):
-            subset=entries[page*PAGE_SIZE:(page+1)*PAGE_SIZE]
-            listing="".join("<li><a href=\""+esc(path)+"\">"+esc(title)+"</a></li>" for title,path in subset)
-            body="<h2>"+esc(label)+"</h2>"+("<ul>"+listing+"</ul>" if subset else "<p>Nenhuma publicação disponível.</p>")
-            body+="<p>Página "+str(page+1)+" de "+str(total)+". "
-            if page:body+="<a href=\""+(category+".html" if page==1 else category+"-"+str(page)+".html")+"\">Anterior</a> "
-            if page+1<total:body+="<a href=\""+category+"-"+str(page+2)+".html\">Próxima</a>"
-            body+="</p>"
-            name=category+".html" if page==0 else category+"-"+str(page+1)+".html"
-            pages[name]=layout(label,body)
-        home.append("<section id=\""+category+"\"><h2>"+esc(label)+"</h2><p>"+str(len(entries))+" títulos</p><p><a href=\""+category+".html\">Explorar</a></p></section>")
+            entries=[
+                {
+                    "title":x["titulo"],
+                    "path":"arquivos/"+x["slug"]+".html",
+                    "summary":x.get("resumo") or CATEGORY_META[category]["fallback"]
+                }
+                for x in groups[category]
+            ]
+            entry_count=len(entries)
+            total=max(1,(len(entries)+PAGE_SIZE-1)//PAGE_SIZE)
+            for page in range(total):
+                name=category+".html" if page==0 else category+"-"+str(page+1)+".html"
+                pages[name]=category_cards_page(category,label,entries,page,total)
+        home.append("<section id=\""+category+"\"><h2>"+esc(label)+"</h2><p>"+str(entry_count)+" títulos</p><p><a href=\""+category+".html\">Explorar</a></p></section>")
     # Restore the approved Lite Biblioteca layout after the generic category pagination is built.
     pages["biblioteca.html"]=(
         '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">'
