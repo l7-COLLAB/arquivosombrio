@@ -10,3 +10,35 @@ html{-webkit-text-size-adjust:100%;}body{margin:0;background:#0b0d10;color:#d8c9
 
 /* Separação consistente entre títulos em todas as listas de categorias. */
 main>ul, #search-results{list-style-position:outside;padding-left:27px}main>ul>li, #search-results>li{padding:10px 0;line-height:1.55;margin:0;border-bottom:1px solid rgba(173,149,114,.18)}main>ul>li:last-child, #search-results>li:last-child{border-bottom:0}main>ul>li>a, #search-results>li>a{display:inline-block;padding:2px 0}main ol>li{padding:7px 0;line-height:1.55}body.paper main>ul>li,body.paper #search-results>li{border-bottom-color:rgba(81,56,32,.2)}
+
+
+/* Índices visuais das categorias Lite. Sem dependências externas; compatível com Safari iOS 9. */
+.category-intro{margin:22px 0 18px;padding:28px 22px;border:1px solid #b48a55;background:#dcc195;color:#23170e;text-align:center;box-sizing:border-box}
+.category-intro .eyebrow{margin:0 0 8px;font:11px Arial,sans-serif;letter-spacing:3px;color:#8b4b31}
+.category-intro h2{margin:0 0 10px;font:700 26px/1.2 Georgia,"Times New Roman",serif;color:#1f140c}
+.category-intro p:last-child{margin:0;color:#4a3525;font-size:16px;line-height:1.6}
+.category-grid{margin:16px 0 0;padding:0;list-style:none;font-size:0}
+.category-grid>li{display:inline-block;width:49%;margin:0 2% 14px 0;padding:0;vertical-align:top;border:0;font-size:17px;box-sizing:border-box}
+.category-grid>li:nth-child(even){margin-right:0}
+.category-card{display:block;box-sizing:border-box;min-height:190px;padding:16px 16px 14px;border:1px solid #8a6338;color:#f0d9b2;text-decoration:none;background:#171a1e;position:relative}
+.category-card:focus,.category-card:hover{border-color:#c79655}
+.category-card-kicker{display:block;margin-bottom:10px;font:11px Arial,sans-serif;letter-spacing:2px;color:#ffbf6d}
+.category-card-title{display:block;margin:0 0 12px;font:700 18px/1.35 Georgia,"Times New Roman",serif;color:#ffe2b1}
+.category-card-summary{display:block;padding-bottom:38px;color:#d8c9ad;font:15px/1.55 Georgia,"Times New Roman",serif}
+.category-card-open{display:block;position:absolute;left:16px;right:16px;bottom:14px;padding-top:10px;border-top:1px solid rgba(212,168,101,.28);font:11px Arial,sans-serif;letter-spacing:1.5px;color:#ffbf6d}
+.tone-bronze{background:#241a13}
+.tone-wine{background:#321714}
+.tone-teal{background:#132a2c}
+.category-pagination{margin:18px 0 8px;padding-top:12px;border-top:1px solid #4e463c;color:#b2a58f;font-size:14px}
+body.paper .category-intro{background:#e1c89e;color:#24180f;border-color:#8e6840}
+body.paper .category-intro h2{color:#21150d}
+body.paper .category-intro p:last-child{color:#4a3525}
+body.paper .category-card{border-color:#8e6840}
+body.paper .category-card-title{color:#fff0cf}
+body.paper .category-card-summary{color:#eadcc3}
+body.paper .category-card-kicker,body.paper .category-card-open{color:#ffc477}
+body.large .category-card-title{font-size:21px}
+body.large .category-card-summary{font-size:18px}
+body.small .category-card-title{font-size:16px}
+body.small .category-card-summary{font-size:14px}
+@media(max-width:560px){.category-grid>li{display:block;width:100%;margin:0 0 14px}.category-card{min-height:0}.category-card-summary{padding-bottom:42px}.category-intro{padding:22px 16px}.category-intro h2{font-size:23px}}
