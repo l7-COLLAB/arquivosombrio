@@ -2901,11 +2901,17 @@ function renderizarFontesBlocoDossie(dados) {
 
         if (typeof item === "string") {
 
-            const linkDireto =
-                criarLinkExternoDossie(
-                    item,
-                    item
-                );
+            // A fonte pode vir da caixa administrativa com título + URL.
+            // Somente a URL absoluta deve virar href; texto livre nunca é rota.
+            const textoFonte = item.trim();
+            const urlFonte = textoFonte.match(/https?:\/\/[^\s]+/i);
+            const endereco = urlFonte ? urlFonte[0] : "";
+            const tituloFonte = endereco
+                ? textoFonte.slice(0, urlFonte.index).replace(/[\s—–|:]+$/, "").trim()
+                : textoFonte;
+            const linkDireto = endereco
+                ? criarLinkExternoDossie(endereco, tituloFonte || endereco)
+                : null;
 
             if (linkDireto) {
                 linha.appendChild(linkDireto);
