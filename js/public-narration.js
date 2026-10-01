@@ -290,7 +290,7 @@
       </button>
       <button type="button" class="public-narration-expand" aria-expanded="false" aria-label="Mostrar controles de áudio" hidden>Controles <span aria-hidden="true">⌄</span></button>
       <div class="public-narration-progress" hidden>
-        <div><span data-narration-status>Preparando áudio...</span><span data-narration-count></span></div>
+        <div><span data-narration-status>Carregando áudio...</span><span data-narration-count></span></div>
         <div class="public-narration-timeline"><span data-elapsed>0:00</span><input data-seek type="range" min="0" max="1000" value="0" aria-label="Selecionar ponto da narração" disabled><span data-duration>--:--</span></div><div class="public-narration-controls"><button type="button" data-back disabled aria-label="Voltar 10 segundos">↶ 10s</button><button type="button" data-forward disabled aria-label="Avançar 10 segundos">10s ↷</button><label>Velocidade <select data-speed aria-label="Velocidade"><option value="0.85">0,85×</option><option value="1" selected>1×</option><option value="1.15">1,15×</option><option value="1.3">1,3×</option></select></label></div>
       </div>`;
     if(ctx.type==="dossie"&&target.classList?.contains("case-reader-toolbar")) target.appendChild(box); else target.insertAdjacentElement("afterend",box);
@@ -367,7 +367,7 @@
           index=0;
           setState("ready");
           status.textContent="Narração concluída";
-          count.textContent=chunks.length+" trechos";
+          count.textContent=chunks.length===1?"Áudio completo":chunks.length+" trechos";
         }
       });
       audio.addEventListener("error",()=>{
@@ -383,7 +383,7 @@
       bindAudio();
       if(!playStartedLogged){playStartedLogged=true;logMetric(ctx,"play_started",{chunks:chunks?.length||0});}
       status.textContent="Reproduzindo";
-      count.textContent="Trecho "+(index+1)+" de "+chunks.length;
+      count.textContent=chunks.length===1?"Áudio completo":"Trecho "+(index+1)+" de "+chunks.length;
       setState("playing");
       audio.play().catch(()=>{
         setState("ready");
@@ -420,7 +420,11 @@
           return await callNarration({...body,_busyRetry:retry+1});
         }
       }
-      if(!r.ok)throw new Error(data.error||"Não foi possível preparar a narração.");
+      if(!r.ok){
+        const err=new Error(data?.code==="AUDIO_UNAVAILABLE"?"Áudio ainda indisponível para este arquivo.":(data.error||"Não foi possível carregar a narração."));
+        err.code=data?.code||"";
+        throw err;
+      }
       return data;
     }
 
@@ -448,18 +452,18 @@
       button.disabled=true;
       expand.hidden=false;
       showControls(false);
-      status.textContent="Preparando o primeiro trecho...";
+      status.textContent="Localizando áudio aprovado...";
       count.textContent="";
       try{
         const manifest=await callNarration({action:"manifest"});
         await logMetric(ctx,"manifest_ready",{total_chunks:Number(manifest.total_chunks||0)});
         totalChunks=Number(manifest.total_chunks||0);
-        if(!totalChunks)throw new Error("Nenhum trecho de áudio foi preparado.");
+        if(!totalChunks)throw new Error("Áudio aprovado indisponível.");
         await getChunk(0);
         chunks=Array.from({length:totalChunks},(_,i)=>({index:i,url:chunkCache.get(i)||null}));
         index=0;
         status.textContent="Áudio pronto";
-        count.textContent=totalChunks+" trechos";
+        count.textContent=totalChunks===1?"Áudio completo":totalChunks+" trechos";
         prefetchNext();
       }finally{
         loading=false;
