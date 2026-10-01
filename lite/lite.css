@@ -52,3 +52,18 @@ body.small .category-card-summary{font-size:14px}
 body.paper .lite-audio{background:#e9dec9;border-color:#87765e;color:#30251a}
 body.paper .lite-audio h3{color:#3b2b1f}
 body.paper .lite-audio p[data-lite-audio-state]{color:#6e5b47}
+
+/* Conta Lite unificada com a conta principal. Compatível com Safari antigo. */
+.lite-account{margin:20px 0;padding:18px;border:1px solid #66523f;background:#121416}
+.lite-account h2{margin:4px 0 10px;color:#e4d2b5}
+.lite-account>p{margin:8px 0 14px}
+.lite-account form{margin-top:16px}
+.lite-account label{display:block;margin:12px 0 5px;font:12px/1.4 Arial,sans-serif;letter-spacing:.5px;color:#b59d7f}
+.lite-account input{display:block;box-sizing:border-box;width:100%;margin:0 0 8px}
+.lite-account button{margin-top:8px}
+.lite-account [data-lite-login-state]{min-height:20px;margin:9px 0 0;color:#c8ad88;font:13px/1.5 Arial,sans-serif}
+.lite-account [data-lite-account-current]{margin:16px 0;padding:14px;border:1px solid #745a40;background:#1b1816}
+.lite-account [data-lite-account-current] strong{color:#e7d8be}
+.lite-account [data-lite-account-email]{font:13px Arial,sans-serif;color:#b9a58a;word-break:break-word}
+body.paper .lite-account,body.paper .lite-account [data-lite-account-current]{background:#e9dec9;color:#30251a;border-color:#87765e}
+body.paper .lite-account h2,body.paper .lite-account [data-lite-account-current] strong{color:#3b2b1f}
