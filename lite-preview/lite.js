@@ -2,8 +2,73 @@
 var root=document.documentElement,body=document.body;
 function get(k){try{return localStorage.getItem("as-lite-"+k)}catch(e){return null}}
 function put(k,v){try{localStorage.setItem("as-lite-"+k,v)}catch(e){}}
+var AUTH_URL="https://iuhotznurbyujzbyhizf.supabase.co/auth/v1";
+var AUTH_KEY="sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj";
+var AUTH_STORAGE="sb-iuhotznurbyujzbyhizf-auth-token";
+function authRead(){try{var raw=localStorage.getItem(AUTH_STORAGE);return raw?JSON.parse(raw):null}catch(e){return null}}
+function authWrite(v){try{if(v)localStorage.setItem(AUTH_STORAGE,JSON.stringify(v));else localStorage.removeItem(AUTH_STORAGE)}catch(e){}}
+function authRequest(method,url,body,token,done){
+  try{
+    var x=new XMLHttpRequest();x.open(method,url,true);
+    x.setRequestHeader("apikey",AUTH_KEY);
+    x.setRequestHeader("Content-Type","application/json");
+    if(token)x.setRequestHeader("Authorization","Bearer "+token);
+    x.onreadystatechange=function(){if(x.readyState!==4)return;var data={};try{data=JSON.parse(x.responseText||"{}")}catch(e){}done(x.status,data)};
+    x.send(body?JSON.stringify(body):null);
+  }catch(e){done(0,{message:"Não foi possível acessar a conta."})}
+}
+function authUser(session,done){
+  if(!session||!session.access_token){done(null);return}
+  authRequest("GET",AUTH_URL+"/user",null,session.access_token,function(status,data){
+    if(status>=200&&status<300){session.user=data;authWrite(session);done(data);return}
+    if(session.refresh_token){
+      authRequest("POST",AUTH_URL+"/token?grant_type=refresh_token",{refresh_token:session.refresh_token},null,function(rs,rd){
+        if(rs>=200&&rs<300&&rd.access_token){authWrite(rd);done(rd.user||null)}else{authWrite(null);done(null)}
+      });
+    }else{authWrite(null);done(null)}
+  });
+}
+function authName(user){
+  if(!user)return"";
+  var m=user.user_metadata||{};
+  return m.display_name||m.name||m.full_name||user.email||"Conta";
+}
+function initAccount(){
+  var links=document.querySelectorAll("[data-lite-account-link]");
+  authUser(authRead(),function(user){
+    for(var i=0;i<links.length;i++)if(user)links[i].innerHTML="Conta · "+authName(user);
+    var current=document.querySelector("[data-lite-account-current]"),form=document.querySelector("[data-lite-login]");
+    if(current){
+      if(user){
+        current.hidden=false;if(form)form.style.display="none";
+        var n=current.querySelector("[data-lite-account-name]"),e=current.querySelector("[data-lite-account-email]");
+        if(n)n.innerHTML=authName(user);if(e)e.innerHTML=user.email||"";
+      }else{current.hidden=true;if(form)form.style.display="block"}
+    }
+  });
+  var form=document.querySelector("[data-lite-login]");
+  if(form)form.onsubmit=function(ev){
+    if(ev&&ev.preventDefault)ev.preventDefault();
+    var email=form.elements.email.value.replace(/^\s+|\s+$/g,""),password=form.elements.password.value;
+    var state=form.querySelector("[data-lite-login-state]"),btn=form.querySelector('button[type="submit"]');
+    if(state)state.innerHTML="Entrando...";if(btn)btn.disabled=true;
+    authRequest("POST",AUTH_URL+"/token?grant_type=password",{email:email,password:password},null,function(status,data){
+      if(btn)btn.disabled=false;
+      if(status>=200&&status<300&&data.access_token){
+        authWrite(data);if(state)state.innerHTML="Conta conectada.";setTimeout(function(){location.reload()},250);
+      }else if(state)state.innerHTML=(data&&((data.error_description)||(data.msg)||(data.message)))||"E-mail ou senha inválidos.";
+    });
+    return false;
+  };
+  var logout=document.querySelector("[data-lite-logout]");
+  if(logout)logout.onclick=function(){
+    var s=authRead();authWrite(null);
+    if(s&&s.access_token)authRequest("POST",AUTH_URL+"/logout",{},s.access_token,function(){location.reload()});else location.reload();
+    return false;
+  };
+}
 function apply(){var theme=get("theme")==="paper"?"paper":"dark",size=get("size")||"normal";body.className=body.className.replace(/\b(paper|large|small)\b/g,"").replace(/\s+/g," ")+" "+(theme==="paper"?"paper ":"")+(size==="large"?"large":size==="small"?"small":"");}
-function init(){apply();var buttons=document.querySelectorAll("[data-lite-setting]");for(var i=0;i<buttons.length;i++){buttons[i].onclick=function(){var k=this.getAttribute("data-lite-setting");if(k==="theme")put("theme",get("theme")==="paper"?"dark":"paper");if(k==="size"){var s=get("size")||"normal";put("size",s==="normal"?"large":s==="large"?"small":"normal")}apply();return false;};}
+function init(){apply();initAccount();var buttons=document.querySelectorAll("[data-lite-setting]");for(var i=0;i<buttons.length;i++){buttons[i].onclick=function(){var k=this.getAttribute("data-lite-setting");if(k==="theme")put("theme",get("theme")==="paper"?"dark":"paper");if(k==="size"){var s=get("size")||"normal";put("size",s==="normal"?"large":s==="large"?"small":"normal")}apply();return false;};}
 var save=document.getElementById("save-reading"),resume=document.getElementById("resume-reading");
 if(save){save.onclick=function(){put("last",location.href.split("#")[0]);this.innerHTML="Leitura marcada";return false;};}
 if(resume){var last=get("last");if(last&&last.indexOf(location.origin+location.pathname.split("/").slice(0,-1).join("/"))===0){resume.href=last;resume.style.display="inline-block";}}
