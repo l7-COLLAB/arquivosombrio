@@ -69,7 +69,7 @@ jobs:
           cp ../lite-source/lite/dist/lendas*.html lite-preview/
           cp ../lite-source/lite/dist/creepypastas*.html lite-preview/
           cp ../lite-source/lite/dist/biblioteca*.html ../lite-source/lite/dist/novels.html lite-preview/
-          cp ../lite-source/lite/dist/pesquisa.html ../lite-source/lite/dist/lite.js lite-preview/
+          cp ../lite-source/lite/dist/pesquisa.html ../lite-source/lite/dist/lite.js ../lite-source/lite/dist/lite.css lite-preview/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A -- lite-preview
