@@ -198,7 +198,7 @@ def build(src,out):
         '<meta name="robots" content="noindex,nofollow"><title>Histórias do Arquivo · Lite</title>'
         '<link rel="stylesheet" href="lite.css"><link rel="stylesheet" href="lite-novels.css"><link rel="stylesheet" href="lite-index.css?v=1"><link rel="stylesheet" href="lite-pulp.css?v=1">'
         '</head><body class="lite-index"><div class="wrap"><header><p class="eyebrow">ARQUIVO 02 · LITERATURA</p><h1>HISTÓRIAS DO ARQUIVO</h1><p>Toda ficção esconde um universo.</p></header>'
-        '<nav><a href="index.html">Início</a><a href="biblioteca.html">Biblioteca</a></nav><div class="reader-tools"><button type="button" data-lite-setting="theme">Papel / Escuro</button> <button type="button" data-lite-setting="size">Tamanho da letra</button></div><main><div class="index-intro"><p class="eyebrow">ARQUIVO SOMBRIO · LITERATURA</p><h2>Acervo literário</h2><p>Escolha uma obra e consulte seus capítulos.</p></div>'
+        '<nav><a href="index.html">Início</a><a href="biblioteca.html">Biblioteca</a><a href="conta.html" data-lite-account-link>Conta</a></nav><div class="reader-tools"><button type="button" data-lite-setting="theme">Papel / Escuro</button> <button type="button" data-lite-setting="size">Tamanho da letra</button></div><main><div class="index-intro"><p class="eyebrow">ARQUIVO SOMBRIO · LITERATURA</p><h2>Acervo literário</h2><p>Escolha uma obra e consulte seus capítulos.</p></div>'
         '<p class="notice">Edição de leitura leve para dispositivos antigos.</p><ul class="index-grid">'+literary_list+'</ul></main><script src="lite.js?v=8"></script><footer><p><a href="index.html">← Voltar ao acervo</a></p></footer></div></body></html>'
     )
     library_list=literary_list
