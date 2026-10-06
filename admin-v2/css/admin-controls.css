@@ -1,0 +1,56 @@
+/* Shared administrative controls: documentary palette and mono typography. */
+:where(body) button,
+:where(body) input[type="button"],
+:where(body) input[type="submit"],
+:where(body) input[type="file"]::file-selector-button {
+  box-sizing:border-box;
+  min-height:38px;
+  padding:9px 12px;
+  border:1px solid #3a3028;
+  border-radius:2px;
+  background:#0f0c0a;
+  color:#d8cfc2;
+  font:600 11px/1.4 "IBM Plex Mono",monospace;
+  letter-spacing:.035em;
+  cursor:pointer;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+body button {font-family:"IBM Plex Mono",monospace;line-height:1.4;}
+body button:focus-visible,
+body input[type="file"]:focus-visible {
+  outline:2px solid #b59d7a;
+  outline-offset:3px;
+}
+body button:disabled {opacity:.45;cursor:not-allowed;}
+:where(body) button:not(:disabled):hover {border-color:#972329;background:#21100f;color:#eee5d7;}
+/* The narration workspace previously injected brown controls with inherited serif text. */
+body .kokoro-simple button,
+body .voice-studio-actions button,
+body .admin-home-feature-actions button {
+  min-height:40px;
+  padding:10px 14px;
+  border:1px solid #3a3028;
+  border-radius:2px;
+  background:#0f0c0a;
+  color:#d8cfc2;
+  font:600 11px/1.4 "IBM Plex Mono",monospace;
+  letter-spacing:.035em;
+}
+body .kokoro-simple button:not(:disabled):hover,
+body .voice-studio-actions button:not(:disabled):hover,
+body .admin-home-feature-actions button:not(:disabled):hover {
+  background:#21100f;border-color:#972329;color:#eee5d7;
+}
+body .kokoro-simple [data-manual-approve],
+body .kokoro-simple [data-approve-full-kokoro] {
+  background:#651010;border-color:#8d2023;color:#eee5d7;
+}
+body .kokoro-simple .admin-audio-delete {
+  background:#190c0b;border-color:#7a2727;color:#e2b1a9;
+}
+body .kokoro-simple .admin-audio-delete:not(:disabled):hover {
+  background:#431010;border-color:#b54848;color:#fff;
+}
+body .kokoro-simple input[type="file"] {max-width:100%;color:#bdb1a3;font:11px/1.5 "IBM Plex Mono",monospace;}
+body .kokoro-simple input[type="file"]::file-selector-button {margin-right:10px;}
