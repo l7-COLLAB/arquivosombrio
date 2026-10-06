@@ -85,3 +85,18 @@ body button:not(:disabled):active {filter:brightness(.88);}
   .admin-reader-diagnostic button {width:100%;}
   .admin-hub-stats {grid-template-columns:repeat(2,minmax(0,1fr));}
 }
+
+.admin-hub-campaign{margin:24px 0;padding:18px;border:1px solid #3a3028;background:#0f0c0a;}
+.share-link-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.share-link-filters label{display:grid;gap:7px;font:11px/1.5 "IBM Plex Mono",monospace;color:#a99f92;}
+.share-link-filters input,.share-link-filters select{width:100%;min-width:0;}
+.share-link-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:16px 0;}
+.share-link-actions span{font:11px/1.6 "IBM Plex Mono",monospace;color:#a99f92;}
+.share-link-list{display:grid;gap:12px;max-height:600px;overflow:auto;}
+.share-link-list article{padding:14px;border:1px solid #3a3028;}
+.share-link-list article>div:first-child{display:grid;gap:5px;margin-bottom:10px;}
+.share-link-list small{color:#988c7c;font:10px/1.5 "IBM Plex Mono",monospace;}
+.share-link-row-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.share-link-row-actions input{flex:1 1 220px;min-width:0;}
+.share-link-row-actions a{padding:10px 12px;border:1px solid #3a3028;color:#d8cfc2;font:11px/1.4 "IBM Plex Mono",monospace;}
+@media(max-width:600px){.share-link-filters{grid-template-columns:1fr;}.share-link-row-actions input{flex-basis:100%;width:100%;}}
