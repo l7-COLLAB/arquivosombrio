@@ -7013,3 +7013,34 @@ body.menu-arquivo-aberto { overflow: hidden; }
         display: none;
     }
 }
+
+/* Base fallback for personal archive controls without a dedicated visual rule. */
+:where(.meu-arquivo-page) button {
+    border:1px solid var(--arquivo-border-strong, #3a3028);
+    border-radius:2px;
+    background:#0f0c0a;
+    color:var(--arquivo-text, #d8cfc2);
+    padding:10px 14px;
+    min-height:40px;
+    cursor:pointer;
+}
+.meu-arquivo-page button:focus-visible {
+    outline:2px solid #b59d7a;
+    outline-offset:3px;
+}
+.meu-arquivo-page button:disabled {
+    opacity:.45;
+    cursor:not-allowed;
+}
+.historico-clear {
+    display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+    padding:10px 14px;min-height:40px;
+    border:1px solid var(--arquivo-border-strong, #3a3028);border-radius:2px;
+    background:#0f0c0a;color:var(--arquivo-text, #d8cfc2);
+    font:500 11px/1.4 "DM Mono",monospace;letter-spacing:.05em;text-transform:uppercase;
+}
+.historico-clear:not(:disabled):hover {
+    border-color:#8d2023;background:#21100f;color:#eee5d7;
+}
+.historico-heading {display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+@media(max-width:560px){.historico-clear {width:100%;}}
