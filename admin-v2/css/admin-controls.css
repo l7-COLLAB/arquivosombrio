@@ -1,8 +1,8 @@
 /* Shared administrative controls: documentary palette and mono typography. */
-:where(body) button,
-:where(body) input[type="button"],
-:where(body) input[type="submit"],
-:where(body) input[type="file"]::file-selector-button {
+body button,
+body input[type="button"],
+body input[type="submit"],
+body input[type="file"]::file-selector-button {
   box-sizing:border-box;
   min-height:38px;
   padding:9px 12px;
@@ -23,7 +23,7 @@ body input[type="file"]:focus-visible {
   outline-offset:3px;
 }
 body button:disabled {opacity:.45;cursor:not-allowed;}
-:where(body) button:not(:disabled):hover {border-color:#972329;background:#21100f;color:#eee5d7;}
+body button:not(:disabled):hover {border-color:#972329;background:#21100f;color:#eee5d7;}
 /* The narration workspace previously injected brown controls with inherited serif text. */
 body .kokoro-simple button,
 body .voice-studio-actions button,
@@ -54,3 +54,34 @@ body .kokoro-simple .admin-audio-delete:not(:disabled):hover {
 }
 body .kokoro-simple input[type="file"] {max-width:100%;color:#bdb1a3;font:11px/1.5 "IBM Plex Mono",monospace;}
 body .kokoro-simple input[type="file"]::file-selector-button {margin-right:10px;}
+
+/* Common controls in every V2 module, including dynamically inserted forms. */
+body select,
+body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="button"]):not([type="submit"]):not([type="hidden"]),
+body textarea {
+  max-width:100%;border:1px solid #3a3028;border-radius:2px;
+  background:#0b0908;color:#d8cfc2;padding:10px 12px;
+  font:12px/1.5 "IBM Plex Mono",monospace;
+}
+body select {min-height:40px;cursor:pointer;color-scheme:dark;}
+body select option {background:#0b0908;color:#d8cfc2;}
+body :is(select,input,textarea):focus-visible {outline:2px solid #b59d7a;outline-offset:2px;}
+body :is(select,input,textarea):disabled {opacity:.5;cursor:not-allowed;}
+body input[type="file"]::file-selector-button {background:#0f0c0a;color:#d8cfc2;border:1px solid #3a3028;}
+body button:not(:disabled):active {filter:brightness(.88);}
+.admin-reader-diagnostic {padding:18px;border:1px solid #3a3028;background:#0f0c0a;margin:18px 0;}
+.admin-reader-diagnostic h3 {margin:0 0 8px;color:#eee5d7;}
+.admin-reader-diagnostic p {color:#a99f92;line-height:1.7;}
+.admin-reader-diagnostic [data-reader-diagnostic-status] {display:block;margin-top:10px;font:11px/1.6 "IBM Plex Mono",monospace;color:#a99f92;}
+.admin-reader-period {margin:18px 0;}
+.admin-reader-period label {display:flex;flex-wrap:wrap;align-items:center;gap:10px;font:11px "IBM Plex Mono",monospace;color:#bdb1a3;}
+.admin-hub-stats {display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:20px 0;}
+.admin-hub-stats>div {display:grid;gap:8px;padding:16px;border:1px solid #3a3028;background:#120e0c;}
+.admin-hub-stats strong {font:700 25px "Cormorant Garamond",Georgia,serif;color:#eee5d7;}
+.admin-hub-stats span {font:10px/1.6 "IBM Plex Mono",monospace;color:#988c7c;}
+@media(max-width:600px){
+  body .kokoro-toolbar {gap:8px;}
+  body .kokoro-toolbar button {flex:1 1 145px;}
+  .admin-reader-diagnostic button {width:100%;}
+  .admin-hub-stats {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
