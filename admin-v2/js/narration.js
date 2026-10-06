@@ -446,7 +446,7 @@ async function openSimpleKokoro(panel,dossier){
       manualUpload.textContent="Enviar novo MP3";
       manualStatus.textContent="Selecione o novo MP3, envie e ouça a prévia. Clique em Aprovar e publicar para substituir o áudio público. O áudio atual permanece disponível até a aprovação.";
       manualFile.scrollIntoView({block:"center",behavior:"smooth"});manualFile.click();
-    };const remove=document.createElement("button");remove.type="button";remove.textContent="Excluir áudio";remove.style.borderColor="#b54848";
+    };const remove=document.createElement("button");remove.type="button";remove.textContent="Excluir áudio";remove.className="admin-audio-delete";
     remove.onclick=async()=>{
       if(!confirm("Excluir definitivamente este MP3? Se estiver publicado, ele deixará de ser usado pelo player. Outro áudio aprovado poderá ficar disponível. Esta ação não pode ser desfeita."))return;
       remove.disabled=true;
