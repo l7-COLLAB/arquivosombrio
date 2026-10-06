@@ -8004,7 +8004,7 @@ const pericias =
 
                         : casos.map(caso => `
 
-                            <div class="admin-item" data-admin-title="${escaparHTML(caso.titulo || "")}" data-admin-date="${escaparHTML(caso.created_at || "")}">
+                            <div class="admin-item" data-admin-tracking="${escaparHTML(caso.acompanhamento_status || "normal")}" data-admin-title="${escaparHTML(caso.titulo || "")}" data-admin-date="${escaparHTML(caso.created_at || "")}">
 
                                 <div>
 
@@ -8016,7 +8016,7 @@ const pericias =
                                     </strong>
 
                                     <small>
-                                        ${escaparHTML(
+                                        ${caso.acompanhamento_status === "ativo" ? '<span class="tracking-badge">EM ACOMPANHAMENTO</span> ' : ""}${escaparHTML(
                                             caso.categoria ||
                                             "Sem categoria"
                                         )}${caso.status_publicacao === "rascunho" ? " · <strong style=\"color:#c96a5a;\">RASCUNHO</strong>" : caso.status_publicacao === "agendado" ? " · <strong>AGENDADO</strong>" : ""}
@@ -9734,6 +9734,7 @@ async function salvarCasoAdmin(
 
 
         const caso = {
+            acompanhamento_status: formulario.querySelector("[data-tracking-status]")?.value || casoExistente?.acompanhamento_status || "normal",
 
             titulo:
                 document
@@ -12119,6 +12120,10 @@ function aplicarOrganizacaoAdmin() {
 
     const busca = normalizarBuscaAdmin(document.getElementById("admin-content-search")?.value);
     const ordem = document.getElementById("admin-content-order")?.value || "recentes";
+    const trackingFilter=document.getElementById("admin-content-tracking");
+    const trackingApplicable=["dossies","diarios"].includes(secaoAdminAtiva);
+    if(trackingFilter){trackingFilter.closest("label").hidden=!trackingApplicable;if(!trackingApplicable)trackingFilter.value="";}
+    const tracking=trackingApplicable?(trackingFilter?.value||""):"";
     const lista = secao.querySelector(".admin-list");
     const itens = [...(lista?.querySelectorAll(".admin-item") || [])];
 
@@ -12132,7 +12137,7 @@ function aplicarOrganizacaoAdmin() {
 
     let visiveis = 0;
     itens.forEach(item => {
-        const corresponde = !busca || normalizarBuscaAdmin(item.dataset.adminTitle || item.textContent).includes(busca);
+        const corresponde = (!tracking || item.dataset.adminTracking===tracking) && (!busca || normalizarBuscaAdmin(item.dataset.adminTitle || item.textContent).includes(busca));
         item.hidden = !corresponde;
         if (corresponde) visiveis += 1;
     });
@@ -12153,6 +12158,7 @@ function inicializarOrganizacaoAdmin() {
 
     if (!painel.dataset.organizacaoAtiva) {
         painel.dataset.organizacaoAtiva = "true";
+        if(!document.getElementById("admin-content-tracking")){const label=document.createElement("label");label.innerHTML='<span>Acompanhamento</span><select id="admin-content-tracking"><option value="">Todos</option><option value="ativo">Em acompanhamento</option><option value="encerrado">Encerrados</option></select>';document.getElementById("admin-content-order")?.after(label);label.querySelector("select").addEventListener("change",aplicarOrganizacaoAdmin);}
         painel.querySelectorAll("[data-admin-tab]").forEach(botao => {
             botao.addEventListener("click", () => {
                 secaoAdminAtiva = botao.dataset.adminTab;
@@ -12256,10 +12262,10 @@ function injetarCasosDiariosNoGerenciador() {
                 : casosDiariosAdmin.length === 0
                     ? '<p class="admin-empty">Nenhum caso diário cadastrado.</p>'
                     : casosDiariosAdmin.map(caso => `
-                        <div class="admin-item" data-admin-title="${escaparHTML(caso.titulo || "")}" data-admin-date="${escaparHTML(caso.created_at || caso.publicado_em || "")}">
+                        <div class="admin-item" data-admin-tracking="${escaparHTML(caso.acompanhamento_status || "normal")}" data-admin-title="${escaparHTML(caso.titulo || "")}" data-admin-date="${escaparHTML(caso.created_at || caso.publicado_em || "")}">
                             <div>
                                 <strong>${escaparHTML(caso.titulo || "Caso sem título")}</strong>
-                                <small>${escaparHTML(caso.status_publicacao === "publicado" ? "PUBLICADO" : caso.status_publicacao === "agendado" ? "AGENDADO" : "RASCUNHO")}${caso.status_publicacao === "agendado" && caso._scheduled_for ? " · " + escaparHTML(formatarAgendamentoLegivel(caso._scheduled_for)) : ""} · ${escaparHTML(caso.categoria || "GARIMPO SOMBRIO")}</small>
+                                <small>${caso.acompanhamento_status === "ativo" ? '<span class="tracking-badge">EM ACOMPANHAMENTO</span> ' : ""}${escaparHTML(caso.status_publicacao === "publicado" ? "PUBLICADO" : caso.status_publicacao === "agendado" ? "AGENDADO" : "RASCUNHO")}${caso.status_publicacao === "agendado" && caso._scheduled_for ? " · " + escaparHTML(formatarAgendamentoLegivel(caso._scheduled_for)) : ""} · ${escaparHTML(caso.categoria || "GARIMPO SOMBRIO")}</small>
                             </div>
                             <div class="admin-item-buttons">
                                 <button type="button" data-edit-daily-case="${escaparHTML(caso.id)}">Editar</button>
@@ -12819,6 +12825,7 @@ function destacarFontesCasoDiario(mensagem) {
 
 async function salvarCasoDiario(evento, existente = null) {
     evento.preventDefault();
+    const formulario = evento.currentTarget;
     const botao = evento.currentTarget.querySelector('button[type="submit"]');
     const original = botao.innerHTML;
     botao.disabled = true;
@@ -12860,6 +12867,7 @@ async function salvarCasoDiario(evento, existente = null) {
 
         const agora = new Date().toISOString();
         const registro = {
+            acompanhamento_status: formulario.querySelector("[data-tracking-status]")?.value || existente?.acompanhamento_status || "normal",
             titulo,
             slug: existente?.slug || `${slugCasoDiario(titulo)}-${Date.now().toString(36)}`,
             categoria: document.getElementById("daily-category").value,

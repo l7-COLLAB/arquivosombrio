@@ -4,7 +4,7 @@ Implementado em 06/10/2026 para Dossiês e Garimpo Sombrio. A classificação n�
 
 ## Operação na V2
 
-1. Entre em **Conteúdos e edição**, escolha **Dossiês** ou **Garimpo Sombrio** e crie ou abra um arquivo.
+1. Na V2, abra **Conteúdos**, escolha **Dossiês** ou **Garimpo Sombrio** e crie ou edite um arquivo. A integração está nos formulários legados utilizados pela central e nos editores modulares. Ao criar, escolha a classificação e salve; reabra a edição para adicionar atualizações.
 2. Na seção **CASO EM ACOMPANHAMENTO**, escolha **Caso em acompanhamento** e clique em **Aplicar classificação**. Essa ação salva diretamente a classificação, sem publicar um rascunho.
 3. Use **Adicionar atualização**. Informe data real, título opcional, natureza da informação, texto e fontes. Links são opcionais. **Salvar atualização** grava o registro separado do relato original. Em um arquivo já publicado, a atualização fica pública imediatamente.
 4. Use **Editar** para corrigir texto, data, fontes ou prioridade. A data organiza a linha do tempo do mais recente para o mais antigo. A prioridade organiza registros do mesmo dia, em ordem crescente.
@@ -18,6 +18,7 @@ Implementado em 06/10/2026 para Dossiês e Garimpo Sombrio. A classificação n�
 - `case_updates`: atualização individual, com FK para um único arquivo, data, título, texto, natureza editorial, lista estruturada de fontes, prioridade, datas técnicas e exclusão lógica.
 - `case_update_history`: cópias anteriores às edições e exclusões. Sem UPDATE/DELETE concedidos pela API.
 - `case_tracking_summary`: view com `security_invoker`, que respeita a RLS do arquivo e calcula última data editorial e modificação técnica. Publicação original permanece em `published_at`/`publicado_em`.
+- O formulário ativo usa `obterClienteAdminIsolado()`, preservando sua sessão autenticada; não cria uma sessão paralela.
 - RLS reutiliza `is_arquivo_sombrio_admin()`, baseado em `app_metadata`. Usuários comuns e anônimos só leem atualizações não excluídas de arquivos publicados.
 - Triggers de validação executam com privilégios do chamador, validam datas, limites e fontes HTTP/HTTPS, preservam snapshots e gerenciam a data de encerramento.
 - Textos e títulos são escapados na renderização. Não é aceito HTML nas atualizações.

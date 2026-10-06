@@ -54,9 +54,10 @@ if(!sessao||!verificationFresh||verifiedUser!==String(sessao.user.id)){
 }
 set("Carregando os dados do arquivo...");
 await load("os dados editoriais","./legacy/data/caso.js?v=clone-1",12000);
-await load("o painel principal","./legacy/js/script.js?v=garimpo-json-fields-fix-20260930",20000);
+await load("o painel principal","./legacy/js/script.js?v=case-tracking-20261006-2",20000);
 await load("os controles V2 de Dossiês","./legacy/js/v2-dossie.js?v=agendado-4",12000);
 await load("os controles V2 do Garimpo","./legacy/js/v2-garimpo.js?v=agendado-4",12000);
+await load("o acompanhamento editorial","./js/case-tracking-legacy.js?v=case-tracking-20261006-2",12000);
 set("Carregando o editor literário...");
 await load("o editor de lendas e creepypastas","./legacy/js/admin-literario.js?v=lite-handoff-1",12000);
 await load("o módulo de Novels","./js/novels-hub.js?v=novels-1",12000);
@@ -65,7 +66,7 @@ await load("o módulo de narração","./js/narration.js?v=delete-audio-20261006"
 set("Preparando o Arquivo Voz...");
 await load("o Arquivo Voz","./js/voice-studio.js?v=audio-metrics-1",12000);
 set("Preparando a central administrativa...");
-await load("os links de divulgação","./js/share-links.js?v=20261006-1",12000);
+await load("os links de divulgação","./js/share-links.js?v=case-tracking-20261006-2",12000);
 await load("a central administrativa","./legacy/js/admin-dashboard.js?v=share-links-20261006",12000);
 if(typeof abrirPainelAdmin!=="function")throw new Error("A função principal do painel não ficou disponível.");
 var metrics=document.createElement("section");metrics.className="admin-hub-card admin-v2-registrations";metrics.innerHTML='<h2>CADASTROS DE LEITORES</h2><p id="registration-summary">Consultando...</p><button id="registration-reload">Atualizar</button>';async function updateRegistrations(){var el=document.getElementById("registration-summary");try{var result=await obterClienteAdminIsolado().functions.invoke("admin-secure-rpc",{body:{operation:"admin_registration_metrics",args:{}}});if(result.error)throw result.error;var d=result.data?.data;if(!d)throw Error("Resposta administrativa inválida");el.textContent="Total: "+d.total+" | Confirmadas: "+d.confirmed+" | Pendentes: "+d.pending+" | Últimos 7 dias: "+d.last_7_days;}catch(e){el.textContent="Erro ao consultar: "+e.message;}}metrics.querySelector("#registration-reload").onclick=updateRegistrations;set("Montando a Central de Arquivo...");
