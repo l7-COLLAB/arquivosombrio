@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';import {createRequire} from 'node:module';
+const {JSDOM}=createRequire(import.meta.url)('jsdom');
+const {window:w}=new JSDOM('<div class="archive-search-panel"><input id="busca-casos"></div><select id="ordenar-casos"><option value="az">A–Z</option></select><strong id="contador-casos"></strong><div id="grid-casos"></div>',{runScripts:'outside-only'});
+let records=[{id:1,titulo:'Antigo',acompanhamento_status:'normal'}];w.obterTodosCasos=()=>records;w.criarCardCaso=c=>'<article data-id="'+c.id+'">'+c.titulo+'</article>';
+const source=fs.readFileSync('js/filtros.js','utf8').split('async function tokenCaptcha()')[0];w.eval(source+'inicializarFiltrosArquivo();})();');
+const filter=w.document.getElementById('filtro-acompanhamento');filter.value='ativo';filter.dispatchEvent(new w.Event('change'));assert.equal(w.document.getElementById('contador-casos').textContent,'0');
+records=[...records,{id:2,titulo:'Beta',acompanhamento_status:'ativo'},{id:3,titulo:'Alpha',acompanhamento_status:'ativo'},{id:4,titulo:'Encerrado',acompanhamento_status:'encerrado'}];
+w.document.dispatchEvent(new w.Event('arquivo:casos-carregados'));
+assert.equal(filter.value,'ativo');assert.equal(w.document.getElementById('contador-casos').textContent,'2');assert.equal(w.document.querySelector('article').textContent,'Alpha');
+w.document.getElementById('busca-casos').value='Beta';w.document.getElementById('busca-casos').dispatchEvent(new w.Event('input'));assert.equal(w.document.querySelector('article').dataset.id,'2');
+console.log('PASS: filtro, nome, ordem e contador após carregamento assíncrono.');

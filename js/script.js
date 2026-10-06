@@ -4146,6 +4146,7 @@ function carregarCasos() {
         casos
             .map(criarCardCaso)
             .join("");
+    document.dispatchEvent(new Event("arquivo:casos-carregados"));
 }
 
 
