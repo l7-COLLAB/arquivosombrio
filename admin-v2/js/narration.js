@@ -435,10 +435,10 @@ async function openSimpleKokoro(panel,dossier){
   host.querySelector(".kokoro-manual-import").append(drafts);
   async function loadManualDrafts(){
     const state=drafts.querySelector("[data-drafts-state]"),list=drafts.querySelector("[data-drafts-list]");
-    const q=await c.from("arquivo_voz_manual_imports").select("id,status,created_at,file_size,original_filename,duration_seconds").eq("project_id",project.id).in("status",["review","approved"]).order("created_at",{ascending:false}).limit(20);
+    const q=await c.from("arquivo_voz_manual_imports").select("id,status,created_at,file_size,original_filename,duration_seconds").eq("project_id",project.id).in("status",["review","approved","rejected"]).order("created_at",{ascending:false}).limit(20);
     if(q.error){state.textContent="Não foi possível recuperar os rascunhos: "+q.error.message;return;}
     list.replaceChildren();state.textContent=q.data?.length?"Selecione um áudio para ouvir e avaliar, inclusive pelo celular.":"Nenhum áudio rascunho disponível.";
-    for(const item of q.data||[]){const row=document.createElement("div");row.style.cssText="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0";const label=document.createElement("span");label.textContent=(dossier.titulo||dossier.title||"Arquivo")+" · "+(item.original_filename||"MP3 importado")+" · "+(item.duration_seconds?Math.floor(item.duration_seconds/60)+":"+String(Math.floor(item.duration_seconds%60)).padStart(2,"0"):"Duração não registrada")+" · "+new Date(item.created_at).toLocaleString("pt-BR")+" · "+(item.status==="approved"?"Publicado":"Rascunho privado");const listen=document.createElement("button");listen.type="button";listen.textContent="Ouvir rascunho";listen.onclick=()=>{manualId=item.id;manualPreview.disabled=false;manualPreview.click();};const choose=document.createElement("button");choose.type="button";choose.textContent="Selecionar para avaliação";choose.onclick=()=>{manualId=item.id;manualPreview.disabled=false;manualApprove.disabled=item.status!=="review";manualReject.disabled=item.status!=="review";manualStatus.textContent=item.status==="review"?"Rascunho selecionado. Ouça antes de aprovar.":"Áudio já publicado.";};const replace=document.createElement("button");replace.type="button";replace.textContent="Substituir áudio";replace.onclick=()=>{
+    for(const item of q.data||[]){const row=document.createElement("div");row.style.cssText="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0";const label=document.createElement("span");label.textContent=(dossier.titulo||dossier.title||"Arquivo")+" · "+(item.original_filename||"MP3 importado")+" · "+(item.duration_seconds?Math.floor(item.duration_seconds/60)+":"+String(Math.floor(item.duration_seconds%60)).padStart(2,"0"):"Duração não registrada")+" · "+new Date(item.created_at).toLocaleString("pt-BR")+" · "+(item.status==="approved"?"Publicado":item.status==="rejected"?"Rejeitado":"Rascunho privado");const listen=document.createElement("button");listen.type="button";listen.textContent="Ouvir rascunho";listen.onclick=()=>{manualId=item.id;manualPreview.disabled=false;manualPreview.click();};const choose=document.createElement("button");choose.type="button";choose.textContent="Selecionar para avaliação";choose.onclick=()=>{manualId=item.id;manualPreview.disabled=false;manualApprove.disabled=item.status!=="review";manualReject.disabled=item.status!=="review";manualStatus.textContent=item.status==="review"?"Rascunho selecionado. Ouça antes de aprovar.":"Áudio já publicado.";};const replace=document.createElement("button");replace.type="button";replace.textContent="Substituir áudio";replace.onclick=()=>{
       manualId=null;manualFile.value="";
       manualApprove.disabled=true;manualReject.disabled=true;manualPreview.disabled=true;
       manualPlayer.pause();manualPlayer.removeAttribute("src");manualPlayer.load();manualPlayer.style.display="none";
@@ -446,7 +446,18 @@ async function openSimpleKokoro(panel,dossier){
       manualUpload.textContent="Enviar novo MP3";
       manualStatus.textContent="Selecione o novo MP3, envie e ouça a prévia. Clique em Aprovar e publicar para substituir o áudio público. O áudio atual permanece disponível até a aprovação.";
       manualFile.scrollIntoView({block:"center",behavior:"smooth"});manualFile.click();
-    };row.append(label,listen,choose,replace);list.append(row);}
+    };const remove=document.createElement("button");remove.type="button";remove.textContent="Excluir áudio";remove.style.borderColor="#b54848";
+    remove.onclick=async()=>{
+      if(!confirm("Excluir definitivamente este MP3? Se estiver publicado, ele deixará de ser usado pelo player. Outro áudio aprovado poderá ficar disponível. Esta ação não pode ser desfeita."))return;
+      remove.disabled=true;
+      try{
+        await manualApi("delete",{upload_id:item.id});
+        if(manualId===item.id){manualId=null;manualApprove.disabled=true;manualReject.disabled=true;manualPreview.disabled=true;manualPlayer.pause();manualPlayer.removeAttribute("src");manualPlayer.load();manualPlayer.style.display="none";}
+        await loadManualDrafts();manualStatus.textContent="Áudio excluído.";
+      }catch(e){manualStatus.textContent="Falha na exclusão: "+(e.message||e);remove.disabled=false;}
+    };
+    if(item.status==="rejected"){listen.disabled=true;choose.disabled=true;}
+    row.append(label,listen,choose,replace,remove);list.append(row);}
   }
   loadManualDrafts();
   async function manualApi(action,extra={}){
