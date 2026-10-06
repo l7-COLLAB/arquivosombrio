@@ -91,9 +91,10 @@ if(audioBox){
   }catch(e){}
 }
 var q=document.getElementById("lite-query"),form=document.getElementById("lite-search"),rows=document.querySelectorAll("[data-search]"),category=document.getElementById("lite-category"),sort=document.getElementById("lite-sort");
-function filter(){if(!rows.length)return;var term=q?q.value.toLowerCase():"",cat=category?category.value:"all";for(var i=0;i<rows.length;i++){var row=rows[i],show=(cat==="all"||row.getAttribute("data-category")===cat)&&row.getAttribute("data-search").indexOf(term)!==-1;row.style.display=show?"":"none";}}
-if(form)form.onsubmit=function(){filter();return false};if(q)q.onkeyup=filter;if(category)category.onchange=filter;
+function filter(){if(!rows.length)return;var term=q?q.value.toLowerCase():"",cat=category?category.value:"all",tracking=document.getElementById("lite-tracking"),status=tracking?tracking.value:"";for(var i=0;i<rows.length;i++){var row=rows[i],show=(!status||row.getAttribute("data-tracking")===status)&&(cat==="all"||row.getAttribute("data-category")===cat)&&row.getAttribute("data-search").indexOf(term)!==-1;row.style.display=show?"":"none";}}
+if(form)form.onsubmit=function(){filter();return false};if(q)q.onkeyup=filter;if(category)category.onchange=filter;var tracking=document.getElementById("lite-tracking");if(tracking)tracking.onchange=filter;
 if(sort)sort.onchange=function(){var list=document.getElementById("search-results");if(!list)return;var arr=[];for(var i=0;i<rows.length;i++)arr.push(rows[i]);arr.sort(function(a,b){var k=sort.value,va=a.getAttribute("data-"+k)||"",vb=b.getAttribute("data-"+k)||"";return k==="date"?(va<vb?1:va>vb?-1:0):(va<vb?-1:va>vb?1:0)});for(var j=0;j<arr.length;j++)list.appendChild(arr[j]);filter();};
 }
 if(document.addEventListener)document.addEventListener("DOMContentLoaded",init,false);else window.onload=init;
 })();
+(function(){var list=document.querySelector('.category-grid');if(!list)return;var control=document.createElement('label');control.appendChild(document.createTextNode('Acompanhamento '));var select=document.createElement('select');select.innerHTML='<option value="">Todos</option><option value="ativo">Em acompanhamento</option><option value="encerrado">Encerrados</option>';control.appendChild(select);list.parentNode.insertBefore(control,list);select.onchange=function(){var rows=list.getElementsByTagName('li');for(var i=0;i<rows.length;i++)rows[i].style.display=!select.value||rows[i].getAttribute('data-tracking')===select.value?'':'none';};})();

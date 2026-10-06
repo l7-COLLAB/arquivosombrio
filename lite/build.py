@@ -82,8 +82,37 @@ def text_blocks(value):
                 p="\n".join(lines[1:]).strip()
             if p: parts.append("<p>"+esc(p).replace("\n","<br>")+"</p>")
     return "".join(parts)
+TRACKING_NOTICE="Este é um caso em desenvolvimento. Informações deste arquivo podem ser atualizadas conforme novas evidências, resultados periciais, decisões judiciais ou informações oficiais sejam divulgadas."
+TRACKING_KINDS={"fato_confirmado":"Fato confirmado","testemunho":"Testemunho","hipotese":"Hipótese","controversia":"Controvérsia","nao_confirmado":"Informação não confirmada","correcao":"Correção editorial"}
+def tracking_badge(item):
+    return '<span class="tracking-badge">EM ACOMPANHAMENTO</span>' if item.get("acompanhamento_status")=="ativo" else ''
+def tracking_header(item):
+    result=tracking_badge(item)
+    if item.get("acompanhamento_status")=="ativo": result+='<p class="tracking-notice">'+TRACKING_NOTICE+'</p>'
+    if item.get("acompanhamento_status")=="encerrado" and item.get("acompanhamento_encerrado_em"):result+='<p>Acompanhamento encerrado em '+esc(item["acompanhamento_encerrado_em"][:10])+'</p>'
+    updates=item.get("case_updates",[])
+    if updates:
+        latest=max(u["update_date"] for u in updates)
+        if latest>item["publicado_em"][:10]:result+='<p>Publicado em '+esc(item["publicado_em"][:10])+'<br>Atualizado em '+esc(latest)+'</p>'
+    return result
+def tracking_timeline(item):
+    updates=item.get("case_updates",[])
+    if not updates:return ''
+    result='<section class="case-updates"><h3>ATUALIZAÇÕES DO CASO</h3><ol>'
+    for u in sorted(updates,key=lambda u:(-int(u["update_date"].replace("-","")),u.get("position",0),u["id"])):
+        result+='<li><time>'+esc(u["update_date"])+'</time><p>'+esc(TRACKING_KINDS.get(u["information_type"],"Atualização editorial"))+'</p><h4>'+esc(u.get("title"))+'</h4><p>'+esc(u["body"]).replace("\n","<br>")+'</p>'
+        if u.get("sources"):
+            result+='<p>Fontes desta atualização</p><ul>'
+            for source in u["sources"]:
+                url=source.get("url","")
+                label=esc(source["titulo"])
+                result+='<li>'+('<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+label+'</a>' if re.match(r'^https?://[^\s]+$',url,re.I) else label)+'</li>'
+            result+='</ul>'
+        result+='</li>'
+    return result+'</ol></section>'
 def item_page(item, previous=None, following=None, related=None):
     body='<p><a href="../index.html">← Acervo</a></p><h2>'+esc(item["titulo"])+'</h2>'
+    body+=tracking_header(item)
     if item.get("resumo"): body+='<p>'+esc(item["resumo"])+'</p>'
     rendered=text_blocks(item["conteudo"])
     headings=re.findall(r'<h3 class="internal-heading">(.*?)</h3>',rendered)
@@ -107,6 +136,7 @@ def item_page(item, previous=None, following=None, related=None):
         if entries:
             if not isinstance(entries,list): raise ValueError(key+" deve ser lista")
             body+='<section id="'+key+'"><h3>'+label+'</h3><ul>'+''.join('<li>'+esc(x)+'</li>' for x in entries)+'</ul></section>'
+    body+=tracking_timeline(item)
     if item.get("obra_id"):
         body += '<p class="chapter-nav">'
         if previous: body += '<a href="'+esc(previous["slug"])+'.html">← Anterior</a> '
@@ -124,9 +154,9 @@ def category_cards_page(category, label, entries, page, total):
     for index, item in enumerate(subset, start + 1):
         tone = CARD_TONES[(index - 1) % len(CARD_TONES)]
         cards.append(
-            '<li><a class="category-card '+tone+'" href="'+esc(item["path"])+'">'
+            '<li data-tracking="'+esc(item.get("acompanhamento_status","normal"))+'"><a class="category-card '+tone+'" href="'+esc(item["path"])+'">'
             '<span class="category-card-kicker">'+str(index).zfill(2)+' / '+esc(label.upper())+'</span>'
-            '<strong class="category-card-title">'+esc(item["title"])+'</strong>'
+            +tracking_badge(item)+'<strong class="category-card-title">'+esc(item["title"])+'</strong>'
             '<span class="category-card-summary">'+esc(item["summary"])+'</span>'
             '<span class="category-card-open">'+esc(meta["cta"])+'</span>'
             '</a></li>'
@@ -225,7 +255,8 @@ def build(src,out):
                 {
                     "title":x["titulo"],
                     "path":"arquivos/"+x["slug"]+".html",
-                    "summary":x.get("resumo") or CATEGORY_META[category]["fallback"]
+                    "summary":x.get("resumo") or CATEGORY_META[category]["fallback"],
+                    "acompanhamento_status":x.get("acompanhamento_status","normal")
                 }
                 for x in groups[category]
             ]
@@ -247,7 +278,9 @@ def build(src,out):
     search_entries.sort(key=lambda x:x[0].casefold())
     controls='<h2>Pesquisar no acervo</h2><form id="lite-search" action="pesquisa.html"><label for="lite-query">Título ou resumo</label> <input id="lite-query" type="search" placeholder="Pesquisar"> <button type="submit">Buscar</button></form>'
     controls+='<p><label for="lite-category">Categoria</label> <select id="lite-category"><option value="all">Todas</option>'+"".join('<option value="'+key+'">'+esc(label)+"</option>" for key,label in CATEGORIES.items())+'</select> <label for="lite-sort">Ordenar</label> <select id="lite-sort"><option value="title">A-Z</option><option value="date">Mais recentes</option></select></p>'
-    results='<ul id="search-results">'+"".join('<li data-search="'+esc((title+" "+summary).lower())+'" data-category="'+esc(category)+'" data-title="'+esc(title.lower())+'" data-date="'+esc(date)+'"><a href="'+esc(path)+'">'+esc(title)+"</a> · "+esc(CATEGORIES[category])+"</li>" for title,path,category,date,summary in search_entries)+"</ul>"
+    statuses={"arquivos/"+x["slug"]+".html":x for x in items}
+    controls+='<p><label for="lite-tracking">Acompanhamento</label> <select id="lite-tracking"><option value="">Todos</option><option value="ativo">Em acompanhamento</option><option value="encerrado">Encerrados</option></select></p>'
+    results='<ul id="search-results">' +"".join('<li data-tracking="'+esc(statuses.get(path,{}).get("acompanhamento_status","normal"))+'" data-search="'+esc((title+" "+summary).lower())+'" data-category="'+esc(category)+'" data-title="'+esc(title.lower())+'" data-date="'+esc(date)+'"><a href="'+esc(path)+'">'+esc(title)+"</a> "+tracking_badge(statuses.get(path,{}))+" · "+esc(CATEGORIES[category])+"</li>" for title,path,category,date,summary in search_entries)+"</ul>"
     pages["pesquisa.html"]=layout("Pesquisa",controls+results)
     account_body=(
         '<section class="lite-account"><p class="eyebrow">CONTA ARQUIVO SOMBRIO</p><h2>Acesso Lite</h2>'

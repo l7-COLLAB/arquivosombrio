@@ -67,3 +67,5 @@ body.paper .lite-audio p[data-lite-audio-state]{color:#6e5b47}
 .lite-account [data-lite-account-email]{font:13px Arial,sans-serif;color:#b9a58a;word-break:break-word}
 body.paper .lite-account,body.paper .lite-account [data-lite-account-current]{background:#e9dec9;color:#30251a;border-color:#87765e}
 body.paper .lite-account h2,body.paper .lite-account [data-lite-account-current] strong{color:#3b2b1f}
+
+.tracking-badge{display:inline-block;border:1px solid #79513d;padding:5px 8px;margin:5px 0;font:11px monospace;color:#af9980;background:#211912}.tracking-notice{border-left:3px solid #79513d;padding:12px;line-height:1.7}.case-updates{margin:24px 0;word-wrap:break-word}.case-updates ol{padding-left:22px}.case-updates li{margin:18px 0}.case-updates time{font:12px monospace}

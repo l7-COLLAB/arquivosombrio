@@ -66,6 +66,11 @@ def record(row,category,prefix,date,body,extra=None):
  return out
 def run():
  results=[]
+ tracking={}
+ updates=fetch("case_updates",["id","dossier_id","daily_id","update_date","title","body","information_type","sources","position"],{"deleted_at":"is.null"})
+ for u in updates:
+  k=("Casos",u["dossier_id"]) if u.get("dossier_id") else ("casos_diarios",u["daily_id"])
+  tracking.setdefault(k,[]).append(u)
  configs=[
  ("Casos","dossies","dossie","published_at",["historia"],{"evidencias":"evidencias"},["id","slug","titulo","resumo","historia","evidencias","status_publicacao","published_at","created_at"]),
  ("casos_diarios","garimpo","garimpo","publicado_em",["conteudo","situacao_oficial"],{"cronologia":"cronologia","evidencias":"evidencias","fontes":"fontes"},["id","slug","titulo","resumo","conteudo","situacao_oficial","cronologia","evidencias","fontes","status_publicacao","publicado_em","created_at"]),
@@ -73,9 +78,15 @@ def run():
  ("lendas","lendas","lenda","publicado_em",["introducao","conteudo","contexto_historico","conclusao_arquivo"],{"cronologia":"cronologia","fontes":"fontes"},["id","slug","titulo","resumo","introducao","conteudo","contexto_historico","conclusao_arquivo","cronologia","fontes","status_publicacao","publicado_em","created_at"]),
  ("creepypastas","creepypastas","creepypasta","publicado_em",["introducao","conteudo","nota_editorial"],{"fontes":"fontes"},["id","slug","titulo","resumo","introducao","conteudo","nota_editorial","fontes","status_publicacao","publicado_em","created_at"])]
  for table,category,prefix,date,body,extra,fields in configs:
+  if table in ("Casos","casos_diarios"):fields += ["acompanhamento_status","acompanhamento_encerrado_em"]
   for row in fetch(table,fields,{"status_publicacao":"eq.publicado"}):
    item=record(row,category,prefix,date,body,extra)
-   if item:results.append(item)
+   if item:
+    if table in ("Casos","casos_diarios"):
+     item["acompanhamento_status"]=row.get("acompanhamento_status","normal")
+     item["acompanhamento_encerrado_em"]=row.get("acompanhamento_encerrado_em")
+     item["case_updates"]=sorted(tracking.get((table,row["id"]),[]),key=lambda u:(-int(u["update_date"].replace("-","")),u["position"],u["id"]))
+    results.append(item)
  novels=fetch("novels",["id","slug","titulo","sinopse","autor_nome","status_publicacao","publicado_em","created_at"],{"status_publicacao":"eq.publicado"})
  for novel in novels:
   if not public(novel,"publicado_em"):continue
