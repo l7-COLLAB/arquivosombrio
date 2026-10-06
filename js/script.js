@@ -4053,7 +4053,7 @@ function criarCardCaso(caso) {
                 </div>
 
                 <div class="card-content">
-
+                    ${window.ArquivoTracking?.badge(caso)||""}
                     <span class="badge category">
                         ${escaparHTML(
                             caso.categoria ||
@@ -12814,6 +12814,7 @@ function criarPreviaCasoDiario(caso) {
         <a class="home-daily-card" href="garimpo.html?id=${encodeURIComponent(caso.id)}">
             <img src="${escaparHTML(caso.imagem_capa || "")}" alt="" loading="lazy">
             <div>
+                ${window.ArquivoTracking?.badge(caso)||""}
                 <small>${escaparHTML(caso.categoria || "GARIMPO SOMBRIO")}</small>
                 <strong>${escaparHTML(caso.titulo || "Registro sem título")}</strong>
                 <p>${escaparHTML(caso.resumo || "Abrir registro do arquivo.")}</p>
@@ -12850,6 +12851,7 @@ async function carregarGarimpoPublico() {
                 : '<p class="home-preview-loading">Nenhum caso curto publicado.</p>';
         }
 
+        if (grade) instalarFiltrosAcompanhamentoGarimpo(grade,casos);
         if (detalhe) {
             const id = new URLSearchParams(location.search).get("id");
             const caso = casos.find(item => String(item.id) === String(id));
@@ -12947,7 +12949,7 @@ function renderizarSituacaoGarimpo(valor, status) {
         </section>`;
 }
 
-function renderizarDetalheCasoDiario(container, caso) {
+async function renderizarDetalheCasoDiario(container, caso) {
     const fontes = Array.isArray(caso.fontes) ? caso.fontes : [];
     const imagens = Array.isArray(caso.imagens) ? caso.imagens : [];
     container.innerHTML = `
@@ -12979,6 +12981,7 @@ function renderizarDetalheCasoDiario(container, caso) {
         modificadoEm: caso.updated_at,
         createdAt: caso.created_at
     });
+    await window.ArquivoTracking?.mount({client:await obterClienteSupabase(),type:"garimpo",record:caso,headerRoot:container.querySelector(".daily-reader header"),bodyRoot:container.querySelector(".daily-reader")});
 }
 
 /* RASCUNHOS AUTOMÁTICOS — ADMINISTRAÇÃO */
@@ -13277,7 +13280,7 @@ async function carregarPainelEditorialHome() {
                 .eq("id", 1)
                 .maybeSingle(),
             cliente.from("casos_diarios")
-                .select("id,titulo,categoria,imagem_capa,publicado_em,status_publicacao")
+                .select("id,titulo,categoria,imagem_capa,publicado_em,status_publicacao,acompanhamento_status")
                 .eq("status_publicacao", "publicado")
                 .order("publicado_em", { ascending: false })
                 .limit(1)
@@ -13301,7 +13304,7 @@ async function carregarPainelEditorialHome() {
         let dossieResp;
         if (manualActive) {
             dossieResp = await cliente.from("Casos")
-                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,published_at,updated_at")
+                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,published_at,updated_at,acompanhamento_status")
                 .eq("id", config.dossier_id)
                 .eq("status_publicacao", "publicado")
                 .maybeSingle();
@@ -13309,7 +13312,7 @@ async function carregarPainelEditorialHome() {
 
         if (!dossieResp?.data) {
             dossieResp = await cliente.from("Casos")
-                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,published_at,updated_at")
+                .select("id,titulo,categoria,imagem,local,ano,status_publicacao,published_at,updated_at,acompanhamento_status")
                 .eq("status_publicacao", "publicado")
                 .order("published_at", { ascending: false, nullsFirst: false })
                 .limit(1)
@@ -13324,13 +13327,13 @@ async function carregarPainelEditorialHome() {
             const titulo = document.getElementById("hero-editorial-dossie-title");
             if (titulo) titulo.textContent = dossie.titulo || "Abrir dossiê";
             const meta = document.getElementById("hero-editorial-dossie-meta");
-            if (meta) meta.textContent = [dossie.categoria || "Dossiê", dossie.local || "", dossie.ano || ""].filter(Boolean).join(" · ");
+            if (meta) meta.textContent = [dossie.acompanhamento_status==="ativo"?"EM ACOMPANHAMENTO":"",dossie.categoria || "Dossiê", dossie.local || "", dossie.ano || ""].filter(Boolean).join(" · ");
         }
 
         const garimpo = garimpoResp.data;
         if (garimpo) {
             const link = document.getElementById("hero-editorial-garimpo");
-            if (link) link.href = "garimpo.html?id=" + encodeURIComponent(garimpo.id);
+            if (link) {link.href = "garimpo.html?id=" + encodeURIComponent(garimpo.id);if(garimpo.acompanhamento_status==="ativo")link.insertAdjacentHTML("beforeend",window.ArquivoTracking.badge(garimpo));}
             const titulo = document.getElementById("hero-editorial-garimpo-title");
             if (titulo) titulo.textContent = garimpo.titulo || "Abrir registro diário";
         }
@@ -13348,3 +13351,12 @@ async function carregarPainelEditorialHome() {
 }
 
 document.addEventListener("DOMContentLoaded", carregarPainelEditorialHome);
+
+function instalarFiltrosAcompanhamentoGarimpo(grade,casos){
+ document.getElementById("garimpo-tracking-filters")?.remove();
+ const bar=document.createElement("div");bar.id="garimpo-tracking-filters";bar.className="tracking-filter";
+ bar.innerHTML='<label>Nome <input type="search" data-name></label> <label>Acompanhamento <select data-tracking><option value="">Todos</option><option value="ativo">Em acompanhamento</option><option value="encerrado">Encerrados</option></select></label> <label>Ordenar <select data-order><option value="recent">Publicados recentemente</option><option value="az">A–Z</option><option value="za">Z–A</option></select></label>';
+ grade.before(bar);const render=()=>{const name=bar.querySelector('[data-name]').value.toLocaleLowerCase('pt-BR'),status=bar.querySelector('[data-tracking]').value,order=bar.querySelector('[data-order]').value;
+ const rows=casos.filter(r=>(!status||r.acompanhamento_status===status)&&String(r.titulo).toLocaleLowerCase('pt-BR').includes(name));
+ rows.sort((a,b)=>order==='recent'?Date.parse(b.publicado_em||b.created_at)-Date.parse(a.publicado_em||a.created_at):a.titulo.localeCompare(b.titulo,'pt-BR')*(order==='za'?-1:1));grade.innerHTML=rows.map(criarPreviaCasoDiario).join('')||'<p>Nenhum arquivo corresponde aos filtros.</p>';};bar.oninput=render;bar.onchange=render;
+}

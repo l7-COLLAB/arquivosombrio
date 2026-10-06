@@ -487,7 +487,7 @@ async function carregarCaso() {
     }
 
 
-    renderizarCaso(
+    await renderizarCaso(
         caso
     );
 }
@@ -550,7 +550,7 @@ function exibirAvisoRascunho(caso) {
 }
 
 
-function renderizarCaso(caso) {
+async function renderizarCaso(caso) {
 
     exibirAvisoRascunho(caso);
     preencherCabecalhoDocumental(caso);
@@ -643,10 +643,6 @@ function renderizarCaso(caso) {
      * definitivo foi colocado no documento. Assim, paginação, sumário e
      * marcações também reconhecem os blocos narrativos.
      */
-    inicializarModoLeitura(caso.id);
-
-    restaurarSublinhadosLeitura(caso.id);
-
     if (window.ArquivoSEO) {
         window.ArquivoSEO.aplicar({
             id: caso.id,
@@ -655,7 +651,7 @@ function renderizarCaso(caso) {
             imagem: caso.imagem || caso.imagem_capa,
             caminho: "caso.html",
             secao: caso.categoria || "Dossiês",
-            publicadoEm: caso.publicado_em || caso.created_at,
+            publicadoEm: caso.published_at || caso.publicado_em,
             modificadoEm: caso.updated_at,
             createdAt: caso.created_at
         });
@@ -663,6 +659,11 @@ function renderizarCaso(caso) {
         document.title =
             `${caso.titulo} — Arquivo Sombrio`;
     }
+
+    await window.ArquivoTracking?.mount({client:await obterClienteSupabaseCaso(),type:"dossie",record:caso,headerRoot:document.querySelector(".case-hero-content"),bodyRoot:document.querySelector(".case-main-content")});
+    inicializarModoLeitura(caso.id);
+
+    restaurarSublinhadosLeitura(caso.id);
 
     finalizarAberturaDoCaso();
 }

@@ -1,0 +1,4 @@
+
+supabase/.temp/
+tests/node_modules/
+**/__pycache__/

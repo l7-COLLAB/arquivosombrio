@@ -55,6 +55,12 @@ jobs:
           test -f lite-source/lite/dist/lendas.html
           test -f lite-source/lite/dist/creepypastas.html
           test -f lite-source/lite/dist/conta.html
+      - name: Atualizar sitemap dos arquivos vivos
+        working-directory: site
+        env:
+          SUPABASE_URL: https://iuhotznurbyujzbyhizf.supabase.co
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.LITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: python3 scripts/update_case_sitemap.py
       - name: Atualizar apenas a pasta lite-preview do site
         working-directory: site
         run: |
@@ -73,7 +79,7 @@ jobs:
           cp ../lite-source/lite/dist/pesquisa.html ../lite-source/lite/dist/conta.html ../lite-source/lite/dist/lite.js ../lite-source/lite/dist/lite.css lite-preview/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- lite-preview
+          git add -A -- lite-preview sitemap.xml
           if git diff --cached --quiet; then
             echo "Previa sem alteracoes"
           else

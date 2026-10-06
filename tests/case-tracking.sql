@@ -1,0 +1,51 @@
+begin;
+create temporary table tracking_test_ids(dossier_id bigint,daily_id bigint,update_id uuid);
+grant select,insert,update on tracking_test_ids to authenticated,anon;
+select set_config('request.jwt.claims','{"role":"authenticated","app_metadata":{"role":"admin"}}',true);
+set local role authenticated;
+with d as (insert into public."Casos"(id,titulo,status_publicacao,acompanhamento_status) overriding system value values(-610062331,'TESTE TRANSACIONAL ACOMPANHAMENTO','rascunho','ativo') returning id), g as (insert into public.casos_diarios(id,titulo,slug,resumo,conteudo,status_publicacao,acompanhamento_status) overriding system value values(-610062331,'TESTE TRANSACIONAL GARIMPO','teste-transacional-acompanhamento','Resumo transacional de teste','Conteúdo transacional de teste, revertido integralmente após as verificações.','rascunho','ativo') returning id) insert into tracking_test_ids select d.id,g.id,null from d,g;
+insert into public.case_updates(daily_id,update_date,body,information_type,sources) select daily_id,'2026-10-02','Hipótese de teste','hipotese','[{"titulo":"Fonte de teste","url":"https://example.org/teste"}]' from tracking_test_ids;
+update tracking_test_ids set update_id=(select id from public.case_updates where daily_id=tracking_test_ids.daily_id);
+insert into public.case_updates(daily_id,update_date,title,body,position) select daily_id,'2026-10-06','Mais recente','Texto de teste',2 from tracking_test_ids;
+insert into public.case_updates(dossier_id,update_date,body) select dossier_id,'2026-10-03','Texto de teste de dossiê' from tracking_test_ids;
+update public.case_updates set body='Hipótese corrigida',sources='[{"titulo":"Fonte corrigida","url":""}]',update_date='2026-10-04',position=1 where id=(select update_id from tracking_test_ids);
+do $$begin
+ if (select count(*) from public.case_update_history where update_id=(select update_id from tracking_test_ids))<>1 then raise exception 'Histórico não preservado'; end if;
+ if (select latest_update_date from public.case_tracking_summary where content_type='garimpo' and id=(select daily_id from tracking_test_ids))<>'2026-10-06'::date then raise exception 'Última atualização incorreta'; end if;
+ begin insert into public.case_updates(daily_id,update_date,body) select daily_id,current_date+30,'Inválido' from tracking_test_ids;raise exception 'Data futura aceita';exception when raise_exception then if sqlerrm='Data futura aceita' then raise;end if;end;
+ begin insert into public.case_updates(daily_id,update_date,body,sources) select daily_id,'2026-10-01','Inválido','[{"titulo":"Fonte","url":"javascript:alert(1)"}]' from tracking_test_ids;raise exception 'URL insegura aceita';exception when raise_exception then if sqlerrm='URL insegura aceita' then raise;end if;end;
+end $$;
+reset role;
+select set_config('request.jwt.claims','{"role":"anon"}',true);
+set local role anon;
+do $$begin
+ if exists(select 1 from public.case_updates where daily_id=(select daily_id from tracking_test_ids)) then raise exception 'Rascunho exposto';end if;
+ if exists(select 1 from public.case_tracking_summary where id=(select daily_id from tracking_test_ids) and content_type='garimpo') then raise exception 'Resumo privado exposto';end if;
+ begin insert into public.case_updates(daily_id,update_date,body) select daily_id,'2026-10-01','Intrusão' from tracking_test_ids;raise exception 'Anônimo escreveu';exception when insufficient_privilege then null;end;
+end $$;
+reset role;
+select set_config('request.jwt.claims','{"role":"authenticated","app_metadata":{"role":"admin"}}',true);
+set local role authenticated;
+update public.casos_diarios set status_publicacao='publicado',publicado_em='2026-10-01T12:00:00Z' where id=(select daily_id from tracking_test_ids);
+update public."Casos" set status_publicacao='publicado' where id=(select dossier_id from tracking_test_ids);
+update public.case_updates set deleted_at=now() where id=(select update_id from tracking_test_ids);
+update public.casos_diarios set acompanhamento_status='encerrado' where id=(select daily_id from tracking_test_ids);
+do $$begin
+ if (select count(*) from public.case_update_history where update_id=(select update_id from tracking_test_ids))<>2 then raise exception 'Exclusão sem histórico';end if;
+ if (select acompanhamento_encerrado_em from public.casos_diarios where id=(select daily_id from tracking_test_ids)) is null then raise exception 'Encerramento sem data';end if;
+ if (select publicado_em from public.casos_diarios where id=(select daily_id from tracking_test_ids))<>'2026-10-01T12:00:00Z'::timestamptz then raise exception 'Publicação alterada';end if;
+end $$;
+reset role;
+select set_config('request.jwt.claims','{"role":"authenticated","user_metadata":{"role":"admin"}}',true);
+set local role authenticated;
+do $$begin
+ if (select count(*) from public.case_updates where daily_id=(select daily_id from tracking_test_ids))<>1 then raise exception 'Exclusão pública incorreta';end if;
+ update public.case_updates set body='Intrusão' where daily_id=(select daily_id from tracking_test_ids);
+ if found then raise exception 'Usuário comum editou';end if;
+ begin delete from public.case_updates where daily_id=(select daily_id from tracking_test_ids);raise exception 'Exclusão física permitida';exception when insufficient_privilege then null;end;
+ begin perform count(*) from public.case_update_history;exception when insufficient_privilege then null;end;
+ if exists(select 1 from public.case_update_history) then raise exception 'Histórico privado exposto';end if;
+end $$;
+reset role;
+rollback;
+select 'OK: CRUD, publicação, fontes, datas, histórico, encerramento e RLS; fixtures revertidas.' result;
