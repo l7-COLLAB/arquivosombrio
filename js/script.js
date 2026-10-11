@@ -12812,7 +12812,7 @@ async function removerCasoDiario(id) {
 
 function criarPreviaCasoDiario(caso) {
     return `
-        <a class="home-daily-card" href="garimpo.html?id=${encodeURIComponent(caso.id)}">
+        <a class="home-daily-card" href="garimpo.html?id=${encodeURIComponent(caso.id)}&entry=20261011">
             <img src="${escaparHTML(caso.imagem_capa || "")}" alt="" loading="lazy">
             <div>
                 ${window.ArquivoTracking?.badge(caso)||""}
