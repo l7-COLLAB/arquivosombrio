@@ -12829,13 +12829,22 @@ async function carregarGarimpoPublico() {
     const detalhe = document.getElementById("daily-case-detail");
     if (!feed && !grade && !detalhe) return;
 
+    const id = detalhe ? new URLSearchParams(location.search).get("id") : null;
+
     try {
         const cliente = await obterClienteSupabase();
-        const { data, error } = await cliente
+        let consulta = cliente
             .from("casos_diarios")
             .select("*")
-            .eq("status_publicacao", "publicado")
-            .order("publicado_em", { ascending: false });
+            .eq("status_publicacao", "publicado");
+
+        if (id) {
+            consulta = consulta.eq("id", id).limit(1);
+        } else {
+            consulta = consulta.order("publicado_em", { ascending: false });
+        }
+
+        const { data, error } = await consulta;
         if (error) throw error;
 
         const casos = Array.isArray(data) ? data : [];
@@ -12846,16 +12855,23 @@ async function carregarGarimpoPublico() {
                 : '<p class="home-preview-loading">O primeiro registro será arquivado em breve.</p>';
         }
 
-        if (grade) {
+        if (grade && !id) {
             grade.innerHTML = casos.length
                 ? casos.map(criarPreviaCasoDiario).join("")
                 : '<p class="home-preview-loading">Nenhum caso curto publicado.</p>';
+            instalarFiltrosAcompanhamentoGarimpo(grade, casos);
         }
 
-        if (grade) instalarFiltrosAcompanhamentoGarimpo(grade,casos);
         if (detalhe) {
-            const id = new URLSearchParams(location.search).get("id");
             const caso = casos.find(item => String(item.id) === String(id));
+            if (id && !caso) {
+                detalhe.hidden = false;
+                detalhe.innerHTML = '<p class="home-preview-loading">Arquivo não encontrado ou ainda não publicado.</p>';
+                document.getElementById("daily-archive-list")?.setAttribute("hidden", "");
+                document.body.classList.add("garimpo-detail-mode");
+                return;
+            }
+
             detalhe.hidden = !caso;
             document.getElementById("daily-archive-list")?.toggleAttribute("hidden", Boolean(caso));
             document.body.classList.toggle("garimpo-detail-mode", Boolean(caso));
@@ -12863,8 +12879,17 @@ async function carregarGarimpoPublico() {
         }
     } catch (erro) {
         console.error("Não foi possível abrir o Garimpo Sombrio.", erro);
+        const mensagem = id
+            ? "Não foi possível carregar este arquivo agora. Tente novamente mais tarde."
+            : "Registros temporariamente indisponíveis.";
         if (feed) feed.innerHTML = '<p class="home-preview-loading">Registros temporariamente indisponíveis.</p>';
-        if (grade) grade.innerHTML = '<p class="home-preview-loading">Registros temporariamente indisponíveis.</p>';
+        if (grade && !id) grade.innerHTML = '<p class="home-preview-loading">Registros temporariamente indisponíveis.</p>';
+        if (detalhe && id) {
+            detalhe.hidden = false;
+            detalhe.innerHTML = '<p class="home-preview-loading">' + mensagem + '</p>';
+            document.getElementById("daily-archive-list")?.setAttribute("hidden", "");
+            document.body.classList.add("garimpo-detail-mode");
+        }
     }
 }
 
