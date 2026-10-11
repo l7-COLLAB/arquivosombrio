@@ -3388,3 +3388,20 @@ body[data-reader-theme="papel"] .dossie-summary {
         background-image: none;
     }
 }
+
+/* Identificadores editoriais dos dossiês usam a tipografia da hero. */
+.case-page .case-classification-row span,
+.case-page .case-eyebrow,
+.case-page .case-photo-label,
+.case-page .dossier-document-register dt,
+.case-page .case-meta small,
+.case-page .case-block-heading > span,
+.case-page .case-block-heading h2,
+.case-page .evidence-number,
+.case-page .evidence-open-label,
+.case-page .evidence-card h3 {
+    font-family: 'Oswald', 'Arial Narrow', sans-serif !important;
+    font-weight: 600 !important;
+    letter-spacing: -.018em !important;
+    text-transform: uppercase !important;
+}
