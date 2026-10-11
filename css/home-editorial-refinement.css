@@ -335,3 +335,15 @@
   .home-page .home-featured-heading h2 {font-size:1.67rem;}
   .home-page .home-directory>a {font-size:.85rem;}
 }
+
+/* Títulos dos casos na home: mesma tipografia da chamada principal da hero. */
+.home-page .home-featured .hero-editorial-feature-copy strong,
+.home-page .home-featured .hero-editorial-strip-copy strong,
+.home-page #grid-casos .card-content h3,
+.home-page #grid-forense .card-content h3,
+.home-page .home-daily-card strong {
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  font-weight: 600;
+  letter-spacing: -.018em;
+  text-transform: uppercase;
+}
