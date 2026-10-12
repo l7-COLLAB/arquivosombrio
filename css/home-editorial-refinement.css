@@ -347,3 +347,34 @@
   letter-spacing: -.018em !important;
   text-transform: uppercase !important;
 }
+
+
+/* Category rhythm: reduce the vertical gap between homepage sections. */
+.home-page .home-featured {
+  padding-block: clamp(1.5rem, 3vw, 2.4rem);
+}
+.home-page .cases-section,
+.home-page .home-novels,
+.home-page .home-daily-section,
+.home-page .home-literary-archives,
+.home-page .forensic-section,
+.home-page .books-section,
+.home-page .forum-section,
+.home-page .suggestion-section {
+  padding-block: clamp(2.5rem, 5vw, 3.6rem);
+}
+@media (max-width: 760px) {
+  .home-page .home-featured {
+    padding-block: 1.25rem 1.45rem;
+  }
+  .home-page .cases-section,
+  .home-page .home-novels,
+  .home-page .home-daily-section,
+  .home-page .home-literary-archives,
+  .home-page .forensic-section,
+  .home-page .books-section,
+  .home-page .forum-section,
+  .home-page .suggestion-section {
+    padding-block: clamp(2.2rem, 6vw, 2.75rem);
+  }
+}
