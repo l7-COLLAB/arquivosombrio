@@ -146,7 +146,7 @@ $('restore').addEventListener('click',async()=>{
  }catch(e){status('Falha ao restaurar: '+e.message)}
  finally{btn.disabled=false}
 });
-window.VisualStudioAPI={getDraft:()=>structuredClone(draft),replaceDraft:d=>{draft=validatedSettings(d);load();refresh();},getPage:page,getSelected:()=>selected,getDoc:()=>$('preview').contentDocument,refresh,save,load,selectElement,openPage,validate:validatedSettings,notify:status};
+window.VisualStudioAPI={getClient:client,getDraft:()=>structuredClone(draft),replaceDraft:d=>{draft=validatedSettings(d);load();refresh();},getPage:page,getSelected:()=>selected,getDoc:()=>$('preview').contentDocument,refresh,save,load,selectElement,openPage,validate:validatedSettings,notify:status};
 versions();
 
 load();openPage();
