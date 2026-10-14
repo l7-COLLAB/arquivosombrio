@@ -60,7 +60,7 @@ try{
  const verifiedUser=sessionStorage.getItem("arquivo-admin-verified-user")||"";
  if(!s||verifiedUser!==String(s.user.id)||!(verifiedAt>0&&Date.now()-verifiedAt<30*60*1000)){location.replace("../admin.html?session=verificacao&next=adm");return}
  document.body.classList.add("visual-authorized");
- const script=document.createElement("script");script.src="./js/visual-studio.js?v=click-to-edit-1";script.onload=function(){const advanced=document.createElement("script");advanced.src="./js/visual-advanced.js?v=1";advanced.onload=function(){const simple=document.createElement("script");simple.src="./js/visual-simple-ui.js?v=20261014-cards3";document.body.appendChild(simple)};document.body.appendChild(advanced)};document.body.appendChild(script);
+ const script=document.createElement("script");script.src="./js/visual-studio.js?v=click-to-edit-1";script.onload=function(){const advanced=document.createElement("script");advanced.src="./js/visual-advanced.js?v=1";advanced.onload=function(){const simple=document.createElement("script");simple.src="./js/visual-simple-ui.js?v=20261014-cards3";simple.onload=function(){const work=document.createElement("script");work.src="./js/visual-workbench.js?v=1";document.body.appendChild(work)};document.body.appendChild(simple)};document.body.appendChild(advanced)};document.body.appendChild(script);
 }catch(e){location.replace("../admin.html?session=verificacao&next=adm")}
 })();
 </script>
