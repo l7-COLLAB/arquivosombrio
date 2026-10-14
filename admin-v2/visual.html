@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Estúdio Visual | Arquivo Sombrio V2</title>
+<style>
+:root{font-family:Arial,sans-serif;color:#e9dfd1;background:#0b0908;color-scheme:dark}*{box-sizing:border-box}body{margin:0}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;background:#18120f;border-bottom:1px solid #514036;flex-wrap:wrap}
+h1{font-family:Georgia,serif;font-size:23px;margin:0}small,.note{color:#b5a79a}button,select,input{font:inherit}button,select,input{padding:9px;border:1px solid #6a5342;border-radius:4px;background:#241b17;color:#f2e8dc}button{cursor:pointer}button:hover{background:#493026}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #d9aa70}button:disabled{opacity:.4;cursor:not-allowed}
+main{display:grid;grid-template-columns:minmax(290px,350px) 1fr;min-height:calc(100dvh - 70px)}aside{padding:16px;overflow:auto;max-height:calc(100dvh - 70px);border-right:1px solid #514036}section{border-bottom:1px solid #40332a;padding-bottom:15px;margin-bottom:15px}h2{font-size:15px;letter-spacing:.03em}label{display:block;margin:12px 0 5px;font-size:13px}input,select{width:100%}input[type=color]{height:43px}input[type=range]{padding:0;accent-color:#af8160}.inline{display:flex;gap:8px}.inline>*{flex:1;min-width:0}.toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px;gap:10px;flex-wrap:wrap}.preview-wrap{background:#24201d;min-width:0}.frame-wrap{margin:0 auto;background:white;transition:width .2s;width:100%;height:calc(100dvh - 130px)}iframe{width:100%;height:100%;border:0}#status{font-size:12px;color:#d6bb94}a{color:#e7be8e}.danger{border-color:#9a4440}
+@media(max-width:800px){main{display:block}aside{max-height:none}.frame-wrap{height:75dvh}.preview-wrap{padding-bottom:10px}}
+</style>
+</head>
+<body>
+<header><div><h1>Estúdio Visual <small>· V2</small></h1><small>Editor experimental: prévia e rascunho privado neste navegador</small></div><a href="./index.html">← Voltar à V2</a></header>
+<main>
+<aside>
+<section><h2>1. Página e elemento</h2>
+<label for="page">Página pública</label><select id="page"><option value="index.html">Página inicial</option><option value="garimpo.html">Garimpo</option><option value="pericias.html">Perícia</option><option value="lendas.html">Lendas</option><option value="creepypastas.html">Creepypastas</option><option value="biblioteca.html">Biblioteca</option><option value="caso.html">Dossiê</option></select>
+<label for="target">Elemento a editar</label><select id="target">
+<option value="body">Página inteira</option><option value=".main-header">Cabeçalho</option><option value=".hero">Destaque principal</option><option value=".hero-title">Título do destaque</option><option value=".section-title">Títulos de seções</option><option value=".category-title">Títulos de categorias</option><option value=".container">Contêineres</option><option value=".card">Cartões</option><option value=".btn">Botões</option><option value=".main-footer">Rodapé</option>
+</select><p class="note">A edição usa seletores predefinidos. Alguns elementos variam entre páginas e podem não existir na página selecionada.</p>
+</section>
+<section><h2>2. Tipografia e cores</h2>
+<label for="font">Fonte</label><select id="font"><option value="">Manter original</option><option value="Georgia, serif">Georgia</option><option value="Verdana, sans-serif">Verdana</option><option value="Arial, sans-serif">Arial</option><option value="'Times New Roman', serif">Times New Roman</option><option value="'Courier New', monospace">Courier New</option><option value="'Cinzel', serif">Cinzel</option><option value="'Libre Baskerville', serif">Libre Baskerville</option></select>
+<label for="size">Tamanho da fonte <output id="sizeValue"></output></label><input type="range" id="size" min="10" max="72" value="18">
+<label for="textColor">Cor do texto</label><input type="color" id="textColor" value="#e9dfd1">
+<label for="bg">Cor de fundo</label><input type="color" id="bg" value="#16110f">
+</section>
+<section><h2>3. Dimensões e posição</h2>
+<label for="width">Largura máxima <output id="widthValue"></output></label><input type="range" id="width" min="200" max="1600" value="1100" step="10">
+<label for="padding">Espaçamento interno <output id="paddingValue"></output></label><input type="range" id="padding" min="0" max="100" value="16">
+<label for="margin">Espaçamento externo <output id="marginValue"></output></label><input type="range" id="margin" min="0" max="100" value="0">
+<label for="radius">Cantos arredondados <output id="radiusValue"></output></label><input type="range" id="radius" min="0" max="45" value="0">
+<label for="align">Alinhamento</label><select id="align"><option value="">Manter original</option><option value="left">Esquerda</option><option value="center">Centralizado</option><option value="right">Direita</option></select>
+</section>
+<section><h2>4. Rascunho e recuperação</h2><div class="inline"><button id="save">Salvar rascunho</button><button id="reset" class="danger">Limpar elemento</button></div><p class="note">O rascunho fica somente neste navegador. Não altera o site de outros visitantes.</p><div class="inline"><button id="export">Exportar CSS</button><button id="clear" class="danger">Apagar rascunho</button></div></section>
+<p id="status" role="status" aria-live="polite"></p>
+</aside>
+<div class="preview-wrap"><div class="toolbar"><div class="inline"><button data-device="desktop">Desktop</button><button data-device="mobile">Celular</button></div><span class="note">Prévia, sem publicação</span></div><div class="frame-wrap" id="frameWrap"><iframe id="preview" title="Prévia da página pública" sandbox="allow-scripts allow-same-origin" referrerpolicy="same-origin"></iframe></div></div>
+</main>
+<script src="./js/visual-studio.js"></script>
+</body></html>
