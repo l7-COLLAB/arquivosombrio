@@ -4,6 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Estúdio Visual | Arquivo Sombrio V2</title>
+<style>body{visibility:hidden}body.visual-authorized{visibility:visible}</style>
 <style>
 :root{font-family:Arial,sans-serif;color:#e9dfd1;background:#0b0908;color-scheme:dark}*{box-sizing:border-box}body{margin:0}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;background:#18120f;border-bottom:1px solid #514036;flex-wrap:wrap}
@@ -40,5 +41,18 @@ main{display:grid;grid-template-columns:minmax(290px,350px) 1fr;min-height:calc(
 </aside>
 <div class="preview-wrap"><div class="toolbar"><div class="inline"><button data-device="desktop">Desktop</button><button data-device="mobile">Celular</button></div><span class="note">Prévia, sem publicação</span></div><div class="frame-wrap" id="frameWrap"><iframe id="preview" title="Prévia da página pública" sandbox="allow-scripts allow-same-origin" referrerpolicy="same-origin"></iframe></div></div>
 </main>
-<script src="./js/visual-studio.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
+<script src="./legacy/js/admin-auth.js?v=security-1"></script>
+<script>
+(async function(){
+try{
+ const s=await obterSessaoAdminIsolada();
+ const verifiedAt=Number(sessionStorage.getItem("arquivo-admin-verified-at")||0);
+ const verifiedUser=sessionStorage.getItem("arquivo-admin-verified-user")||"";
+ if(!s||verifiedUser!==String(s.user.id)||!(verifiedAt>0&&Date.now()-verifiedAt<30*60*1000)){location.replace("../admin.html?session=verificacao&next=adm");return}
+ document.body.classList.add("visual-authorized");
+ const script=document.createElement("script");script.src="./js/visual-studio.js";document.body.appendChild(script);
+}catch(e){location.replace("../admin.html?session=verificacao&next=adm")}
+})();
+</script>
 </body></html>
