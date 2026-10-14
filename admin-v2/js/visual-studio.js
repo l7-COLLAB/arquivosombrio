@@ -3,7 +3,7 @@
 const KEY='arquivo-visual-v2-draft-1';
 const ids=['font','size','textColor','bg','width','padding','margin','radius','align'];
 const $=id=>document.getElementById(id);
-const safePages=new Set(['index.html','garimpo.html','pericias.html','lendas.html','creepypastas.html','biblioteca.html','caso.html']);
+const safePages=new Set(['index.html','garimpo.html','pericia.html','lendas.html','creepypastas.html','novels.html','caso.html']);
 const controls=Object.fromEntries(ids.map(id=>[id,$(id)]));
 let selected=null,editEnabled=true,frameDoc=null;
 let draft={};try{draft=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(_){draft={}}
