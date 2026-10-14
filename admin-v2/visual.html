@@ -14,41 +14,41 @@ main{display:grid;grid-template-columns:minmax(290px,350px) 1fr;min-height:calc(
 </style>
 </head>
 <body>
-<header><div><h1>Estúdio Visual <small>· V2</small></h1><small>Editor experimental: prévia e rascunho privado neste navegador</small></div><a href="./index.html">← Voltar à V2</a></header>
+<header><div><h1>Editar aparência <small>· V2</small></h1><small>Escolha, mude e guarde. O site só muda quando você publicar.</small></div><a href="./index.html">← Voltar à V2</a></header>
 <main>
 <aside>
-<section><h2>1. Escolha o que editar</h2>
+<section><h2>Escolha o que mudar</h2>
 <p class="note">Clique em qualquer texto, imagem, cartão, botão ou seção na prévia. Os ajustes são feitos abaixo.</p>
-<div class="inline"><button type="button" id="editMode" aria-pressed="true">Selecionar elementos: ligado</button><button type="button" id="selectParent">Selecionar caixa externa</button></div>
-<p id="selectedElement" class="note" aria-live="polite">Nenhum elemento selecionado: clique na página ao lado.</p>
+<div class="inline"><button type="button" id="editMode" aria-pressed="true">Escolher tocando na página</button><button type="button" id="selectParent">Escolher a caixa inteira</button></div>
+<p id="selectedElement" class="note" aria-live="polite">Toque em algo na página para começar.</p>
 <label for="page">Página pública</label><select id="page"><option value="index.html">Página inicial</option><option value="garimpo.html">Garimpo</option><option value="pericia.html">Perícia</option><option value="lendas.html">Lendas</option><option value="creepypastas.html">Creepypastas</option><option value="novels.html">Biblioteca</option><option value="caso.html">Dossiê</option></select>
-<label for="target">Ou escolha uma área geral</label><select id="target">
+<label for="target">Ou escolha uma parte da página</label><select id="target">
 <option value="body">Página inteira</option><option value=".main-header">Cabeçalho</option><option value=".hero">Destaque principal</option><option value=".hero-title">Título do destaque</option><option value=".section-title">Títulos de seções</option><option value=".category-title">Títulos de categorias</option><option value=".container">Contêineres</option><option value=".card">Cartões</option><option value=".btn">Botões</option><option value=".main-footer">Rodapé</option>
 </select><p class="note">A edição usa seletores predefinidos. Alguns elementos variam entre páginas e podem não existir na página selecionada.</p>
 </section>
-<section><h2>2. Edite a seleção</h2><p class="note">Altere somente o que desejar. Os outros estilos serão preservados.</p>
+<section><h2>Mudar o que escolheu</h2><p class="note">Altere somente o que desejar. Os outros estilos serão preservados.</p>
 <label for="font">Fonte</label><select id="font"><option value="">Manter original</option><option value="Georgia, serif">Georgia</option><option value="Verdana, sans-serif">Verdana</option><option value="Arial, sans-serif">Arial</option><option value="'Times New Roman', serif">Times New Roman</option><option value="'Courier New', monospace">Courier New</option><option value="'Cinzel', serif">Cinzel</option><option value="'Libre Baskerville', serif">Libre Baskerville</option></select>
-<label for="size">Tamanho da fonte <output id="sizeValue"></output></label><input type="range" id="size" min="10" max="72" value="18">
-<label for="textColor">Cor do texto</label><input type="color" id="textColor" value="#e9dfd1">
+<label for="size">Tamanho das letras <output id="sizeValue"></output></label><input type="range" id="size" min="10" max="72" value="18">
+<label for="textColor">Cor das letras</label><input type="color" id="textColor" value="#e9dfd1">
 <label for="bg">Cor de fundo</label><input type="color" id="bg" value="#16110f">
 </section>
-<section><h2>3. Espaçamentos e tamanhos</h2>
+<section><h2>Tamanho e espaço</h2>
 <label for="width">Largura máxima <output id="widthValue"></output></label><input type="range" id="width" min="200" max="1600" value="1100" step="10">
-<label for="padding">Espaçamento interno <output id="paddingValue"></output></label><input type="range" id="padding" min="0" max="100" value="16">
-<label for="margin">Espaçamento externo <output id="marginValue"></output></label><input type="range" id="margin" min="0" max="100" value="0">
-<label for="radius">Cantos arredondados <output id="radiusValue"></output></label><input type="range" id="radius" min="0" max="45" value="0">
+<label for="padding">Espaço dentro da caixa <output id="paddingValue"></output></label><input type="range" id="padding" min="0" max="100" value="16">
+<label for="margin">Espaço fora da caixa <output id="marginValue"></output></label><input type="range" id="margin" min="0" max="100" value="0">
+<label for="radius">Arredondar cantos <output id="radiusValue"></output></label><input type="range" id="radius" min="0" max="45" value="0">
 <label for="align">Alinhamento</label><select id="align"><option value="">Manter original</option><option value="left">Esquerda</option><option value="center">Centralizado</option><option value="right">Direita</option></select>
 </section>
-<section><h2>4. Rascunho e recuperação</h2><div class="inline"><button id="save">Salvar rascunho</button><button id="reset" class="danger">Limpar elemento</button></div><p class="note">O rascunho fica somente neste navegador. Não altera o site de outros visitantes.</p><div class="inline"><button id="export">Exportar CSS</button><button id="clear" class="danger">Apagar rascunho</button></div></section>
-<section><h2>5. Publicação e versões</h2>
+<section><h2>Guardar e recuperar</h2><div class="inline"><button id="save">Guardar mudanças</button><button id="reset" class="danger">Voltar ao original</button></div><p class="note">O rascunho fica somente neste navegador. Não altera o site de outros visitantes.</p><div class="inline"><button id="export">Guardar arquivo de estilos</button><button id="clear" class="danger">Apagar mudanças guardadas</button></div></section>
+<section><h2>Colocar no site ou voltar atrás</h2>
 <p class="note">Publicar torna o visual acessível a todos. Cada publicação cria uma versão imutável; restaurar também cria uma nova versão.</p>
 <label for="versionNote">Descrição desta publicação</label><input id="versionNote" maxlength="200" placeholder="Ex.: ajuste de fontes na página inicial">
-<div class="inline"><button type="button" id="publish">Publicar aparência</button><button type="button" id="reloadVersions">Atualizar versões</button></div>
-<label for="versions">Histórico de versões</label><select id="versions"><option value="">Carregando…</option></select>
-<button type="button" id="restore">Restaurar versão selecionada</button>
+<div class="inline"><button type="button" id="publish">Aplicar no site</button><button type="button" id="reloadVersions">Recarregar histórico</button></div>
+<label for="versions">Mudanças já publicadas</label><select id="versions"><option value="">Carregando…</option></select>
+<button type="button" id="restore">Voltar para esta versão</button>
 </section><p id="status" role="status" aria-live="polite"></p>
 </aside>
-<div class="preview-wrap"><div class="toolbar"><div class="inline"><button data-device="desktop">Desktop</button><button data-device="mobile">Celular</button></div><span class="note">Prévia, sem publicação</span></div><div class="frame-wrap" id="frameWrap"><iframe id="preview" title="Prévia da página pública" sandbox="allow-scripts allow-same-origin" referrerpolicy="same-origin"></iframe></div></div>
+<div class="preview-wrap"><div class="toolbar"><div class="inline"><button data-device="desktop">Computador</button><button data-device="mobile">Celular</button></div><span class="note">Você está vendo um teste</span></div><div class="frame-wrap" id="frameWrap"><iframe id="preview" title="Prévia da página pública" sandbox="allow-scripts allow-same-origin" referrerpolicy="same-origin"></iframe></div></div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <script src="./legacy/js/admin-auth.js?v=security-1"></script>
@@ -60,7 +60,7 @@ try{
  const verifiedUser=sessionStorage.getItem("arquivo-admin-verified-user")||"";
  if(!s||verifiedUser!==String(s.user.id)||!(verifiedAt>0&&Date.now()-verifiedAt<30*60*1000)){location.replace("../admin.html?session=verificacao&next=adm");return}
  document.body.classList.add("visual-authorized");
- const script=document.createElement("script");script.src="./js/visual-studio.js?v=click-to-edit-1";script.onload=function(){const advanced=document.createElement("script");advanced.src="./js/visual-advanced.js?v=1";advanced.onload=function(){const simple=document.createElement("script");simple.src="./js/visual-simple-ui.js?v=20261014";document.body.appendChild(simple)};document.body.appendChild(advanced)};document.body.appendChild(script);
+ const script=document.createElement("script");script.src="./js/visual-studio.js?v=click-to-edit-1";script.onload=function(){const advanced=document.createElement("script");advanced.src="./js/visual-advanced.js?v=1";advanced.onload=function(){const simple=document.createElement("script");simple.src="./js/visual-simple-ui.js?v=20261014-simple2";document.body.appendChild(simple)};document.body.appendChild(advanced)};document.body.appendChild(script);
 }catch(e){location.replace("../admin.html?session=verificacao&next=adm")}
 })();
 </script>
