@@ -5,7 +5,7 @@ const hex=(a:ArrayBuffer)=>Array.from(new Uint8Array(a)).map(x=>x.toString(16).p
 const sha=async(s:string)=>hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)));
 const equal=(a:string,b:string)=>{let diff=a.length^b.length;for(let i=0;i<Math.max(a.length,b.length);i++)diff|=(a.charCodeAt(i)||0)^(b.charCodeAt(i)||0);return diff===0};
 Deno.serve(async(req)=>{
- if(req.method==="OPTIONS")return new Response(null,{status:204,headers});
+ if(req.method==="OPTIONS")return new Response(null,{status:req.headers.get("origin")===origin?204:403,headers});
  if(req.method!=="POST"||req.headers.get("origin")!==origin)return respond(403,{error:"Origem não autorizada"});
  const configuredPassword=Deno.env.get("LITE_ADMIN_PASSWORD");const expected=configuredPassword?await sha(configuredPassword):"";const key=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),url=Deno.env.get("SUPABASE_URL");
  if(!configuredPassword||configuredPassword.length<16||!key||!url){const missing=[!configuredPassword?"password_absent":configuredPassword.length<16?"password_too_short":"",!key?"service_key_absent":"",!url?"project_url_absent":""].filter(Boolean);console.error("lite-admin configuration:",missing.join(","));return respond(503,{error:!configuredPassword?"Senha administrativa não encontrada no ambiente da função":configuredPassword.length<16?"Senha administrativa deve ter ao menos 16 caracteres":"Configuração interna do Supabase indisponível; não altere sua senha"});}
@@ -16,6 +16,11 @@ Deno.serve(async(req)=>{
  if(body.action==="login"){
   const ip=req.headers.get("cf-connecting-ip")||"unknown";
   const ipHash=await sha((Deno.env.get("LITE_ADMIN_IP_PEPPER")||expected)+ip);
+  // Atomic database limit supplements the legacy attempt counter across edge instances.
+  {
+   const gate=await client("rpc/security_consume_rate_limit","POST",{p_scope:ip==="unknown"?"lite_login_unknown":"lite_login_ip",p_subject_hash:ipHash,p_max:12,p_window_seconds:900,p_block_seconds:900});
+   if(gate!==true)return respond(429,{error:"Muitas tentativas. Aguarde 15 minutos."});
+  }
   const since=new Date(Date.now()-15*60000).toISOString();
   const attempts=await client("lite_admin_access_attempts?select=id&ip_hash=eq."+ipHash+"&attempted_at=gte."+encodeURIComponent(since)+"&limit=8");
   if(attempts.length>=5)return respond(429,{error:"Muitas tentativas. Aguarde 15 minutos."});
