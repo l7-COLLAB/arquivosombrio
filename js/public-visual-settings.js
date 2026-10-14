@@ -52,7 +52,7 @@ function advanced(settings){
  const palette={accent:colors.accent,foreground:colors.foreground,background:colors.background};
  const tokens=Object.entries(palette).filter(([,x])=>color(x)).map(([k,val])=>'--studio-'+k+':'+val+';').join('');
  const el=document.createElement('style');el.id='arquivo-public-visual-advanced';
- el.textContent=':root{'+tokens+'}'+rules+'@media(max-width:767px){'+mobile+'}@media(min-width:768px){'+desktop+'}';
+ el.textContent=':root{'+tokens+'}'+(colors.enabled===true?'body{background-color:var(--studio-background)!important;color:var(--studio-foreground)!important}a:focus-visible,button:focus-visible{outline-color:var(--studio-accent)!important}':'')+rules+'@media(max-width:767px){'+mobile+'}@media(min-width:768px){'+desktop+'}';
  document.head.appendChild(el);
 }
 
