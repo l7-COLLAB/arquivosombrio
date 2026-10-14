@@ -5,26 +5,78 @@ const ids=['font','size','textColor','bg','width','padding','margin','radius','a
 const $=id=>document.getElementById(id);
 const safePages=new Set(['index.html','garimpo.html','pericias.html','lendas.html','creepypastas.html','biblioteca.html','caso.html']);
 const controls=Object.fromEntries(ids.map(id=>[id,$(id)]));
+let selected=null,editEnabled=true,frameDoc=null;
 let draft={};try{draft=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(_){draft={}}
 const status=msg=>$('status').textContent=msg;
-const page=()=>$('page').value,target=()=>$('target').value, key=()=>page()+'|'+target();
+const page=()=>$('page').value,target=()=>selected?.selector||$('target').value, key=()=>page()+'|'+target();
 const htmlEscape=s=>String(s).replace(/[^a-z0-9_-]/gi,'');
 function defaultValues(){return{font:'',size:'18',textColor:'#e9dfd1',bg:'#16110f',width:'1100',padding:'16',margin:'0',radius:'0',align:''}}
 function properties(v){const p={};if(v.font)p['font-family']=v.font;if(v.size)p['font-size']=v.size+'px';if(v.textColor)p.color=v.textColor;if(v.bg)p['background-color']=v.bg;if(v.width)p['max-width']=v.width+'px';if(v.padding)p.padding=v.padding+'px';if(v.margin)p.margin=v.margin+'px auto';if(v.radius)p['border-radius']=v.radius+'px';if(v.align)p['text-align']=v.align;return p}
-function buildCSS(which){return Object.entries(draft).filter(([k])=>!which||k.startsWith(which+'|')).map(([k,v])=>{const [p,selector]=k.split('|');if(!safePages.has(p)||!Array.from($('target').options).some(x=>x.value===selector))return'';const declarations=Object.entries(properties(v)).map(([name,value])=>name+': '+value+' !important;').join(' ');return declarations?selector+' { '+declarations+' }':''}).filter(Boolean).join('\n')}
-function refresh(){const f=$('preview');try{const d=f.contentDocument;if(!d)return;let el=d.getElementById('arquivo-v2-visual-preview');if(!el){el=d.createElement('style');el.id='arquivo-v2-visual-preview';d.head.appendChild(el)}el.textContent=buildCSS(page());}catch(e){status('Prévia indisponível neste navegador: '+e.message)}}
-function load(){const v=draft[key()]||defaultValues();ids.forEach(id=>{controls[id].value=v[id]??defaultValues()[id]});labels();refresh()}
+function buildCSS(which){return Object.entries(validatedSettings(draft)).filter(([k])=>!which||k.startsWith(which+'|')).map(([k,v])=>{const selector=k.slice(k.indexOf('|')+1);const declarations=Object.entries(properties(v)).map(([name,value])=>name+': '+value+' !important;').join(' ');return declarations?selector+' { '+declarations+' }':''}).filter(Boolean).join('\n')}
+function refresh(){const f=$('preview');try{const d=f.contentDocument;if(!d)return;let el=d.getElementById('arquivo-v2-visual-preview');if(!el){el=d.createElement('style');el.id='arquivo-v2-visual-preview';d.head.appendChild(el)}el.textContent=buildCSS(page());if(selected?.element?.isConnected)selected.element.style.outline='2px dashed #e0a868';}catch(e){status('Prévia indisponível neste navegador: '+e.message)}}
+function load(){const v=draft[key()]||{};ids.forEach(id=>{controls[id].value=v[id]??defaultValues()[id]});labels();refresh()}
 function labels(){['size','width','padding','margin','radius'].forEach(id=>$(id+'Value').textContent=controls[id].value+'px')}
-function set(){draft[key()]=Object.fromEntries(ids.map(id=>[id,controls[id].value]));labels();refresh();status('Alterações na prévia; salve o rascunho para conservar neste navegador.')}
+function set(id){draft[key()]={...(draft[key()]||{}),[id]:controls[id].value};labels();refresh();status('Alteração aplicada na prévia. Salve ou publique quando estiver satisfeita.')}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(draft));status('Rascunho salvo somente neste navegador.')}catch(e){status('Falha ao salvar: '+e.message)}}
 function openPage(){const p=page();if(!safePages.has(p))return; $('preview').src='../'+encodeURIComponent(p);status('Abrindo a página para pré-visualização.')}
-$('preview').addEventListener('load',refresh);$('page').addEventListener('change',()=>{openPage();load()});$('target').addEventListener('change',load);
-ids.forEach(id=>controls[id].addEventListener('input',set));
+$('preview').addEventListener('load',()=>{selected=null;attachSelection();refresh()});$('page').addEventListener('change',()=>{selected=null;openPage();load()});$('target').addEventListener('change',()=>{clearSelection();load()});
+ids.forEach(id=>controls[id].addEventListener('input',()=>set(id)));
 $('save').addEventListener('click',save);
 $('reset').addEventListener('click',()=>{delete draft[key()];load();save()});
 $('clear').addEventListener('click',()=>{if(!confirm('Apagar todos os rascunhos visuais deste navegador?'))return;draft={};localStorage.removeItem(KEY);load();status('Rascunhos apagados.')});
 $('export').addEventListener('click',()=>{const css=buildCSS();const blob=new Blob([css],{type:'text/css'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='arquivo-sombrio-ajustes-visuais.css';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);status('CSS exportado. A publicação requer revisão e integração ao site.')});
 document.querySelectorAll('[data-device]').forEach(b=>b.addEventListener('click',()=>{$('frameWrap').style.width=b.dataset.device==='mobile'?'390px':'100%'}));
+
+
+function allowedSelector(sel,legacy){
+ if(legacy.has(sel))return true;
+ if(typeof sel!=='string'||sel.length>380)return false;
+ return /^body(?: > [a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,3}\)){1,12}$/i.test(sel);
+}
+function nodeSelector(el){
+ const steps=[];
+ for(let n=el;n&&n.tagName&&n.tagName.toLowerCase()!=='body'&&steps.length<12;n=n.parentElement){
+  const tag=n.tagName.toLowerCase();
+  if(!/^[a-z][a-z0-9-]*$/.test(tag))return null;
+  let index=1;for(let prev=n.previousElementSibling;prev;prev=prev.previousElementSibling)if(prev.tagName===n.tagName)index++;
+  if(index>9999)return null;
+  steps.unshift(tag+':nth-of-type('+index+')');
+ }
+ return steps.length&&steps.length<=12?'body > '+steps.join(' > '):null;
+}
+function clearSelection(){
+ if(selected?.element?.isConnected)selected.element.style.outline='';
+ selected=null;$('selectedElement').textContent='Clique em qualquer elemento da prévia para selecioná-lo.';
+}
+function selectElement(el){
+ if(!el||el===frameDoc?.body||el===frameDoc?.documentElement)return;
+ const selector=nodeSelector(el);if(!selector){status('Esta área é muito profunda para edição direta. Selecione uma caixa externa.');return}
+ clearSelection();selected={element:el,selector};
+ $('selectedElement').textContent='Selecionado: '+el.tagName.toLowerCase()+(el.id?' #'+el.id:'')+' — '+(el.innerText||el.getAttribute('alt')||'').trim().slice(0,75);
+ el.style.outline='2px dashed #e0a868';load();
+}
+function attachSelection(){
+ try{
+ const doc=$('preview').contentDocument;if(!doc||doc===frameDoc)return;
+ frameDoc=doc;doc.addEventListener('click',event=>{
+  if(!editEnabled)return;
+  const el=event.target.closest('body *');if(!el)return;
+  event.preventDefault();event.stopImmediatePropagation();selectElement(el);
+ },true);
+ doc.addEventListener('mouseover',event=>{
+  if(!editEnabled||selected)return;
+  const el=event.target;if(el?.style)el.style.cursor='crosshair';
+ },true);
+ }catch(e){status('Seleção direta indisponível nesta página: '+e.message)}
+}
+$('editMode').addEventListener('click',()=>{
+ editEnabled=!editEnabled;$('editMode').setAttribute('aria-pressed',String(editEnabled));
+ $('editMode').textContent=editEnabled?'Selecionar elementos: ligado':'Navegar pela página: ligado';
+ if(!editEnabled)clearSelection();
+});
+$('selectParent').addEventListener('click',()=>{
+ const parent=selected?.element?.parentElement;if(parent&&parent!==frameDoc?.body)selectElement(parent);
+});
 
 const publishedVersions=new Map();
 async function client(){
@@ -40,7 +92,7 @@ function validatedSettings(settings){
  const fonts=new Set(Array.from($('font').options).map(o=>o.value));
  for(const [k,v] of Object.entries(settings||{})){
   const parts=k.split('|');
-  if(parts.length!==2||!pages.has(parts[0])||!selectors.has(parts[1])||!v||typeof v!=='object')continue;
+  if(parts.length!==2||!pages.has(parts[0])||!allowedSelector(parts[1],selectors)||!v||typeof v!=='object')continue;
   const p={};
   if(fonts.has(v.font))p.font=v.font;
   for(const [field,min,max] of [['size',10,72],['width',200,1600],['padding',0,100],['margin',0,100],['radius',0,45]]){
