@@ -12975,6 +12975,64 @@ function renderizarSituacaoGarimpo(valor, status) {
         </section>`;
 }
 
+
+function urlImagemDocumentalGarimpo(valor) {
+    try {
+        const url = new URL(String(valor || "").trim(), document.baseURI);
+        return ["https:", "http:"].includes(url.protocol) && String(valor || "").trim() ? url.href : "";
+    } catch (_) { return ""; }
+}
+
+function htmlImagemDocumentalGarimpo(imagem) {
+    const url = urlImagemDocumentalGarimpo(imagem.url);
+    if (!url) return "";
+    const img = '<img src="' + escaparHTML(url) + '" alt="' + escaparHTML(imagem.legenda || "Imagem documental") + '" loading="lazy" referrerpolicy="no-referrer" style="display:block;max-width:100%;max-height:650px;width:auto;height:auto;margin:0 auto">';
+    const visual = imagem.sensivel === true
+        ? '<details class="daily-sensitive-image"><summary style="cursor:pointer;padding:1rem;border:1px solid currentColor">Conteúdo sensível: restos humanos. Clique para visualizar.</summary>' + img + '</details>'
+        : img;
+    const link = urlImagemDocumentalGarimpo(imagem.link);
+    const contexto = urlImagemDocumentalGarimpo(imagem.link_contexto);
+    const origem = imagem.fonte || "Consultar origem";
+    return '<figure class="daily-inline-image" style="margin:2rem 0">' + visual +
+        '<figcaption style="font-size:.85rem;line-height:1.6;margin-top:.8rem">' +
+        '<div>' + escaparHTML(imagem.legenda || "") + '</div>' +
+        (imagem.descricao ? '<div>' + escaparHTML(imagem.descricao) + '</div>' : '') +
+        (imagem.credito ? '<div>Crédito: ' + escaparHTML(imagem.credito) + '</div>' : '') +
+        (link ? '<div>Fonte: <a href="' + escaparHTML(link) + '" target="_blank" rel="noopener noreferrer">' + escaparHTML(origem) + '</a></div>' : imagem.fonte ? '<div>Fonte: ' + escaparHTML(origem) + '</div>' : '') +
+        (contexto ? '<div><a href="' + escaparHTML(contexto) + '" target="_blank" rel="noopener noreferrer">Consultar documentação do contexto</a></div>' : '') +
+        '</figcaption></figure>';
+}
+
+function inserirImagensDocumentaisGarimpo(container, imagens) {
+    const texto = container.querySelector(".daily-reader-text");
+    const galeria = container.querySelector("[data-daily-gallery]");
+    if (!texto || !galeria) return;
+    const trechos = Array.from(texto.children);
+    const ultimas = new Map();
+    imagens.forEach(imagem => {
+        const html = htmlImagemDocumentalGarimpo(imagem);
+        if (!html) return;
+        const secao = String(imagem.secao || "").trim();
+        const inicio = secao ? trechos.findIndex(el => el.textContent.trim() === secao) : -1;
+        if (inicio >= 0) {
+            let fim = inicio;
+            for (let i = inicio + 1; i < trechos.length; i++) {
+                const valor = trechos[i].textContent.trim();
+                const cabecalho = /^H[2-4]$/.test(trechos[i].tagName) ||
+                    (valor.length < 150 && /[A-ZÀ-Ý]/.test(valor) && valor === valor.toLocaleUpperCase("pt-BR"));
+                if (cabecalho) break;
+                fim = i;
+            }
+            const alvo = ultimas.get(trechos[fim]) || trechos[fim];
+            alvo.insertAdjacentHTML("afterend", html);
+            ultimas.set(trechos[fim], alvo.nextElementSibling);
+        } else {
+            galeria.insertAdjacentHTML("beforeend", html);
+            galeria.hidden = false;
+        }
+    });
+}
+
 async function renderizarDetalheCasoDiario(container, caso) {
     const fontes = Array.isArray(caso.fontes) ? caso.fontes : [];
     const imagens = Array.isArray(caso.imagens) ? caso.imagens : [];
@@ -12993,9 +13051,10 @@ async function renderizarDetalheCasoDiario(container, caso) {
             ${renderizarSecaoDocumentalGarimpo("daily-reader-evidence", "VESTÍGIOS E ELEMENTOS", "Evidências", caso.evidencias)}
             ${renderizarSecaoDocumentalGarimpo("daily-reader-hypotheses", "LEITURAS DO CASO", "Hipóteses e controvérsias", caso.hipoteses)}
             ${renderizarSituacaoGarimpo(caso.situacao_oficial, caso.status_caso)}
-            ${imagens.length ? `<section class="daily-reader-gallery"><div class="daily-reader-section-head"><small>ANEXOS VISUAIS</small><h2>Imagens do arquivo</h2></div>${imagens.map(imagem => `<figure><img src="${escaparHTML(imagem.url || "")}" alt="${escaparHTML(imagem.legenda || "Imagem documental")}" loading="lazy"><figcaption>${escaparHTML([imagem.legenda, imagem.credito].filter(Boolean).join(" · "))}</figcaption></figure>`).join("")}</section>` : ""}
+            <section class="daily-reader-gallery" data-daily-gallery hidden><div class="daily-reader-section-head"><small>ANEXOS VISUAIS</small><h2>Imagens do arquivo</h2></div></section>
             ${fontes.length ? `<section class="daily-reader-sources"><div class="daily-reader-section-head"><small>REFERÊNCIAS</small><h2>Fontes</h2></div>${fontes.map(fonte => `<a href="${escaparHTML(fonte.url || "#")}" target="_blank" rel="noopener noreferrer">${escaparHTML(fonte.titulo || fonte.url || "Fonte")}</a>`).join("")}</section>` : ""}
         </article>`;
+    inserirImagensDocumentaisGarimpo(container, imagens);
     window.ArquivoSEO?.aplicar({
         id: caso.id,
         titulo: caso.titulo,
