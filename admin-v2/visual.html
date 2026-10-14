@@ -9,7 +9,7 @@
 :root{font-family:Arial,sans-serif;color:#e9dfd1;background:#0b0908;color-scheme:dark}*{box-sizing:border-box}body{margin:0}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;background:#18120f;border-bottom:1px solid #514036;flex-wrap:wrap}
 h1{font-family:Georgia,serif;font-size:23px;margin:0}small,.note{color:#b5a79a}button,select,input{font:inherit}button,select,input{padding:9px;border:1px solid #6a5342;border-radius:4px;background:#241b17;color:#f2e8dc}button{cursor:pointer}button:hover{background:#493026}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #d9aa70}button:disabled{opacity:.4;cursor:not-allowed}
-main{display:grid;grid-template-columns:minmax(290px,350px) 1fr;min-height:calc(100dvh - 70px)}aside{padding:16px;overflow:auto;max-height:calc(100dvh - 70px);border-right:1px solid #514036}section{border-bottom:1px solid #40332a;padding-bottom:15px;margin-bottom:15px}h2{font-size:15px;letter-spacing:.03em}label{display:block;margin:12px 0 5px;font-size:13px}input,select{width:100%}input[type=color]{height:43px}input[type=range]{padding:0;accent-color:#af8160}.inline{display:flex;gap:8px}.inline>*{flex:1;min-width:0}.toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px;gap:10px;flex-wrap:wrap}.preview-wrap{background:#24201d;min-width:0}.frame-wrap{margin:0 auto;background:white;transition:width .2s;width:100%;height:calc(100dvh - 130px)}iframe{width:100%;height:100%;border:0}#status{font-size:12px;color:#d6bb94}a{color:#e7be8e}.danger{border-color:#9a4440}
+main{display:grid;grid-template-columns:minmax(290px,350px) 1fr;min-height:calc(100dvh - 70px)}aside{padding:16px;overflow:auto;max-height:calc(100dvh - 70px);border-right:1px solid #514036}section{border-bottom:1px solid #40332a;padding-bottom:15px;margin-bottom:15px}h2{font-size:15px;letter-spacing:.03em}label{display:block;margin:12px 0 5px;font-size:13px}input,select{width:100%}input[type=color]{height:43px}input[type=range]{padding:0;accent-color:#af8160}.inline{display:flex;gap:8px}.inline>*{flex:1;min-width:0}.toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px;gap:10px;flex-wrap:wrap}.preview-wrap{background:#24201d;min-width:0}.frame-wrap{margin:0 auto;background:white;transition:width .2s;width:100%;height:calc(100dvh - 130px)}iframe{width:100%;height:100%;border:0}#status{font-size:12px;color:#d6bb94}a{color:#e7be8e}.danger{border-color:#9a4440}#selectedElement{padding:9px;background:#241a15;border:1px solid #6a5342;word-break:break-word}#editMode[aria-pressed="true"]{background:#703122;border-color:#c28762}aside{scrollbar-width:thin}#status{position:sticky;bottom:0;background:#211813;padding:12px;border:1px solid #564236}
 @media(max-width:800px){main{display:block}aside{max-height:none}.frame-wrap{height:75dvh}.preview-wrap{padding-bottom:10px}}
 </style>
 </head>
@@ -17,19 +17,22 @@ main{display:grid;grid-template-columns:minmax(290px,350px) 1fr;min-height:calc(
 <header><div><h1>Estúdio Visual <small>· V2</small></h1><small>Editor experimental: prévia e rascunho privado neste navegador</small></div><a href="./index.html">← Voltar à V2</a></header>
 <main>
 <aside>
-<section><h2>1. Página e elemento</h2>
+<section><h2>1. Escolha o que editar</h2>
+<p class="note">Clique em qualquer texto, imagem, cartão, botão ou seção na prévia. Os ajustes são feitos abaixo.</p>
+<div class="inline"><button type="button" id="editMode" aria-pressed="true">Selecionar elementos: ligado</button><button type="button" id="selectParent">Selecionar caixa externa</button></div>
+<p id="selectedElement" class="note" aria-live="polite">Nenhum elemento selecionado: clique na página ao lado.</p>
 <label for="page">Página pública</label><select id="page"><option value="index.html">Página inicial</option><option value="garimpo.html">Garimpo</option><option value="pericias.html">Perícia</option><option value="lendas.html">Lendas</option><option value="creepypastas.html">Creepypastas</option><option value="biblioteca.html">Biblioteca</option><option value="caso.html">Dossiê</option></select>
-<label for="target">Elemento a editar</label><select id="target">
+<label for="target">Ou escolha uma área geral</label><select id="target">
 <option value="body">Página inteira</option><option value=".main-header">Cabeçalho</option><option value=".hero">Destaque principal</option><option value=".hero-title">Título do destaque</option><option value=".section-title">Títulos de seções</option><option value=".category-title">Títulos de categorias</option><option value=".container">Contêineres</option><option value=".card">Cartões</option><option value=".btn">Botões</option><option value=".main-footer">Rodapé</option>
 </select><p class="note">A edição usa seletores predefinidos. Alguns elementos variam entre páginas e podem não existir na página selecionada.</p>
 </section>
-<section><h2>2. Tipografia e cores</h2>
+<section><h2>2. Edite a seleção</h2><p class="note">Altere somente o que desejar. Os outros estilos serão preservados.</p>
 <label for="font">Fonte</label><select id="font"><option value="">Manter original</option><option value="Georgia, serif">Georgia</option><option value="Verdana, sans-serif">Verdana</option><option value="Arial, sans-serif">Arial</option><option value="'Times New Roman', serif">Times New Roman</option><option value="'Courier New', monospace">Courier New</option><option value="'Cinzel', serif">Cinzel</option><option value="'Libre Baskerville', serif">Libre Baskerville</option></select>
 <label for="size">Tamanho da fonte <output id="sizeValue"></output></label><input type="range" id="size" min="10" max="72" value="18">
 <label for="textColor">Cor do texto</label><input type="color" id="textColor" value="#e9dfd1">
 <label for="bg">Cor de fundo</label><input type="color" id="bg" value="#16110f">
 </section>
-<section><h2>3. Dimensões e posição</h2>
+<section><h2>3. Espaçamentos e tamanhos</h2>
 <label for="width">Largura máxima <output id="widthValue"></output></label><input type="range" id="width" min="200" max="1600" value="1100" step="10">
 <label for="padding">Espaçamento interno <output id="paddingValue"></output></label><input type="range" id="padding" min="0" max="100" value="16">
 <label for="margin">Espaçamento externo <output id="marginValue"></output></label><input type="range" id="margin" min="0" max="100" value="0">
@@ -57,7 +60,7 @@ try{
  const verifiedUser=sessionStorage.getItem("arquivo-admin-verified-user")||"";
  if(!s||verifiedUser!==String(s.user.id)||!(verifiedAt>0&&Date.now()-verifiedAt<30*60*1000)){location.replace("../admin.html?session=verificacao&next=adm");return}
  document.body.classList.add("visual-authorized");
- const script=document.createElement("script");script.src="./js/visual-studio.js";document.body.appendChild(script);
+ const script=document.createElement("script");script.src="./js/visual-studio.js?v=click-to-edit-1";document.body.appendChild(script);
 }catch(e){location.replace("../admin.html?session=verificacao&next=adm")}
 })();
 </script>
