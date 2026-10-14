@@ -3,7 +3,7 @@
 const endpoint='https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/visual_site_versions?select=id,settings&order=id.desc&limit=1';
 const key='sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj';
 const selectors=new Set(['body','.main-header','.hero','.hero-title','.section-title','.category-title','.container','.card','.btn','.main-footer']);
-function allowedSelector(s){return selectors.has(s)||(typeof s==='string'&&s.length<=380&&/^body(?: > [a-z][a-z0-9-]*:nth-of-type\\([1-9][0-9]{0,3}\\)){1,12}$/i.test(s));}
+function allowedSelector(s){return selectors.has(s)||(typeof s==='string'&&s.length<=380&&/^body(?: > [a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,3}\)){1,12}$/i.test(s));}
 const fonts=new Set(['Georgia, serif','Verdana, sans-serif','Arial, sans-serif',"'Times New Roman', serif","'Courier New', monospace","'Cinzel', serif","'Libre Baskerville', serif"]);
 const color=v=>/^#[0-9a-f]{6}$/i.test(v||'')?v:null;
 const px=(v,min,max)=>{let n=Number(v);return Number.isFinite(n)&&n>=min&&n<=max? n+'px':null};
