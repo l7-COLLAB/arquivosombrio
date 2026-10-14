@@ -7,7 +7,7 @@ if(!advanced||sections.length<5)return;
 const aside=document.querySelector('main > aside');
 const panel=document.createElement('div');panel.id='simple-panel';
 const head=document.createElement('div');head.id='simple-controls';
-head.innerHTML='<div class="simple-heading"><strong>Editor do site</strong><span id="simpleState">Rascunho local</span></div><div class="simple-actions"><button type="button" id="simpleBack">Voltar</button><button type="button" id="simpleUndo">↶ Desfazer</button><button type="button" id="simpleRedo">↷ Refazer</button><button type="button" id="simpleSave">Salvar rascunho</button><button type="button" id="simplePublish">Publicar no site</button></div><label for="simpleFind">Encontrar elemento</label><input id="simpleFind" type="search" placeholder="Ex.: título, botão, biblioteca, imagem..."><div id="simpleResults" role="listbox" aria-label="Elementos encontrados"></div><nav class="simple-tabs" aria-label="Ferramentas de edição"><button data-panel="find" class="active">Encontrar</button><button data-panel="edit">Editar</button><button data-panel="images">Imagens</button><button data-panel="layout">Organizar</button><button data-panel="theme">Cores e fontes</button><button data-panel="history">Versões</button></nav>';
+head.innerHTML='<div class="simple-heading"><strong>Mudar aparência</strong><span id="simpleState">Não publicado</span></div><div class="simple-actions"><button type="button" id="simpleBack">Sair</button><button type="button" id="simpleUndo">↶ Desfazer</button><button type="button" id="simpleRedo">↷ Refazer</button><button type="button" id="simpleSave">Guardar mudanças</button><button type="button" id="simplePublish">Aplicar no site</button></div><label for="simpleFind">O que você quer mudar?</label><input id="simpleFind" type="search" placeholder="Procure um texto, botão ou imagem..."><div id="simpleResults" role="listbox" aria-label="Elementos encontrados"></div><nav class="simple-tabs" aria-label="Ferramentas de edição"><button data-panel="find" class="active">1. Escolher</button><button data-panel="edit">2. Mudar</button><button data-panel="images">Fotos</button><button data-panel="layout">Posição</button><button data-panel="theme">Aparência</button><button data-panel="history">Voltar atrás</button></nav>';
 aside.insertBefore(head,aside.firstChild);
 sections.forEach(s=>panel.appendChild(s));
 panel.appendChild(advanced);aside.insertBefore(panel,aside.children[1]);
@@ -33,19 +33,19 @@ function search(){
  }).slice(0,300);
  const matched=nodes.map(el=>({el,name:(el.getAttribute('aria-label')||el.getAttribute('alt')||el.textContent||'').trim().replace(/\\s+/g,' ').slice(0,75)})).filter(x=>!q||(x.name+' '+x.el.tagName).toLocaleLowerCase('pt-BR').includes(q)).slice(0,35);
  if(!matched.length){out.textContent='Nenhum elemento encontrado nesta página.';return}
- matched.forEach(({el,name})=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','option');b.textContent=(el.tagName==='IMG'?'Imagem':el.tagName.toLowerCase())+' · '+(name||'Sem título');b.onclick=()=>{el.scrollIntoView({block:'center',behavior:'smooth'});window.VisualStudioAPI?.selectElement(el);show('edit')};out.appendChild(b)});
+ matched.forEach(({el,name})=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','option');b.textContent=(el.tagName==='IMG'?'Foto':['H1','H2','H3','H4'].includes(el.tagName)?'Título':el.tagName==='BUTTON'?'Botão':el.tagName==='A'?'Link':el.tagName==='P'?'Texto':['SECTION','ARTICLE','MAIN'].includes(el.tagName)?'Parte da página':'Item')+' · '+(name||'Sem nome');b.onclick=()=>{el.scrollIntoView({block:'center',behavior:'smooth'});window.VisualStudioAPI?.selectElement(el);show('edit')};out.appendChild(b)});
 }
 function current(){try{return localStorage.getItem('arquivo-visual-v2-draft-1')}catch(_){return null}}
-function save(){document.getElementById('save')?.click();savedLocal=current();$('simpleState').textContent='Rascunho salvo neste navegador';}
-function mark(){ $('simpleState').textContent='Alterações não publicadas';}
+function save(){document.getElementById('save')?.click();savedLocal=current();$('simpleState').textContent='Mudanças guardadas neste aparelho';}
+function mark(){ $('simpleState').textContent='Ainda não publicado';}
 document.querySelectorAll('.simple-tabs button').forEach(b=>b.onclick=()=>show(b.dataset.panel));
 $('simpleFind').addEventListener('input',search);
-$('simpleBack').onclick=()=>{if($('simpleState').textContent==='Alterações não publicadas'&&!confirm('Voltar à V2? Salve seu rascunho antes de sair.'))return;location.href='./index.html'};
+$('simpleBack').onclick=()=>{if($('simpleState').textContent==='Ainda não publicado'&&!confirm('Sair do editor? Guarde suas mudanças antes de sair.'))return;location.href='./index.html'};
 $('simpleUndo').onclick=()=>{if($('studioUndo'))$('studioUndo').click();mark()};
 $('simpleRedo').onclick=()=>{if($('studioRedo'))$('studioRedo').click();mark()};
 $('simpleSave').onclick=save;
-$('simplePublish').onclick=()=>{save();if(confirm('O rascunho foi salvo. Deseja abrir a confirmação de publicação?'))$('publish')?.click()};
-document.getElementById('publish')?.addEventListener('click',()=>{$('simpleState').textContent='Verifique o histórico para confirmar a publicação'});
+$('simplePublish').onclick=()=>{save();if(confirm('Mudanças guardadas. Quer mostrar essas mudanças para todos no site?'))$('publish')?.click()};
+document.getElementById('publish')?.addEventListener('click',()=>{$('simpleState').textContent='Confira abaixo se a publicação deu certo'});
 $('preview').addEventListener('load',()=>setTimeout(search,600));
 window.addEventListener('visual-selected',()=>{if(tab==='find')show('edit')});
 document.querySelectorAll('input,select').forEach(el=>{if(el.id!=='simpleFind')el.addEventListener('input',mark)});
