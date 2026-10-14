@@ -26,8 +26,33 @@ const selector=key.slice(basename.length+1);if(!allowedSelector(selector))return
 const props=rule(v);return props?selector+'{'+props+'}':'';
 }).join('\n');
 }
+
+function advanced(settings){
+ const v=settings.__studio_v2;
+ if(!v||typeof v!=='object')return;
+ const basename=location.pathname.split('/').pop()||'index.html';
+ const entries=v.pages?.[basename]||{};
+ let rules='',mobile='',desktop='';
+ for(const [selector,r] of Object.entries(entries)){
+  if(!allowedSelector(selector)||!r||typeof r!=='object')continue;
+  if(Number.isInteger(r.order)&&r.order>=-30&&r.order<=30)rules+=selector+'{order:'+r.order+' !important}';
+  if(Number.isInteger(r.mobileSize)&&r.mobileSize>=10&&r.mobileSize<=60)mobile+=selector+'{font-size:'+r.mobileSize+'px !important}';
+  if(Number.isInteger(r.desktopSize)&&r.desktopSize>=10&&r.desktopSize<=90)desktop+=selector+'{font-size:'+r.desktopSize+'px !important}';
+  if(typeof r.image==='string'&&r.image.startsWith('/')&&/\\.(png|jpe?g|webp|avif|gif)(?:$|\\?)/i.test(r.image)){
+   const img=document.querySelector(selector);
+   if(img?.tagName==='IMG'){img.src=r.image;if(['cover','contain','fill'].includes(r.fit))img.style.objectFit=r.fit}
+  }
+ }
+ const colors=v.global||{};
+ const palette={accent:colors.accent,foreground:colors.foreground,background:colors.background};
+ const tokens=Object.entries(palette).filter(([,x])=>color(x)).map(([k,val])=>'--studio-'+k+':'+val+';').join('');
+ const el=document.createElement('style');el.id='arquivo-public-visual-advanced';
+ el.textContent=':root{'+tokens+'}'+rules+'@media(max-width:767px){'+mobile+'}@media(min-width:768px){'+desktop+'}';
+ document.head.appendChild(el);
+}
+
 fetch(endpoint,{headers:{apikey:key},cache:'no-store'}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(rows=>{
 if(!Array.isArray(rows)||!rows[0])return;
-const style=document.createElement('style');style.id='arquivo-public-visual-settings';style.textContent=css(rows[0].settings);document.head.appendChild(style);
+const style=document.createElement('style');style.id='arquivo-public-visual-settings';style.textContent=css(rows[0].settings);document.head.appendChild(style);if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>advanced(rows[0].settings),{once:true});else advanced(rows[0].settings);
 }).catch(e=>console.warn('Não foi possível carregar aparência publicada:',e.message));
 })();
