@@ -37,7 +37,13 @@ main{display:grid;grid-template-columns:minmax(290px,350px) 1fr;min-height:calc(
 <label for="align">Alinhamento</label><select id="align"><option value="">Manter original</option><option value="left">Esquerda</option><option value="center">Centralizado</option><option value="right">Direita</option></select>
 </section>
 <section><h2>4. Rascunho e recuperação</h2><div class="inline"><button id="save">Salvar rascunho</button><button id="reset" class="danger">Limpar elemento</button></div><p class="note">O rascunho fica somente neste navegador. Não altera o site de outros visitantes.</p><div class="inline"><button id="export">Exportar CSS</button><button id="clear" class="danger">Apagar rascunho</button></div></section>
-<p id="status" role="status" aria-live="polite"></p>
+<section><h2>5. Publicação e versões</h2>
+<p class="note">Publicar torna o visual acessível a todos. Cada publicação cria uma versão imutável; restaurar também cria uma nova versão.</p>
+<label for="versionNote">Descrição desta publicação</label><input id="versionNote" maxlength="200" placeholder="Ex.: ajuste de fontes na página inicial">
+<div class="inline"><button type="button" id="publish">Publicar aparência</button><button type="button" id="reloadVersions">Atualizar versões</button></div>
+<label for="versions">Histórico de versões</label><select id="versions"><option value="">Carregando…</option></select>
+<button type="button" id="restore">Restaurar versão selecionada</button>
+</section><p id="status" role="status" aria-live="polite"></p>
 </aside>
 <div class="preview-wrap"><div class="toolbar"><div class="inline"><button data-device="desktop">Desktop</button><button data-device="mobile">Celular</button></div><span class="note">Prévia, sem publicação</span></div><div class="frame-wrap" id="frameWrap"><iframe id="preview" title="Prévia da página pública" sandbox="allow-scripts allow-same-origin" referrerpolicy="same-origin"></iframe></div></div>
 </main>
