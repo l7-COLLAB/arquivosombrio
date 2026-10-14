@@ -16,7 +16,7 @@ function buildCSS(which){return Object.entries(validatedSettings(draft)).filter(
 function refresh(){const f=$('preview');try{const d=f.contentDocument;if(!d)return;let el=d.getElementById('arquivo-v2-visual-preview');if(!el){el=d.createElement('style');el.id='arquivo-v2-visual-preview';d.head.appendChild(el)}el.textContent=buildCSS(page());if(selected?.element?.isConnected)selected.element.style.outline='2px dashed #e0a868';}catch(e){status('Prévia indisponível neste navegador: '+e.message)}}
 function load(){const v=draft[key()]||{};ids.forEach(id=>{controls[id].value=v[id]??defaultValues()[id]});labels();refresh()}
 function labels(){['size','width','padding','margin','radius'].forEach(id=>$(id+'Value').textContent=controls[id].value+'px')}
-function set(id){draft[key()]={...(draft[key()]||{}),[id]:controls[id].value};labels();refresh();status('Alteração aplicada na prévia. Salve ou publique quando estiver satisfeita.')}
+function set(id){window.dispatchEvent(new CustomEvent('visual-before-change'));draft[key()]={...(draft[key()]||{}),[id]:controls[id].value};labels();refresh();status('Alteração aplicada na prévia. Salve ou publique quando estiver satisfeita.')}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(draft));status('Rascunho salvo somente neste navegador.')}catch(e){status('Falha ao salvar: '+e.message)}}
 function openPage(){const p=page();if(!safePages.has(p))return; $('preview').src='../'+encodeURIComponent(p);status('Abrindo a página para pré-visualização.')}
 $('preview').addEventListener('load',()=>{selected=null;attachSelection();refresh()});$('page').addEventListener('change',()=>{selected=null;openPage();load()});$('target').addEventListener('change',()=>{clearSelection();load()});
@@ -53,7 +53,7 @@ function selectElement(el){
  const selector=nodeSelector(el);if(!selector){status('Esta área é muito profunda para edição direta. Selecione uma caixa externa.');return}
  clearSelection();selected={element:el,selector};
  $('selectedElement').textContent='Selecionado: '+el.tagName.toLowerCase()+(el.id?' #'+el.id:'')+' — '+(el.innerText||el.getAttribute('alt')||'').trim().slice(0,75);
- el.style.outline='2px dashed #e0a868';load();
+ el.style.outline='2px dashed #e0a868';load();window.dispatchEvent(new CustomEvent('visual-selected',{detail:{selector,element:el}}));
 }
 function attachSelection(){
  try{
@@ -145,6 +145,7 @@ $('restore').addEventListener('click',async()=>{
  }catch(e){status('Falha ao restaurar: '+e.message)}
  finally{btn.disabled=false}
 });
+window.VisualStudioAPI={getDraft:()=>structuredClone(draft),replaceDraft:d=>{draft=validatedSettings(d);load();refresh();},getPage:page,getSelected:()=>selected,getDoc:()=>$('preview').contentDocument,refresh,save,load,selectElement,openPage,validate:validatedSettings,notify:status};
 versions();
 
 load();openPage();
