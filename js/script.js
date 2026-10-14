@@ -12988,7 +12988,7 @@ function htmlImagemDocumentalGarimpo(imagem) {
     if (!url) return "";
     const img = '<img src="' + escaparHTML(url) + '" alt="' + escaparHTML(imagem.legenda || "Imagem documental") + '" loading="lazy" referrerpolicy="no-referrer" style="display:block;max-width:100%;max-height:650px;width:auto;height:auto;margin:0 auto">';
     const visual = imagem.sensivel === true
-        ? '<details class="daily-sensitive-image"><summary style="cursor:pointer;padding:1rem;border:1px solid currentColor">Conteúdo sensível: restos humanos. Clique para visualizar.</summary>' + img + '</details>'
+        ? '<details class="daily-sensitive-image"><summary style="cursor:pointer;padding:1rem;border:1px solid currentColor">Conteúdo sensível. Clique para visualizar a imagem.</summary>' + img + '</details>'
         : img;
     const link = urlImagemDocumentalGarimpo(imagem.link);
     const contexto = urlImagemDocumentalGarimpo(imagem.link_contexto);
