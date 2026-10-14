@@ -119,6 +119,7 @@ async function versions(){
 async function insertVersion(settings,note){
  const {c,user}=await client();
  const clean=validatedSettings(settings);
+ if(window.AdvancedStudio)clean.__studio_v2=window.AdvancedStudio.export();
  if(JSON.stringify(clean).length>90000)throw Error('Personalização excede o limite permitido.');
  const {error}=await c.from('visual_site_versions').insert({author_id:user.id,note,settings:clean});
  if(error)throw error;
@@ -140,7 +141,7 @@ $('restore').addEventListener('click',async()=>{
  const btn=$('restore');btn.disabled=true;
  try{
   await insertVersion(v.settings,'Restauração da versão #'+v.id);
-  draft=validatedSettings(v.settings);save();load();await versions();
+  draft=validatedSettings(v.settings);if(window.AdvancedStudio)window.AdvancedStudio.import(v.settings?.__studio_v2||{});save();load();await versions();
   status('Versão #'+v.id+' restaurada por nova publicação.');
  }catch(e){status('Falha ao restaurar: '+e.message)}
  finally{btn.disabled=false}
