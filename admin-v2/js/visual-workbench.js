@@ -32,5 +32,27 @@ issues.slice(0,25).forEach(msg=>body.appendChild(create('p',msg)).classList.add(
 body.appendChild(button('Ver novamente',audit));}
 $('workDrafts').onclick=fetchDrafts;$('workChanges').onclick=changes;$('workCheck').onclick=audit;
 const pub=$('simplePublish');if(pub){pub.addEventListener('click',()=>{if(active==='check')return;},true)}
+
+async function syncCurrent(){
+ try{
+ const {c,user}=await db();const data={settings:payload(),updated_at:new Date().toISOString()};
+ if(currentId){const {error}=await c.from('visual_site_drafts').update(data).eq('id',currentId).eq('author_id',user.id);if(error)throw error;}
+ else {const {data:created,error}=await c.from('visual_site_drafts').insert({...data,title:'Mudanças em andamento',author_id:user.id}).select('id').single();if(error)throw error;currentId=created.id;}
+ $('simpleState').textContent='Rascunho guardado na conta';
+ }catch(e){api.notify('Guardado neste aparelho, mas não foi possível sincronizar: '+e.message)}
+}
+$('simpleSave')?.addEventListener('click',()=>{void syncCurrent()});
+function preflight(){
+ const doc=api.getDoc();if(!doc?.body)return ['A prévia ainda não carregou.'];
+ const problems=[];const w=doc.documentElement.clientWidth;
+ for(const img of doc.images){if(img.complete&&img.naturalWidth===0)problems.push('Imagem não carregada');}
+ for(const el of doc.querySelectorAll('body *')){if(problems.length>=10)break;const r=el.getBoundingClientRect();if(r.width>0&&r.right>w+10&&!['fixed','absolute'].includes(doc.defaultView.getComputedStyle(el).position))problems.push('Elemento excede a tela');}
+ return problems;
+}
+$('simplePublish')?.addEventListener('click',e=>{
+ const problems=preflight();
+ if(problems.length&&!confirm('A conferência encontrou '+problems.length+' possível(is) problema(s). Deseja continuar até a confirmação de publicação?')){e.preventDefault();e.stopImmediatePropagation();audit();}
+},true);
+
 window.VisualWorkbench={fetchDrafts,changes,audit};fetchDrafts();
 })();
