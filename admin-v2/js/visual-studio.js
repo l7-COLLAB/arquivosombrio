@@ -16,7 +16,7 @@ function buildCSS(which){return Object.entries(validatedSettings(draft)).filter(
 function refresh(){const f=$('preview');try{const d=f.contentDocument;if(!d)return;let el=d.getElementById('arquivo-v2-visual-preview');if(!el){el=d.createElement('style');el.id='arquivo-v2-visual-preview';d.head.appendChild(el)}el.textContent=buildCSS(page());if(selected?.element?.isConnected)selected.element.style.outline='2px dashed #e0a868';}catch(e){status('Prévia indisponível neste navegador: '+e.message)}}
 function load(){const v=draft[key()]||{};ids.forEach(id=>{controls[id].value=v[id]??defaultValues()[id]});labels();refresh()}
 function labels(){['size','width','padding','margin','radius'].forEach(id=>$(id+'Value').textContent=controls[id].value+'px')}
-function set(id){const scope=$('applyScope')?.value||'selected',group=scope==='category'?window.AdvancedStudio?.groupSelector(selected?.element):null;if(scope==='category'&&!group){status('Selecione um card dentro da categoria para aplicar o padrão a todos os cards deste grupo.');return}window.dispatchEvent(new CustomEvent('visual-before-change'));const k=page()+'|'+(group||target());draft[k]={...(draft[k]||{}),...(scope==='category'?{scope:'cards'}:{}),[id]:controls[id].value};labels();refresh();status(scope==='category'?'Padrão aplicado na prévia a todos os cards deste grupo. Guarde para manter.':'Alteração aplicada na prévia. Guarde ou publique quando estiver satisfeita.')}
+function set(id){const scope=$('applyScope')?.value||'selected',group=scope==='category'?window.AdvancedStudio?.groupSelector(selected?.element):null;if(scope==='category'&&!group){status('Não identifiquei um grupo de cards reutilizável. Selecione um card da categoria na prévia.');return}window.dispatchEvent(new CustomEvent('visual-before-change'));const k=page()+'|'+(group||target());draft[k]={...(draft[k]||{}),...(scope==='category'?{scope:'cards'}:{}),[id]:controls[id].value};labels();refresh();status(scope==='category'?'Padrão aplicado aos cards atuais e futuros deste grupo na prévia. Salve o rascunho e publique para ativar no site.':'Alteração aplicada na prévia. Salve o rascunho e publique quando estiver satisfeita.')}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(draft));status('Rascunho salvo somente neste navegador.')}catch(e){status('Falha ao salvar: '+e.message)}}
 function openPage(){const p=page();if(!safePages.has(p))return; $('preview').src='../'+encodeURIComponent(p);status('Abrindo a página para pré-visualização.')}
 $('preview').addEventListener('load',()=>{selected=null;attachSelection();refresh()});$('page').addEventListener('change',()=>{selected=null;openPage();load()});$('target').addEventListener('change',()=>{clearSelection();load()});
@@ -32,7 +32,7 @@ document.querySelectorAll('[data-device]').forEach(b=>b.addEventListener('click'
 function allowedSelector(sel,legacy){
  if(legacy.has(sel))return true;
  if(typeof sel!=='string'||sel.length>380)return false;
- return /^body(?: > [a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,3}\)){1,12}(?: > [a-z][a-z0-9-]*(?:\.[a-z0-9_-]+){0,8})?$/i.test(sel);
+ return /^(?:body(?: > [a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,3}\)){1,12}|#[a-z][a-z0-9_-]{0,63}(?: > [a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,3}\)){0,12})(?: > [a-z][a-z0-9-]*(?:\.[a-z0-9_-]+){0,8})?$/i.test(sel);
 }
 function nodeSelector(el){
  const steps=[];

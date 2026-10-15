@@ -3,7 +3,7 @@
 const endpoint='https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/visual_site_versions?select=id,settings&order=id.desc&limit=1';
 const key='sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj';
 const selectors=new Set(['body','.main-header','.hero','.hero-title','.section-title','.category-title','.container','.card','.btn','.main-footer']);
-function allowedSelector(s){return selectors.has(s)||(typeof s==='string'&&s.length<=380&&/^body(?: > [a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,3}\)){1,12}(?: > [a-z][a-z0-9-]*(?:\.[a-z0-9_-]+){0,8})?$/i.test(s));}
+function allowedSelector(s){return selectors.has(s)||(typeof s==='string'&&s.length<=380&&/^(?:body(?: > [a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,3}\)){1,12}|#[a-z][a-z0-9_-]{0,63}(?: > [a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,3}\)){0,12})(?: > [a-z][a-z0-9-]*(?:\.[a-z0-9_-]+){0,8})?$/i.test(s));}
 const fonts=new Set(['Georgia, serif','Verdana, sans-serif','Arial, sans-serif',"'Times New Roman', serif","'Courier New', monospace","'Cinzel', serif","'Libre Baskerville', serif"]);
 const color=v=>/^#[0-9a-f]{6}$/i.test(v||'')?v:null;
 const px=(v,min,max)=>{let n=Number(v);return Number.isFinite(n)&&n>=min&&n<=max? n+'px':null};
@@ -38,8 +38,8 @@ function advanced(settings){
  for(const [selector,r] of Object.entries(entries)){
   if(!allowedSelector(selector)||!r||typeof r!=='object')continue;
   if(Number.isInteger(r.order)&&r.order>=-30&&r.order<=30)rules+=selector+'{order:'+r.order+' !important}';
-  if(Number.isInteger(r.mobileSize)&&r.mobileSize>=10&&r.mobileSize<=60)mobile+=selector+'{font-size:'+r.mobileSize+'px !important}';
-  if(Number.isInteger(r.desktopSize)&&r.desktopSize>=10&&r.desktopSize<=90)desktop+=selector+'{font-size:'+r.desktopSize+'px !important}';
+  if(Number.isInteger(r.mobileSize)&&r.mobileSize>=10&&r.mobileSize<=60)mobile+=(r.scope==='cards'?selector+' *':selector)+'{font-size:'+r.mobileSize+'px !important}';
+  if(Number.isInteger(r.desktopSize)&&r.desktopSize>=10&&r.desktopSize<=90)desktop+=(r.scope==='cards'?selector+' *':selector)+'{font-size:'+r.desktopSize+'px !important}';
   if(typeof r.image==='string'){
    try{
     const url=new URL(r.image,location.origin);
