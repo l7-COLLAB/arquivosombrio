@@ -25,6 +25,7 @@ function show(t){tab=t;document.querySelectorAll('.simple-tabs button').forEach(
  advanced.querySelectorAll('h2').forEach(h=>{const enabled=(headings[t]||[]).some(x=>h.textContent.includes(x));h.hidden=!enabled;let n=h.nextElementSibling;while(n&&n.tagName!=='H2'){n.hidden=!enabled;n=n.nextElementSibling}});
  $('simpleResults').hidden=t!=='find';$('simpleFind').hidden=t!=='find';document.querySelector('label[for="simpleFind"]').hidden=t!=='find';
  if(t==='find')search();
+  if(t==='theme')setTimeout(()=>$('font')?.closest('section')?.scrollIntoView({block:'start',behavior:'smooth'}),0);
 }
 function search(){
  const d=$('preview').contentDocument, q=$('simpleFind').value.trim().toLocaleLowerCase('pt-BR'),out=$('simpleResults');out.replaceChildren();
