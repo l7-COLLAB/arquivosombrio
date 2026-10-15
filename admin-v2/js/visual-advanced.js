@@ -67,8 +67,8 @@ function groupSelector(el){
  const body=api.getDoc()?.body;if(!el||!body)return null;let node=el,steps=0;
  while(node&&node!==body&&steps++<12){
   const parent=node.parentElement,tag=node.tagName.toLowerCase(),classes=Array.from(node.classList||[]).filter(x=>/^[a-z0-9_-]+$/i.test(x));
-  const cardTokens=classes.filter(x=>/(?:^|[-_])(?:card|item|tile|entry|story|case|dossier|archive)(?:[-_](?:link|wrapper|container))?$/i.test(x));
-  const cardLike=node.tagName==='ARTICLE'||cardTokens.length>0||(['A','DIV'].includes(node.tagName)&&!!node.querySelector('img')&&!!node.querySelector('h2,h3,p'));
+  const cardTokens=classes.filter(x=>/(?:^|[-_])(?:card|item|tile|entry|story|case|dossier|archive)$/i.test(x));
+  const cardLike=node.tagName==='ARTICLE'||cardTokens.length>0||(['A','DIV'].includes(node.tagName)&&!(node.tagName==='A'&&parent?.tagName==='ARTICLE')&&!!node.querySelector('img')&&!!node.querySelector('h2,h3,p'));
   if(parent&&cardLike){
    const siblings=Array.from(parent.children).filter(other=>other.tagName===node.tagName&&(node.tagName==='ARTICLE'||cardTokens.some(x=>other.classList.contains(x))));
    const common=cardTokens.filter(x=>siblings.every(other=>other.classList.contains(x)));
