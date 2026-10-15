@@ -64,7 +64,7 @@ function groupSelector(el){
  const body=api.getDoc()?.body;if(!el||!body)return null;let node=el,steps=0;
  while(node&&node!==body&&steps++<12){
   const parent=node.parentElement,tag=node.tagName.toLowerCase(),classes=Array.from(node.classList||[]).filter(x=>/^[a-z0-9_-]+$/i.test(x));
-  const cardLike=node.tagName==='ARTICLE'||classes.some(x=>/(card|item|tile|entry|story|case|dossier|archive)/i.test(x));
+  const cardLike=node.tagName==='ARTICLE'||classes.some(x=>/(?:^|[-_])(?:card|item|tile|entry|story|case|dossier|archive)(?:[-_](?:card|item|tile|entry|story|case|dossier|archive))*$/i.test(x))||(['A','DIV'].includes(node.tagName)&&!!node.querySelector('img')&&!!node.querySelector('h2,h3,p'));
   if(parent&&cardLike){
    const siblings=Array.from(parent.children).filter(other=>{if(other.tagName!==node.tagName)return false;const otherClasses=Array.from(other.classList||[]);return node.tagName==='ARTICLE'||classes.some(x=>otherClasses.includes(x))});
    const common=classes.filter(x=>siblings.every(other=>other.classList.contains(x)));
