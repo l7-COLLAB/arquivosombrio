@@ -38,8 +38,8 @@ function advanced(settings){
  for(const [selector,r] of Object.entries(entries)){
   if(!allowedSelector(selector)||!r||typeof r!=='object')continue;
   if(Number.isInteger(r.order)&&r.order>=-30&&r.order<=30)rules+=selector+'{order:'+r.order+' !important}';
-  if(Number.isInteger(r.mobileSize)&&r.mobileSize>=10&&r.mobileSize<=60)mobile+=selector+'{font-size:'+r.mobileSize+'px !important}';
-  if(Number.isInteger(r.desktopSize)&&r.desktopSize>=10&&r.desktopSize<=90)desktop+=selector+'{font-size:'+r.desktopSize+'px !important}';
+  if(Number.isInteger(r.mobileSize)&&r.mobileSize>=10&&r.mobileSize<=60)mobile+=(r.scope==='cards'?selector+' *':selector)+'{font-size:'+r.mobileSize+'px !important}';
+  if(Number.isInteger(r.desktopSize)&&r.desktopSize>=10&&r.desktopSize<=90)desktop+=(r.scope==='cards'?selector+' *':selector)+'{font-size:'+r.desktopSize+'px !important}';
   if(typeof r.image==='string'){
    try{
     const url=new URL(r.image,location.origin);
