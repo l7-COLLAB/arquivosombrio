@@ -146,219 +146,76 @@ function carregarTurnstileSDK() {
 }
 
 
+// Share an in-progress challenge; never open competing security dialogs.
+let promessaVerificacaoTurnstile = null;
 function obterTokenTurnstile() {
-
-    let container = null;
-    let widgetId = null;
-
-    return carregarTurnstileSDK()
-        .then(
-            turnstile => {
-
-                return new Promise(
-                    (resolve, reject) => {
-
-                        container =
-                            document.createElement(
-                                "div"
-                            );
-
-                        container.id =
-                            "arquivo-sombrio-turnstile";
-
-                        container.setAttribute(
-                            "role",
-                            "dialog"
-                        );
-
-                        container.setAttribute(
-                            "aria-label",
-                            "Verificação de segurança"
-                        );
-
-                        container.style.cssText =
-                            "position:fixed;inset:0;z-index:2147483647;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.92)";
-
-                        document.body.appendChild(
-                            container
-                        );
-
-
-                        let temporizador = null;
-
-                        const limpar = () => {
-
-                            if (
-                                temporizador !==
-                                null
-                            ) {
-
-                                clearTimeout(
-                                    temporizador
-                                );
-
-                                temporizador =
-                                    null;
-                            }
-
-                            if (
-                                widgetId !== null &&
-                                window.turnstile
-                            ) {
-
-                                try {
-
-                                    window.turnstile.remove(
-                                        widgetId
-                                    );
-
-                                } catch (erro) {
-
-                                    console.warn(
-                                        erro
-                                    );
-
-                                }
-                            }
-
-                            if (container) {
-
-                                container.remove();
-                                container = null;
-
-                            }
-                        };
-
-
-                        const rejeitar =
-                            mensagem => {
-
-                                limpar();
-
-                                reject(
-                                    new Error(
-                                        mensagem
-                                    )
-                                );
-                            };
-
-
-                        /*
-                         * Instrução visível: o Cloudflare
-                         * pode exigir clique no checkbox;
-                         * sem este aviso, o usuário não
-                         * sabe que precisa interagir.
-                         */
-
-                        const aviso =
-                            document.createElement(
-                                "div"
-                            );
-
-                        aviso.textContent =
-                            "CONCLUA A VERIFICAÇÃO DE SEGURANÇA";
-
-                        aviso.style.cssText =
-                            "font:600 11px/1.4 monospace;letter-spacing:.12em;color:#cfc6bd;text-transform:uppercase;margin:0 0 12px;text-align:center";
-
-                        container.appendChild(
-                            aviso
-                        );
-
-
-                        /*
-                         * Rede de segurança: se nenhum
-                         * callback do widget disparar
-                         * em 2 minutos, encerra a
-                         * espera com orientação clara
-                         * em vez de "Verificando..."
-                         * infinito.
-                         */
-
-                        temporizador =
-                            setTimeout(
-                                () => {
-
-                                    rejeitar(
-                                        "A verificação de segurança não foi concluída. Clique na caixa exibida e tente novamente."
-                                    );
-
-                                },
-                                30000
-                            );
-
-
-                        widgetId =
-                            turnstile.render(
-                                container,
-                                {
-
-                                    sitekey:
-                                        TURNSTILE_SITE_KEY,
-
-                                    theme:
-                                        "dark",
-
-                                    language:
-                                        "pt-BR",
-
-                                    callback:
-                                        token => {
-
-                                            limpar();
-
-                                            resolve(
-                                                token
-                                            );
-                                        },
-
-                                    "error-callback":
-                                        () => {
-
-                                            rejeitar(
-                                                "Não foi possível concluir a verificação anti-bot."
-                                            );
-
-                                            return true;
-                                        },
-
-                                    "expired-callback":
-                                        () => {
-
-                                            rejeitar(
-                                                "A verificação anti-bot expirou. Tente novamente."
-                                            );
-                                        },
-
-                                    "timeout-callback":
-                                        () => {
-
-                                            rejeitar(
-                                                "A verificação anti-bot demorou demais. Tente novamente."
-                                            );
-                                        }
-
-                                }
-                            );
-
-                    }
-                );
-
-            }
-        )
-        .catch(
-            erro => {
-
-                if (container) {
-
-                    container.remove();
-
-                }
-
-                throw erro;
-
-            }
-        );
+    if (promessaVerificacaoTurnstile) return promessaVerificacaoTurnstile;
+    promessaVerificacaoTurnstile = carregarTurnstileSDK().then(turnstile => new Promise((resolve, reject) => {
+        const anterior = document.activeElement;
+        const container = document.createElement("div");
+        container.id = "arquivo-sombrio-turnstile";
+        container.setAttribute("role", "dialog");
+        container.setAttribute("aria-modal", "true");
+        container.setAttribute("aria-label", "Verificação de segurança");
+        container.style.cssText = "position:fixed;inset:0;z-index:2147483647;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.96);color:#eee;font:14px/1.5 Arial,sans-serif;text-align:center";
+        const aviso = document.createElement("p");
+        aviso.textContent = "Conclua a verificação de segurança abaixo. Você tem até 2 minutos.";
+        // The widget owns an empty element, separate from instructions and controls.
+        const widget = document.createElement("div");
+        const cancelar = document.createElement("button");
+        cancelar.type = "button";
+        cancelar.textContent = "Voltar ao formulário";
+        cancelar.style.cssText = "margin-top:20px;padding:12px 18px;background:#211b16;border:1px solid #b59970;color:#fff;cursor:pointer;font:14px Arial,sans-serif";
+        container.append(aviso, widget, cancelar);
+        document.body.appendChild(container);
+        let widgetId = null, terminado = false, temporizador = null;
+        const limpar = () => {
+            clearTimeout(temporizador);
+            document.removeEventListener("keydown", onEsc);
+            if (widgetId !== null) { try { turnstile.remove(widgetId); } catch (_) {} }
+            container.remove();
+            if (anterior?.isConnected) anterior.focus();
+        };
+        const finalizar = (erro, token) => {
+            if (terminado) return;
+            terminado = true;
+            limpar();
+            if (erro) reject(erro); else resolve(token);
+        };
+        const falhar = (mensagem, codigo) => {
+            const erro = new Error(mensagem);
+            erro.code = codigo;
+            finalizar(erro);
+        };
+        const voltar = () => falhar("Verificação cancelada. Seus dados continuam no formulário; tente novamente quando desejar.", "captcha_cancelled");
+        function onEsc(event) { if (event.key === "Escape") voltar(); }
+        document.addEventListener("keydown", onEsc);
+        cancelar.addEventListener("click", voltar);
+        temporizador = setTimeout(() => falhar("O prazo de 2 minutos para a verificação terminou. Seus dados foram mantidos; tente novamente.", "captcha_timeout"), 120000);
+        try {
+            widgetId = turnstile.render(widget, {
+                sitekey: TURNSTILE_SITE_KEY,
+                theme: "dark",
+                language: "pt-BR",
+                callback: token => {
+                    if (!token) return falhar("A verificação não retornou uma confirmação válida. Tente novamente.", "captcha_empty");
+                    finalizar(null, token);
+                },
+                "error-callback": codigo => {
+                    const referencia = /^\d{3,6}$/.test(String(codigo)) ? ` (código ${codigo})` : "";
+                    falhar("A verificação de segurança falhou" + referencia + ". Confira sua conexão e permita a proteção do Cloudflare neste site antes de tentar novamente.", "captcha_failed");
+                    return true;
+                },
+                "expired-callback": () => falhar("A verificação de segurança expirou. Tente novamente para obter uma nova confirmação.", "captcha_expired"),
+                "timeout-callback": () => falhar("A verificação de segurança demorou demais. Confira sua conexão e tente novamente.", "captcha_timeout")
+            });
+            // Also clean up if a provider callback ran synchronously during render.
+            if (terminado && widgetId !== null) { try { turnstile.remove(widgetId); } catch (_) {} }
+        } catch (_) {
+            falhar("Não foi possível abrir a verificação de segurança. Recarregue a página e tente novamente.", "captcha_render");
+        }
+    })).finally(() => { promessaVerificacaoTurnstile = null; });
+    return promessaVerificacaoTurnstile;
 }
 
 
