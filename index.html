@@ -963,66 +963,27 @@
                 <div class="hero-content">
 
 
-                    <div class="hero-classification">
+                    <p class="hero-eyebrow">ARQUIVO SOMBRIO · INVESTIGAÇÃO E MEMÓRIA</p>
 
-                        <span>
-                            ARQUIVO Nº AS-001
-                        </span>
-
-                        <span>
-                            ACESSO DOCUMENTAL
-                        </span>
-
-                    </div>
-
-
-                    <p class="hero-eyebrow">
-                        MEMÓRIA • INVESTIGAÇÃO • CONHECIMENTO
-                    </p>
-
-
-                    <h1
-                        class="hero-rotating-title"
-                        id="hero-rotating-title"
-                    >
-                        Há mais em um caso do que aquilo que
-                        <span class="hero-title-accent">virou notícia.</span>
+                    <h1 class="hero-rotating-title" id="hero-rotating-title">
+                        <span class="hero-title-line">O TEMPO PASSA.</span>
+                        <span class="hero-title-accent">OS VESTÍGIOS PERMANECEM.</span>
                     </h1>
 
-
                     <p class="hero-description">
-
-                        Um gabinete documental dedicado aos vestígios da experiência humana.
-                        Investigações históricas, dossiês criminais, ciência forense,
-                        lendas e literatura reunidos com rigor, memória e profundidade.
-
+                        Dossiês criminais, investigações históricas, ciência forense e
+                        narrativas que atravessam o tempo.
                     </p>
 
-
-                    <div class="gabinete-manifesto" aria-label="Princípio editorial">
-                        <span class="gabinete-manifesto-index">PRINCÍPIO I · REGISTRO E MEMÓRIA</span>
-                        <p>Nem toda pergunta encontra resposta. Toda evidência merece exame.</p>
-                    </div>
                     <div class="gabinete-actions" aria-label="Explorar o acervo">
                         <a class="gabinete-action gabinete-action-primary" href="dossies.html">Consultar dossiês <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                         <a class="gabinete-action gabinete-action-secondary" href="novels.html">Entrar na biblioteca <i class="fa-solid fa-book-open" aria-hidden="true"></i></a>
                     </div>
 
-                    <div class="hero-warning">
-
-                        <span class="hero-warning-label">
-                            NOTA EDITORIAL
-                        </span>
-
-                        <p>
-
-                            Alguns arquivos abordam crimes reais, mortes,
-                            investigações e temas sensíveis.
-
-                        </p>
-
-                    </div>
-
+                    <p class="gabinete-manifesto" aria-label="Princípio editorial">
+                        <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
+                        Nem toda pergunta encontra resposta. Toda evidência merece exame.
+                    </p>
 
                 </div>
 
@@ -1036,6 +997,13 @@
 
         </section>
 
+
+        <aside class="home-editorial-notice" aria-label="Nota editorial">
+            <div class="container">
+                <strong>NOTA EDITORIAL</strong>
+                <span>Alguns arquivos abordam crimes reais, mortes, investigações e temas sensíveis.</span>
+            </div>
+        </aside>
 
         <!-- Vitrine editorial única: visível também em dispositivos móveis. -->
         <section class="home-featured" id="home-main-feature" aria-labelledby="home-main-feature-heading">
@@ -2617,149 +2585,7 @@
     <script src="js/filtros.js?v=case-tracking-20261006-2" defer></script>
     <script src="js/arquivo-literario-bootstrap.js?v=20260923-novels-2" defer></script>
 
-<script>
-(function () {
-    const title = document.getElementById('hero-rotating-title');
 
-    if (!title || title.dataset.rotatorReady === 'true') {
-        return;
-    }
-
-    title.dataset.rotatorReady = 'true';
-
-    const phrases = [
-        {
-            text: 'Há mais em um caso do que aquilo que',
-            accent: 'virou notícia.'
-        },
-        {
-            text: 'Os detalhes mudam a forma como uma história',
-            accent: 'é contada.'
-        },
-        {
-            text: 'O que ficou para trás ainda merece',
-            accent: 'ser lido.'
-        }
-    ];
-
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const intervalMs = 9000;
-    const fadeMs = 480;
-    let currentIndex = 0;
-    let rotationTimer = null;
-    let fadeTimer = null;
-    let resizeTimer = null;
-
-    function renderPhrase(index) {
-        const phrase = phrases[index];
-        title.textContent = phrase.text + ' ';
-
-        const accent = document.createElement('span');
-        accent.className = 'hero-title-accent';
-        accent.textContent = phrase.accent;
-        title.appendChild(accent);
-    }
-
-    function stabilizeTitleHeight() {
-        const parent = title.parentElement;
-        if (!parent) return;
-
-        const measuringTitle = title.cloneNode(false);
-        measuringTitle.removeAttribute('id');
-        measuringTitle.classList.remove('is-changing');
-        measuringTitle.style.position = 'absolute';
-        measuringTitle.style.visibility = 'hidden';
-        measuringTitle.style.pointerEvents = 'none';
-        measuringTitle.style.width = title.getBoundingClientRect().width + 'px';
-        measuringTitle.style.minHeight = '0';
-        measuringTitle.style.height = 'auto';
-        parent.appendChild(measuringTitle);
-
-        let maxHeight = 0;
-
-        phrases.forEach((phrase) => {
-            measuringTitle.textContent = phrase.text + ' ';
-            const accent = document.createElement('span');
-            accent.className = 'hero-title-accent';
-            accent.textContent = phrase.accent;
-            measuringTitle.appendChild(accent);
-            maxHeight = Math.max(maxHeight, measuringTitle.getBoundingClientRect().height);
-        });
-
-        measuringTitle.remove();
-
-        if (maxHeight > 0) {
-            title.style.minHeight = Math.ceil(maxHeight) + 'px';
-        }
-    }
-
-    function stopRotation() {
-        if (rotationTimer) {
-            clearInterval(rotationTimer);
-            rotationTimer = null;
-        }
-
-        if (fadeTimer) {
-            clearTimeout(fadeTimer);
-            fadeTimer = null;
-        }
-    }
-
-    function showNextPhrase() {
-        if (document.hidden || fadeTimer) return;
-
-        currentIndex = (currentIndex + 1) % phrases.length;
-
-        /*
-         * "Reduzir Movimento" deve remover somente o fade. A troca de
-         * conteúdo continua disponível no Safari e no PWA do iPhone.
-         */
-        if (reducedMotion.matches) {
-            renderPhrase(currentIndex);
-            return;
-        }
-
-        title.classList.add('is-changing');
-
-        fadeTimer = window.setTimeout(() => {
-            renderPhrase(currentIndex);
-            title.classList.remove('is-changing');
-            fadeTimer = null;
-        }, fadeMs);
-    }
-
-    function startRotation() {
-        stopRotation();
-
-        if (document.hidden) return;
-
-        rotationTimer = window.setInterval(showNextPhrase, intervalMs);
-    }
-
-    renderPhrase(currentIndex);
-    stabilizeTitleHeight();
-    startRotation();
-
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            stopRotation();
-            title.classList.remove('is-changing');
-        } else {
-            startRotation();
-        }
-    });
-
-    reducedMotion.addEventListener?.('change', () => {
-        title.classList.remove('is-changing');
-        startRotation();
-    });
-
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = window.setTimeout(stabilizeTitleHeight, 160);
-    }, { passive: true });
-})();
-</script>
 
 
 <script>
