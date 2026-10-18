@@ -13,7 +13,7 @@
 .home-page .hero-content{max-width:900px}
 .home-page .hero-classification{display:flex;flex-wrap:wrap;gap:10px 24px;border-bottom:1px solid rgba(169,138,95,.3);padding-bottom:14px;margin-bottom:27px}
 .home-page .hero-classification span,.home-page .hero-eyebrow{color:#c6af89;font-family:"IBM Plex Mono",monospace;letter-spacing:.14em}
-.home-page .hero-content .hero-rotating-title{font-family:"Cormorant Garamond",Georgia,serif!important;font-weight:600!important;font-size:clamp(3rem,7.2vw,6.2rem)!important;line-height:1.03!important;letter-spacing:-.025em!important;color:var(--gab-paper);max-width:14ch;text-wrap:balance}
+.home-page .hero-content .hero-rotating-title{font-family:"Cormorant Garamond",Georgia,serif!important;font-weight:600!important;font-size:clamp(2.55rem,3.8vw,3.85rem)!important;line-height:1.09!important;letter-spacing:-.02em!important;color:var(--gab-paper);max-width:19ch;text-wrap:balance}
 .home-page .hero-content .hero-rotating-title .hero-title-accent{color:#bd9672!important;font-family:inherit!important}
 .home-page .hero-description{font-size:clamp(1rem,1.45vw,1.14rem);line-height:1.82;max-width:680px;color:#e0d4c4}
 .home-page .gabinete-manifesto{max-width:690px;margin-top:30px;padding:16px 20px;border-left:2px solid var(--gab-bronze);background:rgba(230,217,189,.035)}
