@@ -1,0 +1,81 @@
+/* ARQUIVO SOMBRIO | Sistema cromático v2 | Fase 1
+   Protótipo para validação — fontes originais preservadas.
+   ESCOPO: catálogos públicos. Exclui novels.html, capítulos e Admin V2.
+   Não modifica componentes de leitura nem preferências do leitor. */
+:root {
+  --as-bg:#12100f;
+  --as-surface:#201917;
+  --as-surface-raised:#2c2623;
+  --as-document:#d8c7a6;
+  --as-text-primary:#e7dcc6;
+  --as-text-secondary:#b7a488;
+  --as-text-on-paper:#29251f;
+  --as-accent:#5a1e25;
+  --as-accent-hover:#6c2a2d;
+  --as-rust:#7b3a2b;
+  --as-ornament:#8a6a3d;
+  --as-ornament-light:#a28758;
+  --as-forensic:#3e4b46;
+  --as-focus:#e7dcc6;
+  --as-radius:3px;
+  --as-font-title:"Oswald","Arial Narrow",sans-serif;
+  --as-font-accent:"Archivo Black",Impact,sans-serif;
+  --as-font-document:"Cinzel",Georgia,serif;
+  --as-font-reading:"Libre Baskerville",Georgia,serif;
+  --as-font-meta:"DM Mono",monospace;
+}
+:where(.home-page,.archive-page,.forensic-page,.garimpo-page,.lendas-page,.creepypastas-page,body[data-archive-type="lendas"],body[data-archive-type="creepypastas"]){
+  --bg:var(--as-bg);
+  --bg-soft:var(--as-surface);
+  --bg-card:var(--as-surface);
+  --bg-card-2:var(--as-surface-raised);
+  --paper:var(--as-text-primary);
+  --paper-soft:var(--as-text-secondary);
+  --muted:var(--as-text-secondary);
+  --gold:var(--as-ornament-light);
+  --gold-light:#c9ae82;
+  --red:var(--as-accent);
+  --red-dark:#40191d;
+  --red-light:#ba817d;
+  --border:rgba(162,135,88,.33);
+  --border-strong:rgba(162,135,88,.68);
+  color:var(--as-text-primary);
+  background-color:var(--as-bg);
+}
+:where(.home-page,.archive-page,.forensic-page,.garimpo-page,.lendas-page,.creepypastas-page,body[data-archive-type="lendas"],body[data-archive-type="creepypastas"]) .main-header{
+  background-color:var(--as-bg);
+  border-bottom-color:rgba(162,135,88,.33);
+}
+:where(.home-page,.archive-page,.forensic-page,.garimpo-page,.lendas-page,.creepypastas-page,body[data-archive-type="lendas"],body[data-archive-type="creepypastas"]) :is(.case-card,.home-daily-card,.hero-editorial-feature,.hero-editorial-strip){
+  border-color:rgba(162,135,88,.3);
+  border-radius:var(--as-radius);
+}
+:where(.home-page,.archive-page,.forensic-page,.garimpo-page,.lendas-page,.creepypastas-page,body[data-archive-type="lendas"],body[data-archive-type="creepypastas"]) :is(.btn-primary,.gabinete-action-primary){
+  background-color:var(--as-accent);
+  color:var(--as-text-primary);
+  border-color:var(--as-accent);
+}
+:where(.home-page,.archive-page,.forensic-page,.garimpo-page,.lendas-page,.creepypastas-page,body[data-archive-type="lendas"],body[data-archive-type="creepypastas"]) :is(.btn-primary,.gabinete-action-primary):hover{
+  background-color:var(--as-accent-hover);
+  border-color:var(--as-accent-hover);
+}
+:where(.home-page,.archive-page,.forensic-page,.garimpo-page,.lendas-page,.creepypastas-page,body[data-archive-type="lendas"],body[data-archive-type="creepypastas"]) :is(a,button,input,select,textarea,summary):focus-visible{
+  outline:2px solid var(--as-focus);
+  outline-offset:3px;
+}
+:where(.home-page,.archive-page,.forensic-page,.garimpo-page,.lendas-page,.creepypastas-page,body[data-archive-type="lendas"],body[data-archive-type="creepypastas"]) :is(.section-eyebrow,.section-number,.home-directory-label){
+  color:#c9ae82; /* Corrige contraste de bronze puro em fundo de carvão */
+}
+/* Tratamento por área: somente matizes de apoio, sem reconstruir a tipografia. */
+.forensic-page{--as-category-accent:var(--as-forensic)}
+.garimpo-page,.archive-page{--as-category-accent:var(--as-rust)}
+:where(.creepypastas-page,body[data-archive-type="creepypastas"]){--as-category-accent:var(--as-accent-hover)}
+:where(.lendas-page,body[data-archive-type="lendas"]){--as-category-accent:var(--as-rust)}
+:where(.forensic-page,.garimpo-page,.archive-page,.creepypastas-page,.lendas-page,body[data-archive-type="lendas"],body[data-archive-type="creepypastas"]) :is(.section-header,.archive-header){
+  border-color:rgba(162,135,88,.28);
+}
+@media(prefers-reduced-motion:reduce){
+  :where(.home-page,.archive-page,.forensic-page,.garimpo-page,.lendas-page,.creepypastas-page,body[data-archive-type="lendas"],body[data-archive-type="creepypastas"]) :is(.case-card,.gabinete-action){transition:none}
+}
+/* Escopo intencional: nenhuma regra body genérica, nenhum seletor .novels,
+   .novel-reader, .reader-*, .admin-v2 nem regra global de fontes. */
