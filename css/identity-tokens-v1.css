@@ -1,5 +1,5 @@
-/* ARQUIVO SOMBRIO — identidade 1.0 | Fase 1 (tokens em preparação)
-   Tokens documentados. Não ativar globalmente sem auditoria de contraste e regressão. */
+/* ARQUIVO SOMBRIO — identidade 1.0 | Fase 1
+   Ativação progressiva apenas nos catálogos públicos. */
 :root {
   --as-carvao: #171715;
   --as-madeira: #29241F;
@@ -21,4 +21,55 @@
   --as-espacamento-4: 16px;
   --as-espacamento-6: 24px;
   --as-espacamento-8: 32px;
+}
+
+/* Fase 1: aplicar apenas aos catálogos públicos.
+   Leitura de dossiês/novels, temas de acessibilidade e Admin V2 ficam fora do escopo. */
+:where(.home-page, .archive-page, .forensic-page, .garimpo-page, .creepypastas-page, .lendas-page) {
+  --bg: var(--as-carvao);
+  --bg-soft: #211e1a;
+  --bg-card: var(--as-madeira);
+  --bg-card-2: #302922;
+  --paper: var(--as-marfim);
+  --paper-soft: #d5c8b7;
+  --muted: #b0a99e;
+  --red: var(--as-vinho);
+  --red-light: #c08b83;
+  --red-dark: #512d2a;
+  --gold: var(--as-bronze);
+  --gold-light: #d0b188;
+  --border: rgba(169,138,95,.26);
+  --border-strong: rgba(169,138,95,.58);
+}
+:where(.home-page, .archive-page, .forensic-page, .garimpo-page, .creepypastas-page, .lendas-page) .main-header {
+  background: rgba(23,23,21,.96);
+  border-bottom-color: rgba(169,138,95,.4);
+}
+:where(.home-page, .archive-page, .forensic-page, .garimpo-page, .creepypastas-page, .lendas-page) :is(.hero-content h1,.section-header h2,.home-featured-heading h2) {
+  font-family: var(--as-fonte-titulo);
+  font-weight: 600;
+  letter-spacing: .015em;
+  text-wrap: balance;
+}
+:where(.home-page, .archive-page, .forensic-page, .garimpo-page, .creepypastas-page, .lendas-page) :is(.section-eyebrow,.section-number,.home-directory-label) {
+  color: var(--as-bronze);
+  font-family: var(--as-fonte-registro);
+  letter-spacing: .11em;
+}
+:where(.home-page, .archive-page, .forensic-page, .garimpo-page, .creepypastas-page, .lendas-page) :is(.case-card,.home-daily-card,.home-featured .hero-dossier) {
+  border-color: rgba(169,138,95,.32);
+  border-radius: var(--as-raio-card);
+}
+:where(.home-page, .archive-page, .forensic-page, .garimpo-page, .creepypastas-page, .lendas-page) :is(.case-card,.home-daily-card):focus-within {
+  outline: 2px solid var(--as-bronze);
+  outline-offset: 3px;
+}
+:where(.home-page, .archive-page, .forensic-page, .garimpo-page, .creepypastas-page, .lendas-page) :is(.btn-primary,.btn-secondary,.home-section-link) {
+  border-radius: var(--as-raio-card);
+}
+@media (prefers-reduced-motion:reduce) {
+  :where(.home-page, .archive-page, .forensic-page, .garimpo-page, .creepypastas-page, .lendas-page) .case-card {
+    transition: none;
+    transform: none;
+  }
 }
