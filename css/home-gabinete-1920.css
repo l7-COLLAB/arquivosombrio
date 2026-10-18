@@ -96,3 +96,112 @@
     max-width:100%;
   }
 }
+
+/* Hero final — revisão editorial aprovada.
+   As duas linhas usam Archivo Black, sem rotação ou dimensões herdadas
+   da composição anterior. Restringir à home; novels e leitores intocados. */
+.home-page .hero-section{
+  padding-block:clamp(44px,5.2vw,74px);
+  background:radial-gradient(ellipse at 90% 20%,rgba(90,30,37,.19),transparent 43%),
+             linear-gradient(120deg,var(--as-bg),var(--as-surface));
+}
+.home-page .hero-content{max-width:920px}
+.home-page .hero-content .hero-eyebrow{
+  display:block;
+  margin:0 0 22px;
+  font-family:"DM Mono",monospace;
+  font-size:.69rem;
+  font-weight:500;
+  line-height:1.6;
+  letter-spacing:.12em;
+  color:#c9ae82;
+}
+.home-page .hero-content .hero-rotating-title{
+  max-width:900px!important;
+  margin:0 0 24px!important;
+  font-family:"Archivo Black",Impact,sans-serif!important;
+  font-weight:400!important;
+  font-size:clamp(2.35rem,4.05vw,3.75rem)!important;
+  line-height:1.14!important;
+  letter-spacing:-.035em!important;
+  text-transform:uppercase;
+  text-wrap:balance;
+  min-height:0!important;
+  height:auto!important;
+  transition:none!important;
+}
+.home-page .hero-content .hero-rotating-title .hero-title-line,
+.home-page .hero-content .hero-rotating-title .hero-title-accent{
+  display:block;
+  max-width:100%;
+  font-family:"Archivo Black",Impact,sans-serif!important;
+  font-size:1em!important;
+  font-weight:400!important;
+  line-height:inherit!important;
+  letter-spacing:inherit!important;
+  overflow-wrap:normal;
+}
+.home-page .hero-content .hero-rotating-title .hero-title-line{color:var(--as-text-primary)}
+.home-page .hero-content .hero-rotating-title .hero-title-accent{color:#c58d88!important}
+.home-page .hero-content .hero-description{
+  max-width:610px;
+  margin:0 0 23px;
+  color:var(--as-text-secondary);
+  font-family:"Libre Baskerville",Georgia,serif;
+  font-weight:400;
+  font-size:clamp(.9rem,1.2vw,1.02rem);
+  line-height:1.75;
+}
+.home-page .hero-content .gabinete-actions{margin:0;gap:12px}
+.home-page .hero-content .gabinete-action{min-height:48px;align-items:center}
+.home-page .hero-content .gabinete-manifesto{
+  max-width:680px;
+  margin:27px 0 0;
+  padding:16px 0 0;
+  border:0;
+  border-top:1px solid rgba(162,135,88,.27);
+  background:transparent;
+  font:italic 400 .86rem/1.7 "Libre Baskerville",Georgia,serif;
+  color:#cdbd9f;
+}
+.home-page .hero-content .gabinete-manifesto i{
+  display:inline-block;
+  margin-right:9px;
+  color:#a28758;
+  font-size:.84em;
+}
+.home-page .home-editorial-notice{
+  background:#171311;
+  border-bottom:1px solid rgba(162,135,88,.2);
+}
+.home-page .home-editorial-notice .container{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px 14px;
+  align-items:baseline;
+  padding-block:14px;
+}
+.home-page .home-editorial-notice strong{
+  font:500 .67rem/1.6 "DM Mono",monospace;
+  color:#c9ae82;
+  letter-spacing:.08em;
+}
+.home-page .home-editorial-notice span{
+  font:400 .75rem/1.65 "Libre Baskerville",Georgia,serif;
+  color:#b7a488;
+}
+@media(max-width:760px){
+  .home-page .hero-section{padding-block:32px 39px!important}
+  .home-page .hero-content .hero-rotating-title{
+    font-size:clamp(1.82rem,7.2vw,2.75rem)!important;
+    line-height:1.17!important;
+    max-width:100%!important;
+    overflow-wrap:anywhere;
+  }
+  .home-page .hero-content .hero-rotating-title .hero-title-accent{overflow-wrap:anywhere}
+  .home-page .hero-content .hero-description{font-size:.9rem;line-height:1.7}
+  .home-page .hero-content .gabinete-manifesto{margin-top:22px;font-size:.8rem}
+}
+@media(max-width:360px){
+  .home-page .hero-content .hero-rotating-title{font-size:clamp(1.65rem,7vw,1.9rem)!important}
+}
