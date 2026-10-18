@@ -552,7 +552,7 @@
 .arquivo-cadastro-acoes a{color:#e7d9c1!important;font:13px Arial,sans-serif;text-decoration:underline}
 </style>
 <link rel="stylesheet" href="css/home-editorial-refinement.css?v=spacing-categories-20261012-1">
-<link rel="stylesheet" href="css/home-gabinete-1920.css?v=hero-final-20261018">
+<link rel="stylesheet" href="css/home-gabinete-1920.css?v=hero-rotacao-12-20261018">
 
     <!-- Identidade tipográfica exclusiva do hero da home -->
     <style>
@@ -2587,6 +2587,106 @@
 
 
 
+
+<script>
+/* Frases autorais do Arquivo Sombrio — duas cores, sem citações atribuídas. */
+(function () {
+    const title = document.getElementById('hero-rotating-title');
+    if (!title || title.dataset.rotatorReady === 'true') return;
+    title.dataset.rotatorReady = 'true';
+
+    const phrases = [
+        ['O TEMPO PASSA.', 'OS VESTÍGIOS PERMANECEM.'],
+        ['PARA ENTENDER UM CRIME,', 'É PRECISO INVESTIGAR A MENTE.'],
+        ['UMA PROVA PODE SER SILENCIOSA.', 'MAS NUNCA IRRELEVANTE.'],
+        ['POR TRÁS DE CADA CASO,', 'EXISTIU UMA VIDA.'],
+        ['A VERDADE NÃO DEPENDE', 'DA HISTÓRIA MAIS CONVINCENTE.'],
+        ['COMPREENDER UM ASSASSINO', 'NÃO É JUSTIFICAR SEUS ATOS.'],
+        ['NEM TODO MONSTRO SE REVELA.', 'ALGUNS PARECEM COMUNS.'],
+        ['UMA VIDA NÃO SE RESUME', 'À FORMA COMO TERMINOU.'],
+        ['A VIOLÊNCIA TEM CONTEXTO.', 'A RESPONSABILIDADE TAMBÉM.'],
+        ['UMA CONFISSÃO NÃO ENCERRA', 'TODAS AS PERGUNTAS.'],
+        ['A DÚVIDA EXIGE RIGOR.', 'NÃO CONCLUSÕES APRESSADAS.'],
+        ['O MAL NÃO PRECISA DE MITOS.', 'PRECISA SER EXAMINADO.']
+    ];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const intervalMs = 9000;
+    const fadeMs = 320;
+    let current = 0;
+    let intervalId = null;
+    let transitionId = null;
+    let resizeId = null;
+
+    function render(pair, node) {
+        node.replaceChildren();
+        const first = document.createElement('span');
+        first.className = 'hero-title-line';
+        first.textContent = pair[0];
+        const second = document.createElement('span');
+        second.className = 'hero-title-accent';
+        second.textContent = pair[1];
+        node.append(first, second);
+    }
+
+    function reserveHeight() {
+        const width = title.getBoundingClientRect().width;
+        if (!width) return;
+        const probe = title.cloneNode(false);
+        probe.removeAttribute('id');
+        probe.classList.remove('is-changing');
+        probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;height:auto!important;min-height:0!important;width:' + width + 'px;';
+        title.parentElement.appendChild(probe);
+        let maxHeight = 0;
+        phrases.forEach(pair => {
+            render(pair, probe);
+            maxHeight = Math.max(maxHeight, probe.getBoundingClientRect().height);
+        });
+        probe.remove();
+        title.style.setProperty('min-height', Math.ceil(maxHeight) + 'px', 'important');
+    }
+
+    function stop() {
+        if (intervalId !== null) window.clearInterval(intervalId);
+        if (transitionId !== null) window.clearTimeout(transitionId);
+        intervalId = null;
+        transitionId = null;
+        title.classList.remove('is-changing');
+    }
+
+    function next() {
+        if (document.hidden || transitionId !== null) return;
+        current = (current + 1) % phrases.length;
+        if (reduceMotion.matches) {
+            render(phrases[current], title);
+            return;
+        }
+        title.classList.add('is-changing');
+        transitionId = window.setTimeout(() => {
+            render(phrases[current], title);
+            title.classList.remove('is-changing');
+            transitionId = null;
+        }, fadeMs);
+    }
+
+    function start() {
+        stop();
+        if (!document.hidden) intervalId = window.setInterval(next, intervalMs);
+    }
+
+    render(phrases[0], title);
+    reserveHeight();
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(reserveHeight).catch(() => {});
+    }
+    start();
+    document.addEventListener('visibilitychange', start);
+    if (reduceMotion.addEventListener) reduceMotion.addEventListener('change', start);
+    window.addEventListener('resize', () => {
+        window.clearTimeout(resizeId);
+        resizeId = window.setTimeout(reserveHeight, 160);
+    }, {passive: true});
+})();
+</script>
 
 <script>
 (function () {
