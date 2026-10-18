@@ -19,7 +19,8 @@ protected = {
 }
 public_pages = [
     f for f in site.glob("*.html") if f.name not in protected
-    and f.name != "maintenance.html"\n    and not f.name.startswith("previsualizacao-")
+    and f.name != "maintenance.html"
+    and not f.name.startswith("previsualizacao-")
 ]
 public_pages += list((site / "dossies").rglob("*.html")) if (site / "dossies").exists() else []
 for dest in public_pages:
