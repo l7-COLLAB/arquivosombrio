@@ -1,0 +1,24 @@
+/* ARQUIVO SOMBRIO — identidade 1.0 | Fase 1 (tokens em preparação)
+   Tokens documentados. Não ativar globalmente sem auditoria de contraste e regressão. */
+:root {
+  --as-carvao: #171715;
+  --as-madeira: #29241F;
+  --as-papel: #E6D9BD;
+  --as-tinta: #29251F;
+  --as-bronze: #A98A5F;
+  --as-vinho: #713C39;
+  --as-marfim: #EAE3D5;
+  --as-cinza: #9D9A92;
+  --as-fonte-titulo: "Cormorant Garamond", Georgia, serif;
+  --as-fonte-dossie: "Libre Baskerville", Georgia, serif;
+  --as-fonte-registro: "IBM Plex Mono", "Courier New", monospace;
+  --as-fonte-leitura: Verdana, Geneva, sans-serif;
+  --as-borda-documento: 1px solid rgba(169, 138, 95, .35);
+  --as-raio-card: 4px;
+  --as-espacamento-1: 4px;
+  --as-espacamento-2: 8px;
+  --as-espacamento-3: 12px;
+  --as-espacamento-4: 16px;
+  --as-espacamento-6: 24px;
+  --as-espacamento-8: 32px;
+}
