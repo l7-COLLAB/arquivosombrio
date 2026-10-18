@@ -29,7 +29,8 @@ jobs:
           test -f _site/index.html
           test -f _site/admin-v2/index.html
           test -f _site/admin-v2/visual.html
-          python3 scripts/build-design-preview.py _site\n          if [ "$MAINTENANCE_MODE" = "true" ]; then
+          python3 scripts/build-design-preview.py _site
+          if [ "$MAINTENANCE_MODE" = "true" ]; then
             python3 scripts/build-maintenance.py _site
           fi
       - uses: actions/upload-pages-artifact@v4
