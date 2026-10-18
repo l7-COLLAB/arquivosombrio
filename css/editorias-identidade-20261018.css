@@ -1,0 +1,165 @@
+/* Arquivo Sombrio | Etapa 4: assinatura visual das editorias públicas.
+   Apenas listagens públicas. Não alterar CSS do leitor, novels ou Admin V2.
+   Mantém os IDs e mecanismos existentes de busca, filtros e carregamento. */
+
+.archive-page, .forensic-page, .garimpo-page,
+body[data-archive-type="lendas"], body[data-archive-type="creepypastas"] {
+  --editoria-bg:var(--as-bg,#12100f);
+  --editoria-paper:var(--as-text-primary,#e7dcc6);
+  --editoria-muted:var(--as-text-secondary,#b7a488);
+  --editoria-border:rgba(162,135,88,.36);
+  --editoria-highlight:var(--as-ornament-light,#a28758);
+}
+
+/* Cabeçalhos antigos compartilhados com a home: hierarquia simples e distinta. */
+.archive-page .hero-section, .forensic-page .hero-section {
+  background:linear-gradient(116deg,#12100f,#201917);
+  border-bottom:1px solid var(--editoria-border);
+}
+.archive-page .hero-content h1, .forensic-page .hero-content h1 {
+  font-family:"Archivo Black",Impact,sans-serif;
+  font-weight:400;
+  font-size:clamp(2.4rem,4.6vw,4.35rem);
+  line-height:1.13;
+  letter-spacing:-.025em;
+  text-transform:uppercase;
+  color:var(--editoria-paper);
+  max-width:21ch;
+  text-wrap:balance;
+}
+.archive-page .hero-content h1 span {color:#b77866}
+.forensic-page .hero-content h1 span {color:#a1b0a4}
+.archive-page .hero-description,.forensic-page .hero-description {
+  font-family:"Libre Baskerville",Georgia,serif;
+  line-height:1.8;
+  color:var(--editoria-muted);
+  max-width:620px;
+}
+.archive-page .hero-classification span,.forensic-page .hero-classification span,
+.archive-page .hero-eyebrow,.forensic-page .hero-eyebrow{
+  font-family:"DM Mono",monospace;
+  color:#c9ae82;
+}
+.archive-page .cases-section, .forensic-page .forensic-section {
+  background:var(--editoria-bg);
+}
+.archive-page .archive-list-heading h2,
+.forensic-page .forensic-editorial-header h2{
+  font-family:"Oswald","Arial Narrow",sans-serif;
+  font-weight:600;
+  color:var(--editoria-paper);
+}
+.archive-page :is(.archive-search-panel,.advanced-filters,.archive-results-bar),
+.forensic-page :is(.forensic-tools,.forensic-method-note) {
+  border-color:var(--editoria-border);
+}
+.archive-page :is(.filter-chip,.advanced-filter-button,.reset-filters-button):focus-visible,
+.forensic-page :is(.forensic-search,.forensic-clear):focus-visible {
+  outline:2px solid var(--as-focus,#e7dcc6);
+  outline-offset:3px;
+}
+
+/* Garimpo Sombrio: suplemento de jornal, com registro e data em evidência. */
+.garimpo-page .garimpo-intro {
+  background:linear-gradient(180deg,#1c1714,#12100f 70%);
+  color:var(--editoria-paper);
+}
+.garimpo-page .garimpo-edition-header {
+  border-top:2px solid #a28758;
+  border-bottom:1px solid var(--editoria-border);
+}
+.garimpo-page .garimpo-edition-rule,
+.garimpo-page .garimpo-edition-bottom {color:#c4b294}
+.garimpo-page .garimpo-edition-title h1 {
+  font-family:"Archivo Black",Impact,sans-serif;
+  font-weight:400;
+  font-size:clamp(2.45rem,5.9vw,5.1rem);
+  line-height:1.08;
+  letter-spacing:-.035em;
+  color:var(--editoria-paper);
+}
+.garimpo-page .garimpo-edition-title h1 span{color:#b77866}
+.garimpo-page .garimpo-edition-title .garimpo-description {
+  font-family:"Libre Baskerville",Georgia,serif;
+  color:var(--editoria-muted);
+}
+.garimpo-page .daily-archive-grid :is(a,article){border-color:var(--editoria-border)}
+
+/* Perícia: a mesma coleção, mas com assinatura sóbria de laboratório. */
+.forensic-page {--editoria-highlight:#859e90}
+.forensic-page .forensic-lab-band,
+.forensic-page .forensic-editorial-header {
+  border-color:rgba(133,158,144,.38);
+}
+.forensic-page .forensic-lab-code,
+.forensic-page .forensic-method-note{color:#bbcbbf}
+.forensic-page .forensic-grid :is(a,article){border-color:rgba(133,158,144,.32)}
+
+/* Arquivos literários: títulos mais expressivos sem mudar os leitores. */
+body[data-archive-type="lendas"] .archive-literary-main,
+body[data-archive-type="creepypastas"] .archive-literary-main {
+  background:linear-gradient(180deg,#201917 0%,#12100f 40%);
+  color:var(--editoria-paper);
+}
+body[data-archive-type="lendas"] .archive-literary-intro,
+body[data-archive-type="creepypastas"] .archive-literary-intro {
+  padding-block:clamp(2.3rem,5.8vw,4.5rem);
+}
+body[data-archive-type="lendas"] .archive-literary-title,
+body[data-archive-type="creepypastas"] .archive-literary-title{
+  font-family:"Archivo Black",Impact,sans-serif;
+  font-size:clamp(2.55rem,5.5vw,4.75rem);
+  font-weight:400;
+  line-height:1.12;
+  letter-spacing:-.025em;
+  color:var(--editoria-paper);
+  text-wrap:balance;
+}
+body[data-archive-type="lendas"] .archive-literary-title span{color:#c4a578}
+body[data-archive-type="creepypastas"] .archive-literary-title span{color:#b77866}
+body[data-archive-type="lendas"] .archive-literary-description,
+body[data-archive-type="creepypastas"] .archive-literary-description{
+  font-family:"Libre Baskerville",Georgia,serif;
+  color:var(--editoria-muted);
+}
+body[data-archive-type="lendas"] .archive-literary-eyebrow,
+body[data-archive-type="creepypastas"] .archive-literary-eyebrow{
+  color:#c9ae82;
+}
+body[data-archive-type="lendas"] .archive-literary-card,
+body[data-archive-type="creepypastas"] .archive-literary-card{
+  border-color:var(--editoria-border);
+  background:var(--as-surface,#201917);
+  border-radius:3px;
+}
+body[data-archive-type="lendas"] .archive-literary-card h2,
+body[data-archive-type="creepypastas"] .archive-literary-card h2{
+  color:var(--editoria-paper);
+}
+body[data-archive-type="lendas"] .archive-literary-search input,
+body[data-archive-type="creepypastas"] .archive-literary-search input {
+  border-color:var(--editoria-border);
+  background:#171311;
+  color:var(--editoria-paper);
+}
+body[data-archive-type="lendas"] .archive-literary-search input:focus-visible,
+body[data-archive-type="creepypastas"] .archive-literary-search input:focus-visible,
+body[data-archive-type="lendas"] .archive-literary-card:focus-visible,
+body[data-archive-type="creepypastas"] .archive-literary-card:focus-visible{
+  outline:2px solid var(--as-focus,#e7dcc6);
+  outline-offset:3px;
+}
+
+@media(max-width:760px){
+  .archive-page .hero-content h1,.forensic-page .hero-content h1{
+    font-size:clamp(2.1rem,7.3vw,3.25rem);
+  }
+  .garimpo-page .garimpo-edition-title h1{
+    font-size:clamp(2.2rem,8vw,3.5rem);
+  }
+  body[data-archive-type="lendas"] .archive-literary-title,
+  body[data-archive-type="creepypastas"] .archive-literary-title{
+    font-size:clamp(2.05rem,8vw,3.5rem);
+    overflow-wrap:anywhere;
+  }
+}
