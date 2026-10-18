@@ -1,0 +1,48 @@
+/* ARQUIVO SOMBRIO — Fase 2 | Gabinete documental, 1920
+   Exclusivo da home. Não altera IDs, dados dinâmicos ou o Admin V2. */
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+.home-page {--gab-paper:#e6d9bd;--gab-bronze:#a98a5f;--gab-dark:#171715;--gab-outline:rgba(169,138,95,.4)}
+.home-page .gabinete-header-rule{display:flex;justify-content:space-between;gap:15px;max-width:1220px;margin:auto;padding:7px 24px 6px;color:#bda581;border-bottom:1px solid rgba(169,138,95,.22);font:500 10px/1.5 "IBM Plex Mono",monospace;letter-spacing:.19em}
+.home-page .main-header{background:rgba(23,23,21,.97);border-bottom:1px solid var(--gab-outline)}
+.home-page .header-content{min-height:72px}
+.home-page .logo-texto{letter-spacing:.09em}
+.home-page .nav-menu a:focus-visible,.home-page .gabinete-action:focus-visible{outline:2px solid var(--gab-bronze);outline-offset:4px}
+.home-page .hero-section{isolation:isolate;position:relative;background:radial-gradient(ellipse at 87% 8%,rgba(169,138,95,.13),transparent 45%),linear-gradient(115deg,rgba(23,23,21,.96),rgba(41,36,31,.94)),#171715;border-top:0;border-bottom:1px solid rgba(169,138,95,.45);padding-block:clamp(46px,7vw,95px)}
+.home-page .hero-section:after{content:"";position:absolute;inset:14px;pointer-events:none;border:1px solid rgba(169,138,95,.13);z-index:-1}
+.home-page .hero-background-decoration{width:min(70vw,610px);height:min(70vw,610px);right:-170px;top:-160px;background:radial-gradient(circle,rgba(113,60,57,.16),transparent 65%);pointer-events:none}
+.home-page .hero-content{max-width:900px}
+.home-page .hero-classification{display:flex;flex-wrap:wrap;gap:10px 24px;border-bottom:1px solid rgba(169,138,95,.3);padding-bottom:14px;margin-bottom:27px}
+.home-page .hero-classification span,.home-page .hero-eyebrow{color:#c6af89;font-family:"IBM Plex Mono",monospace;letter-spacing:.14em}
+.home-page .hero-content .hero-rotating-title{font-family:"Cormorant Garamond",Georgia,serif!important;font-weight:600!important;font-size:clamp(3rem,7.2vw,6.2rem)!important;line-height:1.03!important;letter-spacing:-.025em!important;color:var(--gab-paper);max-width:14ch;text-wrap:balance}
+.home-page .hero-content .hero-rotating-title .hero-title-accent{color:#bd9672!important;font-family:inherit!important}
+.home-page .hero-description{font-size:clamp(1rem,1.45vw,1.14rem);line-height:1.82;max-width:680px;color:#e0d4c4}
+.home-page .gabinete-manifesto{max-width:690px;margin-top:30px;padding:16px 20px;border-left:2px solid var(--gab-bronze);background:rgba(230,217,189,.035)}
+.home-page .gabinete-manifesto-index{font:500 .64rem/1.4 "IBM Plex Mono",monospace;letter-spacing:.14em;color:#bda581}
+.home-page .gabinete-manifesto p{margin:8px 0 0;color:#e6d9bd;font:italic 500 clamp(1.15rem,2.2vw,1.55rem)/1.4 "Cormorant Garamond",Georgia,serif}
+.home-page .gabinete-actions{display:flex;gap:12px;flex-wrap:wrap;margin:23px 0 6px}
+.home-page .gabinete-action{display:inline-flex;justify-content:center;align-items:center;gap:12px;min-height:46px;padding:12px 19px;border:1px solid var(--gab-bronze);font:600 .72rem/1.4 "IBM Plex Mono",monospace;letter-spacing:.045em;text-decoration:none;transition:background-color .2s ease,color .2s ease}
+.home-page .gabinete-action-primary{background:#a98a5f;color:#171715}
+.home-page .gabinete-action-primary:hover{background:#d1b48b;color:#171715}
+.home-page .gabinete-action-secondary{background:transparent;color:#e6d9bd}
+.home-page .gabinete-action-secondary:hover{background:rgba(169,138,95,.12);color:#fff}
+.home-page .hero-warning{border-color:rgba(169,138,95,.24);margin-top:28px}
+.home-page .home-featured{border-bottom:1px solid rgba(169,138,95,.25);background:linear-gradient(180deg,#242019,#171715)}
+.home-page .home-featured-heading{border-bottom:1px solid rgba(169,138,95,.28);padding-bottom:19px}
+.home-page :is(.home-featured-heading h2,.cases-section .section-header h2,.forensic-section .section-header h2,.books-section .section-header h2,.forum-section .section-header h2,.suggestion-section h2,.home-compact-heading h2,#home-novels h2,.home-literary-archives h2){font-family:"Cormorant Garamond",Georgia,serif!important;font-weight:600!important;letter-spacing:.015em!important;text-transform:none!important;color:#e6d9bd}
+.home-page :is(.home-featured-heading span,.section-eyebrow,.section-number){font-family:"IBM Plex Mono",monospace!important;letter-spacing:.12em!important;color:#bd9b73!important;text-transform:uppercase!important}
+.home-page .home-featured .hero-editorial-frame{border-color:rgba(169,138,95,.27)}
+.home-page :is(.hero-editorial-feature,.hero-editorial-strip,.case-card,.home-daily-card){border-radius:3px}
+.home-page .hero-editorial-feature:focus-visible,.home-page .hero-editorial-strip:focus-visible{outline:2px solid #d1b48b;outline-offset:3px}
+@media(max-width:760px){
+ .home-page .gabinete-header-rule{padding-inline:15px;font-size:8px;letter-spacing:.08em}
+ .home-page .hero-section{padding-block:37px 45px}
+ .home-page .hero-section:after{inset:8px}
+ .home-page .hero-content .hero-rotating-title{font-size:clamp(2.8rem,10vw,4rem)!important;max-width:100%}
+ .home-page .hero-classification{margin-bottom:21px}
+ .home-page .gabinete-manifesto{margin-top:22px;padding:12px 15px}
+ .home-page .gabinete-actions{flex-direction:column}
+ .home-page .gabinete-action{width:100%}
+ .home-page .home-featured-heading{align-items:start}
+}
+@media(max-width:360px){.home-page .gabinete-header-rule span:last-child{display:none}}
+@media(prefers-reduced-motion:reduce){.home-page .gabinete-action{transition:none}}
