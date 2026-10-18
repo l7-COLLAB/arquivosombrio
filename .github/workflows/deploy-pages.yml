@@ -12,6 +12,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   deploy:
+    env:
+      MAINTENANCE_MODE: 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -27,7 +29,7 @@ jobs:
           test -f _site/index.html
           test -f _site/admin-v2/index.html
           test -f _site/admin-v2/visual.html
-          if [ "true" = "true" ]; then
+          if [ "$MAINTENANCE_MODE" = "true" ]; then
             python3 scripts/build-maintenance.py _site
           fi
       - uses: actions/upload-pages-artifact@v4
