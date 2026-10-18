@@ -205,3 +205,19 @@
 @media(max-width:360px){
   .home-page .hero-content .hero-rotating-title{font-size:clamp(1.65rem,7vw,1.9rem)!important}
 }
+
+/* Rotação editorial: duas cores, Archivo Black em ambas as linhas.
+   A altura é reservada pelo script para evitar deslocamento do conteúdo. */
+.home-page .hero-content .hero-rotating-title{
+  transition:opacity .32s ease!important;
+}
+.home-page .hero-content .hero-rotating-title.is-changing{opacity:0}
+.home-page .hero-content .hero-rotating-title .hero-title-line{
+  color:#e7dcc6!important;
+}
+.home-page .hero-content .hero-rotating-title .hero-title-accent{
+  color:#b77866!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .home-page .hero-content .hero-rotating-title{transition:none!important}
+}
