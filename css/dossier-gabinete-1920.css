@@ -1,0 +1,78 @@
+/* Arquivo Sombrio — Fase 3: identidade documental nos dossiês
+   Escopo: componentes editoriais; a leitura contínua, o modo livro, o tamanho
+   de fonte e os temas de leitura continuam controlados pelo leitor existente. */
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+.case-page{
+ --dossier-charcoal:#171715;
+ --dossier-wood:#29241f;
+ --dossier-parchment:#e6d9bd;
+ --dossier-bronze:#a98a5f;
+ --dossier-ivory:#eae3d5;
+ --dossier-mono:"IBM Plex Mono","DM Mono",monospace;
+ --dossier-display:"Cormorant Garamond",Georgia,serif;
+}
+.case-page:not([data-reader-theme="papel"]){background:radial-gradient(ellipse at 85% 9%,rgba(169,138,95,.08),transparent 38%),var(--dossier-charcoal)}
+.case-page .main-header{background:rgba(23,23,21,.97);border-bottom:1px solid rgba(169,138,95,.35)}
+.case-page .case-top-nav a{color:#decfb8}
+.case-page .case-top-nav a:hover{color:#f3dfbc}
+.case-page .case-top-nav a:focus-visible,.case-page .case-back-button:focus-visible,
+.case-page #caso-historia a:focus-visible{outline:2px solid var(--dossier-bronze);outline-offset:3px}
+.case-page .case-hero{background:linear-gradient(120deg,rgba(169,138,95,.065),transparent 64%);border-bottom-color:rgba(169,138,95,.3)}
+.case-page .dossier-document-head{border-bottom:1px solid rgba(169,138,95,.45);padding-block:.65rem 1.25rem}
+.case-page .dossier-document-mark{border-color:#a98a5f;color:#e6d9bd;font-family:var(--dossier-display);font-size:1.55rem}
+.case-page .dossier-document-brand-copy strong{font-family:var(--dossier-display);font-size:clamp(1.4rem,2.5vw,1.85rem);letter-spacing:.055em}
+.case-page :is(.dossier-document-brand-copy>span,.dossier-document-register dt,.case-eyebrow,.case-classification-row span,.case-block-heading span,.case-file-label){font-family:var(--dossier-mono);letter-spacing:.095em}
+.case-page .case-classification-row span{border-color:rgba(169,138,95,.45);color:#dfcfb7;background:rgba(169,138,95,.05)}
+.case-page .case-classification-row span:last-child{background:rgba(113,60,57,.14);border-color:rgba(169,138,95,.45);color:#e6d9bd}
+.case-page .case-hero-content h1{font-family:var(--dossier-display);font-weight:600;line-height:1.05;font-size:clamp(3rem,5.5vw,5.5rem);color:var(--dossier-parchment);overflow-wrap:anywhere}
+.case-page .case-meta div{background:rgba(41,36,31,.6);border:1px solid rgba(169,138,95,.35);border-radius:3px}
+.case-page .case-meta small{color:#c9b08d;font-family:var(--dossier-mono)}
+.case-page .case-meta strong{color:#eae3d5}
+.case-page .case-summary{color:#e1d6c5}
+.case-page .case-image-frame{border:1px solid rgba(169,138,95,.45);box-shadow:0 22px 50px rgba(0,0,0,.2)}
+.case-page .case-photo-label{background:rgba(23,23,21,.9);border:1px solid rgba(169,138,95,.45);color:#e6d9bd}
+.case-page .dossier-editorial-record{background:#211d19;border-bottom-color:rgba(169,138,95,.3)}
+.case-page .dossier-record-heading h2{font-family:var(--dossier-display);font-size:clamp(1.8rem,3vw,2.3rem);color:#e6d9bd}
+.case-page .dossier-revision-history li{border-left-color:#a98a5f}
+.case-page .case-block-heading{border-bottom:1px solid rgba(169,138,95,.34)}
+.case-page .case-block-heading span{color:#c7a779;font-size:.7rem}
+.case-page .case-block-heading h2{font-family:var(--dossier-display);font-size:clamp(1.8rem,3vw,2.5rem);font-weight:600;letter-spacing:.01em}
+.case-page :is(.evidence-item,.theory-item,.evidence-card,.case-content-evidence,.case-content-hypotheses,.case-content-timeline,.case-content-sources){border-color:rgba(169,138,95,.3);border-radius:3px}
+.case-page :is(.evidence-item,.theory-item,.evidence-card){background:linear-gradient(135deg,rgba(169,138,95,.045),transparent 50%),#211d19}
+.case-page :is(.evidence-item,.theory-item) i{color:#bd9672}
+.case-page .evidence-card.open{border-color:#a98a5f}
+.case-page #caso-historia .dossier-document-quicknav{border-color:rgba(169,138,95,.35);background:rgba(169,138,95,.06)}
+.case-page #caso-historia .dossier-document-quicknav a{color:#e1c69b}
+.case-page #caso-historia :is(.case-content-timeline,.case-content-sources) h3{font-family:var(--dossier-display);font-size:clamp(1.6rem,2.8vw,2.1rem);letter-spacing:.012em}
+.case-page #caso-historia .case-content-timeline li{border-left-color:rgba(169,138,95,.5)}
+.case-page #caso-historia .case-timeline-source{color:#c8b495}
+.case-page #caso-historia .case-content-sources li{border-bottom-color:rgba(169,138,95,.2)}
+.case-page .case-file-card{background:linear-gradient(135deg,#e6d9bd,#cbb89a);color:#29251f;border:1px solid #987e55;box-shadow:0 18px 35px rgba(0,0,0,.2);border-radius:2px}
+.case-page .case-file-label{border-bottom-color:rgba(41,37,31,.3)}
+.case-page .case-file-stamp{border-color:#713c39;color:#713c39}
+.case-page .case-back-button{border-color:rgba(169,138,95,.45)}
+/* Tema papel continua claro: não copiar superfícies escuras nem sobrescrever
+   conteúdo dinâmico ou preferências do leitor. */
+body.case-page[data-reader-theme="papel"] .case-hero{background:transparent}
+body.case-page[data-reader-theme="papel"] .case-hero-content h1{color:#342819}
+body.case-page[data-reader-theme="papel"] .case-classification-row span{color:#503e29;background:rgba(110,77,37,.04)}
+body.case-page[data-reader-theme="papel"] .case-meta div{background:rgba(110,77,37,.06);border-color:rgba(110,77,37,.3)}
+body.case-page[data-reader-theme="papel"] .case-meta :is(small,strong){color:#4b3421}
+body.case-page[data-reader-theme="papel"] .case-summary{color:#493524}
+body.case-page[data-reader-theme="papel"] .dossier-editorial-record{background:#e8dcc1}
+body.case-page[data-reader-theme="papel"] .dossier-record-heading h2,
+body.case-page[data-reader-theme="papel"] .case-block-heading h2,
+body.case-page[data-reader-theme="papel"] #caso-historia :is(.case-content-timeline,.case-content-sources) h3{color:#382918}
+body.case-page[data-reader-theme="papel"] :is(.evidence-item,.theory-item,.evidence-card){background:rgba(110,77,37,.055);border-color:rgba(90,60,25,.3)}
+body.case-page[data-reader-theme="papel"] .case-block-heading span{color:#79522a}
+body.case-page[data-reader-theme="papel"] #caso-historia .dossier-document-quicknav a{color:#51361e}
+body.case-page[data-reader-theme="papel"] #caso-historia .case-timeline-source{color:#60482e}
+@media(max-width:760px){
+ .case-page .case-hero-content h1{font-size:clamp(2.55rem,9.5vw,3.8rem)}
+ .case-page .dossier-document-brand-copy strong{font-size:1.5rem}
+ .case-page .case-block-heading h2{font-size:1.9rem}
+ .case-page .case-meta{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .case-page .case-meta strong{overflow-wrap:anywhere}
+}
+@media(max-width:390px){.case-page .case-meta{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.case-page .evidence-card{transition:none}}
