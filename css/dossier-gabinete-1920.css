@@ -1,15 +1,14 @@
 /* Arquivo Sombrio — Fase 3: identidade documental nos dossiês
    Escopo: componentes editoriais; a leitura contínua, o modo livro, o tamanho
    de fonte e os temas de leitura continuam controlados pelo leitor existente. */
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 .case-page{
  --dossier-charcoal:#171715;
  --dossier-wood:#29241f;
  --dossier-parchment:#e6d9bd;
  --dossier-bronze:#a98a5f;
  --dossier-ivory:#eae3d5;
- --dossier-mono:"IBM Plex Mono","DM Mono",monospace;
- --dossier-display:"Cormorant Garamond",Georgia,serif;
+ --dossier-mono:"DM Mono",monospace;
+ --dossier-display:"Cinzel",Georgia,serif;
 }
 .case-page:not([data-reader-theme="papel"]){background:radial-gradient(ellipse at 85% 9%,rgba(169,138,95,.08),transparent 38%),var(--dossier-charcoal)}
 .case-page .main-header{background:rgba(23,23,21,.97);border-bottom:1px solid rgba(169,138,95,.35)}
