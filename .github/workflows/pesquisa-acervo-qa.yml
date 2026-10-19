@@ -1,0 +1,41 @@
+name: Verificar pesquisa unificada
+on:
+  pull_request:
+    paths:
+      - 'pesquisa.html'
+      - 'js/pesquisa-acervo.js'
+      - 'css/pesquisa-acervo.css'
+      - 'tests/pesquisa-acervo.mjs'
+      - '.github/workflows/pesquisa-acervo-qa.yml'
+      - 'index.html'
+      - 'dossies.html'
+      - 'garimpo.html'
+      - 'pericia.html'
+      - 'lendas.html'
+      - 'creepypastas.html'
+  push:
+    branches: [main]
+    paths:
+      - 'pesquisa.html'
+      - 'js/pesquisa-acervo.js'
+      - 'css/pesquisa-acervo.css'
+      - 'tests/pesquisa-acervo.mjs'
+      - '.github/workflows/pesquisa-acervo-qa.yml'
+      - 'index.html'
+      - 'dossies.html'
+      - 'garimpo.html'
+      - 'pericia.html'
+      - 'lendas.html'
+      - 'creepypastas.html'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/pesquisa-acervo.mjs
