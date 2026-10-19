@@ -6,6 +6,7 @@ on:
       - 'js/pesquisa-acervo.js'
       - 'css/pesquisa-acervo.css'
       - 'tests/pesquisa-acervo.mjs'
+      - 'tests/pesquisa-avancada.mjs'
       - '.github/workflows/pesquisa-acervo-qa.yml'
       - 'index.html'
       - 'dossies.html'
@@ -20,6 +21,7 @@ on:
       - 'js/pesquisa-acervo.js'
       - 'css/pesquisa-acervo.css'
       - 'tests/pesquisa-acervo.mjs'
+      - 'tests/pesquisa-avancada.mjs'
       - '.github/workflows/pesquisa-acervo-qa.yml'
       - 'index.html'
       - 'dossies.html'
@@ -38,4 +40,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/pesquisa-acervo.mjs
+      - run: node --test tests/pesquisa-acervo.mjs tests/pesquisa-avancada.mjs

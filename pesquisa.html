@@ -33,9 +33,32 @@
 <label for="as-search-input">O que deseja encontrar?</label>
 <div class="as-search-input-row"><input type="search" id="as-search-input" name="q" placeholder="Ex.: investigação, folclore, genética..." autocomplete="off" maxlength="120"><button type="submit">Pesquisar <span aria-hidden="true">→</span></button></div>
 </form>
+<div class="as-search-assistance">
+  <div class="as-search-suggestions" id="as-search-suggestions" hidden aria-label="Sugestões do acervo">
+    <strong>Sugestões de pesquisa</strong>
+    <div id="as-search-suggestion-items"></div>
+  </div>
+  <div class="as-search-history">
+    <label class="as-search-history-opt"><input type="checkbox" id="as-search-save-history"> Guardar minhas pesquisas neste dispositivo</label>
+    <div id="as-search-history-content" hidden>
+      <div class="as-search-history-head"><strong>Pesquisas recentes</strong><button type="button" id="as-search-clear-history">Apagar histórico</button></div>
+      <div id="as-search-history-items"></div>
+    </div>
+  </div>
+</div>
 </section>
 <section class="as-search-results" aria-labelledby="as-results-title">
 <div class="as-search-results-heading"><div><p class="as-search-kicker">ÍNDICE UNIFICADO</p><h2 id="as-results-title">Arquivos encontrados</h2></div><output id="as-results-count" aria-live="polite" aria-atomic="true">Preparando pesquisa...</output></div>
+<div class="as-search-sort">
+<label for="as-search-order">Ordenar resultados</label>
+<select id="as-search-order">
+<option value="relevance">Mais relevantes</option>
+<option value="recent">Mais recentes</option>
+<option value="oldest">Mais antigos</option>
+<option value="az">Título: A–Z</option>
+<option value="za">Título: Z–A</option>
+</select>
+</div>
 <div class="as-search-filters" aria-label="Filtrar editorias">
 <button type="button" data-as-search-category="all" aria-pressed="true">Todas</button>
 <button type="button" data-as-search-category="dossies" aria-pressed="false">Dossiês</button>
@@ -49,6 +72,6 @@
 </section>
 </main>
 <footer class="as-search-footer"><div class="as-search-container"><span>ARQUIVO SOMBRIO / DOCUMENTAÇÃO E INVESTIGAÇÃO</span><a href="index.html">Voltar ao início</a></div></footer>
-<script src="js/pesquisa-acervo.js?v=1" defer></script>
+<script src="js/pesquisa-acervo.js?v=2" defer></script>
 </body>
 </html>

@@ -13,7 +13,66 @@ const sources=[
 ];
 const $=id=>document.getElementById(id);
 const normalize=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
-const state={loaded:false,rows:[],errors:[],category:"all"};
+const state={loaded:false,rows:[],errors:[],category:"all",order:"relevance"};
+const HISTORY_ENABLED="as_search_history_enabled_v1";
+const HISTORY_KEY="as_search_history_v1";
+function storageGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function storageSet(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}
+function storageRemove(k){try{localStorage.removeItem(k);}catch(e){}}
+function historyEnabled(){return storageGet(HISTORY_ENABLED)==="yes";}
+function recentTerms(){
+ if(!historyEnabled())return [];
+ try{const data=JSON.parse(storageGet(HISTORY_KEY)||"[]");return Array.isArray(data)?data.filter(x=>typeof x==="string"&&x.length<=120).slice(0,6):[];}catch(e){return [];}
+}
+function renderHistory(){
+ const enabled=historyEnabled();
+ $("as-search-save-history").checked=enabled;
+ $("as-search-history-content").hidden=!enabled;
+ const holder=$("as-search-history-items");holder.replaceChildren();
+ if(!enabled)return;
+ recentTerms().forEach(term=>{
+  const b=make("button","as-search-term",term);b.type="button";
+  b.addEventListener("click",()=>applyTerm(term));
+  holder.append(b);
+ });
+ if(!holder.children.length)holder.append(make("p","as-search-history-empty","Nenhuma pesquisa guardada."));
+}
+function remember(q){
+ if(!historyEnabled()||!q)return;
+ const updated=[q,...recentTerms().filter(x=>normalize(x)!==normalize(q))].slice(0,6);
+ storageSet(HISTORY_KEY,JSON.stringify(updated));renderHistory();
+}
+function applyTerm(q){
+ $("as-search-input").value=q;updateURL(q);remember(q);render();renderSuggestions();
+ $("as-search-input").focus();
+}
+function renderSuggestions(){
+ const holder=$("as-search-suggestion-items"),box=$("as-search-suggestions");
+ holder.replaceChildren();
+ const q=normalize($("as-search-input").value);
+ if(!state.loaded||q.length<2){box.hidden=true;return;}
+ const names=new Set();
+ state.rows.forEach(item=>{
+  if(names.size>=6)return;
+  if(normalize(item.titulo).includes(q))names.add(String(item.titulo).slice(0,120));
+ });
+ box.hidden=!names.size;
+ names.forEach(term=>{
+  const b=make("button","as-search-term",term);b.type="button";
+  b.addEventListener("click",()=>applyTerm(term));
+  holder.append(b);
+ });
+}
+function sorter(a,b,terms){
+ const date=(x)=>{const n=Date.parse(x.created_at||"");return Number.isFinite(n)?n:0;};
+ switch(state.order){
+  case "recent":return date(b)-date(a)||String(a.titulo).localeCompare(String(b.titulo),"pt-BR");
+  case "oldest":return date(a)-date(b)||String(a.titulo).localeCompare(String(b.titulo),"pt-BR");
+  case "az":return String(a.titulo).localeCompare(String(b.titulo),"pt-BR");
+  case "za":return String(b.titulo).localeCompare(String(a.titulo),"pt-BR");
+  default:return rank(b,terms)-rank(a,terms)||date(b)-date(a);
+ }
+}
 function hit(item,terms){
  if(!terms.length)return true;
  const hay=normalize([item.titulo,item.resumo,item.categoria,item.origem].join(" "));
@@ -61,7 +120,7 @@ function render(){
  const q=$("as-search-input").value.trim().slice(0,120);
  const terms=normalize(q).split(/\s+/).filter(Boolean);
  const result=state.rows.filter(x=>(state.category==="all"||x._source.id===state.category)&&hit(x,terms))
- .sort((a,b)=>rank(b,terms)-rank(a,terms)||Date.parse(b.created_at||0)-Date.parse(a.created_at||0));
+ .sort((a,b)=>sorter(a,b,terms));
  const holder=$("as-search-sections");holder.replaceChildren();
  $("as-results-count").textContent=result.length+" registro"+(result.length===1?"":"s")+" encontrado"+(result.length===1?"":"s");
  const message=$("as-search-message");
@@ -110,14 +169,23 @@ async function init(){
  const params=new URLSearchParams(location.search);
  const initial=(params.get("q")||"").slice(0,120);
  $("as-search-input").value=initial;
+ $("as-search-order").addEventListener("change",e=>{state.order=e.target.value;render();});
+ $("as-search-save-history").addEventListener("change",e=>{
+  if(e.target.checked){if(!storageSet(HISTORY_ENABLED,"yes")){e.target.checked=false;return;}}
+  else{storageRemove(HISTORY_ENABLED);storageRemove(HISTORY_KEY);}
+  renderHistory();
+ });
+ $("as-search-clear-history").addEventListener("click",()=>{storageRemove(HISTORY_KEY);renderHistory();});
+ renderHistory();
  document.querySelectorAll("[data-as-search-category]").forEach(button=>button.addEventListener("click",()=>setCategory(button.dataset.asSearchCategory)));
- $("as-search-form").addEventListener("submit",ev=>{ev.preventDefault();updateURL($("as-search-input").value.trim());render();});
+ $("as-search-form").addEventListener("submit",ev=>{ev.preventDefault();const term=$("as-search-input").value.trim();updateURL(term);remember(term);render();renderSuggestions();});
  let timer=0;
- $("as-search-input").addEventListener("input",()=>{clearTimeout(timer);timer=setTimeout(()=>{updateURL($("as-search-input").value.trim());render();},180);});
+ $("as-search-input").addEventListener("input",()=>{clearTimeout(timer);timer=setTimeout(()=>{updateURL($("as-search-input").value.trim());render();renderSuggestions();},180);});
  const results=await Promise.allSettled(sources.map(read));
  results.forEach((result,i)=>{if(result.status==="fulfilled")state.rows.push(...result.value);else state.errors.push(sources[i].id);});
  state.loaded=true;
  render();
+ renderSuggestions();
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
