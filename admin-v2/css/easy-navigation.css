@@ -1,0 +1,54 @@
+/* Etapa 6 | Guia e busca de funções. Isolado no Admin V2. */
+body.admin-dashboard-open .admin-v2-easy-find{
+  padding:15px 0 11px;
+  border-bottom:1px solid rgba(162,135,88,.23);
+}
+body.admin-dashboard-open .admin-v2-easy-find label{
+  display:block;
+  margin-bottom:8px;
+  font:500 .7rem/1.5 "DM Mono",monospace;
+  color:#d8c7a6;
+  letter-spacing:.035em;
+}
+body.admin-dashboard-open .admin-v2-easy-find input{
+  width:100%;
+  min-height:43px;
+  padding:10px 12px;
+  border:1px solid rgba(162,135,88,.48);
+  background:#181310;
+  color:#e7dcc6;
+  border-radius:3px;
+  font:400 .78rem/1.4 "DM Mono",monospace;
+}
+body.admin-dashboard-open .admin-v2-easy-find input::placeholder{color:#b7a488}
+body.admin-dashboard-open .admin-v2-find-hint{
+  margin:8px 0 0;
+  color:#b7a488;
+  font:400 .68rem/1.5 "DM Mono",monospace;
+}
+body.admin-dashboard-open .admin-hub-sidebar nav [hidden],
+body.admin-dashboard-open .admin-hub-sidebar nav .admin-v2-extra-nav[hidden]{
+  display:none!important;
+}
+body.admin-dashboard-open .admin-v2-workflow-guide{
+  margin:0 0 20px;
+  padding:14px 16px;
+  background:#201917;
+  border:1px solid rgba(162,135,88,.35);
+  border-left:3px solid #a28758;
+  border-radius:3px;
+}
+body.admin-dashboard-open .admin-v2-workflow-guide strong{
+  display:block;
+  margin-bottom:5px;
+  color:#e7dcc6;
+  font:600 1.05rem/1.4 "Oswald","Arial Narrow",sans-serif;
+}
+body.admin-dashboard-open .admin-v2-workflow-guide p{
+  margin:0;
+  color:#c6b79e;
+  font:400 .78rem/1.65 "DM Mono",monospace;
+}
+@media(max-width:980px){
+  body.admin-dashboard-open .admin-v2-easy-find{padding:10px 0}
+}
