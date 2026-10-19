@@ -15,8 +15,13 @@ class LiveAuditTests(TestCase):
   xml='<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f'<url><loc>{url}</loc></url>' for url in urls)+'</urlset>'
   def fetch(url):
    if url==mod.SITEMAP:return url,200,{},xml.encode()
+   if "?id=" in url:
+    return url,200,{},b'<html><title>Leitor interativo</title></html>'
    canonical="https://wrong.example/test" if url==broken else url
-   html=f'<html><head><title>Arquivo</title><link rel="canonical" href="{canonical}"><meta property="og:url" content="{url}"></head></html>'
+   import re
+   match=re.search(r"/arquivo/([a-z]+)-(\\d+)\\.html",url)
+   legacy=f'{mod.ORIGIN}/{match.group(1)}.html?id={match.group(2)}'
+   html=f'<html><head><title>Arquivo</title><link rel="canonical" href="{canonical}"><meta property="og:url" content="{url}"></head><body><a href="{legacy}">Ler</a></body></html>'
    return url,200,{},html.encode()
   return fetch
  def test_canonical_and_editorial_coverage(self):
@@ -32,6 +37,20 @@ class LiveAuditTests(TestCase):
   report=mod.audit(fail)
   self.assertTrue(report["errors"])
   self.assertEqual(report["google_indexation"],"not assessed")
+ def test_original_reader_link_missing_is_detected(self):
+  def fetch(url):
+   if url==mod.SITEMAP:return self.fixture()(url)
+   if "?id=" in url:return url,200,{},b'reader'
+   return url,200,{},f'<html><head><title>Arquivo</title><link rel="canonical" href="{url}"><meta property="og:url" content="{url}"></head></html>'.encode()
+  report=mod.audit(fetch)
+  self.assertTrue(any("não aponta para o leitor" in x for x in report["errors"]))
+ def test_original_reader_unavailable_is_detected(self):
+  regular=self.fixture()
+  def fetch(url):
+   if "?id=" in url:raise TimeoutError("indisponível")
+   return regular(url)
+  report=mod.audit(fetch)
+  self.assertTrue(any("indisponível" in x for x in report["errors"]))
  def test_sitemap_duplicates_detected(self):
   urls=self.urls()
   def fetch(url):
