@@ -79,7 +79,7 @@ def plain_text(value, limit=100000):
 def canonical_path(page, ident):
     return "arquivo/" + page.removesuffix(".html") + "-" + safe_id(ident) + ".html"
 
-def render_page(table, row, related=None):
+def render_page(table, row, related=None, cross_editorial=None):
     page, label, field, _image_field = PUBLIC_TABLES[table]
     ident = safe_id(row["id"])
     title = plain_text(row["titulo"], 170)
@@ -129,12 +129,35 @@ def render_page(table, row, related=None):
                          '<p>Outros registros publicados na mesma coleção. A lista não indica relação factual entre os casos.</p>'
                          '<ul>' + "".join(links) + '</ul></aside>')
 
+    # Curated-by-editorial-position discovery: these are navigation options,
+    # never factual relationships. Show at most two other published collections.
+    cross_links = ""
+    if cross_editorial:
+        items = []
+        for other_table, peer in cross_editorial[:2]:
+            if other_table == table or other_table not in PUBLIC_TABLES:
+                raise ValueError("Editorias cruzadas inválidas")
+            if peer.get("status_publicacao") != "publicado":
+                raise ValueError("Leitura cruzada não publicada")
+            other_page, other_label, _, _ = PUBLIC_TABLES[other_table]
+            target = sitemap.BASE + canonical_path(other_page, peer["id"])
+            peer_title = plain_text(peer.get("titulo"), 135)
+            if not peer_title:
+                raise ValueError("Leitura cruzada sem título")
+            items.append(f'<li><span>{e(other_label)}</span> '
+                         f'<a href="{e(target)}">{e(peer_title)}</a></li>')
+        if items:
+            cross_links = ('<aside class="cross-editorial" aria-label="Descubra outras editorias">'
+                           '<h2>Explore outras editorias</h2>'
+                           '<p>Leituras de outras categorias do acervo. Estas indicações não representam '
+                           'vínculo factual entre os assuntos.</p>'
+                           '<ul>' + "".join(items) + '</ul></aside>')
     style = """body{margin:0;background:#12100f;color:#e7dcc6;font:17px/1.8 Georgia,serif}
 main,header,footer{max-width:800px;margin:auto;padding:24px}
 header{border-bottom:1px solid #a28758}h1{font:700 clamp(2rem,5vw,3rem)/1.2 Georgia,serif}
 a{color:#d9b77d}nav a{margin-right:18px}
 small{color:#bca882;letter-spacing:.08em}article{overflow-wrap:anywhere}
-article p{margin:0 0 1.35em}.related-documents{border-top:1px solid #a28758;margin:36px 0;padding:20px 0}.related-documents h2{font-size:1.3rem}.related-documents li{margin:9px 0}a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}"""
+article p{margin:0 0 1.35em}.related-documents{border-top:1px solid #a28758;margin:36px 0;padding:20px 0}.related-documents h2{font-size:1.3rem}.related-documents li{margin:9px 0}.cross-editorial{margin:30px 0;padding:22px 0;border-top:1px solid #a28758}.cross-editorial h2{font-size:1.3rem}.cross-editorial li{margin:12px 0}.cross-editorial span{color:#bca882;font:12px "DM Mono",monospace}a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}"""
     html = f"""<!doctype html>
 <html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -162,6 +185,7 @@ article p{margin:0 0 1.35em}.related-documents{border-top:1px solid #a28758;marg
 <p><a href="{e(original)}">Abrir leitura interativa completa e anexos →</a></p>
 <article aria-label="Texto público do arquivo">{paragraphs}</article>
 {related_links}
+{cross_links}
 <p><a href="{e(original)}">Consultar versão interativa, evidências e referências →</a></p>
 </main><footer><a href="/pesquisa.html">Pesquisar outros arquivos</a></footer>
 </body></html>
@@ -232,6 +256,20 @@ def insert_index_into_search(html, datasets):
         raise ValueError("Cabeçalho da pesquisa inesperado")
     return html.replace('</head>', stylesheet + '</head>').replace(marker, index_links(datasets) + marker)
 
+def cross_editorial_readings(current_table, current_id, datasets):
+    """Rotate two other published editorias; not a related-case algorithm."""
+    tables = list(PUBLIC_TABLES)
+    position = tables.index(current_table)
+    # Rotate across records so the same cross-category document is not linked everywhere.
+    selection = []
+    for offset in (1, 2):
+        other = tables[(position + offset) % len(tables)]
+        candidates = ordered_public_rows(other, datasets[other])
+        if candidates:
+            index = int(safe_id(current_id)) % len(candidates)
+            selection.append((other, candidates[index]))
+    return selection
+
 def build_all(site: Path, datasets):
     if set(datasets) != set(PUBLIC_TABLES):
         raise ValueError("Todas as cinco editorias são obrigatórias")
@@ -245,7 +283,7 @@ def build_all(site: Path, datasets):
             rel = canonical_path(page, row["id"])
             if rel in output:
                 raise ValueError("Rota SEO duplicada")
-            output[rel] = render_page(table, row, other_readings(ordered, row))
+            output[rel] = render_page(table, row, other_readings(ordered, row), cross_editorial_readings(table, row['id'], datasets))
     if not output:
         raise ValueError("Nenhuma publicação pública")
     return output
