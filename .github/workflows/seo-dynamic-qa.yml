@@ -51,7 +51,7 @@ jobs:
       - name: Validar consulta pública real e sitemap de deploy
         run: |
           mkdir -p /tmp/arquivo-sombrio-sitemap-test
-          cp sitemap.xml /tmp/arquivo-sombrio-sitemap-test/
+          cp sitemap.xml pesquisa.html /tmp/arquivo-sombrio-sitemap-test/
           python3 scripts/build-seo-pages.py /tmp/arquivo-sombrio-sitemap-test
           python3 scripts/audit-seo-build.py /tmp/arquivo-sombrio-sitemap-test --report /tmp/seo-audit-report.json
           python3 -c 'from xml.etree import ElementTree as ET; root=ET.parse("/tmp/arquivo-sombrio-sitemap-test/sitemap.xml").getroot(); assert len(root)>21, "Sitemap não inclui publicações"'
