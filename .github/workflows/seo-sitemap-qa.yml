@@ -1,0 +1,27 @@
+name: Verificar SEO e sitemap
+on:
+  pull_request:
+    paths:
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'tests/seo-sitemap.mjs'
+      - '.github/workflows/seo-sitemap-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'tests/seo-sitemap.mjs'
+      - '.github/workflows/seo-sitemap-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/seo-sitemap.mjs
