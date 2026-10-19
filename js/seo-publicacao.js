@@ -60,13 +60,16 @@
 
         if (id) url.searchParams.set("id", id);
 
-        const canonical = url.href;
+        const indexavel = configuracao.indexavel !== false;
+        const paginasPublicas = ["caso.html", "garimpo.html", "pericia.html", "lendas.html", "creepypastas.html"];
+        const canonical = indexavel && /^[0-9]+$/.test(id) && paginasPublicas.includes(caminho)
+            ? SITE_URL + "arquivo/" + caminho.replace(/\.html$/, "") + "-" + id + ".html"
+            : url.href;
         const tituloCompleto = titulo ? `${titulo} — ${SITE_NAME}` : SITE_NAME;
 
         document.title = tituloCompleto;
         definirCanonical(canonical);
         definirMeta('meta[name="description"]', "content", descricao);
-        const indexavel = configuracao.indexavel !== false;
         definirMeta('meta[name="robots"]', "content",
             indexavel ? "index, follow, max-image-preview:large" : "noindex, nofollow");
         definirMeta('meta[property="og:locale"]', "content", "pt_BR");
