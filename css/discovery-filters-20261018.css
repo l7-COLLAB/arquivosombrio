@@ -1,0 +1,21 @@
+/* Etapa 15 | Busca editorial do acervo, escopo: Garimpo e categorias literárias. */
+body.garimpo-page .as-discovery-controls{display:flex;flex-wrap:wrap;align-items:end;gap:10px 14px;margin:14px 0 18px;padding:16px;border:1px solid rgba(162,135,88,.3);background:#201917;border-radius:3px}
+body.garimpo-page .as-discovery-controls label,.as-discovery-literary label{display:flex;flex-direction:column;gap:7px;min-width:150px;color:#d6c4a7;font:500 .7rem/1.4 "DM Mono",monospace}
+body.garimpo-page .as-discovery-controls label:has([data-name]){flex:2 1 240px}
+body.garimpo-page .as-discovery-controls :is(input,select),.as-discovery-literary select{width:100%;min-height:44px;padding:9px 11px;color:#e7dcc6;background:#171310;border:1px solid rgba(162,135,88,.5);border-radius:3px;font:400 .8rem/1.4 "DM Mono",monospace}
+body.garimpo-page .as-discovery-controls input::placeholder{color:#ae9e85}
+body.garimpo-page .as-discovery-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;width:100%;border-top:1px solid rgba(162,135,88,.22);padding-top:12px}
+.as-discovery-count{color:#e7dcc6;font:500 .76rem/1.5 "DM Mono",monospace}
+.as-discovery-clear{min-height:40px;padding:8px 12px;border:1px solid rgba(162,135,88,.5);background:#2c2623;color:#e7dcc6;border-radius:3px;cursor:pointer;font:500 .72rem/1.4 "DM Mono",monospace}
+.as-discovery-clear:hover{background:#5a1e25}
+.as-discovery-clear:focus-visible,body.garimpo-page .as-discovery-controls :is(input,select):focus-visible,.as-discovery-literary select:focus-visible{outline:2px solid #e7dcc6;outline-offset:2px}
+.as-discovery-empty{color:#b7a488;font:400 .9rem/1.7 "Libre Baskerville",Georgia,serif}
+body[data-archive-type] .as-discovery-literary{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;padding:12px 0 17px}
+body[data-archive-type] .as-discovery-literary label{flex:1 1 210px;max-width:360px}
+@media(max-width:650px){
+ body.garimpo-page .as-discovery-controls{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:12px}
+ body.garimpo-page .as-discovery-controls label{min-width:0}
+ body[data-archive-type] .as-discovery-literary{display:grid;grid-template-columns:minmax(0,1fr)}
+ body[data-archive-type] .as-discovery-literary label{max-width:none}
+ .as-discovery-clear{width:100%}
+}
