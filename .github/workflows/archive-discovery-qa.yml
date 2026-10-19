@@ -1,0 +1,35 @@
+name: Verificar descoberta do acervo
+on:
+  pull_request:
+    paths:
+      - 'js/script.js'
+      - 'js/arquivo-literario.js'
+      - 'garimpo.html'
+      - 'lendas.html'
+      - 'creepypastas.html'
+      - 'css/discovery-filters-20261018.css'
+      - 'tests/archive-discovery.mjs'
+      - '.github/workflows/archive-discovery-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'js/script.js'
+      - 'js/arquivo-literario.js'
+      - 'garimpo.html'
+      - 'lendas.html'
+      - 'creepypastas.html'
+      - 'css/discovery-filters-20261018.css'
+      - 'tests/archive-discovery.mjs'
+      - '.github/workflows/archive-discovery-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  discovery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/archive-discovery.mjs
