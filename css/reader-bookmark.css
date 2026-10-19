@@ -1,0 +1,12 @@
+/* Etapa 13 | Marcador manual, dentro da barra original de leitura. */
+.case-page .as-reader-bookmark{display:flex;flex-wrap:wrap;align-items:center;gap:8px 15px;margin:0 auto;padding:9px 12px 11px;max-width:1100px;border-top:1px solid rgba(162,135,88,.22)}
+.case-page .as-reader-bookmark-actions{display:flex;flex-wrap:wrap;gap:7px}
+.case-page .as-reader-bookmark-actions button{border:1px solid rgba(162,135,88,.5);border-radius:2px;background:#201917;color:#e7dcc6;padding:8px 11px;min-height:40px;cursor:pointer;font:500 11px/1.4 "DM Mono",monospace}
+.case-page .as-reader-bookmark-actions button:hover:not(:disabled){background:#2c2623;border-color:#a28758}
+.case-page .as-reader-bookmark-actions button:disabled{opacity:.42;cursor:default}
+.case-page .as-reader-bookmark-actions button:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}
+.case-page .as-reader-bookmark-status{color:#b7a488;font:400 11px/1.5 "DM Mono",monospace}
+body.case-page[data-reader-theme="papel"] .as-reader-bookmark{border-color:rgba(92,63,35,.25)}
+body.case-page[data-reader-theme="papel"] .as-reader-bookmark-actions button{background:#e9ddc3;color:#39281b;border-color:#8a6a3d}
+body.case-page[data-reader-theme="papel"] .as-reader-bookmark-status{color:#513c28}
+@media(max-width:700px){.case-page .as-reader-bookmark{padding:10px 8px}.case-page .as-reader-bookmark-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;gap:5px}.case-page .as-reader-bookmark-actions button{padding:7px 5px;font-size:10px;min-width:0}.case-page .as-reader-bookmark-status{font-size:10px}}

@@ -3357,6 +3357,7 @@ function inicializarModoLeitura(casoId) {
     casoId
 );
    configurarSumarioDossie();
+   window.ArquivoMarcadorLeitura?.init(casoId);
 }
 
 /* ==========================================================================
