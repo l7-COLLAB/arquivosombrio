@@ -66,7 +66,9 @@
         document.title = tituloCompleto;
         definirCanonical(canonical);
         definirMeta('meta[name="description"]', "content", descricao);
-        definirMeta('meta[name="robots"]', "content", "index, follow, max-image-preview:large");
+        const indexavel = configuracao.indexavel !== false;
+        definirMeta('meta[name="robots"]', "content",
+            indexavel ? "index, follow, max-image-preview:large" : "noindex, nofollow");
         definirMeta('meta[property="og:locale"]', "content", "pt_BR");
         definirMeta('meta[property="og:type"]', "content", "article");
         definirMeta('meta[property="og:site_name"]', "content", SITE_NAME);
@@ -78,6 +80,12 @@
         definirMeta('meta[name="twitter:title"]', "content", tituloCompleto);
         definirMeta('meta[name="twitter:description"]', "content", descricao);
         definirMeta('meta[name="twitter:image"]', "content", imagem);
+
+        if (!indexavel) {
+            // Um rascunho acessado pelo administrador não deve emitir Article JSON-LD.
+            document.head.querySelector('script[data-arquivo-seo="publicacao"]')?.remove();
+            return;
+        }
 
         const publicado = dataISO(configuracao.publicadoEm || configuracao.createdAt);
         const modificado = dataISO(configuracao.modificadoEm || configuracao.updatedAt || configuracao.publicadoEm || configuracao.createdAt);
