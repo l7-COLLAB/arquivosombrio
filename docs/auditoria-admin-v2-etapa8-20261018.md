@@ -26,3 +26,16 @@ Central Admin V2, interface de navegação, busca de funções, editor legado, r
 
 ## Limites
 Não houve autenticação real nesta auditoria, testes end-to-end ou publicação de arquivos de teste. Sucesso do GitHub Pages não comprova integridade funcional no navegador. Não foram alteradas novels, conteúdos dos casos, schema Supabase, operações administrativas nem credenciais.
+
+## Complemento de validação — Supabase e deploy (18/10/2026)
+
+Consultas realizadas em modo **somente leitura** no projeto Supabase `Arquivo Sombrio`, identificado como `iuhotznurbyujzbyhizf`. Nenhum registro foi criado, editado, publicado ou excluído.
+
+- Projeto Supabase: `ACTIVE_HEALTHY` no momento da consulta.
+- RLS ativa nas tabelas `Casos`, `casos_diarios`, `pericias`, `admin_drafts` e `admin_audit_log`.
+- Políticas de escrita de `Casos`, `casos_diarios` e `pericias` (INSERT/UPDATE/DELETE) referenciam a função `is_arquivo_sombrio_admin()`.
+- Políticas de escrita de `admin_drafts` exigem simultaneamente `user_id = auth.uid()` e `is_arquivo_sombrio_admin()`.
+- Contagem por `status_publicacao`: `Casos`: 18 publicados, 3 rascunhos; `casos_diarios`: 29 publicados, 5 rascunhos; `pericias`: 12 publicados, 2 rascunhos. Nenhum registro marcado `agendado` nessas três tabelas na leitura.
+- GitHub Actions no commit `5dcc9e0c5b5230b9e62b27b87466c214a90780dc`: fluxo `Verificar Admin V2` e fluxo `Deploy Arquivo Sombrio (GitHub Pages)` concluídos com sucesso.
+
+**Limite:** estas consultas confirmam configurações e estados do banco, não a execução real das operações com uma conta administrativa. Não houve testes com login em navegador, mudança de estado, gravação, agendamento, publicação, cache da página pública ou reversão. RLS ativa e políticas existentes não dispensam testes de autorização sob papéis diferentes.
