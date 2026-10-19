@@ -13325,9 +13325,44 @@ document.addEventListener("DOMContentLoaded", carregarPainelEditorialHome);
 
 function instalarFiltrosAcompanhamentoGarimpo(grade,casos){
  document.getElementById("garimpo-tracking-filters")?.remove();
- const bar=document.createElement("div");bar.id="garimpo-tracking-filters";bar.className="tracking-filter";
- bar.innerHTML='<label>Nome <input type="search" data-name></label> <label>Acompanhamento <select data-tracking><option value="">Todos</option><option value="ativo">Em acompanhamento</option><option value="encerrado">Encerrados</option></select></label> <label>Ordenar <select data-order><option value="recent">Publicados recentemente</option><option value="az">A–Z</option><option value="za">Z–A</option></select></label>';
- grade.before(bar);const render=()=>{const name=bar.querySelector('[data-name]').value.toLocaleLowerCase('pt-BR'),status=bar.querySelector('[data-tracking]').value,order=bar.querySelector('[data-order]').value;
- const rows=casos.filter(r=>(!status||r.acompanhamento_status===status)&&String(r.titulo).toLocaleLowerCase('pt-BR').includes(name));
- rows.sort((a,b)=>order==='recent'?Date.parse(b.publicado_em||b.created_at)-Date.parse(a.publicado_em||a.created_at):a.titulo.localeCompare(b.titulo,'pt-BR')*(order==='za'?-1:1));grade.innerHTML=rows.map(criarPreviaCasoDiario).join('')||'<p>Nenhum arquivo corresponde aos filtros.</p>';};bar.oninput=render;bar.onchange=render;
+ const bar=document.createElement("div");bar.id="garimpo-tracking-filters";bar.className="tracking-filter as-discovery-controls";
+ const normalize=value=>String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("pt-BR").trim();
+ const categories=[...new Set(casos.map(item=>String(item.categoria||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+ const option=document.createElement("option");
+ bar.innerHTML='<label>Pesquisar registros <input type="search" data-name placeholder="Nome, local, resumo ou palavra-chave..." autocomplete="off" aria-label="Buscar registros publicados"></label><label>Categoria <select data-category aria-label="Filtrar categoria"><option value="">Todas as categorias</option></select></label><label>Acompanhamento <select data-tracking><option value="">Todos</option><option value="ativo">Em acompanhamento</option><option value="encerrado">Encerrados</option></select></label><label>Ordenar <select data-order><option value="recent">Publicados recentemente</option><option value="az">Nome: A–Z</option><option value="za">Nome: Z–A</option></select></label>';
+ const cat=bar.querySelector('[data-category]');
+ categories.forEach(value=>{const el=option.cloneNode();el.value=value;el.textContent=value;cat.append(el);});
+ const foot=document.createElement("div");foot.className="as-discovery-footer";
+ const count=document.createElement("output");count.className="as-discovery-count";count.setAttribute("aria-live","polite");
+ const clear=document.createElement("button");clear.type="button";clear.className="as-discovery-clear";clear.textContent="Limpar filtros";
+ foot.append(count,clear);bar.append(foot);
+ const params=new URLSearchParams(location.search);
+ const initial=params.get("q");if(initial)bar.querySelector("[data-name]").value=initial.slice(0,120);
+ grade.before(bar);
+ const render=()=>{
+  const name=normalize(bar.querySelector('[data-name]').value);
+  const category=cat.value;
+  const tracking=bar.querySelector('[data-tracking]').value;
+  const order=bar.querySelector('[data-order]').value;
+  const terms=name.split(/\s+/).filter(Boolean);
+  const rows=casos.filter(r=>{
+   if(tracking&&r.acompanhamento_status!==tracking)return false;
+   if(category&&String(r.categoria||"").trim()!==category)return false;
+   const searchable=normalize([r.titulo,r.categoria,r.local,r.resumo,r.data_caso,r.status_caso].join(" "));
+   return terms.every(term=>searchable.includes(term));
+  });
+  rows.sort((a,b)=>order==='recent'?Date.parse(b.publicado_em||b.created_at||0)-Date.parse(a.publicado_em||a.created_at||0):String(a.titulo||"").localeCompare(String(b.titulo||""),'pt-BR')*(order==='za'?-1:1));
+  grade.innerHTML=rows.map(criarPreviaCasoDiario).join('')||'<p class="as-discovery-empty">Nenhum arquivo corresponde aos filtros. Experimente outro termo ou limpe a seleção.</p>';
+  count.textContent=rows.length+" de "+casos.length+" registros";
+ };
+ bar.addEventListener("input",render);
+ bar.addEventListener("change",render);
+ clear.addEventListener("click",()=>{
+   bar.querySelector('[data-name]').value="";
+   cat.value="";
+   bar.querySelector('[data-tracking]').value="";
+   bar.querySelector('[data-order]').value="recent";
+   render();bar.querySelector('[data-name]').focus();
+ });
+ render();
 }
