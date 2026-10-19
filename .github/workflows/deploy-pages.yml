@@ -35,6 +35,7 @@ jobs:
           python3 scripts/build-seo-pages.py _site
           python3 scripts/audit-seo-build.py _site
           python3 scripts/audit-internal-links.py _site
+          python3 scripts/audit-mobile-seo-readiness.py _site --report /tmp/arquivo-mobile-seo-report.json
           python3 scripts/build-design-preview.py _site
           if [ "$MAINTENANCE_MODE" = "true" ]; then
             python3 scripts/build-maintenance.py _site
