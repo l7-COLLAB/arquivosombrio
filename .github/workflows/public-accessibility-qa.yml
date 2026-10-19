@@ -1,0 +1,37 @@
+name: Verificar acessibilidade pública
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'dossies.html'
+      - 'garimpo.html'
+      - 'pericia.html'
+      - 'lendas.html'
+      - 'creepypastas.html'
+      - 'css/acessibilidade-publica-20261018.css'
+      - 'tests/public-accessibility.mjs'
+      - '.github/workflows/public-accessibility-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'dossies.html'
+      - 'garimpo.html'
+      - 'pericia.html'
+      - 'lendas.html'
+      - 'creepypastas.html'
+      - 'css/acessibilidade-publica-20261018.css'
+      - 'tests/public-accessibility.mjs'
+      - '.github/workflows/public-accessibility-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  accessibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/public-accessibility.mjs
