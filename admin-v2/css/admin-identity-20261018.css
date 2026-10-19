@@ -1,0 +1,134 @@
+/* Arquivo Sombrio | Fase 5 — identidade visual do painel Admin V2.
+   Escopo EXCLUSIVO da Central Administrativa. Sem alterações em scripts,
+   autenticação, salvamento, publicação, lógica de navegação ou leitor. */
+
+body.admin-dashboard-open {
+  --v2-fumaca:#12100f;
+  --v2-madeira:#201917;
+  --v2-ferro:#2c2623;
+  --v2-osso:#e7dcc6;
+  --v2-papel:#b7a488;
+  --v2-bronze:#a28758;
+  --v2-vinho:#5a1e25;
+  --v2-foco:#e7dcc6;
+}
+
+/* Hierarquia visual. Uma fonte robusta para os títulos, monospace para dados. */
+body.admin-dashboard-open .admin-hub-brand strong,
+body.admin-dashboard-open .admin-hub-topbar h1 {
+  font-family:"Oswald","Arial Narrow",sans-serif;
+  font-weight:600;
+  letter-spacing:.025em;
+  color:var(--v2-osso);
+}
+body.admin-dashboard-open .admin-hub-brand strong {
+  font-size:clamp(1.45rem,1.9vw,1.7rem);
+  line-height:1.2;
+}
+body.admin-dashboard-open .admin-hub-topbar h1 {
+  font-size:clamp(1.45rem,2vw,1.85rem);
+  line-height:1.2;
+}
+body.admin-dashboard-open :is(.admin-hub-section-heading h2,.admin-hub-intro h2,
+ .admin-v2-registrations h2,.admin-hub-card h2) {
+  font-family:"Oswald","Arial Narrow",sans-serif;
+  font-weight:600;
+  letter-spacing:.015em;
+  color:var(--v2-osso);
+}
+body.admin-dashboard-open :is(.admin-hub-brand>span,.admin-hub-topbar span,
+ .admin-hub-section-heading span,.admin-hub-intro span) {
+  color:#c9ae82;
+  font-family:"DM Mono",monospace;
+  letter-spacing:.12em;
+}
+body.admin-dashboard-open :is(.admin-hub-card p,.admin-hub-intro p) {
+  color:var(--v2-papel);
+  line-height:1.65;
+}
+
+/* Menus — alvos de clique legíveis, itens selecionados visíveis. */
+body.admin-dashboard-open .admin-hub-sidebar {
+  background:linear-gradient(180deg,var(--v2-madeira),var(--v2-fumaca));
+  border-right-color:rgba(162,135,88,.27);
+}
+body.admin-dashboard-open .admin-hub-brand {
+  padding-bottom:18px;
+  border-bottom-color:rgba(162,135,88,.29);
+}
+body.admin-dashboard-open .admin-hub-sidebar nav {
+  gap:5px;
+  padding:14px 0;
+}
+body.admin-dashboard-open .admin-hub-sidebar nav button,
+body.admin-dashboard-open .admin-v2-extra-nav :is(a,button) {
+  min-height:44px;
+  padding:10px 12px;
+  color:#c5b59d;
+  border-radius:3px;
+}
+body.admin-dashboard-open .admin-hub-sidebar nav button span,
+body.admin-dashboard-open .admin-v2-extra-nav :is(a,button) {
+  font-family:"DM Mono",monospace;
+  font-size:.74rem;
+  letter-spacing:.02em;
+  line-height:1.4;
+}
+body.admin-dashboard-open .admin-hub-sidebar nav button:hover,
+body.admin-dashboard-open .admin-v2-extra-nav :is(a,button):hover {
+  color:var(--v2-osso);
+  border-color:rgba(162,135,88,.43);
+  background:var(--v2-ferro);
+}
+body.admin-dashboard-open .admin-hub-sidebar nav button.active,
+body.admin-dashboard-open .admin-hub-sidebar nav button[aria-current="page"] {
+  color:var(--v2-osso);
+  border-color:rgba(162,135,88,.54);
+  border-left:3px solid var(--v2-bronze);
+  background:rgba(90,30,37,.3);
+}
+body.admin-dashboard-open .admin-hub-sidebar nav button.active i {
+  color:#d39a85;
+}
+
+/* Cartões e barra principal: superfícies discretas e legíveis. */
+body.admin-dashboard-open .admin-hub-main {
+  background:var(--v2-fumaca);
+}
+body.admin-dashboard-open .admin-hub-topbar {
+  min-height:66px;
+  padding:12px 22px;
+  background:#191411;
+  border-bottom-color:rgba(162,135,88,.29);
+}
+body.admin-dashboard-open :is(.admin-hub-card,.admin-hub-request-card) {
+  border-color:rgba(162,135,88,.3);
+  border-radius:3px;
+  background-color:var(--v2-madeira);
+}
+body.admin-dashboard-open .admin-v2-registrations p {
+  color:var(--v2-papel);
+  font-family:"DM Mono",monospace;
+  line-height:1.65;
+}
+body.admin-dashboard-open :is(button,a,input,select,textarea):focus-visible {
+  outline:2px solid var(--v2-foco);
+  outline-offset:3px;
+}
+body.admin-dashboard-open :is(input,select,textarea) {
+  accent-color:var(--v2-bronze);
+}
+@media(max-width:760px){
+  body.admin-dashboard-open .admin-hub-topbar {
+    padding:12px 14px;
+    min-height:62px;
+  }
+  body.admin-dashboard-open .admin-hub-brand strong {
+    font-size:1.5rem;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  body.admin-dashboard-open .admin-hub-sidebar nav button {
+    transition:none;
+  }
+}
