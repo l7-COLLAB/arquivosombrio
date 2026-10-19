@@ -1,0 +1,18 @@
+/* Programa de Investigadores — herda a identidade visual de Meu Arquivo. */
+.meu-arquivo-page .recompensas{--recompensas-destaque:var(--arquivo-red-light);background:var(--arquivo-surface);border:1px solid var(--arquivo-border);padding:clamp(18px,3vw,32px);color:var(--arquivo-text)}
+.recompensas__etiqueta{font:500 .65rem "DM Mono",monospace;letter-spacing:.15em;text-transform:uppercase;color:var(--arquivo-paper-dark)}
+.recompensas__titulo{font:600 clamp(1.4rem,3vw,2.2rem) "Cinzel",serif;color:var(--arquivo-text);margin:.65rem 0 1rem}
+.recompensas__descricao{font:400 .92rem/1.8 "Libre Baskerville",serif;color:var(--arquivo-text-soft)}
+.recompensas__nivel{display:flex;align-items:center;gap:14px;margin:22px 0}
+.recompensas__insignia{display:grid;place-items:center;flex:none;width:64px;height:64px;border:3px double var(--arquivo-red-light);border-radius:50%;background:var(--arquivo-bg-soft);color:var(--arquivo-paper);font-size:1.5rem}
+.recompensas__nome{font:600 1.15rem "Cinzel",serif;color:var(--arquivo-paper)}
+.recompensas__xp{font:500 .7rem "DM Mono",monospace;color:var(--arquivo-paper-dark)}
+.recompensas__trilha{height:6px;background:var(--arquivo-bg);border:1px solid var(--arquivo-border);overflow:hidden;margin:12px 0}
+.recompensas__progresso{height:100%;width:var(--progresso,0%);background:var(--arquivo-red-light);transition:width .3s}
+.recompensas__grade{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px}
+.recompensas__dado{padding:16px 8px;background:var(--arquivo-bg-soft);border:1px solid var(--arquivo-border);text-align:center}
+.recompensas__numero{display:block;font:600 1.35rem "Cinzel",serif;color:var(--arquivo-paper)}
+.recompensas__legenda{font:400 .6rem/1.6 "DM Mono",monospace;color:var(--arquivo-text-soft);text-transform:uppercase;letter-spacing:.04em}
+.recompensas__nota{font:400 .7rem/1.6 "DM Mono",monospace;color:var(--arquivo-text-soft);margin-top:18px}
+@media(max-width:420px){.recompensas__grade{grid-template-columns:1fr 1fr}.recompensas__insignia{width:54px;height:54px}}
+@media(prefers-reduced-motion:reduce){.recompensas__progresso{transition:none}}
