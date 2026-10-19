@@ -3896,8 +3896,8 @@ function criarCardCaso(caso) {
                     <img
                         src="${escaparHTML(caso.imagem)}"
                         alt="${escaparHTML(caso.titulo)}"
-                        loading="lazy"
-                        onerror="this.src='https://placehold.co/800x500/111/777?text=Arquivo+Sombrio';"
+                        loading="lazy" decoding="async" width="800" height="500"
+                        onerror="this.onerror=null;this.src='imagem-compartilhamento.jpg';"
                     >
 
                     <span class="badge status">
@@ -4090,7 +4090,7 @@ function criarCardPericia(pericia) {
     return '<article class="case-card" data-forensic-id="' + escaparHTML(pericia.id) + '">' +
         '<button type="button" class="content-favorite-button" aria-label="Adicionar perícia aos favoritos" data-favorite-type="forensic" data-favorite-id="' + escaparHTML(pericia.id) + '" data-favorite-title="' + escaparHTML(pericia.titulo || "Perícia") + '" data-favorite-subtitle="' + escaparHTML(pericia.categoria || "Ciência Forense") + '" data-favorite-image="' + escaparHTML(pericia.imagem || "") + '" data-favorite-url="' + escaparHTML(url) + '"><i class="fa-regular fa-bookmark"></i></button>' +
         '<a href="' + escaparHTML(url) + '" class="case-card-link" aria-label="Abrir perícia: ' + escaparHTML(pericia.titulo || "") + '">' +
-        '<div class="card-image"><img src="' + escaparHTML(pericia.imagem || "") + '" alt="' + escaparHTML(pericia.legenda_imagem || pericia.titulo || "") + '" loading="lazy" onerror="this.src=\'https://placehold.co/800x500/111/777?text=Ciencia+Forense\';"><span class="badge status">TÉCNICO / METODOLÓGICO</span></div>' +
+        '<div class="card-image"><img src="' + escaparHTML(pericia.imagem || "") + '" alt="' + escaparHTML(pericia.legenda_imagem || pericia.titulo || "") + '" loading="lazy" decoding="async" width="800" height="500" onerror="this.onerror=null;this.src=\'imagem-compartilhamento.jpg\';"><span class="badge status">TÉCNICO / METODOLÓGICO</span></div>' +
         '<div class="card-content"><span class="badge category">' + escaparHTML(pericia.categoria || "PERÍCIA") + '</span><h3>' + escaparHTML(pericia.titulo || "Matéria forense") + '</h3>' +
         '<div class="card-meta"><span><i class="fa-solid fa-flask-vial"></i> Ciência Forense</span><span><i class="fa-solid fa-file-lines"></i> Artigo técnico</span></div>' +
         '<p class="card-summary">' + escaparHTML(pericia.resumo || "Sem resumo disponível.") + '</p><span class="btn-read-more">Abrir perícia <i class="fa-solid fa-arrow-right"></i></span></div></a></article>';
@@ -12670,7 +12670,7 @@ async function removerCasoDiario(id) {
 function criarPreviaCasoDiario(caso) {
     return `
         <a class="home-daily-card" href="garimpo.html?id=${encodeURIComponent(caso.id)}&entry=20261011">
-            <img src="${escaparHTML(caso.imagem_capa || "")}" alt="" loading="lazy">
+            <img src="${escaparHTML(caso.imagem_capa || "")}" alt="" loading="lazy" decoding="async" width="92" height="104" onerror="this.onerror=null;this.src='imagem-compartilhamento.jpg';">
             <div>
                 ${window.ArquivoTracking?.badge(caso)||""}
                 <small>${escaparHTML(caso.categoria || "GARIMPO SOMBRIO")}</small>
