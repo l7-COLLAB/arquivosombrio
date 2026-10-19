@@ -13,7 +13,7 @@ test("página com SEO, acessibilidade e controles funcionais",()=>{
  assert.match(page,/https:\/\/arquivosombrio.net.br\/pesquisa.html/);
  for(const id of ["as-search-form","as-search-input","as-results-count","as-search-sections","as-search-message"])assert.ok(page.includes('id="'+id+'"'));
  assert.match(page,/role="search"/);
- assert.match(page,/js\/pesquisa-acervo.js\?v=1/);
+ assert.match(page,/js\/pesquisa-acervo.js\?v=2/);
  assert.match(page,/css\/pesquisa-acervo.css\?v=1/);
 });
 test("script válido e cinco fontes corretas",()=>{
