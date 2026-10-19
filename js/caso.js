@@ -490,6 +490,30 @@ async function carregarCaso() {
     await renderizarCaso(
         caso
     );
+    carregarRelacionadosDossie(caso);
+}
+
+async function carregarRelacionadosDossie(caso) {
+    const area=document.querySelector(".case-page .case-content-section");
+    if (!area || !caso?.categoria || !window.ArquivoLeiturasRelacionadas) return;
+    try {
+        const cliente=await obterClienteSupabaseCaso();
+        const {data,error}=await cliente.from("Casos")
+          .select("id,titulo,categoria,status_publicacao")
+          .eq("status_publicacao","publicado")
+          .eq("categoria",caso.categoria)
+          .neq("id",caso.id)
+          .order("created_at",{ascending:false})
+          .limit(3);
+        if(error)throw error;
+        window.ArquivoLeiturasRelacionadas.render(area,data,{
+          currentId:caso.id,route:"caso.html",archive:"dossies.html",
+          heading:"Outros dossiês da mesma classificação",
+          note:"Arquivos da mesma classificação editorial. Isso não indica conexão entre as pessoas ou os acontecimentos."
+        });
+    } catch(error) {
+        console.warn("Sugestões de leitura indisponíveis.",error);
+    }
 }
 
 

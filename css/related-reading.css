@@ -1,0 +1,14 @@
+/* Etapa 12 | Navegação contextual, estética documental do acervo público. */
+.as-related-reading{margin:clamp(2rem,5vw,3.75rem) auto 1.25rem;padding:clamp(1.15rem,3vw,1.8rem);max-width:1080px;background:#201917;border:1px solid rgba(162,135,88,.35);border-top:2px solid #8a6a3d;border-radius:2px;color:#e7dcc6}
+.as-related-reading .as-related-eyebrow{margin:0 0 .45rem;color:#c7ac7b;font:500 .7rem/1.6 "DM Mono",monospace;letter-spacing:.1em}
+.as-related-reading h2{margin:0 0 .5rem;color:#e7dcc6;font:600 clamp(1.4rem,2.8vw,2rem)/1.2 "Oswald","Arial Narrow",sans-serif}
+.as-related-reading .as-related-note{max-width:65ch;margin:0 0 1.3rem;color:#b7a488;font:400 .86rem/1.7 "Libre Baskerville",Georgia,serif}
+.as-related-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.as-related-link{display:flex;flex-direction:column;gap:10px;min-width:0;padding:16px;border:1px solid rgba(162,135,88,.28);background:#171310;color:#e7dcc6;text-decoration:none;border-radius:2px}
+.as-related-link:hover{border-color:#a28758;background:#2c2623}
+.as-related-link span{color:#c9ae82;font:500 .68rem/1.5 "DM Mono",monospace;text-transform:uppercase}
+.as-related-link strong{font:600 1.05rem/1.4 "Oswald","Arial Narrow",sans-serif;overflow-wrap:anywhere}
+.as-related-link small{margin-top:auto;color:#d3c0a4;font:500 .7rem/1.5 "DM Mono",monospace}
+.as-related-more{display:inline-block;margin-top:1.1rem;color:#e7dcc6;font:500 .73rem/1.5 "DM Mono",monospace;text-decoration:underline;text-underline-offset:4px}
+.as-related-link:focus-visible,.as-related-more:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}
+@media(max-width:700px){.as-related-list{grid-template-columns:1fr}.as-related-link{padding:13px}.as-related-reading{margin-top:2rem}}
