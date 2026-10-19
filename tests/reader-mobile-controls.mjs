@@ -22,7 +22,7 @@ test('expansão preserva botões originais e é acessível',()=>{
  assert.match(js,/aria-expanded/);
  assert.match(js,/aria-controls/);
  assert.match(js,/as-mobile-reader-expanded/);
- assert.match(js,/data-reader/); // o módulo NÃO substitui os controles originais
+ assert.match(js,/\.case-reader-actions/); // o módulo reaproveita os controles originais
  assert.doesNotMatch(js,/innerHTML\s*=\s*['"`][\s\S]*case-reader-toolbar-inner/);
 });
 test('sumário é navegado apenas em rolagem, sem interferir no modo livro',()=>{
