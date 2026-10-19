@@ -46,6 +46,7 @@ body.admin-dashboard-open .admin-hub-sidebar nav{overflow:visible!important}
 <link rel="stylesheet" href="../css/case-tracking.css?v=20261006">
 <link rel="stylesheet" href="./css/admin-identity-20261018.css?v=1">
 <link rel="stylesheet" href="./css/easy-navigation.css?v=1">
+<link rel="stylesheet" href="./css/content-assist.css?v=1">
 </head>
 <body>
 <main id="admin-panel-loading"><div><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><p id="admin-panel-status">Abrindo a Central de Arquivo...</p></div></main>
@@ -97,6 +98,8 @@ if(hub){
  try {
    await load("a busca de funções","./js/easy-navigation.js?v=1",12000);
    window.ArquivoAdminEasyNav?.init();
+   await load("o guia do editor de conteúdos","./js/content-assist.js?v=1",12000);
+   window.ArquivoAdminContentAssist?.init();
  } catch (navigationError) {
    console.warn("Busca de funções não pôde ser iniciada; menu original preservado.",navigationError);
  }
