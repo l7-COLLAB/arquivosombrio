@@ -1,0 +1,35 @@
+name: Auditoria pública de rastreamento SEO
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 9 * * *'
+  pull_request:
+    paths:
+      - 'scripts/audit-public-crawlability.py'
+      - 'tests/test_public_crawlability.py'
+      - '.github/workflows/public-crawlability-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/audit-public-crawlability.py'
+      - 'tests/test_public_crawlability.py'
+      - '.github/workflows/public-crawlability-qa.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Testar auditoria de canonical
+        run: python3 -m unittest discover -s tests -p 'test_public_crawlability.py' -v
+      - name: Verificar URLs públicas
+        run: python3 scripts/audit-public-crawlability.py --report /tmp/crawlability-report.json
+      - name: Salvar relatório da execução
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-rastreamento-publico
+          path: /tmp/crawlability-report.json
+          if-no-files-found: ignore
+          retention-days: 30
