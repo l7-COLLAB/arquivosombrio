@@ -72,3 +72,8 @@ button,input{font:inherit}
 .as-search-sort label{font:500 .76rem/1.4 "DM Mono",monospace;color:var(--ink)}
 .as-search-sort select{border:1px solid var(--gold);background:#201917;color:var(--ink);padding:10px 14px;min-height:44px;font:400 .78rem/1.4 "DM Mono",monospace;max-width:100%}
 @media(max-width:590px){.as-search-sort{align-items:stretch;flex-direction:column}.as-search-sort select{width:100%}.as-search-history{padding:12px}.as-search-history-head{align-items:start}.as-search-term{width:100%}}
+
+/* Auditoria Etapa 18: recuperação de editorias temporariamente indisponíveis */
+.as-search-retry{display:inline-block;min-height:42px;margin:8px 0 0;padding:9px 12px;border:1px solid #a28758;background:#201917;color:#e7dcc6;cursor:pointer;font:500 .75rem/1.4 "DM Mono",monospace}
+.as-search-retry:hover{background:#5a2627}
+.as-search-retry:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}
