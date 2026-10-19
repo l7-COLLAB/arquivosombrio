@@ -33,6 +33,7 @@ jobs:
           test -f _site/admin-v2/index.html
           test -f _site/admin-v2/visual.html
           python3 scripts/build-seo-pages.py _site
+          python3 scripts/audit-seo-build.py _site
           python3 scripts/build-design-preview.py _site
           if [ "$MAINTENANCE_MODE" = "true" ]; then
             python3 scripts/build-maintenance.py _site

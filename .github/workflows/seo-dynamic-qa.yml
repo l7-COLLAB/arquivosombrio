@@ -6,6 +6,8 @@ on:
       - 'tests/test_build_public_sitemap.py'
       - 'tests/seo-dynamic.mjs'
       - 'scripts/build-seo-pages.py'
+      - 'scripts/audit-seo-build.py'
+      - 'tests/test_audit_seo_build.py'
       - 'tests/test_build_seo_pages.py'
       - 'js/seo-publicacao.js'
       - 'js/caso.js'
@@ -18,6 +20,8 @@ on:
       - 'tests/test_build_public_sitemap.py'
       - 'tests/seo-dynamic.mjs'
       - 'scripts/build-seo-pages.py'
+      - 'scripts/audit-seo-build.py'
+      - 'tests/test_audit_seo_build.py'
       - 'tests/test_build_seo_pages.py'
       - 'js/seo-publicacao.js'
       - 'js/caso.js'
@@ -38,6 +42,7 @@ jobs:
         run: |
           python3 -m unittest discover -s tests -p 'test_build_*sitemap.py' -v
           python3 -m unittest discover -s tests -p 'test_build_seo_pages.py' -v
+          python3 -m unittest discover -s tests -p 'test_audit_seo_build.py' -v
       - name: Testar metadados e status
         run: node --test tests/seo-dynamic.mjs
       - name: Validar consulta pública real e sitemap de deploy
@@ -45,4 +50,5 @@ jobs:
           mkdir -p /tmp/arquivo-sombrio-sitemap-test
           cp sitemap.xml /tmp/arquivo-sombrio-sitemap-test/
           python3 scripts/build-seo-pages.py /tmp/arquivo-sombrio-sitemap-test
+          python3 scripts/audit-seo-build.py /tmp/arquivo-sombrio-sitemap-test --report /tmp/seo-audit-report.json
           python3 -c 'from xml.etree import ElementTree as ET; root=ET.parse("/tmp/arquivo-sombrio-sitemap-test/sitemap.xml").getroot(); assert len(root)>21, "Sitemap não inclui publicações"'
