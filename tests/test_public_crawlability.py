@@ -19,7 +19,7 @@ class LiveAuditTests(TestCase):
     return url,200,{},b'<html><title>Leitor interativo</title></html>'
    canonical="https://wrong.example/test" if url==broken else url
    import re
-   match=re.search(r"/arquivo/([a-z]+)-(\\d+)\\.html",url)
+   match=re.search(r"/arquivo/([a-z]+)-(\d+)\.html",url)
    legacy=f'{mod.ORIGIN}/{match.group(1)}.html?id={match.group(2)}'
    html=f'<html><head><title>Arquivo</title><link rel="canonical" href="{canonical}"><meta property="og:url" content="{url}"></head><body><a href="{legacy}">Ler</a></body></html>'
    return url,200,{},html.encode()
