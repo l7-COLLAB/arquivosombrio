@@ -85,7 +85,7 @@ def check(site: Path) -> dict:
         except (UnicodeError, ValueError) as exc:
             errors.append(f"HTML ilegível {rel}: {exc}")
             continue
-        own_url = BASE + rel
+        own_url = BASE if rel == "index.html" else BASE + rel
         if own_url not in sitemap:
             errors.append(f"Página principal não listada no sitemap: {rel}")
         if p.canonicals != [own_url]:
