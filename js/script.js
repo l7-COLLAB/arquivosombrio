@@ -4159,6 +4159,13 @@ function carregarForense() {
         if (selecionada) {
             secaoForense?.classList.add("forensic-detail-mode");
             renderizarDetalhePericia(grid, selecionada);
+            const candidatos=(Array.isArray(periciasSupabase)?periciasSupabase:[])
+              .filter(item=>String(item.categoria||"")===String(selecionada.categoria||""));
+            window.ArquivoLeiturasRelacionadas?.render(grid,candidatos,{
+              currentId:selecionada.id,route:"pericia.html",anchor:"#forense",archive:"pericia.html",
+              heading:"Outras técnicas desta especialidade",
+              note:"Conteúdos da mesma especialidade forense. A indicação não constitui laudo nem associação entre investigações."
+            });
             document.querySelector(".forensic-tools")?.setAttribute("hidden", "");
             document.getElementById("forensic-results-status")?.setAttribute("hidden", "");
             return;
@@ -12732,7 +12739,10 @@ async function carregarGarimpoPublico() {
             detalhe.hidden = !caso;
             document.getElementById("daily-archive-list")?.toggleAttribute("hidden", Boolean(caso));
             document.body.classList.toggle("garimpo-detail-mode", Boolean(caso));
-            if (caso) renderizarDetalheCasoDiario(detalhe, caso);
+            if (caso) {
+                renderizarDetalheCasoDiario(detalhe, caso);
+                carregarRelacionadosGarimpo(cliente,detalhe,caso);
+            }
         }
     } catch (erro) {
         console.error("Não foi possível abrir o Garimpo Sombrio.", erro);
@@ -12748,6 +12758,25 @@ async function carregarGarimpoPublico() {
             document.body.classList.add("garimpo-detail-mode");
         }
     }
+}
+
+async function carregarRelacionadosGarimpo(cliente,detalhe,caso) {
+    if(!caso?.categoria || !window.ArquivoLeiturasRelacionadas)return;
+    try {
+        const {data,error}=await cliente.from("casos_diarios")
+          .select("id,titulo,categoria,status_publicacao")
+          .eq("status_publicacao","publicado")
+          .eq("categoria",caso.categoria)
+          .neq("id",caso.id)
+          .order("publicado_em",{ascending:false})
+          .limit(3);
+        if(error)throw error;
+        window.ArquivoLeiturasRelacionadas.render(detalhe,data,{
+          currentId:caso.id,route:"garimpo.html",archive:"garimpo.html",
+          heading:"Outros registros desta categoria",
+          note:"Registros organizados pela mesma categoria editorial. Não há vínculo factual presumido entre os casos."
+        });
+    } catch(error) {console.warn("Sugestões do Garimpo indisponíveis.",error);}
 }
 
 function normalizarItensGarimpo(valor) {
