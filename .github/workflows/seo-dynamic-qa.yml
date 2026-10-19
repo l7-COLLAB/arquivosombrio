@@ -35,7 +35,8 @@ jobs:
         with:
           node-version: '22'
       - name: Testar gerador em memória
-        run: python3 -m unittest discover -s tests -p 'test_build_*sitemap.py' -v
+        run: |
+          python3 -m unittest discover -s tests -p 'test_build_*sitemap.py' -v
           python3 -m unittest discover -s tests -p 'test_build_seo_pages.py' -v
       - name: Testar metadados e status
         run: node --test tests/seo-dynamic.mjs
