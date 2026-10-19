@@ -1,0 +1,40 @@
+/* Fase 7 | Organização do editor, sem modificar formulários existentes. */
+body.admin-dashboard-open .admin-v2-content-assist{
+ padding:16px 18px;
+ margin:0 0 18px;
+ border:1px solid rgba(162,135,88,.32);
+ border-left:3px solid #a28758;
+ border-radius:3px;
+ background:#201917;
+}
+body.admin-dashboard-open .admin-v2-content-assist-heading strong{
+ display:block;color:#e7dcc6;
+ font:600 clamp(1.1rem,2vw,1.4rem)/1.3 "Oswald","Arial Narrow",sans-serif;
+}
+body.admin-dashboard-open .admin-v2-content-assist-heading p{
+ margin:5px 0 0;color:#c3b399;
+ font:400 .78rem/1.6 "DM Mono",monospace;
+}
+body.admin-dashboard-open .admin-v2-content-assist-actions{
+ display:flex;flex-wrap:wrap;gap:9px;margin-top:13px;
+}
+body.admin-dashboard-open .admin-v2-content-assist-actions button{
+ min-height:42px;padding:10px 14px;border-radius:3px;
+ border:1px solid #a28758;background:#5a1e25;color:#e7dcc6;
+ font:500 .76rem/1.4 "DM Mono",monospace;
+}
+body.admin-dashboard-open .admin-v2-content-assist-actions .admin-v2-assist-reset{
+ background:#171311;border-color:rgba(162,135,88,.52);
+}
+body.admin-dashboard-open .admin-v2-content-count{
+ color:#e7dcc6;margin:15px 0 0;
+ font:500 .79rem/1.5 "DM Mono",monospace;
+}
+body.admin-dashboard-open .admin-v2-content-state-help{
+ margin:6px 0 0;color:#b7a488;
+ font:400 .71rem/1.65 "DM Mono",monospace;
+}
+@media(max-width:760px){
+ body.admin-dashboard-open .admin-v2-content-assist{padding:13px}
+ body.admin-dashboard-open .admin-v2-content-assist-actions button{width:100%}
+}
