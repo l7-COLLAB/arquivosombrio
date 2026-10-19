@@ -21,7 +21,7 @@ test("rascunhos recebem noindex e não recebem Article JSON-LD",()=>{
 });
 test("deploy inclui sitemap dinâmico e agenda recorrente",()=>{
  assert.match(workflow,/cron: '17 \*\/6 \* \* \*'/);
- assert.match(workflow,/python3 scripts\/build-public-sitemap\.py _site/);
- assert.ok(workflow.indexOf("build-public-sitemap.py")<workflow.indexOf("upload-pages-artifact@"));
+ assert.match(workflow,/python3 scripts\/build-seo-pages\.py _site/);
+ assert.ok(workflow.indexOf("build-seo-pages.py")<workflow.indexOf("upload-pages-artifact@"));
  assert.match(read("robots.txt"),/Sitemap: https:\/\/arquivosombrio\.net\.br\/sitemap\.xml/);
 });

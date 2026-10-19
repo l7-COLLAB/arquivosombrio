@@ -22,8 +22,8 @@ class SitemapTests(TestCase):
         doc = ET.fromstring(result)
         locs = [x.text for x in doc.iter(module.tag("loc"))]
         self.assertEqual(len(locs), 26)  # 21 páginas estáticas + cinco publicações
-        self.assertIn("https://arquivosombrio.net.br/caso.html?id=1", locs)
-        self.assertNotIn("https://arquivosombrio.net.br/caso.html?id=26", locs)
+        self.assertIn("https://arquivosombrio.net.br/arquivo/caso-1.html", locs)
+        self.assertNotIn("https://arquivosombrio.net.br/arquivo/caso-26.html", locs)
         self.assertEqual(len(locs), len(set(locs)))
         self.assertIn("https://arquivosombrio.net.br/pesquisa.html", locs)
 
