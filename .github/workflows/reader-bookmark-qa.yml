@@ -1,0 +1,31 @@
+name: Verificar marcador de leitura
+on:
+  pull_request:
+    paths:
+      - 'caso.html'
+      - 'js/caso.js'
+      - 'js/reader-bookmark.js'
+      - 'css/reader-bookmark.css'
+      - 'tests/reader-bookmark.mjs'
+      - '.github/workflows/reader-bookmark-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'caso.html'
+      - 'js/caso.js'
+      - 'js/reader-bookmark.js'
+      - 'css/reader-bookmark.css'
+      - 'tests/reader-bookmark.mjs'
+      - '.github/workflows/reader-bookmark-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reader:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/reader-bookmark.mjs
