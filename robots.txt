@@ -2,6 +2,8 @@ User-agent: *
 Allow: /
 Disallow: /meu-arquivo.html
 Disallow: /admin.html
+Disallow: /admin-v2/
+Disallow: /admin-lite/
 Disallow: /painel-admin.html
 Disallow: /redefinir-senha.html
 
