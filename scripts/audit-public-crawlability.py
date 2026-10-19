@@ -95,7 +95,7 @@ def audit(fetch=get):
         # The canonical static page must point readers to the original interactive file.
         # The original route must remain reachable. Do not demand a canonical in the
         # raw HTML of legacy ?id= routes: that metadata is inserted by JavaScript.
-        matched=re.fullmatch(re.escape(ORIGIN)+r"/arquivo/(caso|garimpo|pericia|lendas|creepypastas)-(\\d+)\\.html",url)
+        matched=re.fullmatch(re.escape(ORIGIN)+r"/arquivo/(caso|garimpo|pericia|lendas|creepypastas)-(\d+)\.html",url)
         if matched and item["status"]==200:
             category,ident=matched.groups()
             legacy=f"{ORIGIN}/{category}.html?id={ident}"
