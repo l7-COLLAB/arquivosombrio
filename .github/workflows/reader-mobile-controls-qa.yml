@@ -1,0 +1,31 @@
+name: Verificar controles móveis de leitura
+on:
+  pull_request:
+    paths:
+      - 'caso.html'
+      - 'js/caso.js'
+      - 'js/reader-mobile-controls.js'
+      - 'css/reader-mobile-controls.css'
+      - 'tests/reader-mobile-controls.mjs'
+      - '.github/workflows/reader-mobile-controls-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'caso.html'
+      - 'js/caso.js'
+      - 'js/reader-mobile-controls.js'
+      - 'css/reader-mobile-controls.css'
+      - 'tests/reader-mobile-controls.mjs'
+      - '.github/workflows/reader-mobile-controls-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reader:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/reader-mobile-controls.mjs tests/reader-bookmark.mjs
