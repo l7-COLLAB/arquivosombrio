@@ -35,7 +35,7 @@ def tag(name: str) -> str:
 
 def get_public_rows(table: str) -> list[dict]:
     query = urlencode({
-        "select": "id,status_publicacao,created_at,updated_at,publicado_em",
+        "select": "id,status_publicacao,created_at,updated_at" + (",publicado_em" if table != "Casos" else ""),
         "status_publicacao": "eq.publicado",
         "order": "id.asc",
         "limit": str(MAX_PER_TABLE),
