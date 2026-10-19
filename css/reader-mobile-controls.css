@@ -1,0 +1,45 @@
+/* Etapa 14 — controles responsivos exclusivos do leitor de dossiês.
+   Nenhuma mudança no modo livro, nas fontes, no sumário ou nos textos. */
+.case-page .as-mobile-summary,.case-page .as-mobile-more{display:none}
+.case-page .as-mobile-reader-note{display:none}
+@media(max-width:700px){
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .case-reader-toolbar-inner{
+   display:flex;align-items:center;gap:4px;min-height:52px;padding:2px 8px;width:100%;
+ }
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .case-reader-actions{
+   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;min-width:0;flex:1;
+   overflow:visible;
+ }
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .case-reader-back{
+   width:42px;min-width:42px;min-height:44px;
+ }
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .case-reader-action{
+   min-width:0;min-height:44px;padding:6px 2px;gap:2px;
+ }
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .case-reader-action small{
+   font-size:10px;line-height:1.2;white-space:nowrap;
+ }
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready :is(.as-mobile-summary,.as-mobile-more){display:inline-flex}
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready:not(.as-mobile-reader-expanded)
+ :is([data-reader-theme-button],[data-reader-font-button],[data-reader-lines-button],[data-reader-underline]){display:none}
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready.as-mobile-reader-expanded .case-reader-actions{
+   grid-template-columns:repeat(4,minmax(0,1fr));
+ }
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .as-mobile-reader-note:not(:empty){
+   display:block;max-width:100%;padding:2px 10px 7px;text-align:center;
+   font:400 11px/1.5 "DM Mono",monospace;color:#b7a488;
+ }
+ body.case-page[data-reader-theme="papel"].case-reading
+ .case-reader-toolbar.as-mobile-reader-ready .as-mobile-reader-note{color:#513c28}
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .case-reader-popovers{
+   max-width:calc(100vw - 16px);
+ }
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .reader-page-navigation:not([hidden]){
+   padding:3px 8px 8px;
+ }
+}
+@media(max-width:360px){
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .case-reader-toolbar-inner{padding-inline:3px}
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .case-reader-actions{gap:0}
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .case-reader-action small{font-size:9px}
+}
