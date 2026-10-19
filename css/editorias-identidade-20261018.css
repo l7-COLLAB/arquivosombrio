@@ -163,3 +163,78 @@ body[data-archive-type="creepypastas"] .archive-literary-card:focus-visible{
     overflow-wrap:anywhere;
   }
 }
+
+/* Ajuste de densidade editorial | 18/10/2026.
+   O cabeçalho global não muda; somente o início das listagens públicas. */
+.archive-page .cases-section{
+  padding-top:clamp(1.4rem,3vw,2.2rem);
+}
+.forensic-page .forensic-section{
+  padding-top:clamp(1.4rem,3vw,2.2rem);
+}
+.archive-page .archive-page-back,
+.forensic-page .archive-page-back{
+  margin-bottom:clamp(.8rem,1.8vw,1.2rem);
+}
+.archive-page .archive-list-heading{
+  margin-bottom:1.1rem;
+  padding-bottom:1rem;
+}
+.archive-page .archive-list-heading .section-number{
+  margin-bottom:.15rem;
+}
+.archive-page .archive-list-heading .section-eyebrow{
+  margin-bottom:.35rem;
+}
+.archive-page .archive-list-heading h2{
+  margin-top:.3rem;
+  margin-bottom:.25rem;
+}
+.archive-page .archive-list-heading .section-description{
+  margin-bottom:.15rem;
+}
+.forensic-page .forensic-lab-band{
+  padding-bottom:.7rem;
+  gap:.6rem 1rem;
+}
+.forensic-page .forensic-editorial-header{
+  padding-top:clamp(.7rem,1.65vw,1.05rem);
+  padding-bottom:.6rem;
+  gap:.65rem 1.75rem;
+  margin-bottom:.35rem;
+}
+.forensic-page .forensic-editorial-header h2{
+  margin:.2rem 0 .3rem;
+}
+.forensic-page .forensic-editorial-header .section-description{
+  margin:0;
+}
+.forensic-page .forensic-method-note{
+  padding:.65rem 0;
+  margin-bottom:.9rem;
+}
+.garimpo-page .garimpo-intro{
+  padding-top:clamp(1.3rem,3vw,2.2rem);
+}
+.garimpo-page .garimpo-intro .archive-back{
+  margin-bottom:clamp(.8rem,1.8vw,1.2rem);
+}
+.garimpo-page .garimpo-edition-title{
+  padding-block:clamp(.9rem,2vw,1.45rem);
+}
+body[data-archive-type="lendas"] .archive-literary-intro,
+body[data-archive-type="creepypastas"] .archive-literary-intro{
+  padding-top:clamp(1.6rem,3.3vw,2.5rem);
+}
+body[data-archive-type="lendas"] .archive-literary-intro .archive-back,
+body[data-archive-type="creepypastas"] .archive-literary-intro .archive-back{
+  margin-bottom:clamp(1rem,2vw,1.5rem);
+}
+@media(max-width:760px){
+  .archive-page .cases-section,
+  .forensic-page .forensic-section{padding-top:1.3rem}
+  .archive-page .archive-page-back,
+  .forensic-page .archive-page-back{margin-bottom:.85rem}
+  .forensic-page .forensic-editorial-header{padding-top:.75rem}
+  .forensic-page .forensic-method-note{padding:.7rem 0;margin-bottom:.9rem}
+}
