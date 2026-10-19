@@ -1,0 +1,44 @@
+name: Etapa 30 - Lighthouse público
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '43 9 * * 1'
+permissions:
+  contents: read
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+      - name: Preparar ambiente
+        run: |
+          mkdir -p lighthouse-reports
+          npm install --no-save --no-package-lock lighthouse@12
+      - name: Medir páginas públicas em dispositivo móvel simulado
+        shell: bash
+        run: |
+          set -uo pipefail
+          failed=0
+          for entry in "inicio|https://arquivosombrio.net.br/" "pesquisa|https://arquivosombrio.net.br/pesquisa.html" "dossies|https://arquivosombrio.net.br/dossies.html" "garimpo|https://arquivosombrio.net.br/garimpo.html" "pericia|https://arquivosombrio.net.br/pericia.html"; do
+            name="${entry%%|*}"
+            url="${entry#*|}"
+            if ! ./node_modules/.bin/lighthouse "$url" --chrome-flags="--headless --no-sandbox" --only-categories=performance,accessibility,seo --output=json --output-path="lighthouse-reports/${name}.json" --quiet --max-wait-for-load=45000; then
+              echo "::warning::Falha na medição Lighthouse: $name"
+              failed=1
+            fi
+          done
+          python3 scripts/report-lighthouse-public.py lighthouse-reports --output lighthouse-reports/resumo.json
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: etapa30-lighthouse-mobile
+          path: lighthouse-reports/
+          retention-days: 30
