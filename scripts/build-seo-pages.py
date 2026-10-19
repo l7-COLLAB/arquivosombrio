@@ -155,6 +155,8 @@ def build_all(site: Path, datasets):
     output = {}
     for table, rows in datasets.items():
         for row in rows:
+            if row.get("status_publicacao") != "publicado":
+                raise ValueError("Registro não publicado em " + table)
             page = PUBLIC_TABLES[table][0]
             rel = canonical_path(page, row["id"])
             if rel in output:
