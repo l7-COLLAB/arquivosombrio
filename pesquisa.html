@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pesquisar no Acervo — Arquivo Sombrio</title>
+<meta name="description" content="Pesquise dossiês, registros do Garimpo Sombrio, perícias forenses, lendas e creepypastas no Arquivo Sombrio.">
+<link rel="canonical" href="https://arquivosombrio.net.br/pesquisa.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pesquisa do Acervo — Arquivo Sombrio">
+<meta property="og:description" content="Uma pesquisa para cinco editorias do Arquivo Sombrio.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500;600&family=Libre+Baskerville:wght@400;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/pesquisa-acervo.css?v=1">
+</head>
+<body class="as-search-page">
+<a class="as-skip-link" href="#conteudo-principal">Ir para o conteúdo principal</a>
+<header class="as-search-header"><div class="as-search-container as-search-header-inner">
+<a class="as-search-brand" href="index.html" aria-label="Arquivo Sombrio, voltar à página inicial"><span>ARQUIVO</span><strong>SOMBRIO</strong></a>
+<nav aria-label="Editorias do acervo">
+<a href="index.html">Início</a><a href="dossies.html">Dossiês</a><a href="garimpo.html">Garimpo</a><a href="pericia.html">Perícia</a><a href="lendas.html">Lendas</a><a href="creepypastas.html">Creepypastas</a>
+</nav>
+</div></header>
+<main class="as-search-container" id="conteudo-principal" tabindex="-1">
+<section class="as-search-hero" aria-labelledby="as-search-title">
+<p class="as-search-kicker">ARQUIVO SOMBRIO / CONSULTA DOCUMENTAL</p>
+<h1 id="as-search-title">Pesquisa do <span>Acervo</span></h1>
+<p>Consulte os registros publicados em cinco editorias. Pesquise nomes, assuntos, categorias e informações resumidas, sem confundir narrativas de ficção com casos documentados.</p>
+<form id="as-search-form" role="search">
+<label for="as-search-input">O que deseja encontrar?</label>
+<div class="as-search-input-row"><input type="search" id="as-search-input" name="q" placeholder="Ex.: investigação, folclore, genética..." autocomplete="off" maxlength="120"><button type="submit">Pesquisar <span aria-hidden="true">→</span></button></div>
+</form>
+</section>
+<section class="as-search-results" aria-labelledby="as-results-title">
+<div class="as-search-results-heading"><div><p class="as-search-kicker">ÍNDICE UNIFICADO</p><h2 id="as-results-title">Arquivos encontrados</h2></div><output id="as-results-count" aria-live="polite" aria-atomic="true">Preparando pesquisa...</output></div>
+<div class="as-search-filters" aria-label="Filtrar editorias">
+<button type="button" data-as-search-category="all" aria-pressed="true">Todas</button>
+<button type="button" data-as-search-category="dossies" aria-pressed="false">Dossiês</button>
+<button type="button" data-as-search-category="garimpo" aria-pressed="false">Garimpo</button>
+<button type="button" data-as-search-category="pericia" aria-pressed="false">Perícia</button>
+<button type="button" data-as-search-category="lendas" aria-pressed="false">Lendas</button>
+<button type="button" data-as-search-category="creepypastas" aria-pressed="false">Creepypastas</button>
+</div>
+<div id="as-search-message" class="as-search-message" role="status" aria-live="polite">Consultando registros publicados...</div>
+<div id="as-search-sections"></div>
+</section>
+</main>
+<footer class="as-search-footer"><div class="as-search-container"><span>ARQUIVO SOMBRIO / DOCUMENTAÇÃO E INVESTIGAÇÃO</span><a href="index.html">Voltar ao início</a></div></footer>
+<script src="js/pesquisa-acervo.js?v=1" defer></script>
+</body>
+</html>
