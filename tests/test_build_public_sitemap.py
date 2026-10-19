@@ -54,7 +54,7 @@ class SitemapTests(TestCase):
         def mock_open(request, timeout=0):
             self.assertIn("status_publicacao=eq.publicado", request.full_url)
             self.assertIn("id%2Cstatus_publicacao", request.full_url)
-            self.assertIn("apikey", request.headers)
+            self.assertIn("apikey", {name.lower() for name in request.headers})
             self.assertEqual(timeout,25)
             return Response(response)
         with patch.object(module, "urlopen", side_effect=mock_open):
