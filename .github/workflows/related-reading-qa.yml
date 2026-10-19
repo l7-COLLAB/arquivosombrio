@@ -1,0 +1,43 @@
+name: Verificar leituras relacionadas
+on:
+  pull_request:
+    paths:
+      - 'caso.html'
+      - 'garimpo.html'
+      - 'pericia.html'
+      - 'lendas.html'
+      - 'creepypastas.html'
+      - 'js/caso.js'
+      - 'js/script.js'
+      - 'js/arquivo-literario.js'
+      - 'js/related-reading.js'
+      - 'css/related-reading.css'
+      - 'tests/related-reading.mjs'
+      - '.github/workflows/related-reading-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'caso.html'
+      - 'garimpo.html'
+      - 'pericia.html'
+      - 'lendas.html'
+      - 'creepypastas.html'
+      - 'js/caso.js'
+      - 'js/script.js'
+      - 'js/arquivo-literario.js'
+      - 'js/related-reading.js'
+      - 'css/related-reading.css'
+      - 'tests/related-reading.mjs'
+      - '.github/workflows/related-reading-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/related-reading.mjs
