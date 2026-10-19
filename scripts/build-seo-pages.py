@@ -111,43 +111,43 @@ def render_page(table, row):
     e = lambda value: escape(str(value or ""), quote=True)
     chunks = [narrative[i:i+1900] for i in range(0, len(narrative), 1900)] or [description]
     paragraphs = "\n".join("<p>" + e(part) + "</p>" for part in chunks)
-    return ("""<!doctype html>
-<html lang="pt-BR"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>""" + e(headline) + """</title>
-<meta name="description" content="""" + e(description) + """">
-<meta name="robots" content="index,follow,max-image-preview:large">
-<link rel="canonical" href="""" + e(canonical) + """">
-<meta property="og:type" content="article">
-<meta property="og:locale" content="pt_BR">
-<meta property="og:site_name" content="Arquivo Sombrio">
-<meta property="og:title" content="""" + e(headline) + """">
-<meta property="og:description" content="""" + e(description) + """">
-<meta property="og:url" content="""" + e(canonical) + """">
-<meta name="twitter:card" content="summary">
-<script type="application/ld+json">""" + json_ld + """</script>
-<style>
-body{margin:0;background:#12100f;color:#e7dcc6;font:17px/1.8 Georgia,serif}
+    style = """body{margin:0;background:#12100f;color:#e7dcc6;font:17px/1.8 Georgia,serif}
 main,header,footer{max-width:800px;margin:auto;padding:24px}
 header{border-bottom:1px solid #a28758}h1{font:700 clamp(2rem,5vw,3rem)/1.2 Georgia,serif}
 a{color:#d9b77d}nav a{margin-right:18px}
 small{color:#bca882;letter-spacing:.08em}article{overflow-wrap:anywhere}
-article p{margin:0 0 1.35em}a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}
-</style>
+article p{margin:0 0 1.35em}a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}"""
+    html = f"""<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{e(headline)}</title>
+<meta name="description" content="{e(description)}">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="{e(canonical)}">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Arquivo Sombrio">
+<meta property="og:title" content="{e(headline)}">
+<meta property="og:description" content="{e(description)}">
+<meta property="og:url" content="{e(canonical)}">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{json_ld}</script>
+<style>{style}</style>
 </head><body>
 <header><nav aria-label="Navegação do acervo">
 <a href="/index.html">Início</a><a href="/pesquisa.html">Pesquisar</a>
-<a href="/""" + e(page) + """">""" + e(label) + """</a></nav></header>
+<a href="/{e(page)}">{e(label)}</a></nav></header>
 <main id="conteudo-principal">
-<small>ARQUIVO SOMBRIO / """ + e(label.upper()) + """</small>
-<h1>""" + e(title) + """</h1>
-<p>""" + e(description) + """</p>
-<p><a href="""" + e(original) + """">Abrir leitura interativa completa e anexos →</a></p>
-<article aria-label="Texto público do arquivo">""" + paragraphs + """</article>
-<p><a href="""" + e(original) + """">Consultar versão interativa, evidências e referências →</a></p>
+<small>ARQUIVO SOMBRIO / {e(label.upper())}</small>
+<h1>{e(title)}</h1>
+<p>{e(description)}</p>
+<p><a href="{e(original)}">Abrir leitura interativa completa e anexos →</a></p>
+<article aria-label="Texto público do arquivo">{paragraphs}</article>
+<p><a href="{e(original)}">Consultar versão interativa, evidências e referências →</a></p>
 </main><footer><a href="/pesquisa.html">Pesquisar outros arquivos</a></footer>
 </body></html>
-""").encode("utf-8")
+"""
+    return html.encode("utf-8")
 
 def build_all(site: Path, datasets):
     if set(datasets) != set(PUBLIC_TABLES):
