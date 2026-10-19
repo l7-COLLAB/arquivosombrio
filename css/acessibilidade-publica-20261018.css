@@ -1,0 +1,36 @@
+/* Acessibilidade das páginas públicas | Etapa 9
+   O atalho só aparece quando recebe foco por teclado.
+   Não interfere nos modais, nos leitores, nas novels nem no Admin V2. */
+body:is(.home-page,.archive-page,.garimpo-page,.forensic-page) > .as-skip-link,
+body:is([data-archive-type="lendas"],[data-archive-type="creepypastas"]) > .as-skip-link{
+  position:fixed;
+  z-index:2147483000;
+  inset:12px auto auto 12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  max-width:calc(100vw - 24px);
+  min-height:44px;
+  padding:10px 16px;
+  background:#e7dcc6;
+  border:2px solid #5a1e25;
+  border-radius:3px;
+  color:#29251f;
+  font:600 14px/1.4 Verdana,Arial,sans-serif;
+  text-decoration:none;
+  transform:translateY(calc(-100% - 24px));
+  pointer-events:none;
+  visibility:hidden;
+}
+body:is(.home-page,.archive-page,.garimpo-page,.forensic-page) > .as-skip-link:focus,
+body:is([data-archive-type="lendas"],[data-archive-type="creepypastas"]) > .as-skip-link:focus{
+  visibility:visible;
+  transform:none;
+  pointer-events:auto;
+  outline:3px solid #e7dcc6;
+  outline-offset:3px;
+}
+body:is(.home-page,.archive-page,.garimpo-page,.forensic-page) > #conteudo-principal:focus,
+body:is([data-archive-type="lendas"],[data-archive-type="creepypastas"]) > #conteudo-principal:focus{
+  outline:none;
+}
