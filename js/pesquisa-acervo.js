@@ -124,12 +124,23 @@ function render(){
  const holder=$("as-search-sections");holder.replaceChildren();
  $("as-results-count").textContent=result.length+" registro"+(result.length===1?"":"s")+" encontrado"+(result.length===1?"":"s");
  const message=$("as-search-message");
+ const incomplete=state.errors.length>0;
  if(!result.length){
   message.hidden=false;
-  message.textContent=state.errors.length===sources.length?"Não foi possível consultar o acervo agora. Tente novamente mais tarde.":"Nenhum registro corresponde à pesquisa. Tente outro nome ou escolha outra editoria.";
+  message.textContent=state.errors.length===sources.length
+   ?"Não foi possível consultar o acervo agora. Tente novamente mais tarde."
+   :incomplete
+    ?"Nenhum resultado nas editorias disponíveis. A consulta está incompleta porque algumas editorias não responderam."
+    :"Nenhum registro corresponde à pesquisa. Tente outro nome ou escolha outra editoria.";
  }else {
-  message.hidden=!state.errors.length;
-  if(state.errors.length)message.textContent="Algumas editorias estão temporariamente indisponíveis; os demais resultados continuam acessíveis.";
+  message.hidden=!incomplete;
+  if(incomplete)message.textContent="Pesquisa parcial: algumas editorias não responderam. Os resultados exibidos são apenas das editorias disponíveis.";
+ }
+ if(incomplete){
+  const retry=make("button","as-search-retry","Tentar novamente as editorias indisponíveis");
+  retry.type="button";
+  retry.addEventListener("click",retryFailedSources);
+  message.append(document.createTextNode(" "),retry);
  }
  const relevant=sources.filter(src=>state.category==="all"||src.id===state.category);
  for(const src of relevant){
@@ -156,6 +167,20 @@ function render(){
   }
   holder.append(section);
  }
+}
+async function retryFailedSources(){
+ const failed=sources.filter(src=>state.errors.includes(src.id));
+ if(!failed.length)return;
+ const message=$("as-search-message");
+ message.hidden=false;
+ message.textContent="Tentando consultar as editorias indisponíveis...";
+ const results=await Promise.allSettled(failed.map(read));
+ const recovered=new Set();
+ results.forEach((result,i)=>{
+  if(result.status==="fulfilled"){state.rows.push(...result.value);recovered.add(failed[i].id);}
+ });
+ state.errors=state.errors.filter(id=>!recovered.has(id));
+ render();renderSuggestions();
 }
 function setCategory(value){
  state.category=sources.some(x=>x.id===value)?value:"all";
