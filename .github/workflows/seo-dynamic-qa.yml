@@ -1,0 +1,42 @@
+name: Verificar sitemap dinâmico e SEO
+on:
+  pull_request:
+    paths:
+      - 'scripts/build-public-sitemap.py'
+      - 'tests/test_build_public_sitemap.py'
+      - 'tests/seo-dynamic.mjs'
+      - 'js/seo-publicacao.js'
+      - 'js/caso.js'
+      - '.github/workflows/deploy-pages.yml'
+      - '.github/workflows/seo-dynamic-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build-public-sitemap.py'
+      - 'tests/test_build_public_sitemap.py'
+      - 'tests/seo-dynamic.mjs'
+      - 'js/seo-publicacao.js'
+      - 'js/caso.js'
+      - '.github/workflows/deploy-pages.yml'
+      - '.github/workflows/seo-dynamic-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testar gerador em memória
+        run: python3 -m unittest discover -s tests -p 'test_build_public_sitemap.py' -v
+      - name: Testar metadados e status
+        run: node --test tests/seo-dynamic.mjs
+      - name: Validar consulta pública real e sitemap de deploy
+        run: |
+          mkdir -p /tmp/arquivo-sombrio-sitemap-test
+          cp sitemap.xml /tmp/arquivo-sombrio-sitemap-test/
+          python3 scripts/build-public-sitemap.py /tmp/arquivo-sombrio-sitemap-test
+          python3 -c 'from xml.etree import ElementTree as ET; root=ET.parse("/tmp/arquivo-sombrio-sitemap-test/sitemap.xml").getroot(); assert len(root)>21, "Sitemap não inclui publicações"'

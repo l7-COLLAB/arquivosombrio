@@ -3,6 +3,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    # Recria o sitemap público a cada seis horas, inclusive sem novos commits.
+    - cron: '17 */6 * * *'
 permissions:
   contents: read
   pages: write
@@ -29,6 +32,7 @@ jobs:
           test -f _site/index.html
           test -f _site/admin-v2/index.html
           test -f _site/admin-v2/visual.html
+          python3 scripts/build-public-sitemap.py _site
           python3 scripts/build-design-preview.py _site
           if [ "$MAINTENANCE_MODE" = "true" ]; then
             python3 scripts/build-maintenance.py _site

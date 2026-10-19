@@ -672,6 +672,7 @@ async function renderizarCaso(caso) {
             id: caso.id,
             titulo: caso.titulo,
             descricao: caso.resumo,
+            indexavel: String(caso.status_publicacao || "").toLowerCase() !== "rascunho",
             imagem: caso.imagem || caso.imagem_capa,
             caminho: "caso.html",
             secao: caso.categoria || "Dossiês",
