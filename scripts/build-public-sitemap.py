@@ -101,7 +101,7 @@ def build(original_xml: bytes, datasets: dict[str, list[dict]]) -> bytes:
             ident = str(row.get("id", ""))
             if not ident.isascii() or not ident.isdecimal():
                 raise ValueError("ID inválido: " + table)
-            loc = f"{BASE}{page}?id={ident}"
+            loc = f"{BASE}arquivo/{page.removesuffix('.html')}-{ident}.html"
             if loc in seen:
                 raise ValueError("URL dinâmica duplicada")
             seen.add(loc)
