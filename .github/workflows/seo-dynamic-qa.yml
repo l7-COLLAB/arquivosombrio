@@ -9,6 +9,7 @@ on:
       - 'scripts/audit-seo-build.py'
       - 'tests/test_audit_seo_build.py'
       - 'tests/test_build_seo_pages.py'
+      - 'tests/test_seo_internal_links.py'
       - 'js/seo-publicacao.js'
       - 'js/caso.js'
       - '.github/workflows/deploy-pages.yml'
@@ -23,6 +24,7 @@ on:
       - 'scripts/audit-seo-build.py'
       - 'tests/test_audit_seo_build.py'
       - 'tests/test_build_seo_pages.py'
+      - 'tests/test_seo_internal_links.py'
       - 'js/seo-publicacao.js'
       - 'js/caso.js'
       - '.github/workflows/deploy-pages.yml'
@@ -42,6 +44,7 @@ jobs:
         run: |
           python3 -m unittest discover -s tests -p 'test_build_*sitemap.py' -v
           python3 -m unittest discover -s tests -p 'test_build_seo_pages.py' -v
+          python3 -m unittest discover -s tests -p 'test_seo_internal_links.py' -v
           python3 -m unittest discover -s tests -p 'test_audit_seo_build.py' -v
       - name: Testar metadados e status
         run: node --test tests/seo-dynamic.mjs
