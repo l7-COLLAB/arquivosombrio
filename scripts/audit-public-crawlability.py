@@ -92,6 +92,28 @@ def audit(fetch=get):
         except (HTTPError,URLError,TimeoutError,ValueError) as e:
             item["issue"]=str(e)
         if item["issue"]:report["errors"].append(url+": "+item["issue"])
+        # The canonical static page must point readers to the original interactive file.
+        # The original route must remain reachable. Do not demand a canonical in the
+        # raw HTML of legacy ?id= routes: that metadata is inserted by JavaScript.
+        matched=re.fullmatch(re.escape(ORIGIN)+r"/arquivo/(caso|garimpo|pericia|lendas|creepypastas)-(\d+)\.html",url)
+        if matched and item["status"]==200:
+            category,ident=matched.groups()
+            legacy=f"{ORIGIN}/{category}.html?id={ident}"
+            item["legacy_url"]=legacy
+            try:
+                if legacy not in body.decode("utf-8","replace"):
+                    issue="Página SEO não aponta para o leitor interativo"
+                    report["errors"].append(url+": "+issue)
+                    item["legacy_issue"]=issue
+                redirected,old_status,old_headers,old_html=fetch(legacy)
+                item["legacy_status"]=old_status
+                if old_status!=200 or redirected!=legacy:
+                    issue="Rota legada inacessível ou redirecionada"
+                    report["errors"].append(legacy+": "+issue)
+                    item["legacy_issue"]=issue
+            except (HTTPError,URLError,TimeoutError,ValueError) as err:
+                item["legacy_issue"]=str(err)
+                report["errors"].append(legacy+": "+str(err))
         report["checked"].append(item)
     return report
 
