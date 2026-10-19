@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://arquivosombrio.net.br/</loc>
@@ -85,66 +85,6 @@
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://arquivosombrio.net.br/garimpo.html?id=2</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/garimpo.html?id=3</loc>
-    <lastmod>2026-09-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/garimpo.html?id=4</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/garimpo.html?id=5</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/pericia.html?id=1</loc>
-    <lastmod>2026-09-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/pericia.html?id=2</loc>
-    <lastmod>2026-09-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/pericia.html?id=3</loc>
-    <lastmod>2026-09-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/lendas.html?id=3</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/creepypastas.html?id=1</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/creepypastas.html?id=2</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://arquivosombrio.net.br/dossies/caso-isabella-nardoni.html</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -181,32 +121,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://arquivosombrio.net.br/caso.html?id=2</loc>
-    <lastmod>2026-09-28</lastmod>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/caso.html?id=4</loc>
-    <lastmod>2026-09-26</lastmod>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/caso.html?id=5</loc>
-    <lastmod>2026-09-26</lastmod>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/caso.html?id=6</loc>
-    <lastmod>2026-09-23</lastmod>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/caso.html?id=7</loc>
-    <lastmod>2026-09-23</lastmod>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/caso.html?id=8</loc>
-    <lastmod>2026-09-23</lastmod>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/caso.html?id=9</loc>
-    <lastmod>2026-09-26</lastmod>
+    <loc>https://arquivosombrio.net.br/pesquisa.html</loc>
+    <lastmod>2026-10-18</lastmod>
   </url>
   <url>
     <loc>https://arquivosombrio.net.br/caso.html?id=10</loc>
@@ -241,20 +157,68 @@
     <lastmod>2026-10-01</lastmod>
   </url>
   <url>
+    <loc>https://arquivosombrio.net.br/caso.html?id=2</loc>
+    <lastmod>2026-09-28</lastmod>
+  </url>
+  <url>
     <loc>https://arquivosombrio.net.br/caso.html?id=21</loc>
     <lastmod>2026-10-01</lastmod>
   </url>
   <url>
-    <loc>https://arquivosombrio.net.br/garimpo.html?id=6</loc>
+    <loc>https://arquivosombrio.net.br/caso.html?id=25</loc>
+    <lastmod>2026-10-15</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/caso.html?id=26</loc>
+    <lastmod>2026-10-15</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/caso.html?id=4</loc>
+    <lastmod>2026-09-26</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/caso.html?id=5</loc>
+    <lastmod>2026-09-26</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/caso.html?id=6</loc>
+    <lastmod>2026-09-23</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/caso.html?id=7</loc>
+    <lastmod>2026-09-23</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/caso.html?id=8</loc>
+    <lastmod>2026-09-23</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/caso.html?id=9</loc>
+    <lastmod>2026-09-26</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/creepypastas.html?id=1</loc>
+    <lastmod>2026-09-18</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/creepypastas.html?id=2</loc>
+    <lastmod>2026-09-18</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/creepypastas.html?id=3</loc>
+    <lastmod>2026-09-23</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/creepypastas.html?id=4</loc>
+    <lastmod>2026-10-07</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/creepypastas.html?id=5</loc>
     <lastmod>2026-09-30</lastmod>
   </url>
   <url>
-    <loc>https://arquivosombrio.net.br/garimpo.html?id=8</loc>
-    <lastmod>2026-09-30</lastmod>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/garimpo.html?id=9</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://arquivosombrio.net.br/creepypastas.html?id=6</loc>
+    <lastmod>2026-10-14</lastmod>
   </url>
   <url>
     <loc>https://arquivosombrio.net.br/garimpo.html?id=10</loc>
@@ -297,16 +261,16 @@
     <lastmod>2026-10-06</lastmod>
   </url>
   <url>
+    <loc>https://arquivosombrio.net.br/garimpo.html?id=2</loc>
+    <lastmod>2026-09-30</lastmod>
+  </url>
+  <url>
     <loc>https://arquivosombrio.net.br/garimpo.html?id=21</loc>
     <lastmod>2026-10-06</lastmod>
   </url>
   <url>
-    <loc>https://arquivosombrio.net.br/garimpo.html?id=27</loc>
-    <lastmod>2026-10-16</lastmod>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/caso.html?id=20</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://arquivosombrio.net.br/garimpo.html?id=22</loc>
+    <lastmod>2026-10-12</lastmod>
   </url>
   <url>
     <loc>https://arquivosombrio.net.br/garimpo.html?id=23</loc>
@@ -325,12 +289,8 @@
     <lastmod>2026-10-14</lastmod>
   </url>
   <url>
-    <loc>https://arquivosombrio.net.br/caso.html?id=25</loc>
-    <lastmod>2026-10-15</lastmod>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/garimpo.html?id=22</loc>
-    <lastmod>2026-10-12</lastmod>
+    <loc>https://arquivosombrio.net.br/garimpo.html?id=27</loc>
+    <lastmod>2026-10-16</lastmod>
   </url>
   <url>
     <loc>https://arquivosombrio.net.br/garimpo.html?id=28</loc>
@@ -338,10 +298,6 @@
   </url>
   <url>
     <loc>https://arquivosombrio.net.br/garimpo.html?id=29</loc>
-    <lastmod>2026-10-15</lastmod>
-  </url>
-  <url>
-    <loc>https://arquivosombrio.net.br/caso.html?id=26</loc>
     <lastmod>2026-10-15</lastmod>
   </url>
   <url>
@@ -359,5 +315,97 @@
   <url>
     <loc>https://arquivosombrio.net.br/garimpo.html?id=33</loc>
     <lastmod>2026-10-18</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/garimpo.html?id=4</loc>
+    <lastmod>2026-09-30</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/garimpo.html?id=5</loc>
+    <lastmod>2026-09-30</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/garimpo.html?id=6</loc>
+    <lastmod>2026-09-30</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/garimpo.html?id=8</loc>
+    <lastmod>2026-09-30</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/garimpo.html?id=9</loc>
+    <lastmod>2026-09-30</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/lendas.html?id=3</loc>
+    <lastmod>2026-09-18</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/lendas.html?id=4</loc>
+    <lastmod>2026-09-23</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/lendas.html?id=5</loc>
+    <lastmod>2026-09-26</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/lendas.html?id=6</loc>
+    <lastmod>2026-10-03</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/lendas.html?id=7</loc>
+    <lastmod>2026-10-13</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/lendas.html?id=8</loc>
+    <lastmod>2026-10-17</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=1</loc>
+    <lastmod>2026-09-30</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=10</loc>
+    <lastmod>2026-10-12</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=11</loc>
+    <lastmod>2026-10-13</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=12</loc>
+    <lastmod>2026-10-16</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=2</loc>
+    <lastmod>2026-10-02</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=3</loc>
+    <lastmod>2026-10-09</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=4</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=5</loc>
+    <lastmod>2026-10-02</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=6</loc>
+    <lastmod>2026-09-30</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=7</loc>
+    <lastmod>2026-09-30</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=8</loc>
+    <lastmod>2026-10-06</lastmod>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia.html?id=9</loc>
+    <lastmod>2026-10-02</lastmod>
   </url>
 </urlset>
