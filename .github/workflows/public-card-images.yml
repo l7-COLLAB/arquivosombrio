@@ -1,0 +1,28 @@
+name: Verificar imagens dos cards
+on:
+  pull_request:
+    paths:
+      - 'js/script.js'
+      - 'js/arquivo-literario.js'
+      - 'tests/public-card-images.mjs'
+      - '.github/workflows/public-card-images.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'js/script.js'
+      - 'js/arquivo-literario.js'
+      - 'tests/public-card-images.mjs'
+      - '.github/workflows/public-card-images.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testar cards e imagens
+        run: node --test tests/public-card-images.mjs
