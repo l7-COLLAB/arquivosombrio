@@ -494,7 +494,7 @@ async function carregarCaso() {
 }
 
 async function carregarRelacionadosDossie(caso) {
-    const area=document.querySelector(".case-page main .case-file") || document.querySelector(".case-page main .case-content") || document.querySelector(".case-page main");
+    const area=document.querySelector(".case-page .case-content-section");
     if (!area || !caso?.categoria || !window.ArquivoLeiturasRelacionadas) return;
     try {
         const cliente=await obterClienteSupabaseCaso();
