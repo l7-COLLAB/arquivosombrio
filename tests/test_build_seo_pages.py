@@ -25,7 +25,8 @@ class SeoPagesTests(TestCase):
   value='Texto <script>alert("x")</script> & detalhes'
   html=pages.render_page("Casos",record(1,title='Título <x> & y',text=value)).decode()
   self.assertNotIn('<script>alert("x")</script>',html)
-  self.assertIn('&lt;x&gt;',html)
+  self.assertNotIn('<x>',html)
+  self.assertIn('Título &amp; y',html)
   self.assertIn('&amp;',html)
   self.assertIn('Texto alert',html)
  def test_no_drafts_or_invalid_ids_in_generator(self):
