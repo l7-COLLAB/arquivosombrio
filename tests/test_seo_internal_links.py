@@ -32,7 +32,7 @@ class InternalLinksTests(TestCase):
         output=pages.build_all(ROOT,self.catalog)
         self.assertEqual(len(output),20)
         for rel, content in output.items():
-            parser=Links();parser.feed(content.decode())
+            parser=Links();parser.feed(content.decode().split('<aside class="related-documents"')[1].split("</aside>")[0])
             self.assertIn("Continue explorando esta editoria",content.decode())
             peer_links=[link for link in parser.links if link and "/arquivo/" in link]
             self.assertGreaterEqual(len(peer_links),1)
@@ -42,6 +42,27 @@ class InternalLinksTests(TestCase):
                 destination=url.removeprefix(pages.sitemap.BASE)
                 self.assertIn(destination,output)
                 self.assertNotEqual(destination,rel)
+
+    def test_cross_editorial_navigation_is_separate_from_related_readings(self):
+        output=pages.build_all(ROOT,self.catalog)
+        for rel, content in output.items():
+            html=content.decode()
+            self.assertIn('aria-label="Descubra outras editorias"',html)
+            self.assertIn("não representam vínculo factual",html)
+            other=html.split('<aside class="cross-editorial"')[1].split("</aside>")[0]
+            reader=Links();reader.feed(other)
+            self.assertEqual(len(reader.links),2)
+            category=rel.split("/")[1].split("-")[0]
+            for url in reader.links:
+                target=url.removeprefix(pages.sitemap.BASE)
+                self.assertIn(target,output)
+                self.assertNotEqual(target.split("/")[1].split("-")[0],category)
+
+    def test_empty_other_editorias_are_not_invented(self):
+        data={table:[] for table in pages.PUBLIC_TABLES}
+        data["Casos"]=[row(1)]
+        result=pages.build_all(ROOT,data)
+        self.assertNotIn('class="cross-editorial"',result["arquivo/caso-1.html"].decode())
 
     def test_index_has_one_link_for_each_published_record(self):
         html=pages.insert_index_into_search("<html><head></head><body><main></main></body></html>",self.catalog)
