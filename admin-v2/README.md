@@ -7,7 +7,7 @@ Ambiente paralelo de desenvolvimento. Não substitui admin.html ou painel-admin.
 2. O V2 não depende do js/script.js público.
 3. Nenhuma service_role ou chave privada pode existir no frontend.
 4. Alterações de schema devem permanecer compatíveis com o painel antigo durante a transição.
-5. Escritas públicas ficam desabilitadas na base inicial do V2.
+5. Rascunhos e o motor de publicação em fila permanecem isolados; Salvar alterações e Publicar no editor essencial atualizam o registro público após confirmação.
 6. Todo módulo privilegiado deve respeitar RLS e role administrativa server-controlled.
 
 ## Escopo registrado
@@ -31,12 +31,12 @@ Implementar primeiro o núcleo editorial sem afetar o frontend público.
 - RLS confirmada nas tabelas editoriais consultadas.
 - Atenção de migração: pericias possui leitura pública sem filtro de status; livros é integralmente público. Não alterar durante compatibilidade com o painel legado.
 - Admin V2 agora possui login próprio com sessão isolada e validação de app_metadata.role=admin.
-- Dashboard e seis seções editoriais consultam dados reais somente para leitura.
-- Escrita/publicação/exclusão continuam bloqueadas no V2.
+- Dashboard e seis seções editoriais consultam dados reais.
+- Salvar rascunho permanece em admin_drafts. Salvar alterações e Publicar, no editor essencial, atualizam o registro público após confirmação.
 
 ## Editor de Dossiês — fase segura
 - Abas funcionais: Geral, Conteúdo, Evidências, Teorias, Mídia, Fontes, SEO, Interno e Publicação.
 - Campos atuais de Casos são preservados no formato real do banco.
 - Fontes, SEO, pessoas e notas internas ficam encapsulados em editor_v2 dentro do rascunho até migração aditiva própria.
 - conteudo_blocos e documentos são preservados integralmente; editor visual específico será construído sem conversão destrutiva.
-- Publicar e Agendar seguem bloqueados.
+- O motor de publicação em fila permanece bloqueado para testes; Salvar alterações e Publicar no rodapé do editor essencial atualizam o registro público após confirmação.
