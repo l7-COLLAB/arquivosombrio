@@ -1,4 +1,5 @@
 MONEYPRINTERTURBO ORIGINAL 1.3.8 - ACESSO PELA V2
+INICIADOR V2: CORREÇÃO DE CAMINHOS LONGOS DO WINDOWS
 
 Este ZIP contém o iniciador e as instruções. Na primeira abertura ele instala
 pela internet o pacote oficial mpt==1.3.8, mantido por harry0703 no PyPI.
@@ -51,3 +52,7 @@ https://pypi.org/project/mpt/1.3.8/
 MoneyPrinterTurbo: MIT, Copyright (c) 2024 Harry.
 A licença original acompanha o pacote oficial instalado.
 Documentação do acesso privado: https://tailscale.com/docs/reference/tailscale-cli/serve
+
+O ambiente Python fica em %USERPROFILE%\.as-mpt, fora da pasta de Downloads,
+para reduzir o tamanho dos caminhos. O iniciador do iPhone usa a mesma instalação.
+A instalação incompleta anterior não é apagada nem reutilizada automaticamente.
