@@ -1,0 +1,27 @@
+ARQUIVO SOMBRIO - AUXILIAR DE HOSPEDAGEM 0.1
+
+Esta etapa gera narração com Antônio e legendas. Ainda não exporta o vídeo completo.
+
+1. Extraia o ZIP em uma pasta permanente do PC.
+2. Abra ABRIR_HOSPEDEIRO_WINDOWS.bat. É necessário Python 3.11 ou superior.
+   Na primeira abertura, as dependências são instaladas do PyPI.
+3. Na V2, abra Estúdio de vídeo > Hospedeiros > Conectar computador.
+4. Dê um nome ao PC, gere o código e cole na janela do auxiliar.
+   O código fica oculto ao colar. Pressione Enter. Validade: 10 minutos, uso único.
+5. Mantenha a janela aberta. Você pode solicitar a narração na V2 pelo PC ou iPhone.
+6. Quando concluir, use Usar no projeto para trazer áudio e legendas ao editor.
+
+Até três computadores ativos por conta administrativa. O iPhone é um dispositivo de acesso.
+Cada computador adicional precisa de sua própria instalação e código.
+Os trabalhos são atribuídos a um computador escolhido, sem troca automática de hospedeiro.
+Um trabalho interrompido pode ser tentado novamente uma vez no mesmo computador.
+No Windows, a credencial local é protegida pela conta do Windows (DPAPI).
+Para trocar a conexão, abra RECONECTAR_WINDOWS.bat. Se necessário, desconecte a antiga na V2.
+Feche com Ctrl+C. Não há instalação automática na inicialização do Windows.
+
+A voz é um serviço online Edge TTS; exige internet e pode ficar indisponível.
+Os estilos ajustam ritmo, sem garantir interpretação emocional.
+O roteiro é enviado ao Supabase do Arquivo Sombrio e ao serviço de voz da Microsoft.
+Áudios gerados ficam no armazenamento privado do projeto e consomem suas cotas existentes.
+Biblioteca utilizada: edge-tts 7.3.1, projeto rany2/edge-tts (LGPLv3).
+https://github.com/rany2/edge-tts

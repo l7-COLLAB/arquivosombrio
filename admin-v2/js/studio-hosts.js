@@ -1,0 +1,34 @@
+/* Conector autenticado da V2. Credenciais do hospedeiro nunca entram nos projetos. */
+(function(){'use strict';
+window.ArquivoStudioHosts={mount};
+function mount({app,onNarration}){
+ if(app.querySelector('.vs-hosts'))return;
+ const panel=document.createElement('details');panel.className='vs-hosts';
+ panel.innerHTML=`<summary>Hospedeiros e geração com Antônio</summary><p>Até 3 computadores. Edite e solicite pelo iPhone; mantenha o auxiliar aberto no PC.</p><div class="vs-host-grid"><section><h3>Computadores</h3><div class="vs-host-list"></div><button data-host-action="refresh">Atualizar conexão</button><label>Nome do novo computador<input class="vs-host-name" maxlength="80" placeholder="PC principal"></label><button data-host-action="pair">Conectar computador</button><a class="vs-host-download" href="./downloads/hospedeiro-windows-0-1.zip" download>Baixar auxiliar Windows</a><div class="vs-host-code-box" hidden><p>No PC, abra o auxiliar e cole este código. Uso único, válido por 10 minutos.</p><input class="vs-host-code" readonly aria-label="Código temporário do hospedeiro"><button data-host-action="copy">Copiar código</button></div></section><section><h3>Narração</h3><label>Processar no computador<select class="vs-host-target"><option value="">Cadastre um computador</option></select></label><label>Estilo<select class="vs-host-style"><option value="dossie">Dossiê / Garimpo Sombrio</option><option value="pericia">Perícias</option><option value="lenda">Lendas / Creepypastas</option><option value="dramatica">Dramática</option><option value="jornalistica">Jornalística</option><option value="normal">Normal</option></select></label><label>Roteiro para narrar<textarea class="vs-host-script" rows="5" maxlength="15000" placeholder="Cole o roteiro completo…"></textarea></label><button data-host-action="enqueue" class="vs-primary">Gerar voz e legendas</button><p class="vs-hint">Antônio, tom natural. Os estilos ajustam o ritmo dentro dos limites da voz. O roteiro será enviado ao computador escolhido e ao serviço online de voz.</p></section></div><h3>Trabalhos recentes</h3><div class="vs-host-jobs"></div><p class="vs-host-status" role="status" aria-live="polite"></p>`;
+ app.querySelector('.vs-main').prepend(panel);
+ const $=s=>panel.querySelector(s);let busy=false,loaded=false,codeTimer;
+ const say=t=>$('.vs-host-status').textContent=t;
+ try{$('.vs-host-style').value=localStorage.getItem('arquivo-studio-style')||'dossie'}catch{}
+ $('.vs-host-style').onchange=()=>{try{localStorage.setItem('arquivo-studio-style',$('.vs-host-style').value)}catch{}};
+ async function api(action,extra={}){
+  const client=window.obterClienteAdminIsolado();const {data,error}=await client.functions.invoke('studio-connector',{body:{action,...extra}});
+  if(error){let text='Não foi possível conectar o Estúdio. Confira sua sessão e a internet.';try{const body=await error.context?.json();if(body?.error)text=body.error}catch{}throw Error(text)}
+  if(data?.error)throw Error(data.error);return data;
+ }
+ function button(text,fn){const b=document.createElement('button');b.type='button';b.textContent=text;b.onclick=fn;return b}
+ async function refresh(){
+  const {hosts,jobs}=await api('list');loaded=true;const list=$('.vs-host-list'),target=$('.vs-host-target');let selected=target.value;try{selected=selected||localStorage.getItem('arquivo-studio-host')||''}catch{}
+  list.replaceChildren();target.replaceChildren(new Option(hosts.length?'Escolha o computador':'Cadastre um computador',''));
+  for(const host of hosts){const online=host.last_seen&&Date.now()-new Date(host.last_seen).getTime()<90000;target.add(new Option(host.name+(online?' · conectado':' · offline'),host.id));const row=document.createElement('div');row.className='vs-host-row';const label=document.createElement('span');label.textContent=host.name+' · '+(online?'Conectado':'Offline');const revoke=button('Desconectar',async()=>{revoke.disabled=true;try{await api('revoke',{host:host.id});await refresh()}catch(e){say(e.message)}finally{revoke.disabled=false}});row.append(label,revoke);list.append(row)}
+  if(!hosts.length)list.textContent='Nenhum computador cadastrado.';
+  target.value=hosts.some(h=>h.id===selected)?selected:hosts[0]?.id||'';$('.vs-host-name').disabled=hosts.length>=3;panel.querySelector('[data-host-action="pair"]').disabled=hosts.length>=3;panel.querySelector('[data-host-action="enqueue"]').disabled=!hosts.length;
+  $('.vs-host-jobs').replaceChildren();const labels={queued:'Aguardando o computador',processing:'Gerando narração',completed:'Concluído',failed:'Falhou'};
+  for(const job of jobs){const row=document.createElement('div');row.className='vs-host-row';const info=document.createElement('span');info.textContent=(hosts.find(h=>h.id===job.host_id)?.name||'Computador desconectado')+' · '+labels[job.status];row.append(info);if(job.error){const error=document.createElement('small');error.textContent=job.error;row.append(error)}if(job.status==='completed')row.append(button('Usar áudio e legendas no projeto',async()=>{try{say('Carregando narração…');const data=await api('result',{job:job.id});await onNarration(data);say('Narração e legendas aplicadas. Você pode desfazer no editor.')}catch(e){say(e.message)}}));$('.vs-host-jobs').append(row)}
+  if(!jobs.length)$('.vs-host-jobs').textContent='Nenhuma narração solicitada.';
+ }
+ $('.vs-host-target').onchange=()=>{try{localStorage.setItem('arquivo-studio-host',$('.vs-host-target').value)}catch{}};
+ panel.ontoggle=()=>{if(panel.open&&!loaded)refresh().catch(e=>say(e.message))};
+ panel.addEventListener('click',async e=>{const action=e.target.closest('[data-host-action]')?.dataset.hostAction;if(!action||busy)return;busy=true;try{if(action==='refresh'){await refresh();say('Conexões atualizadas.')}if(action==='pair'){const name=$('.vs-host-name').value.trim();if(!name)throw Error('Informe um nome para este computador.');const data=await api('create_code',{name});$('.vs-host-code').value=data.code;$('.vs-host-code-box').hidden=false;clearTimeout(codeTimer);codeTimer=setTimeout(()=>{$('.vs-host-code').value='';$('.vs-host-code-box').hidden=true},10*60000);say('Abra o auxiliar no PC e cole o código. Não envie este código a outras pessoas.')}if(action==='copy'){try{await navigator.clipboard.writeText($('.vs-host-code').value);say('Código copiado. Cole no auxiliar do PC.')}catch{$('.vs-host-code').select();say('Selecione e copie o código com o comando do dispositivo.')}}if(action==='enqueue'){const host=$('.vs-host-target').value,text=$('.vs-host-script').value.trim();if(!host||!text)throw Error('Escolha o computador e preencha o roteiro.');await api('enqueue',{host,text,style:$('.vs-host-style').value});await refresh();say('Narração na fila. Ela aguarda o auxiliar aberto no computador escolhido.')}}catch(e){say(e.message)}finally{busy=false}});
+ setInterval(()=>{if(!app.hidden&&panel.open&&!busy)refresh().catch(e=>say(e.message))},30000);
+}
+})();
