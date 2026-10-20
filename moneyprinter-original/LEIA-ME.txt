@@ -1,0 +1,53 @@
+MONEYPRINTERTURBO ORIGINAL 1.3.8 - ACESSO PELA V2
+
+Este ZIP contém o iniciador e as instruções. Na primeira abertura ele instala
+pela internet o pacote oficial mpt==1.3.8, mantido por harry0703 no PyPI.
+A interface e o motor originais são preservados. Não há editor semelhante ao CapCut.
+Os ajustes externos são apenas o tema escuro e o diretório separado para seus dados.
+
+NO PC
+1. Extraia o ZIP em uma pasta permanente.
+2. Instale Python 3.11 ou superior, se não estiver instalado: https://www.python.org/downloads/
+3. Abra ABRIR_MONEY_ORIGINAL_WINDOWS.bat. Aguarde a instalação inicial.
+4. O programa abrirá no navegador em http://127.0.0.1:8501.
+5. Na V2, clique em MoneyPrinterTurbo > Abrir neste PC.
+6. O português pode ser selecionado no controle de idioma do programa original.
+
+A V2 abre o programa em outra aba; os arquivos Python não rodam no GitHub Pages.
+Mantenha a janela do programa aberta para processar vídeos.
+Se a porta 8501 estiver ocupada, feche a instância anterior e tente novamente.
+Não execute este pacote de dentro do ZIP.
+
+NO IPHONE, COM ACESSO PRIVADO
+1. Instale Tailscale no PC e no iPhone: https://tailscale.com/download
+2. Entre com a mesma conta nos dois dispositivos e mantenha-os conectados.
+3. Com o Money original aberto no PC, abra ACESSO_PRIVADO_IPHONE.bat.
+4. Se o Tailscale pedir habilitação do HTTPS, conclua a etapa mostrada por ele.
+5. Copie o endereço HTTPS terminado em .ts.net:8443 mostrado na janela.
+6. Na V2 > MoneyPrinterTurbo > Acesso pelo iPhone, salve o endereço.
+7. No iPhone, abra a V2 e toque no endereço salvo.
+
+O Tailscale Serve permite o acesso aos dispositivos autorizados nessa rede privada.
+Não é um link público. Não use Tailscale Funnel, encaminhamento de portas ou um
+endereço público para esta interface. As permissões da rede Tailscale controlam
+quais dispositivos podem acessar o programa e suas configurações.
+Para parar o acesso privado, pressione Ctrl+C na janela ACESSO_PRIVADO_IPHONE.
+Você pode salvar até três endereços privados na V2, um para cada PC ou notebook.
+
+DADOS E CONFIGURAÇÕES
+A nova instalação guarda arquivos em dados, dentro desta pasta.
+Não apague instalações anteriores antes de copiar os arquivos que deseja manter.
+Projetos do editor experimental continuam no navegador em que foram criados.
+Eles não são projetos nativos do MoneyPrinterTurbo e não são importados automaticamente.
+
+O programa é aberto e gratuito; provedores externos escolhidos na interface podem
+exigir cadastro, chave ou pagamento. Para voz, use Edge TTS; você também pode usar
+roteiro, áudio e materiais locais. Não há assinatura obrigatória deste iniciador.
+O acesso remoto depende de configurar a rede privada nos dois dispositivos.
+
+ORIGEM E LICENÇA
+https://github.com/harry0703/MoneyPrinterTurbo
+https://pypi.org/project/mpt/1.3.8/
+MoneyPrinterTurbo: MIT, Copyright (c) 2024 Harry.
+A licença original acompanha o pacote oficial instalado.
+Documentação do acesso privado: https://tailscale.com/docs/reference/tailscale-cli/serve

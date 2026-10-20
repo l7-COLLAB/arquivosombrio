@@ -47,7 +47,7 @@ body.admin-dashboard-open .admin-hub-sidebar nav{overflow:visible!important}
 <link rel="stylesheet" href="./css/admin-identity-20261018.css?v=1">
 <link rel="stylesheet" href="./css/easy-navigation.css?v=1">
 <link rel="stylesheet" href="./css/content-assist.css?v=1">
-<link rel="stylesheet" href="./css/video-studio.css?v=20261020-4">
+<link rel="stylesheet" href="./css/moneyprinter-access.css?v=20261020-1">
 </head>
 <body>
 <main id="admin-panel-loading"><div><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><p id="admin-panel-status">Abrindo a Central de Arquivo...</p></div></main>
@@ -108,7 +108,7 @@ var hub=await esperarCentralAdmin(20000);
 if(hub){
  var nav=hub.querySelector(".admin-hub-sidebar nav");
  if(nav){var extras=document.createElement("div");extras.className="admin-v2-extra-nav";extras.innerHTML='<a href="./feedback.html"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span>Mensagens dos leitores</span></a><a href="./editorial.html"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i><span>Expediente e revisões</span></a><button type="button" id="admin-v2-registration-link"><i class="fa-solid fa-user-check" aria-hidden="true"></i><span>Cadastros de leitores</span></button>';nav.appendChild(extras);extras.querySelector("#admin-v2-registration-link").onclick=function(){hub.querySelector('[data-admin-hub-view="overview"]')?.click();metrics.scrollIntoView({behavior:"smooth",block:"start"});};}
- try { try { await load("o conector do Estúdio","./js/studio-hosts.js?v=20261020-1",12000); } catch (connectorError) { console.warn("Conector indisponível; editor local preservado.",connectorError); } await load("o Estúdio de vídeo","./js/video-studio.js?v=20261020-4",12000); window.ArquivoVideoStudio?.init(); } catch (studioError) { console.warn("Estúdio indisponível; painel preservado.",studioError); }
+ try { await load("o acesso ao MoneyPrinterTurbo original","./js/moneyprinter-access.js?v=20261020-1",12000); window.ArquivoMoneyPrinter?.init(); } catch (moneyError) { console.warn("Acesso ao MoneyPrinterTurbo indisponível; painel preservado.",moneyError); }
  var overview=hub.querySelector('[data-admin-hub-panel="overview"]');if(overview){overview.appendChild(metrics);updateRegistrations();}
  try {
    await load("a busca de funções","./js/easy-navigation.js?v=1",12000);
