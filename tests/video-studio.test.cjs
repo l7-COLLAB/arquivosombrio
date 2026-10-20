@@ -1,0 +1,12 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const core=require('../admin-v2/js/video-studio.js');
+const fixture=()=>({version:1,project:{title:'Caso de teste',album:'Caso',format:'9/16',assets:[{id:'a',name:'foto.png',src:'data:image/png;base64,aGVsbG8='}],clips:[{id:'c',assetId:'a',start:0,duration:5,scale:100,x:0,y:0,fit:'contain'}]}});
+test('corte não sobrepõe trechos adjacentes',()=>{const clips=[{start:0,duration:5},{start:5,duration:7}];assert.deepEqual(core.active(clips,5),[clips[1]]);assert.deepEqual(core.active(clips,12),[])});
+test('movimento mantém tempos válidos',()=>{const c={start:0,duration:5};assert.equal(core.move(c,-10).start,0);assert.equal(core.move(c,3.16).start,3.2);assert.equal(core.move(c,3599),c)});
+test('tempos inválidos são rejeitados',()=>{for(const c of [null,{start:0,duration:NaN},{start:-1,duration:2},{start:3599,duration:2},{start:0,duration:0}])assert.equal(core.validate(c),false)});
+test('projeto exportado reabre sem perder enquadramento',()=>{const f=fixture();Object.assign(f.project.clips[0],{start:12.5,duration:6.4,x:-20,y:30,scale:150,fit:'cover'});assert.deepEqual(core.parseProject(JSON.parse(JSON.stringify(f))),f.project)});
+test('IDs repetidos são rejeitados',()=>{const f=fixture();f.project.assets.push({...f.project.assets[0]});assert.throws(()=>core.parseProject(f));const g=fixture();g.project.clips.push({...g.project.clips[0]});assert.throws(()=>core.parseProject(g))});
+test('mídias externas e referência ausente são rejeitadas',()=>{const f=fixture();f.project.assets[0].src='https://example.com/photo.jpg';assert.throws(()=>core.parseProject(f));const g=fixture();g.project.clips[0].assetId='missing';assert.throws(()=>core.parseProject(g))});
+test('metadados desconhecidos não entram no projeto',()=>{const f=fixture();f.project.assets[0].tracking='extra';assert.equal('tracking' in core.parseProject(f).assets[0],false)});
+test('posição, escala e formato são validados',()=>{for(const [key,value] of [['scale',Infinity],['x',101],['y',-101],['fit','invalid']]){const f=fixture();f.project.clips[0][key]=value;assert.throws(()=>core.parseProject(f))}const f=fixture();f.project.format='bad';assert.throws(()=>core.parseProject(f))});
