@@ -3405,3 +3405,20 @@ body[data-reader-theme="papel"] .dossie-summary {
     letter-spacing: -.018em !important;
     text-transform: uppercase !important;
 }
+
+/* Metadados de documentos: discretos e responsivos, sem alterar a narrativa. */
+.case-content-document-metadata {
+    display: grid;
+    grid-template-columns: minmax(5rem, 8rem) minmax(0, 1fr);
+    gap: .3rem .8rem;
+    margin: .75rem 0;
+    font-size: .875rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+.case-content-document-metadata dt { font-weight: 700; opacity: .8; }
+.case-content-document-metadata dd { margin: 0; }
+@media (max-width: 440px) {
+    .case-content-document-metadata { grid-template-columns: 1fr; gap: .15rem; }
+    .case-content-document-metadata dd { margin-bottom: .5rem; }
+}
