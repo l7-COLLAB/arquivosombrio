@@ -153,29 +153,68 @@ function scheduleStatusLabel(v){
 }
 
 async function scheduleCenter(p){
-  var r=await state.client.from("admin_v2_content_state")
+  // Combine all source records with their scheduling metadata. Never mutate missing state.
+  async function pages(makeQuery){
+    var out=[],offset=0,size=500;
+    while(true){
+      var response=await makeQuery().range(offset,offset+size-1);
+      if(response.error)throw response.error;
+      var batch=response.data||[];
+      out.push.apply(out,batch);
+      if(batch.length<size)break;
+      offset+=size;
+    }
+    return out;
+  }
+  var stateRows=await pages(function(){return state.client.from("admin_v2_content_state")
     .select("content_type,record_id,editorial_status,scheduled_for,schedule_timezone,schedule_status,schedule_note,updated_at")
-    .neq("schedule_status","none")
-    .order("scheduled_for",{ascending:true,nullsFirst:false});
-  if(r.error)throw r.error;
-  var rows=await hydrateScheduleTitles(r.data||[]);
-  p.innerHTML=heading("PUBLICAÇÃO","Central de Agendamentos","Controle todas as publicações programadas em um único lugar.")+
+    .order("content_type",{ascending:true}).order("record_id",{ascending:true});});
+  var byKey=new Map(stateRows.map(function(x){return [x.content_type+":"+x.record_id,x];}));
+  var sources=await Promise.all(Object.keys(scheduleTables).map(async function(type){
+    var table=scheduleTables[type];
+    try{
+      var items=await pages(function(){return state.client.from(table).select("id,titulo,status_publicacao").order("id",{ascending:true});});
+      return items.map(function(item){
+        var key=type+":"+item.id,metadata=byKey.get(key);
+        byKey.delete(key);
+        var sourceStatus=String(item.status_publicacao||metadata?.editorial_status||"rascunho").toLowerCase();
+        var scheduleStatus=metadata?.schedule_status||"none";
+        // Published source records remain published even without scheduling metadata.
+        var displayStatus=sourceStatus==="publicado"?"executed":scheduleStatus==="scheduled"||scheduleStatus==="failed"?scheduleStatus:sourceStatus==="agendado"?"scheduled":"draft";
+        return Object.assign({},metadata||{},{content_type:type,record_id:item.id,_title:item.titulo||"Conteúdo sem título",
+          _source_status:sourceStatus,_display_status:displayStatus,
+          schedule_status:scheduleStatus,scheduled_for:metadata?.scheduled_for||null});
+      });
+    }catch(error){
+      console.error("Falha ao carregar categoria "+type,error);
+      throw new Error("Não foi possível carregar todos os arquivos de "+(scheduleTypeLabels[type]||type)+". "+error.message);
+    }
+  }));
+  var rows=[].concat.apply([],sources);
+  // Preserve orphaned metadata for diagnosis rather than silently dropping it.
+  byKey.forEach(function(x){rows.push(Object.assign({},x,{_title:"Registro sem arquivo de origem",_display_status:x.schedule_status==="executed"?"executed":x.schedule_status==="scheduled"?"scheduled":x.schedule_status==="failed"?"failed":"draft",_orphan:true}));});
+  p.innerHTML=heading("PUBLICAÇÃO","Acervo e agendamentos","Encontre rascunhos, publicações e conteúdos programados em um único lugar.")+
   '<div class="admin-schedule-center-toolbar">'+
-    '<label>Tipo<select data-schedule-filter-type><option value="all">Todos</option><option value="dossie">Dossiês</option><option value="caso_diario">Garimpo</option><option value="pericia">Perícias</option><option value="livro">Livros</option><option value="lenda">Lendas</option><option value="creepypasta">Creepypastas</option></select></label>'+
-    '<label>Status<select data-schedule-filter-status><option value="all">Todos</option><option value="scheduled">Agendados</option><option value="failed">Falharam</option><option value="executed">Publicados</option><option value="cancelled">Cancelados</option></select></label>'+
+    '<label>Pesquisar<input type="search" data-schedule-search placeholder="Nome do caso ou arquivo" autocomplete="off"></label>'+ 
+    '<label>Categoria<select data-schedule-filter-type><option value="all">Todos</option><option value="dossie">Dossiês</option><option value="caso_diario">Garimpo</option><option value="pericia">Perícias</option><option value="livro">Livros</option><option value="lenda">Lendas</option><option value="creepypasta">Creepypastas</option></select></label>'+
+    '<label>Status<select data-schedule-filter-status><option value="all">Todos</option><option value="scheduled">Agendados</option><option value="failed">Falharam</option><option value="executed">Publicados</option><option value="draft">Rascunhos</option><option value="cancelled">Cancelados</option></select></label>'+
+    '<label>Ordenar<select data-schedule-order><option value="next">Próximas publicações</option><option value="newest">Programados mais recentes</option><option value="updated">Editados recentemente</option></select></label>'+ 
     '<label>Período<select data-schedule-filter-date><option value="all">Todas as datas</option><option value="today">Hoje</option><option value="7d">Próximos 7 dias</option><option value="future">Futuros</option></select></label>'+
   '</div><div data-schedule-list></div>';
 
   var box=p.querySelector("[data-schedule-list]");
   function render(){
     var type=p.querySelector("[data-schedule-filter-type]").value;
+    var search=p.querySelector("[data-schedule-search]").value.trim().toLocaleLowerCase("pt-BR");
+    var order=p.querySelector("[data-schedule-order]").value;
     var status=p.querySelector("[data-schedule-filter-status]").value;
     var period=p.querySelector("[data-schedule-filter-date]").value;
     var now=new Date(),todayKey=new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo"}).format(now);
     var end7=new Date(now.getTime()+7*86400000);
     var list=rows.filter(function(x){
       if(type!=="all"&&x.content_type!==type)return false;
-      if(status!=="all"&&x.schedule_status!==status)return false;
+      if(search&&!String(x._title||"").toLocaleLowerCase("pt-BR").includes(search))return false;
+      if(status!=="all"&&x._display_status!==status)return false;
       if(period==="all")return true;
       if(!x.scheduled_for)return false;
       var d=new Date(x.scheduled_for);
@@ -184,25 +223,38 @@ async function scheduleCenter(p){
       if(period==="future")return d>=now;
       return true;
     });
-    var waiting=list.filter(function(x){return x.schedule_status==="scheduled";}).length;
-    var failed=list.filter(function(x){return x.schedule_status==="failed";}).length;
+    list.sort(function(a,b){
+      if(order==="updated")return new Date(b.updated_at||0)-new Date(a.updated_at||0);
+      if(order==="newest")return new Date(b.scheduled_for||0)-new Date(a.scheduled_for||0);
+      var aActive=a._display_status==="scheduled"||a._display_status==="failed";
+      var bActive=b._display_status==="scheduled"||b._display_status==="failed";
+      if(aActive!==bActive)return aActive?-1:1;
+      var ad=new Date(a.scheduled_for||0).getTime(),bd=new Date(b.scheduled_for||0).getTime();
+      var nowMs=now.getTime(),af=ad>=nowMs,bf=bd>=nowMs;
+      if(af!==bf)return af?-1:1;
+      return af?ad-bd:bd-ad;
+    });
+    var waiting=list.filter(function(x){return x._display_status==="scheduled";}).length;
+    var failed=list.filter(function(x){return x._display_status==="failed";}).length;
+    var next=list.find(function(x){return x._display_status==="scheduled"&&x.scheduled_for&&new Date(x.scheduled_for)>=now;});
     box.innerHTML='<div class="admin-schedule-summary"><div><strong>'+waiting+'</strong><span>aguardando publicação</span></div><div><strong>'+failed+'</strong><span>com falha</span></div><div><strong>'+list.length+'</strong><span>itens exibidos</span></div></div>'+
       (list.length?'<div class="admin-schedule-center-list">'+list.map(function(x){
-        var overdue=x.schedule_status==="scheduled"&&x.scheduled_for&&new Date(x.scheduled_for)<new Date();
-        return '<article class="admin-schedule-center-item '+(overdue?"is-overdue ":"")+'is-'+esc(x.schedule_status)+'">'+
-          '<div class="admin-schedule-center-time"><i class="fa-regular fa-calendar"></i><strong>'+esc(scheduleDate(x.scheduled_for))+'</strong><small>Horário de Brasília</small></div>'+
-          '<div class="admin-schedule-center-content"><span>'+esc(scheduleTypeLabels[x.content_type]||x.content_type)+'</span><h3>'+esc(x._title)+'</h3><p>'+esc(x.schedule_note||"Publicação programada")+'</p></div>'+
-          '<div class="admin-schedule-center-state"><span>'+esc(scheduleStatusLabel(x.schedule_status))+'</span>'+(overdue?'<small>HORÁRIO ULTRAPASSADO</small>':"")+'</div>'+
+        var overdue=x._display_status==="scheduled"&&x.scheduled_for&&new Date(x.scheduled_for)<new Date();
+        return '<article class="admin-schedule-center-item '+(overdue?"is-overdue ":"")+'is-'+esc(x._display_status)+'">'+
+          '<div class="admin-schedule-center-time"><i class="fa-regular fa-calendar"></i><strong>'+esc(x.scheduled_for?scheduleDate(x.scheduled_for):'Sem agendamento')+'</strong><small>Horário de Brasília</small></div>'+
+          '<div class="admin-schedule-center-content"><span>'+esc(scheduleTypeLabels[x.content_type]||x.content_type)+'</span><h3>'+esc(x._title)+'</h3><p>'+esc(x.schedule_note||(x._display_status==="executed"?"Publicado":x._display_status==="draft"?"Rascunho":"Publicação programada"))+'</p></div>'+
+          '<div class="admin-schedule-center-state"><span>'+esc(x._display_status==="draft"?"RASCUNHO":scheduleStatusLabel(x._display_status))+'</span>'+(overdue?'<small>HORÁRIO ULTRAPASSADO</small>':"")+'</div>'+
           '<div class="admin-schedule-center-actions">'+
-            '<button data-schedule-action="edit" data-type="'+esc(x.content_type)+'" data-id="'+esc(x.record_id)+'">Editar</button>'+
-            (x.schedule_status==="scheduled"||x.schedule_status==="failed"?'<button data-schedule-action="publish" data-type="'+esc(x.content_type)+'" data-id="'+esc(x.record_id)+'">Publicar agora</button><button class="danger" data-schedule-action="cancel" data-type="'+esc(x.content_type)+'" data-id="'+esc(x.record_id)+'">Cancelar</button>':"")+
+            (x._orphan?'':'<button data-schedule-action="edit" data-type="'+esc(x.content_type)+'" data-id="'+esc(x.record_id)+'">Editar</button>')+
+            (!x._orphan&&(x._display_status==="scheduled"||x._display_status==="failed")&&(x.schedule_status==="scheduled"||x.schedule_status==="failed")?'<button data-schedule-action="publish" data-type="'+esc(x.content_type)+'" data-id="'+esc(x.record_id)+'">Publicar agora</button><button class="danger" data-schedule-action="cancel" data-type="'+esc(x.content_type)+'" data-id="'+esc(x.record_id)+'">Cancelar</button>':"")+
           '</div></article>';
       }).join("")+'</div>':empty("Nenhum agendamento encontrado com estes filtros."));
     box.querySelectorAll("[data-schedule-action]").forEach(function(b){b.onclick=function(){scheduleAction(b,p);};});
   }
   p.querySelectorAll(".admin-schedule-center-toolbar select").forEach(function(s){s.onchange=render;});
+  p.querySelector("[data-schedule-search]").oninput=render;
   render();
-  setCount("schedule",rows.filter(function(x){return x.schedule_status==="scheduled";}).length);
+  setCount("schedule",rows.filter(function(x){return x._display_status==="scheduled";}).length);
 }
 
 async function scheduleAction(b,p){
