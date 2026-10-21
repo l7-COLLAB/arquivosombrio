@@ -2104,6 +2104,24 @@ function renderizarDocumentoBlocoDossie(dados) {
         );
     }
 
+    // Metadados facultativos: arquivos antigos continuam válidos.
+    const metadados = [
+        ["Tipo", dados.tipo_documento || dados.classificacao],
+        ["Instituição", dados.instituicao || dados.autor],
+        ["Data", dados.data_documento || dados.data_publicacao],
+        ["Referência", dados.referencia]
+    ].filter(([, valor]) => textoBlocoDossie(valor));
+
+    if (metadados.length) {
+        const descricao = document.createElement("dl");
+        descricao.className = "case-content-document-metadata";
+        metadados.forEach(([rotulo, valor]) => {
+            descricao.appendChild(criarElementoTextoDossie("dt", rotulo));
+            descricao.appendChild(criarElementoTextoDossie("dd", textoBlocoDossie(valor)));
+        });
+        ficha.appendChild(descricao);
+    }
+
     const acoes =
         document.createElement("div");
 
