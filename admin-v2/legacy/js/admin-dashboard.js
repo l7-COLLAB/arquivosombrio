@@ -153,12 +153,22 @@ function scheduleStatusLabel(v){
 }
 
 async function scheduleCenter(p){
-  var r=await state.client.from("admin_v2_content_state")
-    .select("content_type,record_id,editorial_status,scheduled_for,schedule_timezone,schedule_status,schedule_note,updated_at")
-    .neq("schedule_status","none")
-    .order("scheduled_for",{ascending:true,nullsFirst:false});
-  if(r.error)throw r.error;
-  var rows=await hydrateScheduleTitles(r.data||[]);
+  // Supabase defaults to a limited result window. Fetch every page before applying filters.
+  var all=[],pageSize=500,offset=0;
+  while(true){
+    var r=await state.client.from("admin_v2_content_state")
+      .select("content_type,record_id,editorial_status,scheduled_for,schedule_timezone,schedule_status,schedule_note,updated_at")
+      .neq("schedule_status","none")
+      .order("scheduled_for",{ascending:true,nullsFirst:false})
+      .order("record_id",{ascending:true})
+      .range(offset,offset+pageSize-1);
+    if(r.error)throw r.error;
+    var batch=r.data||[];
+    all.push.apply(all,batch);
+    if(batch.length<pageSize)break;
+    offset+=pageSize;
+  }
+  var rows=await hydrateScheduleTitles(all);
   p.innerHTML=heading("PUBLICAÇÃO","Central de Agendamentos","Controle todas as publicações programadas em um único lugar.")+
   '<div class="admin-schedule-center-toolbar">'+
     '<label>Tipo<select data-schedule-filter-type><option value="all">Todos</option><option value="dossie">Dossiês</option><option value="caso_diario">Garimpo</option><option value="pericia">Perícias</option><option value="livro">Livros</option><option value="lenda">Lendas</option><option value="creepypasta">Creepypastas</option></select></label>'+
