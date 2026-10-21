@@ -2916,8 +2916,16 @@ function renderizarFontesBlocoDossie(dados) {
 
     const vistos = new Set();
 
+    // Uma referência antiga costuma ocupar título e URL em duas linhas.
+    // Separe referências por parágrafos, não cada linha da mesma referência.
     const itens =
-        normalizarItensBlocoDossie(dados, true)
+        Array.isArray(dados.itens)
+            ? normalizarItensBlocoDossie(dados, true)
+            : textoBlocoDossie(dados.texto)
+                .split(/\\n\\s*\\n/g)
+                .map(parte => parte.trim())
+                .filter(Boolean);
+    const fontesUnicas = itens
             .filter(item => {
 
                 const chave =
@@ -2931,7 +2939,7 @@ function renderizarFontesBlocoDossie(dados) {
                 return true;
             });
 
-    if (!itens.length) {
+    if (!fontesUnicas.length) {
         return null;
     }
 
@@ -2956,7 +2964,7 @@ function renderizarFontesBlocoDossie(dados) {
     const lista =
         document.createElement("ol");
 
-    itens.forEach(item => {
+    fontesUnicas.forEach(item => {
 
         const linha =
             document.createElement("li");
