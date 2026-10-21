@@ -3422,3 +3422,20 @@ body[data-reader-theme="papel"] .dossie-summary {
     .case-content-document-metadata { grid-template-columns: 1fr; gap: .15rem; }
     .case-content-document-metadata dd { margin-bottom: .5rem; }
 }
+
+/* Metadados de evidências: somente valores documentados, sem interferir no texto. */
+.case-evidence-metadata {
+    display: grid;
+    grid-template-columns: minmax(6rem, 9rem) minmax(0, 1fr);
+    gap: .35rem .8rem;
+    margin: .7rem 0 1rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+.case-evidence-metadata dt { font-weight: 700; opacity: .85; }
+.case-evidence-metadata dd { margin: 0; }
+@media (max-width: 440px) {
+    .case-evidence-metadata { grid-template-columns: 1fr; gap: .1rem; }
+    .case-evidence-metadata dd { margin-bottom: .5rem; }
+}
