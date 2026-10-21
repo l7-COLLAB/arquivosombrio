@@ -2890,8 +2890,12 @@ function renderizarSituacaoOficialBlocoDossie(dados) {
 function chaveFonteDossie(item) {
 
     if (typeof item === "string") {
-        return textoBlocoDossie(item)
-            .toLocaleLowerCase("pt-BR");
+        const texto = textoBlocoDossie(item);
+        const url = texto.match(/https?:\/\/[^\s]+/i);
+        // Evita a mesma fonte repetida com títulos levemente diferentes.
+        // A coleção de dados original permanece intacta.
+        if (url) return "url:" + url[0].replace(/[),.;]+$/, "").toLowerCase();
+        return texto.replace(/\s+/g, " ").toLocaleLowerCase("pt-BR");
     }
 
     if (!item || typeof item !== "object") {
