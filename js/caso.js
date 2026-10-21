@@ -2926,7 +2926,7 @@ function renderizarFontesBlocoDossie(dados) {
         Array.isArray(dados.itens)
             ? normalizarItensBlocoDossie(dados, true)
             : textoBlocoDossie(dados.texto)
-                .split(/\\n\\s*\\n/g)
+                .split(/\n\s*\n/g)
                 .map(parte => parte.trim())
                 .filter(Boolean);
     const fontesUnicas = itens
