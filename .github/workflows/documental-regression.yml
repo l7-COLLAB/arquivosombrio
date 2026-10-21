@@ -8,6 +8,7 @@ on:
       - 'tests/dossier-source-renderer.mjs'
       - 'tests/publication-editorial-audit.mjs'
       - 'tests/evidence-metadata.mjs'
+      - 'tests/dossier-evidence-completeness.mjs'
       - '.github/workflows/documental-regression.yml'
   workflow_dispatch:
 
@@ -31,4 +32,5 @@ jobs:
         run: |
           node tests/publication-editorial-audit.mjs
           node tests/evidence-metadata.mjs
+          node tests/dossier-evidence-completeness.mjs
           node tests/dossier-source-renderer.mjs
