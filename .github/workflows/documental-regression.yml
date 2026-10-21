@@ -1,0 +1,34 @@
+name: Regressão documental
+on:
+  pull_request:
+    paths:
+      - 'js/caso.js'
+      - 'css/caso.css'
+      - 'admin-v2/js/publication.js'
+      - 'tests/dossier-source-renderer.mjs'
+      - 'tests/publication-editorial-audit.mjs'
+      - 'tests/evidence-metadata.mjs'
+      - '.github/workflows/documental-regression.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regressao:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sintaxe JavaScript
+        run: |
+          node --check js/caso.js
+          node --check admin-v2/js/publication.js
+      - name: Testes de documentação
+        run: |
+          node tests/publication-editorial-audit.mjs
+          node tests/evidence-metadata.mjs
+          node tests/dossier-source-renderer.mjs
