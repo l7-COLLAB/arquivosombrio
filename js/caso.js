@@ -2492,14 +2492,10 @@ function renderizarCardsBlocoDossie(
     dados
 ) {
 
-    const limite =
-        tipo === "evidencias"
-            ? 5
-            : Infinity;
-
+    // Nunca ocultar evidências adicionais: a integridade do dossiê
+    // prevalece sobre limites visuais arbitrários.
     const itens =
-        normalizarItensBlocoDossie(dados)
-            .slice(0, limite);
+        normalizarItensBlocoDossie(dados);
 
     if (!itens.length) {
         return null;
