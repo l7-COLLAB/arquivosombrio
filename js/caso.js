@@ -2648,6 +2648,24 @@ function renderizarCardsBlocoDossie(
             );
             detalhes.appendChild(texto);
 
+            // Identificação documental opcional, exibida apenas quando fornecida.
+            const metadadosEvidencia = [
+                ["Classificação", obterCampoItemDossie(objeto, ["classificacao", "tipo"])],
+                ["Procedência", obterCampoItemDossie(objeto, ["procedencia", "instituicao", "origem"])],
+                ["Data", obterCampoItemDossie(objeto, ["data_documento", "data", "data_publicacao"])],
+                ["Situação da informação", obterCampoItemDossie(objeto, ["situacao_documental", "grau_confirmacao"])]
+            ].filter(([, valor]) => Boolean(valor));
+
+            if (metadadosEvidencia.length) {
+                const ficha = document.createElement("dl");
+                ficha.className = "case-evidence-metadata";
+                metadadosEvidencia.forEach(([rotulo, valor]) => {
+                    ficha.appendChild(criarElementoTextoDossie("dt", rotulo));
+                    ficha.appendChild(criarElementoTextoDossie("dd", valor));
+                });
+                detalhes.appendChild(ficha);
+            }
+
             const fonte =
                 obterCampoItemDossie(objeto, ["fonte"]);
 
