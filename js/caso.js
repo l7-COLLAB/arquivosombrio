@@ -2412,6 +2412,27 @@ function renderizarCronologiaBlocoDossie(dados) {
             document.createElement("li");
         const ano = identificarAno(item);
         if (ano) linha.dataset.anoCronologia = ano;
+        // Natureza editorial é distinta da etapa investigativa.
+        // Não presumir que um evento seja fato comprovado se não houver indicação.
+        const naturezaDeclarada = typeof item === "object" && item
+            ? obterCampoItemDossie(item, ["natureza_documental", "classificacao_editorial", "natureza_evento"])
+            : "";
+        const naturezas = {
+            fato: "Fato documentado",
+            fato_documentado: "Fato documentado",
+            testemunho: "Testemunho",
+            hipotese: "Hipótese",
+            controversia: "Controvérsia"
+        };
+        const chaveNatureza = naturezaDeclarada.normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "").toLowerCase()
+            .trim().replace(/\s+/g, "_");
+        const natureza = naturezas[chaveNatureza] || "";
+        if (natureza) {
+            const identificador = criarElementoTextoDossie("span", natureza);
+            identificador.className = "case-timeline-documentary-nature";
+            linha.appendChild(identificador);
+        }
         const categoria = categoriaEvento(item);
         if (categoria) {
             categoriasPresentes.add(categoria);
