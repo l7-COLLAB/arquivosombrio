@@ -1,0 +1,15 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+const src=readFileSync(new URL("../js/caso.js",import.meta.url),"utf8");
+const css=readFileSync(new URL("../css/caso.css",import.meta.url),"utf8");
+const a=src.indexOf("function renderizarCronologiaBlocoDossie(");
+const b=src.indexOf("function renderizarCardsBlocoDossie(",a);
+assert(a>=0&&b>a);
+const body=src.slice(a,b);
+assert.match(body,/gruposAnuais\.size >= 2/);
+assert.match(body,/className = "case-timeline-navigation"/);
+assert.match(body,/gruposAnuais\.set\(ano, linha\.id\)/);
+assert.match(body,/className = "case-timeline-event-details"/);
+assert.match(body,/Consultar fonte do evento/);
+assert.match(css,/case-timeline-navigation a:focus-visible/);
+console.log("Verificações estruturais da cronologia aprovadas.");
