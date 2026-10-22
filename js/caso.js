@@ -2416,6 +2416,9 @@ function renderizarCronologiaBlocoDossie(dados) {
         if (categoria) {
             categoriasPresentes.add(categoria);
             linha.dataset.categoriaCronologia = categoria;
+            const identificacao = criarElementoTextoDossie("span", categoria);
+            identificacao.className = "case-timeline-category";
+            linha.appendChild(identificacao);
         }
         if (ano && !gruposAnuais.has(ano)) {
             gruposAnuais.set(ano, `cronologia-ano-${ano}-${gruposAnuais.size + 1}`);
@@ -2518,7 +2521,11 @@ function renderizarCronologiaBlocoDossie(dados) {
             if (fonte || link) {
                 const referencia = document.createElement("div");
                 referencia.className = "case-timeline-source";
-                if (fonte) referencia.appendChild(criarElementoTextoDossie("span", fonte));
+                if (fonte) {
+                    const nomeFonte = criarElementoTextoDossie("span", fonte);
+                    nomeFonte.className = "case-timeline-source-name";
+                    referencia.appendChild(nomeFonte);
+                }
                 if (link) referencia.appendChild(link);
                 linha.appendChild(referencia);
             }
