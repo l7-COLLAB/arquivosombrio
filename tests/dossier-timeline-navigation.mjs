@@ -28,4 +28,8 @@ assert.match(body,/linha\.dataset\.anoCronologia === ano/);
 assert.match(body,/if \(destino\) destino\.id = id/);
 assert.match(body,/campoPesquisa\.focus\(\)/);
 assert.match(css,/case-timeline-navigation a\[hidden\]/);
+assert.match(body,/case-timeline-category/);
+assert.match(body,/case-timeline-source-name/);
+assert.match(css,/case-timeline-category/);
+assert.match(css,/case-timeline-source-link/);
 console.log("Verificações estruturais da cronologia aprovadas.");
