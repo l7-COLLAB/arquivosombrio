@@ -10,3 +10,24 @@ body.case-page[data-reader-theme="papel"] .as-reader-bookmark{border-color:rgba(
 body.case-page[data-reader-theme="papel"] .as-reader-bookmark-actions button{background:#e9ddc3;color:#39281b;border-color:#8a6a3d}
 body.case-page[data-reader-theme="papel"] .as-reader-bookmark-status{color:#513c28}
 @media(max-width:700px){.case-page .as-reader-bookmark{padding:10px 8px}.case-page .as-reader-bookmark-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;gap:5px}.case-page .as-reader-bookmark-actions button{padding:7px 5px;font-size:10px;min-width:0}.case-page .as-reader-bookmark-status{font-size:10px}}
+
+/* Leitor compacto: opções secundárias recolhidas sem eliminar funcionalidades. */
+body.case-reading .case-reader-toolbar { padding-top: 0 !important; padding-bottom: 0 !important; row-gap: 0 !important; align-items: center !important; }
+body.case-reading .case-reader-toolbar-inner { min-height: 46px !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+body.case-reading .case-reader-action { min-height: 42px !important; padding-top: 3px !important; padding-bottom: 3px !important; }
+body.case-reading .case-reader-back { min-height: 42px !important; }
+body.case-reading .as-reader-bookmark { display:block; width:100%; max-width:none; margin:0; padding:0 12px; border-top:1px solid rgba(162,135,88,.14); }
+body.case-reading .as-reader-bookmark > summary { display:list-item; list-style-position:inside; cursor:pointer; width:max-content; max-width:100%; padding:5px 8px; font:500 11px/1.5 "DM Mono",monospace; color:#c8b58f; }
+body.case-reading .as-reader-bookmark:not([open]) > .as-reader-bookmark-actions,
+body.case-reading .as-reader-bookmark:not([open]) > .as-reader-bookmark-status { display:none; }
+body.case-reading .as-reader-bookmark[open] { padding-bottom:8px; }
+body.case-reading .as-reader-bookmark[open] > .as-reader-bookmark-actions { margin:5px 0; }
+body.case-reading .as-reader-bookmark > summary:focus-visible { outline:2px solid currentColor; outline-offset:2px; }
+body.case-reading[data-reader-theme="papel"] .as-reader-bookmark > summary { color:#513c28; }
+body.case-reading .case-reader-toolbar .public-narration-player { margin-top:0 !important; margin-bottom:2px !important; }
+@media(max-width:700px){
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .case-reader-toolbar-inner { min-height:46px !important; }
+ body.case-reading .case-reader-toolbar.as-mobile-reader-ready .case-reader-action { min-height:42px !important; }
+ body.case-reading .as-reader-bookmark { padding:0 8px; }
+ body.case-reading .as-reader-bookmark > summary { padding:5px 2px; }
+}
