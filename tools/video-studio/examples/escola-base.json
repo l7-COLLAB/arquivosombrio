@@ -1,0 +1,65 @@
+{
+  "title": "CASO ESCOLA BASE",
+  "black_white": true,
+  "target_seconds": 60.0,
+  "fade_seconds": 1.0,
+  "warnings": [
+    "Exemplo de roteiro; confira fontes e contexto antes de publicar. As buscas fornecem imagens ilustrativas, não registros reais do caso."
+  ],
+  "scenes": [
+    {
+      "text": "Em 1994, uma escola infantil de São Paulo virou notícia nacional. Antes de a investigação terminar, seis pessoas já eram tratadas como culpadas.",
+      "query": "1990 school building Brazil",
+      "visual": "",
+      "kind": "illustrative",
+      "image_prompt": "Vertical black and white documentary illustration, 1990 school building Brazil, no people, no readable text.",
+      "asset": "",
+      "source": ""
+    },
+    {
+      "text": "Duas mães denunciaram suspeitas de abuso contra seus filhos na Escola Base, no bairro da Aclimação. A polícia investigou, e a imprensa divulgou as acusações.",
+      "query": "empty classroom",
+      "visual": "",
+      "kind": "illustrative",
+      "image_prompt": "Vertical black and white documentary illustration, empty classroom, no people, no readable text.",
+      "asset": "",
+      "source": ""
+    },
+    {
+      "text": "A escola foi depredada e fechou. Os acusados sofreram ameaças e tiveram suas vidas e sua fonte de renda atingidas.",
+      "query": "closed school gate",
+      "visual": "",
+      "kind": "illustrative",
+      "image_prompt": "Vertical black and white documentary illustration, closed school gate, no people, no readable text.",
+      "asset": "",
+      "source": ""
+    },
+    {
+      "text": "Mas a investigação não encontrou provas que sustentassem as acusações. O inquérito foi arquivado. A denúncia se revelou infundada.",
+      "query": "documents folder desk",
+      "visual": "",
+      "kind": "illustrative",
+      "image_prompt": "Vertical black and white documentary illustration, documents folder desk, no people, no readable text.",
+      "asset": "",
+      "source": ""
+    },
+    {
+      "text": "O encerramento não desfez os danos. O caso tornou-se um marco dos riscos de uma cobertura precipitada e de tratar suspeitas como certezas.",
+      "query": "old newspapers",
+      "visual": "",
+      "kind": "illustrative",
+      "image_prompt": "Vertical black and white documentary illustration, old newspapers, no people, no readable text.",
+      "asset": "",
+      "source": ""
+    },
+    {
+      "text": "Leia a história completa no Arquivo Sombrio. Acesse o link da bio.",
+      "query": "old library books",
+      "visual": "",
+      "kind": "illustrative",
+      "image_prompt": "Vertical black and white documentary illustration, old library books, no people, no readable text.",
+      "asset": "",
+      "source": ""
+    }
+  ]
+}

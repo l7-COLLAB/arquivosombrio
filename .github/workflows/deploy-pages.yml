@@ -28,10 +28,11 @@ jobs:
       - name: Prepare static files
         run: |
           mkdir -p _site
-          rsync -a --exclude='.git' --exclude='.github' --exclude='supabase' --exclude='node_modules' --exclude='_site' --exclude='*.md' ./ _site/
+          rsync -a --exclude='.git' --exclude='.github' --exclude='supabase' --exclude='tools' --exclude='tests' --exclude='node_modules' --exclude='_site' --exclude='*.md' ./ _site/
           test -f _site/index.html
           test -f _site/admin-v2/index.html
           test -f _site/admin-v2/visual.html
+          test -f _site/admin-v2/studio/index.html
           python3 scripts/build-seo-pages.py _site
           python3 scripts/audit-seo-build.py _site
           python3 scripts/audit-internal-links.py _site

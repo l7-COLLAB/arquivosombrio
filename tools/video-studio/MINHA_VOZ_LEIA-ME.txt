@@ -1,0 +1,52 @@
+ARQUIVO SOMBRIO STUDIO 0.2.0 — MINHA VOZ
+
+O QUE FOI ADICIONADO
+Uma amostra da sua voz em português é usada como referência pelo Chatterbox Multilingual. Não é treinamento do zero e não garante uma cópia perfeita. A pronúncia, a entonação e a semelhança precisam de revisão. Edge TTS e importação do Kokoro continuam disponíveis.
+
+ATUALIZAR SEM PERDER PROJETOS
+1. Feche o Studio com Ctrl+C na janela preta.
+2. Extraia este ZIP inteiro em uma pasta NOVA.
+3. Na pasta nova, abra ATUALIZAR_ESTUDIO.bat.
+4. Informe a pasta do Studio antigo, que contém INICIAR.bat e a pasta projects.
+5. O atualizador copia os arquivos do aplicativo e faz backup dos arquivos anteriores. Não apaga projects, voices, .venv ou .venv_voice.
+6. Volte à pasta antiga do Studio. Abra INSTALAR_MINHA_VOZ.bat e aguarde concluir.
+7. Abra INICIAR.bat normalmente.
+
+INSTALAÇÃO NOVA
+Execute INSTALAR.bat e depois INSTALAR_MINHA_VOZ.bat. Ambos precisam concluir. Abra INICIAR.bat.
+
+REQUISITOS DO MÓDULO OPCIONAL
+Python 3.11 ou 3.12, 64 bits; o instalador prefere 3.11. Baixa PyTorch para CPU e as dependências em um ambiente separado. A instalação e o primeiro uso podem baixar vários GB. Reserve espaço livre e use conexão estável. O modelo de síntese tem cerca de 500 milhões de parâmetros: um notebook com pouca RAM pode não conseguir executá-lo. Em CPU pode demorar bastante; não há garantia de tempo real. Este instalador não instala aceleração NVIDIA.
+
+CADASTRAR A VOZ UMA VEZ
+1. Abra a aba 4 · Minha voz.
+2. Importe uma gravação ou selecione Gravar pelo microfone.
+3. Grave sua própria voz em português, por 10 a 15 segundos, em ambiente silencioso, sem música e sem outras vozes. Comece a falar logo no início. O cadastro aceita 8 a 30 segundos, mas o modelo usa principalmente os primeiros 6 a 10 segundos. Um áudio longo não equivale a mais treinamento.
+4. Dê um nome e clique Salvar minha voz e definir como padrão.
+5. Clique Gerar teste com minha voz. O primeiro teste baixa os modelos. Aguarde com o Studio e o terminal abertos.
+6. Ouça o teste. Se a referência tiver eco, ruído ou uma entonação inadequada, grave outra amostra.
+
+TEXTO SUGERIDO PARA A GRAVAÇÃO
+Cada história exige atenção aos detalhes. Antes de chegar a uma conclusão, precisamos ouvir as pessoas, conferir os documentos e compreender o que realmente aconteceu.
+
+GERAR NOVAS NARRAÇÕES
+Selecione Minha voz · Chatterbox local e a gravação na barra lateral. A seleção padrão fica salva entre sessões. Na aba 3, escolha Gerar com a voz selecionada. Use Gerar apenas áudio e legendas para ouvir antes de montar o MP4. Baixe WAV e SRT pelos botões. Para usar narração pronta do Kokoro, selecione Importar áudio: ela tem prioridade sobre a voz selecionada.
+
+LEGENDAS E CACHE
+Whisper local transcreve o áudio realmente gerado. Os nomes podem exigir correção. Cada cena usa sua própria duração medida; não se estima o tempo apenas pelo número de palavras. Ao corrigir uma cena ou trocar a referência, o cache correspondente muda. Áudios concluídos podem ser reutilizados. O modelo é carregado uma vez por tarefa, não uma vez por cena. Trechos longos são divididos para reduzir cortes de fala. Não existe pausa no meio de uma cena com retomada exata.
+
+PRIVACIDADE E MODELOS
+A referência fica na pasta voices do seu Studio; não é enviada para uma API de voz, nem incluída na exportação de projetos. Não envie essa pasta para o GitHub. As narrações geradas podem ser exportadas normalmente. Preserve voices e projects ao atualizar. Os downloads de modelos consultam Hugging Face; depois de os modelos estarem em cache, a síntese não depende de uma API de voz. O modelo mantém a marca d'água sonora imperceptível do fabricante.
+
+LIMITES DE VALIDAÇÃO
+Verificados: sintaxe, cadastro e validação de arquivos de referência, padrão persistente, seleção da interface, encaminhamento ao backend, cache por cena/referência, prioridade do áudio importado, limites de texto e tempos das legendas, atualizador que preserva projetos e renderização existente.
+A inferência neural com uma voz real, as dependências opcionais completas e a instalação em Windows NÃO foram executadas neste ambiente. Não há amostra de voz da usuária neste pacote. O teste local na aba 4 é necessário para avaliar compatibilidade e qualidade. Se a instalação falhar, envie o erro: as opções anteriores continuam utilizáveis.
+
+FONTES OFICIAIS
+Modelo e exemplos: https://github.com/resemble-ai/chatterbox
+Pacote fixado: chatterbox-tts 0.1.7 — https://pypi.org/project/chatterbox-tts/0.1.7/
+Licença do projeto/modelo: MIT, conforme publicação oficial. Os componentes instalados mantêm suas licenças próprias.
+PyTorch CPU: https://docs.pytorch.org/get-started/previous-versions/
+Transcrição: https://github.com/SYSTRAN/faster-whisper
+
+A versão 0.2.0 também mantém a correção 0.1.1: foto inteira sobre fundo escuro, sem o zoom automático que causava saltos.

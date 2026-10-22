@@ -1,0 +1,26 @@
+name: Verificar Studio Web V2
+on:
+  push:
+    branches: [main]
+    paths: ['admin-v2/studio/**', 'tools/video-studio/**', 'tests/studio-web.test.cjs', '.github/workflows/studio-web-qa.yml']
+  pull_request:
+    paths: ['admin-v2/studio/**', 'tools/video-studio/**', 'tests/studio-web.test.cjs', '.github/workflows/studio-web-qa.yml']
+permissions:
+  contents: read
+jobs:
+  studio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: npm ci --prefix tests --ignore-scripts --no-audit --no-fund
+      - run: node --test tests/studio-web.test.cjs tests/video-studio.test.cjs tests/admin-v2-regressions.mjs
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: python -m pip install -r tools/video-studio/requirements.txt
+      - run: python -m unittest discover -s tools/video-studio/tests -p test_web_api.py -v
+      - run: python -m unittest discover -s tools/video-studio/tests -p test_pipeline.py -v
