@@ -3461,3 +3461,32 @@ body[data-reader-theme="papel"] .dossie-summary {
     margin: .55rem 0 0;
     white-space: pre-line;
 }
+
+/* Fase 2.2 — navegação por anos presentes na cronologia. */
+.case-page #caso-historia .case-timeline-navigation {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .45rem;
+    margin: 0 0 1.15rem;
+    font-size: .85rem;
+}
+.case-page #caso-historia .case-timeline-navigation-label {
+    margin-right: .35rem;
+    color: var(--case-block-muted, #a99b8a);
+}
+.case-page #caso-historia .case-timeline-navigation a {
+    padding: .4rem .65rem;
+    border: 1px solid var(--case-block-border, #756044);
+    border-radius: 4px;
+    color: var(--case-block-accent, #bc9969);
+    text-decoration: none;
+}
+.case-page #caso-historia .case-timeline-navigation a:hover,
+.case-page #caso-historia .case-timeline-navigation a:focus-visible {
+    text-decoration: underline;
+    outline-offset: 3px;
+}
+.case-page #caso-historia .case-content-timeline li[id^="cronologia-ano-"] {
+    scroll-margin-top: 6rem;
+}
