@@ -36,6 +36,38 @@ try {
     const external=page.locator('.case-content-sources a').first();
     assert.equal(await external.getAttribute("target"),"_blank");
     assert.match(await external.getAttribute("rel"),/noopener/);
+    await page.evaluate(()=>{
+      const eventos=[
+        {data:"1941",descricao:"Investigação fictícia",categoria:"Investigação",detalhes:"Contexto adicional"},
+        {data:"1942",descricao:"Perícia documental",categoria:"Perícia",fonte:"Arquivo demonstrativo",link_fonte:"https://example.org/fonte"},
+        {data:"1942",descricao:"Segundo evento de perícia",categoria:"Perícia"},
+        {data:"1943",descricao:"Julgamento fictício",categoria:"Julgamento"},
+        {data:"Sem data",descricao:"Registro não classificado"}
+      ];
+      document.getElementById("fixture").append(renderizarCronologiaBlocoDossie({titulo:"Cronologia demonstrativa",itens:eventos}));
+    });
+    const timeline=page.locator(".case-content-timeline");
+    assert.equal(await timeline.locator("ol > li").count(),5);
+    const search=timeline.locator('input[type="search"]');
+    const select=timeline.locator("select");
+    await search.fill("pericia");
+    assert.equal(await timeline.locator("ol > li:visible").count(),2,"Busca deve ignorar acentos");
+    assert.equal(await timeline.locator(".case-timeline-navigation a:visible").count(),1);
+    const yearLink=timeline.locator('.case-timeline-navigation a:visible').first();
+    const destination=await yearLink.getAttribute("href");
+    assert(destination?.startsWith("#cronologia-ano-1942"));
+    assert.equal(await timeline.locator(destination).isVisible(),true);
+    await select.selectOption({label:"Julgamento"});
+    assert.equal(await timeline.locator("ol > li:visible").count(),0);
+    assert.equal(await timeline.locator(".case-timeline-empty").isVisible(),true);
+    await timeline.locator(".case-timeline-reset").click();
+    assert.equal(await timeline.locator("ol > li:visible").count(),5);
+    assert.equal(await timeline.locator(".case-timeline-empty").isVisible(),false);
+    const details=timeline.locator("details").first();
+    await details.locator("summary").click();
+    assert.equal(await details.getAttribute("open"),"");
+    const fonteEvento=timeline.locator(".case-timeline-source-link").first();
+    assert.equal(await fonteEvento.getAttribute("target"),"_blank");
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
     assert(!overflow,`Rolagem horizontal em ${width}px`);
     await page.screenshot({path:`${outputs}/dossie-${width}.png`,fullPage:true});
