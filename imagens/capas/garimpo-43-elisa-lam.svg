@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200" role="img" aria-label="Capa editorial ilustrativa ELISA LAM">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#383341"/><stop offset="1" stop-color="#101217"/></linearGradient><pattern id="lines" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M0 34L34 0" stroke="#d7c9ac" stroke-opacity=".06" stroke-width="1"/></pattern></defs>
+<rect width="900" height="1200" fill="url(#g)"/><rect width="900" height="1200" fill="url(#lines)"/>
+<rect x="45" y="48" width="810" height="1102" fill="none" stroke="#9b8970" stroke-opacity=".55" stroke-width="2"/>
+<text x="75" y="133" font-family="Georgia,serif" font-size="42" letter-spacing="9" fill="#ece2d3">ARQUIVO SOMBRIO</text><path d="M75 161H825" stroke="#8d7560" stroke-width="2"/>
+<g opacity=".53" stroke="#dacbb7" fill="none"><path d="M0 542L125 470L310 510L490 405L735 463L900 390"/><path d="M0 565L155 505L310 545L490 445L735 498L900 430"/><circle cx="710" cy="295" r="140" stroke-width="3"/><circle cx="710" cy="295" r="111"/><circle cx="710" cy="295" r="72"/><path d="M710 110V480M525 295H895" stroke-dasharray="4 15"/></g>
+<rect x="0" y="600" width="900" height="450" fill="#0c0e12" opacity=".84"/>
+<rect x="75" y="641" width="92" height="7" fill="#9b3b36"/>
+<text x="74" y="720" font-family="Georgia,serif" font-weight="bold" font-size="86" letter-spacing="3" fill="#f4eee1">ELISA LAM</text>
+<path d="M75 928H826" stroke="#9b3b36" stroke-width="4"/>
+<text x="75" y="982" font-family="Arial,sans-serif" font-size="28" letter-spacing="4" fill="#ded0bd">HOTEL CECIL · 2013</text>
+<text x="75" y="1030" font-family="Arial,sans-serif" font-size="24" letter-spacing="5" fill="#c4b8a7">LOS ANGELES</text>
+<text x="75" y="1115" font-family="Arial,sans-serif" font-size="18" letter-spacing="5" fill="#a99b88">GARIMPO SOMBRIO · ILUSTRACAO EDITORIAL</text>
+</svg>
