@@ -10,6 +10,7 @@ on:
       - 'tests/evidence-metadata.mjs'
       - 'tests/dossier-evidence-completeness.mjs'
       - 'tests/dossier-browser-smoke.mjs'
+      - 'tests/dossier-timeline-navigation.mjs'
       - '.github/workflows/documental-regression.yml'
   workflow_dispatch:
 
@@ -35,6 +36,7 @@ jobs:
           node tests/evidence-metadata.mjs
           node tests/dossier-evidence-completeness.mjs
           node tests/dossier-source-renderer.mjs
+          node tests/dossier-timeline-navigation.mjs
       - name: Instalar navegador para homologação
         run: |
           npm install --no-save --no-package-lock playwright
