@@ -3626,3 +3626,27 @@ body[data-reader-theme="papel"] .dossie-summary {
   letter-spacing: .02em;
   overflow-wrap: anywhere;
 }
+
+/* Fase 2.12 — rastreabilidade de fontes por acontecimento. */
+.case-timeline-source {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .4rem .8rem;
+  min-width: 0;
+}
+.case-timeline-source-name {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.case-timeline-source-name strong {
+  font-weight: 650;
+}
+@media (max-width: 600px) {
+  .case-timeline-source {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .3rem;
+  }
+}
