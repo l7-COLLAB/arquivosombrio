@@ -11,6 +11,8 @@ import streamlit as st
 from engine import render, prepare_audio, ffmpeg
 from media import search_photos, download_photo, generate_image, save_image_bytes
 from planner import interpret, manual_plan, validate_plan
+from voice_profiles import list_profiles, read_defaults, save_defaults, save_profile
+from voice_backend import voice_available
 
 ROOT=Path(__file__).resolve().parent
 PROJECTS=ROOT/'projects'; PROJECTS.mkdir(exist_ok=True)
@@ -18,7 +20,13 @@ st.set_page_config(page_title='Arquivo Sombrio Studio',page_icon='🎬',layout='
 st.markdown('''<style>.stApp{background:#101317} h1,h2,h3{color:#dfc79c}
 div.stButton>button[kind=primary]{background:#a07b44;border:0} </style>''',unsafe_allow_html=True)
 st.title('Arquivo Sombrio · Studio')
-st.caption('Do roteiro ao MP4 • Projetos locais • Cenas que você pode revisar e substituir')
+st.caption('Versão 0.2.0 • Do roteiro ao MP4 • Minha voz local opcional')
+
+# Apply requested selection before creating widgets on the next Streamlit run.
+pending_voice=st.session_state.pop('pending_voice',None)
+if pending_voice:
+    st.session_state.voice_provider=pending_voice['provider']
+    st.session_state.voice_profile=pending_voice['profile_id']
 
 if 'project_id' not in st.session_state:
     st.session_state.project_id=uuid.uuid4().hex
@@ -79,8 +87,36 @@ with st.sidebar:
     photo_key=st.text_input('Chave do banco de imagens',type='password')
     st.markdown('[Pexels API](https://www.pexels.com/api/) · [Pixabay API](https://pixabay.com/api/docs/)')
     st.caption('Imagens de banco são ilustrativas. A busca por palavras não comprova pessoas, locais ou documentos de um caso.')
-    voice=st.selectbox('Voz online',['pt-BR-FranciscaNeural','pt-BR-AntonioNeural'])
-    st.caption('A voz usa Edge TTS via internet; disponibilidade depende do serviço. Também pode importar seu MP3 do Kokoro.')
+    defaults=read_defaults()
+    voice_provider=st.selectbox('Modelo de narração',['edge','chatterbox'],
+        index=1 if defaults.get('provider')=='chatterbox' else 0,
+        format_func=lambda x:'Voz online · Edge' if x=='edge' else 'Minha voz · Chatterbox local',key='voice_provider')
+    profiles=list_profiles(); profile_names={p['id']:p['name'] for p in profiles}
+    selected_profile=''
+    edge_voice=defaults.get('edge_voice','pt-BR-FranciscaNeural')
+    if voice_provider=='edge':
+        edge_voice=st.selectbox('Voz online',['pt-BR-FranciscaNeural','pt-BR-AntonioNeural'],
+            index=1 if edge_voice=='pt-BR-AntonioNeural' else 0)
+        voice=edge_voice
+        st.caption('Usa Edge TTS pela internet. Também pode importar seu MP3 do Kokoro na aba 3.')
+    else:
+        options=['',*profile_names]
+        if st.session_state.get('voice_profile') not in options:
+            st.session_state.pop('voice_profile',None)
+        default_profile=defaults.get('profile_id','')
+        selected_profile=st.selectbox('Gravação de referência',options,
+            index=options.index(default_profile) if default_profile in options else 0,
+            format_func=lambda x:profile_names.get(x,'Selecione sua voz…'),key='voice_profile')
+        voice='chatterbox:'+selected_profile
+        if not voice_available():
+            st.info('Execute INSTALAR_MINHA_VOZ.bat uma vez. Cadastre sua gravação na aba 4 · Minha voz.')
+        st.caption('Narração e transcrição locais. Primeiro uso baixa modelos; em CPU a geração pode demorar.')
+    if st.button('Usar esta voz por padrão'):
+        try:
+            save_defaults(voice_provider,selected_profile,edge_voice)
+            st.success('Voz padrão salva para as próximas sessões.')
+        except ValueError as e:
+            st.error(str(e))
     with st.expander('Imagens geradas por IA · opcional'):
         image_base=st.text_input('URL base da API de imagens',value='https://api.openai.com/v1')
         image_key=st.text_input('Chave de imagens',type='password')
@@ -116,7 +152,7 @@ with st.sidebar:
             del st.session_state[k]
         st.rerun()
 
-tab1,tab2,tab3=st.tabs(['1 · Pedido e roteiro','2 · Cenas e imagens','3 · Áudio e vídeo'])
+tab1,tab2,tab3,tab4=st.tabs(['1 · Pedido e roteiro','2 · Cenas e imagens','3 · Áudio e vídeo','4 · Minha voz'])
 with tab1:
     mode=st.radio('Como começar?',['Colar instruções completas · com API','Colar somente narração · sem API'],horizontal=True)
     brief=st.text_area('Cole o pedido ou a narração',height=250,placeholder='Cole aqui o pedido do Claude, com roteiro, duração e orientações visuais…')
@@ -142,7 +178,7 @@ with tab1:
         except Exception as e:
             st.error(str(e))
     if mode.startswith('Colar instruções'):
-        st.caption('Atalho automático: usa a API de planejamento e o banco de fotografias configurados, com voz online. Gera uma prévia para revisão.')
+        st.caption('Atalho automático: usa a API de planejamento, o banco de fotografias e a voz selecionada. Gera uma prévia para revisão.')
         if st.button('Preparar e gerar automaticamente · prévia'):
             try:
                 if not model or not photo_key:
@@ -332,3 +368,58 @@ with tab3:
             for label,file,name in [('Baixar MP4',result['video'],Path(result['video']).name),('Baixar SRT',result['srt'],'legendas.srt'),('Baixar áudio',result['audio'],'narracao.wav')]:
                 st.download_button(label,Path(file).read_bytes(),file_name=name)
             st.download_button('Baixar fontes das imagens',(folder/'fontes.json').read_bytes(),file_name='fontes.json')
+
+with tab4:
+    st.subheader('Grave uma vez e use sua voz nas próximas narrações')
+    st.write('Salve uma amostra limpa da sua própria voz em português. O modelo usa essa referência para gerar novos textos; não é necessário treinar uma voz do zero.')
+    st.info('Antes do primeiro teste: execute INSTALAR_MINHA_VOZ.bat com o Studio fechado. O download de dependências e modelos pode ocupar vários GB. A geração em CPU pode ser lenta.')
+    st.caption('A gravação e a síntese ficam neste computador. A amostra não entra no ZIP dos projetos nem é enviada para uma API de voz. A semelhança varia: ouça um teste antes de gerar o vídeo inteiro.')
+    with st.expander('Como gravar uma boa referência',expanded=True):
+        st.write('Grave de 10 a 15 segundos, sem música, eco ou outras pessoas falando. Comece a falar logo no início, com ritmo e entonação que deseja nas narrações. São aceitos arquivos entre 8 e 30 segundos; o modelo usa principalmente os primeiros segundos da amostra.')
+        st.write('Texto sugerido: “Cada história exige atenção aos detalhes. Antes de chegar a uma conclusão, precisamos ouvir as pessoas, conferir os documentos e compreender o que realmente aconteceu.”')
+    voice_name=st.text_input('Nome da minha voz',value='Minha voz · Arquivo Sombrio',key='new_voice_name')
+    source_kind=st.radio('Como fornecer a gravação?',['Importar arquivo','Gravar pelo microfone'],horizontal=True)
+    sample=st.file_uploader('Minha gravação',type=['wav','mp3','m4a','flac','ogg','webm'],key='voice_sample') if source_kind=='Importar arquivo' else st.audio_input('Gravar minha voz',key='voice_mic')
+    if sample:
+        st.audio(sample.getvalue())
+    if st.button('Salvar minha voz e definir como padrão',type='primary'):
+        try:
+            if not sample:
+                raise ValueError('Importe ou grave sua voz primeiro.')
+            with st.spinner('Conferindo a gravação…'):
+                profile=save_profile(voice_name,sample.getvalue(),Path(sample.name).suffix or '.wav')
+                save_defaults('chatterbox',profile['id'])
+            st.session_state.pending_voice={'provider':'chatterbox','profile_id':profile['id']}
+            st.session_state.voice_saved_notice='Gravação salva. Sua voz foi definida como padrão.'
+            st.rerun()
+        except Exception as e:
+            st.error(str(e))
+    notice=st.session_state.pop('voice_saved_notice',None)
+    if notice:
+        st.success(notice)
+    if profiles:
+        st.write('Vozes salvas: '+', '.join(p['name'] for p in profiles))
+        if selected_profile:
+            st.audio(next(p['reference'] for p in profiles if p['id']==selected_profile))
+    test_text=st.text_area('Texto para testar minha voz',value='Você está no Arquivo Sombrio. Cada documento conta uma parte da história.',max_chars=500,key='voice_test_text')
+    if st.button('Gerar teste com minha voz'):
+        try:
+            if voice_provider!='chatterbox' or not selected_profile:
+                raise ValueError('Selecione Minha voz e sua gravação na barra lateral.')
+            if not voice_available():
+                raise ValueError('Feche o Studio, execute INSTALAR_MINHA_VOZ.bat e abra novamente.')
+            test_plan=manual_plan(test_text,'Teste da minha voz',10)
+            test_folder=ROOT/'voices'/'_previews'/selected_profile
+            with st.status('Gerando teste local…',expanded=True) as status:
+                audio,lengths,cues=prepare_audio(test_plan,test_folder,voice,progress=status.write)
+                status.update(label=f'Teste pronto · {sum(lengths):.1f} s',state='complete')
+            st.session_state.voice_test_result={'audio':audio,'srt':str(test_folder/'legendas.srt'),'profile':selected_profile}
+        except Exception as e:
+            st.error(str(e))
+    voice_test=st.session_state.get('voice_test_result')
+    if voice_test and voice_test.get('profile')==selected_profile and Path(voice_test['audio']).is_file():
+        st.audio(voice_test['audio'])
+        st.download_button('Baixar teste WAV',Path(voice_test['audio']).read_bytes(),file_name='teste-minha-voz.wav')
+        st.download_button('Baixar legenda do teste',Path(voice_test['srt']).read_bytes(),file_name='teste-minha-voz.srt')
+    st.caption('Depois de aprovar o teste, use Gerar apenas áudio e legendas ou GERAR VÍDEO MP4 na aba 3. A voz escolhida na barra lateral será usada automaticamente. As legendas são transcritas e podem exigir correção de nomes.')
+

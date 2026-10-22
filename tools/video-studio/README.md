@@ -1,4 +1,4 @@
-# Arquivo Sombrio Studio — versão 0.1.1
+# Arquivo Sombrio Studio — versão 0.2.0
 
 Aplicativo local para Windows que entrega **MP4 de verdade**, com roteiro dividido
 em cenas, fotografias, narração, legendas e transições. Interface em português.
@@ -16,6 +16,12 @@ Não precisa de Git, Node, ImageMagick ou placa de vídeo dedicada. O FFmpeg é
 localizado no sistema ou fornecido por imageio-ffmpeg. A primeira instalação
 pode baixar esse executável. A transcrição opcional exige download adicional.
 
+## Minha voz como padrão
+
+Abra `MINHA_VOZ_LEIA-ME.txt` para instalar o módulo opcional e cadastrar uma gravação própria. A aba **4 · Minha voz** permite gravar pelo microfone ou importar uma amostra, salvá-la como padrão e gerar um teste. Chatterbox Multilingual 0.1.7 e Whisper trabalham em um ambiente separado. A referência é local e não entra nos ZIPs dos projetos. A inferência neural e o instalador Windows ainda precisam ser testados no computador da usuária.
+
+Para atualizar uma instalação existente, extraia este ZIP em uma pasta nova e execute `ATUALIZAR_ESTUDIO.bat`; informe a pasta antiga. O atualizador faz backup do código e preserva os dados. Depois execute `INSTALAR_MINHA_VOZ.bat` na pasta antiga.
+
 ## Caminho mais automático
 
 1. Na barra lateral, configure a API de planejamento: URL base, chave e nome do modelo.
@@ -29,7 +35,7 @@ pode baixar esse executável. A transcrição opcional exige download adicional.
 5. Revise o vídeo na aba 3. Troque as imagens na aba 2 quando necessário.
 6. Desmarque **Prévia rápida** e clique **GERAR VÍDEO MP4** para Full HD.
 
-O atalho automático usa fotos de banco ilustrativas e Edge TTS, sem música por
+O atalho automático usa fotos de banco ilustrativas e a voz selecionada, sem música por
 padrão. Não gera imagens pagas silenciosamente. Se uma busca não encontrar uma
 imagem única, salva o projeto e informa qual cena precisa de atenção.
 
@@ -47,6 +53,7 @@ pelos controles. Não cole instruções de edição no campo de narração.
 - Fotografias via Pexels/Pixabay, importação de JPEG/PNG/WebP e busca automática.
 - Geração opcional de imagens por API `/images/generations`, com clique explícito.
   O servidor deve aceitar `size=1024x1536` e responder com `b64_json` ou `url`.
+- Voz própria com referência local via Chatterbox Multilingual, perfis e padrão persistente.
 - Duas vozes brasileiras via Edge TTS; importação de áudio MP3/WAV/M4A/FLAC/OGG.
 - Legendas sincronizadas pelos tempos da síntese; importação de SRT com áudio.
 - Whisper local opcional para transcrever áudio sem SRT, pelo `INSTALAR_TRANSCRICAO.bat`.
@@ -87,6 +94,8 @@ não no projeto, ZIP ou GitHub. Ao fechar a sessão, será necessário digitá-l
 O texto é enviado ao provedor de IA escolhido apenas ao solicitar interpretação.
 As consultas são enviadas ao banco de imagens. A narração é enviada ao Edge TTS
 quando essa voz é usada. Importar áudio+SRT e fotos permite renderizar offline.
+A pasta `voices` contém amostras pessoais e preferências. Não é exportada com os projetos nem deve ser enviada ao GitHub. A voz Chatterbox é processada localmente, com modelos baixados no primeiro uso.
+
 O programa escuta apenas em `127.0.0.1`. Não exponha esta versão diretamente na internet.
 
 Não há pausa com retomada no mesmo frame. Se fechar durante a geração, reabra

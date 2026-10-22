@@ -157,6 +157,9 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
 def prepare_audio(plan, folder, voice, imported=None, srt=None, progress=lambda x: None):
     folder=Path(folder); folder.mkdir(parents=True,exist_ok=True)
+    if not imported and voice.startswith('chatterbox:'):
+        from voice_backend import prepare_cloned_audio
+        return prepare_cloned_audio(plan, folder, voice.split(':', 1)[1], progress)
     lengths, cues = [], []
     if imported:
         progress('Lendo áudio importado e sincronizando legendas…')

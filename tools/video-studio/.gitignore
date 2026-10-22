@@ -1,7 +1,11 @@
 .venv/
+.venv_voice/
+voices/
+_backup_atualizacao_*/
 __pycache__/
 projects/
 settings.json
 .env
 *.log
 vendor/MoneyPrinterTurbo/
+
