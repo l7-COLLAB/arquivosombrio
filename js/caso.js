@@ -2616,6 +2616,8 @@ function renderizarCronologiaBlocoDossie(dados) {
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .toLocaleLowerCase("pt-BR").trim();
     const atualizarVisibilidade = () => {
+        // Separadores visuais para cronologias longas; a ordem dos dados não muda.
+        lista.querySelectorAll(".case-timeline-period-label").forEach(no => no.remove());
         const termo = normalizarBusca(campoPesquisa?.value);
         const categoriaFiltro = seletorCategoria?.value || "";
         let visiveis = 0;
@@ -2626,6 +2628,19 @@ function renderizarCronologiaBlocoDossie(dados) {
             linha.hidden = !(correspondeCategoria && correspondeTexto);
             if (!linha.hidden) visiveis += 1;
         });
+        if (itens.length >= 8) {
+            let periodoAnterior = null;
+            Array.from(lista.children).forEach(linha => {
+                if (linha.hidden) return;
+                const periodo = linha.dataset.anoCronologia || "Sem ano definido";
+                if (periodo !== periodoAnterior) {
+                    const rotulo = criarElementoTextoDossie("span", periodo);
+                    rotulo.className = "case-timeline-period-label";
+                    linha.insertBefore(rotulo, linha.firstChild);
+                    periodoAnterior = periodo;
+                }
+            });
+        }
         atalhosAnuais.forEach(({ ancora, id, ano }) => {
             // O destino acompanha o primeiro evento visível do respectivo ano.
             const destino = Array.from(lista.children).find(linha =>
@@ -2722,6 +2737,7 @@ function renderizarCronologiaBlocoDossie(dados) {
         atualizarVisibilidade();
     }
     secao.appendChild(lista);
+    if (itens.length >= 8 && !campoPesquisa) atualizarVisibilidade();
     return secao;
 }
 
