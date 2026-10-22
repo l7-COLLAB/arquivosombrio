@@ -2411,14 +2411,14 @@ function renderizarCronologiaBlocoDossie(dados) {
         const linha =
             document.createElement("li");
         const ano = identificarAno(item);
+        if (ano) linha.dataset.anoCronologia = ano;
         const categoria = categoriaEvento(item);
         if (categoria) {
             categoriasPresentes.add(categoria);
             linha.dataset.categoriaCronologia = categoria;
         }
         if (ano && !gruposAnuais.has(ano)) {
-            linha.id = `cronologia-ano-${ano}-${gruposAnuais.size + 1}`;
-            gruposAnuais.set(ano, linha.id);
+            gruposAnuais.set(ano, `cronologia-ano-${ano}-${gruposAnuais.size + 1}`);
         }
 
         if (typeof item === "string") {
@@ -2551,14 +2551,16 @@ function renderizarCronologiaBlocoDossie(dados) {
             linha.hidden = !(correspondeCategoria && correspondeTexto);
             if (!linha.hidden) visiveis += 1;
         });
-        atalhosAnuais.forEach(({ ancora, id }) => {
-            // Um ano filtrado não deve apontar para um evento invisível.
-            const destino = lista.querySelector('[id="' + id + '"]');
-            const ano = destino?.querySelector("time")?.textContent?.match(/\b(?:1[5-9]\d{2}|20\d{2}|21\d{2})\b/)?.[0];
-            const visivelNoAno = ano && Array.from(lista.children).some(linha =>
-                !linha.hidden && linha.querySelector("time")?.textContent?.includes(ano)
+        atalhosAnuais.forEach(({ ancora, id, ano }) => {
+            // O destino acompanha o primeiro evento visível do respectivo ano.
+            const destino = Array.from(lista.children).find(linha =>
+                !linha.hidden && linha.dataset.anoCronologia === ano
             );
-            ancora.hidden = !visivelNoAno;
+            ancora.hidden = !destino;
+            if (destino) destino.id = id;
+            Array.from(lista.children).forEach(linha => {
+                if (linha !== destino && linha.id === id) linha.removeAttribute("id");
+            });
         });
         if (mensagemVazia) mensagemVazia.hidden = visiveis !== 0;
         if (mensagemResultado) {
@@ -2579,7 +2581,7 @@ function renderizarCronologiaBlocoDossie(dados) {
         gruposAnuais.forEach((id, ano) => {
             const ancora = criarElementoTextoDossie("a", ano);
             ancora.href = `#${id}`;
-            atalhosAnuais.push({ ancora, id });
+            atalhosAnuais.push({ ancora, id, ano });
             navegacao.appendChild(ancora);
         });
         secao.appendChild(navegacao);
