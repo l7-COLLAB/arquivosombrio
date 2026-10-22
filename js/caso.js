@@ -2535,6 +2535,8 @@ function renderizarCronologiaBlocoDossie(dados) {
 
     let seletorCategoria = null;
     let campoPesquisa = null;
+    let mensagemVazia = null;
+    const atalhosAnuais = [];
     const normalizarBusca = valor => String(valor || "")
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .toLocaleLowerCase("pt-BR").trim();
@@ -2549,6 +2551,16 @@ function renderizarCronologiaBlocoDossie(dados) {
             linha.hidden = !(correspondeCategoria && correspondeTexto);
             if (!linha.hidden) visiveis += 1;
         });
+        atalhosAnuais.forEach(({ ancora, id }) => {
+            // Um ano filtrado não deve apontar para um evento invisível.
+            const destino = lista.querySelector('[id="' + id + '"]');
+            const ano = destino?.querySelector("time")?.textContent?.match(/\b(?:1[5-9]\d{2}|20\d{2}|21\d{2})\b/)?.[0];
+            const visivelNoAno = ano && Array.from(lista.children).some(linha =>
+                !linha.hidden && linha.querySelector("time")?.textContent?.includes(ano)
+            );
+            ancora.hidden = !visivelNoAno;
+        });
+        if (mensagemVazia) mensagemVazia.hidden = visiveis !== 0;
         if (mensagemResultado) {
             mensagemResultado.textContent = visiveis === 1
                 ? "1 acontecimento encontrado"
@@ -2567,6 +2579,7 @@ function renderizarCronologiaBlocoDossie(dados) {
         gruposAnuais.forEach((id, ano) => {
             const ancora = criarElementoTextoDossie("a", ano);
             ancora.href = `#${id}`;
+            atalhosAnuais.push({ ancora, id });
             navegacao.appendChild(ancora);
         });
         secao.appendChild(navegacao);
@@ -2611,6 +2624,23 @@ function renderizarCronologiaBlocoDossie(dados) {
         busca.appendChild(rotuloBusca);
         busca.appendChild(campoPesquisa);
         busca.appendChild(mensagemResultado);
+        mensagemVazia = criarElementoTextoDossie(
+            "p", "Nenhum acontecimento corresponde à pesquisa. Limpe a busca ou altere o filtro.",
+            "case-timeline-empty"
+        );
+        mensagemVazia.hidden = true;
+        busca.appendChild(mensagemVazia);
+        const limpar = document.createElement("button");
+        limpar.type = "button";
+        limpar.className = "case-timeline-reset";
+        limpar.textContent = "Limpar pesquisa e filtros";
+        limpar.addEventListener("click", () => {
+            campoPesquisa.value = "";
+            if (seletorCategoria) seletorCategoria.value = "";
+            atualizarVisibilidade();
+            campoPesquisa.focus();
+        });
+        busca.appendChild(limpar);
         secao.appendChild(busca);
         atualizarVisibilidade();
     }
