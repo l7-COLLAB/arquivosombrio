@@ -210,19 +210,23 @@ def render(plan, folder, voice='pt-BR-FranciscaNeural', imported=None, srt=None,
         timeline.append((start,start+length))
         # Extra tail overlaps the next scene; narration duration stays unchanged.
         clip_length=length+(cross if i<len(lengths)-1 else 0)
-        identity=hashlib.sha256(Path(scene['asset']).read_bytes()+str((clip_length,w,h,plan['black_white'])).encode()).hexdigest()[:20]
+        # Version the cache so old cropped/animated clips are never reused.
+        identity=hashlib.sha256(Path(scene['asset']).read_bytes()+str(('contain-static-v2',clip_length,w,h,plan['black_white'])).encode()).hexdigest()[:20]
         clip=folder/(identity+'.mp4'); clips.append(clip)
         if not clip.exists():
             progress(f'Renderizando cena {i+1}/{len(lengths)}…')
             with Image.open(scene['asset']) as im:
-                im=ImageOps.fit(ImageOps.exif_transpose(im).convert('RGB'),(w,h))
+                im=ImageOps.contain(ImageOps.exif_transpose(im).convert('RGB'),(w,h),method=Image.Resampling.LANCZOS)
                 if plan['black_white']:
                     im=ImageOps.grayscale(im).convert('RGB')
+                canvas=Image.new('RGB',(w,h),(16,19,23))
+                canvas.paste(im,((w-im.width)//2,(h-im.height)//2))
+                im=canvas
                 still=folder/(identity+'.jpg'); im.save(still,quality=95)
-            frames=math.ceil(clip_length*30)
-            vf=f"scale={w*2}:{h*2},zoompan=z='1+0.04*on/{frames}':x='iw/2-iw/zoom/2':y='ih/2-ih/zoom/2':d={frames}:s={w}x{h}:fps=30,setsar=1,format=yuv420p"
+            # Static frames avoid zoompan's integer-pixel stepping on archival photos.
+            vf='setsar=1,format=yuv420p'
             partial=folder/(identity+'.partial.mp4')
-            run([ffmpeg(),'-y','-v','error','-threads','2','-i',still,'-vf',vf,'-t',f'{clip_length:.6f}',
+            run([ffmpeg(),'-y','-v','error','-threads','2','-loop','1','-framerate','30','-i',still,'-vf',vf,'-t',f'{clip_length:.6f}',
                  '-an','-c:v','libx264','-threads','2','-preset','ultrafast','-pix_fmt','yuv420p',partial])
             partial.replace(clip)
         start+=length
@@ -266,3 +270,4 @@ def render(plan, folder, voice='pt-BR-FranciscaNeural', imported=None, srt=None,
     return {'video':str(output),'audio':str(audio),'srt':str(folder/'legendas.srt'),
             'seconds':total,'target_seconds':plan['target_seconds'],
             'warning':'Com áudio importado, a troca das cenas é proporcional ao roteiro; revise a prévia.' if imported else ''}
+
