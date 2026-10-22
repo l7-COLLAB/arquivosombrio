@@ -12,7 +12,8 @@ function init(id){
  const bar=document.querySelector(".case-reader-toolbar");
  const article=document.querySelector(".case-main-content");
  if(!id||!bar||!article||bar.querySelector(".as-reader-bookmark"))return false;
- const box=document.createElement("div");box.className="as-reader-bookmark";
+ const box=document.createElement("details");box.className="as-reader-bookmark";
+ const toggle=document.createElement("summary");toggle.textContent="Marcação de leitura";toggle.setAttribute("aria-label","Expandir opções de marcação de leitura");box.append(toggle);
  const save=document.createElement("button");save.type="button";save.textContent="Guardar ponto";save.setAttribute("aria-label","Guardar posição de leitura neste dispositivo");
  const resume=document.createElement("button");resume.type="button";resume.textContent="Retomar leitura";resume.setAttribute("aria-label","Retomar posição de leitura guardada");
  const clear=document.createElement("button");clear.type="button";clear.textContent="Apagar marcação";clear.setAttribute("aria-label","Apagar posição de leitura guardada");
