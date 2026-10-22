@@ -3519,3 +3519,34 @@ body[data-reader-theme="papel"] .dossie-summary {
 .case-page #caso-historia .case-content-timeline li[hidden] {
     display: none !important;
 }
+
+/* Fase 2.4 — busca textual na cronologia. */
+.case-page #caso-historia .case-timeline-search {
+    display: grid;
+    gap: .45rem;
+    min-width: 0;
+    margin: 0 0 1rem;
+}
+.case-page #caso-historia .case-timeline-search label {
+    color: var(--case-block-muted, #aaa092);
+    font-size: .85rem;
+}
+.case-page #caso-historia .case-timeline-search input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: .65rem .75rem;
+    color: var(--paper, #eee5d7);
+    background: var(--case-block-surface, #201c19);
+    border: 1px solid var(--case-block-border, #756044);
+    border-radius: 4px;
+}
+.case-page #caso-historia .case-timeline-search input:focus-visible {
+    outline: 2px solid var(--case-block-accent, #bc9969);
+    outline-offset: 2px;
+}
+.case-page #caso-historia .case-timeline-search-results {
+    margin: 0;
+    font-size: .78rem;
+    color: var(--case-block-muted, #aaa092);
+}
