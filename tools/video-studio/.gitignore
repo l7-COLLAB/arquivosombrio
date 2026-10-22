@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+projects/
+settings.json
+.env
+*.log
+vendor/MoneyPrinterTurbo/
