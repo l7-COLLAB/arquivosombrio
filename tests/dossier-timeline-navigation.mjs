@@ -14,7 +14,7 @@ assert.match(body,/Consultar fonte do evento/);
 assert.match(css,/case-timeline-navigation a:focus-visible/);
 assert.match(body,/case-timeline-filters/);
 assert.match(body,/categoriaEvento\(item\)/);
-assert.match(body,/linha\.hidden = Boolean\(/);
+assert.match(body,/linha\.hidden = !\(correspondeCategoria && correspondeTexto\)/);
 assert.match(css,/case-content-timeline li\[hidden\]/);
 assert.match(body,/case-timeline-search/);
 assert.match(body,/campoPesquisa\.addEventListener\("input", atualizarVisibilidade\)/);
