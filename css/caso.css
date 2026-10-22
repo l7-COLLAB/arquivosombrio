@@ -3550,3 +3550,24 @@ body[data-reader-theme="papel"] .dossie-summary {
     font-size: .78rem;
     color: var(--case-block-muted, #aaa092);
 }
+
+/* Fase 2.5 — atalhos indisponíveis e estados de pesquisa. */
+.case-page #caso-historia .case-timeline-navigation a[hidden],
+.case-page #caso-historia .case-timeline-empty[hidden] { display: none !important; }
+.case-page #caso-historia .case-timeline-empty {
+    margin: .4rem 0;
+    color: var(--case-block-muted, #aaa092);
+    line-height: 1.5;
+}
+.case-page #caso-historia .case-timeline-reset {
+    justify-self: start;
+    padding: .35rem .55rem;
+    border: 1px solid var(--case-block-border, #756044);
+    background: transparent;
+    color: var(--case-block-accent, #bc9969);
+    cursor: pointer;
+}
+.case-page #caso-historia .case-timeline-reset:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
