@@ -3490,3 +3490,32 @@ body[data-reader-theme="papel"] .dossie-summary {
 .case-page #caso-historia .case-content-timeline li[id^="cronologia-ano-"] {
     scroll-margin-top: 6rem;
 }
+
+/* Fase 2.3 — filtro editorial progressivo da cronologia. */
+.case-page #caso-historia .case-timeline-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: 1rem;
+}
+.case-page #caso-historia .case-timeline-filters label {
+    color: var(--case-block-muted, #aaa092);
+    font-size: .85rem;
+}
+.case-page #caso-historia .case-timeline-filters select {
+    max-width: 100%;
+    min-height: 2.5rem;
+    padding: .4rem .65rem;
+    color: var(--paper, #eee5d7);
+    border: 1px solid var(--case-block-border, #756044);
+    background: var(--case-block-surface, #201c19);
+    border-radius: 4px;
+}
+.case-page #caso-historia .case-timeline-filters select:focus-visible {
+    outline: 2px solid var(--case-block-accent, #bc9969);
+    outline-offset: 2px;
+}
+.case-page #caso-historia .case-content-timeline li[hidden] {
+    display: none !important;
+}
