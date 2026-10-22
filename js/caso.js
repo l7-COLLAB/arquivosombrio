@@ -2533,6 +2533,30 @@ function renderizarCronologiaBlocoDossie(dados) {
         return null;
     }
 
+    let seletorCategoria = null;
+    let campoPesquisa = null;
+    const normalizarBusca = valor => String(valor || "")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase("pt-BR").trim();
+    const atualizarVisibilidade = () => {
+        const termo = normalizarBusca(campoPesquisa?.value);
+        const categoriaFiltro = seletorCategoria?.value || "";
+        let visiveis = 0;
+        Array.from(lista.children).forEach(linha => {
+            const categoria = linha.dataset.categoriaCronologia || "";
+            const correspondeCategoria = !categoriaFiltro || !categoria || categoria === categoriaFiltro;
+            const correspondeTexto = !termo || normalizarBusca(linha.textContent).includes(termo);
+            linha.hidden = !(correspondeCategoria && correspondeTexto);
+            if (!linha.hidden) visiveis += 1;
+        });
+        if (mensagemResultado) {
+            mensagemResultado.textContent = visiveis === 1
+                ? "1 acontecimento encontrado"
+                : `${visiveis} acontecimentos encontrados`;
+        }
+    };
+    let mensagemResultado = null;
+
     if (gruposAnuais.size >= 2) {
         const navegacao = document.createElement("nav");
         navegacao.className = "case-timeline-navigation";
@@ -2552,6 +2576,7 @@ function renderizarCronologiaBlocoDossie(dados) {
         filtros.className = "case-timeline-filters";
         const rotulo = criarElementoTextoDossie("label", "Filtrar acontecimentos:");
         const seletor = document.createElement("select");
+        seletorCategoria = seletor;
         seletor.setAttribute("aria-label", "Filtrar acontecimentos por categoria");
         const inserirOpcao = (valor, titulo) => {
             const opcao = document.createElement("option");
@@ -2562,16 +2587,32 @@ function renderizarCronologiaBlocoDossie(dados) {
         inserirOpcao("", "Todos os acontecimentos");
         Array.from(categoriasPresentes).sort((a,b) => a.localeCompare(b,"pt-BR"))
             .forEach(categoria => inserirOpcao(categoria, categoria));
-        seletor.addEventListener("change", () => {
-            Array.from(lista.children).forEach(linha => {
-                // Registros sem categoria nunca desaparecem do filtro.
-                const categoria = linha.dataset.categoriaCronologia || "";
-                linha.hidden = Boolean(seletor.value && categoria && categoria !== seletor.value);
-            });
-        });
+        seletor.addEventListener("change", atualizarVisibilidade);
         filtros.appendChild(rotulo);
         filtros.appendChild(seletor);
         secao.appendChild(filtros);
+    }
+    if (itens.length >= 2) {
+        const busca = document.createElement("div");
+        busca.className = "case-timeline-search";
+        const rotuloBusca = document.createElement("label");
+        const idBusca = "busca-cronologia-" + Math.random().toString(36).slice(2, 10);
+        rotuloBusca.htmlFor = idBusca;
+        rotuloBusca.textContent = "Pesquisar acontecimentos";
+        campoPesquisa = document.createElement("input");
+        campoPesquisa.id = idBusca;
+        campoPesquisa.type = "search";
+        campoPesquisa.autocomplete = "off";
+        campoPesquisa.placeholder = "Nome, local ou acontecimento";
+        campoPesquisa.addEventListener("input", atualizarVisibilidade);
+        mensagemResultado = criarElementoTextoDossie("p", "", "case-timeline-search-results");
+        mensagemResultado.setAttribute("role", "status");
+        mensagemResultado.setAttribute("aria-live", "polite");
+        busca.appendChild(rotuloBusca);
+        busca.appendChild(campoPesquisa);
+        busca.appendChild(mensagemResultado);
+        secao.appendChild(busca);
+        atualizarVisibilidade();
     }
     secao.appendChild(lista);
     return secao;
