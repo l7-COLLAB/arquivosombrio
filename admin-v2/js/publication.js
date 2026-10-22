@@ -32,6 +32,12 @@ export function compileDossierForPublic(draft){
    const link=txt(item.link_fonte||item.fonte_url||item.url_fonte);
    const instituicao=txt(item.instituicao_fonte||item.orgao_fonte);
    const identificador=txt(item.identificador_documento||item.numero_documento);
+   const natureza=txt(item.natureza_documental||item.classificacao_editorial||item.natureza_evento)
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim().replace(/\s+/g,"_");
+   const naturezasAceitas=new Set(["fato","fato_documentado","testemunho","hipotese","controversia"]);
+   if(natureza&&!naturezasAceitas.has(natureza))warnings.push(prefix+"natureza editorial não reconhecida; confira o vocabulário utilizado.");
+   if((natureza==="fato"||natureza==="fato_documentado")&&!fonte&&!instituicao&&!identificador&&!link)
+    warnings.push(prefix+"fato classificado como documentado sem referência identificada.");
    if(link){
     let valido=false;
     try{const u=new URL(link);valido=["http:","https:"].includes(u.protocol)&&!!u.hostname}
