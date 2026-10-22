@@ -3667,3 +3667,17 @@ body[data-reader-theme="papel"] .dossie-summary {
 .case-timeline-editorial-guide li {
   margin: .25rem 0;
 }
+
+/* Fase 3.2: cabeçalhos de períodos sem mover acontecimentos. */
+.case-page #caso-historia .case-timeline-period-label,
+.case-content-timeline .case-timeline-period-label {
+  display: block;
+  grid-column: 1 / -1;
+  margin: .3rem 0;
+  padding: .35rem .65rem;
+  border-bottom: 1px solid currentColor;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  overflow-wrap: anywhere;
+}
