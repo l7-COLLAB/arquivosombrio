@@ -3439,3 +3439,25 @@ body[data-reader-theme="papel"] .dossie-summary {
     .case-evidence-metadata { grid-template-columns: 1fr; gap: .1rem; }
     .case-evidence-metadata dd { margin-bottom: .5rem; }
 }
+
+/* Fase 2 — detalhes opcionais em acontecimentos cronológicos. */
+.case-page #caso-historia .case-timeline-event-details {
+    grid-column: 1 / -1;
+    min-width: 0;
+    margin: .35rem 0 0;
+    overflow-wrap: anywhere;
+}
+.case-page #caso-historia .case-timeline-event-details summary {
+    color: var(--case-block-accent, #bc9969);
+    cursor: pointer;
+    font-weight: 600;
+    line-height: 1.55;
+}
+.case-page #caso-historia .case-timeline-event-details summary:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+}
+.case-page #caso-historia .case-timeline-event-details p {
+    margin: .55rem 0 0;
+    white-space: pre-line;
+}
