@@ -2384,6 +2384,7 @@ function renderizarCronologiaBlocoDossie(dados) {
 
     const gruposAnuais = new Map();
     const categoriasPresentes = new Set();
+    const naturezasPresentes = new Set();
     const categoriaEvento = item => {
         if (!item || typeof item !== "object") return "";
         const valor = obterCampoItemDossie(item, ["categoria", "tipo_evento", "fase_investigativa"]);
@@ -2429,6 +2430,7 @@ function renderizarCronologiaBlocoDossie(dados) {
             .trim().replace(/\s+/g, "_");
         const natureza = naturezas[chaveNatureza] || "";
         if (natureza) {
+            naturezasPresentes.add(natureza);
             const identificador = criarElementoTextoDossie("span", natureza);
             identificador.className = "case-timeline-documentary-nature";
             linha.appendChild(identificador);
@@ -2578,6 +2580,32 @@ function renderizarCronologiaBlocoDossie(dados) {
 
     if (!lista.childNodes.length) {
         return null;
+    }
+
+    // Guia documental apenas com naturezas declaradas nos registros.
+    // O guia não atribui nem altera classificações.
+    if (naturezasPresentes.size) {
+        const guia = document.createElement("aside");
+        guia.className = "case-timeline-editorial-guide";
+        guia.setAttribute("aria-label", "Guia de natureza documental");
+        guia.appendChild(criarElementoTextoDossie(
+            "strong", "Como interpretar os registros"
+        ));
+        const definicoes = {
+            "Fato documentado": "Informação assim classificada pelo editor; consulte a referência.",
+            "Testemunho": "Relato atribuído a uma fonte, não necessariamente comprovado.",
+            "Hipótese": "Interpretação ainda sujeita a confirmação.",
+            "Controvérsia": "Informação ou interpretação em disputa."
+        };
+        const itensGuia = document.createElement("ul");
+        naturezasPresentes.forEach(rotulo => {
+            const itemGuia = document.createElement("li");
+            itemGuia.appendChild(criarElementoTextoDossie("strong", rotulo + ": "));
+            itemGuia.appendChild(document.createTextNode(definicoes[rotulo]));
+            itensGuia.appendChild(itemGuia);
+        });
+        guia.appendChild(itensGuia);
+        secao.appendChild(guia);
     }
 
     let seletorCategoria = null;
