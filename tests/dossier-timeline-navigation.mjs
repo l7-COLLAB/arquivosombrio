@@ -44,4 +44,7 @@ assert.match(body,/data_documento_fonte/);
 assert.match(body,/identificador_documento/);
 assert.match(body,/Referência documental do acontecimento/);
 assert.match(css,/case-timeline-source-name strong/);
+assert.match(body,/case-timeline-editorial-guide/);
+assert.match(body,/naturezasPresentes.size/);
+assert.match(css,/case-timeline-editorial-guide/);
 console.log("Verificações estruturais da cronologia aprovadas.");
