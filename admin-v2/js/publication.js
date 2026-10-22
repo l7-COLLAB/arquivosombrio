@@ -21,6 +21,29 @@ export function compileDossierForPublic(draft){
  if(!temBloco("cronologia"))warnings.push("Revisão documental: cronologia estruturada não identificada. Avalie se é aplicável.");
  if(!temBloco("documento")&&!temLista(d.documentos))warnings.push("Revisão documental: sem documentos vinculados. Isso não impede a publicação.");
  if(!temBloco("evidencias")&&!temLista(d.evidencias))warnings.push("Revisão documental: evidências estruturadas não identificadas; verifique se são pertinentes ao caso.");
+ // Avisos de rastreabilidade apenas para cronologias estruturadas.
+ compiled.filter(b=>b.tipo==="cronologia").forEach((bloco,indice)=>{
+  const itens=Array.isArray(bloco.dados?.itens)?bloco.dados.itens:[];
+  const vistos=new Set();
+  itens.forEach((item,pos)=>{
+   if(!item||typeof item!=="object"||Array.isArray(item))return;
+   const num=pos+1,prefix="Cronologia "+(indice+1)+", evento "+num+": ";
+   const fonte=txt(item.fonte||item.referencia);
+   const link=txt(item.link_fonte||item.fonte_url||item.url_fonte);
+   const instituicao=txt(item.instituicao_fonte||item.orgao_fonte);
+   const identificador=txt(item.identificador_documento||item.numero_documento);
+   if(link){
+    let valido=false;
+    try{const u=new URL(link);valido=["http:","https:"].includes(u.protocol)&&!!u.hostname}
+    catch{}
+    if(!valido)warnings.push(prefix+"URL da fonte inválida (somente http/https).");
+    else if(vistos.has(link.trim().toLowerCase()))warnings.push(prefix+"URL de fonte repetida no mesmo bloco; confira se corresponde a documentos distintos.");
+    vistos.add(link.trim().toLowerCase());
+   }
+   if((fonte||instituicao||identificador)&&!link)warnings.push(prefix+"referência sem link verificável; confirme se a fonte está disponível apenas offline.");
+   if(link&&!fonte&&!instituicao&&!identificador)warnings.push(prefix+"link sem identificação da fonte ou instituição.");
+  });
+ });
  const row={
   titulo:txt(d.titulo),categoria:txt(d.categoria),local:txt(d.local),ano:txt(d.ano),status:txt(d.status),
   imagem:txt(d.imagem),resumo:txt(d.resumo),historia:txt(d.historia),
