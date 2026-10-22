@@ -2383,6 +2383,21 @@ function renderizarCronologiaBlocoDossie(dados) {
         document.createElement("ol");
 
     const gruposAnuais = new Map();
+    const categoriasPresentes = new Set();
+    const categoriaEvento = item => {
+        if (!item || typeof item !== "object") return "";
+        const valor = obterCampoItemDossie(item, ["categoria", "tipo_evento", "fase_investigativa"]);
+        const opcoes = {
+            investigacao: "Investigação",
+            pericia: "Perícia",
+            julgamento: "Julgamento",
+            depoimento: "Depoimento",
+            descoberta: "Descoberta",
+            desfecho: "Desfecho"
+        };
+        const normalizado = valor.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        return opcoes[normalizado] || "";
+    };
     const identificarAno = item => {
         const valor = typeof item === "string"
             ? item.split(":")[0]
@@ -2396,6 +2411,11 @@ function renderizarCronologiaBlocoDossie(dados) {
         const linha =
             document.createElement("li");
         const ano = identificarAno(item);
+        const categoria = categoriaEvento(item);
+        if (categoria) {
+            categoriasPresentes.add(categoria);
+            linha.dataset.categoriaCronologia = categoria;
+        }
         if (ano && !gruposAnuais.has(ano)) {
             linha.id = `cronologia-ano-${ano}-${gruposAnuais.size + 1}`;
             gruposAnuais.set(ano, linha.id);
@@ -2526,6 +2546,32 @@ function renderizarCronologiaBlocoDossie(dados) {
             navegacao.appendChild(ancora);
         });
         secao.appendChild(navegacao);
+    }
+    if (categoriasPresentes.size >= 2) {
+        const filtros = document.createElement("div");
+        filtros.className = "case-timeline-filters";
+        const rotulo = criarElementoTextoDossie("label", "Filtrar acontecimentos:");
+        const seletor = document.createElement("select");
+        seletor.setAttribute("aria-label", "Filtrar acontecimentos por categoria");
+        const inserirOpcao = (valor, titulo) => {
+            const opcao = document.createElement("option");
+            opcao.value = valor;
+            opcao.textContent = titulo;
+            seletor.appendChild(opcao);
+        };
+        inserirOpcao("", "Todos os acontecimentos");
+        Array.from(categoriasPresentes).sort((a,b) => a.localeCompare(b,"pt-BR"))
+            .forEach(categoria => inserirOpcao(categoria, categoria));
+        seletor.addEventListener("change", () => {
+            Array.from(lista.children).forEach(linha => {
+                // Registros sem categoria nunca desaparecem do filtro.
+                const categoria = linha.dataset.categoriaCronologia || "";
+                linha.hidden = Boolean(seletor.value && categoria && categoria !== seletor.value);
+            });
+        });
+        filtros.appendChild(rotulo);
+        filtros.appendChild(seletor);
+        secao.appendChild(filtros);
     }
     secao.appendChild(lista);
     return secao;
