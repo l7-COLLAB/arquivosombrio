@@ -45,3 +45,12 @@ Status: **pendente de validação visual e funcional**. Não equivale a aprovaç
 - Capturas: **não coletadas**
 - Bloqueios: **ausência de ambiente de prévia da branch acessível nesta sessão**
 - Decisão: **não publicar**
+
+## Conferência técnica — 22/10/2026
+
+- Pull request #75 permaneceu aberto, em rascunho, com `mergeable=true` e `mergeable_state=clean` no SHA `855703a5185a0dbcf61686f951c146223ac03d2f`.
+- Seis workflows deste commit concluíram com `success`: Regressão documental, Admin V2, sitemap/SEO, marcador de leitura, controles móveis e leituras relacionadas.
+- Esses testes verificam código e regressões automatizadas; **não constituem teste visual no navegador**.
+- A tentativa de inspecionar `https://arquivosombrio.net.br/caso.html?id=28` não foi bem-sucedida no ambiente de navegação desta sessão.
+- Os cenários D01–D16 permanecem pendentes de homologação visual/manual em prévia da ramificação. O modo Lite exige dispositivo compatível.
+- Decisão: **não publicar e não marcar homologação como aprovada**.
