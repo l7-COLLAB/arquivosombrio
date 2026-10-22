@@ -54,3 +54,12 @@ Status: **pendente de validação visual e funcional**. Não equivale a aprovaç
 - A tentativa de inspecionar `https://arquivosombrio.net.br/caso.html?id=28` não foi bem-sucedida no ambiente de navegação desta sessão.
 - Os cenários D01–D16 permanecem pendentes de homologação visual/manual em prévia da ramificação. O modo Lite exige dispositivo compatível.
 - Decisão: **não publicar e não marcar homologação como aprovada**.
+
+## Conferência de artefatos — 22/10/2026
+
+- Execução Chromium: https://github.com/l7-COLLAB/arquivosombrio/actions/runs/39857888667, concluída com `success`.
+- Artefato `capturas-dossie-documental` localizado, tamanho 189288 bytes, `expired=false` no momento da conferência.
+- Cenários automatizados: sete cartões, botão expandir/recolher, atributos de segurança dos links, ausência de rolagem horizontal em 375, 768 e 1280 px. Não representam a totalidade dos cenários D01–D16.
+- As imagens PNG do artefato **não foram abertas ou inspecionadas visualmente nesta sessão**. Não declarar aprovação estética ou homologação manual.
+- GitHub informou PR #75 em rascunho, `mergeable=true` e `mergeable_state=clean` no commit `6a4f98e74de28d495aac0dd3758e61c61f208d3f`.
+- **Decisão: manter a PR em rascunho e não realizar merge.** Necessária análise humana das capturas e testes da página real com modos de leitura.
