@@ -21,4 +21,9 @@ assert.match(body,/campoPesquisa\.addEventListener\("input", atualizarVisibilida
 assert.match(body,/seletor\.addEventListener\("change", atualizarVisibilidade\)/);
 assert.match(body,/correspondeCategoria && correspondeTexto/);
 assert.match(css,/case-timeline-search input:focus-visible/);
+assert.match(body,/case-timeline-empty/);
+assert.match(body,/case-timeline-reset/);
+assert.match(body,/atalhosAnuais\.forEach/);
+assert.match(body,/campoPesquisa\.focus\(\)/);
+assert.match(css,/case-timeline-navigation a\[hidden\]/);
 console.log("Verificações estruturais da cronologia aprovadas.");
