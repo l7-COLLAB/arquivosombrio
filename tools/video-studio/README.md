@@ -1,4 +1,4 @@
-# Arquivo Sombrio Studio — primeira versão
+# Arquivo Sombrio Studio — versão 0.1.1
 
 Aplicativo local para Windows que entrega **MP4 de verdade**, com roteiro dividido
 em cenas, fotografias, narração, legendas e transições. Interface em português.
@@ -52,7 +52,7 @@ pelos controles. Não cole instruções de edição no campo de narração.
 - Whisper local opcional para transcrever áudio sem SRT, pelo `INSTALAR_TRANSCRICAO.bat`.
 - Legendas amarelas com contorno preto, até duas linhas, na parte central inferior.
 - Título branco fixo no canto superior direito, com margem para controles do Instagram.
-- Fotografias em preto e branco, movimento suave e dissolução entre cenas.
+- Fotografias em preto e branco, preservadas inteiras sobre fundo escuro, sem movimento automático e com dissolução entre cenas.
 - Fade de imagem e áudio no início e no fim. O fade é aplicado depois dos textos.
 - Música importada com volume ajustável e redução automática durante a voz.
 - Prévia 360×640 e exportação 1080×1920, H.264/AAC, 30 fps.
@@ -141,3 +141,12 @@ python -m unittest discover -s tests -v
 
 Software gratuito sob MIT. APIs podem ter custos e limites próprios. Fotografia
 e voz dependem da disponibilidade e das condições de seus respectivos serviços.
+
+
+## Correção 0.1.1
+
+Preserva a fotografia inteira, sem cortar para preencher 9:16. Áreas livres recebem fundo escuro. Remove o zoom automático que podia causar saltos de pixels. Invalida apenas o cache visual anterior; projetos, imagens e áudio permanecem.
+
+Para atualizar a instalação existente: feche o Studio com Ctrl+C e copie somente engine.py desta versão para a pasta original, substituindo o arquivo. Reabra INICIAR.bat e gere uma nova prévia. Não substitua nem apague a pasta projects. Não é necessário reinstalar dependências.
+
+Fotos reais devem ser marcadas como Registro real verificado em cada cena; a atualização não modifica essa classificação automaticamente.
