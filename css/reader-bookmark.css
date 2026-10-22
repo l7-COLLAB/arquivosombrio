@@ -31,3 +31,69 @@ body.case-reading .case-reader-toolbar .public-narration-player { margin-top:0 !
  body.case-reading .as-reader-bookmark { padding:0 8px; }
  body.case-reading .as-reader-bookmark > summary { padding:5px 2px; }
 }
+
+/* Vidro fosco discreto: visual inspirado nos controles translúcidos modernos.
+   Os fundos mais opacos são um fallback para leitores sem backdrop-filter. */
+body.case-reading .case-reader-toolbar {
+  background:rgba(19,17,16,.94) !important;
+  background-image:none !important;
+  border-bottom:1px solid rgba(222,200,163,.18) !important;
+  box-shadow:0 5px 20px rgba(0,0,0,.16) !important;
+}
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))) {
+  body.case-reading .case-reader-toolbar {
+    background:rgba(19,17,16,.68) !important;
+    -webkit-backdrop-filter:blur(18px) saturate(125%);
+    backdrop-filter:blur(18px) saturate(125%);
+  }
+}
+body.case-reading .case-reader-toolbar .case-reader-action,
+body.case-reading .case-reader-toolbar .case-reader-back {
+  border-radius:13px;
+  transition:background-color .18s ease,box-shadow .18s ease;
+}
+body.case-reading .case-reader-toolbar .case-reader-action:hover,
+body.case-reading .case-reader-toolbar .case-reader-action.active,
+body.case-reading .case-reader-toolbar .case-reader-back:hover {
+  background:rgba(242,222,188,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09);
+}
+body.case-reading .as-reader-bookmark { border-top-color:rgba(220,199,165,.10); }
+body.case-reading .as-reader-bookmark > summary {
+  border-radius:12px;
+  background:rgba(223,197,156,.08);
+  margin:3px 0;
+}
+body.case-reading .as-reader-bookmark > summary:hover { background:rgba(223,197,156,.16); }
+body.case-reading .as-reader-bookmark-actions button { border-radius:12px; }
+body.case-reading .case-reader-toolbar .public-narration-player {
+  border-radius:14px !important;
+  background:rgba(35,29,25,.78) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+body.case-reading[data-reader-theme="papel"] .case-reader-toolbar {
+  background:rgba(231,216,190,.95) !important;
+  background-image:none !important;
+  border-bottom-color:rgba(89,66,42,.21) !important;
+  box-shadow:0 5px 16px rgba(67,49,29,.10) !important;
+}
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))) {
+  body.case-reading[data-reader-theme="papel"] .case-reader-toolbar {
+    background:rgba(231,216,190,.76) !important;
+  }
+}
+body.case-reading[data-reader-theme="papel"] .case-reader-toolbar .case-reader-action:hover,
+body.case-reading[data-reader-theme="papel"] .case-reader-toolbar .case-reader-action.active,
+body.case-reading[data-reader-theme="papel"] .case-reader-toolbar .case-reader-back:hover {
+  background:rgba(89,66,42,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3);
+}
+body.case-reading[data-reader-theme="papel"] .as-reader-bookmark > summary { background:rgba(89,66,42,.09); }
+body.case-reading[data-reader-theme="papel"] .case-reader-toolbar .public-narration-player {
+  background:rgba(245,235,216,.82) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+}
+@media(prefers-reduced-motion:reduce) {
+  body.case-reading .case-reader-toolbar .case-reader-action,
+  body.case-reading .case-reader-toolbar .case-reader-back { transition:none; }
+}
