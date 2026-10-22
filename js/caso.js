@@ -2457,6 +2457,23 @@ function renderizarCronologiaBlocoDossie(dados) {
                     )
                 );
             }
+            // Detalhes adicionais são opcionais e ficam acessíveis por teclado.
+            // A descrição principal permanece sempre visível.
+            const detalhesEvento = obterCampoItemDossie(
+                item, ["detalhes", "contexto", "informacoes_adicionais"]
+            );
+            if (detalhesEvento && detalhesEvento !== descricao) {
+                const expansivel = document.createElement("details");
+                expansivel.className = "case-timeline-event-details";
+                expansivel.appendChild(
+                    criarElementoTextoDossie("summary", "Ler detalhes do acontecimento")
+                );
+                expansivel.appendChild(
+                    criarElementoTextoDossie("p", detalhesEvento)
+                );
+                linha.appendChild(expansivel);
+            }
+
             // Referências por evento são adicionadas somente se o editor informou URL.
             const fonte = obterCampoItemDossie(item, ["fonte", "referencia"]);
             const link = criarLinkExternoDossie(
