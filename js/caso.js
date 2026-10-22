@@ -2534,19 +2534,38 @@ function renderizarCronologiaBlocoDossie(dados) {
 
             // Referências por evento são adicionadas somente se o editor informou URL.
             const fonte = obterCampoItemDossie(item, ["fonte", "referencia"]);
+            const instituicaoFonte = obterCampoItemDossie(
+                item, ["instituicao_fonte", "orgao_fonte"]
+            );
+            const dataFonte = obterCampoItemDossie(
+                item, ["data_documento_fonte", "data_fonte"]
+            );
+            const identificadorFonte = obterCampoItemDossie(
+                item, ["identificador_documento", "numero_documento"]
+            );
             const link = criarLinkExternoDossie(
                 item.link_fonte || item.fonte_url || item.url_fonte,
                 "Consultar fonte do evento",
                 "case-timeline-source-link"
             );
-            if (fonte || link) {
+            if (fonte || instituicaoFonte || dataFonte || identificadorFonte || link) {
                 const referencia = document.createElement("div");
                 referencia.className = "case-timeline-source";
-                if (fonte) {
-                    const nomeFonte = criarElementoTextoDossie("span", fonte);
-                    nomeFonte.className = "case-timeline-source-name";
-                    referencia.appendChild(nomeFonte);
-                }
+                referencia.setAttribute("aria-label", "Referência documental do acontecimento");
+                const metadados = [
+                    ["Fonte", fonte],
+                    ["Instituição", instituicaoFonte],
+                    ["Data do documento", dataFonte],
+                    ["Identificador", identificadorFonte]
+                ];
+                metadados.forEach(([rotulo, valor]) => {
+                    if (!valor) return;
+                    const campo = document.createElement("span");
+                    campo.className = "case-timeline-source-name";
+                    campo.appendChild(criarElementoTextoDossie("strong", rotulo + ": "));
+                    campo.appendChild(document.createTextNode(valor));
+                    referencia.appendChild(campo);
+                });
                 if (link) referencia.appendChild(link);
                 linha.appendChild(referencia);
             }
