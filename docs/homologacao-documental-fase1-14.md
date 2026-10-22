@@ -1,0 +1,47 @@
+# Homologação documental — Fase 1.14
+
+Status: **pendente de validação visual e funcional**. Não equivale a aprovação para produção.
+
+## Pré-condições
+
+- Testar uma prévia publicada a partir da ramificação `feat/padronizacao-documental-etapa1`, não a página de produção (`main`).
+- Não inserir informações de casos reais em fixtures de demonstração.
+- Conferir os resultados do workflow `Regressão documental` no commit da proposta.
+- Registrar data, dispositivo/navegador, URL de prévia, capturas e resultado para cada cenário.
+
+## Matriz de testes manuais
+
+| ID | Cenário | Critério para aprovação | Resultado |
+| --- | --- | --- | --- |
+| D01 | Dossiê com mais de cinco evidências | Todas aparecem, na ordem e sem truncamento | Pendente |
+| D02 | Evidência expandida | Botão ABRIR/FECHAR alterna o conteúdo e `aria-expanded` corresponde ao estado | Pendente |
+| D03 | Evidências antigas em texto livre | Título e detalhes legíveis sem sumiço de informação | Pendente |
+| D04 | Evidência com metadados | Classificação, procedência, data e situação aparecem apenas se cadastradas | Pendente |
+| D05 | Lista de fontes estruturadas | Títulos, instituições, datas e URLs exibidos corretamente | Pendente |
+| D06 | Fonte textual com título e URL em linhas distintas | Aparece como uma referência com link válido | Pendente |
+| D07 | Fontes com a mesma URL | Não duplicar visualmente; manter a referência completa no banco | Pendente |
+| D08 | Fonte sem URL válida | Exibir referência textual sem criar link inválido | Pendente |
+| D09 | Documento com metadados opcionais | Campos presentes aparecem, ausentes não geram lacunas visuais | Pendente |
+| D10 | Documento com link original | Link abre em nova aba com `noopener noreferrer` | Pendente |
+| D11 | Cronologia documentada | Todos os eventos e datas registrados permanecem visíveis | Pendente |
+| D12 | Desktop e celular (375px / 768px / 1280px) | Sem rolagem horizontal indevida ou texto cortado | Pendente |
+| D13 | Modos livro e scroll; escuro e papel antigo | Fontes, links e cartões legíveis; sem quebra de paginação crítica | Pendente |
+| D14 | Modo Lite iOS 9.3.5 | Sem regressão de navegação e leitura; testar em dispositivo real se possível | Pendente |
+| D15 | Admin V2 | Compilação mantém avisos editoriais não bloqueantes e compatibilidade | Pendente |
+| D16 | Acessibilidade via teclado | Links e botões navegáveis; foco visível e sem armadilhas | Pendente |
+
+## Critérios de publicação
+
+1. Todas as verificações automatizadas do commit candidato concluídas com sucesso.
+2. Cenários D01–D13 e D15–D16 aprovados na prévia, ou exceções documentadas e aceitas antes do merge. D14 exige verificação em equipamento compatível.
+3. Nenhuma alteração automática nos dados publicados do Supabase.
+4. Revisão final do diff, links e segurança.
+5. Merge da PR #75 somente após homologação explícita.
+
+## Registro de execução
+
+- Prévia/ambiente: **não configurado nesta etapa**
+- Navegadores e dispositivos: **não executado**
+- Capturas: **não coletadas**
+- Bloqueios: **ausência de ambiente de prévia da branch acessível nesta sessão**
+- Decisão: **não publicar**
