@@ -1,0 +1,3 @@
+# Isolated environment; do not install in the Studio's .venv.
+chatterbox-tts==0.1.7
+faster-whisper>=1.1,<2
