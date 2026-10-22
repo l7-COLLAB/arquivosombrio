@@ -12,4 +12,8 @@ assert.match(body,/gruposAnuais\.set\(ano, linha\.id\)/);
 assert.match(body,/className = "case-timeline-event-details"/);
 assert.match(body,/Consultar fonte do evento/);
 assert.match(css,/case-timeline-navigation a:focus-visible/);
+assert.match(body,/case-timeline-filters/);
+assert.match(body,/categoriaEvento\(item\)/);
+assert.match(body,/linha\.hidden = Boolean\(/);
+assert.match(css,/case-content-timeline li\[hidden\]/);
 console.log("Verificações estruturais da cronologia aprovadas.");
