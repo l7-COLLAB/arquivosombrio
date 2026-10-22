@@ -9,6 +9,7 @@ on:
       - 'tests/publication-editorial-audit.mjs'
       - 'tests/evidence-metadata.mjs'
       - 'tests/dossier-evidence-completeness.mjs'
+      - 'tests/dossier-browser-smoke.mjs'
       - '.github/workflows/documental-regression.yml'
   workflow_dispatch:
 
@@ -34,3 +35,17 @@ jobs:
           node tests/evidence-metadata.mjs
           node tests/dossier-evidence-completeness.mjs
           node tests/dossier-source-renderer.mjs
+      - name: Instalar navegador para homologação
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Homologar interface com dados fictícios
+        run: node tests/dossier-browser-smoke.mjs
+      - name: Guardar capturas para revisão
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capturas-dossie-documental
+          path: artifacts/documental/*.png
+          if-no-files-found: ignore
+          retention-days: 7
