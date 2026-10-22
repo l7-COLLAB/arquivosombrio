@@ -73,5 +73,13 @@ try {
     await page.screenshot({path:`${outputs}/dossie-${width}.png`,fullPage:true});
     await page.close();
   }
+  const preview = await browser.newPage({viewport:{width:375,height:812}});
+  await preview.goto(new URL("../previews/cronologia-fase2.html", import.meta.url).href);
+  await preview.locator(".case-content-timeline ol > li").first().waitFor({timeout:10000});
+  assert.equal(await preview.locator(".case-content-timeline ol > li").count(),6);
+  await preview.locator('.case-timeline-search input[type="search"]').fill("pericia");
+  assert.equal(await preview.locator(".case-content-timeline ol > li:visible").count(),1);
+  await preview.screenshot({path:`${outputs}/cronologia-previa-mobile.png`,fullPage:true});
+  await preview.close();
   console.log("Smoke test de navegador aprovado (375, 768 e 1280 px).");
 } finally { await browser.close(); }
