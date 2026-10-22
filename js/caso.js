@@ -2382,10 +2382,24 @@ function renderizarCronologiaBlocoDossie(dados) {
     const lista =
         document.createElement("ol");
 
+    const gruposAnuais = new Map();
+    const identificarAno = item => {
+        const valor = typeof item === "string"
+            ? item.split(":")[0]
+            : obterCampoItemDossie(item, ["data", "periodo", "quando"]);
+        const match = String(valor || "").match(/\b(?:1[5-9]\d{2}|20\d{2}|21\d{2})\b/);
+        return match ? match[0] : "";
+    };
+
     itens.forEach(item => {
 
         const linha =
             document.createElement("li");
+        const ano = identificarAno(item);
+        if (ano && !gruposAnuais.has(ano)) {
+            linha.id = `cronologia-ano-${ano}-${gruposAnuais.size + 1}`;
+            gruposAnuais.set(ano, linha.id);
+        }
 
         if (typeof item === "string") {
 
@@ -2499,6 +2513,20 @@ function renderizarCronologiaBlocoDossie(dados) {
         return null;
     }
 
+    if (gruposAnuais.size >= 2) {
+        const navegacao = document.createElement("nav");
+        navegacao.className = "case-timeline-navigation";
+        navegacao.setAttribute("aria-label", "Navegar pela cronologia por ano");
+        navegacao.appendChild(
+            criarElementoTextoDossie("span", "Ir para o ano:", "case-timeline-navigation-label")
+        );
+        gruposAnuais.forEach((id, ano) => {
+            const ancora = criarElementoTextoDossie("a", ano);
+            ancora.href = `#${id}`;
+            navegacao.appendChild(ancora);
+        });
+        secao.appendChild(navegacao);
+    }
     secao.appendChild(lista);
     return secao;
 }
