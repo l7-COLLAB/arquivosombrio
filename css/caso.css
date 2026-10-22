@@ -3571,3 +3571,44 @@ body[data-reader-theme="papel"] .dossie-summary {
     outline: 2px solid currentColor;
     outline-offset: 2px;
 }
+
+/* Fase 2.8: metadados e referências na cronologia. */
+.case-timeline-category {
+  display: inline-block;
+  grid-column: 1 / -1;
+  width: fit-content;
+  max-width: 100%;
+  padding: .2rem .5rem;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font-size: .75rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.case-timeline-source,
+.case-timeline-source-name,
+.case-timeline-source-link {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.case-timeline-source-link {
+  text-underline-offset: .16em;
+}
+@media (max-width: 600px) {
+  .case-timeline-navigation a {
+    min-height: 40px;
+    box-sizing: border-box;
+    padding: .5rem .7rem;
+  }
+  .case-timeline-filters,
+  .case-timeline-search,
+  .case-content-timeline li {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .case-timeline-filters select {
+    max-width: 100%;
+    width: 100%;
+  }
+}
