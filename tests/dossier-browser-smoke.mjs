@@ -68,6 +68,23 @@ try {
     assert.equal(await details.getAttribute("open"),"");
     const fonteEvento=timeline.locator(".case-timeline-source-link").first();
     assert.equal(await fonteEvento.getAttribute("target"),"_blank");
+    await page.evaluate(() => {
+      const extensos=Array.from({length:9},(_,i)=>({
+        data: i<3?"1941":i<6?"1942":"1943",
+        descricao:"Acontecimento de teste "+(i+1),
+        categoria:"Investigação"
+      }));
+      document.getElementById("fixture").append(
+        renderizarCronologiaBlocoDossie({titulo:"Cronologia longa",itens:extensos})
+      );
+    });
+    const longa=page.locator(".case-content-timeline").last();
+    assert.equal(await longa.locator("ol > li").count(),9);
+    assert.deepEqual(await longa.locator(".case-timeline-period-label").allTextContents(),["1941","1942","1943"]);
+    await longa.locator('input[type="search"]').fill("teste 5");
+    assert.deepEqual(await longa.locator(".case-timeline-period-label").allTextContents(),["1942"]);
+    await longa.locator(".case-timeline-reset").click();
+    assert.deepEqual(await longa.locator(".case-timeline-period-label").allTextContents(),["1941","1942","1943"]);
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
     assert(!overflow,`Rolagem horizontal em ${width}px`);
     await page.screenshot({path:`${outputs}/dossie-${width}.png`,fullPage:true});
