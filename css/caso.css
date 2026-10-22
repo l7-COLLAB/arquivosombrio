@@ -3612,3 +3612,17 @@ body[data-reader-theme="papel"] .dossie-summary {
     width: 100%;
   }
 }
+
+/* Fase 2.11 — sinalização da natureza editorial, sem afirmar veracidade automaticamente. */
+.case-timeline-documentary-nature {
+  display: inline-block;
+  grid-column: 1 / -1;
+  width: fit-content;
+  max-width: 100%;
+  border-left: 3px solid currentColor;
+  padding: .2rem .55rem;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  overflow-wrap: anywhere;
+}
