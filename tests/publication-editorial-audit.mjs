@@ -31,4 +31,13 @@ assert(refs.warnings.some(w=>w.includes("URL de fonte repetida")));
 assert(refs.warnings.some(w=>w.includes("referência sem link verificável")));
 assert(refs.warnings.some(w=>w.includes("link sem identificação")));
 assert.equal(refs.row.conteudo_blocos[0].dados.itens.length,5,"Auditoria não pode retirar eventos");
+const natureza = compileDossierForPublic({...base,conteudo_blocos:[{tipo:"cronologia",dados:{itens:[
+ {data:"1941",descricao:"Evento sem referência",natureza_documental:"fato_documentado"},
+ {data:"1942",descricao:"Classificação desconhecida",classificacao_editorial:"não verificada"},
+ {data:"1943",descricao:"Testemunho com fonte",natureza_documental:"testemunho",fonte:"Documento X"}
+]}}]});
+assert.equal(natureza.compatible,true);
+assert(natureza.warnings.some(w=>w.includes("fato classificado como documentado sem referência")));
+assert(natureza.warnings.some(w=>w.includes("natureza editorial não reconhecida")));
+assert.equal(natureza.row.conteudo_blocos[0].dados.itens.length,3);
 console.log("Auditoria editorial V2: testes aprovados.");
