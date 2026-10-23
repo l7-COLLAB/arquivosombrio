@@ -19,3 +19,6 @@ const x=normalizarEvento(structured);assert.deepEqual(x.evento,structured);asser
 assert.equal(prepararCronologia([v,"2000: evento",structured]).length,3);
 assert.throws(()=>prepararCronologia({}),TypeError);
 console.log("Normalização conservadora aprovada.");
+
+for(const invalida of ["31/02/2008: data impossível","31 de abril de 1892: data impossível","29/02/1900: século não bissexto"]){const res=normalizarEvento(invalida);assert.equal(res.alterado,false);assert.equal(res.evento,invalida);assert.equal(res.exigeRevisao,true);}
+assert.equal(normalizarEvento("29/02/2000: data válida").alterado,true);
