@@ -3,7 +3,8 @@ import {readFileSync} from "node:fs";
 const pacote=JSON.parse(readFileSync(new URL("../docs/pacote-integracao-dyatlov-somerton-fase4-5.json",import.meta.url),"utf8"));
 const codigo=readFileSync(new URL("../admin-v2/js/publication.js",import.meta.url),"utf8");
 const {compileDossierForPublic}=await import("data:text/javascript;base64,"+Buffer.from(codigo).toString("base64"));
-import {verificarAlvoEditorial} from "../admin-v2/js/editorial-identity-guard.js";
+const guarda=readFileSync(new URL("../admin-v2/js/editorial-identity-guard.js",import.meta.url),"utf8");
+const {verificarAlvoEditorial}=await import("data:text/javascript;base64,"+Buffer.from(guarda).toString("base64"));
 assert.equal(pacote.status,"rascunho_editorial_nao_publicar");
 assert.equal(pacote.integracoes.length,2);
 for(const proposta of pacote.integracoes){
