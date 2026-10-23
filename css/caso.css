@@ -3798,11 +3798,12 @@ body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeli
 body.case-reading[data-reader-theme="papel"] .case-history h1,
 body.case-reading[data-reader-theme="papel"] .case-main-content h1,
 body.case-reading[data-reader-theme="papel"] .case-main-content h2,
-body.case-reading[data-reader-theme="papel"] #caso-historia .evidence-card h3,
+body.case-reading[data-reader-theme="papel"] .evidence-card h3,
+body.case-reading[data-reader-theme="papel"] main > h1,
 body.case-reading[data-reader-theme="papel"] #caso-historia .case-content-timeline h2 {
   color: #302519;
 }
-body.case-reading[data-reader-theme="papel"] #caso-historia .evidence-card .evidence-number,
-body.case-reading[data-reader-theme="papel"] #caso-historia .evidence-card .evidence-open-label {
+body.case-reading[data-reader-theme="papel"] .evidence-card .evidence-number,
+body.case-reading[data-reader-theme="papel"] .evidence-card .evidence-open-label {
   color: #49321e;
 }
