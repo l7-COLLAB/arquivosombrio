@@ -99,6 +99,22 @@ try {
     }),true,"Foco do acontecimento deve permanecer visível");
     await longa.locator(".case-timeline-reset").click();
     assert.deepEqual(await longa.locator(".case-timeline-period-label").allTextContents(),["1941","1942","1943"]);
+    for (const theme of ["arquivo","papel"]) {
+      await page.evaluate(value => {
+        document.body.classList.add("case-reading","case-paginated");
+        document.body.dataset.readerTheme=value;
+      },theme);
+      const styles=await longa.locator(".case-timeline-step-navigation button").first().evaluate(el=>{
+        const style=getComputedStyle(el);
+        return {color:style.color,background:style.backgroundColor,border:style.borderTopColor};
+      });
+      assert.notEqual(styles.background,"rgba(0, 0, 0, 0)");
+      assert.notEqual(styles.border,"rgba(0, 0, 0, 0)");
+    }
+    await page.evaluate(()=>{
+      document.body.classList.remove("case-reading","case-paginated");
+      delete document.body.dataset.readerTheme;
+    });
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
     assert(!overflow,`Rolagem horizontal em ${width}px`);
     await page.screenshot({path:`${outputs}/dossie-${width}.png`,fullPage:true});
