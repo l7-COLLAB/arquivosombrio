@@ -8,6 +8,7 @@ on:
       - 'admin-v2/js/editorial-identity-guard.js'
       - 'admin-v2/js/chronology-normalizer.js'
       - 'admin-v2/js/chronology-pending-classifier.js'
+      - 'admin-v2/js/chronology-temporal-preview.js'
       - 'tests/dossier-source-renderer.mjs'
       - 'tests/publication-editorial-audit.mjs'
       - 'tests/evidence-metadata.mjs'
@@ -18,6 +19,7 @@ on:
       - 'tests/dossier-editorial-integration-package.mjs'
       - 'tests/dossier-chronology-normalizer.mjs'
       - 'tests/dossier-chronology-pending-classifier.mjs'
+      - 'tests/dossier-chronology-temporal-preview.mjs'
       - 'docs/relatorio-normalizacao-acervo-fase5-9.json'
       - 'tests/dossier-chronology-real-sample.mjs'
       - 'docs/amostra-normalizacao-fase5-5.json'
@@ -53,6 +55,7 @@ jobs:
           node tests/dossier-editorial-integration-package.mjs
           node tests/dossier-chronology-normalizer.mjs
           node tests/dossier-chronology-pending-classifier.mjs
+          node tests/dossier-chronology-temporal-preview.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
