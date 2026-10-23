@@ -3,6 +3,7 @@
 const YEAR = /^((?:1[5-9]|20)\d{2})\s*[:—–-]\s*(.+)$/u;
 const DATE = /^((?:0?[1-9]|[12]\d|3[01])\s+de\s+[a-záàâãéêíóôõúç]+\s+de\s+(?:1[5-9]|20)\d{2})\s*[:—–-]\s*(.+)$/iu;
 const SLASH = /^((?:0?[1-9]|[12]\d|3[01])\/(?:0?[1-9]|1[0-2])\/(?:1[5-9]|20)\d{2})\s*[:—–-]\s*(.+)$/u;
+const MES_ANO = /^((?:janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro) de (?:1[5-9]|20)\d{2})\s*[:—–-]\s*(.+)$/iu;
 const MESES={janeiro:1,fevereiro:2,março:3,abril:4,maio:5,junho:6,julho:7,agosto:8,setembro:9,outubro:10,novembro:11,dezembro:12};
 function dataValida(data){
  const slash=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(data);
@@ -28,7 +29,7 @@ export function normalizarEvento(evento) {
  if (typeof evento !== "string") return {evento:structuredClone(evento),alterado:false,exigeRevisao:false};
  const original=evento;
  const texto=evento.trim();
- const partes=DATE.exec(texto)||SLASH.exec(texto)||YEAR.exec(texto)||separarLinhas(texto);
+ const partes=DATE.exec(texto)||SLASH.exec(texto)||YEAR.exec(texto)||MES_ANO.exec(texto)||separarLinhas(texto);
  if (!partes || !dataValida(partes[1])) return {evento:original,alterado:false,exigeRevisao:true,motivo:"Data não reconhecida ou calendário inválido; texto preservado"};
  return {evento:{data:partes[1],descricao:partes[2],texto_original:original},alterado:true,exigeRevisao:true,motivo:"Separação sintática pendente de validação editorial"};
 }
