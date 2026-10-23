@@ -6,6 +6,7 @@ on:
       - 'css/caso.css'
       - 'admin-v2/js/publication.js'
       - 'admin-v2/js/editorial-identity-guard.js'
+      - 'admin-v2/js/chronology-normalizer.js'
       - 'tests/dossier-source-renderer.mjs'
       - 'tests/publication-editorial-audit.mjs'
       - 'tests/evidence-metadata.mjs'
@@ -14,6 +15,7 @@ on:
       - 'tests/dossier-timeline-navigation.mjs'
       - 'tests/dossier-initial-editorial-audit.mjs'
       - 'tests/dossier-editorial-integration-package.mjs'
+      - 'tests/dossier-chronology-normalizer.mjs'
       - 'docs/pacote-integracao-dyatlov-somerton-fase4-5.json'
       - 'data/caso.js'
       - '.github/workflows/documental-regression.yml'
@@ -44,6 +46,7 @@ jobs:
           node tests/dossier-timeline-navigation.mjs
           node tests/dossier-initial-editorial-audit.mjs
           node tests/dossier-editorial-integration-package.mjs
+          node tests/dossier-chronology-normalizer.mjs
       - name: Instalar navegador para homologação
         run: |
           npm install --no-save --no-package-lock playwright
