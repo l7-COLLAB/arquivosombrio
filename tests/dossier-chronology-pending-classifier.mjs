@@ -14,3 +14,5 @@ assert.equal(classificarPendencia("Primeira tentativa de pagamento\\nOcorreu a e
 assert.equal(classificarPendencia("1997 e 1998: ocorreram eventos."),"intervalo_ou_multiplas_datas");
 assert.equal(classificarPendencia("Antes de 28/08/2003: evento"),"periodo_aproximado");
 console.log(JSON.stringify({total:rem.length,por_categoria:counts},null,2));
+
+assert.equal(classificarPendencia("Fevereiro e março de 2016: buscas judiciais"),"intervalo_ou_multiplas_datas");
