@@ -15,7 +15,7 @@ const events=[{
   {date:'2026-10-30', title:'Assassinatos de Pasadena'},
   {date:'2026-10-31', title:'Luis Andrés Colmenares'}
  ]}];
-function today(){return new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
+function today(){const parts=new Intl.DateTimeFormat('en-US',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const get=t=>parts.find(p=>p.type===t).value;return get('year')+'-'+get('month')+'-'+get('day');}
 function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function linkOf(c){return c && c.published===true && typeof c.url==='string' && /^\/(?!\/)[\w\-/]+(?:\.html)?$/.test(c.url) ? c.url:null;}
 function activeAt(date){return events.find(e=>date>=e.start&&date<=e.end)||null;}
