@@ -20,7 +20,7 @@ function init(id){
  const status=document.createElement("span");status.setAttribute("role","status");status.setAttribute("aria-live","polite");status.className="as-reader-bookmark-status";
  const controls=document.createElement("div");controls.className="as-reader-bookmark-actions";
  controls.append(save,resume,clear);box.append(controls,status);
- bar.append(box);
+ (bar.querySelector(".case-reader-toolbar-inner")||bar).insertBefore(box,bar.querySelector(".case-reader-toolbar .public-narration-player, .case-reader-actions")||null);
  const bookMode=()=>{const paging=bar.querySelector(".reader-page-navigation");return !!(paging&&!paging.hidden);};
  function refresh(){
   const stored=get(id);
