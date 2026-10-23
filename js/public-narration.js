@@ -293,7 +293,7 @@
         <div><span data-narration-status>Carregando áudio...</span><span data-narration-count></span></div>
         <div class="public-narration-timeline"><span data-elapsed>0:00</span><input data-seek type="range" min="0" max="1000" value="0" aria-label="Selecionar ponto da narração" disabled><span data-duration>--:--</span></div><div class="public-narration-controls"><button type="button" data-back disabled aria-label="Voltar 10 segundos">↶ 10s</button><button type="button" data-forward disabled aria-label="Avançar 10 segundos">10s ↷</button><label>Velocidade <select data-speed aria-label="Velocidade"><option value="0.85">0,85×</option><option value="1" selected>1×</option><option value="1.15">1,15×</option><option value="1.3">1,3×</option></select></label></div>
       </div>`;
-    if(ctx.type==="dossie"&&target.classList?.contains("case-reader-toolbar")) target.appendChild(box); else target.insertAdjacentElement("afterend",box);
+    if(ctx.type==="dossie"&&target.classList?.contains("case-reader-toolbar")) { const inner=target.querySelector(".case-reader-toolbar-inner"); if(inner) inner.insertBefore(box,inner.querySelector(".case-reader-actions")); else target.appendChild(box); } else target.insertAdjacentElement("afterend",box);
 
     const button=box.querySelector(".public-narration-main");
     const action=box.querySelector(".public-narration-action i");
