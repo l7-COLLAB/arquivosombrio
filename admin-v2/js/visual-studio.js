@@ -131,7 +131,7 @@ $('publish').addEventListener('click',async()=>{
  const btn=$('publish');btn.disabled=true;
  try{
   await insertVersion(draft,$('versionNote').value.trim()||'Atualização visual pela V2');
-  save();await versions();status('Nova versão publicada no banco. O site passa a carregar os ajustes após o deploy do código público.');
+  save();await versions();status('Nova versão publicada. Os visitantes passam a carregar os ajustes na próxima visita às páginas públicas.');
  }catch(e){status('Falha ao publicar: '+e.message)}
  finally{btn.disabled=false}
 });

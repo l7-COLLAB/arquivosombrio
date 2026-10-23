@@ -21,8 +21,11 @@ test("script válido e cinco fontes corretas",()=>{
  for(const t of ["Casos","casos_diarios","pericias","lendas","creepypastas"])assert.ok(js.includes('table:"'+t+'"'));
  assert.match(js,/status_publicacao","eq\.publicado"/);
  assert.match(js,/item\.status_publicacao==="publicado"/);
- assert.match(js,/Promise\.allSettled/);
-});
+  assert.match(js,/Promise\.allSettled/);
+  assert.doesNotMatch(js,/table:"livros"/);
+  assert.match(js,/Nenhum registro corresponde à pesquisa/);
+  assert.match(js,/Pesquisa parcial: algumas editorias não responderam/);
+ });
 test("resultados escapam conteúdo ao criar elementos",()=>{
  assert.match(js,/name\.textContent|el\.textContent/);
  assert.match(js,/encodeURIComponent\(String\(item\.id\)\)/);
