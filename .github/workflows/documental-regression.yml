@@ -11,6 +11,8 @@ on:
       - 'tests/dossier-evidence-completeness.mjs'
       - 'tests/dossier-browser-smoke.mjs'
       - 'tests/dossier-timeline-navigation.mjs'
+      - 'tests/dossier-initial-editorial-audit.mjs'
+      - 'data/caso.js'
       - '.github/workflows/documental-regression.yml'
   workflow_dispatch:
 
@@ -37,6 +39,7 @@ jobs:
           node tests/dossier-evidence-completeness.mjs
           node tests/dossier-source-renderer.mjs
           node tests/dossier-timeline-navigation.mjs
+          node tests/dossier-initial-editorial-audit.mjs
       - name: Instalar navegador para homologação
         run: |
           npm install --no-save --no-package-lock playwright
@@ -48,6 +51,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: capturas-dossie-documental
-          path: artifacts/documental/*.png
+          path: |
+            artifacts/documental/*.png
+            artifacts/editorial/*.json
           if-no-files-found: ignore
           retention-days: 7
