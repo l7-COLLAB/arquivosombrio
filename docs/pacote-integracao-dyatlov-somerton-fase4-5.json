@@ -1,10 +1,9 @@
 {
   "status": "rascunho_editorial_nao_publicar",
   "origem": "Fase 4.3 e revisão 4.4",
-  "aviso": "Revisado em 22/10/2026; conferir status oficial de Somerton novamente antes de publicar; não aplicar automaticamente.",
+  "aviso": "BLOQUEADO: IDs originais referem-se ao arquivo local e não ao Supabase. Somente preparar integração após identidade editorial exata (título + slug + ID do banco) confirmada.",
   "integracoes": [
     {
-      "caso_id": 101,
       "titulo": "O Incidente do Passo Dyatlov",
       "bloco": {
         "id": "cronologia-editorial-proposta-101",
@@ -57,7 +56,6 @@
         }
       },
       "revisao_historia": {
-        "caso_id": 101,
         "campo": "historia",
         "trecho_atual": "Em fevereiro de 1959, nove estudantes e experientes praticantes de esqui partiram para uma expedição",
         "correcao_proposta": "Em janeiro de 1959, dez integrantes iniciaram a viagem; em 28 de janeiro, Yuri Yudin retornou por motivos de saúde e nove prosseguiram.",
@@ -65,11 +63,18 @@
         "fontes": [
           "https://dyatlovpass.com/page.php?id=12786&language_id=1",
           "https://baug.ethz.ch/en/news-and-events/news/2021/01/a-new-take-on-an-old-mystery.html"
-        ]
+        ],
+        "id_legado": 101
+      },
+      "id_legado": 101,
+      "identidade_alvo": {
+        "titulo_exato": "O Incidente do Passo Dyatlov",
+        "slug_verificado": null,
+        "id_banco_verificado": null,
+        "estado": "nao_resolvido"
       }
     },
     {
-      "caso_id": 103,
       "titulo": "O Homem de Somerton",
       "bloco": {
         "id": "cronologia-editorial-proposta-103",
@@ -121,14 +126,21 @@
         }
       },
       "revisao_historia": {
-        "caso_id": 103,
         "campo": "historia",
         "trecho_atual": "Ao longo das décadas, diferentes pesquisadores analisaram documentos",
         "correcao_proposta": "Complementar a narrativa com a exumação de 2021 e a identificação genética proposta em 2022, explicitando que a confirmação oficial ainda dependia da investigação do legista segundo a reportagem de julho de 2026.",
         "motivo": "O texto inicial não contextualiza os desenvolvimentos posteriores.",
         "fontes": [
           "https://www.abc.net.au/news/2026-07-06/sa-police-report-coroner-into-somerton-man-case-very-soon/106869302"
-        ]
+        ],
+        "id_legado": 103
+      },
+      "id_legado": 103,
+      "identidade_alvo": {
+        "titulo_exato": "O Homem de Somerton",
+        "slug_verificado": null,
+        "id_banco_verificado": null,
+        "estado": "nao_resolvido"
       }
     }
   ]
