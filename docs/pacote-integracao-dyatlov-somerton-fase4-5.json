@@ -1,0 +1,133 @@
+{
+  "status": "rascunho_editorial_nao_publicar",
+  "origem": "Fase 4.3 e revisão 4.4",
+  "aviso": "Não aplicar automaticamente, revisar fontes e comparar com versão vigente no banco.",
+  "integracoes": [
+    {
+      "caso_id": 101,
+      "titulo": "O Incidente do Passo Dyatlov",
+      "bloco": {
+        "id": "cronologia-editorial-proposta-101",
+        "tipo": "cronologia",
+        "dados": {
+          "titulo": "Cronologia documentada",
+          "itens": [
+            {
+              "data": "28 de janeiro de 1959",
+              "descricao": "Yuri Yudin retorna por problemas de saúde; os nove integrantes restantes prosseguem.",
+              "categoria": "Investigação",
+              "natureza_documental": "fato_documentado",
+              "fonte": "Dyatlov Pass — Timeline",
+              "link_fonte": "https://dyatlovpass.com/page.php?id=12786&language_id=1"
+            },
+            {
+              "data": "Noite de 1 para 2 de fevereiro de 1959",
+              "descricao": "Nove integrantes morrem durante a expedição nos Urais, provavelmente na noite de 1 para 2 de fevereiro. As circunstâncias e o mecanismo da morte continuam sujeitos a reconstrução científica.",
+              "natureza_documental": "fato_documentado",
+              "fonte": "Gaume e Puzrin, Communications Earth & Environment (2021)",
+              "link_fonte": "https://www.nature.com/articles/s43247-020-00081-8",
+              "detalhes": "A morte dos nove integrantes está documentada. A hipótese de avalanche em placa é uma explicação científica posterior, não uma observação direta do ocorrido."
+            },
+            {
+              "data": "Julho de 2020",
+              "descricao": "A Procuradoria-Geral russa conclui que uma avalanche é a explicação mais provável.",
+              "categoria": "Desfecho",
+              "natureza_documental": "fato_documentado",
+              "fonte": "Gaume e Puzrin (2021), histórico das investigações",
+              "link_fonte": "https://doi.org/10.1038/s43247-020-00081-8"
+            },
+            {
+              "data": "28 de janeiro de 2021",
+              "descricao": "Estudo apresenta um mecanismo físico de avalanche em placa; trata-se de explicação científica, não de observação direta do episódio.",
+              "categoria": "Perícia",
+              "natureza_documental": "hipotese",
+              "fonte": "Gaume e Puzrin (2021)",
+              "link_fonte": "https://doi.org/10.1038/s43247-020-00081-8"
+            },
+            {
+              "data": "24 de março de 2022",
+              "descricao": "Pesquisadores relatam observações posteriores de avalanches na região, reforçando a plausibilidade do mecanismo investigado.",
+              "categoria": "Descoberta",
+              "natureza_documental": "fato_documentado",
+              "fonte": "Puzrin e Gaume (2022)",
+              "link_fonte": "https://doi.org/10.1038/s43247-022-00393-x"
+            }
+          ]
+        }
+      },
+      "revisao_historia": {
+        "caso_id": 101,
+        "campo": "historia",
+        "trecho_atual": "Em fevereiro de 1959, nove estudantes e experientes praticantes de esqui partiram para uma expedição",
+        "correcao_proposta": "Em janeiro de 1959, dez integrantes iniciaram a viagem; em 28 de janeiro, Yuri Yudin retornou por motivos de saúde e nove prosseguiram.",
+        "motivo": "A partida e o retorno de Yuri Yudin ocorreram em janeiro, antes da morte dos nove integrantes em fevereiro.",
+        "fontes": [
+          "https://dyatlovpass.com/page.php?id=12786&language_id=1",
+          "https://baug.ethz.ch/en/news-and-events/news/2021/01/a-new-take-on-an-old-mystery.html"
+        ]
+      }
+    },
+    {
+      "caso_id": 103,
+      "titulo": "O Homem de Somerton",
+      "bloco": {
+        "id": "cronologia-editorial-proposta-103",
+        "tipo": "cronologia",
+        "dados": {
+          "titulo": "Cronologia documentada",
+          "itens": [
+            {
+              "data": "1º de dezembro de 1948",
+              "descricao": "Um homem não identificado é encontrado morto na praia de Somerton, em Adelaide.",
+              "natureza_documental": "fato_documentado",
+              "fonte": "ABC News, cronologia do caso (2022)",
+              "link_fonte": "https://www.abc.net.au/news/2022-08-02/somerton-man-who-was-carl-charles-webb/101288890"
+            },
+            {
+              "data": "Junho a julho de 1949",
+              "descricao": "O inquérito e as investigações examinam indícios associados ao papel Tamám Shud e ao Rubáiyát; a identidade e as circunstâncias da morte permanecem sem resolução conclusiva.",
+              "categoria": "Investigação",
+              "natureza_documental": "fato_documentado",
+              "fonte": "ABC News (2022)",
+              "link_fonte": "https://www.abc.net.au/news/2022-08-02/somerton-man-who-was-carl-charles-webb/101288890"
+            },
+            {
+              "data": "Maio de 2021",
+              "descricao": "Os restos mortais são exumados pela polícia da Austrália do Sul para investigação genética.",
+              "categoria": "Investigação",
+              "natureza_documental": "fato_documentado",
+              "fonte": "ABC News (2026)",
+              "link_fonte": "https://www.abc.net.au/news/2026-07-06/sa-police-report-coroner-into-somerton-man-case-very-soon/106869302"
+            },
+            {
+              "data": "Julho de 2022",
+              "descricao": "Derek Abbott e Colleen Fitzpatrick anunciam identificação genética proposta como Carl 'Charles' Webb; distinguir resultado da pesquisa da confirmação oficial pelo legista.",
+              "categoria": "Descoberta",
+              "natureza_documental": "hipotese",
+              "fonte": "ABC News (2022)",
+              "link_fonte": "https://www.abc.net.au/news/2022-07-26/somerton-man-identified-melbourne-born-engineer-researcher-says/101272182"
+            },
+            {
+              "data": "6 de julho de 2026",
+              "descricao": "Reportagem informa que a polícia ainda preparava relatório ao legista para formalizar a conclusão; não apresentar confirmação oficial como ocorrida sem nova verificação.",
+              "categoria": "Investigação",
+              "natureza_documental": "fato_documentado",
+              "fonte": "ABC News (2026)",
+              "link_fonte": "https://www.abc.net.au/news/2026-07-06/sa-police-report-coroner-into-somerton-man-case-very-soon/106869302"
+            }
+          ]
+        }
+      },
+      "revisao_historia": {
+        "caso_id": 103,
+        "campo": "historia",
+        "trecho_atual": "Ao longo das décadas, diferentes pesquisadores analisaram documentos",
+        "correcao_proposta": "Complementar a narrativa com a exumação de 2021 e a identificação genética proposta em 2022, explicitando que a confirmação oficial ainda dependia da investigação do legista segundo a reportagem de julho de 2026.",
+        "motivo": "O texto inicial não contextualiza os desenvolvimentos posteriores.",
+        "fontes": [
+          "https://www.abc.net.au/news/2026-07-06/sa-police-report-coroner-into-somerton-man-case-very-soon/106869302"
+        ]
+      }
+    }
+  ]
+}
