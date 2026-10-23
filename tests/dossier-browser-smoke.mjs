@@ -93,6 +93,10 @@ try {
     await steps.locator("button").last().click();
     assert.equal(await page.evaluate(() => document.activeElement?.tagName), "LI");
     assert.match(await steps.locator(".case-timeline-step-position").textContent(),/1 de 1/);
+    assert.equal(await page.evaluate(() => {
+      const node=document.activeElement;
+      return getComputedStyle(node).outlineStyle !== "none";
+    }),true,"Foco do acontecimento deve permanecer visível");
     await longa.locator(".case-timeline-reset").click();
     assert.deepEqual(await longa.locator(".case-timeline-period-label").allTextContents(),["1941","1942","1943"]);
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
