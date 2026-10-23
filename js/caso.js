@@ -2737,6 +2737,58 @@ function renderizarCronologiaBlocoDossie(dados) {
         atualizarVisibilidade();
     }
     secao.appendChild(lista);
+    if (itens.length >= 8) {
+        const comandos = document.createElement("nav");
+        comandos.className = "case-timeline-step-navigation";
+        comandos.setAttribute("aria-label", "Navegar entre acontecimentos visíveis");
+        const anterior = document.createElement("button");
+        const proximo = document.createElement("button");
+        anterior.type = proximo.type = "button";
+        anterior.textContent = "← Anterior";
+        proximo.textContent = "Próximo →";
+        const posicao = criarElementoTextoDossie("span", "", "case-timeline-step-position");
+        posicao.setAttribute("role", "status");
+        posicao.setAttribute("aria-live", "polite");
+        let indiceAtual = -1;
+        const eventosVisiveis = () => Array.from(lista.children).filter(no => !no.hidden);
+        const atualizarComandos = () => {
+            const visiveis = eventosVisiveis();
+            if (!visiveis.length) indiceAtual = -1;
+            else if (indiceAtual >= visiveis.length) indiceAtual = visiveis.length - 1;
+            anterior.disabled = !visiveis.length || indiceAtual <= 0;
+            proximo.disabled = !visiveis.length || indiceAtual >= visiveis.length - 1;
+            posicao.textContent = visiveis.length
+                ? (indiceAtual < 0 ? visiveis.length + " acontecimentos visíveis" : (indiceAtual + 1) + " de " + visiveis.length)
+                : "Nenhum acontecimento visível";
+        };
+        const navegar = passo => {
+            const visiveis = eventosVisiveis();
+            if (!visiveis.length) return;
+            indiceAtual = Math.max(0, Math.min(visiveis.length - 1, indiceAtual + passo));
+            visiveis[indiceAtual].scrollIntoView({behavior: "smooth", block: "center"});
+            visiveis[indiceAtual].setAttribute("tabindex", "-1");
+            visiveis[indiceAtual].focus({preventScroll: true});
+            atualizarComandos();
+        };
+        anterior.addEventListener("click", () => navegar(-1));
+        proximo.addEventListener("click", () => navegar(1));
+        comandos.append(anterior, posicao, proximo);
+        secao.appendChild(comandos);
+        if (campoPesquisa) campoPesquisa.addEventListener("input", () => {
+            indiceAtual = -1;
+            atualizarComandos();
+        });
+        if (seletorCategoria) seletorCategoria.addEventListener("change", () => {
+            indiceAtual = -1;
+            atualizarComandos();
+        });
+        const reset = secao.querySelector(".case-timeline-reset");
+        if (reset) reset.addEventListener("click", () => {
+            indiceAtual = -1;
+            atualizarComandos();
+        });
+        atualizarComandos();
+    }
     if (itens.length >= 8 && !campoPesquisa) atualizarVisibilidade();
     return secao;
 }
