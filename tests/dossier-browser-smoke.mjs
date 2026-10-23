@@ -173,10 +173,19 @@ try {
   assert.equal(await realTimeline.count(),11,"Dana deve exibir somente os 11 marcos, sem nota de situação");
   const sourceCount=await real.locator(".case-timeline-source-link").count();
   assert.equal(sourceCount,0,"Prévia real não deve inventar fontes");
+  await real.screenshot({path:`${outputs}/cronologia-dana-real-375.png`,fullPage:true});
   await real.locator("#case-choose").selectOption("1");
   assert.equal(await realTimeline.count(),18,"Unabomber deve preservar 18 marcos");
   assert.equal(await real.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
   await real.screenshot({path:`${outputs}/cronologia-dana-unabomber-real-375.png`,fullPage:true});
+  // Repetir a conferência visual dos dois dossiês na largura desktop.
+  await real.setViewportSize({width:1280,height:900});
+  assert.equal(await realTimeline.count(),18);
+  assert.equal(await real.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
+  await real.screenshot({path:`${outputs}/cronologia-unabomber-real-1280.png`,fullPage:true});
+  await real.locator("#case-choose").selectOption("0");
+  assert.equal(await realTimeline.count(),11);
+  await real.screenshot({path:`${outputs}/cronologia-dana-real-1280.png`,fullPage:true});
   await real.close();
   console.log("Smoke test de navegador aprovado (320, 375, 768 e 1280 px, temas arquivo e papel).");
 } finally { await browser.close(); }
