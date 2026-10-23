@@ -1,7 +1,7 @@
 {
   "status": "rascunho_editorial_nao_publicar",
   "origem": "Fase 4.3 e revisão 4.4",
-  "aviso": "Não aplicar automaticamente, revisar fontes e comparar com versão vigente no banco.",
+  "aviso": "Revisado em 22/10/2026; conferir status oficial de Somerton novamente antes de publicar; não aplicar automaticamente.",
   "integracoes": [
     {
       "caso_id": 101,
@@ -15,18 +15,18 @@
             {
               "data": "28 de janeiro de 1959",
               "descricao": "Yuri Yudin retorna por problemas de saúde; os nove integrantes restantes prosseguem.",
-              "categoria": "Investigação",
+              "categoria": "Desfecho",
               "natureza_documental": "fato_documentado",
               "fonte": "Dyatlov Pass — Timeline",
-              "link_fonte": "https://dyatlovpass.com/page.php?id=12786&language_id=1"
+              "link_fonte": "https://dyatlovpass.com/28-january-1959"
             },
             {
               "data": "Noite de 1 para 2 de fevereiro de 1959",
-              "descricao": "Nove integrantes morrem durante a expedição nos Urais, provavelmente na noite de 1 para 2 de fevereiro. As circunstâncias e o mecanismo da morte continuam sujeitos a reconstrução científica.",
+              "descricao": "Os nove integrantes morrem durante a expedição nos Urais, provavelmente na noite de 1 para 2 de fevereiro de 1959. A sequência exata dos acontecimentos não foi observada diretamente.",
               "natureza_documental": "fato_documentado",
               "fonte": "Gaume e Puzrin, Communications Earth & Environment (2021)",
               "link_fonte": "https://www.nature.com/articles/s43247-020-00081-8",
-              "detalhes": "A morte dos nove integrantes está documentada. A hipótese de avalanche em placa é uma explicação científica posterior, não uma observação direta do ocorrido."
+              "detalhes": "As mortes são documentadas; a data exata, a dinâmica do abandono da barraca e a hipótese de avalanche dependem de reconstruções posteriores."
             },
             {
               "data": "Julho de 2020",
@@ -50,7 +50,8 @@
               "categoria": "Descoberta",
               "natureza_documental": "fato_documentado",
               "fonte": "Puzrin e Gaume (2022)",
-              "link_fonte": "https://doi.org/10.1038/s43247-022-00393-x"
+              "link_fonte": "https://doi.org/10.1038/s43247-022-00393-x",
+              "detalhes": "O artigo descreve observações posteriores de avalanches, não evidência direta de uma avalanche específica na noite da tragédia."
             }
           ]
         }
@@ -101,15 +102,16 @@
             },
             {
               "data": "Julho de 2022",
-              "descricao": "Derek Abbott e Colleen Fitzpatrick anunciam identificação genética proposta como Carl 'Charles' Webb; distinguir resultado da pesquisa da confirmação oficial pelo legista.",
+              "descricao": "Pesquisadores liderados por Derek Abbott, com Colleen Fitzpatrick, anunciam que análises genealógicas apontam para Carl 'Charles' Webb. O anúncio não equivale à confirmação formal do legista.",
               "categoria": "Descoberta",
-              "natureza_documental": "hipotese",
+              "natureza_documental": "fato_documentado",
               "fonte": "ABC News (2022)",
-              "link_fonte": "https://www.abc.net.au/news/2022-07-26/somerton-man-identified-melbourne-born-engineer-researcher-says/101272182"
+              "link_fonte": "https://www.abc.net.au/news/2022-07-26/somerton-man-identified-melbourne-born-engineer-researcher-says/101272182",
+              "detalhes": "O fato documentado é o anúncio da identificação proposta; a identidade como conclusão oficial deve ser tratada separadamente."
             },
             {
               "data": "6 de julho de 2026",
-              "descricao": "Reportagem informa que a polícia ainda preparava relatório ao legista para formalizar a conclusão; não apresentar confirmação oficial como ocorrida sem nova verificação.",
+              "descricao": "Segundo reportagem publicada nessa data, a investigação policial permanecia em andamento e o relatório ainda não havia sido entregue ao legista. A reportagem não comprova o estado da investigação depois de 6 de julho.",
               "categoria": "Investigação",
               "natureza_documental": "fato_documentado",
               "fonte": "ABC News (2026)",
