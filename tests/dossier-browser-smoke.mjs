@@ -124,7 +124,7 @@ try {
         assert.equal(colors.fg,"rgb(44, 33, 24)");
         assert.equal(colors.bg,"rgb(241, 229, 207)");
         const contraste=await longa.locator(".case-timeline-search input").evaluate(el=>{
-          const rgb=value=>(value.match(/[\\d.]+/g)||[]).slice(0,3).map(Number);
+          const rgb=value=>(value.match(/[\d.]+/g)||[]).slice(0,3).map(Number);
           const luminancia=cor=>rgb(cor).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((a,v,i)=>a+v*[.2126,.7152,.0722][i],0);
           const st=getComputedStyle(el), fg=luminancia(st.color),bg=luminancia(st.backgroundColor);
           return (Math.max(fg,bg)+.05)/(Math.min(fg,bg)+.05);
