@@ -81,8 +81,15 @@ try {
     const longa=page.locator(".case-content-timeline").last();
     assert.equal(await longa.locator("ol > li").count(),9);
     assert.deepEqual(await longa.locator(".case-timeline-period-label").allTextContents(),["1941","1942","1943"]);
+    const steps=longa.locator(".case-timeline-step-navigation");
+    assert.equal(await steps.locator("button").count(),2);
+    await steps.locator("button").last().click();
+    assert.match(await steps.locator(".case-timeline-step-position").textContent(),/1 de 9/);
+    await steps.locator("button").last().click();
+    assert.match(await steps.locator(".case-timeline-step-position").textContent(),/2 de 9/);
     await longa.locator('input[type="search"]').fill("teste 5");
     assert.deepEqual(await longa.locator(".case-timeline-period-label").allTextContents(),["1942"]);
+    assert.match(await steps.locator(".case-timeline-step-position").textContent(),/1 acontecimentos visíveis/);
     await longa.locator(".case-timeline-reset").click();
     assert.deepEqual(await longa.locator(".case-timeline-period-label").allTextContents(),["1941","1942","1943"]);
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
