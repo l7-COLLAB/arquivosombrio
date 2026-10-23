@@ -20,27 +20,33 @@
       "id_referencia": 5,
       "indice": 3,
       "texto_original": "2009: o caso recebe nova exposição nacional pelo 48 Hours.",
-      "status": "pendente_de_fonte_especifica",
-      "fontes": [],
-      "observacao": "Revisão documental específica ainda não concluída",
+      "status": "corroborado_fonte_jornalistica",
+      "fontes": [
+        "https://www.cbsnews.com/news/woman-charged-in-2002-topeka-double-homicide/"
+      ],
+      "observacao": "CBS/AP confirma exibição do 48 Hours Mystery em outubro de 2009.",
       "aprovado_para_publicacao": false
     },
     {
       "id_referencia": 5,
       "indice": 8,
       "texto_original": "Fevereiro de 2025: começa o terceiro julgamento.",
-      "status": "pendente_de_fonte_especifica",
-      "fontes": [],
-      "observacao": "Revisão documental específica ainda não concluída",
+      "status": "corroborado_fonte_jornalistica",
+      "fontes": [
+        "https://www.wibw.com/2025/02/04/jury-selection-begins-dana-chandlers-third-trial/"
+      ],
+      "observacao": "Seleção do júri iniciada em 3/2/2025; sustenta início do terceiro julgamento.",
       "aprovado_para_publicacao": false
     },
     {
       "id_referencia": 5,
       "indice": 12,
       "texto_original": "Situação atual: condenada e presa; continua contestando a condenação.",
-      "status": "pendente_de_fonte_especifica",
-      "fontes": [],
-      "observacao": "Revisão documental específica ainda não concluída",
+      "status": "atualizacao_processual_pendente",
+      "fontes": [
+        "https://www.cbsnews.com/news/dana-chandler-sentenced-to-life-in-prison-kansas-third-murder-trial/"
+      ],
+      "observacao": "CBS registra apresentação de recursos após condenação, mas não comprova status processual atualizado em 23/10/2026; não aprovar redação 'situação atual'.",
       "aprovado_para_publicacao": false
     },
     {
@@ -154,7 +160,7 @@
       "aprovado_para_publicacao": false
     }
   ],
-  "pendentes_remanescentes": 3,
+  "pendentes_remanescentes": 0,
   "divergencias": [
     {
       "id": 6,
@@ -162,5 +168,6 @@
       "texto": "10 de dezembro de 1994: Thomas Mosser é morto.",
       "observacao": "FBI situa morte de Thomas Mosser em 19/12/1994; texto original menciona 10/12/1994. Não aprovar até correção documental."
     }
-  ]
+  ],
+  "notas_finais": "14/14 possuem referência pertinente. Um item sobre situação atual exige consulta processual recente; divergência Mosser exige correção do texto antes de publicar. Nenhum marco aprovado."
 }
