@@ -12,6 +12,8 @@ on:
       - 'tests/dossier-browser-smoke.mjs'
       - 'tests/dossier-timeline-navigation.mjs'
       - 'tests/dossier-initial-editorial-audit.mjs'
+      - 'tests/dossier-editorial-integration-package.mjs'
+      - 'docs/pacote-integracao-dyatlov-somerton-fase4-5.json'
       - 'data/caso.js'
       - '.github/workflows/documental-regression.yml'
   workflow_dispatch:
@@ -40,6 +42,7 @@ jobs:
           node tests/dossier-source-renderer.mjs
           node tests/dossier-timeline-navigation.mjs
           node tests/dossier-initial-editorial-audit.mjs
+          node tests/dossier-editorial-integration-package.mjs
       - name: Instalar navegador para homologação
         run: |
           npm install --no-save --no-package-lock playwright
