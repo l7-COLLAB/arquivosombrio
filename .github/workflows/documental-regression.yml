@@ -20,6 +20,7 @@ on:
       - 'tests/dossier-chronology-normalizer.mjs'
       - 'tests/dossier-chronology-pending-classifier.mjs'
       - 'tests/dossier-chronology-temporal-preview.mjs'
+      - 'tests/dossier-chronology-real-temporal-preview.mjs'
       - 'docs/relatorio-normalizacao-acervo-fase5-9.json'
       - 'tests/dossier-chronology-real-sample.mjs'
       - 'docs/amostra-normalizacao-fase5-5.json'
@@ -56,6 +57,7 @@ jobs:
           node tests/dossier-chronology-normalizer.mjs
           node tests/dossier-chronology-pending-classifier.mjs
           node tests/dossier-chronology-temporal-preview.mjs
+          node tests/dossier-chronology-real-temporal-preview.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
