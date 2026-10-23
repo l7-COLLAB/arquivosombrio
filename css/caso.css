@@ -3681,3 +3681,33 @@ body[data-reader-theme="papel"] .dossie-summary {
   letter-spacing: .06em;
   overflow-wrap: anywhere;
 }
+
+/* Fase 3.3: navegação sequencial acessível em cronologias extensas. */
+.case-timeline-step-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .65rem;
+  margin: 1rem 0;
+}
+.case-timeline-step-navigation button {
+  min-height: 44px;
+  padding: .55rem .85rem;
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.case-timeline-step-navigation button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+.case-timeline-step-position {
+  font-size: .85rem;
+}
+@media (max-width: 600px) {
+  .case-timeline-step-navigation button { flex: 1 1 38%; }
+  .case-timeline-step-position { order: -1; width: 100%; text-align: center; }
+}
