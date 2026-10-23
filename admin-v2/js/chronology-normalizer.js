@@ -12,11 +12,23 @@ function dataValida(data){
  if(!mes||mes<1||mes>12)return false;
  return dia>=1&&dia<=new Date(Date.UTC(ano,mes,0)).getUTCDate();
 }
+const MONTH = "janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro";
+const HEADING = new RegExp("^(?:(?:[0-3]?\\d de (?:"+MONTH+") de (?:1[5-9]|20)\\d{2})(?:, [^\\n]+)?|(?:1[5-9]|20)\\d{2}|(?:"+MONTH+") de (?:1[5-9]|20)\\d{2})$", "iu");
+function separarLinhas(texto) {
+ const separador = texto.includes("\n") ? "\n" : texto.includes("\\n") ? "\\n" : null;
+ if (!separador) return null;
+ const indice=texto.indexOf(separador);
+ const data=texto.slice(0,indice).trim(), descricao=texto.slice(indice+separador.length).trim();
+ if (!descricao || !HEADING.test(data)) return null;
+ const inicio=/^(\d{1,2} de [a-zçãéêíóôõú]+ de \d{4})/iu.exec(data);
+ if (inicio && !dataValida(inicio[1])) return null;
+ return [data,descricao];
+}
 export function normalizarEvento(evento) {
  if (typeof evento !== "string") return {evento:structuredClone(evento),alterado:false,exigeRevisao:false};
  const original=evento;
  const texto=evento.trim();
- const partes=DATE.exec(texto)||SLASH.exec(texto)||YEAR.exec(texto);
+ const partes=DATE.exec(texto)||SLASH.exec(texto)||YEAR.exec(texto)||separarLinhas(texto);
  if (!partes || !dataValida(partes[1])) return {evento:original,alterado:false,exigeRevisao:true,motivo:"Data não reconhecida ou calendário inválido; texto preservado"};
  return {evento:{data:partes[1],descricao:partes[2],texto_original:original},alterado:true,exigeRevisao:true,motivo:"Separação sintática pendente de validação editorial"};
 }
