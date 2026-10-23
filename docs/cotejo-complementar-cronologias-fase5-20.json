@@ -1,0 +1,166 @@
+{
+  "fase": "5.20",
+  "data": "2026-10-23",
+  "estado": "cotejo_adicional_sem_publicacao",
+  "nota": "Os resultados são corroborações pontuais e não autorizações de publicação. Fontes precisam ser abertas e avaliadas integralmente na revisão final.",
+  "originalmente_pendentes": 14,
+  "revisoes": [
+    {
+      "id_referencia": 5,
+      "indice": 2,
+      "texto_original": "15 de julho de 2002: Dana é presa por uma pendência relacionada à pensão; seu veículo é apreendido.",
+      "status": "corroborado_fonte_judicial",
+      "fontes": [
+        "https://caselaw.findlaw.com/court/ks-supreme-court/1893432.html"
+      ],
+      "observacao": "Acórdão confirma 15/7/2002, mandado de pensão e apreensão do Mitsubishi.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 3,
+      "texto_original": "2009: o caso recebe nova exposição nacional pelo 48 Hours.",
+      "status": "pendente_de_fonte_especifica",
+      "fontes": [],
+      "observacao": "Revisão documental específica ainda não concluída",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 8,
+      "texto_original": "Fevereiro de 2025: começa o terceiro julgamento.",
+      "status": "pendente_de_fonte_especifica",
+      "fontes": [],
+      "observacao": "Revisão documental específica ainda não concluída",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 12,
+      "texto_original": "Situação atual: condenada e presa; continua contestando a condenação.",
+      "status": "pendente_de_fonte_especifica",
+      "fontes": [],
+      "observacao": "Revisão documental específica ainda não concluída",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 1,
+      "texto_original": "1958: Kaczynski entra em Harvard aos 16 anos.",
+      "status": "corroborado_referencia_academica",
+      "fontes": [
+        "https://www.law.cornell.edu/background/unabom/kaczynski.html"
+      ],
+      "observacao": "Entrada em Harvard aos 16 em 1958.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 2,
+      "texto_original": "1959 a 1962: participa da pesquisa conduzida por Henry Murray.",
+      "status": "corroborado_em_parte",
+      "fontes": [
+        "https://www.history.com/articles/unabomber-ted-kaczynski"
+      ],
+      "observacao": "Fonte descreve três anos de experimentos a partir de 1959; limites exatos de 1962 requerem conferência.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 3,
+      "texto_original": "1967: conclui o doutorado em matemática.",
+      "status": "corroborado_fonte_biografica",
+      "fontes": [
+        "https://www.biography.com/crime/ted-kaczynski"
+      ],
+      "observacao": "Doutorado em matemática pela Universidade de Michigan em 1967.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 4,
+      "texto_original": "1969: deixa a Universidade da Califórnia em Berkeley.",
+      "status": "corroborado_referencia_academica",
+      "fontes": [
+        "https://www.law.cornell.edu/background/unabom/kaczynski.html"
+      ],
+      "observacao": "Renúncia da UC Berkeley em 1969.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 5,
+      "texto_original": "1971: passa a viver na cabana de Montana.",
+      "status": "corroborado_fonte_secundaria",
+      "fontes": [
+        "https://www.history.com/articles/unabomber-ted-kaczynski"
+      ],
+      "observacao": "Mudança para cabana na área de Lincoln em 1971; conferir cronologia de construção.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 10,
+      "texto_original": "1993: atentados ferem Charles Epstein e David Gelernter.",
+      "status": "corroborado_fonte_institucional",
+      "fontes": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "observacao": "Dois ataques em junho de 1993; reportar Epstein e Gelernter com datas separadas na revisão.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 11,
+      "texto_original": "10 de dezembro de 1994: Thomas Mosser é morto.",
+      "status": "divergencia_de_data",
+      "fontes": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "observacao": "FBI situa morte de Thomas Mosser em 19/12/1994; texto original menciona 10/12/1994. Não aprovar até correção documental.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 12,
+      "texto_original": "24 de abril de 1995: Gilbert Murray é morto.",
+      "status": "corroborado_fonte_institucional",
+      "fontes": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "observacao": "24/4/1995 morte de Gilbert Murray.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 13,
+      "texto_original": "Setembro de 1995: manifesto é publicado.",
+      "status": "corroborado_fonte_contemporanea",
+      "fontes": [
+        "https://www.washingtonpost.com/archive/politics/1995/09/19/unabomber-manuscript-is-published/041bf0f1-af54-4aa2-8d8d-2f6559113e6b/"
+      ],
+      "observacao": "Publicação do manifesto em 19/9/1995 no Washington Post.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 18,
+      "texto_original": "25 de setembro de 2026: estreia de UNABOMBER.",
+      "status": "corroborado_comunicado_distribuidor",
+      "fontes": [
+        "https://media.netflix.com/en/only-on-netflix/82010386"
+      ],
+      "observacao": "Netflix identifica estreia nos EUA em 25/9/2026; verificar diferença regional se relevante.",
+      "aprovado_para_publicacao": false
+    }
+  ],
+  "pendentes_remanescentes": 3,
+  "divergencias": [
+    {
+      "id": 6,
+      "indice": 11,
+      "texto": "10 de dezembro de 1994: Thomas Mosser é morto.",
+      "observacao": "FBI situa morte de Thomas Mosser em 19/12/1994; texto original menciona 10/12/1994. Não aprovar até correção documental."
+    }
+  ]
+}
