@@ -110,6 +110,11 @@ try {
       });
       assert.notEqual(styles.background,"rgba(0, 0, 0, 0)");
       assert.notEqual(styles.border,"rgba(0, 0, 0, 0)");
+      if(theme==="papel") {
+        const colors=await longa.locator(".case-timeline-search input").evaluate(el=>({fg:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
+        assert.equal(colors.fg,"rgb(44, 33, 24)");
+        assert.equal(colors.bg,"rgb(241, 229, 207)");
+      }
       const noOverflow=await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1);
       assert(noOverflow,`Rolagem horizontal em ${width}px no tema ${theme}`);
       await page.screenshot({path:`${outputs}/cronologia-${width}-${theme}.png`,fullPage:true});
