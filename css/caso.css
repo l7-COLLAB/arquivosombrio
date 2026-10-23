@@ -3791,3 +3791,18 @@ body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeli
 body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-search input:focus-visible {
   outline-color: #49321e;
 }
+
+
+/* Fase 5.25: correção de textos claros sobre papel nos cartões de evidências.
+   Restringe-se ao conteúdo dos dossiês em modo de leitura papel. */
+body.case-reading[data-reader-theme="papel"] .case-history h1,
+body.case-reading[data-reader-theme="papel"] .case-main-content h1,
+body.case-reading[data-reader-theme="papel"] .case-main-content h2,
+body.case-reading[data-reader-theme="papel"] #caso-historia .evidence-card h3,
+body.case-reading[data-reader-theme="papel"] #caso-historia .case-content-timeline h2 {
+  color: #302519;
+}
+body.case-reading[data-reader-theme="papel"] #caso-historia .evidence-card .evidence-number,
+body.case-reading[data-reader-theme="papel"] #caso-historia .evidence-card .evidence-open-label {
+  color: #49321e;
+}
