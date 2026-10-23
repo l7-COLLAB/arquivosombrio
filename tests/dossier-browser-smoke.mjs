@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 
 const browser = await chromium.launch({headless:true});
 const outputs="artifacts/documental";
@@ -156,5 +156,27 @@ try {
   assert.equal(await preview.locator(".case-content-timeline ol > li:visible").count(),1);
   await preview.screenshot({path:`${outputs}/cronologia-previa-mobile.png`,fullPage:true});
   await preview.close();
+  // Fase 5.30: hospedagem simulada, sem servidor remoto nem acesso ao Supabase.
+  const real=await browser.newPage({viewport:{width:375,height:812}});
+  await real.route("http://homologacao.local/**",async route=>{
+    const pathname=new URL(route.request().url()).pathname;
+    const allow={"/previews/cronologia-acervo-real-fase5-30.html":["previews/cronologia-acervo-real-fase5-30.html","text/html"],
+      "/docs/previa-consolidada-cronologias-fase5-17.json":["docs/previa-consolidada-cronologias-fase5-17.json","application/json"],
+      "/css/caso.css":["css/caso.css","text/css"],"/js/caso.js":["js/caso.js","text/javascript"]};
+    const target=allow[pathname];
+    if(!target)return route.fulfill({status:404,body:"Não encontrado"});
+    return route.fulfill({status:200,contentType:target[1],body:readFileSync(new URL("../"+target[0],import.meta.url))});
+  });
+  await real.goto("http://homologacao.local/previews/cronologia-acervo-real-fase5-30.html");
+  const realTimeline=real.locator(".case-content-timeline ol > li");
+  await realTimeline.first().waitFor({timeout:10000});
+  assert.equal(await realTimeline.count(),11,"Dana deve exibir somente os 11 marcos, sem nota de situação");
+  const sourceCount=await real.locator(".case-timeline-source-link").count();
+  assert.equal(sourceCount,0,"Prévia real não deve inventar fontes");
+  await real.locator("#case-choose").selectOption("1");
+  assert.equal(await realTimeline.count(),18,"Unabomber deve preservar 18 marcos");
+  assert.equal(await real.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
+  await real.screenshot({path:`${outputs}/cronologia-dana-unabomber-real-375.png`,fullPage:true});
+  await real.close();
   console.log("Smoke test de navegador aprovado (320, 375, 768 e 1280 px, temas arquivo e papel).");
 } finally { await browser.close(); }
