@@ -6,7 +6,7 @@ const browser = await chromium.launch({headless:true});
 const outputs="artifacts/documental";
 mkdirSync(outputs,{recursive:true});
 try {
-  for(const width of [375,768,1280]) {
+  for(const width of [320,375,768,1280]) {
     const page=await browser.newPage({viewport:{width,height:900}});
     await page.setContent(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><style>
       body{background:#171410;color:#e9dfce;margin:0;font:16px Georgia,serif}
@@ -110,6 +110,9 @@ try {
       });
       assert.notEqual(styles.background,"rgba(0, 0, 0, 0)");
       assert.notEqual(styles.border,"rgba(0, 0, 0, 0)");
+      const noOverflow=await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1);
+      assert(noOverflow,`Rolagem horizontal em ${width}px no tema ${theme}`);
+      await page.screenshot({path:`${outputs}/cronologia-${width}-${theme}.png`,fullPage:true});
     }
     await page.evaluate(()=>{
       document.body.classList.remove("case-reading","case-paginated");
@@ -128,5 +131,5 @@ try {
   assert.equal(await preview.locator(".case-content-timeline ol > li:visible").count(),1);
   await preview.screenshot({path:`${outputs}/cronologia-previa-mobile.png`,fullPage:true});
   await preview.close();
-  console.log("Smoke test de navegador aprovado (375, 768 e 1280 px).");
+  console.log("Smoke test de navegador aprovado (320, 375, 768 e 1280 px, temas arquivo e papel).");
 } finally { await browser.close(); }
