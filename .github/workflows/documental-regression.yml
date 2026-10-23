@@ -16,6 +16,8 @@ on:
       - 'tests/dossier-initial-editorial-audit.mjs'
       - 'tests/dossier-editorial-integration-package.mjs'
       - 'tests/dossier-chronology-normalizer.mjs'
+      - 'tests/dossier-chronology-real-sample.mjs'
+      - 'docs/amostra-normalizacao-fase5-5.json'
       - 'docs/pacote-integracao-dyatlov-somerton-fase4-5.json'
       - 'data/caso.js'
       - '.github/workflows/documental-regression.yml'
@@ -47,6 +49,7 @@ jobs:
           node tests/dossier-initial-editorial-audit.mjs
           node tests/dossier-editorial-integration-package.mjs
           node tests/dossier-chronology-normalizer.mjs
+          node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
           npm install --no-save --no-package-lock playwright
