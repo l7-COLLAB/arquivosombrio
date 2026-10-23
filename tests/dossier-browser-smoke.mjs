@@ -48,6 +48,15 @@ try {
     });
     const timeline=page.locator(".case-content-timeline");
     assert.equal(await timeline.locator("ol > li").count(),5);
+    // Auditoria básica de acessibilidade: rótulos associados e botões nomeados.
+    const a11y=await timeline.evaluate(el=>{
+      const inputs=[...el.querySelectorAll("input, select")];
+      const semRotulo=inputs.filter(input=>!input.labels?.length&&!input.getAttribute("aria-label")&&!input.getAttribute("aria-labelledby")).length;
+      const semNome=[...el.querySelectorAll("button")].filter(button=>!(button.textContent||"").trim()&&!button.getAttribute("aria-label")).length;
+      return {semRotulo,semNome};
+    });
+    assert.equal(a11y.semRotulo,0,"Campos da cronologia precisam de rótulo acessível");
+    assert.equal(a11y.semNome,0,"Botões da cronologia precisam de nome acessível");
     const search=timeline.locator('input[type="search"]');
     const select=timeline.locator("select");
     await search.fill("pericia");
@@ -114,6 +123,13 @@ try {
         const colors=await longa.locator(".case-timeline-search input").evaluate(el=>({fg:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
         assert.equal(colors.fg,"rgb(44, 33, 24)");
         assert.equal(colors.bg,"rgb(241, 229, 207)");
+        const contraste=await longa.locator(".case-timeline-search input").evaluate(el=>{
+          const rgb=value=>(value.match(/[\\d.]+/g)||[]).slice(0,3).map(Number);
+          const luminancia=cor=>rgb(cor).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((a,v,i)=>a+v*[.2126,.7152,.0722][i],0);
+          const st=getComputedStyle(el), fg=luminancia(st.color),bg=luminancia(st.backgroundColor);
+          return (Math.max(fg,bg)+.05)/(Math.min(fg,bg)+.05);
+        });
+        assert(contraste>=4.5,"Texto do campo de busca deve atingir contraste WCAG AA");
         const titleColors=await page.locator("main > h1").evaluate(el=>getComputedStyle(el).color);
         assert.equal(titleColors,"rgb(48, 37, 25)");
         const evidenceTitle=await page.locator(".evidence-card h3").first().evaluate(el=>getComputedStyle(el).color);
