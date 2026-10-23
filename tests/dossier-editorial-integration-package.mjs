@@ -35,4 +35,7 @@ for(const proposta of pacote.integracoes){
  }
  console.log("Pacote editorial validado:",proposta.id_legado);
 }
-\nconst exemplo={identidade_alvo:{estado:"verificado",id_banco_verificado:90001,slug_verificado:"exemplo",titulo_exato:"Exemplo"}};\nassert.equal(verificarAlvoEditorial(exemplo,{id:90001,slug:"exemplo",titulo:"Exemplo"}).ok,true);\nfor (const incorreto of [{id:90002,slug:"exemplo",titulo:"Exemplo"},{id:90001,slug:"outro",titulo:"Exemplo"},{id:90001,slug:"exemplo",titulo:"Outro"}]) assert.equal(verificarAlvoEditorial(exemplo,incorreto).ok,false);\n
+
+const exemplo={identidade_alvo:{estado:"verificado",id_banco_verificado:90001,slug_verificado:"exemplo",titulo_exato:"Exemplo"}};
+assert.equal(verificarAlvoEditorial(exemplo,{id:90001,slug:"exemplo",titulo:"Exemplo"}).ok,true);
+for (const incorreto of [{id:90002,slug:"exemplo",titulo:"Exemplo"},{id:90001,slug:"outro",titulo:"Exemplo"},{id:90001,slug:"exemplo",titulo:"Outro"}]) assert.equal(verificarAlvoEditorial(exemplo,incorreto).ok,false);
