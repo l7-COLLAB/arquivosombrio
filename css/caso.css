@@ -3758,3 +3758,36 @@ body.case-paginated .case-content-timeline .case-timeline-step-navigation {
     box-sizing: border-box;
   }
 }
+
+
+/* Fase 5.24: contraste da cronologia no modo papel (capturas 320–1280px).
+   Escopo deliberadamente restrito à cronologia dentro do leitor. */
+body.case-reading[data-reader-theme="papel"] .case-content-timeline {
+  color: #302519;
+}
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-navigation-label,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-search-results,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-filters label,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-search label,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-empty,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-step-position {
+  color: #4c3b2a;
+}
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-navigation a,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-reset,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-event-details summary {
+  color: #49321e;
+  border-color: #806b51;
+}
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-filters select,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-search input,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-step-navigation button {
+  color: #2c2118;
+  background: #f1e5cf;
+  border-color: #806b51;
+}
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-navigation a:focus-visible,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-step-navigation button:focus-visible,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-search input:focus-visible {
+  outline-color: #49321e;
+}
