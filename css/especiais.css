@@ -24,3 +24,15 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 @media(max-width:750px){.season-home{padding:22px 0}.season-home .container,.season-page .container{padding-inline:14px}.season-actions a{flex:1 1 100%;text-align:center}.season-entry-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.season-entry{padding:12px}.season-card-body h2{font-size:1.3rem}}
 @media(max-width:420px){.season-entry-grid{grid-template-columns:1fr}.season-filter{gap:6px}.season-filter button{padding:8px 11px;font-size:.72rem}}
 @media(prefers-reduced-motion:reduce){.season-campaign-card{transition:none}.season-campaign-card:hover{transform:none}}
+
+/* Artes sazonais versionadas no repositório. A tipografia permanece texto HTML acessível. */
+.season-theme-halloween{--season-banner:url('/assets/especiais/banner-halloween.svg')}
+.season-theme-finados{--season-banner:url('/assets/especiais/banner-finados.svg')}
+.season-theme-natal{--season-banner:url('/assets/especiais/banner-natal.svg')}
+.season-theme-reveillon{--season-banner:url('/assets/especiais/banner-reveillon.svg')}
+.season-hero-art,.season-card-art,.season-detail-art{background-image:linear-gradient(90deg,#08080955,#08080900),var(--season-banner)!important;background-size:cover!important;background-position:center!important}
+.season-hero-art span{opacity:0}
+.season-card-art{color:transparent!important;font-size:0!important}
+.season-detail-art{font-size:0!important}
+.season-hero-art,.season-card-art,.season-detail-art{border-color:var(--sg)}
+@media(max-width:750px){.season-hero-art{background-position:65% center!important}.season-detail-art{background-position:64% center!important}.season-card-art{background-position:70% center!important}}
