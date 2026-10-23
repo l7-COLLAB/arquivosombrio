@@ -114,6 +114,10 @@ try {
         const colors=await longa.locator(".case-timeline-search input").evaluate(el=>({fg:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
         assert.equal(colors.fg,"rgb(44, 33, 24)");
         assert.equal(colors.bg,"rgb(241, 229, 207)");
+        const titleColors=await page.locator("main > h1").evaluate(el=>getComputedStyle(el).color);
+        assert.equal(titleColors,"rgb(48, 37, 25)");
+        const evidenceTitle=await page.locator(".evidence-card h3").first().evaluate(el=>getComputedStyle(el).color);
+        assert.equal(evidenceTitle,"rgb(48, 37, 25)");
       }
       const noOverflow=await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1);
       assert(noOverflow,`Rolagem horizontal em ${width}px no tema ${theme}`);
