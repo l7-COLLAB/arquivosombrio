@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "campaigns": [
+    {
+      "id": "halloween-2026",
+      "slug": "7-noites-de-horror-real",
+      "title": "7 Noites de Horror Real",
+      "subtitle": "Sete noites de arquivos reais ligados ao Halloween.",
+      "label": "ESPECIAL HALLOWEEN · 2026",
+      "theme": "halloween",
+      "start": "2026-10-25",
+      "end": "2026-10-31",
+      "status": "scheduled",
+      "days": [
+        {
+          "date": "2026-10-25",
+          "title": "Ronald O’Bryan",
+          "published": false,
+          "url": null
+        },
+        {
+          "date": "2026-10-26",
+          "title": "Martha Moxley",
+          "published": false,
+          "url": null
+        },
+        {
+          "date": "2026-10-27",
+          "title": "Chelsea Bruck",
+          "published": false,
+          "url": null
+        },
+        {
+          "date": "2026-10-28",
+          "title": "Shauna Howe",
+          "published": false,
+          "url": null
+        },
+        {
+          "date": "2026-10-29",
+          "title": "Duplo homicídio de Napa",
+          "published": false,
+          "url": null
+        },
+        {
+          "date": "2026-10-30",
+          "title": "Assassinatos de Pasadena",
+          "published": false,
+          "url": null
+        },
+        {
+          "date": "2026-10-31",
+          "title": "Luis Andrés Colmenares",
+          "published": false,
+          "url": null
+        }
+      ]
+    }
+  ]
+}
