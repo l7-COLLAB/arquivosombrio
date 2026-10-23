@@ -39,3 +39,15 @@ for (const texto of ["Primeira tentativa de pagamento\\nA entrega falha.", "31 d
   assert.equal(resultado.alterado,false);
   assert.equal(resultado.evento,texto);
 }
+
+for (const texto of ["Setembro de 2007: os pais são investigados.", "Junho de 2020: autoridades fazem anúncio."]) {
+ const r=normalizarEvento(texto);
+ assert.equal(r.alterado,true);
+ assert.equal(r.evento.texto_original,texto);
+ assert.equal(r.exigeRevisao,true);
+}
+for (const texto of ["1993,1995: anos distintos", "19–20 de dezembro de 1968\\nperíodo", "Fonte: https://example.org"]) {
+ const r=normalizarEvento(texto);
+ assert.equal(r.alterado,false);
+ assert.equal(r.evento,texto);
+}
