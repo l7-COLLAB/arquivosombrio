@@ -54,7 +54,55 @@
           "published": false,
           "url": null
         }
-      ]
+      ],
+      "description": "Uma coleção documental de crimes e investigações associados ao período do Halloween. Cada arquivo é liberado somente após revisão e publicação.",
+      "motif": "☾",
+      "year": 2026
+    },
+    {
+      "id": "finados-2026",
+      "slug": "ecos-dos-mortos",
+      "title": "Finados: Ecos dos Mortos",
+      "subtitle": "Memórias, investigações e histórias que permanecem nos arquivos.",
+      "description": "Especial editorial proposto para o período de Finados. Pautas ainda não selecionadas.",
+      "label": "ESPECIAL FINADOS · 2026",
+      "theme": "finados",
+      "motif": "✦",
+      "year": 2026,
+      "start": "2026-11-02",
+      "end": "2026-11-08",
+      "status": "draft",
+      "days": []
+    },
+    {
+      "id": "natal-2026",
+      "slug": "natal-sombrio",
+      "title": "Natal Sombrio",
+      "subtitle": "Histórias reais vinculadas às festas de dezembro.",
+      "description": "Especial editorial em preparação. Somente casos com conexão documentada ao Natal.",
+      "label": "ESPECIAL DE NATAL · 2026",
+      "theme": "natal",
+      "motif": "✳",
+      "year": 2026,
+      "start": "2026-12-19",
+      "end": "2026-12-25",
+      "status": "draft",
+      "days": []
+    },
+    {
+      "id": "reveillon-2026",
+      "slug": "reveillon-mortal",
+      "title": "Réveillon Mortal",
+      "subtitle": "O lado obscuro das viradas de ano.",
+      "description": "Especial editorial em planejamento, sujeito à verificação de datas e fontes.",
+      "label": "ESPECIAL DE ANO-NOVO · 2026",
+      "theme": "reveillon",
+      "motif": "✧",
+      "year": 2026,
+      "start": "2026-12-29",
+      "end": "2027-01-04",
+      "status": "draft",
+      "days": []
     }
   ]
 }
