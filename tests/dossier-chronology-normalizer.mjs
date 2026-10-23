@@ -22,3 +22,20 @@ console.log("Normalização conservadora aprovada.");
 
 for(const invalida of ["31/02/2008: data impossível","31 de abril de 1892: data impossível","29/02/1900: século não bissexto"]){const res=normalizarEvento(invalida);assert.equal(res.alterado,false);assert.equal(res.evento,invalida);assert.equal(res.exigeRevisao,true);}
 assert.equal(normalizarEvento("29/02/2000: data válida").alterado,true);
+
+for (const texto of [
+  "26 de dezembro de 1996, 5h52\nPatsy liga para o serviço de emergência.",
+  "1997\nA investigação prossegue.",
+  "Dezembro de 1968\\nUm pedido de resgate é registrado."
+]) {
+  const resultado=normalizarEvento(texto);
+  assert.equal(resultado.alterado,true,JSON.stringify(resultado));
+  assert.equal(resultado.evento.texto_original,texto);
+  assert.equal(resultado.exigeRevisao,true);
+  assert.equal(resultado.evento.fonte,undefined);
+}
+for (const texto of ["Primeira tentativa de pagamento\\nA entrega falha.", "31 de fevereiro de 1996\nEvento impossível"]) {
+  const resultado=normalizarEvento(texto);
+  assert.equal(resultado.alterado,false);
+  assert.equal(resultado.evento,texto);
+}
