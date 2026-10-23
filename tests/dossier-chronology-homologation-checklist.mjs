@@ -1,0 +1,16 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+const read=p=>JSON.parse(readFileSync(new URL(p,import.meta.url),"utf8"));
+const c=read("../docs/checklist-homologacao-cronologias-fase5-22.json");
+const pacote=read("../docs/pacote-editorial-cronologias-fase5-18.json");
+assert.equal(c.situacao,"aguardando_homologacao_editorial");
+assert.equal(c.aprovado,false);
+assert.equal(c.publicacao_autorizada,false);
+assert.equal(pacote.status,"bloqueado_para_publicacao");
+assert.equal(c.criterios.length,8);
+assert.equal(c.criterios.filter(x=>x.aprovado_editorialmente).length,0);
+assert.equal(c.escopo.marcos,29);
+assert.equal(c.escopo.nota_situacao,1);
+assert.equal(c.escopo.referencias_auxiliares,2);
+for(const key of ["fontes","mosser","dana","identidade","rollback","visual","autorizacao"])assert.ok(c.criterios.some(x=>x.id===key&&!x.aprovado_editorialmente));
+console.log("Checklist editorial permanece bloqueado até homologação");
