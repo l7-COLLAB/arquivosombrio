@@ -119,11 +119,13 @@
       "id_referencia": 6,
       "indice": 11,
       "texto_original": "10 de dezembro de 1994: Thomas Mosser é morto.",
-      "status": "divergencia_de_data",
+      "status": "divergencia_entre_fontes_com_preferencia_provisoria_por_fontes_contemporaneas",
       "fontes": [
-        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber",
+        "https://www.washingtonpost.com/archive/politics/1994/12/11/advertising-executive-killed-by-mail-bomb-at-nj-home/26210718-20fa-4101-9d44-de0d0f484e3a/",
+        "https://www.law.cornell.edu/background/unabom/history.html"
       ],
-      "observacao": "FBI situa morte de Thomas Mosser em 19/12/1994; texto original menciona 10/12/1994. Não aprovar até correção documental.",
+      "observacao": "CORREÇÃO DO COTEJO: fontes contemporâneas de 11/12/1994 informam morte no dia anterior, 10/12/1994; Cornell também registra 10/12. O resumo cronológico do FBI exibe 19/12. NÃO substituir a data original. Registrar divergência e checar registro primário antes da aprovação definitiva.",
       "aprovado_para_publicacao": false
     },
     {
@@ -165,9 +167,10 @@
     {
       "id": 6,
       "indice": 11,
-      "texto": "10 de dezembro de 1994: Thomas Mosser é morto.",
-      "observacao": "FBI situa morte de Thomas Mosser em 19/12/1994; texto original menciona 10/12/1994. Não aprovar até correção documental."
+      "tipo": "inconsistencia_entre_fontes",
+      "texto_original": "10 de dezembro de 1994: Thomas Mosser é morto.",
+      "observacao": "CORREÇÃO DO COTEJO: fontes contemporâneas de 11/12/1994 informam morte no dia anterior, 10/12/1994; Cornell também registra 10/12. O resumo cronológico do FBI exibe 19/12. NÃO substituir a data original. Registrar divergência e checar registro primário antes da aprovação definitiva."
     }
   ],
-  "notas_finais": "14/14 possuem referência pertinente. Um item sobre situação atual exige consulta processual recente; divergência Mosser exige correção do texto antes de publicar. Nenhum marco aprovado."
+  "notas_finais": "A data original de Mosser (10/12/1994) é corroborada por notícia contemporânea e Cornell; corrigida a interpretação anterior que a marcava como errada. Status processual de Dana deve permanecer datado e acompanhado de ressalva até confirmação oficial."
 }
