@@ -5,6 +5,7 @@ on:
       - 'js/caso.js'
       - 'css/caso.css'
       - 'admin-v2/js/publication.js'
+      - 'admin-v2/js/editorial-identity-guard.js'
       - 'tests/dossier-source-renderer.mjs'
       - 'tests/publication-editorial-audit.mjs'
       - 'tests/evidence-metadata.mjs'
