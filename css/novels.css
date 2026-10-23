@@ -113,3 +113,46 @@ body.novels:has(#novel-grid) .novel-banner{position:relative;margin:0;border:1px
 .novel-banner-link:focus-visible{outline:3px solid #f3d6a2;outline-offset:3px}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:760px){body.novels:has(#novel-grid) .novel-banner{margin:0 -2px}.novel-banner img{width:100%;height:auto}.novel-banner-link{left:12%;top:73%;width:24%;height:11%}}
+
+/* Catálogo mobile: capas menores e títulos sempre acessíveis.
+   Escopo exclusivo de novels.html, sem alterar leitura e detalhe. */
+@media (max-width: 700px) {
+  body.novels:has(#novel-grid) .novel-grid {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+    padding:14px 0 36px;
+  }
+  body.novels:has(#novel-grid) .novel-grid > .novel-card {
+    box-sizing:border-box;
+    min-width:0;
+    padding:7px;
+    box-shadow:2px 3px 0 rgba(0,0,0,.32);
+  }
+  body.novels:has(#novel-grid) .novel-grid .novel-cover {
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:2/3;
+    overflow:hidden;
+  }
+  body.novels:has(#novel-grid) .novel-grid .novel-cover img {
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  body.novels:has(#novel-grid) .novel-grid .novel-card h2 {
+    font:700 clamp(13px,3.5vw,16px)/1.25 Georgia,serif;
+    overflow-wrap:anywhere;
+    margin:9px 0 5px;
+  }
+  body.novels:has(#novel-grid) .novel-grid .novel-card p {
+    font-size:11px;
+    line-height:1.35;
+    overflow-wrap:anywhere;
+  }
+  body.novels:has(#novel-grid) .novel-grid .novel-tags {gap:4px;margin-top:6px}
+  body.novels:has(#novel-grid) .novel-grid .novel-tags span {font-size:10px;padding:3px 4px}
+  body.novels:has(#novel-grid) .novel-shell {width:calc(100% - 24px)}
+}
