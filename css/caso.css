@@ -3729,3 +3729,32 @@ body[data-reader-theme="papel"] .dossie-summary {
   .case-timeline-step-navigation { min-width: 0; }
   .case-timeline-step-navigation button { min-width: 0; }
 }
+
+/* Fase 3.7: cronologia acompanha as variáveis dos modos de leitura. */
+body.case-reading .case-content-timeline .case-timeline-editorial-guide,
+body.case-reading .case-content-timeline .case-timeline-step-navigation button,
+body.case-reading .case-content-timeline .case-timeline-period-label {
+  color: var(--reader-fg);
+  border-color: var(--reader-border);
+}
+body.case-reading .case-content-timeline .case-timeline-step-navigation button {
+  background: var(--reader-card);
+}
+body.case-reading .case-content-timeline .case-timeline-category,
+body.case-reading .case-content-timeline .case-timeline-documentary-nature {
+  color: var(--reader-fg);
+}
+body.case-reading .case-content-timeline .case-timeline-step-navigation button:focus-visible,
+body.case-reading .case-content-timeline li:focus {
+  outline-color: var(--reader-link);
+}
+body.case-paginated .case-content-timeline .case-timeline-step-navigation {
+  break-inside: avoid;
+}
+@media (max-width: 600px) {
+  body.case-reading .case-content-timeline .case-timeline-editorial-guide,
+  body.case-reading .case-content-timeline .case-timeline-step-navigation {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
