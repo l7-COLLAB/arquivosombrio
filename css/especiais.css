@@ -1,0 +1,31 @@
+/* Temporadas sazonais: isolado para preservar estilos da home. */
+.season-home,.season-page {--season-text:#f1e5d6;--season-muted:#d2bca5;--season-accent:#e2a166;color:var(--season-text);background:radial-gradient(ellipse at 85% 12%,rgba(151,68,21,.19),transparent 40%),linear-gradient(125deg,#201513,#0b0a0b 70%);border-top:1px solid #5d3629;border-bottom:1px solid #5d3629;padding:clamp(30px,5vw,68px) 0;}
+.season-home .container,.season-page .container{max-width:1170px;margin:0 auto;padding:0 20px}
+.season-head{text-align:center;max-width:850px;margin:0 auto 28px}
+.season-overline{font:600 .72rem/1.5 monospace;letter-spacing:.17em;color:var(--season-accent)}
+.season-head h1,.season-head h2{font-family:Cinzel,Georgia,serif;font-weight:700;font-size:clamp(1.8rem,4vw,3.4rem);margin:10px 0;color:var(--season-text)}
+.season-head p{color:var(--season-muted);font-size:1rem;line-height:1.7}
+.season-counter{display:inline-block;border:1px solid #765340;color:var(--season-accent);font:.73rem monospace;padding:7px 13px;margin-top:12px}
+.season-feature{display:grid;grid-template-columns:minmax(210px,1fr) 1.6fr;background:rgba(9,8,8,.65);border:1px solid #604136;overflow:hidden;border-radius:10px}
+.season-art{background:radial-gradient(circle at 45% 35%,#7d3c1c,#1d1716 65%);min-height:250px;display:flex;align-items:center;justify-content:center;gap:20px;font-size:clamp(3rem,7vw,6rem)}
+.season-art span:first-child{color:#efbd91}
+.season-copy{align-self:center;padding:clamp(18px,3vw,38px)}
+.season-copy small{color:var(--season-accent);font:.75rem monospace;letter-spacing:.07em}
+.season-copy h3{font-family:Cinzel,Georgia,serif;font-size:clamp(1.4rem,2.5vw,2.2rem);margin:12px 0;color:var(--season-text)}
+.season-copy p{color:var(--season-muted);line-height:1.6}
+.season-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.season-button,.season-secondary{display:inline-block;padding:11px 16px;border-radius:5px;text-decoration:none!important;font-weight:600;font-size:.85rem}
+.season-button{background:#9e5530;color:#fff!important}.season-secondary{color:var(--season-text)!important;border:1px solid #86604b}
+.season-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));list-style:none;padding:0;margin:18px 0 0;gap:8px}
+.season-day{display:flex;flex-direction:column;gap:5px;min-width:0;text-align:center;padding:13px 4px;border:1px solid #4a3932;background:#211a18;border-radius:6px}
+.season-day.is-today{border-color:#d09b63;background:#3d2920}
+.season-day>span:first-child{font:.58rem monospace;letter-spacing:.07em;color:var(--season-muted)}
+.season-day strong{color:var(--season-text);font:700 1rem Cinzel,Georgia,serif}
+.season-day small{font-size:.62rem;color:var(--season-accent)}
+.season-day a{color:#ffd6b0;font-size:.68rem}.season-locked{font-size:.63rem;color:#b7a89e}
+.season-page{min-height:100vh}.season-page .season-days-detail{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:30px 0}
+.season-page .season-days-detail .season-day{min-height:132px;justify-content:center}
+.season-disclaimer{color:var(--season-muted);max-width:870px;margin:20px auto;line-height:1.7;font-size:.88rem}
+.season-page a{color:#ffc58a}
+@media(max-width:700px){.season-feature{grid-template-columns:1fr}.season-art{min-height:135px;font-size:3rem}.season-days{grid-template-columns:repeat(4,minmax(0,1fr))}.season-head p{font-size:.9rem}}
+@media(prefers-reduced-motion:reduce){.season-home *,.season-page *{animation:none!important;transition:none!important}}
