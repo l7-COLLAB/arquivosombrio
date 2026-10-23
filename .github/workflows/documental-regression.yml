@@ -24,6 +24,8 @@ on:
       - 'tests/dossier-chronology-segmentation-preview.mjs'
       - 'tests/dossier-chronology-consolidated-preview.mjs'
       - 'tests/dossier-chronology-editorial-package.mjs'
+      - 'tests/dossier-chronology-documentary-crosscheck.mjs'
+      - 'docs/cotejo-documental-cronologias-fase5-19.json'
       - 'docs/pacote-editorial-cronologias-fase5-18.json'
       - 'docs/previa-consolidada-cronologias-fase5-17.json'
       - 'docs/previa-segmentacao-cronologias-fase5-16.json'
@@ -67,6 +69,7 @@ jobs:
           node tests/dossier-chronology-segmentation-preview.mjs
           node tests/dossier-chronology-consolidated-preview.mjs
           node tests/dossier-chronology-editorial-package.mjs
+          node tests/dossier-chronology-documentary-crosscheck.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
