@@ -1,6 +1,6 @@
 {
   "status": "rascunho_editorial_nao_publicar",
-  "nota": "Eventos propostos para conferência humana; categorias e naturezas não implicam conclusão judicial.",
+  "nota": "Proposta revisada; exige checagem de cada fonte e homologação editorial. Não foi aplicada aos casos publicados.",
   "casos": [
     {
       "id": 101,
@@ -16,10 +16,11 @@
         },
         {
           "data": "Noite de 1 para 2 de fevereiro de 1959",
-          "descricao": "O grupo de nove integrantes morre na região dos Urais; a sequência exata dos acontecimentos permanece objeto de reconstrução.",
-          "natureza_documental": "controversia",
+          "descricao": "Nove integrantes morrem durante a expedição nos Urais, provavelmente na noite de 1 para 2 de fevereiro. As circunstâncias e o mecanismo da morte continuam sujeitos a reconstrução científica.",
+          "natureza_documental": "fato_documentado",
           "fonte": "Gaume e Puzrin, Communications Earth & Environment (2021)",
-          "link_fonte": "https://www.nature.com/articles/s43247-020-00081-8"
+          "link_fonte": "https://www.nature.com/articles/s43247-020-00081-8",
+          "detalhes": "A morte dos nove integrantes está documentada. A hipótese de avalanche em placa é uma explicação científica posterior, não uma observação direta do ocorrido."
         },
         {
           "data": "Julho de 2020",
@@ -90,6 +91,29 @@
           "fonte": "ABC News (2026)",
           "link_fonte": "https://www.abc.net.au/news/2026-07-06/sa-police-report-coroner-into-somerton-man-case-very-soon/106869302"
         }
+      ]
+    }
+  ],
+  "pendencias_editoriais": [
+    {
+      "caso_id": 101,
+      "campo": "historia",
+      "trecho_atual": "Em fevereiro de 1959, nove estudantes e experientes praticantes de esqui partiram para uma expedição",
+      "correcao_proposta": "Em janeiro de 1959, dez integrantes iniciaram a viagem; em 28 de janeiro, Yuri Yudin retornou por motivos de saúde e nove prosseguiram.",
+      "motivo": "A partida e o retorno de Yuri Yudin ocorreram em janeiro, antes da morte dos nove integrantes em fevereiro.",
+      "fontes": [
+        "https://dyatlovpass.com/page.php?id=12786&language_id=1",
+        "https://baug.ethz.ch/en/news-and-events/news/2021/01/a-new-take-on-an-old-mystery.html"
+      ]
+    },
+    {
+      "caso_id": 103,
+      "campo": "historia",
+      "trecho_atual": "Ao longo das décadas, diferentes pesquisadores analisaram documentos",
+      "correcao_proposta": "Complementar a narrativa com a exumação de 2021 e a identificação genética proposta em 2022, explicitando que a confirmação oficial ainda dependia da investigação do legista segundo a reportagem de julho de 2026.",
+      "motivo": "O texto inicial não contextualiza os desenvolvimentos posteriores.",
+      "fontes": [
+        "https://www.abc.net.au/news/2026-07-06/sa-police-report-coroner-into-somerton-man-case-very-soon/106869302"
       ]
     }
   ]
