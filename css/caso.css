@@ -3711,3 +3711,21 @@ body[data-reader-theme="papel"] .dossie-summary {
   .case-timeline-step-navigation button { flex: 1 1 38%; }
   .case-timeline-step-position { order: -1; width: 100%; text-align: center; }
 }
+
+/* Fase 3.5: foco de teclado e acessibilidade em telas estreitas. */
+.case-content-timeline li:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+.case-timeline-step-navigation button:focus-visible,
+.case-timeline-navigation a:focus-visible,
+.case-timeline-search input:focus-visible,
+.case-timeline-filters select:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+.case-content-timeline li { scroll-margin-block: 5rem; }
+@media (max-width: 600px) {
+  .case-timeline-step-navigation { min-width: 0; }
+  .case-timeline-step-navigation button { min-width: 0; }
+}
