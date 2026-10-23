@@ -2758,14 +2758,15 @@ function renderizarCronologiaBlocoDossie(dados) {
             anterior.disabled = !visiveis.length || indiceAtual <= 0;
             proximo.disabled = !visiveis.length || indiceAtual >= visiveis.length - 1;
             posicao.textContent = visiveis.length
-                ? (indiceAtual < 0 ? visiveis.length + " acontecimentos visíveis" : (indiceAtual + 1) + " de " + visiveis.length)
+                ? (indiceAtual < 0 ? visiveis.length === 1 ? "1 acontecimento visível" : visiveis.length + " acontecimentos visíveis" : (indiceAtual + 1) + " de " + visiveis.length)
                 : "Nenhum acontecimento visível";
         };
         const navegar = passo => {
             const visiveis = eventosVisiveis();
             if (!visiveis.length) return;
             indiceAtual = Math.max(0, Math.min(visiveis.length - 1, indiceAtual + passo));
-            visiveis[indiceAtual].scrollIntoView({behavior: "smooth", block: "center"});
+            const movimentoReduzido = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            visiveis[indiceAtual].scrollIntoView({behavior: movimentoReduzido ? "auto" : "smooth", block: "center"});
             visiveis[indiceAtual].setAttribute("tabindex", "-1");
             visiveis[indiceAtual].focus({preventScroll: true});
             atualizarComandos();
