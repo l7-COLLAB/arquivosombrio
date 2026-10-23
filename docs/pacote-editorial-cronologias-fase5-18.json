@@ -1,0 +1,60 @@
+{
+  "fase": "5.18",
+  "status": "bloqueado_para_publicacao",
+  "data": "2026-10-23",
+  "origem": {
+    "proposta": 79,
+    "branch": "feat/cronologia-interativa-fase2",
+    "relatorio": "docs/relatorio-normalizacao-acervo-fase5-9.json",
+    "previa": "docs/previa-consolidada-cronologias-fase5-17.json"
+  },
+  "integridade": {
+    "eventos_origem": 327,
+    "textos_candidatos": 247,
+    "textos_pendentes_na_fase59": 75,
+    "objetos_existentes": 5,
+    "marcos_separados": 29,
+    "notas_separadas": 1,
+    "referencias_auxiliares": 2
+  },
+  "regras": [
+    "Validar fonte e acontecimento individualmente",
+    "Confirmar título slug e ID no Supabase no momento da publicação",
+    "Não inferir data exata a partir de período ou intervalo",
+    "Não converter notas e fontes em eventos",
+    "Preservar original e plano de reversão",
+    "Não publicar automaticamente"
+  ],
+  "itens": [
+    {
+      "id_referencia_somente_leitura": 5,
+      "titulo": "Caso Dana Chandler",
+      "estado": "revisao_documental_pendente",
+      "marcos": 11,
+      "notas": 1,
+      "aprovado": false
+    },
+    {
+      "id_referencia_somente_leitura": 6,
+      "titulo": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "estado": "revisao_documental_pendente",
+      "marcos": 18,
+      "notas": 0,
+      "aprovado": false
+    }
+  ],
+  "referencias": [
+    {
+      "id_referencia_somente_leitura": 4,
+      "titulo": "Lizzie Borden: quem matou Andrew e Abby Borden?",
+      "estado": "revisao_de_fontes_pendente",
+      "aprovado": false
+    },
+    {
+      "id_referencia_somente_leitura": 17,
+      "titulo": "A família Turpin: a ligação que revelou anos de cativeiro",
+      "estado": "revisao_de_fontes_pendente",
+      "aprovado": false
+    }
+  ]
+}
