@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 const editorial=readFileSync(new URL("../admin-v2/editorial.html",import.meta.url),"utf8");
 const preview=readFileSync(new URL("../previews/revisao-editorial-fase5-50.html",import.meta.url),"utf8");
 assert.ok(editorial.indexOf('id="editorial-preview-entry"')>editorial.indexOf('<div id="app" hidden>'));
-assert.match(editorial,/\.\.\/previews\/revisao-editorial-fase5-50\.html/);
+assert.match(editorial,/editorial-candidates\.html/);
 assert.match(editorial,/admin-auth\.js/);
 assert.match(editorial,/editorial-record\.js/);
 assert.doesNotMatch(preview,/<button\b/);
