@@ -12,4 +12,23 @@ for(const value of ["pendente","liberado",""])assert.equal(validateEditorialDeci
 assert.equal(validateEditorialDecision({...good,data_decisao:"2026-02-30"}).valid,false);
 assert.equal(registry.exclusao.publicavel,false);
 for(const val of Object.values(registry.autorizacoes))assert.equal(val,false);
+
+const invalids=[
+ null,undefined,{},[],{...good,decisao:"pendente"},
+ {...good,responsavel:"   "},{...good,justificativa:"   "},
+ {...good,data_decisao:"2026-02-29"},
+ {...good,data_decisao:"2026-13-01"},
+ {...good,data_decisao:"2026-10-24T00:00:00Z"},
+ {...good,decisao:"publicar"}
+];
+for(const sample of invalids)assert.equal(validateEditorialDecision(sample).valid,false,"Entrada invalida aceita");
+const ids=registry.formularios.map(f=>f.id_caso+":"+f.indice);
+assert.equal(new Set(ids).size,2);
+for(const form of registry.formularios){
+ assert.equal(form.decisao,"pendente");
+ for(const required of registry.validacao.campos_obrigatorios_para_decisao)assert.equal(form[required],null);
+ assert.equal(form.aplicado,false);
+}
+assert.equal(registry.exclusao.id_caso,5);
+assert.equal(registry.exclusao.indice,12);
 console.log("Fase 5.48: aprovações incompletas rejeitadas; nenhuma publicação autorizada.");
