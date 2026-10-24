@@ -1,0 +1,27 @@
+{
+  "fase": "5.48",
+  "estado": "validador_formal_implementado_sem_decisoes_aprovadas",
+  "regressao_fase547": {
+    "commit": "2cc9312c8bbf4143e22b419b6c3c9efae64b43b5",
+    "aprovados": 6,
+    "total": 6
+  },
+  "validador": "admin-v2/js/editorial-decision-validator.js",
+  "testes": "tests/dossier-chronology-validation-phase548.mjs",
+  "regras": [
+    "Somente aprovar, rejeitar ou solicitar_revisao constituem decisões formais.",
+    "Responsável, data ISO válida e justificativa não vazia são obrigatórios.",
+    "Decisões pendentes e registros incompletos não são válidos.",
+    "Validador é utilitário independente; não cria fluxo de aprovação nem concede acesso administrativo."
+  ],
+  "autorizacoes": {
+    "aprovacao_humana": false,
+    "merge": false,
+    "deploy": false,
+    "publicacao": false,
+    "supabase": false
+  },
+  "nota_processual_dana": {
+    "publicavel": false
+  }
+}
