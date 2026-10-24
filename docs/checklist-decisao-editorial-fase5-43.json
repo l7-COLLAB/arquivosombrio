@@ -73,5 +73,49 @@
     "publicacao": false,
     "supabase": false
   },
-  "observacao": "Checklist e plano de reversao documentados; rollback nao executado nem testado."
+  "observacao": "Checklist e plano de reversao documentados; rollback nao executado nem testado.",
+  "auditoria_complementar_2026_10_24": {
+    "origem": "docs/pacote-aprovacao-cronologias-fase5-42.json",
+    "regressao_fase542": {
+      "commit": "b0c11c6d36db0e7303d0a80b09b06d44807011e1",
+      "run_id": 40095329998,
+      "conclusao": "success",
+      "total_workflows": 6,
+      "workflows_aprovados": 6,
+      "validacao_editorial": false
+    },
+    "ressalvas": [
+      {
+        "id_caso": 6,
+        "indice": 11,
+        "motivo": "Divergencia atribuida ao FBI nao demonstrada pela pagina historica consultada",
+        "fonte_especifica_divergencia_confirmada": false,
+        "aprovado": false
+      },
+      {
+        "id_caso": 5,
+        "indice": 5,
+        "motivo": "Termos juridicos do historico de 2012 devem ser aprovados por revisao humana contextualizada",
+        "aprovado": false
+      },
+      {
+        "id_caso": 5,
+        "indice": 12,
+        "motivo": "Situacao processual sem andamento judicial contemporaneo confirmado",
+        "fora_da_cronologia": true,
+        "redacao_candidata": null,
+        "publicavel": false,
+        "aprovado": false
+      }
+    ],
+    "seguranca": {
+      "backup_producao_realizado": false,
+      "restauracao_testada": false,
+      "identificadores_supabase_validados": false,
+      "sha_base_pre_merge_registrado": false,
+      "sha_head_pre_merge_registrado": false,
+      "autorizacao_para_publicar": false
+    },
+    "decisao": "continuar_revisao_sem_homologacao"
+  }
 }
