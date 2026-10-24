@@ -46,6 +46,9 @@ on:
       - 'tests/dossier-chronology-decisions-phase546.mjs'
       - 'tests/dossier-chronology-record-phase547.mjs'
       - 'tests/dossier-chronology-validation-phase548.mjs'
+      - 'tests/dossier-chronology-workflow-phase549.mjs'
+      - 'docs/fluxo-revisao-editorial-fase5-49.json'
+      - 'admin-v2/js/editorial-review-workflow.js'
       - 'docs/validacao-decisoes-editoriais-fase5-48.json'
       - 'admin-v2/js/editorial-decision-validator.js'
       - 'docs/registro-decisoes-editoriais-fase5-47.json'
@@ -126,6 +129,7 @@ jobs:
           node tests/dossier-chronology-decisions-phase546.mjs
           node tests/dossier-chronology-record-phase547.mjs
           node tests/dossier-chronology-validation-phase548.mjs
+          node tests/dossier-chronology-workflow-phase549.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
