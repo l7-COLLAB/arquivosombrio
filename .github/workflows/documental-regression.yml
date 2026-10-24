@@ -62,6 +62,8 @@ on:
       - 'tests/dossier-editorial-predeploy-phase562.mjs'
       - 'tests/dossier-editorial-supabase-inventory-phase563.mjs'
       - 'tests/dossier-editorial-gateway-phase564.mjs'
+      - 'tests/dossier-editorial-gateway-cors-phase565.mjs'
+      - 'docs/compatibilidade-jwt-cors-fase5-65.json'
       - 'docs/gateway-editorial-fase5-64.json'
       - 'supabase/config.toml'
       - 'docs/verificacao-supabase-fase5-63.json'
@@ -177,6 +179,7 @@ jobs:
           node tests/dossier-editorial-predeploy-phase562.mjs
           node tests/dossier-editorial-supabase-inventory-phase563.mjs
           node tests/dossier-editorial-gateway-phase564.mjs
+          node tests/dossier-editorial-gateway-cors-phase565.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
