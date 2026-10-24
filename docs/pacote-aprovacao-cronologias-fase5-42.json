@@ -1,0 +1,71 @@
+{
+  "fase": "5.42",
+  "estado": "pacote_para_aprovacao_humana_nao_homologado",
+  "pr": 79,
+  "dependencia_pr": 75,
+  "referencia_fase_anterior": "docs/revisao-documental-cronologias-fase5-41.json",
+  "regressao_fase541": {
+    "commit": "c5c81b881e4ac9e694a791f34d852fff639c6e9f",
+    "aprovados": 6,
+    "total": 6
+  },
+  "itens": [
+    {
+      "id_caso": 6,
+      "indice": 11,
+      "tema": "Thomas Mosser",
+      "classificacao": "redacao_candidata_fundamentada",
+      "fonte": "https://www.justice.gov/archive/opa/pr/1996/Jun96/283crm.htm",
+      "redacao_candidata": "10 de dezembro de 1994: Thomas Mosser morre após a explosão de uma bomba em North Caldwell, Nova Jersey, segundo o Departamento de Justiça dos Estados Unidos.",
+      "aprovacao_humana": false,
+      "aplicacao": false,
+      "exige": [
+        "validação humana do texto e fonte",
+        "aprovação editorial explícita"
+      ]
+    },
+    {
+      "id_caso": 5,
+      "indice": 5,
+      "tema": "Dana Chandler - condenacao de 2012",
+      "classificacao": "redacao_candidata_fundamentada",
+      "fonte": "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html",
+      "redacao_candidata": "2012: Dana Chandler é condenada por dois homicídios e recebe duas penas consecutivas de prisão perpétua, cada uma com período mínimo obrigatório de 50 anos. As condenações seriam anuladas pela Suprema Corte do Kansas em 2018.",
+      "aprovacao_humana": false,
+      "aplicacao": false,
+      "exige": [
+        "validação humana do texto e fonte",
+        "aprovação editorial explícita"
+      ]
+    },
+    {
+      "id_caso": 5,
+      "indice": 12,
+      "tema": "Dana Chandler - situacao atual",
+      "classificacao": "pendencia_processual_bloqueada",
+      "fonte": "https://www.wibw.com/2025/06/03/dana-chandler-sentenced-prison-tuesday-2002-killings/",
+      "redacao_candidata": null,
+      "aprovacao_humana": false,
+      "aplicacao": false,
+      "exige": [
+        "consulta processual recente",
+        "aprovacao editorial explícita"
+      ]
+    }
+  ],
+  "controles": {
+    "homologacao_editorial": false,
+    "merge": false,
+    "deploy": false,
+    "publicacao": false,
+    "gravacao_supabase": false,
+    "substituicao_automatica": false
+  },
+  "criterios_aprovacao": [
+    "validacao das fontes e redações por revisora humana",
+    "resolucao da pendencia processual ou sua exclusao expressa do escopo",
+    "verificacao da dependencia PR 75",
+    "nova regressao apos qualquer mudanca"
+  ],
+  "observacao": "Documento preparatorio. Nenhuma aprovacao editorial foi concedida."
+}
