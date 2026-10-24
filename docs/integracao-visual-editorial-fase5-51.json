@@ -1,0 +1,10 @@
+{
+  "fase": "5.51",
+  "estado": "atalho_de_consulta_preparado",
+  "origem": "admin-v2/editorial.html",
+  "destino": "previews/revisao-editorial-fase5-50.html",
+  "aviso": "A pagina de previa e publica por URL e nao deve conter dados privados. O atalho no painel autenticado nao protege a URL da previa.",
+  "publicacao_autorizada": false,
+  "merge_autorizado": false,
+  "supabase_autorizado": false
+}
