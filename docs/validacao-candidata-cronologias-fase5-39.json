@@ -1,0 +1,60 @@
+{
+  "fase": "5.39",
+  "estado": "validacao_tecnica_aprovada_homologacao_editorial_pendente",
+  "pr": 79,
+  "dependencia_pr": 75,
+  "commit_validado": "91d81961f4ba8effa545281ac887e02d68ad6ab7",
+  "workflow_regressao": {
+    "run_id": 40047589268,
+    "conclusao": "success",
+    "validacao": "tecnica_automatizada_nao_equivale_a_aprovacao_editorial"
+  },
+  "escopo": {
+    "acontecimentos": 30,
+    "marcos_temporais": 29,
+    "redacoes_alternativas": 2,
+    "notas_bloqueadas": 1
+  },
+  "decisoes": [
+    {
+      "id_caso": 6,
+      "indice": 11,
+      "tema": "Thomas Mosser",
+      "decisao": "candidata_pendente_de_revisao_humana",
+      "condicoes": [
+        "confirmar documentos primarios e origem da divergencia de datas",
+        "aprovar nota explicativa antes de publicar"
+      ]
+    },
+    {
+      "id_caso": 5,
+      "indice": 5,
+      "tema": "Dana Chandler - penas de 2012",
+      "decisao": "candidata_pendente_de_cotejo_integral",
+      "condicoes": [
+        "conferir inteiro teor do documento judicial",
+        "revisar termos juridicos e periodo minimo obrigatorio"
+      ]
+    },
+    {
+      "id_caso": 5,
+      "indice": 12,
+      "tema": "Dana Chandler - situacao processual",
+      "decisao": "excluida_da_publicacao",
+      "condicoes": [
+        "obter andamento judicial recente e datado",
+        "submeter texto novo a revisao humana"
+      ]
+    }
+  ],
+  "homologacao_editorial_aprovada": false,
+  "publicacao_autorizada": false,
+  "gravacao_supabase_autorizada": false,
+  "merge_autorizado": false,
+  "deploy_autorizado": false,
+  "observacoes": [
+    "A aprovacao de testes nao autentica a veracidade das fontes.",
+    "A PR 79 depende da PR 75 e permanece em rascunho.",
+    "Nenhum texto original deve ser substituido automaticamente."
+  ]
+}
