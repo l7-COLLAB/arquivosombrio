@@ -84,3 +84,31 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
  .season-page,.season-home{--sm:#e4d9c9}
  .season-filter button,.season-entry,.season-campaign-card{border-width:2px}
 }
+
+/* Identidades exclusivas dos especiais anuais, ainda em planejamento */
+.season-theme-verao-sombrio{--sa:#bb7643;--sb:#211411;--sg:#bb764388;--season-banner:url('/assets/especiais/banner-verao-sombrio.svg')}
+.season-theme-arquivos-do-recomeco{--sa:#c09f75;--sb:#161d20;--sg:#c09f7588;--season-banner:url('/assets/especiais/banner-arquivos-do-recomeco.svg')}
+.season-theme-carnaval-macabro{--sa:#a85564;--sb:#210f1c;--sg:#a8556488;--season-banner:url('/assets/especiais/banner-carnaval-macabro.svg')}
+.season-theme-mascarados{--sa:#927aa8;--sb:#16111f;--sg:#927aa888;--season-banner:url('/assets/especiais/banner-mascarados.svg')}
+.season-theme-mulheres-no-centro-do-misterio{--sa:#b08a8c;--sb:#221719;--sg:#b08a8c88;--season-banner:url('/assets/especiais/banner-mulheres-no-centro-do-misterio.svg')}
+.season-theme-mentiras-e-manipulacao{--sa:#9ca5aa;--sb:#171c22;--sg:#9ca5aa88;--season-banner:url('/assets/especiais/banner-mentiras-e-manipulacao.svg')}
+.season-theme-pascoa-sombria{--sa:#b5a37b;--sb:#201b14;--sg:#b5a37b88;--season-banner:url('/assets/especiais/banner-pascoa-sombria.svg')}
+.season-theme-semana-dos-rituais{--sa:#a17b63;--sb:#1d1415;--sg:#a17b6388;--season-banner:url('/assets/especiais/banner-semana-dos-rituais.svg')}
+.season-theme-lacos-de-sangue{--sa:#a96b64;--sb:#230e13;--sg:#a96b6488;--season-banner:url('/assets/especiais/banner-lacos-de-sangue.svg')}
+.season-theme-casas-malditas{--sa:#8a8777;--sb:#181b19;--sg:#8a877788;--season-banner:url('/assets/especiais/banner-casas-malditas.svg')}
+.season-theme-amores-mortais{--sa:#b16472;--sb:#221016;--sg:#b1647288;--season-banner:url('/assets/especiais/banner-amores-mortais.svg')}
+.season-theme-noites-de-sao-joao-sombrio{--sa:#d18a53;--sb:#231710;--sg:#d18a5388;--season-banner:url('/assets/especiais/banner-noites-de-sao-joao-sombrio.svg')}
+.season-theme-inverno-macabro{--sa:#8eacbe;--sb:#101a25;--sg:#8eacbe88;--season-banner:url('/assets/especiais/banner-inverno-macabro.svg')}
+.season-theme-casos-frios{--sa:#9aadb8;--sb:#111a20;--sg:#9aadb888;--season-banner:url('/assets/especiais/banner-casos-frios.svg')}
+.season-theme-mes-dos-desaparecidos{--sa:#c0aa86;--sb:#201b18;--sg:#c0aa8688;--season-banner:url('/assets/especiais/banner-mes-dos-desaparecidos.svg')}
+.season-theme-infancias-roubadas{--sa:#a69683;--sb:#222022;--sg:#a6968388;--season-banner:url('/assets/especiais/banner-infancias-roubadas.svg')}
+.season-theme-sete-noites-sem-rastro{--sa:#9b9e90;--sb:#151b19;--sg:#9b9e9088;--season-banner:url('/assets/especiais/banner-sete-noites-sem-rastro.svg')}
+.season-theme-segredos-de-familia{--sa:#b79a7a;--sb:#1e1819;--sg:#b79a7a88;--season-banner:url('/assets/especiais/banner-segredos-de-familia.svg')}
+.season-theme-semana-das-bruxas{--sa:#c48b65;--sb:#21121a;--sg:#c48b6588;--season-banner:url('/assets/especiais/banner-semana-das-bruxas.svg')}
+.season-theme-arquivos-proibidos{--sa:#9b8f7b;--sb:#1b1917;--sg:#9b8f7b88;--season-banner:url('/assets/especiais/banner-arquivos-proibidos.svg')}
+.season-theme-arquivos-sem-solucao{--sa:#9ca5a4;--sb:#141b1f;--sg:#9ca5a488;--season-banner:url('/assets/especiais/banner-arquivos-sem-solucao.svg')}
+.season-theme-casos-do-brasil{--sa:#b89b73;--sb:#1f1c17;--sg:#b89b7388;--season-banner:url('/assets/especiais/banner-casos-do-brasil.svg')}
+.season-theme-seitas-e-fanatismo{--sa:#9f7472;--sb:#1b1516;--sg:#9f747288;--season-banner:url('/assets/especiais/banner-seitas-e-fanatismo.svg')}
+.season-theme-pericia-em-foco{--sa:#7caaa1;--sb:#111e20;--sg:#7caaa188;--season-banner:url('/assets/especiais/banner-pericia-em-foco.svg')}
+.season-theme-creepypastas-da-meia-noite{--sa:#897ca9;--sb:#171525;--sg:#897ca988;--season-banner:url('/assets/especiais/banner-creepypastas-da-meia-noite.svg')}
+.season-theme-lendas-do-brasil-sombrio{--sa:#8f9b69;--sb:#161c15;--sg:#8f9b6988;--season-banner:url('/assets/especiais/banner-lendas-do-brasil-sombrio.svg')}
