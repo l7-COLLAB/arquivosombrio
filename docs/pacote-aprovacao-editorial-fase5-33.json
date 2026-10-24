@@ -1,0 +1,77 @@
+{
+  "fase": "5.33",
+  "data": "2026-10-23",
+  "pr": 79,
+  "dependencia": 75,
+  "status": "aguardando_aprovacao_editorial",
+  "publicacao_autorizada": false,
+  "merge_autorizado": false,
+  "supabase_escrita_autorizada": false,
+  "escopo": {
+    "dossies": [
+      "Dana Chandler",
+      "Unabomber"
+    ],
+    "marcos": 29,
+    "notas_fora_da_cronologia": 1
+  },
+  "tecnico": {
+    "ultimo_head_testado": "9e7d3a5816b524e573ec2d54ef95bc067e2028b8",
+    "workflows_aprovados": 6,
+    "workflows_totais": 6,
+    "capturas_revisadas": 4,
+    "dispositivos_fisicos_testados": false,
+    "acessibilidade_integral_homologada": false
+  },
+  "pendencias": [
+    {
+      "id": "fontes",
+      "criticidade": "bloqueante",
+      "acao": "Conferência manual, acontecimento a acontecimento, com documentação primária ou contemporânea",
+      "aprovado": false
+    },
+    {
+      "id": "mosser",
+      "criticidade": "bloqueante",
+      "acao": "Anotar e decidir editorialmente divergência da data de Thomas Mosser, sem alterar automaticamente o texto de 10/12/1994",
+      "aprovado": false
+    },
+    {
+      "id": "dana",
+      "criticidade": "bloqueante",
+      "acao": "Verificar andamento processual atualizado antes de inserir nota de situação",
+      "aprovado": false
+    },
+    {
+      "id": "identidade",
+      "criticidade": "bloqueante",
+      "acao": "Conferir IDs, slugs e conteúdo atual antes de qualquer plano de aplicação",
+      "aprovado": false
+    },
+    {
+      "id": "reversao",
+      "criticidade": "bloqueante",
+      "acao": "Definir backup, ensaio em ambiente isolado e rollback verificável",
+      "aprovado": false
+    },
+    {
+      "id": "experiencia_real",
+      "criticidade": "pendente",
+      "acao": "Revisar telas em dispositivos físicos, leitores de tela, modo livro e scroll",
+      "aprovado": false
+    },
+    {
+      "id": "autorizacao",
+      "criticidade": "bloqueante",
+      "acao": "Obter aprovação explícita de publicação e dependências PR 75/79",
+      "aprovado": false
+    }
+  ],
+  "fontes_internas": [
+    "docs/checklist-homologacao-cronologias-fase5-22.json",
+    "docs/relatorio-homologacao-tecnica-fase5-29.md",
+    "docs/homologacao-isolada-acervo-fase5-30.md",
+    "docs/revisao-quatro-capturas-reais-fase5-32.md",
+    "docs/revisao-divergencias-cronologias-fase5-21.md"
+  ]
+}
