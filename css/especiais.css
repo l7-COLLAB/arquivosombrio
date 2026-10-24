@@ -181,3 +181,9 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 .season-countdown-digits small{font:600 .6rem/1.2 system-ui,sans-serif;letter-spacing:.13em;color:#d5a97e}
 .season-countdown-status{margin:13px 0 0!important;font-size:.77rem!important;color:#d8c9b9!important;line-height:1.5}
 @media(max-width:420px){.season-countdown{padding:13px}.season-countdown-digits{gap:5px}.season-countdown-digits>span{padding:10px 2px}.season-countdown-digits small{font-size:.54rem}}
+
+/* Halloween: arte cinematográfica oficial, com SVG como fallback até envio do WebP */
+.season-theme-halloween{--season-banner:url('/assets/especiais/halloween-fundo-cinematografico.webp'),url('/assets/especiais/banner-halloween.svg')}
+.season-home.season-theme-halloween{background-image:linear-gradient(90deg,rgba(8,7,8,.82) 0%,rgba(8,7,8,.49) 58%,rgba(8,7,8,.12) 100%),url('/assets/especiais/halloween-fundo-cinematografico.webp'),url('/assets/especiais/banner-halloween.svg')!important;background-size:cover,cover,cover!important;background-position:center,center,center!important}
+.season-theme-halloween .season-hero-art,.season-theme-halloween .season-detail-art,.season-theme-halloween .season-card-art{background-image:url('/assets/especiais/halloween-fundo-cinematografico.webp'),url('/assets/especiais/banner-halloween.svg')!important;background-size:cover!important;background-position:70% center!important}
+@media(max-width:750px){.season-home.season-theme-halloween{background-position:center,69% center,69% center!important}.season-theme-halloween .season-detail-art{background-position:73% center!important}}
