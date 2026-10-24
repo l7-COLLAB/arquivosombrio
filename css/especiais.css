@@ -50,3 +50,37 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 .season-catalog-grid .season-card-art{background-position:63% center!important}
 @media(max-width:750px){.season-home{background-position:65% center!important}.season-home-grid{grid-template-columns:1fr;min-height:0}.season-home .season-hero-art{display:none}.season-home-copy{padding:14px 4px}.season-home h2{max-width:19ch}.season-home-copy p{font-size:.94rem}.season-mini-days{gap:4px}}
 @media(max-width:380px){.season-mini-days li{padding:6px 0;font-size:.62rem}.season-mini-days small{font-size:.57rem}}
+
+/* Etapa 13: isolamento visual e responsividade das telas de campanha */
+.season-page,.season-home{box-sizing:border-box;overflow-x:clip}
+.season-page *,.season-home *{box-sizing:border-box}
+.season-page .container,.season-home .container{width:100%;min-width:0}
+.season-catalog-grid,.season-entry-grid,.season-home-grid{min-width:0}
+.season-campaign-card,.season-card-body,.season-entry{min-width:0}
+.season-card-body h2,.season-card-body p,.season-entry strong{overflow-wrap:break-word}
+.season-home .season-mini-days{width:100%;grid-template-columns:repeat(7,minmax(0,1fr))}
+.season-home .season-mini-days li{min-width:0}
+.season-filter button{min-height:44px}
+.season-button,.season-secondary{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.season-detail-footer a{min-height:44px;display:inline-flex;align-items:center}
+.season-page .season-catalog-head{padding-inline:8px}
+@media(max-width:750px){
+ .season-page{padding-top:18px}
+ .season-catalog-grid{grid-template-columns:minmax(0,1fr)}
+ .season-campaign-card{grid-template-columns:minmax(0,35%) minmax(0,65%)}
+ .season-card-body{padding:16px}
+ .season-entry-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .season-home .season-mini-days{gap:3px}
+ .season-home .season-mini-days li{padding:7px 2px}
+}
+@media(max-width:420px){
+ .season-campaign-card{grid-template-columns:1fr}
+ .season-card-art{min-height:125px;max-height:175px}
+ .season-entry-grid{grid-template-columns:1fr}
+ .season-filter{justify-content:flex-start}
+ .season-detail-footer{gap:12px}
+}
+@media(prefers-contrast:more){
+ .season-page,.season-home{--sm:#e4d9c9}
+ .season-filter button,.season-entry,.season-campaign-card{border-width:2px}
+}
