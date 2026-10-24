@@ -1,0 +1,587 @@
+{
+  "fase": "5.34",
+  "data": "2026-10-23",
+  "estado": "auditoria_documental_item_a_item_sem_homologacao",
+  "escopo": {
+    "total": 30,
+    "marcos": 29,
+    "nota": 1,
+    "fontes_associadas": 30,
+    "divergencias": 1
+  },
+  "nota": "Vinculação de fontes anteriormente identificadas não equivale a verificação integral dos documentos nem aprovação editorial. Nenhuma data ou texto original foi modificado.",
+  "itens": [
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 1,
+      "tipo": "marco_temporal",
+      "texto_original": "7 de julho de 2002: Mike Sisco e Karen Harkness são encontrados mortos em Topeka.",
+      "periodo_original": "7 de julho de 2002",
+      "fonte_fase19": [
+        "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_por_decisao_judicial",
+      "status_fase20": null,
+      "status_documental": "confirmado_por_decisao_judicial",
+      "observacao": "Decisão registra encontro dos corpos em 7/7/2002.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 2,
+      "tipo": "marco_temporal",
+      "texto_original": "15 de julho de 2002: Dana é presa por uma pendência relacionada à pensão; seu veículo é apreendido.",
+      "periodo_original": "15 de julho de 2002",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://caselaw.findlaw.com/court/ks-supreme-court/1893432.html"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_fonte_judicial",
+      "status_documental": "corroborado_fonte_judicial",
+      "observacao": "Acórdão confirma 15/7/2002, mandado de pensão e apreensão do Mitsubishi.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 3,
+      "tipo": "marco_temporal",
+      "texto_original": "2009: o caso recebe nova exposição nacional pelo 48 Hours.",
+      "periodo_original": "2009",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.cbsnews.com/news/woman-charged-in-2002-topeka-double-homicide/"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_fonte_jornalistica",
+      "status_documental": "corroborado_fonte_jornalistica",
+      "observacao": "CBS/AP confirma exibição do 48 Hours Mystery em outubro de 2009.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 4,
+      "tipo": "marco_temporal",
+      "texto_original": "2011: Dana é presa e acusada dos dois homicídios.",
+      "periodo_original": "2011",
+      "fonte_fase19": [
+        "https://www.wibw.com/2025/04/02/dana-chandler-sentencing-set-june-date/"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_em_parte",
+      "status_fase20": null,
+      "status_documental": "confirmado_em_parte",
+      "observacao": "2011 e acusação apoiadas pelo relato; data específica não consta.",
+      "criticidade": "fonte_parcial_ou_secundaria",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 5,
+      "tipo": "marco_temporal",
+      "texto_original": "2012: primeira condenação e duas penas de prisão perpétua.",
+      "periodo_original": "2012",
+      "fonte_fase19": [
+        "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_em_parte",
+      "status_fase20": null,
+      "status_documental": "confirmado_em_parte",
+      "observacao": "Condenação e sentenças documentadas; revisar expressão 'prisão perpétua' e possibilidade de liberdade condicional.",
+      "criticidade": "fonte_parcial_ou_secundaria",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 6,
+      "tipo": "marco_temporal",
+      "texto_original": "6 de abril de 2018: a Suprema Corte do Kansas anula as condenações por conduta imprópria da promotoria.",
+      "periodo_original": "6 de abril de 2018",
+      "fonte_fase19": [
+        "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_por_decisao_judicial",
+      "status_fase20": null,
+      "status_documental": "confirmado_por_decisao_judicial",
+      "observacao": "Decisão de 6/4/2018 reverteu condenações por erro da acusação.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 7,
+      "tipo": "marco_temporal",
+      "texto_original": "2022: segundo julgamento termina sem veredicto.",
+      "periodo_original": "2022",
+      "fonte_fase19": [
+        "https://www.cbsnews.com/news/woman-tried-twice-2002-kansas-double-murder-released-from-jail-dana-chandler/"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_por_imprensa",
+      "status_fase20": null,
+      "status_documental": "confirmado_por_imprensa",
+      "observacao": "Segundo julgamento terminou sem veredito em setembro de 2022.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 8,
+      "tipo": "marco_temporal",
+      "texto_original": "Fevereiro de 2025: começa o terceiro julgamento.",
+      "periodo_original": "Fevereiro de 2025",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.wibw.com/2025/02/04/jury-selection-begins-dana-chandlers-third-trial/"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_fonte_jornalistica",
+      "status_documental": "corroborado_fonte_jornalistica",
+      "observacao": "Seleção do júri iniciada em 3/2/2025; sustenta início do terceiro julgamento.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 9,
+      "tipo": "marco_temporal",
+      "texto_original": "7 de março de 2025: Dana é considerada culpada novamente.",
+      "periodo_original": "7 de março de 2025",
+      "fonte_fase19": [
+        "https://www.wibw.com/2025/04/02/dana-chandler-sentencing-set-june-date/"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_por_imprensa",
+      "status_fase20": null,
+      "status_documental": "confirmado_por_imprensa",
+      "observacao": "Veredito em 7/3/2025.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 10,
+      "tipo": "marco_temporal",
+      "texto_original": "3 de junho de 2025: recebe duas penas consecutivas de prisão perpétua.",
+      "periodo_original": "3 de junho de 2025",
+      "fonte_fase19": [
+        "https://www.wibw.com/2025/06/03/dana-chandler-sentenced-prison-tuesday-2002-killings/"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_por_imprensa",
+      "status_fase20": null,
+      "status_documental": "confirmado_por_imprensa",
+      "observacao": "Duas penas consecutivas e elegibilidade após cinquenta anos no total.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 11,
+      "tipo": "marco_temporal",
+      "texto_original": "10 de setembro de 2026: estreia de A Killer Story na HBO e HBO Max.",
+      "periodo_original": "10 de setembro de 2026",
+      "fonte_fase19": [
+        "https://ebs.publicnow.com/view/011E39353ED0C72570A80BCF6E65DB3B07BE51A8"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_por_comunicado",
+      "status_fase20": null,
+      "status_documental": "confirmado_por_comunicado",
+      "observacao": "Comunicado oficial da HBO confirma estreia em 10/9/2026.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 5,
+      "titulo_caso": "Caso Dana Chandler",
+      "indice": 12,
+      "tipo": "nota_de_situacao",
+      "texto_original": "Situação atual: condenada e presa; continua contestando a condenação.",
+      "periodo_original": null,
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.cbsnews.com/news/dana-chandler-sentenced-to-life-in-prison-kansas-third-murder-trial/"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "atualizacao_processual_pendente",
+      "status_documental": "atualizacao_processual_pendente",
+      "observacao": "CBS registra apresentação de recursos após condenação, mas não comprova status processual atualizado em 23/10/2026; não aprovar redação 'situação atual'.",
+      "criticidade": "validar_andamento_processual",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 1,
+      "tipo": "marco_temporal",
+      "texto_original": "1958: Kaczynski entra em Harvard aos 16 anos.",
+      "periodo_original": "1958",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.law.cornell.edu/background/unabom/kaczynski.html"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_referencia_academica",
+      "status_documental": "corroborado_referencia_academica",
+      "observacao": "Entrada em Harvard aos 16 em 1958.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 2,
+      "tipo": "marco_temporal",
+      "texto_original": "1959 a 1962: participa da pesquisa conduzida por Henry Murray.",
+      "periodo_original": "1959 a 1962",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.history.com/articles/unabomber-ted-kaczynski"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_em_parte",
+      "status_documental": "corroborado_em_parte",
+      "observacao": "Fonte descreve três anos de experimentos a partir de 1959; limites exatos de 1962 requerem conferência.",
+      "criticidade": "fonte_parcial_ou_secundaria",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 3,
+      "tipo": "marco_temporal",
+      "texto_original": "1967: conclui o doutorado em matemática.",
+      "periodo_original": "1967",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.biography.com/crime/ted-kaczynski"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_fonte_biografica",
+      "status_documental": "corroborado_fonte_biografica",
+      "observacao": "Doutorado em matemática pela Universidade de Michigan em 1967.",
+      "criticidade": "fonte_parcial_ou_secundaria",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 4,
+      "tipo": "marco_temporal",
+      "texto_original": "1969: deixa a Universidade da Califórnia em Berkeley.",
+      "periodo_original": "1969",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.law.cornell.edu/background/unabom/kaczynski.html"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_referencia_academica",
+      "status_documental": "corroborado_referencia_academica",
+      "observacao": "Renúncia da UC Berkeley em 1969.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 5,
+      "tipo": "marco_temporal",
+      "texto_original": "1971: passa a viver na cabana de Montana.",
+      "periodo_original": "1971",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.history.com/articles/unabomber-ted-kaczynski"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_fonte_secundaria",
+      "status_documental": "corroborado_fonte_secundaria",
+      "observacao": "Mudança para cabana na área de Lincoln em 1971; conferir cronologia de construção.",
+      "criticidade": "fonte_parcial_ou_secundaria",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 6,
+      "tipo": "marco_temporal",
+      "texto_original": "25 de maio de 1978: primeiro dispositivo conhecido explode.",
+      "periodo_original": "25 de maio de 1978",
+      "fonte_fase19": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_pelo_fbi",
+      "status_fase20": null,
+      "status_documental": "confirmado_pelo_fbi",
+      "observacao": "Primeiro dispositivo em 25/5/1978.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 7,
+      "tipo": "marco_temporal",
+      "texto_original": "15 de novembro de 1979: bomba provoca emergência no voo 444.",
+      "periodo_original": "15 de novembro de 1979",
+      "fonte_fase19": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_pelo_fbi",
+      "status_fase20": null,
+      "status_documental": "confirmado_pelo_fbi",
+      "observacao": "Voo 444 em 15/11/1979.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 8,
+      "tipo": "marco_temporal",
+      "texto_original": "11 de dezembro de 1985: Hugh Scrutton torna-se a primeira vítima fatal.",
+      "periodo_original": "11 de dezembro de 1985",
+      "fonte_fase19": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_pelo_fbi",
+      "status_fase20": null,
+      "status_documental": "confirmado_pelo_fbi",
+      "observacao": "Morte de proprietário de loja em 11/12/1985; revisar nome em fonte complementar.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 9,
+      "tipo": "marco_temporal",
+      "texto_original": "20 de fevereiro de 1987: testemunha vê o suspeito em Salt Lake City.",
+      "periodo_original": "20 de fevereiro de 1987",
+      "fonte_fase19": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_em_parte",
+      "status_fase20": null,
+      "status_documental": "confirmado_em_parte",
+      "observacao": "20/2/1987 e testemunho confirmado; verbo 'vê o suspeito' deve preservar caráter testemunhal.",
+      "criticidade": "fonte_parcial_ou_secundaria",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 10,
+      "tipo": "marco_temporal",
+      "texto_original": "1993: atentados ferem Charles Epstein e David Gelernter.",
+      "periodo_original": "1993",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_fonte_institucional",
+      "status_documental": "corroborado_fonte_institucional",
+      "observacao": "Dois ataques em junho de 1993; reportar Epstein e Gelernter com datas separadas na revisão.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 11,
+      "tipo": "marco_temporal",
+      "texto_original": "10 de dezembro de 1994: Thomas Mosser é morto.",
+      "periodo_original": "10 de dezembro de 1994",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber",
+        "https://www.washingtonpost.com/archive/politics/1994/12/11/advertising-executive-killed-by-mail-bomb-at-nj-home/26210718-20fa-4101-9d44-de0d0f484e3a/",
+        "https://www.law.cornell.edu/background/unabom/history.html"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "divergencia_entre_fontes_com_preferencia_provisoria_por_fontes_contemporaneas",
+      "status_documental": "divergencia_entre_fontes_com_preferencia_provisoria_por_fontes_contemporaneas",
+      "observacao": "CORREÇÃO DO COTEJO: fontes contemporâneas de 11/12/1994 informam morte no dia anterior, 10/12/1994; Cornell também registra 10/12. O resumo cronológico do FBI exibe 19/12. NÃO substituir a data original. Registrar divergência e checar registro primário antes da aprovação definitiva.",
+      "criticidade": "divergencia_de_data",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 12,
+      "tipo": "marco_temporal",
+      "texto_original": "24 de abril de 1995: Gilbert Murray é morto.",
+      "periodo_original": "24 de abril de 1995",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_fonte_institucional",
+      "status_documental": "corroborado_fonte_institucional",
+      "observacao": "24/4/1995 morte de Gilbert Murray.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 13,
+      "tipo": "marco_temporal",
+      "texto_original": "Setembro de 1995: manifesto é publicado.",
+      "periodo_original": "Setembro de 1995",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://www.washingtonpost.com/archive/politics/1995/09/19/unabomber-manuscript-is-published/041bf0f1-af54-4aa2-8d8d-2f6559113e6b/"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_fonte_contemporanea",
+      "status_documental": "corroborado_fonte_contemporanea",
+      "observacao": "Publicação do manifesto em 19/9/1995 no Washington Post.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 14,
+      "tipo": "marco_temporal",
+      "texto_original": "3 de abril de 1996: Kaczynski é preso em Montana.",
+      "periodo_original": "3 de abril de 1996",
+      "fonte_fase19": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_pelo_fbi",
+      "status_fase20": null,
+      "status_documental": "confirmado_pelo_fbi",
+      "observacao": "Prisão em 3/4/1996.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 15,
+      "tipo": "marco_temporal",
+      "texto_original": "Janeiro de 1998: declara-se culpado.",
+      "periodo_original": "Janeiro de 1998",
+      "fonte_fase19": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_pelo_fbi",
+      "status_fase20": null,
+      "status_documental": "confirmado_pelo_fbi",
+      "observacao": "Confissão em janeiro de 1998.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 16,
+      "tipo": "marco_temporal",
+      "texto_original": "Maio de 1998: recebe penas de prisão perpétua.",
+      "periodo_original": "Maio de 1998",
+      "fonte_fase19": [
+        "https://text-message.blogs.archives.gov/2023/06/06/insight-into-the-unabomber-case-from-the-files-of-its-lead-prosecutor/"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_pelo_arquivo_nacional",
+      "status_fase20": null,
+      "status_documental": "confirmado_pelo_arquivo_nacional",
+      "observacao": "Sentença em 4/5/1998.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 17,
+      "tipo": "marco_temporal",
+      "texto_original": "10 de junho de 2023: morre na prisão.",
+      "periodo_original": "10 de junho de 2023",
+      "fonte_fase19": [
+        "https://www.fbi.gov/news/RSS?PQZbxSJnkbv=G43cDa"
+      ],
+      "fonte_fase20": [],
+      "status_fase19": "confirmado_em_parte",
+      "status_fase20": null,
+      "status_documental": "confirmado_em_parte",
+      "observacao": "Fonte confirma morte em 2023, não o dia 10 de junho.",
+      "criticidade": "fonte_parcial_ou_secundaria",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    },
+    {
+      "id_caso": 6,
+      "titulo_caso": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "indice": 18,
+      "tipo": "marco_temporal",
+      "texto_original": "25 de setembro de 2026: estreia de UNABOMBER.",
+      "periodo_original": "25 de setembro de 2026",
+      "fonte_fase19": [],
+      "fonte_fase20": [
+        "https://media.netflix.com/en/only-on-netflix/82010386"
+      ],
+      "status_fase19": "fonte_especifica_pendente",
+      "status_fase20": "corroborado_comunicado_distribuidor",
+      "status_documental": "corroborado_comunicado_distribuidor",
+      "observacao": "Netflix identifica estreia nos EUA em 25/9/2026; verificar diferença regional se relevante.",
+      "criticidade": "conferencia_integral_pendente",
+      "aprovado": false,
+      "publicavel_automaticamente": false
+    }
+  ]
+}
