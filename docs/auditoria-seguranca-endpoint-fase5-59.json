@@ -1,0 +1,37 @@
+{
+  "fase": "5.59",
+  "estado": "auditoria_offline_preparada",
+  "pr": 79,
+  "base_pr": 75,
+  "regressao_fase558": {
+    "commit": "649b7309483e6e557c0bf33320ac81700e6bfb40",
+    "aprovados": 6,
+    "total": 6
+  },
+  "verificacoes": [
+    "GET autorizado apenas para identidade validada com app_metadata.role admin",
+    "ausencia de corpo de dados em respostas 401 e 403",
+    "negação de métodos de escrita",
+    "resposta sem segredo adicional",
+    "headers no-store e vary authorization",
+    "tratamento de excecao na verificacao de token sem vazamento de erro"
+  ],
+  "limites": [
+    "Testes com mocks nao substituem autenticação real do Supabase",
+    "A função ainda nao foi implantada",
+    "A prévia estática antiga continua acessível por URL",
+    "Integridade de sessão revogada e atualizacao de papeis exigem teste de integracao"
+  ],
+  "recomendacoes": [
+    "Configurar CORS e estrategia de invocacao GET antes do deploy",
+    "Validar disponibilidade das variaveis de ambiente no ambiente alvo",
+    "Realizar testes reais em ambiente de homologacao isolado",
+    "Retirar a demonstracao estatica do acesso publico caso venha conter conteudo restrito"
+  ],
+  "autorizacoes": {
+    "merge": false,
+    "deploy": false,
+    "publicacao": false,
+    "supabase": false
+  }
+}
