@@ -51,6 +51,8 @@ on:
       - 'tests/dossier-editorial-navigation-phase551.mjs'
       - 'tests/dossier-editorial-responsive-phase552.mjs'
       - 'tests/dossier-editorial-browser-phase553.mjs'
+      - 'tests/dossier-editorial-usability-phase554.mjs'
+      - 'docs/parecer-usabilidade-editorial-fase5-54.json'
       - 'docs/integracao-visual-editorial-fase5-51.json'
       - 'admin-v2/editorial.html'
       - 'previews/revisao-editorial-fase5-50.html'
@@ -140,6 +142,7 @@ jobs:
           node tests/dossier-editorial-preview-phase550.mjs
           node tests/dossier-editorial-navigation-phase551.mjs
           node tests/dossier-editorial-responsive-phase552.mjs
+          node tests/dossier-editorial-usability-phase554.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
