@@ -57,6 +57,8 @@ on:
       - 'tests/dossier-editorial-endpoint-phase557.mjs'
       - 'tests/dossier-editorial-auth-view-phase558.mjs'
       - 'tests/dossier-editorial-security-phase559.mjs'
+      - 'tests/dossier-editorial-cors-phase560.mjs'
+      - 'docs/compatibilidade-edge-editorial-fase5-60.json'
       - 'docs/auditoria-seguranca-endpoint-fase5-59.json'
       - 'admin-v2/editorial-candidates.html'
       - 'admin-v2/js/editorial-candidates-view.js'
@@ -161,6 +163,7 @@ jobs:
           node tests/dossier-editorial-endpoint-phase557.mjs
           node tests/dossier-editorial-auth-view-phase558.mjs
           node tests/dossier-editorial-security-phase559.mjs
+          node tests/dossier-editorial-cors-phase560.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
