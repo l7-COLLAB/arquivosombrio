@@ -112,3 +112,14 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 .season-theme-pericia-em-foco{--sa:#7caaa1;--sb:#111e20;--sg:#7caaa188;--season-banner:url('/assets/especiais/banner-pericia-em-foco.svg')}
 .season-theme-creepypastas-da-meia-noite{--sa:#897ca9;--sb:#171525;--sg:#897ca988;--season-banner:url('/assets/especiais/banner-creepypastas-da-meia-noite.svg')}
 .season-theme-lendas-do-brasil-sombrio{--sa:#8f9b69;--sb:#161c15;--sg:#8f9b6988;--season-banner:url('/assets/especiais/banner-lendas-do-brasil-sombrio.svg')}
+
+/* Tipografias por campanha: cada tema pode escolher seu caráter editorial */
+.season-home h2,.season-page h1,.season-campaign-card h2{font-family:var(--campaign-font,Cinzel),Georgia,serif}
+.season-theme-verao-sombrio{--campaign-font:Georgia;letter-spacing:.025em}
+.season-theme-carnaval-macabro{--campaign-font:Cinzel;letter-spacing:.01em}
+.season-theme-pascoa-sombria{--campaign-font:'Libre Baskerville';letter-spacing:.025em}
+.season-theme-amores-mortais{--campaign-font:'Oswald';letter-spacing:.01em}
+.season-theme-inverno-macabro{--campaign-font:Georgia;letter-spacing:.025em}
+.season-theme-mes-dos-desaparecidos{--campaign-font:Cinzel;letter-spacing:.01em}
+.season-theme-arquivos-proibidos{--campaign-font:'Libre Baskerville';letter-spacing:.025em}
+.season-theme-pericia-em-foco{--campaign-font:'Oswald';letter-spacing:.01em}
