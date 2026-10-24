@@ -187,3 +187,26 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 .season-home.season-theme-halloween{background-image:linear-gradient(90deg,rgba(8,7,8,.82) 0%,rgba(8,7,8,.49) 58%,rgba(8,7,8,.12) 100%),url('/assets/especiais/halloween_fundo_cinematografico.webp'),url('/assets/especiais/banner-halloween.svg')!important;background-size:cover,cover,cover!important;background-position:center,center,center!important}
 .season-theme-halloween .season-hero-art,.season-theme-halloween .season-detail-art,.season-theme-halloween .season-card-art{background-image:url('/assets/especiais/halloween_fundo_cinematografico.webp'),url('/assets/especiais/banner-halloween.svg')!important;background-size:cover!important;background-position:70% center!important}
 @media(max-width:750px){.season-home.season-theme-halloween{background-position:center,69% center,69% center!important}.season-theme-halloween .season-detail-art{background-position:73% center!important}}
+
+/* Halloween: cabeçalho imersivo único; texto e contagem sobre a arte */
+.season-detail.season-theme-halloween .season-detail-hero{
+ max-width:none;min-height:650px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+ margin:26px 0 28px;padding:clamp(26px,5vw,65px);text-align:left;position:relative;isolation:isolate;
+ border:1px solid #a5674269;border-radius:12px;overflow:hidden;
+ background-image:linear-gradient(90deg,rgba(7,5,5,.89) 0%,rgba(7,5,5,.77) 47%,rgba(7,5,5,.14) 100%),url('/assets/especiais/halloween_fundo_cinematografico.webp');
+ background-size:cover;background-position:center,66% center;background-repeat:no-repeat;
+ box-shadow:inset 0 0 95px #0009,0 18px 45px #0006
+}
+.season-detail.season-theme-halloween .season-detail-hero>*:not(.season-detail-art){position:relative;z-index:2}
+.season-detail.season-theme-halloween .season-detail-art{display:none!important}
+.season-detail.season-theme-halloween .season-detail-hero h1{max-width:650px;margin:18px 0 10px;text-align:left;text-shadow:0 3px 18px #000d}
+.season-detail.season-theme-halloween .season-detail-hero>p{max-width:520px;text-align:left;color:#f1e2d2;text-shadow:0 2px 9px #000}
+.season-detail.season-theme-halloween .season-detail-hero .season-progress{background:#130d0bc7}
+.season-detail.season-theme-halloween .season-detail-hero .season-countdown{width:min(100%,560px);margin:22px 0 0;background:linear-gradient(125deg,#120c0de8,#231310c5)}
+@media(max-width:750px){
+ .season-detail.season-theme-halloween .season-detail-hero{min-height:0;margin:18px 0 26px;padding:30px 20px 28px;background-image:linear-gradient(90deg,rgba(7,5,5,.88),rgba(7,5,5,.58)),url('/assets/especiais/halloween_fundo_cinematografico.webp');background-position:center,67% center}
+ .season-detail.season-theme-halloween .season-detail-hero h1{font-size:clamp(2.15rem,9vw,3.25rem);line-height:1.08}
+ .season-detail.season-theme-halloween .season-detail-hero .season-countdown{padding:14px 11px}
+ .season-detail.season-theme-halloween .season-detail-hero .season-countdown-digits{gap:5px}
+}
+@media(prefers-reduced-motion:reduce){.season-detail.season-theme-halloween .season-detail-hero{scroll-behavior:auto}}
