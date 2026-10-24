@@ -1,0 +1,27 @@
+{
+  "fase": "5.65",
+  "estado": "compatibilidade_simulada_preparada",
+  "regressao_anterior": {
+    "aprovados": 6,
+    "total": 6
+  },
+  "conclusoes": [
+    "O navegador pode enviar preflight OPTIONS sem token de usuario",
+    "O handler permite OPTIONS para origens autorizadas e protege GET com autenticacao",
+    "A configuracao CLI exige verify_jwt=true",
+    "O Admin V2 usa cliente autenticado e invocacao GET"
+  ],
+  "pendencia_critica": "Confirmar se o gateway Supabase encaminha OPTIONS com verify_jwt=true sem JWT; nao presumir compatibilidade a partir de mocks.",
+  "testes_reais_pendentes": [
+    "OPTIONS atraves do gateway implantado",
+    "GET sem JWT",
+    "GET usuario comum",
+    "GET administrador"
+  ],
+  "restricoes": {
+    "deploy": false,
+    "merge": false,
+    "publicacao": false,
+    "supabase": false
+  }
+}
