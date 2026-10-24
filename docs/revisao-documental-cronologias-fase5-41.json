@@ -1,0 +1,53 @@
+{
+  "fase": "5.41",
+  "estado": "revisao_documental_consolidada_sem_homologacao",
+  "base_fase": "5.40",
+  "checagem_workflows_fase540": {
+    "aprovados": 6,
+    "total": 6,
+    "commit": "ec38735315a8133a76d4f7158237b2da62ea5d0f"
+  },
+  "casos": [
+    {
+      "id_caso": 6,
+      "indice": 11,
+      "tema": "Thomas Mosser",
+      "evidencia": "O comunicado DOJ de 18/06/1996 indica 10/12/1994 como data da morte em North Caldwell, New Jersey.",
+      "fonte": "https://www.justice.gov/archive/opa/pr/1996/Jun96/283crm.htm",
+      "redacao_sugerida": "10 de dezembro de 1994: Thomas Mosser morre após a explosão de uma bomba em North Caldwell, Nova Jersey, segundo o Departamento de Justiça dos Estados Unidos.",
+      "resultado": "data_confirmada_em_documento_institucional",
+      "aprovado": false,
+      "aplicado": false
+    },
+    {
+      "id_caso": 5,
+      "indice": 5,
+      "tema": "Dana Chandler - condenacao de 2012",
+      "evidencia": "Acórdão State v. Chandler (2018), processo 108625, registra duas penas perpétuas consecutivas com mínimo de 50 anos em cada uma; descreve contestações constitucionais e reversão das condenações.",
+      "fonte": "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html",
+      "redacao_sugerida": "2012: Dana Chandler é condenada por dois homicídios e recebe duas penas consecutivas de prisão perpétua, cada uma com período mínimo obrigatório de 50 anos. As condenações seriam anuladas pela Suprema Corte do Kansas em 2018.",
+      "resultado": "termos_juridicos_documentados_em_acordao",
+      "aprovado": false,
+      "aplicado": false
+    },
+    {
+      "id_caso": 5,
+      "indice": 12,
+      "tema": "Dana Chandler - situacao atual",
+      "evidencia": "Fontes jornalísticas documentam sentença de 03/06/2025, mas não substituem certidão processual atualizada em 23/10/2026.",
+      "fonte": "https://www.wibw.com/2025/06/03/dana-chandler-sentenced-prison-tuesday-2002-killings/",
+      "redacao_sugerida": null,
+      "resultado": "nao_publicar_sem_consulta_judicial_recente",
+      "aprovado": false,
+      "aplicado": false
+    }
+  ],
+  "restricoes": {
+    "substituicao_automatica": false,
+    "publicacao_autorizada": false,
+    "merge_autorizado": false,
+    "deploy_autorizado": false,
+    "gravacao_supabase_autorizada": false
+  },
+  "observacao": "A divergência anteriormente atribuída a uma cronologia resumida do FBI requer identificação exata da fonte; a página histórica atual do FBI consultada não menciona Mosser pelo nome. Não publicar nota sobre essa divergência sem comprovação específica."
+}
