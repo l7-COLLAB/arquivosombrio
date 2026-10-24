@@ -56,6 +56,8 @@ on:
       - 'tests/dossier-editorial-access-contract-phase556.mjs'
       - 'tests/dossier-editorial-endpoint-phase557.mjs'
       - 'tests/dossier-editorial-auth-view-phase558.mjs'
+      - 'tests/dossier-editorial-security-phase559.mjs'
+      - 'docs/auditoria-seguranca-endpoint-fase5-59.json'
       - 'admin-v2/editorial-candidates.html'
       - 'admin-v2/js/editorial-candidates-view.js'
       - 'docs/integracao-autenticada-editorial-fase5-58.json'
@@ -158,6 +160,7 @@ jobs:
           node tests/dossier-editorial-access-contract-phase556.mjs
           node tests/dossier-editorial-endpoint-phase557.mjs
           node tests/dossier-editorial-auth-view-phase558.mjs
+          node tests/dossier-editorial-security-phase559.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
