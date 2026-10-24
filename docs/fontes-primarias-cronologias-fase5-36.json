@@ -1,0 +1,51 @@
+{
+  "fase": "5.36",
+  "data": "2026-10-23",
+  "estado": "reforco_fontes_institucionais_sem_publicacao",
+  "revisoes": [
+    {
+      "id_caso": 6,
+      "indice": 11,
+      "tema": "Thomas Mosser",
+      "data_original": "10 de dezembro de 1994",
+      "resultado": "data_fortemente_corrobora_por_documentacao_oficial",
+      "fontes": [
+        "https://www.justice.gov/archive/opa/pr/1996/Jun96/283crm.htm",
+        "https://www.thetedkarchive.com/library/new-jersey-indictment",
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "observacao": "O comunicado oficial DOJ de 1996 e transcrição de acusação de Nova Jersey identificam 10/12/1994. Resumo FBI diverge; registrar divergência residual em vez de substituição automática.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_caso": 5,
+      "indice": 5,
+      "tema": "Penas de 2012",
+      "resultado": "terminologia_juridica_esclarecida_documento_judicial",
+      "fontes": [
+        "https://kscourts.gov/KSCourts/media/KsCourts/Opinions/124083.pdf?ext=.pdf",
+        "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html"
+      ],
+      "observacao": "Excerto indexado do tribunal descreve duas penas perpétuas consecutivas com mínimo obrigatório de 50 anos cada. PDF não pôde ser aberto diretamente (403), exigindo consulta primária integral antes de aprovar frase definitiva.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_caso": 5,
+      "indice": 12,
+      "tema": "Situação processual atual",
+      "resultado": "cobertura_contemporanea_sem_certidao_atualizada",
+      "fontes": [
+        "https://www.wibw.com/2025/03/21/dana-chandler-asks-be-released-jail-while-appealing-conviction/",
+        "https://www.eonline.com/ca/news/1435772/a-killer-story-where-dana-chandler-is-now-after-double-murder-conviction"
+      ],
+      "observacao": "Relatos de 2025/2026 indicam recurso e cumprimento de pena; não há acesso confirmado ao andamento judicial atualizado em 23/10/2026. Manter nota fora da cronologia e não afirmar certidão processual.",
+      "aprovado_para_publicacao": false
+    }
+  ],
+  "bloqueios": [
+    "decisao_editorial_formal",
+    "acesso_integral_ao_documento_judicial_primario",
+    "consulta_ao_andamento_processual_atualizado",
+    "sem_merge_ou_deploy"
+  ]
+}
