@@ -1,0 +1,33 @@
+name: Testes dos Especiais
+on:
+  pull_request:
+    paths:
+      - 'data/especiais.json'
+      - 'assets/especiais/**'
+      - 'tests/especiais.test.cjs'
+      - 'js/especiais.js'
+      - '.github/workflows/especiais-tests.yml'
+  push:
+    branches:
+      - feature/especiais-halloween-2026
+    paths:
+      - 'data/especiais.json'
+      - 'assets/especiais/**'
+      - 'tests/especiais.test.cjs'
+      - 'js/especiais.js'
+      - '.github/workflows/especiais-tests.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validar JavaScript
+        run: node --check js/especiais.js
+      - name: Validar manifesto e banners
+        run: node tests/especiais.test.cjs
