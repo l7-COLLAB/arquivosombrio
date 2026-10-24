@@ -1,0 +1,24 @@
+{
+  "fase": "5.58",
+  "estado": "frontend_autenticado_preparado_sem_deploy",
+  "regressao_fase557": {
+    "aprovados": 6,
+    "total": 6,
+    "commit": "db82a033d43f521d5b17e1e0f4e05a0800da899c"
+  },
+  "pagina_protegida": "admin-v2/editorial-candidates.html",
+  "leitor": "admin-v2/js/editorial-candidates-view.js",
+  "endpoint": "editorial-candidates",
+  "observacoes": [
+    "O novo HTML não incorpora as duas redações candidatas; solicita a API apenas após validar sessão.",
+    "A prévia antiga em previews permanece como demonstração pública, contendo textos históricos já documentados; não usá-la para conteúdo confidencial.",
+    "O endpoint da Fase 5.57 continua não implantado; a interface mostrará erro até o deploy seguro.",
+    "Testes locais do fluxo e validação contra Supabase de produção ainda não foram executados."
+  ],
+  "restricoes": {
+    "deploy": false,
+    "merge": false,
+    "publicacao": false,
+    "supabase": false
+  }
+}
