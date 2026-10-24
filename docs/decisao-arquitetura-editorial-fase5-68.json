@@ -1,0 +1,35 @@
+{
+  "fase": "5.68",
+  "estado": "decisao_arquitetural_provisoria",
+  "regressao_fase567": {
+    "commit": "c85ae608b931a40782a0008e5c5a5b58cc9830e3",
+    "aprovados": 6,
+    "total": 6
+  },
+  "arquitetura_principal": "supabase_edge_function",
+  "alternativa": "same_origin_proxy_desativado",
+  "criterios": [
+    "reutilizacao_do_supabase_auth",
+    "verificacao_de_app_metadata_no_servidor",
+    "jwt_obrigatorio_no_gateway",
+    "nao_introduzir_infraestrutura_desnecessaria"
+  ],
+  "condicoes_para_homologacao": [
+    "preflight OPTIONS comprovado no gateway real",
+    "respostas 401/403/200 com identidades de teste autorizadas",
+    "validacao de CORS e no-store no ambiente alvo",
+    "revisao de expiracao e revogacao",
+    "nenhum dado privado incorporado em HTML estatico"
+  ],
+  "impedimentos": [
+    "endpoint ainda nao implantado",
+    "resultado real do gateway desconhecido"
+  ],
+  "aprovacoes": {
+    "editorial": false,
+    "deploy": false,
+    "merge": false,
+    "supabase": false,
+    "publicacao": false
+  }
+}
