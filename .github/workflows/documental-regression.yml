@@ -39,6 +39,8 @@ on:
       - 'tests/dossier-chronology-validation-phase539.mjs'
       - 'tests/dossier-chronology-homologation-phase540.mjs'
       - 'tests/dossier-chronology-documentary-phase541.mjs'
+      - 'tests/dossier-chronology-approval-phase542.mjs'
+      - 'docs/pacote-aprovacao-cronologias-fase5-42.json'
       - 'docs/revisao-documental-cronologias-fase5-41.json'
       - 'docs/parecer-homologacao-cronologias-fase5-40.json'
       - 'docs/validacao-candidata-cronologias-fase5-39.json'
@@ -104,6 +106,7 @@ jobs:
           node tests/dossier-chronology-validation-phase539.mjs
           node tests/dossier-chronology-homologation-phase540.mjs
           node tests/dossier-chronology-documentary-phase541.mjs
+          node tests/dossier-chronology-approval-phase542.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
