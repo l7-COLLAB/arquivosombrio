@@ -43,6 +43,8 @@ on:
       - 'tests/dossier-chronology-decision-phase543.mjs'
       - 'tests/dossier-chronology-isolated-phase544.mjs'
       - 'tests/dossier-chronology-comparison-phase545.mjs'
+      - 'tests/dossier-chronology-decisions-phase546.mjs'
+      - 'docs/decisoes-individuais-cronologias-fase5-46.json'
       - 'docs/revisao-comparativa-cronologias-fase5-45.json'
       - 'docs/homologacao-isolada-cronologias-fase5-44.json'
       - 'docs/checklist-decisao-editorial-fase5-43.json'
@@ -116,6 +118,7 @@ jobs:
           node tests/dossier-chronology-decision-phase543.mjs
           node tests/dossier-chronology-isolated-phase544.mjs
           node tests/dossier-chronology-comparison-phase545.mjs
+          node tests/dossier-chronology-decisions-phase546.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
