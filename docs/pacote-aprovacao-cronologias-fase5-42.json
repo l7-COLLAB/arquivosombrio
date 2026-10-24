@@ -67,5 +67,48 @@
     "verificacao da dependencia PR 75",
     "nova regressao apos qualquer mudanca"
   ],
-  "observacao": "Documento preparatorio. Nenhuma aprovacao editorial foi concedida."
+  "observacao": "Documento preparatorio. Nenhuma aprovacao editorial foi concedida.",
+  "auditoria_complementar_2026_10_24": {
+    "origem": "docs/revisao-documental-cronologias-fase5-41.json",
+    "regressao_mais_recente_fase541": {
+      "commit": "01d1957463b5362477e899e9f1272792d927affd",
+      "workflow": "Regressão documental",
+      "run_id": 40094248073,
+      "conclusao": "success",
+      "homologacao_editorial": false
+    },
+    "cautelas": [
+      {
+        "id_caso": 6,
+        "indice": 11,
+        "questao": "Alegada divergencia da data de Thomas Mosser em fonte do FBI",
+        "situacao": "nao_comprovada_na_pagina_historica_consultada",
+        "requisito": "Nao incluir nota sobre divergencia sem indicar fonte especifica que a demonstre",
+        "fonte_doj": "https://www.justice.gov/archive/opa/pr/1996/Jun96/283crm.htm",
+        "aprovado": false
+      },
+      {
+        "id_caso": 5,
+        "indice": 5,
+        "questao": "Termos das penas impostas em 2012",
+        "situacao": "corroboracao_judicial_historica_sem_aprovacao",
+        "fonte": "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html",
+        "requisito": "Revisao humana da redacao e contexto das condenacoes anuladas em 2018",
+        "aprovado": false
+      },
+      {
+        "id_caso": 5,
+        "indice": 12,
+        "questao": "Situacao processual atual",
+        "situacao": "certidao_recente_nao_confirmada",
+        "redacao_candidata": null,
+        "fora_da_cronologia": true,
+        "publicavel": false,
+        "aprovado": false
+      }
+    ],
+    "alteracao_dos_textos_originais": false,
+    "aprovacao_automatica": false,
+    "publicacao_autorizada": false
+  }
 }
