@@ -49,5 +49,43 @@
     "deploy_autorizado": false,
     "gravacao_supabase_autorizada": false
   },
-  "observacao": "A divergência anteriormente atribuída a uma cronologia resumida do FBI requer identificação exata da fonte; a página histórica atual do FBI consultada não menciona Mosser pelo nome. Não publicar nota sobre essa divergência sem comprovação específica."
+  "observacao": "A divergência anteriormente atribuída a uma cronologia resumida do FBI requer identificação exata da fonte; a página histórica atual do FBI consultada não menciona Mosser pelo nome. Não publicar nota sobre essa divergência sem comprovação específica.",
+  "verificacao_adicional_2026_10_24": {
+    "natureza": "checagem_independente_de_fontes_sem_aprovacao_editorial",
+    "fontes_consultadas": [
+      {
+        "id_caso": 6,
+        "indice": 11,
+        "url": "https://www.justice.gov/archive/opa/pr/1996/Jun96/283crm.htm",
+        "achado": "DOJ de 18/06/1996 registra morte de Thomas J. Mosser em 10/12/1994 em North Caldwell, NJ",
+        "grau": "confirmacao_documental_institucional_da_data",
+        "aprovado": false
+      },
+      {
+        "id_caso": 6,
+        "indice": 11,
+        "url": "https://www.fbi.gov/history/cases-and-criminals/unabomber",
+        "achado": "Pagina historica do FBI consultada nao identifica Mosser nominalmente; alegada divergencia especifica nao demonstrada por esta fonte",
+        "grau": "divergencia_nao_comprovada_nesta_fonte",
+        "aprovado": false
+      },
+      {
+        "id_caso": 5,
+        "indice": 5,
+        "url": "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html",
+        "achado": "Acordao de 06/04/2018 registra duas penas perpetuas consecutivas com minimo obrigatorio de 50 anos cada, posteriormente revertidas",
+        "grau": "confirmacao_documental_judicial_do_historico_de_2012",
+        "aprovado": false
+      }
+    ],
+    "nota_processual_dana": {
+      "id_caso": 5,
+      "indice": 12,
+      "estado": "sem_consulta_judicial_atualizada_nesta_etapa",
+      "redacao_candidata": null,
+      "publicavel": false
+    },
+    "aprovacao_editorial": false,
+    "publicacao_autorizada": false
+  }
 }
