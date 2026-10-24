@@ -1,0 +1,56 @@
+{
+  "fase": "5.47",
+  "estado": "formularios_decisao_preparados",
+  "regressao_fase546": {
+    "commit": "62de62b199e6e5839422aa3c994188ed565f560d",
+    "aprovados": 6,
+    "total": 6
+  },
+  "formularios": [
+    {
+      "id_caso": 6,
+      "indice": 11,
+      "decisao": "pendente",
+      "responsavel": null,
+      "data_decisao": null,
+      "justificativa": null,
+      "fonte": "https://www.justice.gov/archive/opa/pr/1996/Jun96/283crm.htm",
+      "aplicado": false
+    },
+    {
+      "id_caso": 5,
+      "indice": 5,
+      "decisao": "pendente",
+      "responsavel": null,
+      "data_decisao": null,
+      "justificativa": null,
+      "fonte": "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html",
+      "aplicado": false
+    }
+  ],
+  "validacao": {
+    "opcoes": [
+      "aprovar",
+      "rejeitar",
+      "solicitar_revisao"
+    ],
+    "campos_obrigatorios_para_decisao": [
+      "responsavel",
+      "data_decisao",
+      "justificativa"
+    ],
+    "exigir_decisao_individual": true
+  },
+  "exclusao": {
+    "id_caso": 5,
+    "indice": 12,
+    "publicavel": false
+  },
+  "autorizacoes": {
+    "publicacao": false,
+    "merge": false,
+    "deploy": false,
+    "supabase": false,
+    "aprovacao_automatica": false
+  }
+}
