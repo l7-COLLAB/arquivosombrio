@@ -36,3 +36,17 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 .season-detail-art{font-size:0!important}
 .season-hero-art,.season-card-art,.season-detail-art{border-color:var(--sg)}
 @media(max-width:750px){.season-hero-art{background-position:65% center!important}.season-detail-art{background-position:64% center!important}.season-card-art{background-position:70% center!important}}
+
+/* Homepage: destaque sazonal como cartaz documental horizontal */
+.season-home{position:relative;isolation:isolate;background:linear-gradient(90deg,#08080bc9 0%,#08080b94 49%,#08080b44 100%),var(--season-banner) center/cover no-repeat!important}
+.season-home::before{content:"";position:absolute;inset:0;z-index:-1;box-shadow:inset 0 0 95px #000a;pointer-events:none}
+.season-home-grid{grid-template-columns:minmax(0,1fr) minmax(210px,.7fr);min-height:300px}
+.season-home-copy{padding:12px 0 15px}.season-home-copy p{color:#efdfd0;max-width:38rem;text-shadow:0 2px 8px #000}
+.season-home .season-hero-art{border:0;box-shadow:none;background:none!important;min-height:230px}
+.season-home .season-hero-art::before,.season-home .season-hero-art::after{display:none}
+.season-mini-days li{background:rgba(4,5,8,.74);border-color:color-mix(in srgb,var(--sa) 38%,transparent)}
+.season-mini-days li.on{background:color-mix(in srgb,var(--sg) 80%,#171010);box-shadow:inset 0 0 12px #0008}
+.season-catalog-grid .season-campaign-card{box-shadow:0 12px 28px #0007}
+.season-catalog-grid .season-card-art{background-position:63% center!important}
+@media(max-width:750px){.season-home{background-position:65% center!important}.season-home-grid{grid-template-columns:1fr;min-height:0}.season-home .season-hero-art{display:none}.season-home-copy{padding:14px 4px}.season-home h2{max-width:19ch}.season-home-copy p{font-size:.94rem}.season-mini-days{gap:4px}}
+@media(max-width:380px){.season-mini-days li{padding:6px 0;font-size:.62rem}.season-mini-days small{font-size:.57rem}}
