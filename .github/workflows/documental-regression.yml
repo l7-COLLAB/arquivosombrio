@@ -67,6 +67,8 @@ on:
       - 'tests/dossier-editorial-transport-phase567.mjs'
       - 'tests/dossier-editorial-architecture-phase568.mjs'
       - 'tests/dossier-editorial-acceptance-plan-phase569.mjs'
+      - 'tests/dossier-editorial-controlled-phase570.mjs'
+      - 'docs/execucao-controlada-editorial-fase5-70.json'
       - 'docs/roteiro-homologacao-editorial-fase5-69.json'
       - 'docs/decisao-arquitetura-editorial-fase5-68.json'
       - 'admin-v2/js/editorial-transport-phase567.mjs'
@@ -193,6 +195,7 @@ jobs:
           node tests/dossier-editorial-transport-phase567.mjs
           node tests/dossier-editorial-architecture-phase568.mjs
           node tests/dossier-editorial-acceptance-plan-phase569.mjs
+          node tests/dossier-editorial-controlled-phase570.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
