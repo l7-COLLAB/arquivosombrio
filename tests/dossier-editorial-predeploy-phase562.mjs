@@ -1,0 +1,14 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+const report=JSON.parse(readFileSync(new URL("../docs/pre-homologacao-edge-fase5-62.json",import.meta.url),"utf8"));
+const endpoint=readFileSync(new URL("../supabase/functions/editorial-candidates/index.ts",import.meta.url),"utf8");
+assert.equal(report.fase,"5.62");
+assert.equal(report.evidencias.testes_documentais,"success");
+assert.equal(report.evidencias.regressao_completa,"em_execucao_na_consulta");
+assert.equal(report.pontos_de_controle.length,6);
+assert.ok(report.pontos_de_controle.some(x=>x.nome==="jwt_gateway"&&x.estado==="pendente"));
+assert.ok(report.pontos_de_controle.some(x=>x.nome==="endpoint_real"&&x.estado==="pendente"));
+assert.match(endpoint,/auth\.getUser\(token\)/);
+assert.doesNotMatch(endpoint,/SERVICE_ROLE|service_role|SUPABASE_SECRET_KEY/i);
+for(const value of Object.values(report.seguranca))assert.equal(value,false);
+console.log("Fase 5.62: checklist pre-deploy preservado; homologacao real pendente.");
