@@ -71,6 +71,8 @@ on:
       - 'tests/dossier-editorial-evidence-phase571.mjs'
       - 'tests/dossier-editorial-staging-phase572.mjs'
       - 'tests/dossier-editorial-cost-options-phase573.mjs'
+      - 'tests/dossier-editorial-local-fixtures-phase574.mjs'
+      - 'docs/homologacao-local-editorial-fase5-74.md'
       - 'docs/alternativas-homologacao-fase5-73.json'
       - 'docs/ambiente-homologacao-editorial-fase5-72.json'
       - 'docs/evidencias-integracao-editorial-fase5-71.json'
@@ -205,6 +207,7 @@ jobs:
           node tests/dossier-editorial-evidence-phase571.mjs
           node tests/dossier-editorial-staging-phase572.mjs
           node tests/dossier-editorial-cost-options-phase573.mjs
+          node tests/dossier-editorial-local-fixtures-phase574.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
