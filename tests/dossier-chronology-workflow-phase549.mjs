@@ -16,4 +16,15 @@ assert.equal(updated.decisoes[1].decisao,"pendente");
 assert.equal(updated.publicacao_autorizada,false);
 assert.throws(()=>recordEditorialReview(updated,review));
 assert.throws(()=>createEditorialReview([...registry.formularios,registry.formularios[0]]));
+
+for(const bad of [null,undefined,{}, {decisoes:null}]){
+ assert.throws(()=>recordEditorialReview(bad,review),TypeError);
+}
+for(const bad of [null,undefined,[], "aprovar"]){
+ assert.throws(()=>recordEditorialReview(initial,bad),TypeError);
+}
+assert.equal(initial.decisoes[0].historico.length,0);
+assert.equal(updated.decisoes[0].historico[0].responsavel,"Pessoa de teste");
+assert.equal(updated.decisoes[0].historico[0].justificativa,"Simulacao, sem aprovacao real");
+assert.equal(updated.publicacao_autorizada,false);
 console.log("Fluxo simulado validado: sem publicacao.");
