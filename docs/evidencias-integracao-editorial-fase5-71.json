@@ -1,0 +1,33 @@
+{
+  "fase": "5.71",
+  "estado": "evidencias_ci_conferidas_homologacao_real_pendente",
+  "commit_verificado": "d70b94e69cab2c723c0b8edf39035ceab0ce79a3",
+  "workflow_run_id": 40102796097,
+  "resultado": {
+    "workflows_aprovados": 6,
+    "workflows_total": 6,
+    "regressao_documental": "success",
+    "testes_documentais": "success",
+    "navegador": "success",
+    "artefato": {
+      "id": 12563213657,
+      "nome": "capturas-dossie-documental",
+      "disponivel": true
+    }
+  },
+  "distincao": {
+    "testes_locais": "aprovados",
+    "identidades_reais_supabase": "nao_testadas",
+    "endpoint_producao": "nao_implantado",
+    "homologacao_real": false
+  },
+  "bloqueios": [
+    "Comprovar verify_jwt e validacao do gateway com endpoint de homologacao",
+    "Testar origens CORS pelo navegador real",
+    "Testar usuarios com papel comum e admin com contas isoladas",
+    "Verificar expiração e revogação de sessões",
+    "Revisar artefatos sem segredos antes de compartilhamento"
+  ],
+  "decisao": "nao_aprovar_deploy_ou_publicacao",
+  "alteracoes_produtivas": false
+}
