@@ -1,0 +1,12 @@
+import assert from "node:assert/strict";import {readFileSync} from "node:fs";
+const p=JSON.parse(readFileSync(new URL("../docs/contrato-acesso-editorial-fase5-56.json",import.meta.url),"utf8"));
+assert.equal(p.fase,"5.56");
+assert.equal(p.regressao_fase555.aprovados,6);
+assert.equal(p.requisitos.falhas.sem_token,401);
+assert.equal(p.requisitos.falhas.sem_permissao,403);
+assert.deepEqual(p.requisitos.operacoes_permitidas,["leitura"]);
+assert.equal(p.situacao_atual.pagina_estatica_publica,true);
+assert.equal(p.situacao_atual.endpoint_protegido_implantado,false);
+assert.equal(p.situacao_atual.testes_de_acesso_reais_executados,false);
+for(const v of Object.values(p.bloqueios))assert.equal(v,false);
+console.log("Fase 5.56: contrato registrado; endpoint nao implantado e acesso real nao validado.");

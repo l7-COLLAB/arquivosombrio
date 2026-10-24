@@ -1,0 +1,18 @@
+import assert from "node:assert/strict";
+import {handleEditorialCandidates} from "../supabase/functions/editorial-candidates/handler.mjs";
+const req=(method,origin,authorization)=>new Request("https://example.org",{method,headers:{...(origin?{origin}:{}),...(authorization?{authorization}:{})}});
+const verify=async()=>({id:"admin",app_metadata:{role:"admin"}});
+const allow="https://arquivosombrio.net.br";
+const option=await handleEditorialCandidates(req("OPTIONS",allow),verify,[]);
+assert.equal(option.status,204);
+assert.equal(option.headers.get("access-control-allow-origin"),allow);
+assert.match(option.headers.get("access-control-allow-methods"),/GET/);
+const blocked=await handleEditorialCandidates(req("OPTIONS","https://evil.example"),verify,[]);
+assert.equal(blocked.headers.get("access-control-allow-origin"),null);
+const anon=await handleEditorialCandidates(req("GET",allow),verify,[]);
+assert.equal(anon.status,401);
+const ok=await handleEditorialCandidates(req("GET",allow,"Bearer test"),verify,[]);
+assert.equal(ok.status,200);
+assert.equal(ok.headers.get("access-control-allow-origin"),allow);
+assert.match(ok.headers.get("cache-control"),/no-store/);
+console.log("Fase 5.60: preflight e CORS restrito simulados sem credenciais.");

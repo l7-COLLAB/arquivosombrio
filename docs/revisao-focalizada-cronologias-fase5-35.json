@@ -1,0 +1,114 @@
+{
+  "fase": "5.35",
+  "status": "revisao_complementar_sem_aprovacao",
+  "data": "2026-10-23",
+  "checagens": [
+    {
+      "id": 5,
+      "i": 4,
+      "status": "corroborado_2011_sem_dia_especifico",
+      "sources": [
+        "https://www.wibw.com/2025/03/21/dana-chandler-asks-be-released-jail-while-appealing-conviction/"
+      ],
+      "note": "WIBW relata prisão em 2011 e condenação em 2012; sem data exata da prisão.",
+      "aprovado": false,
+      "altera_texto_original": false
+    },
+    {
+      "id": 5,
+      "i": 5,
+      "status": "condenacao_2012_corroborada_terminologia_pena_pendente",
+      "sources": [
+        "https://www.wibw.com/2025/03/21/dana-chandler-asks-be-released-jail-while-appealing-conviction/"
+      ],
+      "note": "Ano confirmado; expressão jurídica exata das penas exige cotejo de decisão.",
+      "aprovado": false,
+      "altera_texto_original": false
+    },
+    {
+      "id": 5,
+      "i": 12,
+      "status": "situacao_recente_reportada_mas_docket_primario_pendente",
+      "sources": [
+        "https://www.biography.com/crime/a73829216/a-killer-story-dana-chandler",
+        "https://www.eonline.com/ca/news/1435772/a-killer-story-where-dana-chandler-is-now-after-double-murder-conviction"
+      ],
+      "note": "Reportagens de setembro de 2026 indicam custódia e recurso; confirmar situação no sistema prisional e tribunal antes de chamar de status atual.",
+      "aprovado": false,
+      "altera_texto_original": false
+    },
+    {
+      "id": 6,
+      "i": 2,
+      "status": "intervalo_1959_1962_corroborado_por_relato",
+      "sources": [
+        "https://www.history.com/articles/unabomber-ted-kaczynski"
+      ],
+      "note": "Pesquisa começou em 1959 e durou três anos; conferir documentação acadêmica para delimitação exata.",
+      "aprovado": false,
+      "altera_texto_original": false
+    },
+    {
+      "id": 6,
+      "i": 3,
+      "status": "ano_corroborado_por_fonte_universitaria_historica",
+      "sources": [
+        "https://www.thecrimson.com/article/2012/5/21/ted-kaczynski-unabomber-math/"
+      ],
+      "note": "Doutorado de matemática em 1967 corroborado por reportagem de veículo universitário.",
+      "aprovado": false,
+      "altera_texto_original": false
+    },
+    {
+      "id": 6,
+      "i": 5,
+      "status": "1971_corroborado_por_fonte_universitaria",
+      "sources": [
+        "https://www.thecrimson.com/article/2012/5/21/ted-kaczynski-unabomber-math/"
+      ],
+      "note": "Mudança para cabana em Lincoln, Montana, em 1971; período corroborado.",
+      "aprovado": false,
+      "altera_texto_original": false
+    },
+    {
+      "id": 6,
+      "i": 9,
+      "status": "testemunho_fbi_nao_inferir_identidade_absoluta",
+      "sources": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "note": "Conservar caráter de relato testemunhal; verificar dia exato diretamente na cronologia do FBI.",
+      "aprovado": false,
+      "altera_texto_original": false
+    },
+    {
+      "id": 6,
+      "i": 11,
+      "status": "divergencia_preservar_10_de_dezembro",
+      "sources": [
+        "https://www.law.cornell.edu/background/unabom/history.html",
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "note": "Cornell cita 10/12/1994; cronologia do FBI diverge. Preservar 10/12 até cotejo de registro primário; não corrigir automaticamente.",
+      "aprovado": false,
+      "altera_texto_original": false
+    },
+    {
+      "id": 6,
+      "i": 17,
+      "status": "10_junho_2023_corroborado_por_contemporaneas",
+      "sources": [
+        "https://www.cbsnews.com/news/unabomber-ted-kaczynski-dead-in-prison-cell/",
+        "https://abcnews.com/US/unabomber-ted-kaczynski-found-dead-jail-cell/story?id=99984583"
+      ],
+      "note": "Notícias publicadas no dia 10/06/2023 registram morte nessa data.",
+      "aprovado": false,
+      "altera_texto_original": false
+    }
+  ],
+  "pendencias_globais": [
+    "cotejo integral de fontes primarias",
+    "confirmacao de situacao processual atual",
+    "revisao editorial e autorizacao de publicacao"
+  ]
+}

@@ -1,0 +1,324 @@
+{
+  "fase": "5.19",
+  "estado": "cotejo_parcial_sem_publicacao",
+  "revisado_em": "2026-10-23",
+  "nota": "Confirmado significa apenas cotejo do marco com fonte indicada, não aprovação definitiva do dossiê. Outros marcos requerem fontes adicionais.",
+  "revisoes": [
+    {
+      "id_referencia": 5,
+      "indice": 1,
+      "texto_original": "7 de julho de 2002: Mike Sisco e Karen Harkness são encontrados mortos em Topeka.",
+      "status": "confirmado_por_decisao_judicial",
+      "fontes": [
+        "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html"
+      ],
+      "observacao": "Decisão registra encontro dos corpos em 7/7/2002.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 2,
+      "texto_original": "15 de julho de 2002: Dana é presa por uma pendência relacionada à pensão; seu veículo é apreendido.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 3,
+      "texto_original": "2009: o caso recebe nova exposição nacional pelo 48 Hours.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 4,
+      "texto_original": "2011: Dana é presa e acusada dos dois homicídios.",
+      "status": "confirmado_em_parte",
+      "fontes": [
+        "https://www.wibw.com/2025/04/02/dana-chandler-sentencing-set-june-date/"
+      ],
+      "observacao": "2011 e acusação apoiadas pelo relato; data específica não consta.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 5,
+      "texto_original": "2012: primeira condenação e duas penas de prisão perpétua.",
+      "status": "confirmado_em_parte",
+      "fontes": [
+        "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html"
+      ],
+      "observacao": "Condenação e sentenças documentadas; revisar expressão 'prisão perpétua' e possibilidade de liberdade condicional.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 6,
+      "texto_original": "6 de abril de 2018: a Suprema Corte do Kansas anula as condenações por conduta imprópria da promotoria.",
+      "status": "confirmado_por_decisao_judicial",
+      "fontes": [
+        "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html"
+      ],
+      "observacao": "Decisão de 6/4/2018 reverteu condenações por erro da acusação.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 7,
+      "texto_original": "2022: segundo julgamento termina sem veredicto.",
+      "status": "confirmado_por_imprensa",
+      "fontes": [
+        "https://www.cbsnews.com/news/woman-tried-twice-2002-kansas-double-murder-released-from-jail-dana-chandler/"
+      ],
+      "observacao": "Segundo julgamento terminou sem veredito em setembro de 2022.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 8,
+      "texto_original": "Fevereiro de 2025: começa o terceiro julgamento.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 9,
+      "texto_original": "7 de março de 2025: Dana é considerada culpada novamente.",
+      "status": "confirmado_por_imprensa",
+      "fontes": [
+        "https://www.wibw.com/2025/04/02/dana-chandler-sentencing-set-june-date/"
+      ],
+      "observacao": "Veredito em 7/3/2025.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 10,
+      "texto_original": "3 de junho de 2025: recebe duas penas consecutivas de prisão perpétua.",
+      "status": "confirmado_por_imprensa",
+      "fontes": [
+        "https://www.wibw.com/2025/06/03/dana-chandler-sentenced-prison-tuesday-2002-killings/"
+      ],
+      "observacao": "Duas penas consecutivas e elegibilidade após cinquenta anos no total.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 11,
+      "texto_original": "10 de setembro de 2026: estreia de A Killer Story na HBO e HBO Max.",
+      "status": "confirmado_por_comunicado",
+      "fontes": [
+        "https://ebs.publicnow.com/view/011E39353ED0C72570A80BCF6E65DB3B07BE51A8"
+      ],
+      "observacao": "Comunicado oficial da HBO confirma estreia em 10/9/2026.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 5,
+      "indice": 12,
+      "texto_original": "Situação atual: condenada e presa; continua contestando a condenação.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 1,
+      "texto_original": "1958: Kaczynski entra em Harvard aos 16 anos.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 2,
+      "texto_original": "1959 a 1962: participa da pesquisa conduzida por Henry Murray.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 3,
+      "texto_original": "1967: conclui o doutorado em matemática.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 4,
+      "texto_original": "1969: deixa a Universidade da Califórnia em Berkeley.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 5,
+      "texto_original": "1971: passa a viver na cabana de Montana.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 6,
+      "texto_original": "25 de maio de 1978: primeiro dispositivo conhecido explode.",
+      "status": "confirmado_pelo_fbi",
+      "fontes": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "observacao": "Primeiro dispositivo em 25/5/1978.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 7,
+      "texto_original": "15 de novembro de 1979: bomba provoca emergência no voo 444.",
+      "status": "confirmado_pelo_fbi",
+      "fontes": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "observacao": "Voo 444 em 15/11/1979.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 8,
+      "texto_original": "11 de dezembro de 1985: Hugh Scrutton torna-se a primeira vítima fatal.",
+      "status": "confirmado_pelo_fbi",
+      "fontes": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "observacao": "Morte de proprietário de loja em 11/12/1985; revisar nome em fonte complementar.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 9,
+      "texto_original": "20 de fevereiro de 1987: testemunha vê o suspeito em Salt Lake City.",
+      "status": "confirmado_em_parte",
+      "fontes": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "observacao": "20/2/1987 e testemunho confirmado; verbo 'vê o suspeito' deve preservar caráter testemunhal.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 10,
+      "texto_original": "1993: atentados ferem Charles Epstein e David Gelernter.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 11,
+      "texto_original": "10 de dezembro de 1994: Thomas Mosser é morto.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 12,
+      "texto_original": "24 de abril de 1995: Gilbert Murray é morto.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 13,
+      "texto_original": "Setembro de 1995: manifesto é publicado.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 14,
+      "texto_original": "3 de abril de 1996: Kaczynski é preso em Montana.",
+      "status": "confirmado_pelo_fbi",
+      "fontes": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "observacao": "Prisão em 3/4/1996.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 15,
+      "texto_original": "Janeiro de 1998: declara-se culpado.",
+      "status": "confirmado_pelo_fbi",
+      "fontes": [
+        "https://www.fbi.gov/history/cases-and-criminals/unabomber"
+      ],
+      "observacao": "Confissão em janeiro de 1998.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 16,
+      "texto_original": "Maio de 1998: recebe penas de prisão perpétua.",
+      "status": "confirmado_pelo_arquivo_nacional",
+      "fontes": [
+        "https://text-message.blogs.archives.gov/2023/06/06/insight-into-the-unabomber-case-from-the-files-of-its-lead-prosecutor/"
+      ],
+      "observacao": "Sentença em 4/5/1998.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 17,
+      "texto_original": "10 de junho de 2023: morre na prisão.",
+      "status": "confirmado_em_parte",
+      "fontes": [
+        "https://www.fbi.gov/news/RSS?PQZbxSJnkbv=G43cDa"
+      ],
+      "observacao": "Fonte confirma morte em 2023, não o dia 10 de junho.",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 6,
+      "indice": 18,
+      "texto_original": "25 de setembro de 2026: estreia de UNABOMBER.",
+      "status": "fonte_especifica_pendente",
+      "fontes": [],
+      "observacao": "Não cotejado nesta etapa; não publicar",
+      "aprovado_para_publicacao": false
+    }
+  ],
+  "referencias_auxiliares": [
+    {
+      "id_referencia": 4,
+      "texto_original": "Fonte: Library of Congress, https://guides.loc.gov/chronicling-america-lizzie-borden",
+      "status": "revisar_destinacao_para_fontes",
+      "aprovado_para_publicacao": false
+    },
+    {
+      "id_referencia": 17,
+      "texto_original": "Fontes: https://rivcoda.org/news/david-and-louise-turpin-plead-guilty ; https://rivcoda.org/sites/g/files/aldnop286/files/migrated/Portals-0-PDF-2018-2019-Biennial-Report.pdf",
+      "status": "revisar_destinacao_para_fontes",
+      "aprovado_para_publicacao": false
+    }
+  ]
+}

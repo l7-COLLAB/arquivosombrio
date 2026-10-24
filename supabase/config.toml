@@ -1,5 +1,8 @@
 # Arquivo Sombrio: security policy for Supabase CLI deployments.
 # JWT is mandatory for account, admin and direct Polly endpoints.
+[functions.editorial-candidates]
+verify_jwt = true # leitura editorial apenas para administradores, segunda checagem no handler
+
 [functions.admin-secure-rpc]
 verify_jwt = true
 

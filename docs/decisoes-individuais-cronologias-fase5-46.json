@@ -1,0 +1,64 @@
+{
+  "fase": "5.46",
+  "estado": "decisoes_individuais_preparadas",
+  "regressao_fase545": {
+    "commit": "eb3c80598f8044dfc6d126fef543c888aa81d7a9",
+    "aprovados": 6,
+    "total": 6
+  },
+  "decisoes": [
+    {
+      "id_caso": 6,
+      "indice": 11,
+      "original": "10 de dezembro de 1994: Thomas Mosser é morto.",
+      "proposta": "10 de dezembro de 1994: Thomas Mosser morre após a explosão de uma bomba em North Caldwell, Nova Jersey, segundo o Departamento de Justiça dos Estados Unidos.",
+      "fonte": "https://www.justice.gov/archive/opa/pr/1996/Jun96/283crm.htm",
+      "decisao": "pendente",
+      "opcoes_permitidas": [
+        "aprovar",
+        "rejeitar",
+        "solicitar_revisao"
+      ],
+      "responsavel": null,
+      "data_decisao": null,
+      "justificativa": null,
+      "aplicado": false
+    },
+    {
+      "id_caso": 5,
+      "indice": 5,
+      "original": "2012: primeira condenação e duas penas de prisão perpétua.",
+      "proposta": "2012: Dana Chandler é condenada por dois homicídios e recebe duas penas consecutivas de prisão perpétua, cada uma com período mínimo obrigatório de 50 anos. As condenações seriam anuladas pela Suprema Corte do Kansas em 2018.",
+      "fonte": "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html",
+      "decisao": "pendente",
+      "opcoes_permitidas": [
+        "aprovar",
+        "rejeitar",
+        "solicitar_revisao"
+      ],
+      "responsavel": null,
+      "data_decisao": null,
+      "justificativa": null,
+      "aplicado": false
+    }
+  ],
+  "nota_bloqueada": {
+    "id_caso": 5,
+    "indice": 12,
+    "decisao": "excluida_da_publicacao",
+    "aplicado": false
+  },
+  "restricoes": {
+    "aprovacao_automatica": false,
+    "publicacao": false,
+    "merge": false,
+    "deploy": false,
+    "supabase": false
+  },
+  "regras": [
+    "Decisao de cada evento deve ser independente e identificada",
+    "Nenhum evento pode ser aplicado com decisao pendente",
+    "Uma aprovacao editorial nao autoriza deploy ou merge",
+    "Nota de situacao atual permanece bloqueada"
+  ]
+}

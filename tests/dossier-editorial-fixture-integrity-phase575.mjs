@@ -1,0 +1,13 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+const fixture=readFileSync(new URL("./dossier-editorial-local-fixtures-phase574.mjs",import.meta.url),"utf8");
+const guide=readFileSync(new URL("../docs/homologacao-local-editorial-fase5-74.md",import.meta.url),"utf8");
+const edge=readFileSync(new URL("../supabase/functions/editorial-candidates/index.ts",import.meta.url),"utf8");
+assert.match(fixture,/id_caso:999/);
+assert.match(fixture,/example\.org\/fixture/);
+assert.match(fixture,/local-admin|fixture-admin/);
+assert.doesNotMatch(fixture,/iuhotznurbyujzbyhizf|service_role|sb_secret_/i);
+assert.match(guide,/Nunca importe dados reais/);
+assert.match(guide,/nao constitui teste real|não constitui teste real/i);
+assert.match(edge,/auth\.getUser\(token\)/);
+console.log("Fase 5.75: fixtures demonstrativas conferidas; o gateway real permanece nao testado.");

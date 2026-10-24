@@ -2382,10 +2382,70 @@ function renderizarCronologiaBlocoDossie(dados) {
     const lista =
         document.createElement("ol");
 
+    const gruposAnuais = new Map();
+    const categoriasPresentes = new Set();
+    const naturezasPresentes = new Set();
+    const categoriaEvento = item => {
+        if (!item || typeof item !== "object") return "";
+        const valor = obterCampoItemDossie(item, ["categoria", "tipo_evento", "fase_investigativa"]);
+        const opcoes = {
+            investigacao: "Investigação",
+            pericia: "Perícia",
+            julgamento: "Julgamento",
+            depoimento: "Depoimento",
+            descoberta: "Descoberta",
+            desfecho: "Desfecho"
+        };
+        const normalizado = valor.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        return opcoes[normalizado] || "";
+    };
+    const identificarAno = item => {
+        const valor = typeof item === "string"
+            ? item.split(":")[0]
+            : obterCampoItemDossie(item, ["data", "periodo", "quando"]);
+        const match = String(valor || "").match(/\b(?:1[5-9]\d{2}|20\d{2}|21\d{2})\b/);
+        return match ? match[0] : "";
+    };
+
     itens.forEach(item => {
 
         const linha =
             document.createElement("li");
+        const ano = identificarAno(item);
+        if (ano) linha.dataset.anoCronologia = ano;
+        // Natureza editorial é distinta da etapa investigativa.
+        // Não presumir que um evento seja fato comprovado se não houver indicação.
+        const naturezaDeclarada = typeof item === "object" && item
+            ? obterCampoItemDossie(item, ["natureza_documental", "classificacao_editorial", "natureza_evento"])
+            : "";
+        const naturezas = {
+            fato: "Fato documentado",
+            fato_documentado: "Fato documentado",
+            testemunho: "Testemunho",
+            hipotese: "Hipótese",
+            controversia: "Controvérsia"
+        };
+        const chaveNatureza = naturezaDeclarada.normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "").toLowerCase()
+            .trim().replace(/\s+/g, "_");
+        const natureza = naturezas[chaveNatureza] || "";
+        if (natureza) {
+            naturezasPresentes.add(natureza);
+            const identificador = criarElementoTextoDossie("span", natureza);
+            identificador.className = "case-timeline-documentary-nature";
+            linha.appendChild(identificador);
+        }
+        const categoria = categoriaEvento(item);
+        if (categoria) {
+            categoriasPresentes.add(categoria);
+            linha.dataset.categoriaCronologia = categoria;
+            const identificacao = criarElementoTextoDossie("span", categoria);
+            identificacao.className = "case-timeline-category";
+            linha.appendChild(identificacao);
+        }
+        if (ano && !gruposAnuais.has(ano)) {
+            gruposAnuais.set(ano, `cronologia-ano-${ano}-${gruposAnuais.size + 1}`);
+        }
 
         if (typeof item === "string") {
 
@@ -2457,17 +2517,57 @@ function renderizarCronologiaBlocoDossie(dados) {
                     )
                 );
             }
+            // Detalhes adicionais são opcionais e ficam acessíveis por teclado.
+            // A descrição principal permanece sempre visível.
+            const detalhesEvento = obterCampoItemDossie(
+                item, ["detalhes", "contexto", "informacoes_adicionais"]
+            );
+            if (detalhesEvento && detalhesEvento !== descricao) {
+                const expansivel = document.createElement("details");
+                expansivel.className = "case-timeline-event-details";
+                expansivel.appendChild(
+                    criarElementoTextoDossie("summary", "Ler detalhes do acontecimento")
+                );
+                expansivel.appendChild(
+                    criarElementoTextoDossie("p", detalhesEvento)
+                );
+                linha.appendChild(expansivel);
+            }
+
             // Referências por evento são adicionadas somente se o editor informou URL.
             const fonte = obterCampoItemDossie(item, ["fonte", "referencia"]);
+            const instituicaoFonte = obterCampoItemDossie(
+                item, ["instituicao_fonte", "orgao_fonte"]
+            );
+            const dataFonte = obterCampoItemDossie(
+                item, ["data_documento_fonte", "data_fonte"]
+            );
+            const identificadorFonte = obterCampoItemDossie(
+                item, ["identificador_documento", "numero_documento"]
+            );
             const link = criarLinkExternoDossie(
                 item.link_fonte || item.fonte_url || item.url_fonte,
                 "Consultar fonte do evento",
                 "case-timeline-source-link"
             );
-            if (fonte || link) {
+            if (fonte || instituicaoFonte || dataFonte || identificadorFonte || link) {
                 const referencia = document.createElement("div");
                 referencia.className = "case-timeline-source";
-                if (fonte) referencia.appendChild(criarElementoTextoDossie("span", fonte));
+                referencia.setAttribute("aria-label", "Referência documental do acontecimento");
+                const metadados = [
+                    ["Fonte", fonte],
+                    ["Instituição", instituicaoFonte],
+                    ["Data do documento", dataFonte],
+                    ["Identificador", identificadorFonte]
+                ];
+                metadados.forEach(([rotulo, valor]) => {
+                    if (!valor) return;
+                    const campo = document.createElement("span");
+                    campo.className = "case-timeline-source-name";
+                    campo.appendChild(criarElementoTextoDossie("strong", rotulo + ": "));
+                    campo.appendChild(document.createTextNode(valor));
+                    referencia.appendChild(campo);
+                });
                 if (link) referencia.appendChild(link);
                 linha.appendChild(referencia);
             }
@@ -2482,7 +2582,215 @@ function renderizarCronologiaBlocoDossie(dados) {
         return null;
     }
 
+    // Guia documental apenas com naturezas declaradas nos registros.
+    // O guia não atribui nem altera classificações.
+    if (naturezasPresentes.size) {
+        const guia = document.createElement("aside");
+        guia.className = "case-timeline-editorial-guide";
+        guia.setAttribute("aria-label", "Guia de natureza documental");
+        guia.appendChild(criarElementoTextoDossie(
+            "strong", "Como interpretar os registros"
+        ));
+        const definicoes = {
+            "Fato documentado": "Informação assim classificada pelo editor; consulte a referência.",
+            "Testemunho": "Relato atribuído a uma fonte, não necessariamente comprovado.",
+            "Hipótese": "Interpretação ainda sujeita a confirmação.",
+            "Controvérsia": "Informação ou interpretação em disputa."
+        };
+        const itensGuia = document.createElement("ul");
+        naturezasPresentes.forEach(rotulo => {
+            const itemGuia = document.createElement("li");
+            itemGuia.appendChild(criarElementoTextoDossie("strong", rotulo + ": "));
+            itemGuia.appendChild(document.createTextNode(definicoes[rotulo]));
+            itensGuia.appendChild(itemGuia);
+        });
+        guia.appendChild(itensGuia);
+        secao.appendChild(guia);
+    }
+
+    let seletorCategoria = null;
+    let campoPesquisa = null;
+    let mensagemVazia = null;
+    const atalhosAnuais = [];
+    const normalizarBusca = valor => String(valor || "")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase("pt-BR").trim();
+    const atualizarVisibilidade = () => {
+        // Separadores visuais para cronologias longas; a ordem dos dados não muda.
+        lista.querySelectorAll(".case-timeline-period-label").forEach(no => no.remove());
+        const termo = normalizarBusca(campoPesquisa?.value);
+        const categoriaFiltro = seletorCategoria?.value || "";
+        let visiveis = 0;
+        Array.from(lista.children).forEach(linha => {
+            const categoria = linha.dataset.categoriaCronologia || "";
+            const correspondeCategoria = !categoriaFiltro || !categoria || categoria === categoriaFiltro;
+            const correspondeTexto = !termo || normalizarBusca(linha.textContent).includes(termo);
+            linha.hidden = !(correspondeCategoria && correspondeTexto);
+            if (!linha.hidden) visiveis += 1;
+        });
+        if (itens.length >= 8) {
+            let periodoAnterior = null;
+            Array.from(lista.children).forEach(linha => {
+                if (linha.hidden) return;
+                const periodo = linha.dataset.anoCronologia || "Sem ano definido";
+                if (periodo !== periodoAnterior) {
+                    const rotulo = criarElementoTextoDossie("span", periodo);
+                    rotulo.className = "case-timeline-period-label";
+                    linha.insertBefore(rotulo, linha.firstChild);
+                    periodoAnterior = periodo;
+                }
+            });
+        }
+        atalhosAnuais.forEach(({ ancora, id, ano }) => {
+            // O destino acompanha o primeiro evento visível do respectivo ano.
+            const destino = Array.from(lista.children).find(linha =>
+                !linha.hidden && linha.dataset.anoCronologia === ano
+            );
+            ancora.hidden = !destino;
+            if (destino) destino.id = id;
+            Array.from(lista.children).forEach(linha => {
+                if (linha !== destino && linha.id === id) linha.removeAttribute("id");
+            });
+        });
+        if (mensagemVazia) mensagemVazia.hidden = visiveis !== 0;
+        if (mensagemResultado) {
+            mensagemResultado.textContent = visiveis === 1
+                ? "1 acontecimento encontrado"
+                : `${visiveis} acontecimentos encontrados`;
+        }
+    };
+    let mensagemResultado = null;
+
+    if (gruposAnuais.size >= 2) {
+        const navegacao = document.createElement("nav");
+        navegacao.className = "case-timeline-navigation";
+        navegacao.setAttribute("aria-label", "Navegar pela cronologia por ano");
+        navegacao.appendChild(
+            criarElementoTextoDossie("span", "Ir para o ano:", "case-timeline-navigation-label")
+        );
+        gruposAnuais.forEach((id, ano) => {
+            const ancora = criarElementoTextoDossie("a", ano);
+            ancora.href = `#${id}`;
+            atalhosAnuais.push({ ancora, id, ano });
+            navegacao.appendChild(ancora);
+        });
+        secao.appendChild(navegacao);
+    }
+    if (categoriasPresentes.size >= 2) {
+        const filtros = document.createElement("div");
+        filtros.className = "case-timeline-filters";
+        const rotulo = criarElementoTextoDossie("label", "Filtrar acontecimentos:");
+        const seletor = document.createElement("select");
+        seletorCategoria = seletor;
+        seletor.setAttribute("aria-label", "Filtrar acontecimentos por categoria");
+        const inserirOpcao = (valor, titulo) => {
+            const opcao = document.createElement("option");
+            opcao.value = valor;
+            opcao.textContent = titulo;
+            seletor.appendChild(opcao);
+        };
+        inserirOpcao("", "Todos os acontecimentos");
+        Array.from(categoriasPresentes).sort((a,b) => a.localeCompare(b,"pt-BR"))
+            .forEach(categoria => inserirOpcao(categoria, categoria));
+        seletor.addEventListener("change", atualizarVisibilidade);
+        filtros.appendChild(rotulo);
+        filtros.appendChild(seletor);
+        secao.appendChild(filtros);
+    }
+    if (itens.length >= 2) {
+        const busca = document.createElement("div");
+        busca.className = "case-timeline-search";
+        const rotuloBusca = document.createElement("label");
+        const idBusca = "busca-cronologia-" + Math.random().toString(36).slice(2, 10);
+        rotuloBusca.htmlFor = idBusca;
+        rotuloBusca.textContent = "Pesquisar acontecimentos";
+        campoPesquisa = document.createElement("input");
+        campoPesquisa.id = idBusca;
+        campoPesquisa.type = "search";
+        campoPesquisa.autocomplete = "off";
+        campoPesquisa.placeholder = "Nome, local ou acontecimento";
+        campoPesquisa.addEventListener("input", atualizarVisibilidade);
+        mensagemResultado = criarElementoTextoDossie("p", "", "case-timeline-search-results");
+        mensagemResultado.setAttribute("role", "status");
+        mensagemResultado.setAttribute("aria-live", "polite");
+        busca.appendChild(rotuloBusca);
+        busca.appendChild(campoPesquisa);
+        busca.appendChild(mensagemResultado);
+        mensagemVazia = criarElementoTextoDossie(
+            "p", "Nenhum acontecimento corresponde à pesquisa. Limpe a busca ou altere o filtro.",
+            "case-timeline-empty"
+        );
+        mensagemVazia.hidden = true;
+        busca.appendChild(mensagemVazia);
+        const limpar = document.createElement("button");
+        limpar.type = "button";
+        limpar.className = "case-timeline-reset";
+        limpar.textContent = "Limpar pesquisa e filtros";
+        limpar.addEventListener("click", () => {
+            campoPesquisa.value = "";
+            if (seletorCategoria) seletorCategoria.value = "";
+            atualizarVisibilidade();
+            campoPesquisa.focus();
+        });
+        busca.appendChild(limpar);
+        secao.appendChild(busca);
+        atualizarVisibilidade();
+    }
     secao.appendChild(lista);
+    if (itens.length >= 8) {
+        const comandos = document.createElement("nav");
+        comandos.className = "case-timeline-step-navigation";
+        comandos.setAttribute("aria-label", "Navegar entre acontecimentos visíveis");
+        const anterior = document.createElement("button");
+        const proximo = document.createElement("button");
+        anterior.type = proximo.type = "button";
+        anterior.textContent = "← Anterior";
+        proximo.textContent = "Próximo →";
+        const posicao = criarElementoTextoDossie("span", "", "case-timeline-step-position");
+        posicao.setAttribute("role", "status");
+        posicao.setAttribute("aria-live", "polite");
+        let indiceAtual = -1;
+        const eventosVisiveis = () => Array.from(lista.children).filter(no => !no.hidden);
+        const atualizarComandos = () => {
+            const visiveis = eventosVisiveis();
+            if (!visiveis.length) indiceAtual = -1;
+            else if (indiceAtual >= visiveis.length) indiceAtual = visiveis.length - 1;
+            anterior.disabled = !visiveis.length || indiceAtual <= 0;
+            proximo.disabled = !visiveis.length || indiceAtual >= visiveis.length - 1;
+            posicao.textContent = visiveis.length
+                ? (indiceAtual < 0 ? visiveis.length === 1 ? "1 acontecimento visível" : visiveis.length + " acontecimentos visíveis" : (indiceAtual + 1) + " de " + visiveis.length)
+                : "Nenhum acontecimento visível";
+        };
+        const navegar = passo => {
+            const visiveis = eventosVisiveis();
+            if (!visiveis.length) return;
+            indiceAtual = Math.max(0, Math.min(visiveis.length - 1, indiceAtual + passo));
+            const movimentoReduzido = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            visiveis[indiceAtual].scrollIntoView({behavior: movimentoReduzido ? "auto" : "smooth", block: "center"});
+            visiveis[indiceAtual].setAttribute("tabindex", "-1");
+            visiveis[indiceAtual].focus({preventScroll: true});
+            atualizarComandos();
+        };
+        anterior.addEventListener("click", () => navegar(-1));
+        proximo.addEventListener("click", () => navegar(1));
+        comandos.append(anterior, posicao, proximo);
+        secao.appendChild(comandos);
+        if (campoPesquisa) campoPesquisa.addEventListener("input", () => {
+            indiceAtual = -1;
+            atualizarComandos();
+        });
+        if (seletorCategoria) seletorCategoria.addEventListener("change", () => {
+            indiceAtual = -1;
+            atualizarComandos();
+        });
+        const reset = secao.querySelector(".case-timeline-reset");
+        if (reset) reset.addEventListener("click", () => {
+            indiceAtual = -1;
+            atualizarComandos();
+        });
+        atualizarComandos();
+    }
+    if (itens.length >= 8 && !campoPesquisa) atualizarVisibilidade();
     return secao;
 }
 

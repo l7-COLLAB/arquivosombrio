@@ -1,0 +1,57 @@
+{
+  "status": "previa_sem_aplicacao",
+  "fonte": "Supabase public.Casos SELECT, amostra de eventos de cronologia",
+  "gerado_em": "2026-10-23",
+  "exige_revisao_humana": true,
+  "observacao": "Sem fontes ou naturezas inferidas; IDs são referências de leitura, não destinos para escrita.",
+  "amostra": [
+    {
+      "id_banco": 4,
+      "titulo": "Lizzie Borden: quem matou Andrew e Abby Borden?",
+      "posicao": 1,
+      "texto_original": "4 de agosto de 1892: Andrew e Abby Borden são assassinados em Fall River, Massachusetts."
+    },
+    {
+      "id_banco": 4,
+      "titulo": "Lizzie Borden: quem matou Andrew e Abby Borden?",
+      "posicao": 2,
+      "texto_original": "11 de agosto de 1892: Lizzie Borden é presa."
+    },
+    {
+      "id_banco": 4,
+      "titulo": "Lizzie Borden: quem matou Andrew e Abby Borden?",
+      "posicao": 3,
+      "texto_original": "5 de junho de 1893: começa o julgamento em New Bedford."
+    },
+    {
+      "id_banco": 4,
+      "titulo": "Lizzie Borden: quem matou Andrew e Abby Borden?",
+      "posicao": 4,
+      "texto_original": "20 de junho de 1893: Lizzie Borden é absolvida."
+    },
+    {
+      "id_banco": 9,
+      "titulo": "Caso Madeleine McCann: o desaparecimento, as falhas e o suspeito nunca acusado",
+      "posicao": 1,
+      "texto_original": "12 de maio de 2003: Madeleine Beth McCann nasce em Leicester, Inglaterra."
+    },
+    {
+      "id_banco": 9,
+      "titulo": "Caso Madeleine McCann: o desaparecimento, as falhas e o suspeito nunca acusado",
+      "posicao": 2,
+      "texto_original": "28 de abril de 2007: a família chega ao Ocean Club, em Praia da Luz."
+    },
+    {
+      "id_banco": 9,
+      "titulo": "Caso Madeleine McCann: o desaparecimento, as falhas e o suspeito nunca acusado",
+      "posicao": 3,
+      "texto_original": "3 de maio de 2007: Madeleine desaparece do apartamento 5A."
+    },
+    {
+      "id_banco": 9,
+      "titulo": "Caso Madeleine McCann: o desaparecimento, as falhas e o suspeito nunca acusado",
+      "posicao": 4,
+      "texto_original": "14 de maio de 2007: Robert Murat torna-se arguido; a condição é retirada em 2008."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+const read=p=>readFileSync(new URL(p,import.meta.url),"utf8");
+const editorial=read("../admin-v2/editorial.html");
+const record=read("../admin-v2/js/editorial-record.js");
+const preview=read("../previews/revisao-editorial-fase5-50.html");
+const workflow=read("../admin-v2/js/editorial-review-workflow.js");
+assert.match(editorial,/<div id="app" hidden>/);
+assert.ok(editorial.indexOf('id="editorial-preview-entry"')>editorial.indexOf('<div id="app" hidden>'));
+assert.match(editorial,/admin-auth\.js/);
+assert.match(record,/obterSessaoAdminIsolada|obterClienteAdminIsolado/);
+assert.doesNotMatch(preview,/<button\b|<form\b/i);
+assert.doesNotMatch(preview,/supabase\.from\s*\(|fetch\s*\(|localStorage/i);
+assert.match(workflow,/publicacao_autorizada:false/);
+console.log("Fase 5.55: verificacoes estaticas de isolamento aprovadas; controle servidor nao testado.");

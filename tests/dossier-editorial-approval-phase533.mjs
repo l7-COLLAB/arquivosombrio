@@ -1,0 +1,15 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+const file=p=>JSON.parse(readFileSync(new URL(p,import.meta.url),"utf8"));
+const pacote=file("../docs/pacote-aprovacao-editorial-fase5-33.json");
+const anterior=file("../docs/checklist-homologacao-cronologias-fase5-22.json");
+assert.equal(pacote.status,"aguardando_aprovacao_editorial");
+for(const flag of ["publicacao_autorizada","merge_autorizado","supabase_escrita_autorizada"])assert.equal(pacote[flag],false);
+assert.equal(pacote.escopo.marcos,29);
+assert.equal(pacote.escopo.notas_fora_da_cronologia,1);
+assert.equal(pacote.tecnico.dispositivos_fisicos_testados,false);
+assert.equal(pacote.tecnico.acessibilidade_integral_homologada,false);
+assert.equal(pacote.pendencias.filter(p=>p.aprovado).length,0);
+assert.equal(anterior.criterios.filter(c=>c.aprovado_editorialmente).length,0);
+for(const id of ["fontes","mosser","dana","identidade","reversao","experiencia_real","autorizacao"])assert(pacote.pendencias.some(p=>p.id===id));
+console.log("Pacote de homologação bloqueado até aprovação explícita.");

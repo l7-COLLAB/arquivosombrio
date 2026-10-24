@@ -1,0 +1,18 @@
+{
+  "fase": "5.70",
+  "estado": "execucao_controlada_local_preparada",
+  "regressao_fase569": {
+    "aprovados": 6,
+    "total": 6
+  },
+  "evidencia_gerada_em_ci": "artifacts/editorial/fase5-70-local.json",
+  "dados": "ficticios",
+  "credenciais_reais": false,
+  "testes_gateway_reais": false,
+  "aprovacao_producao": false,
+  "dependencias": [
+    "Homologacao isolada antes de habilitar endpoint",
+    "Teste real de OPTIONS sem JWT e identidade validada pelo Supabase Auth",
+    "Inspecao de RLS e revogacao de papel administrativo"
+  ]
+}

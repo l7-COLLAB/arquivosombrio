@@ -1,0 +1,27 @@
+{
+  "fase": "5.64",
+  "estado": "configuracao_de_gateway_preparada_sem_deploy",
+  "regressao_fase563": {
+    "aprovados": 6,
+    "total": 6
+  },
+  "gateway": {
+    "funcao": "editorial-candidates",
+    "verify_jwt": true,
+    "implantado": false,
+    "validado_em_producao": false
+  },
+  "testes_reais_pendentes": [
+    "JWT invalido",
+    "usuario nao-admin",
+    "usuario admin",
+    "preflight OPTIONS",
+    "expiracao e revogacao da sessao"
+  ],
+  "autorizacoes": {
+    "deploy": false,
+    "merge": false,
+    "publicacao": false,
+    "supabase": false
+  }
+}

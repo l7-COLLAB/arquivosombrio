@@ -1,0 +1,11 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+const html=readFileSync(new URL("../previews/revisao-editorial-fase5-50.html",import.meta.url),"utf8");
+assert.match(html,/Somente leitura/);
+assert.match(html,/Thomas Mosser/);
+assert.match(html,/Dana Chandler/);
+assert.match(html,/Nenhuma decisão registrada/);
+assert.doesNotMatch(html,/supabase\.from\s*\(/i);
+assert.doesNotMatch(html,/<button\b/i);
+assert.doesNotMatch(html,/localStorage|fetch\s*\(/);
+console.log("Fase 5.50: prévia estática sem botões ou persistência.");

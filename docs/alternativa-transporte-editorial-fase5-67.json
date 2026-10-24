@@ -1,0 +1,29 @@
+{
+  "fase": "5.67",
+  "estado": "alternativa_nao_ativada",
+  "decisao": "Manter transporte atual enquanto o gateway real nao for homologado. Preparar contrato de proxy de mesma origem exclusivamente como contingencia.",
+  "proposta": {
+    "rota": "/api/admin/editorial-candidates",
+    "status": "nao_implantada",
+    "requisitos": [
+      "terminar TLS na origem oficial",
+      "validar token de usuario no servidor com Supabase Auth",
+      "verificar papel admin do usuario em dados confiaveis",
+      "retornar apenas campos permitidos e cache-control no-store",
+      "limitar metodos a GET e bloquear escritas",
+      "nao registrar tokens em logs",
+      "validar revogacao, CSRF/cookies e rate limiting conforme estrategia escolhida"
+    ]
+  },
+  "observacoes": [
+    "Proxy nao equivale a configuracao pronta de infraestrutura",
+    "Modulo nao modifica as chamadas do Admin V2",
+    "Dados estaticos da previa antiga permanecem publicos"
+  ],
+  "restricoes": {
+    "deploy": false,
+    "merge": false,
+    "publicacao": false,
+    "alteracao_supabase": false
+  }
+}

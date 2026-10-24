@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Prévia isolada — Cronologia | Arquivo Sombrio</title>
+<link rel="stylesheet" href="../css/caso.css">
+<style>
+body{margin:0;background:#1b1714;color:#eee3d2;font:16px/1.6 Georgia,serif}
+.case-page{min-height:100vh}
+main{max-width:850px;margin:auto;padding:24px 16px 80px;box-sizing:border-box}
+h1{font-size:1.45rem}
+.notice{padding:12px;border:1px solid #8d7555;font:14px/1.5 system-ui,sans-serif}
+#caso-historia{min-width:0}
+#caso-historia .case-content-timeline{width:100%;max-width:100%;box-sizing:border-box}
+</style>
+</head>
+<body class="case-page">
+<main>
+<h1>Prévia da cronologia interativa</h1>
+<p class="notice">Ambiente demonstrativo com dados inteiramente fictícios. Esta página não consulta o Supabase, não usa sua conta e não altera nenhum dossiê.</p>
+<div id="caso-historia" class="case-main-content"></div>
+<p id="preview-error" role="alert" hidden>Não foi possível carregar a prévia. Abra esta página através de um servidor local a partir da raiz do repositório.</p>
+</main>
+<script>
+(function () {
+  const script=document.createElement("script");
+  script.src="../js/caso.js";
+  script.onload=()=>{
+    try {
+      const dados={titulo:"Cronologia demonstrativa",itens:[
+        {data:"1941",descricao:"A investigação fictícia é iniciada.",categoria:"Investigação",natureza_documental:"fato_documentado",detalhes:"Informação demonstrativa, criada apenas para testar a expansão.",fonte:"Relatório demonstrativo",instituicao_fonte:"Arquivo fictício",data_documento_fonte:"1941",identificador_documento:"DEMO-001",link_fonte:"https://example.org/documento"},
+        {data:"1942",descricao:"Uma testemunha fictícia registra seu relato.",categoria:"Depoimento",natureza_documental:"testemunho",detalhes:"O relato não representa nenhum caso real."},
+        {data:"1942",descricao:"Documentos demonstrativos são examinados.",categoria:"Perícia",natureza_documental:"fato_documentado",fonte:"Relatório ilustrativo"},
+        {data:"1943",descricao:"Uma hipótese fictícia é discutida.",categoria:"Investigação",natureza_documental:"hipotese"},
+        {data:"1944",descricao:"Ocorre um procedimento judicial demonstrativo.",categoria:"Julgamento",natureza_documental:"controversia",detalhes:"Controvérsia simulada para fins de teste."},
+        {data:"Sem data",descricao:"Registro não classificado com data desconhecida."}
+      ]};
+      const rendered=renderizarCronologiaBlocoDossie(dados);
+      if(!rendered)throw new Error("Nenhuma cronologia renderizada");
+      document.getElementById("caso-historia").appendChild(rendered);
+    } catch(err) {
+      document.getElementById("preview-error").hidden=false;
+      console.error("Prévia da cronologia:",err);
+    }
+  };
+  script.onerror=()=>{document.getElementById("preview-error").hidden=false;};
+  // Carregar após DOMContentLoaded evita iniciar a busca de casos neste demonstrativo.
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>document.head.appendChild(script),{once:true});
+  else document.head.appendChild(script);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+{
+  "fase": "5.43",
+  "estado": "checklist_pre_homologacao_pendente",
+  "pr": 79,
+  "dependencia_pr": 75,
+  "regressao_anterior": {
+    "commit": "1d317473d66f133091de3c64600fcef9ca7cb97a",
+    "testes_aprovados": 6,
+    "total": 6
+  },
+  "criterios": [
+    {
+      "id": "documental",
+      "descricao": "Verificar origem, inteiro teor e contexto das fontes primarias",
+      "concluido": false
+    },
+    {
+      "id": "redacoes",
+      "descricao": "Revisao humana e aprovacao nominal das duas redacoes propostas",
+      "concluido": false
+    },
+    {
+      "id": "situacao_processual",
+      "descricao": "Obter registro judicial contemporaneo ou manter nota excluida",
+      "concluido": false
+    },
+    {
+      "id": "dependencia",
+      "descricao": "Validar PR 75 antes de considerar integracao da PR 79",
+      "concluido": false
+    },
+    {
+      "id": "pre_publicacao",
+      "descricao": "Rodar regressao e validar diff restrito antes de publicacao",
+      "concluido": false
+    }
+  ],
+  "decisoes": [
+    {
+      "id_caso": 6,
+      "indice": 11,
+      "decisao": "aguarda_homologacao_humana"
+    },
+    {
+      "id_caso": 5,
+      "indice": 5,
+      "decisao": "aguarda_homologacao_humana"
+    },
+    {
+      "id_caso": 5,
+      "indice": 12,
+      "decisao": "excluir_da_publicacao"
+    }
+  ],
+  "rollback": {
+    "pre_requisitos": [
+      "Salvar SHA da branch e da base imediatamente antes do merge",
+      "Preservar versao original dos acontecimentos para comparacao",
+      "Gerar diff e validar que somente entradas aprovadas mudaram"
+    ],
+    "procedimento": [
+      "Se ainda nao houver merge, cancelar a integracao e preservar branch",
+      "Se houver merge, criar revert do commit de integracao em nova PR apos validar historico",
+      "Se houver deploy, retornar ao artefato de release anterior e executar testes de leitura",
+      "Se houver dados alterados, restaurar apenas os registros afetados com backup validado; nunca sobrescrever Supabase sem inventario"
+    ],
+    "testes_de_recuperacao_executados": false
+  },
+  "autorizacoes": {
+    "aprovacao_editorial": false,
+    "merge": false,
+    "deploy": false,
+    "publicacao": false,
+    "supabase": false
+  },
+  "observacao": "Checklist e plano de reversao documentados; rollback nao executado nem testado.",
+  "auditoria_complementar_2026_10_24": {
+    "origem": "docs/pacote-aprovacao-cronologias-fase5-42.json",
+    "regressao_fase542": {
+      "commit": "b0c11c6d36db0e7303d0a80b09b06d44807011e1",
+      "run_id": 40095329998,
+      "conclusao": "success",
+      "total_workflows": 6,
+      "workflows_aprovados": 6,
+      "validacao_editorial": false
+    },
+    "ressalvas": [
+      {
+        "id_caso": 6,
+        "indice": 11,
+        "motivo": "Divergencia atribuida ao FBI nao demonstrada pela pagina historica consultada",
+        "fonte_especifica_divergencia_confirmada": false,
+        "aprovado": false
+      },
+      {
+        "id_caso": 5,
+        "indice": 5,
+        "motivo": "Termos juridicos do historico de 2012 devem ser aprovados por revisao humana contextualizada",
+        "aprovado": false
+      },
+      {
+        "id_caso": 5,
+        "indice": 12,
+        "motivo": "Situacao processual sem andamento judicial contemporaneo confirmado",
+        "fora_da_cronologia": true,
+        "redacao_candidata": null,
+        "publicavel": false,
+        "aprovado": false
+      }
+    ],
+    "seguranca": {
+      "backup_producao_realizado": false,
+      "restauracao_testada": false,
+      "identificadores_supabase_validados": false,
+      "sha_base_pre_merge_registrado": false,
+      "sha_head_pre_merge_registrado": false,
+      "autorizacao_para_publicar": false
+    },
+    "decisao": "continuar_revisao_sem_homologacao"
+  }
+}

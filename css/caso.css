@@ -3439,3 +3439,371 @@ body[data-reader-theme="papel"] .dossie-summary {
     .case-evidence-metadata { grid-template-columns: 1fr; gap: .1rem; }
     .case-evidence-metadata dd { margin-bottom: .5rem; }
 }
+
+/* Fase 2 — detalhes opcionais em acontecimentos cronológicos. */
+.case-page #caso-historia .case-timeline-event-details {
+    grid-column: 1 / -1;
+    min-width: 0;
+    margin: .35rem 0 0;
+    overflow-wrap: anywhere;
+}
+.case-page #caso-historia .case-timeline-event-details summary {
+    color: var(--case-block-accent, #bc9969);
+    cursor: pointer;
+    font-weight: 600;
+    line-height: 1.55;
+}
+.case-page #caso-historia .case-timeline-event-details summary:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+}
+.case-page #caso-historia .case-timeline-event-details p {
+    margin: .55rem 0 0;
+    white-space: pre-line;
+}
+
+/* Fase 2.2 — navegação por anos presentes na cronologia. */
+.case-page #caso-historia .case-timeline-navigation {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .45rem;
+    margin: 0 0 1.15rem;
+    font-size: .85rem;
+}
+.case-page #caso-historia .case-timeline-navigation-label {
+    margin-right: .35rem;
+    color: var(--case-block-muted, #a99b8a);
+}
+.case-page #caso-historia .case-timeline-navigation a {
+    padding: .4rem .65rem;
+    border: 1px solid var(--case-block-border, #756044);
+    border-radius: 4px;
+    color: var(--case-block-accent, #bc9969);
+    text-decoration: none;
+}
+.case-page #caso-historia .case-timeline-navigation a:hover,
+.case-page #caso-historia .case-timeline-navigation a:focus-visible {
+    text-decoration: underline;
+    outline-offset: 3px;
+}
+.case-page #caso-historia .case-content-timeline li[id^="cronologia-ano-"] {
+    scroll-margin-top: 6rem;
+}
+
+/* Fase 2.3 — filtro editorial progressivo da cronologia. */
+.case-page #caso-historia .case-timeline-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: 1rem;
+}
+.case-page #caso-historia .case-timeline-filters label {
+    color: var(--case-block-muted, #aaa092);
+    font-size: .85rem;
+}
+.case-page #caso-historia .case-timeline-filters select {
+    max-width: 100%;
+    min-height: 2.5rem;
+    padding: .4rem .65rem;
+    color: var(--paper, #eee5d7);
+    border: 1px solid var(--case-block-border, #756044);
+    background: var(--case-block-surface, #201c19);
+    border-radius: 4px;
+}
+.case-page #caso-historia .case-timeline-filters select:focus-visible {
+    outline: 2px solid var(--case-block-accent, #bc9969);
+    outline-offset: 2px;
+}
+.case-page #caso-historia .case-content-timeline li[hidden] {
+    display: none !important;
+}
+
+/* Fase 2.4 — busca textual na cronologia. */
+.case-page #caso-historia .case-timeline-search {
+    display: grid;
+    gap: .45rem;
+    min-width: 0;
+    margin: 0 0 1rem;
+}
+.case-page #caso-historia .case-timeline-search label {
+    color: var(--case-block-muted, #aaa092);
+    font-size: .85rem;
+}
+.case-page #caso-historia .case-timeline-search input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: .65rem .75rem;
+    color: var(--paper, #eee5d7);
+    background: var(--case-block-surface, #201c19);
+    border: 1px solid var(--case-block-border, #756044);
+    border-radius: 4px;
+}
+.case-page #caso-historia .case-timeline-search input:focus-visible {
+    outline: 2px solid var(--case-block-accent, #bc9969);
+    outline-offset: 2px;
+}
+.case-page #caso-historia .case-timeline-search-results {
+    margin: 0;
+    font-size: .78rem;
+    color: var(--case-block-muted, #aaa092);
+}
+
+/* Fase 2.5 — atalhos indisponíveis e estados de pesquisa. */
+.case-page #caso-historia .case-timeline-navigation a[hidden],
+.case-page #caso-historia .case-timeline-empty[hidden] { display: none !important; }
+.case-page #caso-historia .case-timeline-empty {
+    margin: .4rem 0;
+    color: var(--case-block-muted, #aaa092);
+    line-height: 1.5;
+}
+.case-page #caso-historia .case-timeline-reset {
+    justify-self: start;
+    padding: .35rem .55rem;
+    border: 1px solid var(--case-block-border, #756044);
+    background: transparent;
+    color: var(--case-block-accent, #bc9969);
+    cursor: pointer;
+}
+.case-page #caso-historia .case-timeline-reset:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* Fase 2.8: metadados e referências na cronologia. */
+.case-timeline-category {
+  display: inline-block;
+  grid-column: 1 / -1;
+  width: fit-content;
+  max-width: 100%;
+  padding: .2rem .5rem;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font-size: .75rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.case-timeline-source,
+.case-timeline-source-name,
+.case-timeline-source-link {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.case-timeline-source-link {
+  text-underline-offset: .16em;
+}
+@media (max-width: 600px) {
+  .case-timeline-navigation a {
+    min-height: 40px;
+    box-sizing: border-box;
+    padding: .5rem .7rem;
+  }
+  .case-timeline-filters,
+  .case-timeline-search,
+  .case-content-timeline li {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .case-timeline-filters select {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Fase 2.11 — sinalização da natureza editorial, sem afirmar veracidade automaticamente. */
+.case-timeline-documentary-nature {
+  display: inline-block;
+  grid-column: 1 / -1;
+  width: fit-content;
+  max-width: 100%;
+  border-left: 3px solid currentColor;
+  padding: .2rem .55rem;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  overflow-wrap: anywhere;
+}
+
+/* Fase 2.12 — rastreabilidade de fontes por acontecimento. */
+.case-timeline-source {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .4rem .8rem;
+  min-width: 0;
+}
+.case-timeline-source-name {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.case-timeline-source-name strong {
+  font-weight: 650;
+}
+@media (max-width: 600px) {
+  .case-timeline-source {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .3rem;
+  }
+}
+
+/* Fase 3.1: guia editorial restrito aos tipos explicitamente cadastrados. */
+.case-timeline-editorial-guide {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  font-size: .875rem;
+  line-height: 1.6;
+}
+.case-timeline-editorial-guide ul {
+  margin: .4rem 0 0;
+  padding-left: 1.3rem;
+}
+.case-timeline-editorial-guide li {
+  margin: .25rem 0;
+}
+
+/* Fase 3.2: cabeçalhos de períodos sem mover acontecimentos. */
+.case-page #caso-historia .case-timeline-period-label,
+.case-content-timeline .case-timeline-period-label {
+  display: block;
+  grid-column: 1 / -1;
+  margin: .3rem 0;
+  padding: .35rem .65rem;
+  border-bottom: 1px solid currentColor;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  overflow-wrap: anywhere;
+}
+
+/* Fase 3.3: navegação sequencial acessível em cronologias extensas. */
+.case-timeline-step-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .65rem;
+  margin: 1rem 0;
+}
+.case-timeline-step-navigation button {
+  min-height: 44px;
+  padding: .55rem .85rem;
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.case-timeline-step-navigation button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+.case-timeline-step-position {
+  font-size: .85rem;
+}
+@media (max-width: 600px) {
+  .case-timeline-step-navigation button { flex: 1 1 38%; }
+  .case-timeline-step-position { order: -1; width: 100%; text-align: center; }
+}
+
+/* Fase 3.5: foco de teclado e acessibilidade em telas estreitas. */
+.case-content-timeline li:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+.case-timeline-step-navigation button:focus-visible,
+.case-timeline-navigation a:focus-visible,
+.case-timeline-search input:focus-visible,
+.case-timeline-filters select:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+.case-content-timeline li { scroll-margin-block: 5rem; }
+@media (max-width: 600px) {
+  .case-timeline-step-navigation { min-width: 0; }
+  .case-timeline-step-navigation button { min-width: 0; }
+}
+
+/* Fase 3.7: cronologia acompanha as variáveis dos modos de leitura. */
+body.case-reading .case-content-timeline .case-timeline-editorial-guide,
+body.case-reading .case-content-timeline .case-timeline-step-navigation button,
+body.case-reading .case-content-timeline .case-timeline-period-label {
+  color: var(--reader-fg);
+  border-color: var(--reader-border);
+}
+body.case-reading .case-content-timeline .case-timeline-step-navigation button {
+  background: var(--reader-card);
+}
+body.case-reading .case-content-timeline .case-timeline-category,
+body.case-reading .case-content-timeline .case-timeline-documentary-nature {
+  color: var(--reader-fg);
+}
+body.case-reading .case-content-timeline .case-timeline-step-navigation button:focus-visible,
+body.case-reading .case-content-timeline li:focus {
+  outline-color: var(--reader-link);
+}
+body.case-paginated .case-content-timeline .case-timeline-step-navigation {
+  break-inside: avoid;
+}
+@media (max-width: 600px) {
+  body.case-reading .case-content-timeline .case-timeline-editorial-guide,
+  body.case-reading .case-content-timeline .case-timeline-step-navigation {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+
+/* Fase 5.24: contraste da cronologia no modo papel (capturas 320–1280px).
+   Escopo deliberadamente restrito à cronologia dentro do leitor. */
+body.case-reading[data-reader-theme="papel"] .case-content-timeline {
+  color: #302519;
+}
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-navigation-label,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-search-results,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-filters label,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-search label,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-empty,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-step-position {
+  color: #4c3b2a;
+}
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-navigation a,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-reset,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-event-details summary {
+  color: #49321e;
+  border-color: #806b51;
+}
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-filters select,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-search input,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-step-navigation button {
+  color: #2c2118;
+  background: #f1e5cf;
+  border-color: #806b51;
+}
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-navigation a:focus-visible,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-step-navigation button:focus-visible,
+body.case-reading[data-reader-theme="papel"] .case-content-timeline .case-timeline-search input:focus-visible {
+  outline-color: #49321e;
+}
+
+
+/* Fase 5.25: correção de textos claros sobre papel nos cartões de evidências.
+   Restringe-se ao conteúdo dos dossiês em modo de leitura papel. */
+body.case-reading[data-reader-theme="papel"] .case-history h1,
+body.case-reading[data-reader-theme="papel"] .case-main-content h1,
+body.case-reading[data-reader-theme="papel"] .case-main-content h2,
+body.case-reading[data-reader-theme="papel"] .evidence-card h3,
+body.case-reading[data-reader-theme="papel"] main > h1,
+body.case-reading[data-reader-theme="papel"] #caso-historia .case-content-timeline h2 {
+  color: #302519;
+}
+body.case-reading[data-reader-theme="papel"] .evidence-card .evidence-number,
+body.case-reading[data-reader-theme="papel"] .evidence-card .evidence-open-label {
+  color: #49321e;
+}

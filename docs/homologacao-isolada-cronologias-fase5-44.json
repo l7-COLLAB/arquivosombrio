@@ -1,0 +1,50 @@
+{
+  "fase": "5.44",
+  "estado": "homologacao_isolada_preparada_pendente_aprovacao",
+  "pr": 79,
+  "dependencia_pr": 75,
+  "regressao_fase543": {
+    "commit": "733f39649d4d8675508f0b43a0e504e604b978b6",
+    "aprovados": 6,
+    "total": 6
+  },
+  "amostra": [
+    {
+      "id_caso": 6,
+      "indice": 11,
+      "tema": "Thomas Mosser",
+      "redacao": "10 de dezembro de 1994: Thomas Mosser morre após a explosão de uma bomba em North Caldwell, Nova Jersey, segundo o Departamento de Justiça dos Estados Unidos.",
+      "fonte": "https://www.justice.gov/archive/opa/pr/1996/Jun96/283crm.htm",
+      "revisao_humana": false,
+      "homologado": false,
+      "aplicado": false
+    },
+    {
+      "id_caso": 5,
+      "indice": 5,
+      "tema": "Dana Chandler - condenacao de 2012",
+      "redacao": "2012: Dana Chandler é condenada por dois homicídios e recebe duas penas consecutivas de prisão perpétua, cada uma com período mínimo obrigatório de 50 anos. As condenações seriam anuladas pela Suprema Corte do Kansas em 2018.",
+      "fonte": "https://law.justia.com/cases/kansas/supreme-court/2018/108625.html",
+      "revisao_humana": false,
+      "homologado": false,
+      "aplicado": false
+    }
+  ],
+  "exclusoes": [
+    {
+      "id_caso": 5,
+      "indice": 12,
+      "motivo": "nota de situacao processual sem comprovacao judicial atualizada",
+      "homologado": false,
+      "publicavel": false
+    }
+  ],
+  "controles": {
+    "publicacao_autorizada": false,
+    "merge_autorizado": false,
+    "deploy_autorizado": false,
+    "supabase_autorizado": false,
+    "aplicacao_automatica": false
+  },
+  "proximo_passo": "revisao humana dos dois textos em ambiente isolado e validação documental antes de decidir homologacao"
+}

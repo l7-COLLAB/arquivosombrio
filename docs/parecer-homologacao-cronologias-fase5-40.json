@@ -1,0 +1,56 @@
+{
+  "fase": "5.40",
+  "titulo": "Parecer de homologação técnica e editorial das cronologias candidatas",
+  "data": "2026-10-23",
+  "pr": 79,
+  "dependencia_pr": 75,
+  "commit_avaliado": "18896279f40698fe98a9f455f9ed7bdf8f6b7949",
+  "verificacoes": {
+    "total": 6,
+    "aprovadas": 6,
+    "resultado": "aprovacao_tecnica_automatizada",
+    "workflows": [
+      "Regressão documental",
+      "Verificar Admin V2",
+      "Verificar controles móveis de leitura",
+      "Verificar marcador de leitura",
+      "Verificar leituras relacionadas",
+      "Verificar sitemap dinâmico e SEO"
+    ]
+  },
+  "decisao": "homologacao_tecnica_aprovada_editorial_nao_homologada",
+  "itens": [
+    {
+      "caso": "Unabomber",
+      "marco": "Thomas Mosser 10/12/1994",
+      "estado": "redacao_candidata_pendente",
+      "motivo": "revisao da divergencia documental e aprovacao humana"
+    },
+    {
+      "caso": "Dana Chandler",
+      "marco": "Penas aplicadas em 2012",
+      "estado": "redacao_candidata_pendente",
+      "motivo": "conferencia integral da decisao judicial e terminologia legal"
+    },
+    {
+      "caso": "Dana Chandler",
+      "marco": "Situacao processual atual",
+      "estado": "nota_bloqueada",
+      "motivo": "ausencia de comprovacao de andamento judicial recente"
+    }
+  ],
+  "restricoes": {
+    "publicacao_autorizada": false,
+    "merge_autorizado": false,
+    "deploy_autorizado": false,
+    "alteracao_supabase_autorizada": false,
+    "alteracao_de_texto_original_autorizada": false
+  },
+  "proximos_passos": [
+    "conferir documento judicial integral",
+    "obter certidao ou andamento judicial atual",
+    "submeter duas redacoes candidatas a avaliacao editorial humana",
+    "revisar dependencia da PR 75 antes de qualquer merge"
+  ],
+  "observacao": "Aprovação de CI não valida a exatidão factual e jurídica das redações."
+}

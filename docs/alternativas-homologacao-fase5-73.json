@@ -1,0 +1,54 @@
+{
+  "fase": "5.73",
+  "estado": "alternativa_local_recomendada_sem_execucao",
+  "regressao_fase572": {
+    "aprovados": 6,
+    "total": 6,
+    "commit": "79fdbe46ff0512ebec3cb9925e3519e7adc026df"
+  },
+  "alternativas": [
+    {
+      "nome": "supabase_local",
+      "hospedagem": "sem_cobranca_ao_projeto",
+      "requer": [
+        "Supabase CLI",
+        "runtime compativel com Docker"
+      ],
+      "recomendacao": "principal",
+      "limite": "Nao comprova comportamento do gateway hospedado"
+    },
+    {
+      "nome": "preview_branch_hospedada",
+      "cobranca": "uso de computacao, armazenamento e rede",
+      "preco_referencia_usd_hora_micro": 0.01344,
+      "recomendacao": "somente se necessaria",
+      "limite": "Custo real depende de organizacao e utilizacao; solicitar cotacao antes de criar"
+    },
+    {
+      "nome": "producao",
+      "recomendacao": "nao utilizar em testes de seguranca"
+    }
+  ],
+  "decisao": "priorizar_supabase_local_sem_dados_reais",
+  "procedimento_planejado": [
+    "Instalar CLI e Docker em maquina autorizada",
+    "Executar ambiente local isolado sem vincular ou sincronizar dados de producao",
+    "Disponibilizar apenas fixtures e contas falsas",
+    "Servir a Edge Function localmente com verify_jwt configurado",
+    "Executar cenarios HTTP e preservar evidencias sanitizadas",
+    "Se houver incompatibilidade exclusiva do gateway hospedado, avaliar custo e autorizacao de branch remota"
+  ],
+  "referencias": [
+    "https://supabase.com/docs/guides/local-development",
+    "https://supabase.com/docs/guides/functions/quickstart",
+    "https://supabase.com/docs/guides/platform/manage-your-usage/branching"
+  ],
+  "bloqueios": {
+    "criar_branch": false,
+    "incorrer_custos": false,
+    "deploy": false,
+    "merge": false,
+    "alterar_producao": false,
+    "homologacao_real": false
+  }
+}

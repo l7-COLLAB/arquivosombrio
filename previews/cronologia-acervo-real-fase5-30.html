@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Homologação isolada — cronologias reais</title>
+<link rel="stylesheet" href="../css/caso.css">
+<style>body{margin:0;background:#171410;color:#e9dfce;font:16px Georgia,serif}main{max-width:900px;margin:auto;padding:20px 14px 80px;box-sizing:border-box}.warning{border:1px solid #a57d52;padding:1rem;font:14px/1.5 system-ui,sans-serif}.case-main-content{min-width:0}#case-choose{display:block;margin:1rem 0;padding:.7rem;max-width:100%}#case-meta{font:13px/1.5 system-ui,sans-serif}</style></head>
+<body class="case-page"><main><h1>Homologação isolada de cronologias reais</h1>
+<p class="warning">PRÉVIA EDITORIAL NÃO PUBLICÁVEL. Cópia estática do relatório, sem acesso ao Supabase. Datas e fontes ainda exigem validação. Não usar como fonte jornalística.</p>
+<label for="case-choose">Dossiê para conferência</label><select id="case-choose"></select>
+<p id="case-meta"></p><div id="caso-historia" class="case-main-content"></div>
+<p id="preview-error" role="alert" hidden>Falha ao carregar dados locais. Abra esta página via servidor HTTP local.</p></main>
+<script src="../js/caso.js"></script><script>
+(async function(){
+try{
+ const response=await fetch("../docs/previa-consolidada-cronologias-fase5-17.json",{cache:"no-store"});
+ if(!response.ok)throw Error("Dados indisponíveis");
+ const pack=await response.json(),selector=document.getElementById("case-choose");
+ const data=pack.cronologias.map(c=>({id:c.id_origem,titulo:c.titulo,itens:c.acontecimentos.filter(e=>e.tipo_editorial==="marco_temporal").map(e=>({data:e.periodo_original,descricao:e.descricao_original,detalhes:"Prévia editorial: conferência histórica e documental pendente."}))}));
+ data.forEach((c,i)=>{const opt=document.createElement("option");opt.value=String(i);opt.textContent=c.titulo;selector.append(opt)});
+ function show(){const c=data[Number(selector.value)||0];const root=document.getElementById("caso-historia");root.replaceChildren();root.append(renderizarCronologiaBlocoDossie({titulo:"Cronologia para homologação",itens:c.itens}));document.getElementById("case-meta").textContent=c.itens.length+" marcos temporais; textos preservados na origem; sem fontes atribuídas automaticamente."}
+ selector.addEventListener("change",show);show();
+}catch(err){document.getElementById("preview-error").hidden=false;console.error(err)}
+})();
+</script></body></html>
