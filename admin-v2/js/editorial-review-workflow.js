@@ -13,6 +13,8 @@ export function createEditorialReview(records) {
 }
 
 export function recordEditorialReview(state, change) {
+  if (!state || !Array.isArray(state.decisoes)) throw new TypeError("Estado editorial invalido");
+  if (!change || typeof change!=="object" || Array.isArray(change)) throw new TypeError("Alteracao editorial invalida");
   const idx = state.decisoes.findIndex(x => x.id_caso===change.id_caso && x.indice===change.indice);
   if (idx<0) throw new Error("Registro desconhecido");
   if (state.decisoes[idx].decisao!=="pendente") throw new Error("Decisao ja registrada");
