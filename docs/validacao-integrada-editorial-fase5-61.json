@@ -1,0 +1,31 @@
+{
+  "fase": "5.61",
+  "estado": "teste_integrado_local_configurado",
+  "base_commit": "cd81e44176ee8416bbfe764634ee057fdd1ae137",
+  "regressao_anterior": {
+    "total": 6,
+    "aprovados": 6
+  },
+  "cenarios": [
+    "preflight origem permitida",
+    "preflight origem desconhecida",
+    "GET anonimo",
+    "GET token invalido",
+    "GET usuario comum",
+    "POST bloqueado",
+    "GET administrador e filtragem de campos"
+  ],
+  "escopo": "servidor HTTP local com identidade simulada",
+  "limitacoes": [
+    "Nao valida JWT real do Supabase",
+    "Nao substitui teste do endpoint implantado",
+    "Nao comprova politicas RLS, revogacao ou config de gateway",
+    "A pagina de previa estatica antiga permanece publica"
+  ],
+  "autorizacoes": {
+    "deploy": false,
+    "merge": false,
+    "supabase": false,
+    "publicacao": false
+  }
+}
