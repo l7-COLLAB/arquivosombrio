@@ -1,0 +1,17 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+const read=p=>JSON.parse(readFileSync(new URL(p,import.meta.url),"utf8"));
+const report=read("../docs/parecer-homologacao-cronologias-fase5-40.json");
+const previous=read("../docs/validacao-candidata-cronologias-fase5-39.json");
+const candidate=read("../docs/versao-candidata-cronologias-fase5-38.json");
+assert.equal(report.fase,"5.40");
+assert.equal(report.verificacoes.total,6);
+assert.equal(report.verificacoes.aprovadas,6);
+assert.equal(report.decisao,"homologacao_tecnica_aprovada_editorial_nao_homologada");
+assert.equal(report.itens.length,3);
+for(const [name,value] of Object.entries(report.restricoes)) assert.equal(value,false,name);
+assert.equal(previous.homologacao_editorial_aprovada,false);
+assert.equal(candidate.publicacao_autorizada,false);
+assert.equal(candidate.gravacao_supabase_autorizada,false);
+assert.ok(report.itens.every(x=>x.estado!=="aprovado"));
+console.log("Fase 5.40: parecer tecnico registrado; homologacao editorial e publicacao bloqueadas.");
