@@ -18,4 +18,25 @@ assert.equal(entry.homologado,false);
 }
 assert.equal(p.pendencia.candidata,null);
 assert.equal(p.pendencia.publicavel,false);
+
+const approval=read("../docs/pacote-aprovacao-cronologias-fase5-42.json");
+const originals=read("../docs/previa-consolidada-cronologias-fase5-17.json");
+assert.equal(approval.itens.length,3);
+assert.equal(new Set(p.comparacoes.map(x=>x.id_caso+":"+x.indice)).size,2);
+for(const entry of p.comparacoes){
+ const approved=approval.itens.find(x=>x.id_caso===entry.id_caso&&x.indice===entry.indice);
+ const source=originals.cronologias.find(x=>x.id_origem===entry.id_caso)?.acontecimentos.find(x=>x.indice===entry.indice);
+ assert.ok(approved);assert.ok(source);
+ assert.equal(entry.original,source.texto_original);
+ assert.equal(entry.candidata,approved.redacao_candidata);
+ assert.equal(entry.fonte,approved.fonte);
+ assert.equal(approved.aprovacao_humana,false);
+ assert.equal(approved.aplicacao,false);
+}
+const excluded=approval.itens.find(x=>x.id_caso===5&&x.indice===12);
+assert.equal(p.pendencia.id_caso,5);
+assert.equal(p.pendencia.indice,12);
+assert.equal(excluded.redacao_candidata,null);
+assert.equal(excluded.aprovacao_humana,false);
+assert.equal(approval.auditoria_complementar_2026_10_24.cautelas.find(x=>x.id_caso===6).aprovado,false);
 console.log("Fase 5.45: comparação íntegra; publicação bloqueada.");
