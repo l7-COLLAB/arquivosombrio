@@ -123,3 +123,47 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 .season-theme-mes-dos-desaparecidos{--campaign-font:Cinzel;letter-spacing:.01em}
 .season-theme-arquivos-proibidos{--campaign-font:'Libre Baskerville';letter-spacing:.025em}
 .season-theme-pericia-em-foco{--campaign-font:'Oswald';letter-spacing:.01em}
+
+/* Sistema de direção de arte 30/30: variações tipográficas e posicionamento autoral */
+.season-theme-halloween{--campaign-font:'Cinzel Decorative';--season-subtle:#de8c47;--season-shift:0deg;--campaign-art-position:70% 42%;}
+.season-theme-finados{--campaign-font:'Cormorant Garamond';--season-subtle:#a6b1a7;--season-shift:13deg;--campaign-art-position:58% 40%;}
+.season-theme-natal{--campaign-font:'Libre Baskerville';--season-subtle:#c6aa71;--season-shift:26deg;--campaign-art-position:78% 48%;}
+.season-theme-reveillon{--campaign-font:'Playfair Display';--season-subtle:#d6bc81;--season-shift:39deg;--campaign-art-position:65% 54%;}
+.season-theme-verao-sombrio{--campaign-font:'IM Fell English';--season-subtle:#bb7643;--season-shift:52deg;--campaign-art-position:72% 38%;--sa:#bb7643;--sb:#211411;}
+.season-theme-arquivos-do-recomeco{--campaign-font:'EB Garamond';--season-subtle:#c09f75;--season-shift:5deg;--campaign-art-position:61% 57%;--sa:#c09f75;--sb:#161d20;}
+.season-theme-carnaval-macabro{--campaign-font:'Cinzel Decorative';--season-subtle:#a85564;--season-shift:18deg;--campaign-art-position:70% 42%;--sa:#a85564;--sb:#210f1c;}
+.season-theme-mascarados{--campaign-font:'Cormorant Garamond';--season-subtle:#927aa8;--season-shift:31deg;--campaign-art-position:58% 40%;--sa:#927aa8;--sb:#16111f;}
+.season-theme-mulheres-no-centro-do-misterio{--campaign-font:'Libre Baskerville';--season-subtle:#b08a8c;--season-shift:44deg;--campaign-art-position:78% 48%;--sa:#b08a8c;--sb:#221719;}
+.season-theme-mentiras-e-manipulacao{--campaign-font:'Playfair Display';--season-subtle:#9ca5aa;--season-shift:57deg;--campaign-art-position:65% 54%;--sa:#9ca5aa;--sb:#171c22;}
+.season-theme-pascoa-sombria{--campaign-font:'IM Fell English';--season-subtle:#b5a37b;--season-shift:10deg;--campaign-art-position:72% 38%;--sa:#b5a37b;--sb:#201b14;}
+.season-theme-semana-dos-rituais{--campaign-font:'EB Garamond';--season-subtle:#a17b63;--season-shift:23deg;--campaign-art-position:61% 57%;--sa:#a17b63;--sb:#1d1415;}
+.season-theme-lacos-de-sangue{--campaign-font:'Cinzel Decorative';--season-subtle:#a96b64;--season-shift:36deg;--campaign-art-position:70% 42%;--sa:#a96b64;--sb:#230e13;}
+.season-theme-casas-malditas{--campaign-font:'Cormorant Garamond';--season-subtle:#8a8777;--season-shift:49deg;--campaign-art-position:58% 40%;--sa:#8a8777;--sb:#181b19;}
+.season-theme-amores-mortais{--campaign-font:'Libre Baskerville';--season-subtle:#b16472;--season-shift:2deg;--campaign-art-position:78% 48%;--sa:#b16472;--sb:#221016;}
+.season-theme-noites-de-sao-joao-sombrio{--campaign-font:'Playfair Display';--season-subtle:#d18a53;--season-shift:15deg;--campaign-art-position:65% 54%;--sa:#d18a53;--sb:#231710;}
+.season-theme-inverno-macabro{--campaign-font:'IM Fell English';--season-subtle:#8eacbe;--season-shift:28deg;--campaign-art-position:72% 38%;--sa:#8eacbe;--sb:#101a25;}
+.season-theme-casos-frios{--campaign-font:'EB Garamond';--season-subtle:#9aadb8;--season-shift:41deg;--campaign-art-position:61% 57%;--sa:#9aadb8;--sb:#111a20;}
+.season-theme-mes-dos-desaparecidos{--campaign-font:'Cinzel Decorative';--season-subtle:#c0aa86;--season-shift:54deg;--campaign-art-position:70% 42%;--sa:#c0aa86;--sb:#201b18;}
+.season-theme-infancias-roubadas{--campaign-font:'Cormorant Garamond';--season-subtle:#a69683;--season-shift:7deg;--campaign-art-position:58% 40%;--sa:#a69683;--sb:#222022;}
+.season-theme-sete-noites-sem-rastro{--campaign-font:'Libre Baskerville';--season-subtle:#9b9e90;--season-shift:20deg;--campaign-art-position:78% 48%;--sa:#9b9e90;--sb:#151b19;}
+.season-theme-segredos-de-familia{--campaign-font:'Playfair Display';--season-subtle:#b79a7a;--season-shift:33deg;--campaign-art-position:65% 54%;--sa:#b79a7a;--sb:#1e1819;}
+.season-theme-semana-das-bruxas{--campaign-font:'IM Fell English';--season-subtle:#c48b65;--season-shift:46deg;--campaign-art-position:72% 38%;--sa:#c48b65;--sb:#21121a;}
+.season-theme-arquivos-proibidos{--campaign-font:'EB Garamond';--season-subtle:#9b8f7b;--season-shift:59deg;--campaign-art-position:61% 57%;--sa:#9b8f7b;--sb:#1b1917;}
+.season-theme-arquivos-sem-solucao{--campaign-font:'Cinzel Decorative';--season-subtle:#9ca5a4;--season-shift:12deg;--campaign-art-position:70% 42%;--sa:#9ca5a4;--sb:#141b1f;}
+.season-theme-casos-do-brasil{--campaign-font:'Cormorant Garamond';--season-subtle:#b89b73;--season-shift:25deg;--campaign-art-position:58% 40%;--sa:#b89b73;--sb:#1f1c17;}
+.season-theme-seitas-e-fanatismo{--campaign-font:'Libre Baskerville';--season-subtle:#9f7472;--season-shift:38deg;--campaign-art-position:78% 48%;--sa:#9f7472;--sb:#1b1516;}
+.season-theme-pericia-em-foco{--campaign-font:'Playfair Display';--season-subtle:#7caaa1;--season-shift:51deg;--campaign-art-position:65% 54%;--sa:#7caaa1;--sb:#111e20;}
+.season-theme-creepypastas-da-meia-noite{--campaign-font:'IM Fell English';--season-subtle:#897ca9;--season-shift:4deg;--campaign-art-position:72% 38%;--sa:#897ca9;--sb:#171525;}
+.season-theme-lendas-do-brasil-sombrio{--campaign-font:'EB Garamond';--season-subtle:#8f9b69;--season-shift:17deg;--campaign-art-position:61% 57%;--sa:#8f9b69;--sb:#161c15;}
+.season-card-art,.season-detail-art,.season-hero-art{background-position:var(--campaign-art-position,center)!important}
+.season-card-art::before,.season-detail-art::before{border-radius:2px;box-shadow:inset 0 0 0 5px #07080b33}
+.season-campaign-card{position:relative;background:linear-gradient(145deg,var(--sb),#09090c)!important}
+.season-campaign-card:after{content:"";position:absolute;inset:auto 0 0;height:2px;background:linear-gradient(90deg,transparent,var(--sa),transparent);opacity:.56;pointer-events:none}
+.season-card-body .season-kicker,.season-detail .season-kicker{font-family:'DM Mono',monospace;letter-spacing:.12em}
+.season-campaign-card h2{font-family:var(--campaign-font,Georgia),Georgia,serif!important;font-weight:600;line-height:1.13}
+.season-detail h1{font-family:var(--campaign-font,Georgia),Georgia,serif!important}
+.season-campaign-card .season-card-art{min-height:220px;background-size:cover!important}
+.season-detail-hero{position:relative;isolation:isolate;overflow:hidden}
+.season-detail-hero:after{content:"";position:absolute;inset:auto 0 0;height:1px;background:linear-gradient(90deg,transparent,var(--sa),transparent);opacity:.5}
+@media(max-width:750px){.season-campaign-card .season-card-art{min-height:170px}}
+@media(max-width:420px){.season-campaign-card .season-card-art{min-height:135px}}
