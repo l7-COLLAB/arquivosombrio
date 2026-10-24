@@ -50,6 +50,7 @@ on:
       - 'tests/dossier-editorial-preview-phase550.mjs'
       - 'tests/dossier-editorial-navigation-phase551.mjs'
       - 'tests/dossier-editorial-responsive-phase552.mjs'
+      - 'tests/dossier-editorial-browser-phase553.mjs'
       - 'docs/integracao-visual-editorial-fase5-51.json'
       - 'admin-v2/editorial.html'
       - 'previews/revisao-editorial-fase5-50.html'
@@ -146,6 +147,8 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Homologar interface com dados fictícios
         run: node tests/dossier-browser-smoke.mjs
+      - name: Testar prévia editorial em navegador
+        run: node tests/dossier-editorial-browser-phase553.mjs
       - name: Guardar capturas para revisão
         if: always()
         uses: actions/upload-artifact@v4
