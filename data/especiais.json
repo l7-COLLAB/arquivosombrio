@@ -57,7 +57,8 @@
       ],
       "description": "Uma coleção documental de crimes e investigações associados ao período do Halloween. Cada arquivo é liberado somente após revisão e publicação.",
       "motif": "☾",
-      "year": 2026
+      "year": 2026,
+      "introduction": "Antes de as crianças percorrerem ruas fantasiadas em busca de doces, existiam diferentes costumes europeus ligados à passagem das estações e à lembrança dos mortos. O Samhain, celebrado em regiões de tradição celta, marcava o fim das colheitas; séculos depois, práticas como o souling, de pedir alimentos em troca de orações, e o guising, de visitar casas fantasiado e apresentar brincadeiras, contribuíram para a tradição. Não há uma origem única e indiscutível para o trick-or-treating moderno.\n\nCom a imigração irlandesa e escocesa, esses costumes se difundiram na América do Norte. Nos Estados Unidos, pedir doces de porta em porta ganhou sua forma mais conhecida ao longo do século XX, especialmente depois da Segunda Guerra Mundial, quando bairros residenciais e doces embalados individualmente se popularizaram. Crianças passaram a sair acompanhadas de familiares para celebrar a noite de 31 de outubro, batendo às portas em busca de guloseimas.\n\nÉ nesse contexto que começa nosso primeiro arquivo: em 1974, Timothy O’Bryan saiu para participar da tradição. O crime que se seguiu alimentou a lenda dos doces envenenados por estranhos, embora a responsabilidade estabelecida pela Justiça recaísse sobre alguém da própria família. Nesta coleção, distinguimos as origens da festa, os receios coletivos e os fatos comprovados em cada investigação."
     },
     {
       "id": "finados-2026",
@@ -72,7 +73,8 @@
       "start": "2026-11-02",
       "end": "2026-11-08",
       "status": "draft",
-      "days": []
+      "days": [],
+      "introduction": "O Dia de Finados, celebrado em 2 de novembro em muitas comunidades cristãs, é um momento de recordação de pessoas falecidas. Cemitérios, visitas familiares, orações e homenagens assumem formas diferentes conforme o país e a tradição. Esta coleção parte da memória dos mortos para investigar histórias reais, respeitando a diferença entre lembrança, crença e documentação."
     },
     {
       "id": "natal-2026",
@@ -87,7 +89,8 @@
       "start": "2026-12-19",
       "end": "2026-12-25",
       "status": "draft",
-      "days": []
+      "days": [],
+      "introduction": "O Natal reúne tradições religiosas cristãs e costumes familiares que variam entre países e épocas. A expectativa de encontro e proteção convive, em certas investigações, com conflitos e acontecimentos violentos. Nesta campanha, cada caso terá sua conexão temporal ou documental com o período natalino verificada, sem transformar coincidências de calendário em explicações para crimes."
     },
     {
       "id": "reveillon-2026",
@@ -102,7 +105,8 @@
       "start": "2026-12-29",
       "end": "2027-01-04",
       "status": "draft",
-      "days": []
+      "days": [],
+      "introduction": "A passagem de um ano para outro costuma concentrar celebrações públicas, viagens e reuniões familiares. Fogos, contagens regressivas e rituais de renovação diferem entre culturas. Nosso arquivo examinará acontecimentos reais associados a esse período, distinguindo a data dos fatos de qualquer interpretação supersticiosa sobre o Ano-Novo."
     },
     {
       "id": "verao-sombrio-2027",
@@ -121,7 +125,8 @@
       "status": "draft",
       "days": [],
       "accent": "#bb7643",
-      "background": "#211411"
+      "background": "#211411",
+      "introduction": "No Brasil, o verão é associado às férias, às viagens e à maior circulação de pessoas em praias e cidades turísticas. O movimento sazonal também altera rotinas de busca, deslocamento e investigação. A coleção reunirá casos documentados em contextos de verão, sem sugerir que a estação, por si só, explique a violência."
     },
     {
       "id": "arquivos-do-recomeco-2027",
@@ -140,7 +145,8 @@
       "status": "draft",
       "days": [],
       "accent": "#c09f75",
-      "background": "#161d20"
+      "background": "#161d20",
+      "introduction": "O início de um novo ciclo costuma trazer decisões, deslocamentos e expectativas de mudança. Para algumas histórias investigativas, o recomeço é uma tentativa de reconstrução após uma perda; para outras, o ponto inicial de um desaparecimento ou de um conflito. A campanha examina esse contraste com base em cronologias verificadas."
     },
     {
       "id": "carnaval-macabro-2027",
@@ -159,7 +165,8 @@
       "status": "draft",
       "days": [],
       "accent": "#a85564",
-      "background": "#210f1c"
+      "background": "#210f1c",
+      "introduction": "O Carnaval brasileiro reúne diversas tradições populares, manifestações musicais, desfiles e festas de rua. Sua história não se reduz a uma origem única e suas formas variam por região. Esta coleção contextualiza acontecimentos reais ligados ao período carnavalesco, evitando confundir a festa, seus participantes e os crimes investigados."
     },
     {
       "id": "mascarados-2027",
@@ -178,7 +185,8 @@
       "status": "draft",
       "days": [],
       "accent": "#927aa8",
-      "background": "#16111f"
+      "background": "#16111f",
+      "introduction": "Máscaras aparecem em festas populares, teatro, cerimônias e manifestações culturais há séculos. Elas podem servir à representação, ao anonimato ou à celebração. Neste especial, o elemento da máscara será examinado como contexto ou evidência quando presente nos autos, sem presumir motivações apenas pela aparência."
     },
     {
       "id": "mulheres-no-centro-do-misterio-2027",
@@ -197,7 +205,8 @@
       "status": "draft",
       "days": [],
       "accent": "#b08a8c",
-      "background": "#221719"
+      "background": "#221719",
+      "introduction": "Mulheres aparecem nos arquivos criminais como vítimas, sobreviventes, investigadoras e protagonistas de diferentes contextos históricos. A cobertura pública nem sempre lhes concedeu voz ou precisão. Esta coleção reconstitui suas histórias dando prioridade a documentos, à dignidade das vítimas e à separação entre fatos e especulação."
     },
     {
       "id": "mentiras-e-manipulacao-2027",
@@ -216,7 +225,8 @@
       "status": "draft",
       "days": [],
       "accent": "#9ca5aa",
-      "background": "#171c22"
+      "background": "#171c22",
+      "introduction": "Depoimentos contraditórios, álibis falsos e informações fabricadas podem dificultar investigações. Mas uma inconsistência isolada não é prova de culpa. Neste especial, analisaremos como investigadores e tribunais avaliaram declarações e evidências, distinguindo manipulação comprovada, versões em disputa e erros de memória."
     },
     {
       "id": "pascoa-sombria-2027",
@@ -235,7 +245,8 @@
       "status": "draft",
       "days": [],
       "accent": "#b5a37b",
-      "background": "#201b14"
+      "background": "#201b14",
+      "introduction": "A Páscoa é uma celebração central no cristianismo, com significados litúrgicos e costumes familiares próprios de cada região. Símbolos como ovos e encontros festivos foram incorporados em diferentes épocas. Esta coleção contextualiza acontecimentos reais relacionados ao período, sem usar crenças religiosas como explicação automática para crimes."
     },
     {
       "id": "semana-dos-rituais-2027",
@@ -254,7 +265,8 @@
       "status": "draft",
       "days": [],
       "accent": "#a17b63",
-      "background": "#1d1415"
+      "background": "#1d1415",
+      "introduction": "Rituais podem fazer parte da vida religiosa, da cultura, do luto e de práticas comunitárias legítimas. Em investigações criminais, o termo também pode ser usado de forma imprecisa ou sensacionalista. A campanha busca identificar o que de fato ocorreu, quais evidências sustentam a classificação e quando o rótulo é apenas especulação."
     },
     {
       "id": "lacos-de-sangue-2027",
@@ -273,7 +285,8 @@
       "status": "draft",
       "days": [],
       "accent": "#a96b64",
-      "background": "#230e13"
+      "background": "#230e13",
+      "introduction": "Laços familiares envolvem cuidado, dependência, confiança e conflitos. Crimes dentro de famílias desafiam a percepção de proteção associada ao lar, mas cada caso tem motivações e provas próprias. Nesta coleção, reconstruiremos relações e acontecimentos sem tratar parentesco como diagnóstico ou explicação suficiente."
     },
     {
       "id": "casas-malditas-2027",
@@ -292,7 +305,8 @@
       "status": "draft",
       "days": [],
       "accent": "#8a8777",
-      "background": "#181b19"
+      "background": "#181b19",
+      "introduction": "Casas ganham reputações sombrias por acontecimentos reais, rumores ou histórias transmitidas por gerações. Uma residência pode ser cenário documentado de um crime sem que exista qualquer evidência de fenômenos sobrenaturais. Esta campanha separará a história do imóvel, os registros policiais e a formação das lendas."
     },
     {
       "id": "amores-mortais-2027",
@@ -311,7 +325,8 @@
       "status": "draft",
       "days": [],
       "accent": "#b16472",
-      "background": "#221016"
+      "background": "#221016",
+      "introduction": "Relacionamentos afetivos podem ser atravessados por controle, ciúme, dependência ou violência, mas nenhum desses elementos torna um crime inevitável. A coleção investigará casos em que vínculos íntimos integram a cronologia, observando depoimentos, perícias e decisões judiciais e evitando romantizar a violência."
     },
     {
       "id": "noites-de-sao-joao-sombrio-2027",
@@ -330,7 +345,8 @@
       "status": "draft",
       "days": [],
       "accent": "#d18a53",
-      "background": "#231710"
+      "background": "#231710",
+      "introduction": "As festas juninas brasileiras combinam tradições religiosas, rurais e populares, com fogueiras, quadrilhas, música e culinária regional. As celebrações variam amplamente entre comunidades. Nosso recorte reúne fatos documentados ligados a esse calendário, sem associar a cultura junina à criminalidade."
     },
     {
       "id": "inverno-macabro-2027",
@@ -349,7 +365,8 @@
       "status": "draft",
       "days": [],
       "accent": "#8eacbe",
-      "background": "#101a25"
+      "background": "#101a25",
+      "introduction": "O inverno modifica a rotina, a mobilidade e as condições ambientais de diversas regiões. Em uma investigação, clima e duração da noite só são relevantes quando aparecem em registros e evidências concretos. Esta coleção analisa crimes e mistérios ocorridos nesse contexto, sem transformar a estação em causa dos acontecimentos."
     },
     {
       "id": "casos-frios-2027",
@@ -368,7 +385,8 @@
       "status": "draft",
       "days": [],
       "accent": "#9aadb8",
-      "background": "#111a20"
+      "background": "#111a20",
+      "introduction": "Um caso pode permanecer sem solução por anos quando testemunhos se esgotam, evidências são insuficientes ou linhas investigativas não avançam. Novas técnicas e novos depoimentos às vezes permitem reaberturas. Este especial apresenta o que está comprovado, o que continua desconhecido e a situação oficial de cada investigação."
     },
     {
       "id": "mes-dos-desaparecidos-2027",
@@ -387,7 +405,8 @@
       "status": "draft",
       "days": [],
       "accent": "#c0aa86",
-      "background": "#201b18"
+      "background": "#201b18",
+      "introduction": "Desaparecimentos mobilizam familiares, comunidades e órgãos públicos por longos períodos. Nem todo desaparecimento configura crime, e especulações podem prejudicar buscas. Nesta coleção, reunimos cronologias e informações verificadas, com atenção às autoridades responsáveis e às atualizações oficiais."
     },
     {
       "id": "infancias-roubadas-2027",
@@ -406,7 +425,8 @@
       "status": "draft",
       "days": [],
       "accent": "#a69683",
-      "background": "#222022"
+      "background": "#222022",
+      "introduction": "A violência contra crianças exige apuração rigorosa e tratamento editorial cuidadoso. Narrativas sensacionalistas podem expor vítimas e familiares a novos danos. Esta coleção prioriza investigações documentadas, medidas de proteção e responsabilidade institucional, evitando imagens invasivas e detalhes desnecessários."
     },
     {
       "id": "sete-noites-sem-rastro-2027",
@@ -425,7 +445,8 @@
       "status": "draft",
       "days": [],
       "accent": "#9b9e90",
-      "background": "#151b19"
+      "background": "#151b19",
+      "introduction": "Em investigações de pessoas desaparecidas ou crimes sem rastros aparentes, a ausência de evidências claras pode gerar hipóteses conflitantes. A coleção acompanha sete histórias com atenção a datas, últimos contatos, buscas e posicionamentos oficiais. O que permanece incerto será identificado como tal."
     },
     {
       "id": "segredos-de-familia-2027",
@@ -444,7 +465,8 @@
       "status": "draft",
       "days": [],
       "accent": "#b79a7a",
-      "background": "#1e1819"
+      "background": "#1e1819",
+      "introduction": "Histórias familiares podem guardar conflitos, silêncios e versões divergentes que só se tornam públicos após uma investigação. Nem todo segredo representa crime. Este especial reúne casos em que vínculos familiares são relevantes para os fatos documentados, distinguindo testemunhos, suspeitas e conclusões judiciais."
     },
     {
       "id": "semana-das-bruxas-2027",
@@ -463,7 +485,8 @@
       "status": "draft",
       "days": [],
       "accent": "#c48b65",
-      "background": "#21121a"
+      "background": "#21121a",
+      "introduction": "A figura da bruxa foi construída por tradições folclóricas, perseguições históricas e representações literárias. Acusações de feitiçaria, em diferentes épocas, produziram injustiças documentadas. Esta campanha examinará histórias e crenças sem tratar elementos sobrenaturais como fatos comprovados."
     },
     {
       "id": "arquivos-proibidos-2027",
@@ -482,7 +505,8 @@
       "status": "draft",
       "days": [],
       "accent": "#9b8f7b",
-      "background": "#1b1917"
+      "background": "#1b1917",
+      "introduction": "A ideia de arquivo proibido desperta curiosidade, mas documentos podem ter acesso limitado por motivos legais, privacidade ou preservação. Esta coleção contextualiza registros controversos e versões públicas verificáveis, sem alegar acesso a materiais sigilosos ou divulgar dados protegidos."
     },
     {
       "id": "arquivos-sem-solucao-2027",
@@ -501,7 +525,8 @@
       "status": "draft",
       "days": [],
       "accent": "#9ca5a4",
-      "background": "#141b1f"
+      "background": "#141b1f",
+      "introduction": "Algumas investigações permanecem abertas ou chegam a um impasse mesmo após anos de trabalho. Hipóteses divulgadas ao público podem não corresponder a conclusões oficiais. A proposta desta coleção é apresentar o estado real de cada caso, suas evidências disponíveis e o que ainda falta esclarecer."
     },
     {
       "id": "casos-do-brasil-2027",
@@ -520,7 +545,8 @@
       "status": "draft",
       "days": [],
       "accent": "#b89b73",
-      "background": "#1f1c17"
+      "background": "#1f1c17",
+      "introduction": "O Brasil reúne realidades regionais, sistemas locais de investigação e histórias criminais que exigem contexto próprio. Esta coleção percorre casos de diferentes estados, levando em conta a época, as instituições responsáveis e as fontes primárias. A prioridade é compreender os fatos antes de repetir versões popularizadas."
     },
     {
       "id": "seitas-e-fanatismo-2027",
@@ -539,7 +565,8 @@
       "status": "draft",
       "days": [],
       "accent": "#9f7472",
-      "background": "#1b1516"
+      "background": "#1b1516",
+      "introduction": "O termo seita é frequentemente empregado de forma imprecisa para grupos religiosos ou ideológicos minoritários. Crenças incomuns não constituem, por si só, crime. Este especial analisa situações documentadas de coerção, abuso e violência em organizações específicas, distinguindo estruturas de poder e condutas investigadas de estigmas religiosos."
     },
     {
       "id": "pericia-em-foco-2027",
@@ -558,7 +585,8 @@
       "status": "draft",
       "days": [],
       "accent": "#7caaa1",
-      "background": "#111e20"
+      "background": "#111e20",
+      "introduction": "A perícia forense transforma vestígios em informações úteis à investigação por meio de métodos científicos e protocolos de preservação. Impressões digitais, genética, toxicologia e análises digitais têm capacidades e limites próprios. Aqui explicamos como cada técnica funciona, quando pode contribuir para um caso e por que resultados periciais exigem interpretação cuidadosa."
     },
     {
       "id": "creepypastas-da-meia-noite-2027",
@@ -577,7 +605,8 @@
       "status": "draft",
       "days": [],
       "accent": "#897ca9",
-      "background": "#171525"
+      "background": "#171525",
+      "introduction": "Creepypastas são histórias de terror que circularam especialmente em fóruns, blogs e comunidades digitais, muitas vezes reescritas coletivamente. Seu formato simula relatos, documentos ou experiências pessoais, mas isso não as torna verdadeiras. A coleção apresenta as narrativas como ficção e identifica suas origens quando conhecidas."
     },
     {
       "id": "lendas-do-brasil-sombrio-2027",
@@ -596,7 +625,8 @@
       "status": "draft",
       "days": [],
       "accent": "#8f9b69",
-      "background": "#161c15"
+      "background": "#161c15",
+      "introduction": "O folclore brasileiro é formado por tradições orais, influências indígenas, africanas e europeias e interpretações locais em constante mudança. Uma lenda pode ter muitas versões e não precisa corresponder a um acontecimento histórico comprovado. Este especial valoriza essas narrativas como patrimônio cultural, distinguindo tradição, registro e invenção."
     }
   ]
 }
