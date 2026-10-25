@@ -8,4 +8,14 @@ assert.match(editorial,/admin-auth\.js/);
 assert.match(editorial,/editorial-record\.js/);
 assert.doesNotMatch(preview,/<button\b/);
 assert.doesNotMatch(preview,/supabase\.from\s*\(/i);
+
+assert.match(editorial,/href="\.\/editorial-candidates\.html"/);
+assert.match(editorial,/href="\.\.\/previews\/revisao-editorial-fase5-50\.html"/);
+assert.match(editorial,/Prévia estática de demonstração: arquivo acessível por URL pública/);
+assert.match(editorial,/sem autenticação própria, sem conexão com Supabase e sem dados privados/);
+assert.ok(editorial.indexOf("Abrir prévia estática")>editorial.indexOf('<div id="app" hidden>'));
+assert.match(editorial,/@supabase\/supabase-js/);
+assert.match(preview,/Somente leitura/);
+assert.match(preview,/Nenhuma decisão é registrada e nenhuma publicação é autorizada/);
+assert.doesNotMatch(preview,/<form\b|<input\b|<textarea\b|fetch\s*\(|localStorage/i);
 console.log("Fase 5.51: entrada na area autenticada e previa sem controles de gravacao.");
