@@ -20,3 +20,12 @@ body.as-halloween-reader .daily-reader-section-head h2{color:#d99a5e!important;f
 body.as-halloween-reader .daily-reader-sources a{color:#e1ad76!important}
 body.as-halloween-reader a:focus-visible{outline:2px solid #e7af68;outline-offset:3px}
 @media(max-width:600px){body.as-halloween-reader .daily-case-detail{padding:12px 10px 36px!important}body.as-halloween-reader .daily-reader{padding:20px 17px!important}body.as-halloween-reader .daily-reader-text{font-size:1rem!important;line-height:1.85!important}body.as-halloween-reader .daily-reader-lead{font-size:1.06rem!important}body.as-halloween-reader .daily-reader>header:before{font-size:.57rem;letter-spacing:.09em}}
+
+/* Cronologia editorial: uma data e um acontecimento por marco. */
+body.as-halloween-reader .daily-reader-timeline ol{list-style:none!important;margin:24px 0 16px 9px!important;padding:0 0 0 26px!important;border-left:1px solid rgba(202,115,53,.46)!important}
+body.as-halloween-reader .daily-reader-timeline li{position:relative!important;display:block!important;margin:0!important;padding:0 0 31px 0!important;border:0!important;background:transparent!important}
+body.as-halloween-reader .daily-reader-timeline li:last-child{padding-bottom:0!important}
+body.as-halloween-reader .daily-reader-timeline li:before{content:"";position:absolute;left:-33px;top:7px;width:12px;height:12px;border-radius:50%;background:#bf6d36;border:3px solid #201611;box-shadow:0 0 0 1px rgba(226,156,94,.55);box-sizing:border-box}
+body.as-halloween-reader .daily-reader-timeline li time{display:block!important;margin:0 0 7px!important;color:#e0a36b!important;font:700 .83rem/1.5 system-ui,sans-serif!important;letter-spacing:.08em}
+body.as-halloween-reader .daily-reader-timeline li p{margin:0!important;color:#ded0b9!important;font:400 1rem/1.7 Georgia,serif!important;max-width:60ch}
+@media(max-width:600px){body.as-halloween-reader .daily-reader-timeline ol{margin-left:6px!important;padding-left:22px!important}body.as-halloween-reader .daily-reader-timeline li:before{left:-29px}body.as-halloween-reader .daily-reader-timeline li{padding-bottom:26px!important}body.as-halloween-reader .daily-reader-timeline li p{font-size:.98rem!important;line-height:1.65!important}}
