@@ -12,4 +12,10 @@ assert.ok(e.indexOf('id="editorial-preview-entry"')>e.indexOf('id="app" hidden')
 assert.match(e,/rel="noopener noreferrer"/);
 assert.doesNotMatch(p,/<button\b/i);
 assert.doesNotMatch(p,/fetch\s*\(|localStorage|supabase\.from\s*\(/i);
+
+assert.match(p,/<a class="skip-link" href="#conteudo-principal">Ir para o conteúdo principal<\/a>/);
+assert.match(p,/<main id="conteudo-principal" tabindex="-1">/);
+assert.match(p,/<section id="items" aria-label="Comparações editoriais"><\/section>/);
+assert.match(p,/\.skip-link:focus\{top:12px\}/);
+assert.match(p,/\.skip-link\{position:absolute/);
 console.log("Fase 5.52: inspecao estatica de layout, navegação e isolamento aprovada.");
