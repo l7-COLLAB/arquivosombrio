@@ -214,7 +214,7 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 /* Identidade editada pela Admin V2 e exportada no manifesto revisado */
 .season-home[style*="--admin-season-hero"]{background-image:var(--admin-season-hero)!important;background-size:cover!important;background-position:center,var(--admin-season-pos,center)!important}
 .season-detail[style*="--admin-season-hero"] .season-detail-hero{background-image:var(--admin-season-hero)!important;background-size:cover!important;background-position:center,var(--admin-season-pos,center)!important}
-.season-campaign-card[style*="--admin-season-card"] .season-card-art{background-image:var(--admin-season-card)!important;background-size:cover!important;background-position:center!important}
+.season-campaign-card[style*="--admin-season-card"] .season-card-art{background-image:var(--admin-season-card),var(--admin-season-card-fallback)!important;background-size:cover,cover!important;background-position:center!important}
 .season-home[style*="--admin-season-hero"] .season-hero-art{display:none}
 .season-home[style*="--admin-season-hero"] .season-home-grid{grid-template-columns:1fr}
 .season-campaign-card[style*="--admin-season-card"] .season-card-art{border-right-color:var(--sa)}
