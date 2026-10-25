@@ -10,4 +10,26 @@ for(const [request,code] of [[req("GET"),401],[req("GET","invalid"),401],[req("G
  if(code===200){const payload=await response.json();assert.equal(payload.read_only,true);assert.equal(payload.publication_allowed,false);assert.equal(payload.items.length,1);assert.equal("extra_secret" in payload.items[0],false);}
 }
 assert.equal((await handleEditorialCandidates(req("GET","admin"),()=>{throw new Error("Auth offline")},items)).status,401);
+
+for(const [request,code] of [[req("PUT","admin"),405],[req("DELETE","admin"),405],[req("GET",""),401]]){
+ const response=await handleEditorialCandidates(request,verify,items);
+ assert.equal(response.status,code);
+ const payload=await response.json();
+ assert.equal("items" in payload,false);
+ assert.equal(JSON.stringify(payload).includes("private"),false);
+}
+for(const origin of ["https://arquivosombrio.net.br","https://site-nao-autorizado.example"]){
+ const request=new Request("https://example.org/editorial",{headers:{authorization:"Bearer admin",origin}});
+ const response=await handleEditorialCandidates(request,verify,items);
+ assert.equal(response.status,200);
+ assert.equal(response.headers.get("access-control-allow-origin"),origin==="https://arquivosombrio.net.br"?origin:null);
+ assert.match(response.headers.get("cache-control"),/no-store/);
+ const body=await response.json();
+ assert.deepEqual(Object.keys(body.items[0]).sort(),["id_caso","indice","original","proposta","fonte"].sort());
+}
+const options=new Request("https://example.org/editorial",{method:"OPTIONS",headers:{origin:"https://arquivosombrio.net.br"}});
+const preflight=await handleEditorialCandidates(options,verify,items);
+assert.equal(preflight.status,204);
+assert.equal(preflight.headers.get("access-control-allow-origin"),"https://arquivosombrio.net.br");
+assert.equal(preflight.headers.get("access-control-allow-methods"),"GET, OPTIONS");
 console.log("Fase 5.57: mock HTTP 401/403/405/200 e whitelist de campos OK; sem deploy.");
