@@ -1,0 +1,29 @@
+{
+  "fase": "5.77",
+  "estado": "auditoria_de_teste_local_sem_execucao_real",
+  "regressao_fase576": {
+    "commit": "94ef157109236a17d1ce1981946d4766fb70d0cf",
+    "aprovados": 6,
+    "total": 6
+  },
+  "observacao_concorrencia": "A branch recebeu commits posteriores ao commit verificado; nao presumir que o ultimo SHA corresponde apenas a esta fase.",
+  "pontos_confirmados": [
+    "script limita URL a loopback",
+    "credenciais sao obtidas de variaveis de ambiente",
+    "cenarios GET e OPTIONS definidos",
+    "nenhum teste remoto foi executado"
+  ],
+  "pendencias": [
+    "Docker e Supabase CLI local nao iniciados aqui",
+    "Dois usuarios ficticios nao criados no Auth local",
+    "O gateway local pode devolver 401 em OPTIONS antes do handler",
+    "Testar expiracao e revogacao posteriormente"
+  ],
+  "regras": {
+    "executado_com_jwt_real": false,
+    "homologado": false,
+    "deploy": false,
+    "merge": false,
+    "alteracoes_producao": false
+  }
+}
