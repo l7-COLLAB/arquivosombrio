@@ -73,6 +73,9 @@ on:
       - 'tests/dossier-editorial-cost-options-phase573.mjs'
       - 'tests/dossier-editorial-local-fixtures-phase574.mjs'
       - 'tests/dossier-editorial-fixture-integrity-phase575.mjs'
+      - 'tests/dossier-editorial-local-auth-phase576.mjs'
+      - 'tests/dossier-editorial-local-auth-guard-phase576.mjs'
+      - 'docs/execucao-auth-local-fase5-76.md'
       - 'docs/integridade-fixtures-fase5-75.json'
       - 'docs/homologacao-local-editorial-fase5-74.md'
       - 'docs/alternativas-homologacao-fase5-73.json'
@@ -211,6 +214,7 @@ jobs:
           node tests/dossier-editorial-cost-options-phase573.mjs
           node tests/dossier-editorial-local-fixtures-phase574.mjs
           node tests/dossier-editorial-fixture-integrity-phase575.mjs
+          node tests/dossier-editorial-local-auth-guard-phase576.mjs
           node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
