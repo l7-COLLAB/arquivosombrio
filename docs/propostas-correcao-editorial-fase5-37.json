@@ -1,0 +1,44 @@
+{
+  "fase": "5.37",
+  "estado": "propostas_editoriais_nao_aplicadas",
+  "data": "2026-10-23",
+  "publicacao_autorizada": false,
+  "propostas": [
+    {
+      "id_caso": 6,
+      "indice": 11,
+      "original": "10 de dezembro de 1994: Thomas Mosser é morto.",
+      "proposta": "10 de dezembro de 1994: Thomas Mosser morre após a explosão de uma bomba enviada à sua residência. A data é corroborada por documentação do Departamento de Justiça dos EUA, embora exista divergência em uma cronologia resumida do FBI.",
+      "decisao": "preservar_data_com_nota_de_divergencia",
+      "aprovado": false,
+      "aplicado": false,
+      "referencia": "docs/fontes-primarias-cronologias-fase5-36.json"
+    },
+    {
+      "id_caso": 5,
+      "indice": 5,
+      "original": "2012: primeira condenação e duas penas de prisão perpétua.",
+      "proposta": "2012: Dana Chandler é condenada pela primeira vez pelos dois homicídios e recebe duas penas consecutivas de prisão perpétua, sujeitas aos períodos mínimos obrigatórios previstos na decisão judicial.",
+      "decisao": "refinar_terminologia_apos_cotejo_da_decisao_integral",
+      "aprovado": false,
+      "aplicado": false,
+      "referencia": "docs/fontes-primarias-cronologias-fase5-36.json"
+    },
+    {
+      "id_caso": 5,
+      "indice": 12,
+      "original": "Situação atual: condenada e presa; continua contestando a condenação.",
+      "proposta": null,
+      "decisao": "nao_publicar_nota_temporal_sem_certidao_processual_atualizada",
+      "aprovado": false,
+      "aplicado": false,
+      "referencia": "docs/fontes-primarias-cronologias-fase5-36.json"
+    }
+  ],
+  "exigencias": [
+    "cotejo_documental_integral",
+    "revisao_editorial_humana",
+    "validacao_de_identidade_e_rollback",
+    "autorizacao_explicita_para_publicacao"
+  ]
+}

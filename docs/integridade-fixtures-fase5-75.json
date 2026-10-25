@@ -1,0 +1,27 @@
+{
+  "fase": "5.75",
+  "estado": "integridade_dos_testes_locais_preparada",
+  "regressao_anterior": {
+    "aprovados": 6,
+    "total": 6,
+    "commit": "d3805aa80b85f971b70943537e6b53496717979e"
+  },
+  "verificacoes": [
+    "fixture editorial usa id de caso ficticio 999",
+    "fontes ficticias utilizam example.org",
+    "teste automatizado nao possui identificador do Supabase de producao",
+    "guia impede importacao de registros reais",
+    "getUser permanece implementado no endpoint"
+  ],
+  "limites": [
+    "Nao foi iniciado o Supabase local ou Docker nesta fase",
+    "Nao foi verificada autenticacao real nem preflight do gateway",
+    "A funcao ainda inclui propostas de texto reais em seu codigo-fonte"
+  ],
+  "restricoes": {
+    "deploy": false,
+    "merge": false,
+    "alterar_producao": false,
+    "homologacao_real": false
+  }
+}

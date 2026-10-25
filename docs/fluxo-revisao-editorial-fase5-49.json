@@ -1,0 +1,23 @@
+{
+  "fase": "5.49",
+  "estado": "especificacao_pendente_de_implementacao",
+  "regressao_fase548": {
+    "aprovados": 6,
+    "total": 6,
+    "commit": "4cf2ed11bb05fa172192d332eb11e018e80d7183"
+  },
+  "controles": {
+    "validar_responsavel": true,
+    "validar_data": true,
+    "validar_justificativa": true,
+    "registrar_historico": true,
+    "decisoes_independentes": true
+  },
+  "bloqueios": {
+    "publicacao": false,
+    "merge": false,
+    "deploy": false,
+    "supabase": false
+  },
+  "observacao": "Fluxo ainda nao conectado a interface ou persistencia. Aprovação depende de autenticacao e revisão humana."
+}

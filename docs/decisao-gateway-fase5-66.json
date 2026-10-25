@@ -1,0 +1,29 @@
+{
+  "fase": "5.66",
+  "regressao_anterior": {
+    "aprovados": 6,
+    "total": 6,
+    "commit": "132da14964039f5c525a081b633282461fc24cdd"
+  },
+  "decisao": "manter_verify_jwt_true",
+  "gateway_preflight_confirmado": false,
+  "deploy_autorizado": false,
+  "justificativa": "O gateway executa verificacao antes do handler e a passagem de OPTIONS sem JWT nao foi confirmada em ambiente real.",
+  "fontes": [
+    "https://supabase.com/docs/guides/functions/auth-headers",
+    "https://supabase.com/docs/guides/functions/cors",
+    "https://supabase.com/docs/guides/functions/auth"
+  ],
+  "cenario_necessario": "OPTIONS do navegador sem Authorization na funcao implantada em homologacao, com preflight de origin permitido e headers authorization,apikey,x-client-info",
+  "alternativas_caso_401": [
+    "Utilizar arquitetura de invocacao de mesma origem com protecao apropriada",
+    "Considerar wrapper de autenticacao oficial com tratamento automatico CORS, mediante revisao de seguranca",
+    "Nao desabilitar verificacao JWT sem instituir autenticacao confiavel no proprio handler"
+  ],
+  "restricoes": {
+    "merge": false,
+    "deploy": false,
+    "publicacao": false,
+    "alteracao_supabase": false
+  }
+}

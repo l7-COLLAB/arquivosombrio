@@ -5,11 +5,141 @@ on:
       - 'js/caso.js'
       - 'css/caso.css'
       - 'admin-v2/js/publication.js'
+      - 'admin-v2/js/editorial-identity-guard.js'
+      - 'admin-v2/js/chronology-normalizer.js'
+      - 'admin-v2/js/chronology-pending-classifier.js'
+      - 'admin-v2/js/chronology-temporal-preview.js'
       - 'tests/dossier-source-renderer.mjs'
       - 'tests/publication-editorial-audit.mjs'
       - 'tests/evidence-metadata.mjs'
       - 'tests/dossier-evidence-completeness.mjs'
       - 'tests/dossier-browser-smoke.mjs'
+      - 'previews/cronologia-acervo-real-fase5-30.html'
+      - 'tests/dossier-timeline-navigation.mjs'
+      - 'tests/dossier-initial-editorial-audit.mjs'
+      - 'tests/dossier-editorial-integration-package.mjs'
+      - 'tests/dossier-chronology-normalizer.mjs'
+      - 'tests/dossier-chronology-pending-classifier.mjs'
+      - 'tests/dossier-chronology-temporal-preview.mjs'
+      - 'tests/dossier-chronology-real-temporal-preview.mjs'
+      - 'tests/dossier-chronology-segmentation-preview.mjs'
+      - 'tests/dossier-chronology-consolidated-preview.mjs'
+      - 'tests/dossier-chronology-editorial-package.mjs'
+      - 'tests/dossier-chronology-documentary-crosscheck.mjs'
+      - 'tests/dossier-chronology-crosscheck-phase520.mjs'
+      - 'tests/dossier-chronology-homologation-checklist.mjs'
+      - 'docs/checklist-homologacao-cronologias-fase5-22.json'
+      - 'docs/pacote-aprovacao-editorial-fase5-33.json'
+      - 'tests/dossier-editorial-approval-phase533.mjs'
+      - 'tests/dossier-chronology-document-review-phase534.mjs'
+      - 'tests/dossier-chronology-focused-review-phase535.mjs'
+      - 'tests/dossier-chronology-primary-sources-phase536.mjs'
+      - 'tests/dossier-chronology-proposals-phase537.mjs'
+      - 'tests/dossier-chronology-candidate-phase538.mjs'
+      - 'tests/dossier-chronology-validation-phase539.mjs'
+      - 'tests/dossier-chronology-homologation-phase540.mjs'
+      - 'tests/dossier-chronology-documentary-phase541.mjs'
+      - 'tests/dossier-chronology-approval-phase542.mjs'
+      - 'tests/dossier-chronology-decision-phase543.mjs'
+      - 'tests/dossier-chronology-isolated-phase544.mjs'
+      - 'tests/dossier-chronology-comparison-phase545.mjs'
+      - 'tests/dossier-chronology-decisions-phase546.mjs'
+      - 'tests/dossier-chronology-record-phase547.mjs'
+      - 'tests/dossier-chronology-validation-phase548.mjs'
+      - 'tests/dossier-chronology-workflow-phase549.mjs'
+      - 'tests/dossier-editorial-preview-phase550.mjs'
+      - 'tests/dossier-editorial-navigation-phase551.mjs'
+      - 'tests/dossier-editorial-responsive-phase552.mjs'
+      - 'tests/dossier-editorial-browser-phase553.mjs'
+      - 'tests/dossier-editorial-usability-phase554.mjs'
+      - 'tests/dossier-editorial-auth-boundary-phase555.mjs'
+      - 'tests/dossier-editorial-access-contract-phase556.mjs'
+      - 'tests/dossier-editorial-endpoint-phase557.mjs'
+      - 'tests/dossier-editorial-auth-view-phase558.mjs'
+      - 'tests/dossier-editorial-security-phase559.mjs'
+      - 'tests/dossier-editorial-cors-phase560.mjs'
+      - 'tests/dossier-editorial-http-phase561.mjs'
+      - 'tests/dossier-editorial-predeploy-phase562.mjs'
+      - 'tests/dossier-editorial-supabase-inventory-phase563.mjs'
+      - 'tests/dossier-editorial-gateway-phase564.mjs'
+      - 'tests/dossier-editorial-gateway-cors-phase565.mjs'
+      - 'tests/dossier-editorial-gateway-decision-phase566.mjs'
+      - 'tests/dossier-editorial-transport-phase567.mjs'
+      - 'tests/dossier-editorial-architecture-phase568.mjs'
+      - 'tests/dossier-editorial-acceptance-plan-phase569.mjs'
+      - 'tests/dossier-editorial-controlled-phase570.mjs'
+      - 'tests/dossier-editorial-evidence-phase571.mjs'
+      - 'tests/dossier-editorial-staging-phase572.mjs'
+      - 'tests/dossier-editorial-cost-options-phase573.mjs'
+      - 'tests/dossier-editorial-local-fixtures-phase574.mjs'
+      - 'tests/dossier-editorial-fixture-integrity-phase575.mjs'
+      - 'tests/dossier-editorial-local-auth-phase576.mjs'
+      - 'tests/dossier-editorial-local-auth-guard-phase576.mjs'
+      - 'tests/dossier-editorial-auth-audit-phase577.mjs'
+      - 'tests/dossier-editorial-preflight-phase578.mjs'
+      - 'tests/dossier-editorial-preflight-guard-phase578.mjs'
+      - 'tests/dossier-editorial-preflight-phase580.mjs'
+      - 'tests/dossier-editorial-preflight-guard-phase580.mjs'
+      - 'docs/auditoria-auth-local-fase5-77.json'
+      - 'docs/execucao-auth-local-fase5-76.md'
+      - 'docs/integridade-fixtures-fase5-75.json'
+      - 'docs/homologacao-local-editorial-fase5-74.md'
+      - 'docs/alternativas-homologacao-fase5-73.json'
+      - 'docs/ambiente-homologacao-editorial-fase5-72.json'
+      - 'docs/evidencias-integracao-editorial-fase5-71.json'
+      - 'docs/execucao-controlada-editorial-fase5-70.json'
+      - 'docs/roteiro-homologacao-editorial-fase5-69.json'
+      - 'docs/decisao-arquitetura-editorial-fase5-68.json'
+      - 'admin-v2/js/editorial-transport-phase567.mjs'
+      - 'docs/alternativa-transporte-editorial-fase5-67.json'
+      - 'docs/decisao-gateway-fase5-66.json'
+      - 'docs/compatibilidade-jwt-cors-fase5-65.json'
+      - 'docs/gateway-editorial-fase5-64.json'
+      - 'supabase/config.toml'
+      - 'docs/verificacao-supabase-fase5-63.json'
+      - 'docs/pre-homologacao-edge-fase5-62.json'
+      - 'docs/validacao-integrada-editorial-fase5-61.json'
+      - 'docs/compatibilidade-edge-editorial-fase5-60.json'
+      - 'docs/auditoria-seguranca-endpoint-fase5-59.json'
+      - 'admin-v2/editorial-candidates.html'
+      - 'admin-v2/js/editorial-candidates-view.js'
+      - 'docs/integracao-autenticada-editorial-fase5-58.json'
+      - 'supabase/functions/editorial-candidates/index.ts'
+      - 'supabase/functions/editorial-candidates/handler.mjs'
+      - 'docs/contrato-acesso-editorial-fase5-56.json'
+      - 'docs/seguranca-navegacao-editorial-fase5-55.json'
+      - 'docs/parecer-usabilidade-editorial-fase5-54.json'
+      - 'docs/integracao-visual-editorial-fase5-51.json'
+      - 'admin-v2/editorial.html'
+      - 'previews/revisao-editorial-fase5-50.html'
+      - 'docs/fluxo-revisao-editorial-fase5-49.json'
+      - 'admin-v2/js/editorial-review-workflow.js'
+      - 'docs/validacao-decisoes-editoriais-fase5-48.json'
+      - 'admin-v2/js/editorial-decision-validator.js'
+      - 'docs/registro-decisoes-editoriais-fase5-47.json'
+      - 'docs/decisoes-individuais-cronologias-fase5-46.json'
+      - 'docs/revisao-comparativa-cronologias-fase5-45.json'
+      - 'docs/homologacao-isolada-cronologias-fase5-44.json'
+      - 'docs/checklist-decisao-editorial-fase5-43.json'
+      - 'docs/pacote-aprovacao-cronologias-fase5-42.json'
+      - 'docs/revisao-documental-cronologias-fase5-41.json'
+      - 'docs/parecer-homologacao-cronologias-fase5-40.json'
+      - 'docs/validacao-candidata-cronologias-fase5-39.json'
+      - 'docs/versao-candidata-cronologias-fase5-38.json'
+      - 'docs/propostas-correcao-editorial-fase5-37.json'
+      - 'docs/fontes-primarias-cronologias-fase5-36.json'
+      - 'docs/revisao-focalizada-cronologias-fase5-35.json'
+      - 'docs/auditoria-individual-cronologias-fase5-34.json'
+      - 'docs/cotejo-complementar-cronologias-fase5-20.json'
+      - 'docs/cotejo-documental-cronologias-fase5-19.json'
+      - 'docs/pacote-editorial-cronologias-fase5-18.json'
+      - 'docs/previa-consolidada-cronologias-fase5-17.json'
+      - 'docs/previa-segmentacao-cronologias-fase5-16.json'
+      - 'docs/relatorio-normalizacao-acervo-fase5-9.json'
+      - 'tests/dossier-chronology-real-sample.mjs'
+      - 'docs/amostra-normalizacao-fase5-5.json'
+      - 'docs/pacote-integracao-dyatlov-somerton-fase4-5.json'
+      - 'data/caso.js'
       - '.github/workflows/documental-regression.yml'
   workflow_dispatch:
 
@@ -35,17 +165,81 @@ jobs:
           node tests/evidence-metadata.mjs
           node tests/dossier-evidence-completeness.mjs
           node tests/dossier-source-renderer.mjs
+          node tests/dossier-timeline-navigation.mjs
+          node tests/dossier-initial-editorial-audit.mjs
+          node tests/dossier-editorial-integration-package.mjs
+          node tests/dossier-chronology-normalizer.mjs
+          node tests/dossier-chronology-pending-classifier.mjs
+          node tests/dossier-chronology-temporal-preview.mjs
+          node tests/dossier-chronology-real-temporal-preview.mjs
+          node tests/dossier-chronology-segmentation-preview.mjs
+          node tests/dossier-chronology-consolidated-preview.mjs
+          node tests/dossier-chronology-editorial-package.mjs
+          node tests/dossier-chronology-documentary-crosscheck.mjs
+          node tests/dossier-chronology-crosscheck-phase520.mjs
+          node tests/dossier-chronology-homologation-checklist.mjs
+          node tests/dossier-editorial-approval-phase533.mjs
+          node tests/dossier-chronology-document-review-phase534.mjs
+          node tests/dossier-chronology-focused-review-phase535.mjs
+          node tests/dossier-chronology-primary-sources-phase536.mjs
+          node tests/dossier-chronology-proposals-phase537.mjs
+          node tests/dossier-chronology-candidate-phase538.mjs
+          node tests/dossier-chronology-validation-phase539.mjs
+          node tests/dossier-chronology-homologation-phase540.mjs
+          node tests/dossier-chronology-documentary-phase541.mjs
+          node tests/dossier-chronology-approval-phase542.mjs
+          node tests/dossier-chronology-decision-phase543.mjs
+          node tests/dossier-chronology-isolated-phase544.mjs
+          node tests/dossier-chronology-comparison-phase545.mjs
+          node tests/dossier-chronology-decisions-phase546.mjs
+          node tests/dossier-chronology-record-phase547.mjs
+          node tests/dossier-chronology-validation-phase548.mjs
+          node tests/dossier-chronology-workflow-phase549.mjs
+          node tests/dossier-editorial-preview-phase550.mjs
+          node tests/dossier-editorial-navigation-phase551.mjs
+          node tests/dossier-editorial-responsive-phase552.mjs
+          node tests/dossier-editorial-usability-phase554.mjs
+          node tests/dossier-editorial-auth-boundary-phase555.mjs
+          node tests/dossier-editorial-access-contract-phase556.mjs
+          node tests/dossier-editorial-endpoint-phase557.mjs
+          node tests/dossier-editorial-auth-view-phase558.mjs
+          node tests/dossier-editorial-security-phase559.mjs
+          node tests/dossier-editorial-cors-phase560.mjs
+          node tests/dossier-editorial-http-phase561.mjs
+          node tests/dossier-editorial-predeploy-phase562.mjs
+          node tests/dossier-editorial-supabase-inventory-phase563.mjs
+          node tests/dossier-editorial-gateway-phase564.mjs
+          node tests/dossier-editorial-gateway-cors-phase565.mjs
+          node tests/dossier-editorial-gateway-decision-phase566.mjs
+          node tests/dossier-editorial-transport-phase567.mjs
+          node tests/dossier-editorial-architecture-phase568.mjs
+          node tests/dossier-editorial-acceptance-plan-phase569.mjs
+          node tests/dossier-editorial-controlled-phase570.mjs
+          node tests/dossier-editorial-evidence-phase571.mjs
+          node tests/dossier-editorial-staging-phase572.mjs
+          node tests/dossier-editorial-cost-options-phase573.mjs
+          node tests/dossier-editorial-local-fixtures-phase574.mjs
+          node tests/dossier-editorial-fixture-integrity-phase575.mjs
+          node tests/dossier-editorial-local-auth-guard-phase576.mjs
+          node tests/dossier-editorial-auth-audit-phase577.mjs
+          node tests/dossier-editorial-preflight-guard-phase578.mjs
+          node tests/dossier-editorial-preflight-guard-phase580.mjs
+          node tests/dossier-chronology-real-sample.mjs
       - name: Instalar navegador para homologação
         run: |
           npm install --no-save --no-package-lock playwright
           npx playwright install --with-deps chromium
       - name: Homologar interface com dados fictícios
         run: node tests/dossier-browser-smoke.mjs
+      - name: Testar prévia editorial em navegador
+        run: node tests/dossier-editorial-browser-phase553.mjs
       - name: Guardar capturas para revisão
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: capturas-dossie-documental
-          path: artifacts/documental/*.png
+          path: |
+            artifacts/documental/*.png
+            artifacts/editorial/*.json
           if-no-files-found: ignore
           retention-days: 7

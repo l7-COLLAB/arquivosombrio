@@ -1,0 +1,28 @@
+{
+  "fase": "5.55",
+  "estado": "verificacao_estatica_de_navegacao_preparada",
+  "regressao_fase554": {
+    "aprovados": 6,
+    "total": 6,
+    "commit": "a255dcddc6f91c9849abd08d37b90ff0d8adaaa2"
+  },
+  "escopo": [
+    "verificacao da area oculta antes da autenticacao",
+    "verificacao da dependencia da rotina administrativa existente",
+    "garantia de que a previa nao apresenta formularios de aprovacao",
+    "garantia de que o fluxo isolado nunca autoriza publicacao"
+  ],
+  "limites": [
+    "HTML estatico da previa continua acessivel diretamente sem sessao; nao armazenar dados confidenciais ali",
+    "Testes estaticos nao provam autorizacao server-side ou comportamento com sessao real",
+    "O formulario existente de revisoes reais permanece separado do fluxo candidato"
+  ],
+  "recomendacao": "Antes de incluir informacoes privadas, implementar consulta com autorizacao no servidor e testes de acesso anonimo e autenticado.",
+  "autorizacoes": {
+    "editorial": false,
+    "merge": false,
+    "deploy": false,
+    "publicacao": false,
+    "supabase": false
+  }
+}

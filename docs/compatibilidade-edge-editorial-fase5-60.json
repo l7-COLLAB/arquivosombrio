@@ -1,0 +1,27 @@
+{
+  "fase": "5.60",
+  "estado": "compatibilidade_cors_preparada_sem_deploy",
+  "regressao_fase559": {
+    "aprovados": 6,
+    "total": 6,
+    "commit": "c385ebaae354ed4bdeddaa2d7d2e621de247512a"
+  },
+  "verificacoes": [
+    "origens autorizadas limitadas aos dominios oficiais",
+    "resposta OPTIONS sem dados editoriais",
+    "GET sujeito a token e papel admin",
+    "cache-control privado sem armazenamento"
+  ],
+  "pendencias": [
+    "verificar configuracao verify_jwt da funcao no ambiente de implantacao",
+    "testar preflight real e chamadas GET reais",
+    "validar integracao com versao SDK em producao",
+    "avaliar revogacao de sessao e propagacao de mudancas de papel"
+  ],
+  "bloqueios": {
+    "deploy": false,
+    "merge": false,
+    "publicacao": false,
+    "supabase": false
+  }
+}

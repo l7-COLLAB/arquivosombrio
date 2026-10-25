@@ -1,0 +1,10 @@
+import assert from "node:assert/strict";import {readFileSync} from "node:fs";
+const data=JSON.parse(readFileSync(new URL("../docs/decisao-arquitetura-editorial-fase5-68.json",import.meta.url),"utf8"));
+const conf=readFileSync(new URL("../supabase/config.toml",import.meta.url),"utf8");
+const transport=readFileSync(new URL("../admin-v2/js/editorial-transport-phase567.mjs",import.meta.url),"utf8");
+assert.equal(data.arquitetura_principal,"supabase_edge_function");assert.equal(data.alternativa,"same_origin_proxy_desativado");
+assert.match(conf,/\[functions\.editorial-candidates\]\s*verify_jwt\s*=\s*true/);
+assert.match(transport,/enabled:false/);
+assert.equal(data.condicoes_para_homologacao.length,5);
+for(const v of Object.values(data.aprovacoes))assert.equal(v,false);
+console.log("Fase 5.68: arquitetura principal preservada; homologacao real bloqueada.");

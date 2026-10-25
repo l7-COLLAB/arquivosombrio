@@ -18,4 +18,26 @@ const documented = compileDossierForPublic({...base,documentos:[{titulo:"Documen
 assert.equal(documented.warnings.filter(x=>x.startsWith("Revisão documental:")).length,0);
 assert.equal(documented.row.conteudo_blocos.length,2);
 assert.equal(base.conteudo_blocos.length,0,"Não deve mutar o rascunho");
+const refs = compileDossierForPublic({...base,conteudo_blocos:[{tipo:"cronologia",dados:{itens:[
+ {data:"1941",descricao:"Fato fictício",fonte:"Relatório",link_fonte:"javascript:alert(1)"},
+ {data:"1942",descricao:"Documento",fonte:"Relatório",link_fonte:"https://example.org/relatorio"},
+ {data:"1943",descricao:"Mesmo documento",fonte:"Relatório",link_fonte:"https://example.org/relatorio"},
+ {data:"1944",descricao:"Fonte física",fonte:"Arquivo presencial"},
+ {data:"1945",descricao:"Link isolado",link_fonte:"https://example.org/sem-metadados"}
+]}}]});
+assert.equal(refs.compatible,true,"Avisos não devem bloquear a publicação");
+assert(refs.warnings.some(w=>w.includes("URL da fonte inválida")));
+assert(refs.warnings.some(w=>w.includes("URL de fonte repetida")));
+assert(refs.warnings.some(w=>w.includes("referência sem link verificável")));
+assert(refs.warnings.some(w=>w.includes("link sem identificação")));
+assert.equal(refs.row.conteudo_blocos[0].dados.itens.length,5,"Auditoria não pode retirar eventos");
+const natureza = compileDossierForPublic({...base,conteudo_blocos:[{tipo:"cronologia",dados:{itens:[
+ {data:"1941",descricao:"Evento sem referência",natureza_documental:"fato_documentado"},
+ {data:"1942",descricao:"Classificação desconhecida",classificacao_editorial:"não verificada"},
+ {data:"1943",descricao:"Testemunho com fonte",natureza_documental:"testemunho",fonte:"Documento X"}
+]}}]});
+assert.equal(natureza.compatible,true);
+assert(natureza.warnings.some(w=>w.includes("fato classificado como documentado sem referência")));
+assert(natureza.warnings.some(w=>w.includes("natureza editorial não reconhecida")));
+assert.equal(natureza.row.conteudo_blocos[0].dados.itens.length,3);
 console.log("Auditoria editorial V2: testes aprovados.");

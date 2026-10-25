@@ -1,0 +1,327 @@
+{
+  "fase": "5.38",
+  "estado": "candidato_editorial_nao_aprovado",
+  "pr": 79,
+  "dependencia_pr": 75,
+  "publicacao_autorizada": false,
+  "gravacao_supabase_autorizada": false,
+  "escopo": {
+    "acontecimentos": 30,
+    "marcos": 29,
+    "nota_excluida_de_publicacao": 1
+  },
+  "casos": [
+    {
+      "id_caso": 5,
+      "titulo": "Caso Dana Chandler",
+      "acontecimentos": [
+        {
+          "indice": 1,
+          "tipo": "marco_temporal",
+          "original": "7 de julho de 2002: Mike Sisco e Karen Harkness são encontrados mortos em Topeka.",
+          "texto_candidato": "7 de julho de 2002: Mike Sisco e Karen Harkness são encontrados mortos em Topeka.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 2,
+          "tipo": "marco_temporal",
+          "original": "15 de julho de 2002: Dana é presa por uma pendência relacionada à pensão; seu veículo é apreendido.",
+          "texto_candidato": "15 de julho de 2002: Dana é presa por uma pendência relacionada à pensão; seu veículo é apreendido.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 3,
+          "tipo": "marco_temporal",
+          "original": "2009: o caso recebe nova exposição nacional pelo 48 Hours.",
+          "texto_candidato": "2009: o caso recebe nova exposição nacional pelo 48 Hours.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 4,
+          "tipo": "marco_temporal",
+          "original": "2011: Dana é presa e acusada dos dois homicídios.",
+          "texto_candidato": "2011: Dana é presa e acusada dos dois homicídios.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 5,
+          "tipo": "marco_temporal",
+          "original": "2012: primeira condenação e duas penas de prisão perpétua.",
+          "texto_candidato": "2012: Dana Chandler é condenada pela primeira vez pelos dois homicídios e recebe duas penas consecutivas de prisão perpétua, sujeitas aos períodos mínimos obrigatórios previstos na decisão judicial.",
+          "alteracao_proposta": true,
+          "exige_revisao": true,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 6,
+          "tipo": "marco_temporal",
+          "original": "6 de abril de 2018: a Suprema Corte do Kansas anula as condenações por conduta imprópria da promotoria.",
+          "texto_candidato": "6 de abril de 2018: a Suprema Corte do Kansas anula as condenações por conduta imprópria da promotoria.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 7,
+          "tipo": "marco_temporal",
+          "original": "2022: segundo julgamento termina sem veredicto.",
+          "texto_candidato": "2022: segundo julgamento termina sem veredicto.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 8,
+          "tipo": "marco_temporal",
+          "original": "Fevereiro de 2025: começa o terceiro julgamento.",
+          "texto_candidato": "Fevereiro de 2025: começa o terceiro julgamento.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 9,
+          "tipo": "marco_temporal",
+          "original": "7 de março de 2025: Dana é considerada culpada novamente.",
+          "texto_candidato": "7 de março de 2025: Dana é considerada culpada novamente.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 10,
+          "tipo": "marco_temporal",
+          "original": "3 de junho de 2025: recebe duas penas consecutivas de prisão perpétua.",
+          "texto_candidato": "3 de junho de 2025: recebe duas penas consecutivas de prisão perpétua.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 11,
+          "tipo": "marco_temporal",
+          "original": "10 de setembro de 2026: estreia de A Killer Story na HBO e HBO Max.",
+          "texto_candidato": "10 de setembro de 2026: estreia de A Killer Story na HBO e HBO Max.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 12,
+          "tipo": "nota_de_situacao",
+          "original": "Situação atual: condenada e presa; continua contestando a condenação.",
+          "texto_candidato": "Situação atual: condenada e presa; continua contestando a condenação.",
+          "alteracao_proposta": false,
+          "exige_revisao": true,
+          "publicavel": false,
+          "aprovado": false
+        }
+      ]
+    },
+    {
+      "id_caso": 6,
+      "titulo": "Unabomber: os atentados de Ted Kaczynski e a verdade por trás do filme da Netflix",
+      "acontecimentos": [
+        {
+          "indice": 1,
+          "tipo": "marco_temporal",
+          "original": "1958: Kaczynski entra em Harvard aos 16 anos.",
+          "texto_candidato": "1958: Kaczynski entra em Harvard aos 16 anos.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 2,
+          "tipo": "marco_temporal",
+          "original": "1959 a 1962: participa da pesquisa conduzida por Henry Murray.",
+          "texto_candidato": "1959 a 1962: participa da pesquisa conduzida por Henry Murray.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 3,
+          "tipo": "marco_temporal",
+          "original": "1967: conclui o doutorado em matemática.",
+          "texto_candidato": "1967: conclui o doutorado em matemática.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 4,
+          "tipo": "marco_temporal",
+          "original": "1969: deixa a Universidade da Califórnia em Berkeley.",
+          "texto_candidato": "1969: deixa a Universidade da Califórnia em Berkeley.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 5,
+          "tipo": "marco_temporal",
+          "original": "1971: passa a viver na cabana de Montana.",
+          "texto_candidato": "1971: passa a viver na cabana de Montana.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 6,
+          "tipo": "marco_temporal",
+          "original": "25 de maio de 1978: primeiro dispositivo conhecido explode.",
+          "texto_candidato": "25 de maio de 1978: primeiro dispositivo conhecido explode.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 7,
+          "tipo": "marco_temporal",
+          "original": "15 de novembro de 1979: bomba provoca emergência no voo 444.",
+          "texto_candidato": "15 de novembro de 1979: bomba provoca emergência no voo 444.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 8,
+          "tipo": "marco_temporal",
+          "original": "11 de dezembro de 1985: Hugh Scrutton torna-se a primeira vítima fatal.",
+          "texto_candidato": "11 de dezembro de 1985: Hugh Scrutton torna-se a primeira vítima fatal.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 9,
+          "tipo": "marco_temporal",
+          "original": "20 de fevereiro de 1987: testemunha vê o suspeito em Salt Lake City.",
+          "texto_candidato": "20 de fevereiro de 1987: testemunha vê o suspeito em Salt Lake City.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 10,
+          "tipo": "marco_temporal",
+          "original": "1993: atentados ferem Charles Epstein e David Gelernter.",
+          "texto_candidato": "1993: atentados ferem Charles Epstein e David Gelernter.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 11,
+          "tipo": "marco_temporal",
+          "original": "10 de dezembro de 1994: Thomas Mosser é morto.",
+          "texto_candidato": "10 de dezembro de 1994: Thomas Mosser morre após a explosão de uma bomba enviada à sua residência. A data é corroborada por documentação do Departamento de Justiça dos EUA, embora exista divergência em uma cronologia resumida do FBI.",
+          "alteracao_proposta": true,
+          "exige_revisao": true,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 12,
+          "tipo": "marco_temporal",
+          "original": "24 de abril de 1995: Gilbert Murray é morto.",
+          "texto_candidato": "24 de abril de 1995: Gilbert Murray é morto.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 13,
+          "tipo": "marco_temporal",
+          "original": "Setembro de 1995: manifesto é publicado.",
+          "texto_candidato": "Setembro de 1995: manifesto é publicado.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 14,
+          "tipo": "marco_temporal",
+          "original": "3 de abril de 1996: Kaczynski é preso em Montana.",
+          "texto_candidato": "3 de abril de 1996: Kaczynski é preso em Montana.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 15,
+          "tipo": "marco_temporal",
+          "original": "Janeiro de 1998: declara-se culpado.",
+          "texto_candidato": "Janeiro de 1998: declara-se culpado.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 16,
+          "tipo": "marco_temporal",
+          "original": "Maio de 1998: recebe penas de prisão perpétua.",
+          "texto_candidato": "Maio de 1998: recebe penas de prisão perpétua.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 17,
+          "tipo": "marco_temporal",
+          "original": "10 de junho de 2023: morre na prisão.",
+          "texto_candidato": "10 de junho de 2023: morre na prisão.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        },
+        {
+          "indice": 18,
+          "tipo": "marco_temporal",
+          "original": "25 de setembro de 2026: estreia de UNABOMBER.",
+          "texto_candidato": "25 de setembro de 2026: estreia de UNABOMBER.",
+          "alteracao_proposta": false,
+          "exige_revisao": false,
+          "publicavel": false,
+          "aprovado": false
+        }
+      ]
+    }
+  ]
+}

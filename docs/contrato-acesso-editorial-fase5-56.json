@@ -1,0 +1,56 @@
+{
+  "fase": "5.56",
+  "estado": "contrato_de_acesso_servidor_preparado_sem_deploy",
+  "dependencia_pr": 75,
+  "pr": 79,
+  "regressao_fase555": {
+    "commit": "b0691f5a9e326991b566ab48c365a646467e3a69",
+    "aprovados": 6,
+    "total": 6
+  },
+  "requisitos": {
+    "endpoint": "GET editorial-candidates",
+    "autenticacao": "JWT valido conferido no servidor, nao apenas claims fornecidas pelo cliente",
+    "autorizacao": "papel admin conferido em contexto confiavel no servidor",
+    "falhas": {
+      "sem_token": 401,
+      "token_invalido": 401,
+      "sem_permissao": 403,
+      "erro_indeterminado": 401,
+      "erro_de_validacao_identidade": 401,
+      "usuario_autenticado_sem_papel_admin": 403
+    },
+    "dados": "retornar somente campos documentados e necessarios; nunca credenciais ou conteudo privado em bundle estatico",
+    "operacoes_permitidas": [
+      "leitura"
+    ],
+    "operacoes_proibidas": [
+      "aprovacao",
+      "publicacao",
+      "atualizacao",
+      "exclusao"
+    ]
+  },
+  "situacao_atual": {
+    "pagina_estatica_publica": true,
+    "area_editorial_com_verificacao_de_sessao": true,
+    "endpoint_protegido_implantado": false,
+    "testes_de_acesso_reais_executados": false,
+    "endpoint_protegido_implementado_no_repositorio": true
+  },
+  "proximos_passos": [
+    "Validar endpoint ja implementado no repositorio e sua identidade/autorizacao em ambiente isolado antes de qualquer implantacao",
+    "Remover dados restritos do HTML estatico; a interface deve buscar do endpoint protegido",
+    "Testar HTTP 401 anonimo, HTTP 403 nao-admin e HTTP 200 admin em ambiente isolado",
+    "Revisar RLS, logs sem dados confidenciais e politica de cache",
+    "Somente depois considerar substituicao da previa publica"
+  ],
+  "bloqueios": {
+    "merge": false,
+    "deploy": false,
+    "publicacao": false,
+    "supabase": false,
+    "homologacao_editorial": false
+  },
+  "observacao_complementar": "401 indica ausencia ou impossibilidade de verificar a autenticidade da sessao; 403 indica identidade validada sem permissao admin. O handler existe no codigo, mas nao ha deploy nem testes reais de acesso confirmados."
+}

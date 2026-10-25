@@ -1,0 +1,69 @@
+{
+  "fase": "5.69",
+  "estado": "roteiro_de_homologacao_preparado_sem_execucao_real",
+  "base_commit": "545c66fca5a5239700e1e1c9696fa978cbf04a8b",
+  "regressao_anterior": {
+    "aprovados": 6,
+    "total": 6
+  },
+  "ambiente": "homologacao_isolada_e_autorizada",
+  "pre_condicoes": [
+    "Endpoint editorial-candidates implantado no ambiente de homologacao, nunca presumido implantado em producao",
+    "verify_jwt=true confirmado no gateway do ambiente",
+    "Contas de teste anônima, comum e administradora, sem uso de credenciais reais em logs",
+    "Dados candidatos de teste nao confidenciais",
+    "Confirmar origens permitidas e armazenamento proibido"
+  ],
+  "casos": [
+    {
+      "id": "sem_token",
+      "metodo": "GET",
+      "esperado": 401
+    },
+    {
+      "id": "token_invalido",
+      "metodo": "GET",
+      "esperado": 401
+    },
+    {
+      "id": "usuario_comum",
+      "metodo": "GET",
+      "esperado": 403
+    },
+    {
+      "id": "admin",
+      "metodo": "GET",
+      "esperado": 200
+    },
+    {
+      "id": "post_bloqueado",
+      "metodo": "POST",
+      "esperado": 405
+    },
+    {
+      "id": "preflight_oficial",
+      "metodo": "OPTIONS",
+      "esperado": 204,
+      "observacao": "Resposta do gateway pode diferir e exige verificacao real"
+    },
+    {
+      "id": "preflight_origem_nao_autorizada",
+      "metodo": "OPTIONS",
+      "esperado": "sem Access-Control-Allow-Origin"
+    }
+  ],
+  "criterios_aprovacao": [
+    "Verificar corpo sem dados em respostas nao autorizadas",
+    "Conferir no-store nas respostas bem-sucedidas e de falha encaminhadas ao handler",
+    "Nenhuma operacao de escrita ou publicacao disponivel",
+    "Testar revogacao e expiracao em ambiente autorizado",
+    "Registar evidencias expurgadas de credenciais"
+  ],
+  "resultado_real": "nao_executado",
+  "bloqueios": {
+    "deploy_producao": false,
+    "merge": false,
+    "homologacao_real": false,
+    "publicacao": false
+  }
+}

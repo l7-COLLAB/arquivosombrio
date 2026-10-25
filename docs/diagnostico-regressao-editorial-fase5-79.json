@@ -1,0 +1,26 @@
+{
+  "fase": "5.79",
+  "estado": "falha_de_regressao_identificada_e_corrigida_na_branch",
+  "falha_original": {
+    "commit": "10ef68c29286d992686f618271c595d3a555934d",
+    "workflows_aprovados": 5,
+    "regressao": "failure",
+    "causa": "SyntaxError: Invalid regular expression flags em dossier-editorial-preflight-guard-phase578.mjs"
+  },
+  "correcao": "substituir regex invalida por comparacoes literais seguras",
+  "ambiente_inspecionado": {
+    "node": "v22.16.0",
+    "docker_disponivel": false,
+    "supabase_cli_disponivel": false
+  },
+  "proximos_passos": [
+    "confirmar novo workflow documental",
+    "instalar/preparar ambiente isolado em maquina que disponha de Docker e Supabase CLI",
+    "nao implantar em producao"
+  ],
+  "autorizacoes": {
+    "deploy": false,
+    "merge": false,
+    "alteracao_supabase": false
+  }
+}

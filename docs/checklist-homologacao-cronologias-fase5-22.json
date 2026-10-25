@@ -1,0 +1,70 @@
+{
+  "fase": "5.22",
+  "criado_em": "2026-10-23",
+  "situacao": "aguardando_homologacao_editorial",
+  "aprovado": false,
+  "publicacao_autorizada": false,
+  "pr": 79,
+  "dependencia_pr": 75,
+  "origens": [
+    "docs/previa-consolidada-cronologias-fase5-17.json",
+    "docs/cotejo-documental-cronologias-fase5-19.json",
+    "docs/cotejo-complementar-cronologias-fase5-20.json",
+    "docs/revisao-divergencias-cronologias-fase5-21.md"
+  ],
+  "escopo": {
+    "marcos": 29,
+    "nota_situacao": 1,
+    "referencias_auxiliares": 2
+  },
+  "criterios": [
+    {
+      "id": "integridade",
+      "descricao": "Cotejar cada linha com o texto original e preservar a ordem",
+      "atendido_tecnicamente": true,
+      "aprovado_editorialmente": false
+    },
+    {
+      "id": "fontes",
+      "descricao": "Abrir e validar as fontes de cada acontecimento, inclusive os registros com fontes associadas",
+      "atendido_tecnicamente": false,
+      "aprovado_editorialmente": false
+    },
+    {
+      "id": "mosser",
+      "descricao": "Resolver conflito entre data de 10/12/1994 e resumo do FBI; preservar original até decisão editorial",
+      "atendido_tecnicamente": false,
+      "aprovado_editorialmente": false
+    },
+    {
+      "id": "dana",
+      "descricao": "Confirmar status processual em registro judicial recente antes de definir situação atual",
+      "atendido_tecnicamente": false,
+      "aprovado_editorialmente": false
+    },
+    {
+      "id": "identidade",
+      "descricao": "Revalidar ID, slug e título no Supabase no momento de qualquer migração",
+      "atendido_tecnicamente": false,
+      "aprovado_editorialmente": false
+    },
+    {
+      "id": "rollback",
+      "descricao": "Preparar backup e plano de reversão antes de qualquer escrita",
+      "atendido_tecnicamente": false,
+      "aprovado_editorialmente": false
+    },
+    {
+      "id": "visual",
+      "descricao": "Homologar cronologia nos modos mobile, desktop, livro, papel e escuro",
+      "atendido_tecnicamente": false,
+      "aprovado_editorialmente": false
+    },
+    {
+      "id": "autorizacao",
+      "descricao": "Obter aprovação explícita antes de merge, deploy ou mutação de dados",
+      "atendido_tecnicamente": false,
+      "aprovado_editorialmente": false
+    }
+  ]
+}

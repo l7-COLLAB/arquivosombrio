@@ -1,0 +1,40 @@
+{
+  "fase": "5.63",
+  "estado": "inventario_real_conferido_sem_implantacao",
+  "projeto": "iuhotznurbyujzbyhizf",
+  "projeto_status": "ACTIVE_HEALTHY",
+  "regressao_fase562": {
+    "aprovados": 6,
+    "total": 6,
+    "commit": "e2efee704832edf3e01a08db7ce2e7bc2eba1796"
+  },
+  "edge_function_editorial_candidates": {
+    "presente_no_projeto": false,
+    "implantada": false,
+    "verify_jwt": null
+  },
+  "evidencias_existentes": [
+    {
+      "slug": "admin-secure-rpc",
+      "verify_jwt": true
+    },
+    {
+      "slug": "delete-own-account",
+      "verify_jwt": true
+    }
+  ],
+  "criterios_pendentes": [
+    "Revisar configuracao verify_jwt=true no deploy futuro da funcao editorial-candidates",
+    "Verificar autenticacao real e papel admin com usuarios autorizados em ambiente de homologacao",
+    "Testar requisições GET/OPTIONS e codigos de retorno no ambiente-alvo",
+    "Examinar riscos de exposicao da antiga previa estatica",
+    "Nao permitir homologacao por testes simulados apenas"
+  ],
+  "restricoes": {
+    "merge": false,
+    "deploy": false,
+    "alteracao_supabase": false,
+    "publicacao": false,
+    "homologacao_real": false
+  }
+}

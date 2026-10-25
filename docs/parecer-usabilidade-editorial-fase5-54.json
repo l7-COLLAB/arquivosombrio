@@ -1,0 +1,47 @@
+{
+  "fase": "5.54",
+  "estado": "parecer_tecnico_visual_favoravel_sem_homologacao_editorial",
+  "pr": 79,
+  "commit_testado": "ce7936d541ce113b9a7a88f7ced90c8194ccc2b7",
+  "regressao": {
+    "aprovados": 6,
+    "total": 6,
+    "job_navegador": "success",
+    "run_id": 40064782609
+  },
+  "evidencia": {
+    "artifact_id": 12548857293,
+    "arquivo": "capturas-dossie-documental",
+    "larguras": [
+      320,
+      375,
+      768,
+      1280
+    ]
+  },
+  "inspecao_visual": {
+    "executada": true,
+    "resultado": "sem_defeitos_visuais_evidentes_nas_capturas",
+    "itens": [
+      "cartoes e texto renderizados em todas as larguras",
+      "links de fonte e retorno visiveis",
+      "sem corte aparente dos textos",
+      "ausencia de overflow confirmada por Playwright"
+    ],
+    "limites": [
+      "capturas nao comprovam interacao real com o painel autenticado",
+      "avaliacao visual nao substitui auditoria WCAG completa"
+    ]
+  },
+  "restricoes": {
+    "homologacao_editorial": false,
+    "merge": false,
+    "deploy": false,
+    "publicacao": false,
+    "supabase": false
+  },
+  "proximos_passos": [
+    "verificar fluxo autenticado em ambiente de homologacao",
+    "manter registros editoriais pendentes ate aprovacao humana"
+  ]
+}

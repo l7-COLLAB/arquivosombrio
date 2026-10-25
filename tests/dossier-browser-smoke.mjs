@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 
 const browser = await chromium.launch({headless:true});
 const outputs="artifacts/documental";
 mkdirSync(outputs,{recursive:true});
 try {
-  for(const width of [375,768,1280]) {
+  for(const width of [320,375,768,1280]) {
     const page=await browser.newPage({viewport:{width,height:900}});
     await page.setContent(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><style>
       body{background:#171410;color:#e9dfce;margin:0;font:16px Georgia,serif}
@@ -36,10 +36,156 @@ try {
     const external=page.locator('.case-content-sources a').first();
     assert.equal(await external.getAttribute("target"),"_blank");
     assert.match(await external.getAttribute("rel"),/noopener/);
+    await page.evaluate(()=>{
+      const eventos=[
+        {data:"1941",descricao:"Investigação fictícia",categoria:"Investigação",detalhes:"Contexto adicional"},
+        {data:"1942",descricao:"Perícia documental",categoria:"Perícia",fonte:"Arquivo demonstrativo",link_fonte:"https://example.org/fonte"},
+        {data:"1942",descricao:"Segundo evento de perícia",categoria:"Perícia"},
+        {data:"1943",descricao:"Julgamento fictício",categoria:"Julgamento"},
+        {data:"Sem data",descricao:"Registro não classificado"}
+      ];
+      document.getElementById("fixture").append(renderizarCronologiaBlocoDossie({titulo:"Cronologia demonstrativa",itens:eventos}));
+    });
+    const timeline=page.locator(".case-content-timeline");
+    assert.equal(await timeline.locator("ol > li").count(),5);
+    // Auditoria básica de acessibilidade: rótulos associados e botões nomeados.
+    const a11y=await timeline.evaluate(el=>{
+      const inputs=[...el.querySelectorAll("input, select")];
+      const semRotulo=inputs.filter(input=>!input.labels?.length&&!input.getAttribute("aria-label")&&!input.getAttribute("aria-labelledby")).length;
+      const semNome=[...el.querySelectorAll("button")].filter(button=>!(button.textContent||"").trim()&&!button.getAttribute("aria-label")).length;
+      return {semRotulo,semNome};
+    });
+    assert.equal(a11y.semRotulo,0,"Campos da cronologia precisam de rótulo acessível");
+    assert.equal(a11y.semNome,0,"Botões da cronologia precisam de nome acessível");
+    const search=timeline.locator('input[type="search"]');
+    const select=timeline.locator("select");
+    await search.fill("pericia");
+    assert.equal(await timeline.locator("ol > li:visible").count(),2,"Busca deve ignorar acentos");
+    assert.equal(await timeline.locator(".case-timeline-navigation a:visible").count(),1);
+    const yearLink=timeline.locator('.case-timeline-navigation a:visible').first();
+    const destination=await yearLink.getAttribute("href");
+    assert(destination?.startsWith("#cronologia-ano-1942"));
+    assert.equal(await timeline.locator(destination).isVisible(),true);
+    await select.selectOption({label:"Julgamento"});
+    assert.equal(await timeline.locator("ol > li:visible").count(),0);
+    assert.equal(await timeline.locator(".case-timeline-empty").isVisible(),true);
+    await timeline.locator(".case-timeline-reset").click();
+    assert.equal(await timeline.locator("ol > li:visible").count(),5);
+    assert.equal(await timeline.locator(".case-timeline-empty").isVisible(),false);
+    const details=timeline.locator("details").first();
+    await details.locator("summary").click();
+    assert.equal(await details.getAttribute("open"),"");
+    const fonteEvento=timeline.locator(".case-timeline-source-link").first();
+    assert.equal(await fonteEvento.getAttribute("target"),"_blank");
+    await page.evaluate(() => {
+      const extensos=Array.from({length:9},(_,i)=>({
+        data: i<3?"1941":i<6?"1942":"1943",
+        descricao:"Acontecimento de teste "+(i+1),
+        categoria:"Investigação"
+      }));
+      document.getElementById("fixture").append(
+        renderizarCronologiaBlocoDossie({titulo:"Cronologia longa",itens:extensos})
+      );
+    });
+    const longa=page.locator(".case-content-timeline").last();
+    assert.equal(await longa.locator("ol > li").count(),9);
+    assert.deepEqual(await longa.locator(".case-timeline-period-label").allTextContents(),["1941","1942","1943"]);
+    const steps=longa.locator(".case-timeline-step-navigation");
+    assert.equal(await steps.locator("button").count(),2);
+    await steps.locator("button").last().click();
+    assert.match(await steps.locator(".case-timeline-step-position").textContent(),/1 de 9/);
+    await steps.locator("button").last().click();
+    assert.match(await steps.locator(".case-timeline-step-position").textContent(),/2 de 9/);
+    await longa.locator('input[type="search"]').fill("teste 5");
+    assert.deepEqual(await longa.locator(".case-timeline-period-label").allTextContents(),["1942"]);
+    assert.match(await steps.locator(".case-timeline-step-position").textContent(),/1 acontecimento visível/);
+    await steps.locator("button").last().click();
+    assert.equal(await page.evaluate(() => document.activeElement?.tagName), "LI");
+    assert.match(await steps.locator(".case-timeline-step-position").textContent(),/1 de 1/);
+    assert.equal(await page.evaluate(() => {
+      const node=document.activeElement;
+      return getComputedStyle(node).outlineStyle !== "none";
+    }),true,"Foco do acontecimento deve permanecer visível");
+    await longa.locator(".case-timeline-reset").click();
+    assert.deepEqual(await longa.locator(".case-timeline-period-label").allTextContents(),["1941","1942","1943"]);
+    for (const theme of ["arquivo","papel"]) {
+      await page.evaluate(value => {
+        document.body.classList.add("case-reading","case-paginated");
+        document.body.dataset.readerTheme=value;
+      },theme);
+      const styles=await longa.locator(".case-timeline-step-navigation button").first().evaluate(el=>{
+        const style=getComputedStyle(el);
+        return {color:style.color,background:style.backgroundColor,border:style.borderTopColor};
+      });
+      assert.notEqual(styles.background,"rgba(0, 0, 0, 0)");
+      assert.notEqual(styles.border,"rgba(0, 0, 0, 0)");
+      if(theme==="papel") {
+        const colors=await longa.locator(".case-timeline-search input").evaluate(el=>({fg:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
+        assert.equal(colors.fg,"rgb(44, 33, 24)");
+        assert.equal(colors.bg,"rgb(241, 229, 207)");
+        const contraste=await longa.locator(".case-timeline-search input").evaluate(el=>{
+          const rgb=value=>(value.match(/[\d.]+/g)||[]).slice(0,3).map(Number);
+          const luminancia=cor=>rgb(cor).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((a,v,i)=>a+v*[.2126,.7152,.0722][i],0);
+          const st=getComputedStyle(el), fg=luminancia(st.color),bg=luminancia(st.backgroundColor);
+          return (Math.max(fg,bg)+.05)/(Math.min(fg,bg)+.05);
+        });
+        assert(contraste>=4.5,"Texto do campo de busca deve atingir contraste WCAG AA");
+        const titleColors=await page.locator("main > h1").evaluate(el=>getComputedStyle(el).color);
+        assert.equal(titleColors,"rgb(48, 37, 25)");
+        const evidenceTitle=await page.locator(".evidence-card h3").first().evaluate(el=>getComputedStyle(el).color);
+        assert.equal(evidenceTitle,"rgb(48, 37, 25)");
+      }
+      const noOverflow=await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1);
+      assert(noOverflow,`Rolagem horizontal em ${width}px no tema ${theme}`);
+      await page.screenshot({path:`${outputs}/cronologia-${width}-${theme}.png`,fullPage:true});
+    }
+    await page.evaluate(()=>{
+      document.body.classList.remove("case-reading","case-paginated");
+      delete document.body.dataset.readerTheme;
+    });
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
     assert(!overflow,`Rolagem horizontal em ${width}px`);
     await page.screenshot({path:`${outputs}/dossie-${width}.png`,fullPage:true});
     await page.close();
   }
-  console.log("Smoke test de navegador aprovado (375, 768 e 1280 px).");
+  const preview = await browser.newPage({viewport:{width:375,height:812}});
+  await preview.goto(new URL("../previews/cronologia-fase2.html", import.meta.url).href);
+  await preview.locator(".case-content-timeline ol > li").first().waitFor({timeout:10000});
+  assert.equal(await preview.locator(".case-content-timeline ol > li").count(),6);
+  await preview.locator('.case-timeline-search input[type="search"]').fill("pericia");
+  assert.equal(await preview.locator(".case-content-timeline ol > li:visible").count(),1);
+  await preview.screenshot({path:`${outputs}/cronologia-previa-mobile.png`,fullPage:true});
+  await preview.close();
+  // Fase 5.30: hospedagem simulada, sem servidor remoto nem acesso ao Supabase.
+  const real=await browser.newPage({viewport:{width:375,height:812}});
+  await real.route("http://homologacao.local/**",async route=>{
+    const pathname=new URL(route.request().url()).pathname;
+    const allow={"/previews/cronologia-acervo-real-fase5-30.html":["previews/cronologia-acervo-real-fase5-30.html","text/html"],
+      "/docs/previa-consolidada-cronologias-fase5-17.json":["docs/previa-consolidada-cronologias-fase5-17.json","application/json"],
+      "/css/caso.css":["css/caso.css","text/css"],"/js/caso.js":["js/caso.js","text/javascript"]};
+    const target=allow[pathname];
+    if(!target)return route.fulfill({status:404,body:"Não encontrado"});
+    return route.fulfill({status:200,contentType:target[1],body:readFileSync(new URL("../"+target[0],import.meta.url))});
+  });
+  await real.goto("http://homologacao.local/previews/cronologia-acervo-real-fase5-30.html");
+  const realTimeline=real.locator(".case-content-timeline ol > li");
+  await realTimeline.first().waitFor({timeout:10000});
+  assert.equal(await realTimeline.count(),11,"Dana deve exibir somente os 11 marcos, sem nota de situação");
+  const sourceCount=await real.locator(".case-timeline-source-link").count();
+  assert.equal(sourceCount,0,"Prévia real não deve inventar fontes");
+  await real.screenshot({path:`${outputs}/cronologia-dana-real-375.png`,fullPage:true});
+  await real.locator("#case-choose").selectOption("1");
+  assert.equal(await realTimeline.count(),18,"Unabomber deve preservar 18 marcos");
+  assert.equal(await real.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
+  await real.screenshot({path:`${outputs}/cronologia-dana-unabomber-real-375.png`,fullPage:true});
+  // Repetir a conferência visual dos dois dossiês na largura desktop.
+  await real.setViewportSize({width:1280,height:900});
+  assert.equal(await realTimeline.count(),18);
+  assert.equal(await real.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
+  await real.screenshot({path:`${outputs}/cronologia-unabomber-real-1280.png`,fullPage:true});
+  await real.locator("#case-choose").selectOption("0");
+  assert.equal(await realTimeline.count(),11);
+  await real.screenshot({path:`${outputs}/cronologia-dana-real-1280.png`,fullPage:true});
+  await real.close();
+  console.log("Smoke test de navegador aprovado (320, 375, 768 e 1280 px, temas arquivo e papel).");
 } finally { await browser.close(); }

@@ -1,0 +1,52 @@
+{
+  "fase": "5.62",
+  "estado": "pre_homologacao_sem_deploy",
+  "pr": 79,
+  "base_pr": 75,
+  "commit_analisado": "b0c76f21653643de01f42b97d4fe8c101fe6a5bb",
+  "evidencias": {
+    "testes_documentais": "success",
+    "regressao_completa": "em_execucao_na_consulta",
+    "workflows_adicionais_aprovados": 5
+  },
+  "pontos_de_controle": [
+    {
+      "nome": "jwt_gateway",
+      "estado": "pendente",
+      "criterio": "Conferir verify_jwt ativo na configuracao de implantacao e comportamento do gateway para token ausente ou invalido"
+    },
+    {
+      "nome": "auth_servidor",
+      "estado": "implementado_na_branch_nao_testado_em_ambiente_real",
+      "criterio": "Verificar getUser(token), app_metadata confiavel e recusa de nao-admin"
+    },
+    {
+      "nome": "cors",
+      "estado": "mock_local_aprovado",
+      "criterio": "Confirmar OPTIONS e CORS de origem oficial em ambiente implantado"
+    },
+    {
+      "nome": "segredos",
+      "estado": "pendente",
+      "criterio": "Verificar somente variaveis publicaveis no cliente e ausencia de logs/retornos sensiveis"
+    },
+    {
+      "nome": "revogacao",
+      "estado": "pendente",
+      "criterio": "Testar usuario removido, papel administrativo revogado e token expirado"
+    },
+    {
+      "nome": "endpoint_real",
+      "estado": "pendente",
+      "criterio": "Executar requisicoes HTTP 401,403,200 apenas em homologacao autorizada"
+    }
+  ],
+  "seguranca": {
+    "deploy_autorizado": false,
+    "merge_autorizado": false,
+    "publicacao_autorizada": false,
+    "gravacao_supabase_autorizada": false,
+    "homologacao_real": false
+  },
+  "observacao": "Testes simulados nao demonstram autenticacao ou bloqueio efetivo no gateway da plataforma."
+}
