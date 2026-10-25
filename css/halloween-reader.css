@@ -1,0 +1,22 @@
+/* Edição especial Halloween, isolada ao arquivo Ronald O'Bryan. */
+body.as-halloween-reader{--as-h-ink:#e8d8bd;--as-h-orange:#ca7335;--as-h-gold:#b89868;background:#100e0d!important}
+body.as-halloween-reader .garimpo-intro{display:none!important}
+body.as-halloween-reader .garimpo-main{background:radial-gradient(ellipse at 50% 0%,#372016 0%,#1a1412 30%,#100e0d 75%)!important;color:var(--as-h-ink)}
+body.as-halloween-reader .daily-case-detail{max-width:1060px;padding-top:26px}
+body.as-halloween-reader .daily-case-detail>.archive-back{display:inline-block;color:var(--as-h-gold)!important;font-size:.84rem;text-decoration:none;margin-bottom:24px}
+body.as-halloween-reader .daily-reader{background:linear-gradient(180deg,rgba(53,31,22,.5),rgba(14,12,12,.75) 380px)!important;border:1px solid rgba(183,120,67,.23);border-radius:6px;padding:clamp(20px,4vw,55px)!important;box-shadow:0 35px 90px #0009}
+body.as-halloween-reader .daily-reader>header{padding-top:15px;text-align:center}
+body.as-halloween-reader .daily-reader>header:before{content:"ARQUIVO SOMBRIO  /  ESPECIAL HALLOWEEN 2026  /  NOITE 01";display:block;font:600 .67rem/1.7 system-ui,sans-serif;letter-spacing:.15em;color:var(--as-h-orange);margin-bottom:21px}
+body.as-halloween-reader .daily-reader>header small{color:var(--as-h-gold)!important;letter-spacing:.13em}
+body.as-halloween-reader .daily-reader>header h1{font:500 clamp(2rem,5vw,3.6rem)/1.16 Georgia,serif!important;color:#e6b17b!important;max-width:800px;margin:16px auto!important;text-wrap:balance}
+body.as-halloween-reader .daily-reader>header p{color:#c5b39d!important}
+body.as-halloween-reader .daily-reader-cover{display:block;margin:28px auto 35px!important;max-height:490px;object-fit:contain;filter:grayscale(100%) sepia(18%);border:1px solid #6b4833;box-shadow:0 16px 40px #0008}
+body.as-halloween-reader .daily-reader-lead{font:italic 1.18rem/1.85 Georgia,serif!important;color:#e6c5a1!important;max-width:700px;margin:22px auto 35px!important;border-left:2px solid var(--as-h-orange);padding-left:22px}
+body.as-halloween-reader .daily-reader-text{max-width:735px;margin:0 auto 45px!important;color:var(--as-h-ink)!important;font:400 clamp(1.02rem,1.4vw,1.12rem)/1.95 Georgia,serif!important;letter-spacing:.002em}
+body.as-halloween-reader .daily-reader-text p{font:inherit!important;line-height:1.95!important;color:inherit!important;margin:0 0 1.4em!important}
+body.as-halloween-reader .daily-reader-text p:first-child:first-letter{float:left;font:3.8em/.8 Georgia,serif;color:var(--as-h-orange);padding:8px 10px 0 0}
+body.as-halloween-reader .daily-reader-documental,body.as-halloween-reader .daily-reader-sources,body.as-halloween-reader .daily-reader-gallery{border-top:1px solid #73523a!important;margin-top:35px!important}
+body.as-halloween-reader .daily-reader-section-head h2{color:#d99a5e!important;font-family:Georgia,serif!important}
+body.as-halloween-reader .daily-reader-sources a{color:#e1ad76!important}
+body.as-halloween-reader a:focus-visible{outline:2px solid #e7af68;outline-offset:3px}
+@media(max-width:600px){body.as-halloween-reader .daily-case-detail{padding:12px 10px 36px!important}body.as-halloween-reader .daily-reader{padding:20px 17px!important}body.as-halloween-reader .daily-reader-text{font-size:1rem!important;line-height:1.85!important}body.as-halloween-reader .daily-reader-lead{font-size:1.06rem!important}body.as-halloween-reader .daily-reader>header:before{font-size:.57rem;letter-spacing:.09em}}
