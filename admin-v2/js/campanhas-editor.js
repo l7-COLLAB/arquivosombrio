@@ -25,6 +25,37 @@ try{
  $('preview-mobile').addEventListener('click',()=>{mobileMode=!mobileMode;preview()});
  $('local-image').addEventListener('change',e=>{const file=e.target.files?.[0];if(localPreviewUrl)URL.revokeObjectURL(localPreviewUrl);localPreviewUrl=null;if(file){if(!['image/webp','image/png','image/jpeg'].includes(file.type)||file.size>6*1024*1024){say('A imagem deve ser JPG, PNG ou WebP e ter até 6 MB.',true);return;}localPreviewUrl=URL.createObjectURL(file)}preview()});
  async function uploadMedia(destination){try{const file=$('local-image').files?.[0];if(!file)throw Error('Selecione uma imagem antes de enviar.');if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>6291456)throw Error('Aceitos JPG, PNG ou WebP com até 6 MB.');readForm();const auth=await adminClient.auth.getUser();if(auth.error||!auth.data?.user)throw Error('Sessão administrativa expirada.');const c=data.campaigns[Number($('campaign').value)];const suffix=file.type==='image/webp'?'webp':file.type==='image/png'?'png':'jpg';const filename=c.slug+'/'+Date.now().toString(36)+'-'+(destination==='hero'?'hero':'card')+'.'+suffix;const result=await adminClient.storage.from('campaign-images').upload(filename,file,{contentType:file.type,upsert:false,cacheControl:'3600'});if(result.error)throw result.error;const publicUrl=adminClient.storage.from('campaign-images').getPublicUrl(filename).data.publicUrl;if(destination==='hero')$('hero-image').value=publicUrl;else $('card-image').value=publicUrl;preview();say('Imagem enviada com sucesso. Salve o rascunho ou publique a campanha para aplicar.')}catch(e){say('Upload não realizado: '+e.message,true)}}
+
+ $('bulk-upload').addEventListener('click',async()=>{
+ const report=$('bulk-report'),files=[...$('bulk-images').files||[]];if(!files.length){report.textContent='Selecione as capas extraídas do ZIP.';return}
+ const button=$('bulk-upload');button.disabled=true;let saved=0;const failures=[];
+ try{
+ const auth=await adminClient.auth.getUser();if(auth.error||!auth.data?.user)throw Error('Sessão administrativa expirada.');
+ const known=new Map(data.campaigns.map(c=>[c.theme,c]));
+ const matched=[];
+ for(const file of files){
+  const name=file.name.toLowerCase(),m=name.match(/^capa-([a-z0-9-]+)\.(webp|png|jpe?g)$/);
+  if(!m||!known.has(m[1])){failures.push(file.name+': nome sem campanha correspondente');continue}
+  if(!['image/webp','image/jpeg','image/png'].includes(file.type)||file.size>6291456){failures.push(file.name+': formato ou tamanho inválido');continue}
+  matched.push({file,c:known.get(m[1]),ext:m[2]==='jpeg'?'jpg':m[2]});
+ }
+ if(matched.length===0)throw Error('Nenhuma capa reconhecida. Extraia primeiro a pasta assets/especiais do ZIP.');
+ if(!confirm('Importar '+matched.length+' capas para o Storage e salvar seus rascunhos? Nenhuma campanha será publicada.'))return;
+ for(const {file,c,ext} of matched){
+  try{
+   const path=c.slug+'/capa-'+c.theme+'-'+Date.now().toString(36)+'.'+ext;
+   const uploaded=await adminClient.storage.from('campaign-images').upload(path,file,{contentType:file.type,upsert:false,cacheControl:'3600'});
+   if(uploaded.error)throw uploaded.error;
+   const image=adminClient.storage.from('campaign-images').getPublicUrl(path).data.publicUrl;
+   const copy={...c,cardImage:image};
+   const savedRow=await adminClient.from('editorial_campaigns').upsert({id:c.id,payload:copy,updated_by:auth.data.user.id,updated_at:new Date().toISOString()},{onConflict:'id'});
+   if(savedRow.error)throw savedRow.error;
+   Object.assign(c,copy);saved++;report.textContent='Capas salvas: '+saved+' de '+matched.length+'. Nenhuma campanha foi publicada.';
+  }catch(e){failures.push(file.name+': '+e.message)}
+ }
+ render();report.textContent='Importação encerrada: '+saved+' capa(s) em rascunho.'+(failures.length?' Pendências: '+failures.join('; '):'');
+ }catch(e){report.textContent='Importação não concluída: '+e.message}finally{button.disabled=false}
+ });
  $('upload-hero').addEventListener('click',()=>uploadMedia('hero'));
  $('upload-card').addEventListener('click',()=>uploadMedia('card'));
  function dateToIso(value){if(!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(value))throw Error('Informe data e hora válidas.');const milliseconds=new Date(value+':00-03:00').getTime();if(!Number.isFinite(milliseconds))throw Error('Data inválida.');return new Date(milliseconds).toISOString()}
