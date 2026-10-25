@@ -18,8 +18,10 @@ async function start(){
    const box=document.createElement("article"),heading=document.createElement("h2");
    heading.textContent="Caso "+String(item.id_caso)+" · evento "+String(item.indice);box.append(heading);
    field(box,"Original",item.original);field(box,"Candidata",item.proposta);
-   const link=document.createElement("a");link.textContent="Consultar fonte";link.href=item.fonte;link.target="_blank";link.rel="noopener noreferrer";
-   if(!/^https:\/\//.test(link.href))throw new Error("Fonte inválida");box.append(link);root.append(box);
+   if(typeof item.fonte!=="string"||!/^https:\/\/[^\s]+$/i.test(item.fonte))throw new Error("Fonte inválida");
+   let sourceUrl;try{sourceUrl=new URL(item.fonte);}catch{throw new Error("Fonte inválida");}
+   if(sourceUrl.protocol!=="https:"||!sourceUrl.hostname||sourceUrl.username||sourceUrl.password)throw new Error("Fonte inválida");
+   const link=document.createElement("a");link.textContent="Consultar fonte";link.href=sourceUrl.href;link.target="_blank";link.rel="noopener noreferrer";box.append(link);root.append(box);
   }
   status.textContent="Consulta somente leitura. Nenhuma decisão foi aprovada.";
  }catch(e){fail(e?.message||"Consulta indisponível");}
