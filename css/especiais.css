@@ -218,3 +218,9 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 .season-home[style*="--admin-season-hero"] .season-hero-art{display:none}
 .season-home[style*="--admin-season-hero"] .season-home-grid{grid-template-columns:1fr}
 .season-campaign-card[style*="--admin-season-card"] .season-card-art{border-right-color:var(--sa)}
+
+/* Contextualização histórica e cultural das campanhas */
+.season-introduction{margin:30px 0 35px;padding:clamp(20px,4vw,34px);border:1px solid color-mix(in srgb,var(--sa) 45%,transparent);background:linear-gradient(135deg,rgba(13,11,10,.94),rgba(31,22,18,.84));border-radius:8px}
+.season-introduction h2{font-family:Cinzel,Georgia,serif;margin:0 0 18px!important}
+.season-introduction p{max-width:80ch;margin:0 0 16px!important;line-height:1.85!important}
+.season-introduction p:last-child{margin-bottom:0!important}
