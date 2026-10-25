@@ -224,3 +224,9 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 .season-introduction h2{font-family:Cinzel,Georgia,serif;margin:0 0 18px!important}
 .season-introduction p{max-width:80ch;margin:0 0 16px!important;line-height:1.85!important}
 .season-introduction p:last-child{margin-bottom:0!important}
+
+/* Introdução resumida para telas pequenas e desktop */
+.season-introduction:not(.is-expanded) p:not(:first-of-type){display:none!important}
+.season-introduction-toggle{margin-top:12px;padding:7px 0;border:0;background:none;color:var(--sa);font:600 .82rem system-ui;cursor:pointer}
+.season-introduction-toggle:after{content:'⌄';display:inline-block;margin-left:8px;transition:transform .2s}
+.season-introduction.is-expanded .season-introduction-toggle:after{transform:rotate(180deg)}
