@@ -295,6 +295,12 @@
       </div>`;
     if(ctx.type==="dossie"&&target.classList?.contains("case-reader-toolbar")) { const inner=target.querySelector(".case-reader-toolbar-inner"); if(inner) inner.insertBefore(box,inner.querySelector(".case-reader-actions")); else target.appendChild(box); } else target.insertAdjacentElement("afterend",box);
 
+    // Não exibir controles antes de confirmar áudio aprovado no servidor.
+    box.hidden=true;
+    fetch(FN_URL,{method:"POST",headers:{"Content-Type":"application/json",apikey:KEY},body:JSON.stringify({...ctx,action:"availability"})})
+      .then(r=>r.ok?r.json():{available:false})
+      .then(result=>{if(result?.available===true&&box.isConnected)box.hidden=false})
+      .catch(()=>{box.hidden=true});
     const button=box.querySelector(".public-narration-main");
     const action=box.querySelector(".public-narration-action i");
     const progress=box.querySelector(".public-narration-progress");
