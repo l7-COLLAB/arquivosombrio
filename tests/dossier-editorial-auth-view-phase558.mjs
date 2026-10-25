@@ -16,4 +16,12 @@ assert.match(view,/read_only/);
 assert.doesNotMatch(view,/\.insert\(|\.upsert\(|\.update\(|\.delete\(/);
 assert.doesNotMatch(page,/Thomas Mosser|Dana Chandler/);
 assert.match(endpoint,/auth\.getUser\(token\)/);
+
+// Evitar que links relativos sejam resolvidos como HTTPS do proprio dominio.
+assert.match(view,/typeof item\.fonte!=="string"/);
+assert.match(view,/new URL\(item\.fonte\)/);
+assert.match(view,/sourceUrl\.protocol!=="https:"/);
+assert.match(view,/sourceUrl\.username\|\|sourceUrl\.password/);
+assert.ok(view.indexOf("new URL(item.fonte)")<view.indexOf("link.href=sourceUrl.href"));
+assert.doesNotMatch(view,/link\.href=item\.fonte/);
 console.log("Fase 5.58: fluxo autenticado preparado; sem deploy e sem teste real de acesso.");
