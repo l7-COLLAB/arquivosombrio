@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "stage": "6.3",
+  "status": "draft",
+  "baseUrl": "https://arquivosombrio.net.br",
+  "routingStrategy": "path-prefix",
+  "productionRoutesEnabled": false,
+  "defaultLocale": "pt-BR",
+  "locales": [
+    {
+      "code": "pt-BR",
+      "label": "Português (Brasil)",
+      "nativeName": "Português (Brasil)",
+      "region": "BR",
+      "previewPath": "/preview-internacional/?lang=pt-BR",
+      "plannedPath": "/",
+      "status": "existing-production-site",
+      "approvedForInternationalLaunch": false
+    },
+    {
+      "code": "en-US",
+      "label": "English (United States)",
+      "nativeName": "English (United States)",
+      "region": "US",
+      "previewPath": "/preview-internacional/?lang=en-US",
+      "plannedPath": "/en/",
+      "status": "pilot-unreviewed",
+      "approvedForInternationalLaunch": false
+    },
+    {
+      "code": "es-ES",
+      "label": "Español (España)",
+      "nativeName": "Español (España)",
+      "region": "ES",
+      "previewPath": "/preview-internacional/?lang=es-ES",
+      "plannedPath": "/es/",
+      "status": "pilot-unreviewed",
+      "approvedForInternationalLaunch": false
+    },
+    {
+      "code": "fr-FR",
+      "label": "Français (France)",
+      "nativeName": "Français (France)",
+      "region": "FR",
+      "previewPath": "/preview-internacional/?lang=fr-FR",
+      "plannedPath": "/fr/",
+      "status": "pilot-unreviewed",
+      "approvedForInternationalLaunch": false
+    }
+  ],
+  "releaseGates": [
+    "Confirm original agreed countries and locales",
+    "Editorial review by proficient speakers",
+    "Translate navigation and full destination content",
+    "Verify URLs work directly and return HTTP 200",
+    "Verify language-specific title description canonical and structured data",
+    "Implement reciprocal hreflang only among genuinely equivalent published pages",
+    "Check legal policies, image licenses and local cultural context",
+    "Run accessibility, responsive and link tests"
+  ],
+  "notes": "Planned international routes are documentation only. Pilot preview remains noindex and is not access-controlled."
+}
