@@ -5,15 +5,17 @@
 const url="https://iuhotznurbyujzbyhizf.supabase.co";
 const key="sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj";
 const sources=[
- {id:"dossies",name:"Dossiês",table:"Casos",columns:"id,titulo,resumo,categoria,slug,created_at,status_publicacao",path:"caso.html",date:"created_at"},
- {id:"garimpo",name:"Garimpo Sombrio",table:"casos_diarios",columns:"id,titulo,resumo,categoria,created_at,status_publicacao",path:"garimpo.html",date:"created_at"},
- {id:"pericia",name:"Perícia Forense",table:"pericias",columns:"id,titulo,resumo,categoria,created_at,status_publicacao",path:"pericia.html",date:"created_at",hash:"#forense"},
- {id:"lendas",name:"Lendas",table:"lendas",columns:"id,titulo,resumo,categoria,origem,created_at,status_publicacao",path:"lendas.html",date:"created_at"},
- {id:"creepypastas",name:"Creepypastas",table:"creepypastas",columns:"id,titulo,resumo,categoria,origem,created_at,status_publicacao",path:"creepypastas.html",date:"created_at"}
+ {id:"dossies",name:"Dossiês",table:"Casos",columns:"id,titulo,resumo,categoria,slug,created_at,status_publicacao,intensidade_conteudo,avisos_conteudo",path:"caso.html",date:"created_at"},
+ {id:"garimpo",name:"Garimpo Sombrio",table:"casos_diarios",columns:"id,titulo,resumo,categoria,created_at,status_publicacao,intensidade_conteudo,avisos_conteudo",path:"garimpo.html",date:"created_at"},
+ {id:"pericia",name:"Perícia Forense",table:"pericias",columns:"id,titulo,resumo,categoria,created_at,status_publicacao,intensidade_conteudo,avisos_conteudo",path:"pericia.html",date:"created_at",hash:"#forense"},
+ {id:"lendas",name:"Lendas",table:"lendas",columns:"id,titulo,resumo,categoria,origem,created_at,status_publicacao,intensidade_conteudo,avisos_conteudo",path:"lendas.html",date:"created_at"},
+ {id:"creepypastas",name:"Creepypastas",table:"creepypastas",columns:"id,titulo,resumo,categoria,origem,created_at,status_publicacao,intensidade_conteudo,avisos_conteudo",path:"creepypastas.html",date:"created_at"}
 ];
 const $=id=>document.getElementById(id);
 const normalize=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
-const state={loaded:false,rows:[],errors:[],category:"all",order:"relevance"};
+const state={loaded:false,rows:[],errors:[],category:"all",order:"relevance",intensity:"all"};
+const LEVELS={leve:"Leve",moderado:"Moderado",pesado:"Pesado",restrito:"Restrito"};
+function level(item){const s=String(item.intensidade_conteudo||"").toLowerCase();return Object.hasOwn(LEVELS,s)?s:"unclassified";}
 const HISTORY_ENABLED="as_search_history_enabled_v1";
 const HISTORY_KEY="as_search_history_v1";
 function storageGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
@@ -107,6 +109,8 @@ function card(item){
  const a=make("a","as-result-card");
  a.href=src.path+"?id="+encodeURIComponent(String(item.id))+(src.hash||"");
  a.append(make("span","as-result-category",item.categoria||src.name));
+ const l=level(item);a.append(make("span","as-result-intensity",l==="unclassified"?"Intensidade não classificada":"Intensidade: "+LEVELS[l]));
+ if(Array.isArray(item.avisos_conteudo)&&item.avisos_conteudo.length){const aviso=make("span","as-result-warning","Avisos: "+item.avisos_conteudo.slice(0,4).join(", "));a.append(aviso);}
  a.append(make("h4","as-result-title",item.titulo));
  if(item.resumo)a.append(make("p","as-result-summary",item.resumo));
  const foot=make("span","as-result-action","Consultar arquivo →");
@@ -119,7 +123,7 @@ function updateURL(q){
 function render(){
  const q=$("as-search-input").value.trim().slice(0,120);
  const terms=normalize(q).split(/\s+/).filter(Boolean);
- const result=state.rows.filter(x=>(state.category==="all"||x._source.id===state.category)&&hit(x,terms))
+ const result=state.rows.filter(x=>(state.category==="all"||x._source.id===state.category)&&(state.intensity==="all"||level(x)===state.intensity)&&hit(x,terms))
  .sort((a,b)=>sorter(a,b,terms));
  const holder=$("as-search-sections");holder.replaceChildren();
  $("as-results-count").textContent=result.length+" registro"+(result.length===1?"":"s")+" encontrado"+(result.length===1?"":"s");
@@ -193,6 +197,8 @@ function setCategory(value){
 async function init(){
  const params=new URLSearchParams(location.search);
  const initial=(params.get("q")||"").slice(0,120);
+ const intensitySelect=$("as-search-intensity");
+ if(intensitySelect)intensitySelect.addEventListener("change",()=>{state.intensity=intensitySelect.value;render();});
  $("as-search-input").value=initial;
  $("as-search-order").addEventListener("change",e=>{state.order=e.target.value;render();});
  $("as-search-save-history").addEventListener("change",e=>{
