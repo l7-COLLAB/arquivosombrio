@@ -16,13 +16,15 @@
           "date": "2026-10-25",
           "title": "Ronald O’Bryan",
           "published": true,
-          "url": "/garimpo.html?id=53"
+          "url": "/garimpo.html?id=53",
+          "caseId": 53
         },
         {
           "date": "2026-10-26",
           "title": "Martha Moxley",
           "published": false,
-          "url": null
+          "url": null,
+          "caseId": 54
         },
         {
           "date": "2026-10-27",
