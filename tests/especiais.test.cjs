@@ -38,4 +38,7 @@ assert.equal(halloween.days.length,7,'O especial de Halloween deve conter sete n
 assert.ok(halloween.days.every((d,i)=>d.date===`2026-10-${String(25+i).padStart(2,'0')}`),'Datas de Halloween fora de ordem');
 assert.equal(halloween.days[0].title,'Ronald O’Bryan');
 assert.equal(halloween.days[1].title,'Martha Moxley');
+assert.equal(halloween.days[0].caseId,53);
+assert.equal(halloween.days[1].caseId,54);
+assert.ok(new Set(halloween.days.filter(d=>d.caseId).map(d=>d.caseId)).size===halloween.days.filter(d=>d.caseId).length,'ID de caso repetido na campanha');
 console.log('Manifesto, períodos, banners e bloqueios básicos: OK');
