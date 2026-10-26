@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="theme-color" content="#080706">
+<title>Internacionalização · Admin V2 · Arquivo Sombrio</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#080706;color:#e8ddd0;font:15px/1.5 system-ui,Arial,sans-serif}
+main{max-width:1120px;padding:28px 18px 65px;margin:auto}.eyebrow{color:#c18c67;font-size:11px;letter-spacing:.13em;text-transform:uppercase}
+h1{font:600 clamp(30px,5vw,46px)/1.1 Georgia,serif;margin:10px 0}h2{font:600 20px/1.3 Georgia,serif}p{color:#afa294}
+a{color:#e3c6aa}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #e5b188;outline-offset:3px}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;margin:23px 0}.toolbar>label{display:grid;gap:6px;color:#bdb0a1;font-size:12px}
+input,select,button{min-height:40px;padding:8px 12px;background:#211914;border:1px solid #624b3c;color:#f2e8da;border-radius:4px;font:inherit}
+button{cursor:pointer}button[disabled]{opacity:.5;cursor:not-allowed}.notice{border:1px solid #745137;padding:14px 16px;background:#1c1410}
+#status{font-size:13px;min-height:30px}ul.results{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.results li{border:1px solid #342820;background:#100d0b;padding:16px}
+.results strong{display:block;font-size:17px}.meta{font:12px/1.6 ui-monospace,monospace;color:#b29e8e}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.grid div{border:1px solid #3b3027;padding:9px;font-size:12px;color:#c0b0a1}
+@media(max-width:660px){.grid{grid-template-columns:1fr}.toolbar>label{width:100%}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<div class="eyebrow">Arquivo Sombrio · Admin V2 · Fase 6.7</div>
+<h1>Traduções internacionais</h1>
+<p>Consulta administrativa do acervo brasileiro. As traduções ainda não estão habilitadas para salvamento ou publicação.</p>
+<p><a href="../index.html">Voltar ao Admin V2</a></p>
+<div id="status" role="status" aria-live="polite">Verificando acesso…</div>
+<section id="panel" hidden>
+<div class="notice"><strong>Modo de preparação.</strong> Nenhum botão desta página cria traduções, altera casos ou publica conteúdo. A tabela internacional ainda depende de migração validada.</div>
+<div class="toolbar">
+<label for="type">Acervo<select id="type"><option value="Casos">Dossiês</option><option value="casos_diarios">Garimpo Sombrio</option></select></label>
+<label for="search">Buscar título<input id="search" type="search" placeholder="Pesquisar nos resultados carregados"></label>
+<button id="refresh" type="button">Atualizar lista</button>
+</div>
+<h2>Arquivos de origem</h2>
+<ul id="results" class="results"></ul>
+<p id="empty" hidden>Nenhum registro encontrado.</p>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
+<script src="../legacy/js/admin-auth.js?v=security-1"></script>
+<script>
+(function(){
+'use strict';
+var panel=document.getElementById('panel'),status=document.getElementById('status');
+var results=document.getElementById('results'),type=document.getElementById('type');
+var search=document.getElementById('search'),empty=document.getElementById('empty');
+var client=null,records=[],requestSerial=0;
+function setStatus(text){status.textContent=text}
+function makeElement(tag,text,cls){var el=document.createElement(tag);if(cls)el.className=cls;el.textContent=text;return el}
+function render(){
+ var q=search.value.trim().toLocaleLowerCase('pt-BR');
+ var selected=records.filter(function(r){return String(r.titulo||'').toLocaleLowerCase('pt-BR').includes(q)});
+ results.textContent='';empty.hidden=selected.length!==0;
+ selected.forEach(function(r){
+  var li=document.createElement('li');
+  li.appendChild(makeElement('strong',r.titulo||'Sem título'));
+  li.appendChild(makeElement('div','ID original: '+r.id+' · '+(r.categoria||type.options[type.selectedIndex].text)+' · '+(r.status_publicacao||'Status não informado'),'meta'));
+  var grid=makeElement('div','','grid');
+  ['en-US','es-ES','fr-FR'].forEach(function(code){
+   grid.appendChild(makeElement('div',code+' · Tradução não verificada'));
+  });
+  li.appendChild(grid);results.appendChild(li);
+ });
+}
+async function load(){
+ var thisRequest=++requestSerial;
+ setStatus('Consultando o acervo com as permissões administrativas…');
+ records=[];render();
+ var table=type.value;
+ var res=await client.from(table).select('id,titulo,categoria,status_publicacao').order('id',{ascending:false}).limit(100);
+ if(thisRequest!==requestSerial)return;
+ if(res.error){setStatus('Consulta indisponível: '+res.error.message);return}
+ records=res.data||[];setStatus(records.length+' registros consultados (máximo 100 por vez). Dados de tradução não disponíveis nesta fase.');
+ render();
+}
+async function start(){
+ try{
+  if(typeof obterSessaoAdminIsolada!=='function')throw Error('Autenticação administrativa não carregou.');
+  var sessao=await obterSessaoAdminIsolada();
+  var verifiedAt=Number(sessionStorage.getItem('arquivo-admin-verified-at')||0);
+  var verifiedUser=sessionStorage.getItem('arquivo-admin-verified-user')||'';
+  if(!sessao||!verifiedAt||Date.now()-verifiedAt>=30*60*1000||verifiedUser!==String(sessao.user.id)){
+   location.replace('../../admin.html?session=verificacao&next=adm');return;
+  }
+  client=obterClienteAdminIsolado();
+  var user=await client.auth.getUser();
+  if(user.error||user.data?.user?.app_metadata?.role!=='admin')throw Error('Sessão administrativa inválida.');
+  panel.hidden=false;await load();
+ }catch(error){setStatus('Acesso indisponível: '+String(error.message||error))}
+}
+type.addEventListener('change',load);
+search.addEventListener('input',render);
+document.getElementById('refresh').addEventListener('click',load);
+start();
+})();
+</script>
+</body>
+</html>
