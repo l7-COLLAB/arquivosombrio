@@ -12699,7 +12699,8 @@ async function carregarGarimpoPublico() {
         const cliente = await obterClienteSupabase();
         let consulta = cliente
             .from("casos_diarios")
-            .select("*")
+            // A vitrine usa somente metadados; o texto integral e anexos são buscados apenas na leitura.
+            .select(id ? "*" : "id,titulo,resumo,imagem_capa,categoria,local,data_caso,status_caso,acompanhamento_status,publicado_em,created_at")
             .eq("status_publicacao", "publicado");
 
         if (id) {
