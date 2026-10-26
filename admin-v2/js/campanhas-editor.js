@@ -50,10 +50,17 @@ try{
    const copy={...c,cardImage:image};
    const savedRow=await adminClient.from('editorial_campaigns').upsert({id:c.id,payload:copy,updated_by:auth.data.user.id,updated_at:new Date().toISOString()},{onConflict:'id'});
    if(savedRow.error)throw savedRow.error;
-   Object.assign(c,copy);saved++;report.textContent='Capas salvas: '+saved+' de '+matched.length+'. Nenhuma campanha foi publicada.';
+   Object.assign(c,copy);saved++;
+   // Sincronização opcional com GitHub via função segura (sem token no navegador).
+   try{
+    const synced=await adminClient.functions.invoke('campaign-cover-github-sync',{body:{theme:c.theme,storagePath:path}});
+    if(synced.error||!synced.data?.ok)throw Error(synced.data?.error||synced.error?.message||'GitHub indisponível');
+    report.textContent='Capas salvas: '+saved+' de '+matched.length+'. GitHub: '+synced.data.path;
+   }catch(gitError){failures.push(file.name+': imagem salva na V2, mas NÃO enviada ao GitHub ('+gitError.message+')');}
+
   }catch(e){failures.push(file.name+': '+e.message)}
  }
- render();report.textContent='Importação encerrada: '+saved+' capa(s) em rascunho.'+(failures.length?' Pendências: '+failures.join('; '):'');
+ render();report.textContent='Importação finalizada: '+saved+' capa(s) no Supabase. Verifique abaixo as pendências de sincronização com o GitHub.'+(failures.length?' Pendências: '+failures.join('; '):'');
  }catch(e){report.textContent='Importação não concluída: '+e.message}finally{button.disabled=false}
  });
  $('upload-hero').addEventListener('click',()=>uploadMedia('hero'));
