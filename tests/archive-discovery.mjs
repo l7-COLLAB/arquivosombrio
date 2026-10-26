@@ -45,7 +45,7 @@ for(const page of ['garimpo.html','lendas.html','creepypastas.html']){
 }
 test('Garimpo atualiza a versão do script após otimização da lista',()=>{
  const html=read('garimpo.html');
- assert.match(html,/js\\/script\\.js\\?v=garimpo-list-perf-20261026/);
+ assert.ok(html.includes('js/script.js?v=garimpo-list-perf-20261026'));
 });
 test('busca possui foco visível e layout para celular',()=>{
  const css=read('css/discovery-filters-20261018.css');
