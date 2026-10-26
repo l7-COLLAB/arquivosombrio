@@ -21,6 +21,16 @@ test('Garimpo combina palavra-chave, local e categoria com filtro de acompanhame
  assert.match(fn,/Limpar filtros/);
  assert.match(main,/\.eq\("status_publicacao", "publicado"\)/);
 });
+test('Garimpo busca apenas metadados na lista e preserva dados completos no detalhe',()=>{
+ const start=main.indexOf('async function carregarGarimpoPublico()');
+ const end=main.indexOf('async function carregarRelacionadosGarimpo(',start);
+ assert.ok(start>=0&&end>start);
+ const fn=main.slice(start,end);
+ assert.match(fn,/\.select\(id \? "\*" : "id,titulo,resumo,imagem_capa,categoria,local,data_caso,status_caso,acompanhamento_status,publicado_em,created_at"\)/);
+ assert.match(fn,/if \(id\) \{/);
+ assert.match(fn,/consulta = consulta\.eq\("id", id\)\.limit\(1\)/);
+ assert.match(fn,/instalarFiltrosAcompanhamentoGarimpo\(grade, casos\)/);
+});
 test('Lendas e Creepypastas combinam origem com pesquisa e contagem',()=>{
  assert.match(literary,/origins=\[\.\.\.new Set/);
  assert.match(literary,/Filtrar por origem/);
