@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Nosifer&display=swap');
 /* Sistema visual de campanhas | Arquivo Sombrio */
 .season-home,.season-page,.season-detail{--sp:#eadcc9;--sm:#bfae9e;--sa:#df9855;--sb:#20140f;--sg:#604134;color:var(--sp);background:radial-gradient(ellipse at 85% 15%,color-mix(in srgb,var(--sa) 18%,transparent),transparent 50%),linear-gradient(145deg,var(--sb),#090909 77%);font-family:Georgia,serif}
 .season-theme-halloween{--sa:#de8c47;--sb:#24140d;--sg:#8a492a}.season-theme-finados{--sa:#a6b1a7;--sb:#161c1b;--sg:#4e6561}.season-theme-natal{--sa:#c6aa71;--sb:#211014;--sg:#70443d}.season-theme-reveillon{--sa:#d6bc81;--sb:#171827;--sg:#645c80}
@@ -233,7 +234,7 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 
 /* Halloween 2026 — títulos inspirados na referência Spooky (efeito escorrido).
    Nosifer é uma alternativa web, não a fonte proprietária do cartaz Canva. */
-@import url('https://fonts.googleapis.com/css2?family=Nosifer&display=swap');
+
 .season-theme-halloween{--campaign-font:'Nosifer'}
 .season-theme-halloween.season-home h2,
 .season-theme-halloween.season-page h1,
