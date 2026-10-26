@@ -34,6 +34,27 @@ root.querySelectorAll('.season-campaign-card').forEach((card,i)=>applyVisual(car
 function detail(date){const root=el('season-detail');if(!root)return;const slug=root.dataset.slug||new URLSearchParams(location.search).get('slug')||decodeURIComponent(location.pathname.split('/').filter(Boolean).pop()||'');const e=campaigns.find(c=>c.slug===slug);if(!e){root.innerHTML='<h1>Especial não encontrado</h1><p><a href="'+BASE+'">Voltar ao catálogo</a></p>';return}
 document.title=e.title+' | Arquivo Sombrio';root.className='season-detail '+themeClass(e);applyVisual(root,e);
 root.onclick=event=>{const b=event.target.closest('.season-introduction-toggle');if(!b)return;const box=b.closest('.season-introduction');const expanded=box.classList.toggle('is-expanded');b.textContent=expanded?'Ler menos':'Ler mais';b.setAttribute('aria-expanded',String(expanded))};root.innerHTML='<div class="season-detail-hero">'+tag(e)+'<div class="season-detail-art" aria-hidden="true">'+esc(e.motif||'✦')+'</div><h1>'+esc(e.title)+'</h1><p>'+esc(e.subtitle)+'</p><span class="season-progress">'+esc(state(e,date))+' · '+(e.tentative?'Datas a confirmar':esc(e.start.split('-').reverse().join('/')+' a '+e.end.split('-').reverse().join('/')))+'</span>'+(e.theme==='halloween'?countdown(e):'')+'</div>'+(e.theme==='halloween'?'':countdown(e))+'<section class="season-introduction"><h2>Antes de abrir os arquivos</h2>'+(e.introduction?e.introduction.split(/\n\n/).map(par=>'<p>'+esc(par)+'</p>').join(''):'<p>'+esc(e.description||e.subtitle)+'</p>')+'<button type="button" class="season-introduction-toggle" aria-expanded="false">Ler mais</button></section><section class="season-description"><h2>Sobre esta coleção</h2><p>'+esc(e.description||e.subtitle)+'</p></section><section class="season-library"><h2>Arquivos da campanha</h2><p>Os artigos aparecem somente após a publicação editorial e a respectiva data de liberação.</p><ol class="season-entry-grid">'+entry(e,date)+'</ol></section><footer class="season-detail-footer"><a href="'+BASE+'">← Todas as campanhas</a><a href="/dossies.html">Dossiês</a><a href="/garimpo.html">Garimpo Sombrio</a></footer>'}
+async function synchronizeHalloweenCases(){
+ const halloween=campaigns.find(e=>e.id==='halloween-2026');if(!halloween)return;
+ const mapping=new Map((halloween.days||[]).filter(d=>Number.isSafeInteger(d.caseId)&&d.caseId>0).map(d=>[d.caseId,d]));
+ // O banco só permite SELECT público para casos efetivamente publicados.
+ const ids=[...mapping.keys()];if(!ids.length)return;
+ const endpoint='https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/casos_diarios?select=id,titulo,status_publicacao&id=in.('+ids.join(',')+')&status_publicacao=eq.publicado';
+ try{
+  const response=await fetch(endpoint,{headers:{apikey:'sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj'},cache:'no-store'});
+  if(!response.ok)throw Error('Consulta de publicação indisponível');
+  const rows=await response.json();if(!Array.isArray(rows))throw Error('Resposta inválida');
+  const verified=new Set(rows.filter(r=>r.status_publicacao==='publicado').map(r=>Number(r.id)));
+  for(const [id,d] of mapping){
+   // Nunca usar o indicador editorial antigo como prova de publicação.
+   d.published=verified.has(id);
+   d.url=d.published?'/garimpo.html?id='+id:null;
+  }
+ }catch(err){console.warn('Confirmação dos arquivos de Halloween indisponível',err?.message);
+  // Falha fechada: bloquear links não confirmados nesta consulta.
+  for(const d of mapping.values()){d.published=false;d.url=null}
+ }
+}
 async function init(){try{const res=await fetch('/data/especiais.json',{cache:'no-store'});if(!res.ok)throw Error('Manifesto indisponível');const json=await res.json();const BASE_PUBLIC='https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/published_campaigns?select=id,payload';
 const PUBLIC_KEY='sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj';
 let combined=json.campaigns||[];
