@@ -12712,7 +12712,13 @@ async function carregarGarimpoPublico() {
         const { data, error } = await consulta;
         if (error) throw error;
 
-        const casos = Array.isArray(data) ? data : [];
+        // Garimpo é exclusivo de casos editoriais, não de artigos de Perícia Forense.
+        // Preserva a classificação original e evita exibir registros técnicos nesta coleção.
+        const categoriaEhPericia = valor => {
+            const categoria = String(valor || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toUpperCase();
+            return categoria === "PERICIA" || categoria.startsWith("PERICIA ");
+        };
+        const casos = (Array.isArray(data) ? data : []).filter(item => !categoriaEhPericia(item.categoria));
 
         if (feed) {
             feed.innerHTML = casos.length
