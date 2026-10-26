@@ -25,14 +25,9 @@
 </head>
 <body>
 <main>
-  <div class="eyebrow" id="stage">Arquivo Sombrio · Prévia editorial · Fase 6.2</div>
+  <div class="eyebrow" id="stage">Arquivo Sombrio · Prévia editorial · Fase 6.3</div>
   <div class="controls"><label for="locale">Idioma / Language / Langue</label>
-    <select id="locale" aria-label="Selecionar idioma de prévia">
-      <option value="pt-BR">Português (Brasil)</option>
-      <option value="en-US">English (US)</option>
-      <option value="es-ES">Español (España)</option>
-      <option value="fr-FR">Français (France)</option>
-    </select>
+    <select id="locale" aria-label="Selecionar idioma de prévia" disabled><option value="pt-BR">Português (Brasil)</option></select>
   </div>
   <article aria-live="polite" aria-atomic="true">
     <h1 id="title">Arquivo Sombrio</h1>
@@ -56,27 +51,64 @@
     'fr-FR':{notice:'Aperçu éditorial uniquement. Les pages internationales et leurs dossiers ne sont pas encore publiés.',back:'Consulter le site principal (portugais du Brésil)',error:'Impossible de charger les introductions.'}
   };
   var requested=new URLSearchParams(location.search).get('lang');
-  var locale=Object.prototype.hasOwnProperty.call(copy,requested)?requested:'pt-BR';
+  var config=null;
+  var locale='pt-BR';
   var entries=null;
+  function supported(code){return config&&config.locales.some(function(x){return x.code===code})}
+  function resolve(code){return supported(code)?code:config.defaultLocale}
   function render(){
-    var t=copy[locale];document.documentElement.lang=locale;select.value=locale;
-    notice.textContent=t.notice;back.textContent=t.back;
-    if(!entries){document.getElementById('intro').textContent=t.error;return}
-    var d=entries[locale]||entries['pt-BR'];
-    ['title','tagline','intro'].forEach(function(key){document.getElementById(key).textContent=d[key]||''});
+    if(!config)return;
+    var t=copy[locale]||copy['pt-BR'];
+    document.documentElement.lang=locale;
+    select.value=locale;
+    select.setAttribute('aria-label','Idioma / Language / Langue');
+    notice.textContent=t.notice;
+    back.textContent=t.back;
+    if(!entries||!entries[locale]||!['title','tagline','intro'].every(function(k){return typeof entries[locale][k]==='string'&&entries[locale][k].trim()})){
+      document.getElementById('title').textContent='Arquivo Sombrio';
+      document.getElementById('tagline').textContent='';
+      document.getElementById('intro').textContent=t.error;
+      document.title='Arquivo Sombrio | Preview';
+      return;
+    }
+    var d=entries[locale];
+    ['title','tagline','intro'].forEach(function(key){document.getElementById(key).textContent=d[key]});
     document.title=d.title+' | '+d.tagline;
   }
-  select.addEventListener('change',function(){
-    locale=select.value;
-    var url=new URL(location.href);url.searchParams.set('lang',locale);
-    history.replaceState(null,'',url.pathname+url.search+url.hash);
+  function choose(code,push){
+    locale=resolve(code);
+    if(push){
+      var url=new URL(location.href);
+      url.searchParams.set('lang',locale);
+      history.pushState(null,'',url.pathname+url.search+url.hash);
+    }
+    render();
+  }
+  select.addEventListener('change',function(){choose(select.value,true)});
+  window.addEventListener('popstate',function(){if(config)choose(new URLSearchParams(location.search).get('lang'),false)});
+  Promise.all([
+    fetch('../i18n/config-internacional.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw Error('Config HTTP '+r.status);return r.json()}),
+    fetch('../i18n/introducoes.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw Error('Intro HTTP '+r.status);return r.json()})
+  ]).then(function(results){
+    var settings=results[0],introductions=results[1];
+    if(!settings||settings.status!=='draft'||!Array.isArray(settings.locales)||!settings.locales.length||!settings.defaultLocale)throw Error('Invalid config');
+    if(!introductions||introductions.status!=='draft'||!introductions.locales)throw Error('Invalid introductions');
+    config=settings;
+    entries=introductions.locales;
+    select.textContent='';
+    settings.locales.forEach(function(l){
+      if(!copy[l.code])return;
+      var option=document.createElement('option');
+      option.value=l.code;option.textContent=l.nativeName;
+      select.appendChild(option);
+    });
+    select.disabled=false;
+    choose(requested,false);
+  }).catch(function(){
+    config={defaultLocale:'pt-BR',locales:[{code:'pt-BR',nativeName:'Português (Brasil)'}]};
+    locale='pt-BR';
     render();
   });
-  fetch('../i18n/introducoes.json',{cache:'no-store'})
-    .then(function(r){if(!r.ok)throw Error('HTTP '+r.status);return r.json()})
-    .then(function(data){if(!data||data.status!=='draft'||!data.locales)throw Error('Invalid data');entries=data.locales;render()})
-    .catch(function(){render()});
-  render();
 })();
 </script>
 </body>
