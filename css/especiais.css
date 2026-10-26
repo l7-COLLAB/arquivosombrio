@@ -254,3 +254,17 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
  .season-theme-halloween.season-page h1{font-size:clamp(1.5rem,6.2vw,2.65rem)}
  .season-theme-halloween .season-entry strong{font-size:1rem;line-height:1.55}
 }
+
+/* Halloween 2026 — painel editorial substitui o contador encerrado. */
+.season-night-panel{margin:20px 0 0;padding:21px 24px;max-width:570px;background:linear-gradient(125deg,rgba(17,11,11,.95),rgba(39,19,13,.9));border:1px solid #bf7b4b88;box-shadow:0 12px 35px #0007;color:#f4e5d5}
+.season-night-kicker{display:block;color:#e3af79;font:700 .68rem/1.4 system-ui,sans-serif;letter-spacing:.17em}
+.season-night-panel h2{font:600 clamp(1.35rem,3vw,1.9rem)/1.25 Georgia,serif!important;color:#f5c18a!important;text-shadow:0 3px 12px #000b;margin:12px 0!important;letter-spacing:normal!important}
+.season-night-panel p{margin:0 0 16px!important;font:400 .92rem/1.6 Georgia,serif!important;color:#eedccc!important}
+.season-night-actions{display:flex;flex-wrap:wrap;align-items:center;gap:13px}
+.season-night-time{font:.74rem/1.5 system-ui,sans-serif;color:#d9b797}
+.season-detail.season-theme-halloween .season-detail-hero .season-night-panel{width:min(100%,560px)}
+@media(max-width:750px){.season-night-panel{padding:16px}}
+/* A mesma imagem não deve ser empilhada como duas camadas independentes. */
+.season-home.season-theme-halloween{background-image:linear-gradient(90deg,rgba(8,7,8,.83),rgba(8,7,8,.2)),url('/assets/especiais/halloween_fundo_cinematografico.webp')!important;background-size:cover,cover!important}
+.season-home.season-theme-halloween .season-hero-art{display:none!important}
+.season-home.season-theme-halloween .season-home-grid{grid-template-columns:minmax(0,1fr)!important}
