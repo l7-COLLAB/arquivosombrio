@@ -40,7 +40,7 @@ try{
   matched.push({file,c:known.get(m[1]),ext:m[2]==='jpeg'?'jpg':m[2]});
  }
  if(matched.length===0)throw Error('Nenhuma capa reconhecida. Extraia primeiro a pasta assets/especiais do ZIP.');
- if(!confirm('Importar '+matched.length+' capas para o Storage e salvar seus rascunhos? Nenhuma campanha será publicada.'))return;
+ if(!confirm('Importar '+matched.length+' capas para o Storage e salvar seus rascunhos? As capas serão aplicadas ao catálogo público, respeitando as datas e o estado dos arquivos.'))return;
  for(const {file,c,ext} of matched){
   try{
    const path=c.slug+'/capa-'+c.theme+'-'+Date.now().toString(36)+'.'+ext;
@@ -50,6 +50,15 @@ try{
    const copy={...c,cardImage:image};
    const savedRow=await adminClient.from('editorial_campaigns').upsert({id:c.id,payload:copy,updated_by:auth.data.user.id,updated_at:new Date().toISOString()},{onConflict:'id'});
    if(savedRow.error)throw savedRow.error;
+   // Publica apenas a nova capa: preserva a programação e demais dados editoriais.
+   const existing=await adminClient.from('published_campaigns').select('payload,publish_at').eq('id',c.id).maybeSingle();
+   if(existing.error)throw existing.error;
+   const publicPayload=existing.data?.payload&&typeof existing.data.payload==='object'?{...existing.data.payload,cardImage:image}:{...c,cardImage:image};
+   const updated=await adminClient.from('published_campaigns').upsert({
+    id:c.id,payload:publicPayload,updated_by:auth.data.user.id,
+    updated_at:new Date().toISOString(),publish_at:existing.data?.publish_at||new Date().toISOString()
+   },{onConflict:'id'});
+   if(updated.error)throw updated.error;
    Object.assign(c,copy);saved++;
    // Sincronização opcional com GitHub via função segura (sem token no navegador).
    try{
