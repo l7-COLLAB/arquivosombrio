@@ -1,0 +1,5 @@
+/* Avisos editoriais, sem bloqueio de leitura. */
+.as-reader-sensitivity{background:#211c18;color:#eee1cf;border:1px solid #826b52;border-left:3px solid #ac8660;border-radius:5px;max-width:920px;margin:20px auto;padding:15px 18px;font-family:system-ui,sans-serif;line-height:1.5;font-size:.91rem}
+.as-reader-sensitivity strong{display:block;font-size:.91rem;letter-spacing:.035em;margin-bottom:6px}
+.as-reader-sensitivity p{margin:5px 0}.as-reader-sensitivity small{display:block;opacity:.8;margin-top:7px;font-size:.76rem}
+@media(max-width:650px){.as-reader-sensitivity{margin:14px 12px;padding:12px 14px;font-size:.86rem}}
