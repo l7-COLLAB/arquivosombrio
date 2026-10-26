@@ -230,3 +230,26 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 .season-introduction-toggle{margin-top:12px;padding:7px 0;border:0;background:none;color:var(--sa);font:600 .82rem system-ui;cursor:pointer}
 .season-introduction-toggle:after{content:'⌄';display:inline-block;margin-left:8px;transition:transform .2s}
 .season-introduction.is-expanded .season-introduction-toggle:after{transform:rotate(180deg)}
+
+/* Halloween 2026 — títulos inspirados na referência Spooky (efeito escorrido).
+   Nosifer é uma alternativa web, não a fonte proprietária do cartaz Canva. */
+@import url('https://fonts.googleapis.com/css2?family=Nosifer&display=swap');
+.season-theme-halloween{--campaign-font:'Nosifer'}
+.season-theme-halloween.season-home h2,
+.season-theme-halloween.season-page h1,
+.season-theme-halloween .season-card-body h2,
+.season-theme-halloween .season-entry strong,
+.season-theme-halloween .season-detail-hero h1{
+  font-family:'Nosifer',Georgia,serif!important;
+  font-weight:400;
+  line-height:1.48;
+  letter-spacing:.005em;
+  overflow-wrap:anywhere;
+  color:#f5c18a;
+  text-shadow:0 3px 2px #160704,0 6px 16px #000c;
+}
+@media(max-width:750px){
+ .season-theme-halloween.season-home h2,
+ .season-theme-halloween.season-page h1{font-size:clamp(1.5rem,6.2vw,2.65rem)}
+ .season-theme-halloween .season-entry strong{font-size:1rem;line-height:1.55}
+}
