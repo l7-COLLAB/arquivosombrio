@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Classificação de Conteúdo | Admin V2</title>
+<style>
+*{box-sizing:border-box}body{background:#0c0b0a;color:#e9ddca;font:15px/1.55 system-ui;margin:0}
+main{width:min(860px,100%);margin:auto;padding:24px}h1{font:500 31px Georgia,serif}h2{font:500 23px Georgia,serif}
+a{color:#e0c69a}label{display:block;font-weight:600;margin:16px 0 6px}select,input,button{font:inherit;color:inherit;background:#231f1b;border:1px solid #978267;border-radius:4px;padding:11px;width:100%}
+button{cursor:pointer;width:auto;margin:16px 0}button:disabled{opacity:.45;cursor:not-allowed}
+fieldset{border:1px solid #6c5b48;border-radius:5px;padding:12px 18px;margin:18px 0}legend{font-weight:600;padding:0 6px}
+fieldset label{display:flex;align-items:flex-start;gap:10px;font-weight:400;margin:8px 0}
+fieldset input{width:auto;margin-top:5px}section{border:1px solid #60513e;padding:20px;margin:20px 0;background:#16130f}
+p.note{color:#c6bba9;font-size:13px}#status{white-space:pre-wrap}#app[hidden]{display:none}
+</style><link rel="stylesheet" href="./css/admin-controls.css?v=20261006-2">
+</head>
+<body><main>
+<p><a href="index.html">← Administração V2</a></p>
+<h1>Classificação editorial de conteúdo</h1>
+<p>Indique a intensidade e os avisos específicos após revisar o conteúdo. A classificação é informativa e não altera a publicação.</p>
+<p id="status" role="status" aria-live="polite">Verificando acesso...</p>
+<div id="app" hidden>
+<label for="category">Editoria</label>
+<select id="category"><option value="Casos">Dossiês</option><option value="casos_diarios">Garimpo Sombrio</option><option value="pericias">Perícia Forense</option><option value="lendas">Lendas</option><option value="creepypastas">Creepypastas</option></select>
+<label for="item">Arquivo</label><select id="item"><option value="">Carregando...</option></select>
+<label for="level">Intensidade</label><select id="level">
+<option value="">Ainda não classificado</option><option value="leve">Leve</option><option value="moderado">Moderado</option><option value="pesado">Pesado</option><option value="restrito">Restrito</option>
+</select>
+<fieldset id="warnings"><legend>Avisos temáticos</legend>
+<label><input type="checkbox" value="violencia"> Violência</label>
+<label><input type="checkbox" value="violencia_grafica"> Descrições ou imagens gráficas</label>
+<label><input type="checkbox" value="violencia_sexual"> Violência sexual</label>
+<label><input type="checkbox" value="violencia_infantil"> Violência contra crianças</label>
+<label><input type="checkbox" value="suicidio"> Suicídio ou automutilação</label>
+<label><input type="checkbox" value="abuso_psicologico"> Abuso psicológico</label>
+<label><input type="checkbox" value="morte"> Morte e luto</label>
+</fieldset>
+<p class="note">Sem marcação significa que não há aviso selecionado, não necessariamente que o tema foi revisado. Não atribua classificações sem ler o arquivo.</p>
+<button id="save" type="button">Salvar classificação</button>
+</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
+<script src="./legacy/js/admin-auth.js?v=security-1"></script>
+<script src="./js/content-sensitivity.js?v=1"></script>
+</body></html>
