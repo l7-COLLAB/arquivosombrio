@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta id="localized-description" name="description" content="Prévia editorial do Arquivo Sombrio.">
   <meta name="theme-color" content="#080706">
   <title>Arquivo Sombrio | Prévia internacional</title>
   <style>
@@ -21,12 +22,16 @@
     a{color:var(--paper);text-decoration:underline;text-underline-offset:4px}
     a:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
     .foot{color:var(--muted);margin-top:55px;letter-spacing:normal}
+    .category-list{display:flex;gap:10px;flex-wrap:wrap;list-style:none;padding:0;margin:16px 0 28px}
+    .category-list li{border:1px solid var(--line);border-radius:3px;padding:7px 12px;color:var(--muted);font:13px/1.45 system-ui,sans-serif}
+    .categories-heading{font:600 13px/1.6 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin:35px 0 8px}
+    .availability{font:13px/1.6 system-ui,sans-serif;color:var(--muted);margin:0 0 32px}
   </style>
 </head>
 <body>
 <main>
-  <div class="eyebrow" id="stage">Arquivo Sombrio · Prévia editorial · Fase 6.3</div>
-  <div class="controls"><label for="locale">Idioma / Language / Langue</label>
+  <div class="eyebrow" id="stage">Arquivo Sombrio · Prévia editorial · Fase 6.4</div>
+  <div class="controls"><label id="language-label" for="locale">Idioma</label>
     <select id="locale" aria-label="Selecionar idioma de prévia" disabled><option value="pt-BR">Português (Brasil)</option></select>
   </div>
   <article aria-live="polite" aria-atomic="true">
@@ -35,6 +40,7 @@
     <hr class="rule">
     <p class="intro" id="intro">Carregando prévia editorial…</p>
   </article>
+  <nav aria-labelledby="categories-heading"><h3 class="categories-heading" id="categories-heading">Seções do arquivo</h3><ul class="category-list" id="category-list"></ul><p id="availability" class="availability"></p></nav>
   <p id="notice" class="notice">Esta é uma prévia interna. As páginas internacionais e seus dossiês ainda não estão publicados.</p>
   <p class="foot"><a href="../index.html" id="back">Voltar ao site em português (Brasil)</a></p>
 </main>
@@ -44,36 +50,40 @@
   var select=document.getElementById('locale');
   var notice=document.getElementById('notice');
   var back=document.getElementById('back');
-  var copy={
-    'pt-BR':{notice:'Esta é uma prévia editorial. As páginas internacionais e seus dossiês ainda não estão publicados.',back:'Voltar ao site em português (Brasil)',error:'Não foi possível carregar as introduções.'},
-    'en-US':{notice:'Editorial preview only. International pages and case files are not yet published.',back:'Visit the main website (Portuguese — Brazil)',error:'Unable to load the introductions.'},
-    'es-ES':{notice:'Vista previa editorial. Las páginas internacionales y sus expedientes todavía no están publicados.',back:'Visitar el sitio principal (portugués de Brasil)',error:'No se han podido cargar las introducciones.'},
-    'fr-FR':{notice:'Aperçu éditorial uniquement. Les pages internationales et leurs dossiers ne sont pas encore publiés.',back:'Consulter le site principal (portugais du Brésil)',error:'Impossible de charger les introductions.'}
-  };
   var requested=new URLSearchParams(location.search).get('lang');
   var config=null;
   var locale='pt-BR';
   var entries=null;
+  var ui=null;
+  var desc=document.getElementById("localized-description");
   function supported(code){return config&&config.locales.some(function(x){return x.code===code})}
   function resolve(code){return supported(code)?code:config.defaultLocale}
   function render(){
     if(!config)return;
-    var t=copy[locale]||copy['pt-BR'];
+    var t=ui&&ui[locale]||ui&&ui['pt-BR'];
+    if(!t)return;
     document.documentElement.lang=locale;
     select.value=locale;
-    select.setAttribute('aria-label','Idioma / Language / Langue');
+    document.getElementById('stage').textContent='Arquivo Sombrio · '+t.stage;
+    document.getElementById('language-label').textContent=t.language;
+    select.setAttribute('aria-label',t.language);
+    document.getElementById('categories-heading').textContent=t.sections;
+    document.getElementById('availability').textContent=t.unavailable;
+    var list=document.getElementById('category-list');list.textContent='';
+    t.categories.forEach(function(name){var li=document.createElement('li');li.textContent=name;list.appendChild(li)});
+    desc.setAttribute('content',t.description);
     notice.textContent=t.notice;
     back.textContent=t.back;
     if(!entries||!entries[locale]||!['title','tagline','intro'].every(function(k){return typeof entries[locale][k]==='string'&&entries[locale][k].trim()})){
       document.getElementById('title').textContent='Arquivo Sombrio';
       document.getElementById('tagline').textContent='';
       document.getElementById('intro').textContent=t.error;
-      document.title='Arquivo Sombrio | Preview';
+      document.title='Arquivo Sombrio | '+t.preview;
       return;
     }
     var d=entries[locale];
     ['title','tagline','intro'].forEach(function(key){document.getElementById(key).textContent=d[key]});
-    document.title=d.title+' | '+d.tagline;
+    document.title=d.title+' | '+d.tagline+' | '+t.preview;
   }
   function choose(code,push){
     locale=resolve(code);
@@ -88,16 +98,19 @@
   window.addEventListener('popstate',function(){if(config)choose(new URLSearchParams(location.search).get('lang'),false)});
   Promise.all([
     fetch('../i18n/config-internacional.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw Error('Config HTTP '+r.status);return r.json()}),
-    fetch('../i18n/introducoes.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw Error('Intro HTTP '+r.status);return r.json()})
+    fetch('../i18n/introducoes.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw Error('Intro HTTP '+r.status);return r.json()}),
+    fetch('../i18n/interface-internacional.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw Error('UI HTTP '+r.status);return r.json()})
   ]).then(function(results){
-    var settings=results[0],introductions=results[1];
+    var settings=results[0],introductions=results[1],interfaceTexts=results[2];
     if(!settings||settings.status!=='draft'||!Array.isArray(settings.locales)||!settings.locales.length||!settings.defaultLocale)throw Error('Invalid config');
     if(!introductions||introductions.status!=='draft'||!introductions.locales)throw Error('Invalid introductions');
+    if(!interfaceTexts||interfaceTexts.status!=='draft'||!interfaceTexts.locales)throw Error('Invalid interface text');
     config=settings;
     entries=introductions.locales;
+    ui=interfaceTexts.locales;
     select.textContent='';
     settings.locales.forEach(function(l){
-      if(!copy[l.code])return;
+      if(!ui[l.code])return;
       var option=document.createElement('option');
       option.value=l.code;option.textContent=l.nativeName;
       select.appendChild(option);
@@ -106,6 +119,7 @@
     choose(requested,false);
   }).catch(function(){
     config={defaultLocale:'pt-BR',locales:[{code:'pt-BR',nativeName:'Português (Brasil)'}]};
+    ui={'pt-BR':{stage:'Prévia editorial · Fase 6.4',language:'Idioma',sections:'Seções do arquivo',categories:[],notice:'Prévia indisponível.',back:'Voltar ao site em português (Brasil)',error:'Não foi possível carregar a prévia.',description:'Prévia editorial indisponível.',unavailable:'',preview:'Prévia indisponível'}};
     locale='pt-BR';
     render();
   });
