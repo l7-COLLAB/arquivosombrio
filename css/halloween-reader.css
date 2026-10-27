@@ -63,3 +63,13 @@ body.as-halloween-reader .daily-reader-cover{width:auto;max-width:100%;height:au
 /* A barra de stories do Garimpo não pertence à campanha. */
 body.as-halloween-reader .garimpo-stories-bar,
 body.as-halloween-reader [data-garimpo-stories-bar]{display:none!important}
+
+body.as-halloween-reader[data-halloween-night="03"] .daily-reader>header:before{content:"ARQUIVO SOMBRIO  /  ESPECIAL HALLOWEEN 2026  /  NOITE 03"}
+
+body.as-halloween-reader[data-halloween-night="04"] .daily-reader>header:before{content:"ARQUIVO SOMBRIO  /  ESPECIAL HALLOWEEN 2026  /  NOITE 04"}
+
+body.as-halloween-reader[data-halloween-night="05"] .daily-reader>header:before{content:"ARQUIVO SOMBRIO  /  ESPECIAL HALLOWEEN 2026  /  NOITE 05"}
+
+body.as-halloween-reader[data-halloween-night="06"] .daily-reader>header:before{content:"ARQUIVO SOMBRIO  /  ESPECIAL HALLOWEEN 2026  /  NOITE 06"}
+
+body.as-halloween-reader[data-halloween-night="07"] .daily-reader>header:before{content:"ARQUIVO SOMBRIO  /  ESPECIAL HALLOWEEN 2026  /  NOITE 07"}
