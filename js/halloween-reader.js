@@ -9,7 +9,7 @@ const setSpecial=()=>{
  if(!reader)return;
  const titleText=(reader.querySelector(':scope>header h1')?.textContent||'').toLowerCase();
  const titles=['ronald o','martha moxley','chelsea bruck','shauna howe','duplo homicídio de napa','assassinatos de pasadena','luis andrés colmenares'];
- const index=titles.findIndex(s=>titleText.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').includes(s.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')));
+ const index=titles.findIndex(s=>titleText.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')));
  if(index<0)return;
  night=String(index+1).padStart(2,'0');date=dates[index];document.body.dataset.halloweenNight=night;
  reader.querySelectorAll('.daily-reader-timeline li').forEach(li=>{
