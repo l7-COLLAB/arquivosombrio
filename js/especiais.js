@@ -38,7 +38,7 @@ async function synchronizeHalloweenCases(){
  const halloween=campaigns.find(e=>e.id==='halloween-2026');if(!halloween)return;
  const mapping=new Map((halloween.days||[]).filter(d=>Number.isSafeInteger(d.caseId)&&d.caseId>0).map(d=>[d.caseId,d]));
  // O banco só permite SELECT público para casos efetivamente publicados.
- const ids=[...mapping.keys()];if(!ids.length)return;
+ const ids=[...mapping.keys()];
  const endpoint='https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/casos_diarios?select=id,titulo,status_publicacao&id=in.('+ids.join(',')+')&status_publicacao=eq.publicado';
  try{
   const response=await fetch(endpoint,{headers:{apikey:'sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj'},cache:'no-store'});
@@ -54,6 +54,23 @@ async function synchronizeHalloweenCases(){
   // Falha fechada: bloquear links não confirmados nesta consulta.
   for(const d of mapping.values()){d.published=false;d.url=null}
  }
+ // Arquivos das próximas noites entram automaticamente após cadastro como ESPECIAL HALLOWEEN
+ // e publicação editorial. Exige título não ambíguo para evitar vincular caso incorreto.
+ try{
+  const pending=(halloween.days||[]).filter(d=>!d.caseId);
+  if(pending.length){
+   const resp=await fetch('https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/casos_diarios?select=id,titulo,categoria,status_publicacao&status_publicacao=eq.publicado&categoria=eq.ESPECIAL%20HALLOWEEN',{headers:{apikey:'sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj'},cache:'no-store'});
+   if(resp.ok){
+    const rows=await resp.json();
+    const norm=s=>String(s||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    for(const d of pending){
+     const target=norm(d.title);
+     const found=Array.isArray(rows)?rows.filter(r=>norm(r.titulo)===target||norm(r.titulo).startsWith(target+' ')): [];
+     if(found.length===1){d.caseId=Number(found[0].id);d.published=true;d.url='/especiais/7-noites-de-horror-real/arquivo/?id='+d.caseId}
+    }
+   }
+  }
+ }catch(err){console.warn('Vinculação automática do Halloween indisponível',err?.message)}
 }
 async function init(){try{const res=await fetch('/data/especiais.json',{cache:'no-store'});if(!res.ok)throw Error('Manifesto indisponível');const json=await res.json();const BASE_PUBLIC='https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/published_campaigns?select=id,payload';
 const PUBLIC_KEY='sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj';
