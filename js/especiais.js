@@ -62,7 +62,7 @@ async function synchronizeHalloweenCases(){
    const resp=await fetch('https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/casos_diarios?select=id,titulo,categoria,status_publicacao&status_publicacao=eq.publicado&categoria=eq.ESPECIAL%20HALLOWEEN',{headers:{apikey:'sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj'},cache:'no-store'});
    if(resp.ok){
     const rows=await resp.json();
-    const norm=s=>String(s||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
     for(const d of pending){
      const target=norm(d.title);
      const found=Array.isArray(rows)?rows.filter(r=>norm(r.titulo)===target||norm(r.titulo).startsWith(target+' ')): [];
