@@ -12,7 +12,7 @@ a{color:#e3c6aa}a:focus-visible,button:focus-visible,input:focus-visible,select:
 .toolbar{display:flex;flex-wrap:wrap;gap:12px;margin:23px 0}.toolbar>label{display:grid;gap:6px;color:#bdb0a1;font-size:12px}
 input,select,button{min-height:40px;padding:8px 12px;background:#211914;border:1px solid #624b3c;color:#f2e8da;border-radius:4px;font:inherit}
 button{cursor:pointer}button[disabled]{opacity:.5;cursor:not-allowed}.notice{border:1px solid #745137;padding:14px 16px;background:#1c1410}
-#status{font-size:13px;min-height:30px}ul.results{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+#status{font-size:13px;min-height:30px}.editor{margin-top:24px;padding:20px;border:1px solid #594334;background:#120e0c}.editor label{display:grid;gap:6px;margin:12px 0;color:#c5b4a1}.editor textarea{width:100%;min-height:140px;padding:12px;background:#211914;border:1px solid #624b3c;color:#f2e8da;font:inherit}.editor input{width:100%}.editor-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}.editor small{color:#aa9280}ul.results{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .results li{border:1px solid #342820;background:#100d0b;padding:16px}
 .results strong{display:block;font-size:17px}.meta{font:12px/1.6 ui-monospace,monospace;color:#b29e8e}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
@@ -23,7 +23,7 @@ button{cursor:pointer}button[disabled]{opacity:.5;cursor:not-allowed}.notice{bor
 </head>
 <body>
 <main>
-<div class="eyebrow">Arquivo Sombrio · Admin V2 · Fase 6.7</div>
+<div class="eyebrow">Arquivo Sombrio · Admin V2 · Fase 6.9</div>
 <h1>Traduções internacionais</h1>
 <p>Consulta administrativa do acervo brasileiro. As traduções ainda não estão habilitadas para salvamento ou publicação.</p>
 <p><a href="../index.html">Voltar ao Admin V2</a></p>
@@ -38,6 +38,17 @@ button{cursor:pointer}button[disabled]{opacity:.5;cursor:not-allowed}.notice{bor
 <h2>Arquivos de origem</h2>
 <ul id="results" class="results"></ul>
 <p id="empty" hidden>Nenhum registro encontrado.</p>
+<section id="draft-editor" class="editor" hidden aria-label="Prévia de tradução">
+<h2>Prévia de rascunho internacional</h2>
+<p id="draft-origin"></p>
+<label for="draft-locale">Idioma<select id="draft-locale"><option value="en-US">Inglês (EUA)</option><option value="es-ES">Espanhol (Espanha)</option><option value="fr-FR">Francês (França)</option></select></label>
+<label for="draft-title">Título traduzido<input id="draft-title" maxlength="200"></label>
+<label for="draft-summary">Resumo traduzido<textarea id="draft-summary" maxlength="2000"></textarea></label>
+<label for="draft-body">Narrativa traduzida (prévia local)<textarea id="draft-body"></textarea></label>
+<label for="draft-sources">Fontes documentais (uma URL por linha)<textarea id="draft-sources"></textarea></label>
+<div class="editor-actions"><button type="button" id="preview-local">Conferir texto localmente</button><button type="button" disabled aria-disabled="true">Salvar no Supabase (indisponível)</button><button type="button" disabled aria-disabled="true">Enviar para revisão (indisponível)</button></div>
+<p id="draft-feedback" role="status" aria-live="polite"></p><small>Os campos não são enviados ao servidor nem armazenados. Trocar de arquivo descarta o conteúdo digitado.</small>
+</section>
 </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
@@ -48,7 +59,9 @@ button{cursor:pointer}button[disabled]{opacity:.5;cursor:not-allowed}.notice{bor
 var panel=document.getElementById('panel'),status=document.getElementById('status');
 var results=document.getElementById('results'),type=document.getElementById('type');
 var search=document.getElementById('search'),empty=document.getElementById('empty');
-var client=null,records=[],requestSerial=0;
+var client=null,records=[],requestSerial=0,selectedRecord=null;
+var editor=document.getElementById('draft-editor');
+var editFeedback=document.getElementById('draft-feedback');
 function setStatus(text){status.textContent=text}
 function makeElement(tag,text,cls){var el=document.createElement(tag);if(cls)el.className=cls;el.textContent=text;return el}
 function render(){
@@ -63,13 +76,18 @@ function render(){
   ['en-US','es-ES','fr-FR'].forEach(function(code){
    grid.appendChild(makeElement('div',code+' · Tradução não verificada'));
   });
-  li.appendChild(grid);results.appendChild(li);
+  li.appendChild(grid);
+  var btn=makeElement('button','Preparar tradução (sem salvar)');btn.type='button';
+  btn.addEventListener('click',function(){selectedRecord=r;editor.hidden=false;document.getElementById('draft-origin').textContent='Origem: '+r.titulo+' · ID '+r.id+' · '+type.options[type.selectedIndex].text;
+   ['draft-title','draft-summary','draft-body','draft-sources'].forEach(function(id){document.getElementById(id).value=''});
+   editFeedback.textContent='Modo de prévia: nenhum conteúdo está salvo.';editor.scrollIntoView({behavior:'smooth',block:'start'});
+  });li.appendChild(btn);results.appendChild(li);
  });
 }
 async function load(){
  var thisRequest=++requestSerial;
  setStatus('Consultando o acervo com as permissões administrativas…');
- records=[];render();
+ records=[];selectedRecord=null;editor.hidden=true;render();
  var table=type.value;
  var res=await client.from(table).select('id,titulo,categoria,status_publicacao').order('id',{ascending:false}).limit(100);
  if(thisRequest!==requestSerial)return;
@@ -92,6 +110,16 @@ async function start(){
   panel.hidden=false;await load();
  }catch(error){setStatus('Acesso indisponível: '+String(error.message||error))}
 }
+document.getElementById('preview-local').addEventListener('click',function(){
+ if(!selectedRecord)return;
+ var title=document.getElementById('draft-title').value.trim();
+ var summary=document.getElementById('draft-summary').value.trim();
+ var body=document.getElementById('draft-body').value.trim();
+ var sources=document.getElementById('draft-sources').value.trim().split(/\\r?\\n/).map(function(x){return x.trim()}).filter(Boolean);
+ var validSources=sources.every(function(x){try{var url=new URL(x);return url.protocol==='https:'||url.protocol==='http:'}catch(_){return false}});
+ var issues=[];if(title.length<3)issues.push('título curto');if(summary.length<20)issues.push('resumo curto');if(!body)issues.push('narrativa vazia');if(!sources.length||!validSources)issues.push('fontes ausentes ou inválidas');
+ editFeedback.textContent=issues.length?'Pendências locais: '+issues.join('; ')+'.':'Prévia preenchida. Revisão factual, direitos, auditoria e gravação ainda não disponíveis.';
+});
 type.addEventListener('change',load);
 search.addEventListener('input',render);
 document.getElementById('refresh').addEventListener('click',load);
