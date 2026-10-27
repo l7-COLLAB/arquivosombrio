@@ -30,15 +30,15 @@
   function mountShare() {
     const path=location.pathname.toLowerCase();
     let anchor;
-    if (/novel\\.html$/.test(path)) {
+    if (/novel\.html$/.test(path)) {
       anchor=document.querySelector('.novel-top');
-    } else if (/caso\\.html$/.test(path)) {
+    } else if (/caso\.html$/.test(path)) {
       anchor=document.querySelector('#caso-titulo');
-    } else if (/garimpo\\.html$/.test(path)) {
+    } else if (/garimpo\.html$/.test(path)) {
       anchor=document.querySelector('.garimpo-edition-title h1');
-    } else if (/creepypastas\\.html$|lendas\\.html$/.test(path)) {
+    } else if (/creepypastas\.html$|lendas\.html$/.test(path)) {
       anchor=document.querySelector('.archive-literary-title');
-    } else if (/pericia\\.html$/.test(path)) {
+    } else if (/pericia\.html$/.test(path)) {
       anchor=document.querySelector('main h1, .hero h1, h1');
     } else {
       anchor=document.querySelector('main h1, .hero h1, h1, .main-header .header-content');
