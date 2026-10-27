@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const caseId=new URLSearchParams(location.search).get('id');
-if(!location.pathname.endsWith('/garimpo.html')||!['53','54'].includes(caseId))return;
+if(!['53','54'].includes(caseId)||!(location.pathname.endsWith('/garimpo.html')||location.pathname.includes('/7-noites-de-horror-real/arquivo/')))return;
 const date=caseId==='54'?'26':'25',night=caseId==='54'?'02':'01';
 document.body.classList.add('as-halloween-reader');
 document.body.dataset.halloweenNight=night;
