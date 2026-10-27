@@ -23,7 +23,7 @@ button{cursor:pointer}button[disabled]{opacity:.5;cursor:not-allowed}.notice{bor
 </head>
 <body>
 <main>
-<div class="eyebrow">Arquivo Sombrio · Admin V2 · Fase 6.9</div>
+<div class="eyebrow">Arquivo Sombrio · Admin V2 · Fase 6.10</div>
 <h1>Traduções internacionais</h1>
 <p>Consulta administrativa do acervo brasileiro. As traduções ainda não estão habilitadas para salvamento ou publicação.</p>
 <p><a href="../index.html">Voltar ao Admin V2</a></p>
@@ -40,14 +40,14 @@ button{cursor:pointer}button[disabled]{opacity:.5;cursor:not-allowed}.notice{bor
 <p id="empty" hidden>Nenhum registro encontrado.</p>
 <section id="draft-editor" class="editor" hidden aria-label="Prévia de tradução">
 <h2>Prévia de rascunho internacional</h2>
-<p id="draft-origin"></p>
+<p id="draft-origin"></p><p id="draft-revision" class="meta">Sem revisão persistida</p>
 <label for="draft-locale">Idioma<select id="draft-locale"><option value="en-US">Inglês (EUA)</option><option value="es-ES">Espanhol (Espanha)</option><option value="fr-FR">Francês (França)</option></select></label>
 <label for="draft-title">Título traduzido<input id="draft-title" maxlength="200"></label>
 <label for="draft-summary">Resumo traduzido<textarea id="draft-summary" maxlength="2000"></textarea></label>
 <label for="draft-body">Narrativa traduzida (prévia local)<textarea id="draft-body"></textarea></label>
 <label for="draft-sources">Fontes documentais (uma URL por linha)<textarea id="draft-sources"></textarea></label>
 <div class="editor-actions"><button type="button" id="preview-local">Conferir texto localmente</button><button type="button" disabled aria-disabled="true">Salvar no Supabase (indisponível)</button><button type="button" disabled aria-disabled="true">Enviar para revisão (indisponível)</button></div>
-<p id="draft-feedback" role="status" aria-live="polite"></p><small>Os campos não são enviados ao servidor nem armazenados. Trocar de arquivo descarta o conteúdo digitado.</small>
+<p id="draft-feedback" role="status" aria-live="polite"></p><small>Campos digitados não são salvos. Rascunhos existentes podem ser consultados somente se a tabela e a política RLS estiverem ativas.</small>
 </section>
 </section>
 </main>
@@ -62,6 +62,8 @@ var search=document.getElementById('search'),empty=document.getElementById('empt
 var client=null,records=[],requestSerial=0,selectedRecord=null;
 var editor=document.getElementById('draft-editor');
 var editFeedback=document.getElementById('draft-feedback');
+var draftSession=0,loadedRevision=0;
+var translationReadSupported=false;
 function setStatus(text){status.textContent=text}
 function makeElement(tag,text,cls){var el=document.createElement(tag);if(cls)el.className=cls;el.textContent=text;return el}
 function render(){
@@ -80,14 +82,16 @@ function render(){
   var btn=makeElement('button','Preparar tradução (sem salvar)');btn.type='button';
   btn.addEventListener('click',function(){selectedRecord=r;editor.hidden=false;document.getElementById('draft-origin').textContent='Origem: '+r.titulo+' · ID '+r.id+' · '+type.options[type.selectedIndex].text;
    ['draft-title','draft-summary','draft-body','draft-sources'].forEach(function(id){document.getElementById(id).value=''});
-   editFeedback.textContent='Modo de prévia: nenhum conteúdo está salvo.';editor.scrollIntoView({behavior:'smooth',block:'start'});
+   document.getElementById('draft-revision').textContent='Sem revisão persistida';
+   loadedRevision=0; editFeedback.textContent='Consultando estado da tradução…';
+   editor.scrollIntoView({behavior:'smooth',block:'start'});loadTranslation();
   });li.appendChild(btn);results.appendChild(li);
  });
 }
 async function load(){
  var thisRequest=++requestSerial;
  setStatus('Consultando o acervo com as permissões administrativas…');
- records=[];selectedRecord=null;editor.hidden=true;render();
+ records=[];selectedRecord=null;editor.hidden=true;draftSession++;render();
  var table=type.value;
  var res=await client.from(table).select('id,titulo,categoria,status_publicacao').order('id',{ascending:false}).limit(100);
  if(thisRequest!==requestSerial)return;
@@ -110,6 +114,41 @@ async function start(){
   panel.hidden=false;await load();
  }catch(error){setStatus('Acesso indisponível: '+String(error.message||error))}
 }
+
+async function loadTranslation(){
+ var current=++draftSession;
+ if(!selectedRecord||!client)return;
+ var sourceType=type.value==='Casos'?'dossie':'garimpo';
+ var sourceId=selectedRecord.id;
+ var locale=document.getElementById('draft-locale').value;
+ var idColumn=sourceType==='dossie'?'dossier_id':'daily_case_id';
+ // Apenas leitura com RLS. Se a tabela nao estiver implantada, permanece no modo offline.
+ var response=await client.from('international_content_versions')
+   .select('id,locale,revision,editorial_status,translated_title,translated_summary,body_blocks,translated_sources')
+   .eq('source_type',sourceType).eq(idColumn,sourceId).eq('locale',locale).maybeSingle();
+ if(current!==draftSession||!selectedRecord||selectedRecord.id!==sourceId||type.value!==(sourceType==='dossie'?'Casos':'casos_diarios'))return;
+ if(response.error){
+  translationReadSupported=false;
+  editFeedback.textContent='Prévia local: banco internacional ainda não habilitado ou consulta indisponível.';
+  document.getElementById('draft-revision').textContent='Sem revisão persistida';
+  return;
+ }
+ translationReadSupported=true;
+ var row=response.data;
+ if(!row){loadedRevision=0;editFeedback.textContent='Ainda não há rascunho salvo neste idioma.';document.getElementById('draft-revision').textContent='Novo rascunho · revisão esperada 0';return}
+ loadedRevision=row.revision;
+ document.getElementById('draft-revision').textContent='Registro existente · revisão '+row.revision+' · '+row.editorial_status;
+ document.getElementById('draft-title').value=row.translated_title||'';
+ document.getElementById('draft-summary').value=row.translated_summary||'';
+ document.getElementById('draft-body').value=Array.isArray(row.body_blocks)?row.body_blocks.map(function(b){return b.text||''}).join('\\n\\n'):'';
+ document.getElementById('draft-sources').value=Array.isArray(row.translated_sources)?row.translated_sources.map(function(e){return e.url||''}).filter(Boolean).join('\\n'):'';
+ editFeedback.textContent=row.editorial_status==='draft'?'Rascunho carregado somente para consulta/edição local. Salvamento bloqueado.':'Tradução em revisão: edição persistente bloqueada.';
+}
+document.getElementById('draft-locale').addEventListener('change',function(){
+ ['draft-title','draft-summary','draft-body','draft-sources'].forEach(function(id){document.getElementById(id).value=''});
+ if(selectedRecord){editFeedback.textContent='Consultando estado da tradução…';loadTranslation()}
+});
+
 document.getElementById('preview-local').addEventListener('click',function(){
  if(!selectedRecord)return;
  var title=document.getElementById('draft-title').value.trim();
