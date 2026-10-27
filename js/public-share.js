@@ -36,7 +36,25 @@
   function title(){return (document.querySelector('main h1,article h1,.case-title,.novel-title,h1')?.textContent||document.title||'Arquivo Sombrio').trim().replace(/\s+/g,' ').slice(0,150);}
   function sync(){const u=shareUrl(), message=title()+' — Arquivo Sombrio';widget.querySelector('[data-action="whatsapp"]').href='https://api.whatsapp.com/send?text='+encodeURIComponent(message+'\n'+u);widget.querySelector('[data-action="telegram"]').href='https://t.me/share/url?url='+encodeURIComponent(u)+'&text='+encodeURIComponent(message);widget.querySelector('[data-action="email"]').href='mailto:?subject='+encodeURIComponent(message)+'&body='+encodeURIComponent(u);}
   function close(){panel.hidden=true;trigger.setAttribute('aria-expanded','false');}
-  trigger.addEventListener('click',()=>{sync();panel.hidden=!panel.hidden;trigger.setAttribute('aria-expanded',String(!panel.hidden));status.textContent='';});
+  trigger.addEventListener('click',async()=>{
+    sync();
+    status.textContent='';
+    if (typeof navigator.share === 'function') {
+      close();
+      try {
+        await navigator.share({title:title(),text:'Leia no Arquivo Sombrio',url:shareUrl()});
+      } catch (e) {
+        if (e.name !== 'AbortError') {
+          panel.hidden=false;
+          trigger.setAttribute('aria-expanded','true');
+          status.textContent='O compartilhamento nativo falhou. Escolha outra opção.';
+        }
+      }
+      return;
+    }
+    panel.hidden=!panel.hidden;
+    trigger.setAttribute('aria-expanded',String(!panel.hidden));
+  });
   document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
   document.addEventListener('click',e=>{if(!widget.contains(e.target))close();});
   async function copy(){
