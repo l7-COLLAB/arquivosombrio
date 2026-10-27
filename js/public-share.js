@@ -4,10 +4,12 @@
   if (document.getElementById('arquivo-share-widget')) return;
   const style = document.createElement('style');
   style.textContent = `
-    #arquivo-share-widget{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:9000;font-family:Arial,sans-serif}
+    #arquivo-share-widget{position:relative;display:inline-flex;align-items:center;vertical-align:middle;z-index:30;font-family:inherit;margin:8px 0}
     #arquivo-share-widget button,#arquivo-share-widget a{font:inherit}
-    .as-share-trigger{display:flex;align-items:center;gap:8px;justify-content:center;background:#352720;color:#fff;border:1px solid #b99869;border-radius:40px;padding:12px 17px;box-shadow:0 6px 24px #0008;cursor:pointer;font-weight:700}
-    .as-share-panel{position:absolute;right:0;bottom:calc(100% + 12px);width:min(310px,calc(100vw - 32px));max-height:min(510px,75vh);overflow:auto;background:#191715;color:#f4eadb;border:1px solid #8a7153;border-radius:13px;padding:16px;box-shadow:0 18px 40px #0009}
+    .as-share-trigger{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:transparent;color:inherit;border:1px solid currentColor;border-radius:50%;cursor:pointer;opacity:.82;transition:opacity .15s,background .15s}
+    .as-share-trigger:hover{opacity:1;background:rgba(127,127,127,.12)}
+    .as-share-trigger svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .as-share-panel{position:absolute;right:0;top:calc(100% + 8px);width:min(310px,calc(100vw - 32px));max-height:min(510px,75vh);overflow:auto;background:#191715;color:#f4eadb;border:1px solid #8a7153;border-radius:13px;padding:16px;box-shadow:0 18px 40px #0009}
     .as-share-panel[hidden]{display:none}
     .as-share-panel h2{margin:0 0 10px;font-size:17px;color:#f4eadb}
     .as-share-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -15,14 +17,45 @@
     .as-share-options button:focus-visible,.as-share-trigger:focus-visible,.as-share-options a:focus-visible{outline:3px solid #d7aa65;outline-offset:2px}
     .as-share-note{font-size:12px;line-height:1.5;color:#cbbba8;margin:11px 0 0}
     .as-share-status{min-height:16px;margin-top:8px;font-size:12px;color:#f5d39a}
-    @media(max-width:600px){#arquivo-share-widget{right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px))}.as-share-trigger{padding:11px 14px}}
+    .as-share-anchor{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .as-share-anchor>h1,.as-share-anchor>.archive-literary-title{margin-right:0}
+    body.novels #arquivo-share-widget{margin-left:auto}
+    @media(max-width:600px){.as-share-trigger{width:32px;height:32px}.as-share-trigger svg{width:16px;height:16px}.as-share-panel{right:auto;left:0;max-width:calc(100vw - 32px)}}
     @media print{#arquivo-share-widget{display:none}}
   `;
   document.head.appendChild(style);
   const widget = document.createElement('div');
   widget.id = 'arquivo-share-widget';
-  widget.innerHTML = '<button type="button" class="as-share-trigger" aria-expanded="false" aria-controls="as-share-panel" aria-label="Compartilhar este conteúdo">↗ Compartilhar</button><section class="as-share-panel" id="as-share-panel" hidden aria-label="Opções de compartilhamento"><h2>Compartilhar arquivo</h2><div class="as-share-options"><button type="button" data-action="native">Pessoas e aplicativos</button><a data-action="whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp</a><a data-action="telegram" target="_blank" rel="noopener noreferrer">Telegram</a><button type="button" data-action="instagram">Instagram Stories</button><button type="button" data-action="copy">Copiar link</button><a data-action="email">E-mail</a></div><p class="as-share-note">Para Stories, copie o link e adicione-o ao sticker de link no Instagram. No celular, “Pessoas e aplicativos” abre as opções disponíveis no aparelho.</p><div class="as-share-status" role="status" aria-live="polite"></div></section>';
-  document.body.appendChild(widget);
+  widget.innerHTML = '<button type="button" class="as-share-trigger" aria-expanded="false" aria-controls="as-share-panel" aria-label="Compartilhar este conteúdo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7 8m5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button><section class="as-share-panel" id="as-share-panel" hidden aria-label="Opções de compartilhamento"><h2>Compartilhar arquivo</h2><div class="as-share-options"><button type="button" data-action="native">Pessoas e aplicativos</button><a data-action="whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp</a><a data-action="telegram" target="_blank" rel="noopener noreferrer">Telegram</a><button type="button" data-action="instagram">Instagram Stories</button><button type="button" data-action="copy">Copiar link</button><a data-action="email">E-mail</a></div><p class="as-share-note">Para Stories, copie o link e adicione-o ao sticker de link no Instagram. No celular, “Pessoas e aplicativos” abre as opções disponíveis no aparelho.</p><div class="as-share-status" role="status" aria-live="polite"></div></section>';
+  function mountShare() {
+    const path=location.pathname.toLowerCase();
+    let anchor;
+    if (/novel\.html$/.test(path)) {
+      anchor=document.querySelector('.novel-top');
+    } else if (/caso\.html$/.test(path)) {
+      anchor=document.querySelector('#caso-titulo');
+    } else if (/garimpo\.html$/.test(path)) {
+      anchor=document.querySelector('.garimpo-edition-title h1');
+    } else if (/creepypastas\.html$|lendas\.html$/.test(path)) {
+      anchor=document.querySelector('.archive-literary-title');
+    } else if (/pericia\.html$/.test(path)) {
+      anchor=document.querySelector('main h1, .hero h1, h1');
+    } else {
+      anchor=document.querySelector('main h1, .hero h1, h1, .main-header .header-content');
+    }
+    if (anchor && anchor.classList.contains('novel-top')) {anchor.appendChild(widget);return;}
+    if (anchor && anchor.tagName==='H1') {
+      const group=document.createElement('div');
+      group.className='as-share-anchor';
+      anchor.parentNode.insertBefore(group,anchor);
+      group.appendChild(anchor);
+      group.appendChild(widget);
+      return;
+    }
+    if (anchor) {anchor.appendChild(widget);return;}
+    document.body.insertBefore(widget,document.body.firstChild);
+  }
+  mountShare();
   const trigger=widget.querySelector('.as-share-trigger'), panel=widget.querySelector('.as-share-panel'), status=widget.querySelector('.as-share-status');
   const canonical=document.querySelector('link[rel="canonical"]');
   function shareUrl(){
