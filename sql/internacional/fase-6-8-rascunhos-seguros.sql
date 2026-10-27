@@ -14,8 +14,8 @@ create table if not exists public.international_content_versions (
  source_updated_at timestamptz not null,
  translated_title text not null default '',
  translated_summary text not null default '',
- body_blocks jsonb not null default '[]'::jsonb check (jsonb_typeof(body_blocks)='array'),
- translated_sources jsonb not null default '[]'::jsonb check (jsonb_typeof(translated_sources)='array'),
+ body_blocks jsonb not null default '[]'::jsonb check (pg_catalog.jsonb_typeof(body_blocks)='array'),
+ translated_sources jsonb not null default '[]'::jsonb check (pg_catalog.jsonb_typeof(translated_sources)='array'),
  translator_user_id uuid references auth.users(id),
  created_at timestamptz not null default now(),
  updated_at timestamptz not null default now(),
@@ -66,22 +66,27 @@ declare
  v_uid uuid;v_source_time timestamptz;v_record public.international_content_versions%rowtype;
 begin
  v_uid := auth.uid();
+ -- Exigir sessao ativa: um JWT ainda valido nao basta quando sessao foi revogada.
+ if v_uid is not null and not exists (
+   select 1 from auth.sessions ses where ses.id = nullif(auth.jwt()->>'session_id','')::uuid and ses.user_id=v_uid
+ ) then raise exception 'session invalid' using errcode='42501'; end if;
  if v_uid is null or not public.is_arquivo_sombrio_admin() then
    raise exception 'access denied' using errcode='42501';
  end if;
  if p_source_type not in ('dossie','garimpo') or p_locale not in ('en-US','es-ES','fr-FR')
  or p_source_id is null or p_source_id < 1
- or p_blocks is null or jsonb_typeof(p_blocks)<>'array'
- or p_sources is null or jsonb_typeof(p_sources)<>'array'
- or p_title is null or length(p_title)>200
- or p_summary is null or length(p_summary)>2000
+ or p_blocks is null or pg_catalog.jsonb_typeof(p_blocks)<>'array'
+ or p_sources is null or pg_catalog.jsonb_typeof(p_sources)<>'array'
+ or p_title is null or pg_catalog.length(p_title)>200
+ or p_summary is null or pg_catalog.length(p_summary)>2000
+ or pg_catalog.length(p_blocks::text)>250000 or pg_catalog.length(p_sources::text)>40000
  or p_expected_revision is null or p_expected_revision<0 then
    raise exception 'invalid draft' using errcode='22023';
  end if;
  if p_source_type='dossie' then
-  select updated_at into v_source_time from public."Casos" where id=p_source_id;
+  select updated_at into v_source_time from public."Casos" where id=p_source_id for share;
  else
-  select updated_at into v_source_time from public.casos_diarios where id=p_source_id;
+  select updated_at into v_source_time from public.casos_diarios where id=p_source_id for share;
  end if;
  if v_source_time is null then raise exception 'source not found' using errcode='P0002'; end if;
  -- Serializar criacoes do mesmo par origem/idioma.
@@ -95,6 +100,7 @@ begin
   for update;
  if not found then
   if p_expected_revision<>0 then raise exception 'revision conflict' using errcode='40001';end if;
+  -- Confirmar que fonte continua sem alteracoes antes de criar rascunho.
   insert into public.international_content_versions(
     source_type,dossier_id,daily_case_id,locale,source_updated_at,translated_title,
     translated_summary,body_blocks,translated_sources,translator_user_id
@@ -130,6 +136,9 @@ create or replace function public.international_submit_review(
 declare v_uid uuid;v_record public.international_content_versions%rowtype;v_current timestamptz;
 begin
  v_uid:=auth.uid();
+ if v_uid is not null and not exists (
+   select 1 from auth.sessions ses where ses.id = nullif(auth.jwt()->>'session_id','')::uuid and ses.user_id=v_uid
+ ) then raise exception 'session invalid' using errcode='42501'; end if;
  if v_uid is null or not public.is_arquivo_sombrio_admin() then
   raise exception 'access denied' using errcode='42501';end if;
  select * into v_record from public.international_content_versions
@@ -137,15 +146,15 @@ begin
  if not found then raise exception 'not found' using errcode='P0002'; end if;
  if v_record.revision is distinct from p_expected_revision or v_record.editorial_status<>'draft'
   then raise exception 'revision conflict' using errcode='40001';end if;
- if length(pg_catalog.btrim(v_record.translated_title))<3
-  or length(pg_catalog.btrim(v_record.translated_summary))<20
-  or jsonb_array_length(v_record.body_blocks)=0
-  or jsonb_array_length(v_record.translated_sources)=0 then
+ if pg_catalog.length(pg_catalog.btrim(v_record.translated_title))<3
+  or pg_catalog.length(pg_catalog.btrim(v_record.translated_summary))<20
+  or pg_catalog.jsonb_array_length(v_record.body_blocks)=0
+  or pg_catalog.jsonb_array_length(v_record.translated_sources)=0 then
   raise exception 'incomplete translation' using errcode='22023';end if;
  if v_record.source_type='dossie' then
-  select updated_at into v_current from public."Casos" where id=v_record.dossier_id;
+  select updated_at into v_current from public."Casos" where id=v_record.dossier_id for share;
  else
-  select updated_at into v_current from public.casos_diarios where id=v_record.daily_case_id;
+  select updated_at into v_current from public.casos_diarios where id=v_record.daily_case_id for share;
  end if;
  if v_current is distinct from v_record.source_updated_at then
   raise exception 'source changed' using errcode='40001';end if;
