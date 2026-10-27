@@ -1,12 +1,17 @@
 (()=>{'use strict';
 const caseId=new URLSearchParams(location.search).get('id');
-if(!['53','54'].includes(caseId)||!(location.pathname.endsWith('/garimpo.html')||location.pathname.includes('/7-noites-de-horror-real/arquivo/')))return;
-const date=caseId==='54'?'26':'25',night=caseId==='54'?'02':'01';
+if(!(location.pathname.includes('/7-noites-de-horror-real/arquivo/')||(location.pathname.endsWith('/garimpo.html')&&['53','54'].includes(caseId))))return;
+const dates=['25','26','27','28','29','30','31'];let night=caseId==='54'?'02':'01',date=caseId==='54'?'26':'25';
 document.body.classList.add('as-halloween-reader');
 document.body.dataset.halloweenNight=night;
 const setSpecial=()=>{
  const reader=document.querySelector('#daily-case-detail .daily-reader');
  if(!reader)return;
+ const titleText=(reader.querySelector(':scope>header h1')?.textContent||'').toLowerCase();
+ const titles=['ronald o','martha moxley','chelsea bruck','shauna howe','duplo homicídio de napa','assassinatos de pasadena','luis andrés colmenares'];
+ const index=titles.findIndex(s=>titleText.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').includes(s.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')));
+ if(index<0)return;
+ night=String(index+1).padStart(2,'0');date=dates[index];document.body.dataset.halloweenNight=night;
  reader.querySelectorAll('.daily-reader-timeline li').forEach(li=>{
   if(li.dataset.formatted==='1')return;
   const p=li.querySelector('p');if(!p)return;
