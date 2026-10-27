@@ -12718,7 +12718,8 @@ async function carregarGarimpoPublico() {
             const categoria = String(valor || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toUpperCase();
             return categoria === "PERICIA" || categoria.startsWith("PERICIA ");
         };
-        const casos = (Array.isArray(data) ? data : []).filter(item => !categoriaEhPericia(item.categoria));
+        const categoriaEhEspecial = valor => String(valor || "").trim().toUpperCase().startsWith("ESPECIAL ");
+        const casos = (Array.isArray(data) ? data : []).filter(item => !categoriaEhPericia(item.categoria) && (Boolean(id) || !categoriaEhEspecial(item.categoria)));
 
         if (feed) {
             feed.innerHTML = casos.length
