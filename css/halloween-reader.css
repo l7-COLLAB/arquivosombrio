@@ -1,4 +1,4 @@
-/* Edição especial Halloween, isolada ao arquivo Ronald O'Bryan. */
+/* Edição especial Halloween, compartilhada entre os arquivos da campanha. */
 body.as-halloween-reader{--as-h-ink:#e8d8bd;--as-h-orange:#ca7335;--as-h-gold:#b89868;background:#100e0d!important}
 body.as-halloween-reader .garimpo-intro{display:none!important}
 body.as-halloween-reader .garimpo-main{background:radial-gradient(ellipse at 50% 0%,#372016 0%,#1a1412 30%,#100e0d 75%)!important;color:var(--as-h-ink)}
@@ -29,3 +29,33 @@ body.as-halloween-reader .daily-reader-timeline li:before{content:"";position:ab
 body.as-halloween-reader .daily-reader-timeline li time{display:block!important;margin:0 0 7px!important;color:#e0a36b!important;font:700 .83rem/1.5 system-ui,sans-serif!important;letter-spacing:.08em}
 body.as-halloween-reader .daily-reader-timeline li p{margin:0!important;color:#ded0b9!important;font:400 1rem/1.7 Georgia,serif!important;max-width:60ch}
 @media(max-width:600px){body.as-halloween-reader .daily-reader-timeline ol{margin-left:6px!important;padding-left:22px!important}body.as-halloween-reader .daily-reader-timeline li:before{left:-29px}body.as-halloween-reader .daily-reader-timeline li{padding-bottom:26px!important}body.as-halloween-reader .daily-reader-timeline li p{font-size:.98rem!important;line-height:1.65!important}}
+
+/* Identidade unificada 7 Noites: tipografia de horror e numeração por arquivo. */
+body.as-halloween-reader{--as-h-spooky:"Spooky","Creepster",Georgia,serif}
+body.as-halloween-reader[data-halloween-night="02"] .daily-reader>header:before{content:"ARQUIVO SOMBRIO  /  ESPECIAL HALLOWEEN 2026  /  NOITE 02"}
+body.as-halloween-reader .daily-reader>header h1{
+ font-family:var(--as-h-spooky)!important;
+ font-size:clamp(2rem,4.9vw,3.7rem)!important;
+ font-weight:400!important;
+ line-height:1.22!important;
+ letter-spacing:.018em;
+ overflow-wrap:anywhere;
+}
+body.as-halloween-reader .daily-case-detail>.archive-back{
+ display:inline-flex!important;align-items:center;
+ max-width:100%;white-space:normal;
+ border:1px solid rgba(184,152,104,.45);
+ background:rgba(34,23,18,.7);
+ padding:12px 16px;border-radius:4px;
+}
+body.as-halloween-reader .daily-reader>header small{font-family:system-ui,sans-serif!important;font-weight:600}
+body.as-halloween-reader .daily-reader-cover{width:auto;max-width:100%;height:auto}
+@media(max-width:600px){
+ body.as-halloween-reader .daily-reader>header h1{font-size:clamp(1.8rem,8vw,2.55rem)!important;line-height:1.2!important}
+ body.as-halloween-reader .daily-reader>header:before{overflow-wrap:anywhere}
+ body.as-halloween-reader .daily-case-detail>.archive-back{font-size:.76rem!important}
+}
+@media(min-width:900px){
+ body.as-halloween-reader .daily-reader{max-width:990px;margin-inline:auto}
+ body.as-halloween-reader .daily-reader>header h1{max-width:850px}
+}
