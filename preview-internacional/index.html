@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta id="localized-description" name="description" content="Prévia editorial do Arquivo Sombrio.">
+  <meta name="theme-color" content="#080706">
+  <title>Arquivo Sombrio | Prévia internacional</title>
+  <style>
+    :root{color-scheme:dark;--bg:#080706;--paper:#e8dcc1;--muted:#b3a892;--line:#5b4738;--accent:#bd8359}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 70% 5%,#281b17 0,transparent 42%),var(--bg);color:var(--paper);font:16px/1.75 Georgia,serif}
+    main{max-width:820px;min-height:100vh;padding:clamp(24px,5vw,74px) 24px;margin:auto}
+    .eyebrow,.controls,.notice,.foot{font:12px/1.6 system-ui,sans-serif;letter-spacing:.09em}
+    .eyebrow{color:var(--accent);text-transform:uppercase}.controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:36px 0}
+    label{color:var(--muted)}select{color:var(--paper);background:#211916;border:1px solid var(--line);border-radius:4px;padding:12px;font:inherit;min-width:220px}
+    h1{font-size:clamp(35px,6vw,64px);font-weight:500;line-height:1.12;margin:38px 0 16px;letter-spacing:.02em}
+    h2{font-size:clamp(22px,3vw,31px);line-height:1.35;font-weight:normal;color:var(--accent);margin:24px 0}
+    p.intro{font-size:clamp(17px,2.3vw,21px);line-height:1.85;max-width:67ch}
+    .rule{border:0;border-top:1px solid var(--line);margin:32px 0}
+    .notice{border-left:2px solid var(--accent);background:rgba(189,131,89,.06);padding:15px 18px;color:var(--muted);letter-spacing:normal}
+    a{color:var(--paper);text-decoration:underline;text-underline-offset:4px}
+    a:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+    .foot{color:var(--muted);margin-top:55px;letter-spacing:normal}
+    .category-list{display:flex;gap:10px;flex-wrap:wrap;list-style:none;padding:0;margin:16px 0 28px}
+    .category-list li{border:1px solid var(--line);border-radius:3px;padding:7px 12px;color:var(--muted);font:13px/1.45 system-ui,sans-serif}
+    .categories-heading{font:600 13px/1.6 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin:35px 0 8px}
+    .availability{font:13px/1.6 system-ui,sans-serif;color:var(--muted);margin:0 0 32px}
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow" id="stage">Arquivo Sombrio · Prévia editorial · Fase 6.4</div>
+  <div class="controls"><label id="language-label" for="locale">Idioma</label>
+    <select id="locale" aria-label="Selecionar idioma de prévia" disabled><option value="pt-BR">Português (Brasil)</option></select>
+  </div>
+  <nav aria-label="Páginas independentes de prévia" class="availability">
+    Prévia estática por idioma:
+    <a href="./en/" lang="en-US">English</a> ·
+    <a href="./es/" lang="es-ES">Español</a> ·
+    <a href="./fr/" lang="fr-FR">Français</a>
+  </nav>
+  <article aria-live="polite" aria-atomic="true">
+    <h1 id="title">Arquivo Sombrio</h1>
+    <h2 id="tagline">Introduções editoriais</h2>
+    <hr class="rule">
+    <p class="intro" id="intro">Carregando prévia editorial…</p>
+  </article>
+  <nav aria-labelledby="categories-heading"><h3 class="categories-heading" id="categories-heading">Seções do arquivo</h3><ul class="category-list" id="category-list"></ul><p id="availability" class="availability"></p></nav>
+  <p id="notice" class="notice">Esta é uma prévia interna. As páginas internacionais e seus dossiês ainda não estão publicados.</p>
+  <p class="foot"><a href="../index.html" id="back">Voltar ao site em português (Brasil)</a></p>
+</main>
+<script>
+(function(){
+  'use strict';
+  var select=document.getElementById('locale');
+  var notice=document.getElementById('notice');
+  var back=document.getElementById('back');
+  var requested=new URLSearchParams(location.search).get('lang');
+  var config=null;
+  var locale='pt-BR';
+  var entries=null;
+  var ui=null;
+  var desc=document.getElementById("localized-description");
+  function supported(code){return config&&config.locales.some(function(x){return x.code===code})}
+  function resolve(code){return supported(code)?code:config.defaultLocale}
+  function render(){
+    if(!config)return;
+    var t=ui&&ui[locale]||ui&&ui['pt-BR'];
+    if(!t)return;
+    document.documentElement.lang=locale;
+    select.value=locale;
+    document.getElementById('stage').textContent='Arquivo Sombrio · '+t.stage;
+    document.getElementById('language-label').textContent=t.language;
+    select.setAttribute('aria-label',t.language);
+    document.getElementById('categories-heading').textContent=t.sections;
+    document.getElementById('availability').textContent=t.unavailable;
+    var list=document.getElementById('category-list');list.textContent='';
+    t.categories.forEach(function(name){var li=document.createElement('li');li.textContent=name;list.appendChild(li)});
+    desc.setAttribute('content',t.description);
+    notice.textContent=t.notice;
+    back.textContent=t.back;
+    if(!entries||!entries[locale]||!['title','tagline','intro'].every(function(k){return typeof entries[locale][k]==='string'&&entries[locale][k].trim()})){
+      document.getElementById('title').textContent='Arquivo Sombrio';
+      document.getElementById('tagline').textContent='';
+      document.getElementById('intro').textContent=t.error;
+      document.title='Arquivo Sombrio | '+t.preview;
+      return;
+    }
+    var d=entries[locale];
+    ['title','tagline','intro'].forEach(function(key){document.getElementById(key).textContent=d[key]});
+    document.title=d.title+' | '+d.tagline+' | '+t.preview;
+  }
+  function choose(code,push){
+    locale=resolve(code);
+    if(push){
+      var url=new URL(location.href);
+      url.searchParams.set('lang',locale);
+      history.pushState(null,'',url.pathname+url.search+url.hash);
+    }
+    render();
+  }
+  select.addEventListener('change',function(){choose(select.value,true)});
+  window.addEventListener('popstate',function(){if(config)choose(new URLSearchParams(location.search).get('lang'),false)});
+  Promise.all([
+    fetch('../i18n/config-internacional.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw Error('Config HTTP '+r.status);return r.json()}),
+    fetch('../i18n/introducoes.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw Error('Intro HTTP '+r.status);return r.json()}),
+    fetch('../i18n/interface-internacional.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw Error('UI HTTP '+r.status);return r.json()})
+  ]).then(function(results){
+    var settings=results[0],introductions=results[1],interfaceTexts=results[2];
+    if(!settings||settings.status!=='draft'||!Array.isArray(settings.locales)||!settings.locales.length||!settings.defaultLocale)throw Error('Invalid config');
+    if(!introductions||introductions.status!=='draft'||!introductions.locales)throw Error('Invalid introductions');
+    if(!interfaceTexts||interfaceTexts.status!=='draft'||!interfaceTexts.locales)throw Error('Invalid interface text');
+    config=settings;
+    entries=introductions.locales;
+    ui=interfaceTexts.locales;
+    select.textContent='';
+    settings.locales.forEach(function(l){
+      if(!ui[l.code])return;
+      var option=document.createElement('option');
+      option.value=l.code;option.textContent=l.nativeName;
+      select.appendChild(option);
+    });
+    select.disabled=false;
+    choose(requested,false);
+  }).catch(function(){
+    config={defaultLocale:'pt-BR',locales:[{code:'pt-BR',nativeName:'Português (Brasil)'}]};
+    ui={'pt-BR':{stage:'Prévia editorial · Fase 6.4',language:'Idioma',sections:'Seções do arquivo',categories:[],notice:'Prévia indisponível.',back:'Voltar ao site em português (Brasil)',error:'Não foi possível carregar a prévia.',description:'Prévia editorial indisponível.',unavailable:'',preview:'Prévia indisponível'}};
+    locale='pt-BR';
+    render();
+  });
+})();
+</script>
+</body>
+</html>

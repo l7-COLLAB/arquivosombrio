@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arquivosombrio.net.br/i18n/esquema-conteudo.schema.json",
+  "title": "Arquivo Sombrio — tradução editorial por idioma",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "sourceKey",
+    "locale",
+    "category",
+    "status",
+    "sourceRevision",
+    "editorial"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "sourceKey": {
+      "type": "string",
+      "minLength": 3,
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "locale": {
+      "enum": [
+        "en-US",
+        "es-ES",
+        "fr-FR"
+      ]
+    },
+    "category": {
+      "enum": [
+        "dossies",
+        "garimpo",
+        "pericia",
+        "creepypastas",
+        "lendas",
+        "biblioteca"
+      ]
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "in_review",
+        "approved",
+        "published",
+        "archived"
+      ]
+    },
+    "sourceRevision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "translatedRevision": {
+      "type": "string"
+    },
+    "editorial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "summary",
+        "bodyBlocks",
+        "sources",
+        "factCheckStatus",
+        "translator",
+        "reviewer"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bodyBlocks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "text"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "paragraph",
+                  "heading",
+                  "quote",
+                  "fact",
+                  "testimony",
+                  "hypothesis",
+                  "controversy"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sourceIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "url",
+              "description"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "factCheckStatus": {
+          "enum": [
+            "pending",
+            "verified"
+          ]
+        },
+        "translator": {
+          "type": "string"
+        },
+        "reviewer": {
+          "type": "string"
+        },
+        "imageRightsChecked": {
+          "type": "boolean"
+        },
+        "legalReviewChecked": {
+          "type": "boolean"
+        }
+      }
+    },
+    "publication": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^/(en|es|fr)/"
+        },
+        "publishedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "approvedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "published"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "publication"
+        ],
+        "properties": {
+          "editorial": {
+            "properties": {
+              "factCheckStatus": {
+                "const": "verified"
+              },
+              "imageRightsChecked": {
+                "const": true
+              },
+              "legalReviewChecked": {
+                "const": true
+              },
+              "reviewer": {
+                "minLength": 1
+              },
+              "translator": {
+                "minLength": 1
+              }
+            }
+          },
+          "publication": {
+            "required": [
+              "path",
+              "approvedAt",
+              "publishedAt"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
