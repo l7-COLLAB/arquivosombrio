@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 // Fase 6.12: integra apenas sob habilitacao explicita APOS ensaio e deploy.
-var enabled=window.ARQUIVO_I18N_WRITES_ENABLED===true;
+var enabled=false; // Habilitar somente por alteracao revisada do codigo apos testes de integracao.
 function $id(id){return document.getElementById(id)}
 function parseBlocks(raw){
  var blocks=JSON.parse(raw);
