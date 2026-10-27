@@ -115,7 +115,7 @@ document.getElementById('preview-local').addEventListener('click',function(){
  var title=document.getElementById('draft-title').value.trim();
  var summary=document.getElementById('draft-summary').value.trim();
  var body=document.getElementById('draft-body').value.trim();
- var sources=document.getElementById('draft-sources').value.trim().split(/\\r?\\n/).map(function(x){return x.trim()}).filter(Boolean);
+ var sources=document.getElementById('draft-sources').value.trim().split(/\r?\n/).map(function(x){return x.trim()}).filter(Boolean);
  var validSources=sources.every(function(x){try{var url=new URL(x);return url.protocol==='https:'||url.protocol==='http:'}catch(_){return false}});
  var issues=[];if(title.length<3)issues.push('título curto');if(summary.length<20)issues.push('resumo curto');if(!body)issues.push('narrativa vazia');if(!sources.length||!validSources)issues.push('fontes ausentes ou inválidas');
  editFeedback.textContent=issues.length?'Pendências locais: '+issues.join('; ')+'.':'Prévia preenchida. Revisão factual, direitos, auditoria e gravação ainda não disponíveis.';
