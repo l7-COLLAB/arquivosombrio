@@ -140,8 +140,8 @@ async function loadTranslation(){
  document.getElementById('draft-revision').textContent='Registro existente · revisão '+row.revision+' · '+row.editorial_status;
  document.getElementById('draft-title').value=row.translated_title||'';
  document.getElementById('draft-summary').value=row.translated_summary||'';
- document.getElementById('draft-body').value=Array.isArray(row.body_blocks)?row.body_blocks.map(function(b){return b.text||''}).join('\\n\\n'):'';
- document.getElementById('draft-sources').value=Array.isArray(row.translated_sources)?row.translated_sources.map(function(e){return e.url||''}).filter(Boolean).join('\\n'):'';
+ document.getElementById('draft-body').value=Array.isArray(row.body_blocks)?row.body_blocks.map(function(b){return b.text||''}).join('\n\n'):'';
+ document.getElementById('draft-sources').value=Array.isArray(row.translated_sources)?row.translated_sources.map(function(e){return e.url||''}).filter(Boolean).join('\n'):'';
  editFeedback.textContent=row.editorial_status==='draft'?'Rascunho carregado somente para consulta/edição local. Salvamento bloqueado.':'Tradução em revisão: edição persistente bloqueada.';
 }
 document.getElementById('draft-locale').addEventListener('change',function(){
