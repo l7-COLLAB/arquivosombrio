@@ -59,3 +59,7 @@ body.as-halloween-reader .daily-reader-cover{width:auto;max-width:100%;height:au
  body.as-halloween-reader .daily-reader{max-width:990px;margin-inline:auto}
  body.as-halloween-reader .daily-reader>header h1{max-width:850px}
 }
+
+/* A barra de stories do Garimpo não pertence à campanha. */
+body.as-halloween-reader .garimpo-stories-bar,
+body.as-halloween-reader [data-garimpo-stories-bar]{display:none!important}
