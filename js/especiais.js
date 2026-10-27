@@ -48,7 +48,7 @@ async function synchronizeHalloweenCases(){
   for(const [id,d] of mapping){
    // Nunca usar o indicador editorial antigo como prova de publicação.
    d.published=verified.has(id);
-   d.url=d.published?'/garimpo.html?id='+id:null;
+   d.url=d.published?'/especiais/7-noites-de-horror-real/arquivo/?id='+id:null;
   }
  }catch(err){console.warn('Confirmação dos arquivos de Halloween indisponível',err?.message);
   // Falha fechada: bloquear links não confirmados nesta consulta.
