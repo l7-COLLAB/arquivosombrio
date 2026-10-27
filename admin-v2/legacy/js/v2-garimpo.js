@@ -13,7 +13,7 @@ function aprimorar(dados){
  if(dados&&dados.id!=null&&!form.querySelector("[data-v2-garimpo-preview]")){
    var b=document.createElement("button");b.type="button";b.className="admin-secondary-button";b.dataset.v2GarimpoPreview="";
    b.innerHTML='<i class="fa-regular fa-eye"></i> Visualizar';
-   b.addEventListener("click",function(){window.open("../garimpo.html?id="+encodeURIComponent(dados.id),"_blank","noopener")});
+   b.addEventListener("click",function(){window.open((typeof casoDiarioEhEspecialAdmin==="function"&&casoDiarioEhEspecialAdmin(dados)?"../especiais/7-noites-de-horror-real/arquivo/?id=":"../garimpo.html?id=")+encodeURIComponent(dados.id),"_blank","noopener")});
    submit.before(b);
  }
 }

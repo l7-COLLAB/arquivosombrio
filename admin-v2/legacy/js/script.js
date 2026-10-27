@@ -7922,7 +7922,8 @@ const pericias =
 
             <nav class="admin-content-tabs" aria-label="Categorias administrativas">
                 <button type="button" data-admin-tab="dossies"><i class="fa-regular fa-folder-open"></i><span>Dossiês</span><small>${casos.length}</small></button>
-                <button type="button" data-admin-tab="diarios"><i class="fa-regular fa-newspaper"></i><span>Casos diários</span><small>${casosDiariosAdmin?.length || 0}</small></button>
+                <button type="button" data-admin-tab="diarios"><i class="fa-regular fa-newspaper"></i><span>Garimpo Sombrio</span><small>${casosDiariosAdmin?.filter(caso => !casoDiarioEhEspecialAdmin(caso)).length || 0}</small></button>
+                <button type="button" data-admin-tab="especiais"><i class="fa-solid fa-moon"></i><span>Especiais</span><small>${casosDiariosAdmin?.filter(casoDiarioEhEspecialAdmin).length || 0}</small></button>
                 <button type="button" data-admin-tab="pericias"><i class="fa-solid fa-microscope"></i><span>Perícia</span><small>${pericias.length}</small></button>
                 <button type="button" data-admin-tab="livros"><i class="fa-solid fa-book-open"></i><span>Livros</span><small>${livros.length}</small></button>
                 <button type="button" data-admin-tab="novels" onclick="location.href='./novels.html'"><i class="fa-solid fa-feather-pointed"></i><span>Novels</span><small>1</small></button>
@@ -12088,6 +12089,22 @@ document.addEventListener("DOMContentLoaded", () => {
 let casosDiariosAdmin = [];
 let casosDiariosAdminCarregados = false;
 let casosDiariosAdminCarregando = false;
+let carregamentoCasosDiariosAdmin = null;
+const idsArquivosEspeciaisAdmin = new Set(["53", "54"]);
+function casoDiarioEhEspecialAdmin(caso) {
+    return /^ESPECIA(?:L|IS)(?:\s|$)/i.test(String(caso?.categoria || "").trim()) || idsArquivosEspeciaisAdmin.has(String(caso?.id));
+}
+async function abrirArquivoEspecialAdmin(id) {
+    await carregarCasosDiariosAdmin();
+    document.querySelector('[data-admin-hub-view="content"]')?.click();
+    secaoAdminAtiva = "especiais";
+    aplicarOrganizacaoAdmin();
+    if (!id) return;
+    const caso = casosDiariosAdmin.find(item => String(item.id) === String(id) && casoDiarioEhEspecialAdmin(item));
+    if (!caso) throw new Error("Arquivo especial não encontrado ou sem acesso administrativo.");
+    const agenda = await carregarAgendamentoConteudo("caso_diario", caso.id);
+    abrirFormularioCasoDiario({...caso, _scheduled_for:agenda?.scheduled_for || caso._scheduled_for || null});
+}
 
 function normalizarBuscaAdmin(valor) {
     return String(valor || "")
@@ -12121,7 +12138,7 @@ function aplicarOrganizacaoAdmin() {
     const busca = normalizarBuscaAdmin(document.getElementById("admin-content-search")?.value);
     const ordem = document.getElementById("admin-content-order")?.value || "recentes";
     const trackingFilter=document.getElementById("admin-content-tracking");
-    const trackingApplicable=["dossies","diarios"].includes(secaoAdminAtiva);
+    const trackingApplicable=["dossies","diarios","especiais"].includes(secaoAdminAtiva);
     if(trackingFilter){trackingFilter.closest("label").hidden=!trackingApplicable;if(!trackingApplicable)trackingFilter.value="";}
     const tracking=trackingApplicable?(trackingFilter?.value||""):"";
     const lista = secao.querySelector(".admin-list");
@@ -12172,7 +12189,9 @@ function inicializarOrganizacaoAdmin() {
     }
 
     const contadorDiarios = painel.querySelector('[data-admin-tab="diarios"] small');
-    if (contadorDiarios) contadorDiarios.textContent = String(casosDiariosAdmin.length);
+    if (contadorDiarios) contadorDiarios.textContent = String(casosDiariosAdmin.filter(caso => !casoDiarioEhEspecialAdmin(caso)).length);
+    const contadorEspeciais = painel.querySelector('[data-admin-tab="especiais"] small');
+    if (contadorEspeciais) contadorEspeciais.textContent = String(casosDiariosAdmin.filter(casoDiarioEhEspecialAdmin).length);
     aplicarOrganizacaoAdmin();
 }
 
@@ -12187,10 +12206,24 @@ function slugCasoDiario(texto) {
 }
 
 async function carregarCasosDiariosAdmin() {
-    if (casosDiariosAdminCarregando) return;
+    if (carregamentoCasosDiariosAdmin) return carregamentoCasosDiariosAdmin;
+    carregamentoCasosDiariosAdmin = executarCarregamentoCasosDiariosAdmin();
+    try { await carregamentoCasosDiariosAdmin; }
+    finally { carregamentoCasosDiariosAdmin = null; }
+}
+async function executarCarregamentoCasosDiariosAdmin() {
     casosDiariosAdminCarregando = true;
-
     try {
+        try {
+            const resposta = await fetch("/data/especiais.json", {cache:"no-store"});
+            if (resposta.ok) {
+                const manifesto = await resposta.json();
+                for (const campanha of manifesto.campaigns || []) for (const dia of campanha.days || []) {
+                    const id = dia.caseId || String(dia.url || "").match(/[?&]id=(\d+)/)?.[1];
+                    if (id) idsArquivosEspeciaisAdmin.add(String(id));
+                }
+            }
+        } catch (erro) { console.warn("Vínculos de campanhas indisponíveis; usando categorias especiais.", erro); }
         const cliente = await obterClienteSupabase();
         const { data, error } = await cliente
             .from("casos_diarios")
@@ -12227,70 +12260,76 @@ function injetarCasosDiariosNoGerenciador() {
     const acoes = painel?.querySelector(".admin-actions");
     if (!painel || !acoes) return;
 
-    if (!document.getElementById("admin-new-daily-case")) {
-        const botao = document.createElement("button");
-        botao.type = "button";
-        botao.className = "admin-action-button";
-        botao.id = "admin-new-daily-case";
-        botao.dataset.adminCreate = "diarios";
-        botao.innerHTML = '<i class="fa-solid fa-newspaper"></i> Novo Caso Diário';
-        const sair = document.getElementById("admin-logout");
-        acoes.insertBefore(botao, sair || null);
-        botao.addEventListener("click", () => abrirFormularioCasoDiario());
-    }
+    for (const especial of [false, true]) {
+        const tipo = especial ? "especiais" : "diarios";
+        const registros = casosDiariosAdmin.filter(caso => casoDiarioEhEspecialAdmin(caso) === especial);
+        const novoId = especial ? "admin-new-special-case" : "admin-new-daily-case";
+        if (!document.getElementById(novoId)) {
+            const botao = document.createElement("button");
+            botao.type = "button";
+            botao.className = "admin-action-button";
+            botao.id = novoId;
+            botao.dataset.adminCreate = tipo;
+            botao.innerHTML = especial ? '<i class="fa-solid fa-moon"></i> Novo Arquivo Especial' : '<i class="fa-solid fa-newspaper"></i> Novo Caso Diário';
+            const sair = document.getElementById("admin-logout");
+            acoes.insertBefore(botao, sair || null);
+            botao.addEventListener("click", () => abrirFormularioCasoDiario(especial ? {categoria:"ESPECIAIS"} : null));
+        }
 
-    let secao = document.getElementById("admin-daily-cases-section");
-    if (!secao) {
-        secao = document.createElement("section");
-        secao.id = "admin-daily-cases-section";
-        secao.className = "admin-list-section admin-daily-cases-section";
-        secao.dataset.adminSection = "diarios";
-        acoes.after(secao);
-    }
+        const secaoId = especial ? "admin-special-cases-section" : "admin-daily-cases-section";
+        let secao = document.getElementById(secaoId);
+        if (!secao) {
+            secao = document.createElement("section");
+            secao.id = secaoId;
+            secao.className = "admin-list-section admin-daily-cases-section";
+            secao.dataset.adminSection = tipo;
+            acoes.after(secao);
+        }
 
-    secao.innerHTML = `
-        <div class="admin-section-title-row">
-            <div>
-                <span class="admin-eyebrow">GARIMPO SOMBRIO</span>
-                <h3>Casos curtos diários</h3>
+        secao.innerHTML = `
+            <div class="admin-section-title-row">
+                <div>
+                    <span class="admin-eyebrow">${especial ? "ESPECIAIS" : "GARIMPO SOMBRIO"}</span>
+                    <h3>${especial ? "Arquivos das campanhas" : "Casos curtos diários"}</h3>
+                </div>
+                <small>${registros.length} registro(s)</small>
             </div>
-            <small>${casosDiariosAdmin.length} registro(s)</small>
-        </div>
-        <div class="admin-list">
-            ${!casosDiariosAdminCarregados
-                ? '<p class="admin-empty">Consultando casos diários...</p>'
-                : casosDiariosAdmin.length === 0
-                    ? '<p class="admin-empty">Nenhum caso diário cadastrado.</p>'
-                    : casosDiariosAdmin.map(caso => `
-                        <div class="admin-item" data-admin-tracking="${escaparHTML(caso.acompanhamento_status || "normal")}" data-admin-title="${escaparHTML(caso.titulo || "")}" data-admin-date="${escaparHTML(caso.created_at || caso.publicado_em || "")}">
-                            <div>
-                                <strong>${escaparHTML(caso.titulo || "Caso sem título")}</strong>
-                                <small>${caso.acompanhamento_status === "ativo" ? '<span class="tracking-badge">EM ACOMPANHAMENTO</span> ' : ""}${escaparHTML(caso.status_publicacao === "publicado" ? "PUBLICADO" : caso.status_publicacao === "agendado" ? "AGENDADO" : "RASCUNHO")}${caso.status_publicacao === "agendado" && caso._scheduled_for ? " · " + escaparHTML(formatarAgendamentoLegivel(caso._scheduled_for)) : ""} · ${escaparHTML(caso.categoria || "GARIMPO SOMBRIO")}</small>
+            <div class="admin-list">
+                ${!casosDiariosAdminCarregados
+                    ? '<p class="admin-empty">Consultando casos diários...</p>'
+                    : registros.length === 0
+                        ? '<p class="admin-empty">Nenhum arquivo cadastrado nesta categoria.</p>'
+                        : registros.map(caso => `
+                            <div class="admin-item" data-admin-tracking="${escaparHTML(caso.acompanhamento_status || "normal")}" data-admin-title="${escaparHTML(caso.titulo || "")}" data-admin-date="${escaparHTML(caso.created_at || caso.publicado_em || "")}">
+                                <div>
+                                    <strong>${escaparHTML(caso.titulo || "Caso sem título")}</strong>
+                                    <small>${caso.acompanhamento_status === "ativo" ? '<span class="tracking-badge">EM ACOMPANHAMENTO</span> ' : ""}${escaparHTML(caso.status_publicacao === "publicado" ? "PUBLICADO" : caso.status_publicacao === "agendado" ? "AGENDADO" : "RASCUNHO")}${caso.status_publicacao === "agendado" && caso._scheduled_for ? " · " + escaparHTML(formatarAgendamentoLegivel(caso._scheduled_for)) : ""} · ${escaparHTML(caso.categoria || "GARIMPO SOMBRIO")}</small>
+                                </div>
+                                <div class="admin-item-buttons">
+                                    <button type="button" data-edit-daily-case="${escaparHTML(caso.id)}">Editar</button>
+                                    <button type="button" data-delete-daily-case="${escaparHTML(caso.id)}">Excluir</button>
+                                </div>
                             </div>
-                            <div class="admin-item-buttons">
-                                <button type="button" data-edit-daily-case="${escaparHTML(caso.id)}">Editar</button>
-                                <button type="button" data-delete-daily-case="${escaparHTML(caso.id)}">Excluir</button>
-                            </div>
-                        </div>
-                    `).join("")}
-        </div>`;
+                        `).join("")}
+            </div>`;
 
-    secao.querySelectorAll("[data-edit-daily-case]").forEach(botao => {
-        botao.addEventListener("click", async () => {
-            const caso = casosDiariosAdmin.find(item => String(item.id) === String(botao.dataset.editDailyCase));
-            if (!caso) return;
-            const agenda = await carregarAgendamentoConteudo("caso_diario", caso.id);
-            abrirFormularioCasoDiario({
-                ...caso,
-                _scheduled_for: agenda?.scheduled_for || null
+        secao.querySelectorAll("[data-edit-daily-case]").forEach(botao => {
+            botao.addEventListener("click", async () => {
+                const caso = casosDiariosAdmin.find(item => String(item.id) === String(botao.dataset.editDailyCase));
+                if (!caso) return;
+                const agenda = await carregarAgendamentoConteudo("caso_diario", caso.id);
+                abrirFormularioCasoDiario({
+                    ...caso,
+                    _scheduled_for: agenda?.scheduled_for || null
+                });
             });
         });
-    });
 
-    secao.querySelectorAll("[data-delete-daily-case]").forEach(botao => {
-        botao.addEventListener("click", () => removerCasoDiario(botao.dataset.deleteDailyCase));
-    });
+        secao.querySelectorAll("[data-delete-daily-case]").forEach(botao => {
+            botao.addEventListener("click", () => removerCasoDiario(botao.dataset.deleteDailyCase));
+        });
 
+    }
     inicializarOrganizacaoAdmin();
 }
 
@@ -12316,6 +12355,7 @@ function criarLinhaImagemCasoDiario(imagem = {}) {
         <label class="daily-sensitive-check"><input class="daily-image-sensitive" type="checkbox" ${imagem.sensivel ? "checked" : ""}> Imagem sensível</label>
         <button class="daily-remove-row" type="button" aria-label="Remover imagem">Remover</button>`;
 
+    linha.imagemOriginal = {...imagem};
     const arquivo = linha.querySelector(".daily-image-file");
     const enviar = linha.querySelector(".daily-image-upload");
     enviar.addEventListener("click", () => arquivo.click());
@@ -12528,6 +12568,8 @@ async function salvarEstadoAgendamentoConteudo(tipo, id, status, dataHoraISO, se
 }
 
 function abrirFormularioCasoDiario(dados = null) {
+    const especial = casoDiarioEhEspecialAdmin(dados);
+    const categorias = [...new Set(["GARIMPO SOMBRIO", "CRIME REAL", "DESAPARECIMENTO", "MISTÉRIO", "CASO FAMILIAR", "SOBREVIVÊNCIA", "FALHA INVESTIGATIVA", "ESPECIAL HALLOWEEN", "ESPECIAIS", ...casosDiariosAdmin.filter(casoDiarioEhEspecialAdmin).map(caso => caso.categoria), dados?.categoria].filter(Boolean))];
     let modal = document.getElementById("admin-daily-case-modal");
     if (!modal) {
         modal = document.createElement("div");
@@ -12539,15 +12581,15 @@ function abrirFormularioCasoDiario(dados = null) {
     modal.innerHTML = `
         <div class="admin-form-card daily-case-form-card">
             <button type="button" class="admin-close" id="daily-form-close" aria-label="Fechar">&times;</button>
-            <span class="admin-eyebrow">GARIMPO SOMBRIO</span>
-            <h2>${dados ? "Editar" : "Cadastrar"} Caso Diário</h2>
-            <p class="daily-form-intro">Registro curto, verificável e separado dos dossiês extensos.</p>
+            <span class="admin-eyebrow">${especial ? "ESPECIAIS" : "GARIMPO SOMBRIO"}</span>
+            <h2>${dados?.id ? "Editar" : "Cadastrar"} ${especial ? "Arquivo Especial" : "Caso Diário"}</h2>
+            <p class="daily-form-intro">${especial ? "Edite a narrativa completa, capa, imagens, fontes e agendamento do arquivo da campanha." : "Registro verificável e separado dos dossiês."}</p>
             <form id="daily-case-form">
                 <div class="daily-admin-grid">
                     <label>Título<input id="daily-title" type="text" maxlength="180" required value="${escaparHTML(dados?.titulo || "")}"></label>
                     <label>Categoria
                         <select id="daily-category">
-                            ${["GARIMPO SOMBRIO", "CRIME REAL", "DESAPARECIMENTO", "MISTÉRIO", "CASO FAMILIAR", "SOBREVIVÊNCIA", "FALHA INVESTIGATIVA"].map(item => `<option value="${item}" ${dados?.categoria === item ? "selected" : ""}>${item}</option>`).join("")}
+                            ${categorias.map(item => `<option value="${escaparHTML(item)}" ${dados?.categoria === item ? "selected" : ""}>${escaparHTML(item)}</option>`).join("")}
                         </select>
                     </label>
                     <label>Local<input id="daily-location" type="text" value="${escaparHTML(dados?.local || "")}"></label>
@@ -12586,7 +12628,7 @@ function abrirFormularioCasoDiario(dados = null) {
                 </div>
 
                 <label>Resumo curto<textarea id="daily-summary" rows="4" maxlength="700" required>${escaparHTML(dados?.resumo || "")}</textarea></label>
-                <label>Relato do caso<textarea id="daily-content" rows="14" required placeholder="Escreva o caso de forma curta, imersiva e objetiva.">${escaparHTML(dados?.conteudo || "")}</textarea></label>
+                <label>Relato do caso<textarea id="daily-content" rows="14" required placeholder="Escreva a narrativa completa, com início, desenvolvimento e desfecho.">${escaparHTML(dados?.conteudo || "")}</textarea></label>
                 <label>Cronologia opcional<textarea id="daily-chronology" rows="5">${escaparHTML(dados?.cronologia || "")}</textarea></label>
                 <label>Evidências<textarea id="daily-evidence" rows="5" placeholder="Separe os itens com uma linha em branco.">${escaparHTML(normalizarEvidencias(dados?.evidencias).join("\n\n"))}</textarea></label>
                 <label>Hipóteses e controvérsias<textarea id="daily-theories" rows="5" placeholder="Separe os itens com uma linha em branco.">${escaparHTML(normalizarEvidencias(dados?.hipoteses).join("\n\n"))}</textarea></label>
@@ -12718,7 +12760,7 @@ function abrirFormularioCasoDiario(dados = null) {
                     '<i class="fa-regular fa-eye"></i> Visualizar';
                 visualizar.addEventListener("click", () => {
                     window.open(
-                        "../garimpo.html?id=" + encodeURIComponent(dados.id),
+                        (especial ? "../especiais/7-noites-de-horror-real/arquivo/?id=" : "../garimpo.html?id=") + encodeURIComponent(dados.id),
                         "_blank",
                         "noopener"
                     );
@@ -12732,6 +12774,7 @@ function abrirFormularioCasoDiario(dados = null) {
 function coletarImagensCasoDiario() {
     return [...document.querySelectorAll("#daily-images-list .daily-admin-image-row")]
         .map(linha => ({
+            ...linha.imagemOriginal,
             url: linha.querySelector(".daily-image-url").value.trim(),
             legenda: linha.querySelector(".daily-image-caption").value.trim(),
             fonte: linha.querySelector(".daily-image-source").value.trim(),
@@ -12823,6 +12866,22 @@ function destacarFontesCasoDiario(mensagem) {
     campo.addEventListener("input", limpar);
 }
 
+function coletarDocumentosCasoDiario(id, originais = []) {
+    const texto = document.getElementById(id).value.trim();
+    const lista = Array.isArray(originais) ? originais : [];
+    const formatados = normalizarEvidencias(lista);
+    if (texto === formatados.join("\n\n")) return lista;
+    return texto.split(/\n\s*\n/).filter(Boolean).map((bloco, indice) => {
+        if (bloco === formatados[indice]) return lista[indice];
+        const anterior = lista[indice];
+        if (!anterior || typeof anterior !== "object") return bloco;
+        const linhas = bloco.split("\n");
+        const titulo = linhas.shift();
+        if (anterior.fonte && linhas[linhas.length - 1] === anterior.fonte) linhas.pop();
+        return {...anterior, titulo, descricao:linhas.join("\n")};
+    });
+}
+
 async function salvarCasoDiario(evento, existente = null) {
     evento.preventDefault();
     const formulario = evento.currentTarget;
@@ -12838,7 +12897,7 @@ async function salvarCasoDiario(evento, existente = null) {
         const resumo = document.getElementById("daily-summary").value.trim();
         const conteudo = document.getElementById("daily-content").value.trim();
         const imagemCapa = document.getElementById("daily-cover").value.trim();
-        const fontes = coletarFontesCasoDiario();
+        const fontes = coletarFontesCasoDiario().map(fonte => ({...(existente?.fontes || []).find(original => original.url === fonte.url), ...fonte}));
         const statusPublicacao = document.getElementById("daily-publication-status").value;
         const dataHoraAgendadaLocal = document.getElementById("daily-scheduled-for")?.value || "";
         const dataHoraAgendadaISO = dataHoraAgendadaLocal ? dataHoraBrasiliaParaISO(dataHoraAgendadaLocal) : null;
@@ -12879,8 +12938,8 @@ async function salvarCasoDiario(evento, existente = null) {
             resumo,
             conteudo,
             cronologia: document.getElementById("daily-chronology").value.trim() || null,
-            evidencias: normalizarEvidencias(document.getElementById("daily-evidence").value),
-            hipoteses: normalizarEvidencias(document.getElementById("daily-theories").value),
+            evidencias: coletarDocumentosCasoDiario("daily-evidence", existente?.evidencias),
+            hipoteses: coletarDocumentosCasoDiario("daily-theories", existente?.hipoteses),
             situacao_oficial: document.getElementById("daily-official-status").value.trim() || null,
             story_ativo: Boolean(document.getElementById("daily-story-active")?.checked),
             story_imagem: document.getElementById("daily-story-image")?.value.trim() || imagemCapa || null,
