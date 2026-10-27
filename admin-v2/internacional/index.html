@@ -158,9 +158,30 @@ document.getElementById('preview-local').addEventListener('click',function(){
  try{window.arquivoI18nDraft.validate();editFeedback.textContent='Estrutura preenchida. Revisão factual e gravação ainda não aprovadas.'}
  catch(error){editFeedback.textContent='Pendências: '+error.message}
 });
+// Ligação completa preparada, mas indisponível enquanto enabled=false.
+document.getElementById('save-draft').addEventListener('click',async function(){
+ if(!window.arquivoI18nDraft.enabled||!selectedRecord)return;
+ try{
+  editFeedback.textContent='Salvando rascunho…';
+  var result=await window.arquivoI18nDraft.save(client,selectedRecord,type.value,loadedRevision);
+  if(!result||!result.translation_id)throw Error('Resposta de gravação incompleta.');
+  loadedTranslationId=result.translation_id;loadedRevision=result.new_revision;
+  editFeedback.textContent='Rascunho salvo · revisão '+loadedRevision;
+  await loadTranslation();
+ }catch(error){editFeedback.textContent='Falha ao salvar: '+String(error.message||error)}
+});
+document.getElementById('submit-review').addEventListener('click',async function(){
+ if(!window.arquivoI18nDraft.enabled||!loadedTranslationId)return;
+ try{
+  editFeedback.textContent='Enviando para revisão…';
+  await window.arquivoI18nDraft.submit(client,loadedTranslationId,loadedRevision);
+  editFeedback.textContent='Enviado para revisão.';
+  await loadTranslation();
+ }catch(error){editFeedback.textContent='Não foi possível enviar: '+String(error.message||error)}
+});
 ['save-draft','submit-review'].forEach(function(id){
- document.getElementById(id).disabled=true;
- document.getElementById(id).setAttribute('aria-disabled','true');
+ var b=document.getElementById(id);b.disabled=!window.arquivoI18nDraft.enabled;
+ b.setAttribute('aria-disabled',String(!window.arquivoI18nDraft.enabled));
 });
 type.addEventListener('change',load);
 search.addEventListener('input',render);
