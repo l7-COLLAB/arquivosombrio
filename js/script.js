@@ -12720,6 +12720,23 @@ async function carregarGarimpoPublico() {
         };
         const categoriaEhEspecial = valor => String(valor || "").trim().toUpperCase().startsWith("ESPECIAL ");
         const casos = (Array.isArray(data) ? data : []).filter(item => !categoriaEhPericia(item.categoria) && (Boolean(id) || !categoriaEhEspecial(item.categoria)));
+        // Rota própria: somente arquivos do Halloween, respeitando a estreia às 20h de Brasília.
+        if (id && location.pathname.includes("/7-noites-de-horror-real/arquivo/")) {
+            const casoAlvo=casos.find(item=>String(item.id)===String(id));
+            if(casoAlvo) {
+                const resCalendario=await fetch("/data/especiais.json",{cache:"no-store"});
+                if(!resCalendario.ok)throw Error("Calendário do especial indisponível");
+                const manifesto=await resCalendario.json();
+                const campanha=(manifesto.campaigns||[]).find(e=>e.id==="halloween-2026");
+                const normalizar=s=>String(s||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+                const dias=(campanha?.days||[]).filter(d=>String(d.caseId||"")===String(id)||(!d.caseId&&(normalizar(casoAlvo.titulo)===normalizar(d.title)||normalizar(casoAlvo.titulo).startsWith(normalizar(d.title)+" "))));
+                const partes=new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23",minute:"2-digit"}).formatToParts(new Date());
+                const pegar=k=>partes.find(x=>x.type===k)?.value||"";
+                const agora=pegar("year")+"-"+pegar("month")+"-"+pegar("day");
+                const minutos=Number(pegar("hour"))*60+Number(pegar("minute"));
+                if(dias.length!==1||!(String(casoAlvo.categoria||"").toUpperCase().startsWith("ESPECIAL ")||Number(id)===53)||(agora<dias[0].date)||(agora===dias[0].date&&minutos<1200))casos.length=0;
+            }
+        }
 
         if (feed) {
             feed.innerHTML = casos.length
