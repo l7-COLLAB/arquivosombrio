@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "stage": "6.13",
+  "status": "preview-only",
+  "productionRoutesEnabled": false,
+  "internationalLaunchApproved": false,
+  "note": "These are static editorial previews only; none constitutes a published translation or a public international route.",
+  "previewPages": [
+    {
+      "locale": "en-US",
+      "path": "/preview-internacional/en/",
+      "plannedProductionPath": "/en/",
+      "indexable": false,
+      "editorialApproved": false,
+      "publishedCases": 0
+    },
+    {
+      "locale": "es-ES",
+      "path": "/preview-internacional/es/",
+      "plannedProductionPath": "/es/",
+      "indexable": false,
+      "editorialApproved": false,
+      "publishedCases": 0
+    },
+    {
+      "locale": "fr-FR",
+      "path": "/preview-internacional/fr/",
+      "plannedProductionPath": "/fr/",
+      "indexable": false,
+      "editorialApproved": false,
+      "publishedCases": 0
+    }
+  ],
+  "releaseConditions": [
+    "Run Node unit/regression tests and real browser accessibility/mobile QA",
+    "Apply and verify international schema + authenticated RPCs in isolated test database",
+    "Run auth/RLS test matrix, optimistic concurrency tests and audit write tests",
+    "Approve native-speaker editorial translation of landing copy and at least the first complete content piece",
+    "Verify rights to cover images and source links and legal review",
+    "Implement HTTP 200 production routes, category listing and actual localized case pages",
+    "Verify server-rendered title/description/OG/canonical and reciprocal hreflang only for equivalent published pages",
+    "Validate noindex removal and sitemap only after production release gates pass",
+    "Explicit authorization for production merge and deployment"
+  ]
+}
