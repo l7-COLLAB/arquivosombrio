@@ -30,31 +30,36 @@
           "date": "2026-10-27",
           "title": "Chelsea Bruck",
           "published": false,
-          "url": null
+          "url": null,
+          "caseId": 61
         },
         {
           "date": "2026-10-28",
           "title": "Shauna Howe",
           "published": false,
-          "url": null
+          "url": null,
+          "caseId": 62
         },
         {
           "date": "2026-10-29",
           "title": "Duplo homicídio de Napa",
           "published": false,
-          "url": null
+          "url": null,
+          "caseId": 64
         },
         {
           "date": "2026-10-30",
           "title": "Assassinatos de Pasadena",
           "published": false,
-          "url": null
+          "url": null,
+          "caseId": 65
         },
         {
           "date": "2026-10-31",
           "title": "Luis Andrés Colmenares",
           "published": false,
-          "url": null
+          "url": null,
+          "caseId": 66
         }
       ],
       "description": "Uma coleção documental de crimes e investigações associados ao período do Halloween. Cada arquivo é liberado somente após revisão e publicação.",
