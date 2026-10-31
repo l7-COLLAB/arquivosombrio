@@ -25,6 +25,12 @@ async function catalog(){
  genre.innerHTML='<option value="">Todas as categorias</option>'+gs.map(g=>'<option>'+esc(g)+'</option>').join("");
  const draw=()=>{const q=(input.value||"").toLowerCase(),g=genre.value;const rows=books.filter(x=>(!q||[x.titulo,x.autor_nome,x.sinopse,...(x.tags||[])].join(" ").toLowerCase().includes(q))&&(!g||(x.generos||[]).includes(g)));root.innerHTML=rows.map(x=>'<a class="novel-card" href="novel.html?obra='+encodeURIComponent(x.slug)+'">'+cover(x)+'<h2>'+esc(x.titulo)+'</h2><p>'+esc(x.autor_nome)+' · '+esc((x.status_obra||"").replaceAll("_"," "))+'</p><div class="novel-tags">'+(x.generos||[]).slice(0,3).map(t=>'<span>'+esc(t)+'</span>').join("")+'</div></a>').join("")||'<p class="empty">Nenhuma obra encontrada.</p>'};
  input.oninput=draw;genre.onchange=draw;draw();
+ const starter=document.querySelector("#novel-starter");
+ if(starter&&books.length){
+  const suggestions=books.slice(0,Math.min(3,books.length));
+  starter.hidden=false;
+  starter.innerHTML='<div class="novel-section-head"><div><span>PRIMEIRAS PÁGINAS</span><h2>Comece por aqui</h2></div><p>Uma seleção de obras do acervo para descobrir sua próxima leitura.</p></div><div class="novel-starter-grid">'+suggestions.map(x=>'<a class="novel-starter-item" href="novel.html?obra='+encodeURIComponent(x.slug)+'">'+cover(x)+'<span><strong>'+esc(x.titulo)+'</strong><small>'+esc(x.autor_nome||"Autor não informado")+'</small><em>Conhecer a obra →</em></span></a>').join("")+'</div>';
+ }
  const section=document.querySelector("#novel-continue");if(!section||!books.length)return;
  const {data:{user}}=await sb.auth.getUser();if(!user)return;
  const progress=await getReadingProgress(user.id,books.map(x=>x.id));if(!progress.length)return;
