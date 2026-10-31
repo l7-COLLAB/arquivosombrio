@@ -45,7 +45,8 @@ def strip_markup(value):
     text = str(value or "").replace("\r\n", "\n").replace("\r", "\n")
     text = BLOCK_CLOSE_RE.sub("\n\n", text)
     text = TAG_RE.sub(" ", text)
-    return unescape(text).replace("\u00a0", " ")
+    text = unescape(text).replace("\u00a0", " ")
+    return re.sub(r"[ \t]+", " ", text)
 
 
 def is_editorial_heading(text):
