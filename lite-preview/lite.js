@@ -82,6 +82,8 @@ if(audioBox){
     xhr.onreadystatechange=function(){
       if(xhr.readyState!==4)return;
       if(xhr.status>=200&&xhr.status<300){
+        var availability={};try{availability=JSON.parse(xhr.responseText||"{}")}catch(e){}
+        if(availability.available!==true)return;
         audioBox.hidden=false;
         audioState.textContent="Entre na sua conta para ouvir a narração.";
         var audioSession=authRead();
