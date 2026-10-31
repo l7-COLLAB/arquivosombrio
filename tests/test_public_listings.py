@@ -28,8 +28,8 @@ class PublicListings(TestCase):
         self.data = {table: [row(i) for i in range(1, 13)] for table in listing.ROUTES}
     def test_real_templates_have_complete_readable_grids_and_matching_counts(self):
         edits = listing.prepare(ROOT, self.data)
-        self.assertEqual(len(edits), 5)
-        for filename, ident in [('index.html','grid-casos'), ('dossies.html','grid-casos'), ('garimpo.html','daily-archive-grid'), ('lendas.html','literary-grid'), ('creepypastas.html','literary-grid')]:
+        self.assertEqual(len(edits), 7)
+        for filename, ident in [('index.html','grid-casos'), ('dossies.html','grid-casos'), ('pericia.html','grid-casos'), ('forum.html','grid-casos'), ('garimpo.html','daily-archive-grid'), ('lendas.html','literary-grid'), ('creepypastas.html','literary-grid')]:
             html = edits[filename]
             start, end = listing.ElementSpan(html, ident).spans[0]
             doc = Parsed(html[start:end])
@@ -41,8 +41,15 @@ class PublicListings(TestCase):
             if ident == 'grid-casos':
                 a,b=listing.ElementSpan(html,'contador-casos').spans[0]
                 self.assertEqual(html[a:b], '12')
-        a,b=listing.ElementSpan(edits['index.html'],'home-daily-feed').spans[0]
-        self.assertEqual(len(Parsed(edits['index.html'][a:b]).links), 6)
+        for filename in ('index.html', 'dossies.html', 'pericia.html', 'forum.html'):
+            html = edits[filename]
+            for ident, count in (('home-daily-feed', 6), ('grid-forense', 12)):
+                a, b = listing.ElementSpan(html, ident).spans[0]
+                parsed = Parsed(html[a:b])
+                self.assertEqual(len(parsed.links), count, (filename, ident))
+                self.assertTrue(all(link.startswith('/arquivo/') for link in parsed.links))
+                self.assertTrue(all('alt' in img and 'width' in img and 'height' in img for img in parsed.images))
+            self.assertEqual(json.loads(html[listing.ElementSpan(html, 'as-public-listings').spans[0][0]:listing.ElementSpan(html, 'as-public-listings').spans[0][1]])['pericias'][0]['__static_url'], '/arquivo/pericia-12.html')
     def test_excludes_other_editorias_without_deleting_their_articles(self):
         rows=[row(1),row(2),row(3)]
         rows[1]['categoria']='PERÍCIA FORENSE';rows[2]['categoria']='ESPECIAL HALLOWEEN'
