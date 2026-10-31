@@ -8,6 +8,8 @@ on:
       - 'scripts/build-seo-pages.py'
       - 'scripts/build-public-listings.py'
       - 'js/public-listings.js'
+      - 'pericia.html'
+      - 'forum.html'
       - 'tests/test_public_listings.py'
       - 'tests/public-listings.mjs'
       - 'scripts/audit-seo-build.py'
