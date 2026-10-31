@@ -34,7 +34,7 @@ def valid_slug(value):
     return value
 
 def public_books():
-    return query("novels","id,slug,titulo,autor_nome,sinopse,imagem_capa,status_publicacao,updated_at,publicado_em",
+    return query("novels","id,slug,titulo,autor_nome,sinopse,status_publicacao",
                  {"status_publicacao":"eq.publicado","order":"slug.asc"})
 
 def public_chapters(book_ids):
