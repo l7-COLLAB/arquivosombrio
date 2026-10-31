@@ -1,0 +1,39 @@
+name: Verificar envio de sugestões públicas
+on:
+  pull_request:
+    paths:
+      - 'js/public-suggestion.js'
+      - 'js/script.js'
+      - 'index.html'
+      - 'dossies.html'
+      - 'pericia.html'
+      - 'forum.html'
+      - 'tests/suggestion-form.mjs'
+      - '.github/workflows/suggestion-form-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'js/public-suggestion.js'
+      - 'js/script.js'
+      - 'index.html'
+      - 'dossies.html'
+      - 'pericia.html'
+      - 'forum.html'
+      - 'tests/suggestion-form.mjs'
+      - '.github/workflows/suggestion-form-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validar JavaScript e fluxo de confirmação
+        run: |
+          node --check js/script.js
+          node --check js/public-suggestion.js
+          node --test tests/suggestion-form.mjs
