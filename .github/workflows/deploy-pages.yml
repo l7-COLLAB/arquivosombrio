@@ -34,6 +34,7 @@ jobs:
           test -f _site/admin-v2/visual.html
           test -f _site/admin-v2/studio/index.html
           python3 scripts/build-seo-pages.py _site
+          python3 scripts/build-novels-seo.py _site
           python3 scripts/audit-seo-build.py _site
           python3 scripts/audit-internal-links.py _site
           python3 scripts/audit-mobile-seo-readiness.py _site --report /tmp/arquivo-mobile-seo-report.json
