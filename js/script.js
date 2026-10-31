@@ -26,7 +26,7 @@ const TURNSTILE_SITE_KEY =
 let clienteSupabase = null;
 let promessaClienteSupabase = null;
 let promessaSupabaseSDK = null;
-let casosSupabase = [];
+let casosSupabase = window.ArquivoListagens?.read("Casos") || [];
 let livrosSupabase = [];
 let periciasSupabase = [];
 
@@ -3822,14 +3822,14 @@ function casoEstaPublicado(
             "publicado"
         ).toLowerCase();
 
-    return status === "publicado";
+    return status === "publicado" && (!window.ArquivoListagens || window.ArquivoListagens.published(caso));
 }
 
 
 function obterTodosCasos() {
 
     const iniciais =
-        obterCasosIniciais();
+        window.ArquivoListagens?.has("Casos") ? [] : obterCasosIniciais();
 
     const casosSupabasePublicos =
         casosSupabase.filter(
@@ -7860,6 +7860,7 @@ async function autenticarAdmin(evento) {
 
 
 function obterURLPublicaDossie(caso) {
+    if (caso?.__static_url) return caso.__static_url;
 
     const rotas = {
         "2": "dossies/caso-isabella-nardoni.html",
@@ -12676,7 +12677,7 @@ async function removerCasoDiario(id) {
 
 function criarPreviaCasoDiario(caso) {
     return `
-        <a class="home-daily-card" href="garimpo.html?id=${encodeURIComponent(caso.id)}&entry=20261011">
+        <a class="home-daily-card" href="${caso.__static_url || `garimpo.html?id=${encodeURIComponent(caso.id)}&entry=20261011`}">
             <img src="${escaparHTML(caso.imagem_capa || "")}" alt="" loading="lazy" decoding="async" width="92" height="104" onerror="this.onerror=null;this.src='imagem-compartilhamento.jpg';">
             <div>
                 ${window.ArquivoTracking?.badge(caso)||""}
@@ -12719,7 +12720,7 @@ async function carregarGarimpoPublico() {
             return categoria === "PERICIA" || categoria.startsWith("PERICIA ");
         };
         const categoriaEhEspecial = valor => String(valor || "").trim().toUpperCase().startsWith("ESPECIAL ");
-        const casos = (Array.isArray(data) ? data : []).filter(item => !categoriaEhPericia(item.categoria) && (Boolean(id) || !categoriaEhEspecial(item.categoria)));
+        const casos = (Array.isArray(data) ? data : []).filter(item => (!window.ArquivoListagens || window.ArquivoListagens.published(item)) && !categoriaEhPericia(item.categoria) && (Boolean(id) || !categoriaEhEspecial(item.categoria)));
         // Rota própria: somente arquivos do Halloween, respeitando a estreia às 20h de Brasília.
         if (id && location.pathname.includes("/7-noites-de-horror-real/arquivo/")) {
             const casoAlvo=casos.find(item=>String(item.id)===String(id));
@@ -12774,8 +12775,13 @@ async function carregarGarimpoPublico() {
         const mensagem = id
             ? "Não foi possível carregar este arquivo agora. Tente novamente mais tarde."
             : "Registros temporariamente indisponíveis.";
-        if (feed) feed.innerHTML = '<p class="home-preview-loading">Registros temporariamente indisponíveis.</p>';
-        if (grade && !id) grade.innerHTML = '<p class="home-preview-loading">Registros temporariamente indisponíveis.</p>';
+        const initial = window.ArquivoListagens?.has("casos_diarios");
+        const saved = window.ArquivoListagens?.read("casos_diarios") || [];
+        if (feed && !initial) feed.innerHTML = '<p class="home-preview-loading">Registros temporariamente indisponíveis.</p>';
+        if (grade && !id) {
+            if (initial) instalarFiltrosAcompanhamentoGarimpo(grade, saved);
+            else grade.innerHTML = '<p class="home-preview-loading">Registros temporariamente indisponíveis.</p>';
+        }
         if (detalhe && id) {
             detalhe.hidden = false;
             detalhe.innerHTML = '<p class="home-preview-loading">' + mensagem + '</p>';

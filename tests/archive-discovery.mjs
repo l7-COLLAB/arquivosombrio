@@ -43,9 +43,9 @@ for(const page of ['garimpo.html','lendas.html','creepypastas.html']){
   assert.match(read(page),/css\/discovery-filters-20261018\.css\?v=1/);
  });
 }
-test('Garimpo atualiza a versão do script após otimização da lista',()=>{
+test('Garimpo usa a versão atual com listagens pré-renderizadas',()=>{
  const html=read('garimpo.html');
- assert.ok(html.includes('js/script.js?v=garimpo-list-perf-20261026'));
+ assert.ok(html.includes('js/script.js?v=public-listings-20261031'));
 });
 test('busca possui foco visível e layout para celular',()=>{
  const css=read('css/discovery-filters-20261018.css');
