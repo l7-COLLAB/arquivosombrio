@@ -23,6 +23,10 @@ sitemap = importlib.util.module_from_spec(spec)
 assert spec and spec.loader
 spec.loader.exec_module(sitemap)
 
+listing_spec = importlib.util.spec_from_file_location("public_listings", Path(__file__).with_name("build-public-listings.py"))
+listings = importlib.util.module_from_spec(listing_spec)
+listing_spec.loader.exec_module(listings)
+
 PUBLIC_TABLES = {
     "Casos": ("caso.html", "Dossiês", "historia", "imagem"),
     "casos_diarios": ("garimpo.html", "Garimpo Sombrio", "conteudo", "imagem_capa"),
@@ -36,10 +40,10 @@ def safe_id(value):
         raise ValueError("ID público inválido")
     return ident
 
-def public_rows(table):
+def public_rows(table, now=None):
     page, label, narrative, image = PUBLIC_TABLES[table]
     fields = ["id", "titulo", "resumo", "categoria", "status_publicacao",
-              "created_at", "updated_at", narrative]
+              "created_at", "updated_at", narrative] + listings.LIST_FIELDS[table]
     if table != "Casos":
         fields.append("publicado_em")
     params = urlencode({
@@ -67,7 +71,8 @@ def public_rows(table):
         if not str(row.get("titulo") or "").strip():
             raise ValueError(f"Registro sem título em {table}")
         sitemap.lastmod(row)
-    return rows
+    now = now or dt.datetime.now(dt.timezone.utc)
+    return [row for row in rows if listings.published(row, now)]
 
 def plain_text(value, limit=100000):
     value = str(value or "")
@@ -294,7 +299,9 @@ def main():
     site = Path(sys.argv[1])
     sitemap_file = site / "sitemap.xml"
     base = sitemap_file.read_bytes()
-    data = {table: public_rows(table) for table in PUBLIC_TABLES}
+    now = dt.datetime.now(dt.timezone.utc)
+    data = {table: public_rows(table, now) for table in PUBLIC_TABLES}
+    listing_edits = listings.prepare(site, data)
     pages = build_all(site, data)
     # A mesma fotografia de dados serve ao sitemap e às páginas.
     updated_sitemap = sitemap.build(base, data)
@@ -314,6 +321,8 @@ def main():
         raise ValueError("Página de pesquisa ausente do deploy")
     updated_search = insert_index_into_search(search_file.read_text(encoding="utf-8"), data)
     search_file.write_text(updated_search, encoding="utf-8")
+    for filename, html in listing_edits.items():
+        (site / filename).write_text(html, encoding="utf-8")
     sitemap_file.write_bytes(updated_sitemap)
     print(f"Pré-renderização: {len(pages)} páginas públicas com canonical e Article JSON-LD")
 
