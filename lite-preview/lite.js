@@ -36,13 +36,13 @@ function authName(user){
 function initAccount(){
   var links=document.querySelectorAll("[data-lite-account-link]");
   authUser(authRead(),function(user){
-    for(var i=0;i<links.length;i++)if(user)links[i].innerHTML="Conta · "+authName(user);
+    for(var i=0;i<links.length;i++)if(user)links[i].textContent="Conta · "+authName(user);
     var current=document.querySelector("[data-lite-account-current]"),form=document.querySelector("[data-lite-login]");
     if(current){
       if(user){
         current.hidden=false;if(form)form.style.display="none";
         var n=current.querySelector("[data-lite-account-name]"),e=current.querySelector("[data-lite-account-email]");
-        if(n)n.innerHTML=authName(user);if(e)e.innerHTML=user.email||"";
+        if(n)n.textContent=authName(user);if(e)e.textContent=user.email||"";
       }else{current.hidden=true;if(form)form.style.display="block"}
     }
   });
@@ -83,8 +83,30 @@ if(audioBox){
       if(xhr.readyState!==4)return;
       if(xhr.status>=200&&xhr.status<300){
         audioBox.hidden=false;
-        audioPlayer.src=audioBase+"?type="+encodeURIComponent(audioType)+"&id="+encodeURIComponent(audioId);
-        audioState.innerHTML="Narração Kokoro aprovada e pronta para reprodução.";
+        audioState.textContent="Entre na sua conta para ouvir a narração.";
+        var audioSession=authRead();
+        if(audioSession&&audioSession.access_token){
+          authUser(audioSession,function(user){
+            if(!user){audioState.textContent="Entre na sua conta para ouvir a narração.";return}
+            var current=authRead();
+            if(!current||!current.access_token){audioState.textContent="Sessão expirada. Entre novamente.";return}
+            var reqAudio=new XMLHttpRequest();
+            reqAudio.open("GET",audioBase+"?format=json&type="+encodeURIComponent(audioType)+"&id="+encodeURIComponent(audioId),true);
+            reqAudio.setRequestHeader("Authorization","Bearer "+current.access_token);
+            reqAudio.onreadystatechange=function(){
+              if(reqAudio.readyState!==4)return;
+              if(reqAudio.status===200){
+                var payload={};try{payload=JSON.parse(reqAudio.responseText||"{}")}catch(e){}
+                if(payload.url&&/^https:\/\//i.test(payload.url)){
+                  audioPlayer.src=payload.url;
+                  audioState.textContent="Narração Kokoro aprovada e pronta para reprodução.";
+                }else audioState.textContent="Áudio indisponível.";
+              }else if(reqAudio.status===401)audioState.textContent="Entre na sua conta para ouvir a narração.";
+              else audioState.textContent="Não foi possível carregar o áudio.";
+            };
+            reqAudio.send(null);
+          });
+        }
       }
     };
     xhr.send(null);
