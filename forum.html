@@ -1842,8 +1842,7 @@
 
                         <span>
 
-                            Sugestões ficam armazenadas localmente nesta
-                            versão do projeto.
+                            A sugestão só será considerada recebida após confirmação do envio. Se a conexão falhar, o texto poderá ficar como rascunho neste navegador.
 
                         </span>
 
@@ -1872,6 +1871,7 @@
                         <input
                             type="text"
                             id="sug-nome"
+                            minlength="2"
                             maxlength="60"
                             placeholder="Nome ou codinome"
                             required
@@ -1893,6 +1893,7 @@
                         <input
                             type="text"
                             id="sug-titulo"
+                            minlength="3"
                             maxlength="150"
                             placeholder="Nome do caso ou assunto"
                             required
@@ -1938,6 +1939,7 @@
                     <p
                         class="form-message"
                         id="mensagem-sucesso"
+                        role="status"
                         aria-live="polite"
                     ></p>
 
@@ -2256,7 +2258,8 @@
          ================================================================ -->
 
     <script src="data/caso.js" defer></script>
-    <script src="js/script.js?v=public-listings-forense-20261031" defer></script>
+    <script src="js/script.js?v=suggestion-confirmation-20261031" defer></script>
+    <script src="js/public-suggestion.js?v=1" defer></script>
     <script src="js/filtros.js?v=20260919-1" defer></script>
 
 <script>
