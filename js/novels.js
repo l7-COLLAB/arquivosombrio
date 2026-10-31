@@ -18,7 +18,7 @@ function renderGuestContinue(section,books){
 
 function setNovelMetadata(title,description){
  document.title=title;
- const summary=String(description||"").replace(/\\s+/g," ").trim().slice(0,155);
+ const summary=String(description||"").replace(/\s+/g," ").trim().slice(0,155);
  let meta=document.querySelector('meta[name="description"]');
  if(!meta){meta=document.createElement("meta");meta.name="description";document.head.appendChild(meta)}
  meta.content=summary;
