@@ -4,6 +4,18 @@ const sb=window.supabase.createClient(SUPABASE_URL,KEY);
 const esc=s=>String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 const params=new URLSearchParams(location.search);const slug=params.get("obra"),hasChapter=params.has("capitulo"),cap=hasChapter?Number(params.get("capitulo")):null;
 const progressUrl=(book,chapter)=>"novel.html?obra="+encodeURIComponent(book)+"&capitulo="+encodeURIComponent(chapter);
+
+const guestProgressKey=id=>"as-novel-guest-progress-v1-"+id;
+function readGuestProgress(id){
+ try{const p=JSON.parse(localStorage.getItem(guestProgressKey(id))||"null");return p&&Number.isInteger(p.chapter)&&p.chapter>=0&&Number.isFinite(p.scroll)&&p.scroll>=0&&Number.isFinite(p.percent)&&p.percent>=0&&p.percent<=100?p:null}catch{return null}
+}
+function renderGuestContinue(section,books){
+ const rows=books.map(b=>({book:b,progress:readGuestProgress(b.id)})).filter(x=>x.progress).sort((a,b)=>b.progress.updated-a.progress.updated).slice(0,3);
+ if(!rows.length)return;
+ section.hidden=false;
+ section.innerHTML='<div class="novel-section-head"><div><span>SUA LEITURA NESTE DISPOSITIVO</span><h2>Continuar lendo</h2></div><p>Sem login: o progresso fica salvo apenas neste navegador.</p></div><div class="novel-continue-grid">'+rows.map(({book:b,progress:p})=>'<article class="novel-continue-card">'+cover(b)+'<div><h3>'+esc(b.titulo)+'</h3><p>Capítulo '+p.chapter+'</p><div class="novel-progress-track" role="progressbar" aria-label="Progresso do capítulo" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.round(p.percent)+'"><span style="width:'+p.percent+'%"></span></div><small>'+Math.round(p.percent)+'% deste capítulo</small><a class="novel-button" href="'+progressUrl(b.slug,p.chapter)+'">Continuar lendo →</a></div></article>').join("")+'</div>';
+}
+
 async function getReadingProgress(userId,novelIds){
  if(!userId||!novelIds.length)return [];
  const {data,error}=await sb.from("novel_progresso").select("novel_id,capitulo_id,percentual,scroll_y,atualizado_em").eq("user_id",userId).in("novel_id",novelIds).order("atualizado_em",{ascending:false});
@@ -32,7 +44,7 @@ async function catalog(){
   starter.innerHTML='<div class="novel-section-head"><div><span>PRIMEIRAS PÁGINAS</span><h2>Comece por aqui</h2></div><p>Uma seleção de obras do acervo para descobrir sua próxima leitura.</p></div><div class="novel-starter-grid">'+suggestions.map(x=>'<a class="novel-starter-item" href="novel.html?obra='+encodeURIComponent(x.slug)+'">'+cover(x)+'<span><strong>'+esc(x.titulo)+'</strong><small>'+esc(x.autor_nome||"Autor não informado")+'</small><em>Conhecer a obra →</em></span></a>').join("")+'</div>';
  }
  const section=document.querySelector("#novel-continue");if(!section||!books.length)return;
- const {data:{user}}=await sb.auth.getUser();if(!user)return;
+ const {data:{user}}=await sb.auth.getUser();if(!user){renderGuestContinue(section,books);return;}
  const progress=await getReadingProgress(user.id,books.map(x=>x.id));if(!progress.length)return;
  const nums=await chapterNumbers(progress.map(x=>x.capitulo_id));const byId=new Map(books.map(b=>[b.id,b]));
  const items=progress.filter(p=>byId.has(p.novel_id)&&nums.has(p.capitulo_id));
@@ -81,6 +93,23 @@ immersiveButton.onclick=()=>{prefs.immersive=!prefs.immersive;closeOptions();doc
 document.querySelector("#reader-reset").onclick=()=>{prefs={...defaults};apply()};
 apply();
 const {data:{user}}=await sb.auth.getUser();
+if(!user){
+ const key=guestProgressKey(n.id);
+ const maxScroll=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);
+ const saved=readGuestProgress(n.id);
+ if(saved?.chapter===c.numero&&saved.scroll>0){
+  if(document.fonts?.ready)await document.fonts.ready;
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  scrollTo({top:Math.min(saved.scroll,maxScroll()),behavior:"instant"});
+ }
+ let timer=null;
+ const save=()=>{clearTimeout(timer);const max=maxScroll();const data={chapter:c.numero,scroll:Math.round(scrollY),percent:max?Math.min(100,Math.round(scrollY/max*100)):0,updated:Date.now()};try{localStorage.setItem(key,JSON.stringify(data))}catch{}};
+ addEventListener("scroll",()=>{clearTimeout(timer);timer=setTimeout(save,900)},{passive:true});
+ document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")save()});
+ addEventListener("pagehide",save);
+ // A chapter visit establishes the continuation link without requiring a scroll.
+ if(saved?.chapter!==c.numero)save();
+}
 if(user){
  let restoring=true,dirty=false,saving=false,timer=null,lastSaved=-1;
  const key="novel-progress-"+user.id+"-"+n.id;
