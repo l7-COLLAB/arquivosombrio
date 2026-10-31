@@ -26,7 +26,7 @@ def query(table, fields, filters):
     return rows
 
 def clean(value,limit=10000):
-    return re.sub(r"\\s+"," ",re.sub(r"<[^>]*>"," ",str(value or ""))).strip()[:limit]
+    return re.sub(r"\s+"," ",re.sub(r"<[^>]*>"," ",str(value or ""))).strip()[:limit]
 
 def valid_slug(value):
     if not isinstance(value,str) or not re.fullmatch(r"[a-zA-Z0-9_-]{1,120}",value):
@@ -55,7 +55,7 @@ def render(book,chapters):
     chapter_links="".join('<li><a href="'+e(original+"&capitulo="+str(c["numero"]))+'">Capítulo '+e(c["numero"])+' · '+e(clean(c.get("titulo"),180))+'</a></li>' for c in chapters)
     schema={"@context":"https://schema.org","@type":"Book","name":title,"description":desc,"inLanguage":"pt-BR","url":url}
     if author:schema["author"]={"@type":"Person","name":author}
-    ld=json.dumps(schema,ensure_ascii=False).replace("<","\\u003c")
+    ld=json.dumps(schema,ensure_ascii=False).replace("<","\u003c")
     return ('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
             '<title>'+e(title)+' — Biblioteca de Novels | Arquivo Sombrio</title><meta name="description" content="'+e(desc)+'">'
             '<link rel="canonical" href="'+e(url)+'"><meta property="og:type" content="book">'
@@ -92,14 +92,14 @@ def build(site,books,chapters):
         node=ET.SubElement(root,tag("url"))
         ET.SubElement(node,tag("loc")).text=url
         modified=str(book.get("updated_at") or book.get("publicado_em") or "")
-        if re.match(r"^\\d{4}-\\d{2}-\\d{2}",modified):
+        if re.match(r"^\d{4}-\d{2}-\d{2}",modified):
             ET.SubElement(node,tag("lastmod")).text=modified[:10]
     if not output:return 0
     dest=site/"novels"
     if dest.exists():raise ValueError("Pasta novels já existe no artefato")
     dest.mkdir()
     for rel,html in output.items(): (site/rel).write_bytes(html)
-    sitemap_file.write_bytes(b'<?xml version="1.0" encoding="UTF-8"?>\\n'+ET.tostring(root,encoding="utf-8")+b"\\n")
+    sitemap_file.write_bytes(b'<?xml version="1.0" encoding="UTF-8"?>\n'+ET.tostring(root,encoding="utf-8")+b"\n")
     return len(output)
 
 if __name__=="__main__":
