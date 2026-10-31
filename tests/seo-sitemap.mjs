@@ -8,7 +8,7 @@ const robots=fs.readFileSync(path.join(root,'robots.txt'),'utf8');
 const urls=[...xml.matchAll(/<url>\s*<loc>([^<]+)<\/loc>(?:\s*<lastmod>([^<]+)<\/lastmod>)?[\s\S]*?<\/url>/g)].map(m=>({url:m[1],lastmod:m[2]}));
 const contentTypes=['caso.html','garimpo.html','pericia.html','lendas.html','creepypastas.html'];
 test('sitemap completo, sem URLs duplicadas',()=>{
- assert.match(xml,/^<\?xml version="1\.0" encoding="UTF-8"\?>/);
+ assert.match(xml,/^<\?xml\s+version=['"]1\.0['"]\s+encoding=['"]UTF-8['"]\s*\?>/);
  assert.match(xml,/xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/);
  assert.ok(urls.length>=90,'O sitemap base precisa preservar suas entradas históricas');
  assert.equal(new Set(urls.map(x=>x.url)).size,urls.length);
