@@ -14,7 +14,7 @@ LIST_FIELDS = {
     'pericias': ['imagem'],
 }
 BASE_FIELDS = ['id', 'titulo', 'resumo', 'categoria', 'status_publicacao', 'created_at', 'publicado_em']
-ROUTES = {'Casos': 'caso', 'casos_diarios': 'garimpo', 'lendas': 'lendas', 'creepypastas': 'creepypastas'}
+ROUTES = {'Casos': 'caso', 'casos_diarios': 'garimpo', 'lendas': 'lendas', 'creepypastas': 'creepypastas', 'pericias': 'pericia'}
 
 def published(row, now):
     if row.get('status_publicacao') != 'publicado':
@@ -69,11 +69,13 @@ def image_url(value):
 
 def card(table, row):
     url, title, summary = e(row['__static_url']), e(row['titulo']), e(row.get('resumo'))
-    image = e(image_url(row.get('imagem') if table == 'Casos' else row.get('imagem_capa')))
+    image = e(image_url(row.get('imagem') if table in ('Casos', 'pericias') else row.get('imagem_capa')))
     if table == 'Casos':
         return f'''<article class="case-card" data-case-id="{e(row['id'])}"><a class="case-card-link" href="{url}" aria-label="Abrir dossiê: {title}"><div class="card-image"><img src="{image}" alt="{title}" width="800" height="500" loading="lazy" decoding="async"><span class="badge status">{e(row.get('status') or 'EM ARQUIVO')}</span></div><div class="card-content"><span class="badge category">{e(row.get('categoria') or 'ARQUIVO')}</span><h3>{title}</h3><div class="card-meta"><span>{e(row.get('local') or 'Local desconhecido')}</span><span>{e(row.get('ano') or 'Data desconhecida')}</span></div><p class="card-summary">{summary}</p><span class="btn-read-more">Abrir dossiê →</span></div></a></article>'''
+    if table == 'pericias':
+        return f'''<article class="case-card" data-forensic-id="{e(row['id'])}"><a class="case-card-link" href="{url}" aria-label="Abrir perícia: {title}"><div class="card-image"><img src="{image}" alt="{title}" width="800" height="500" loading="lazy" decoding="async"><span class="badge status">TÉCNICO / METODOLÓGICO</span></div><div class="card-content"><span class="badge category">{e(row.get('categoria') or 'PERÍCIA')}</span><h3>{title}</h3><div class="card-meta"><span>Ciência Forense</span><span>Artigo técnico</span></div><p class="card-summary">{summary}</p><span class="btn-read-more">Abrir perícia →</span></div></a></article>'''
     if table == 'casos_diarios':
-        return f'<a class="home-daily-card" href="{url}"><img src="{image}" alt="" width="92" height="104" loading="lazy" decoding="async"><div><small>{e(row.get("categoria") or "GARIMPO SOMBRIO")}</small><strong>{title}</strong><p>{summary}</p></div></a>'
+        return f'<a class="home-daily-card"' href="{url}"><img src="{image}" alt="" width="92" height="104" loading="lazy" decoding="async"><div><small>{e(row.get("categoria") or "GARIMPO SOMBRIO")}</small><strong>{title}</strong><p>{summary}</p></div></a>'
     label = 'LENDA' if table == 'lendas' else 'CREEPYPASTA'
     return f'<a class="archive-literary-card" href="{url}"><div class="archive-literary-card-media"><img src="{image}" alt="" width="184" height="154" loading="lazy" decoding="async"></div><div><span class="archive-literary-card-label">{label}</span><h2>{title}</h2><p>{summary}</p></div></a>'
 
@@ -119,8 +121,10 @@ def prepare(site, datasets):
     catalog = {table: metadata(table, datasets[table]) for table in ROUTES}
     edits = {}
     targets = {
-        'index.html': [('Casos', 'grid-casos'), ('casos_diarios', 'home-daily-feed')],
-        'dossies.html': [('Casos', 'grid-casos')],
+        'index.html': [('Casos', 'grid-casos'), ('casos_diarios', 'home-daily-feed'), ('pericias', 'grid-forense')],
+        'dossies.html': [('Casos', 'grid-casos'), ('casos_diarios', 'home-daily-feed'), ('pericias', 'grid-forense')],
+        'pericia.html': [('Casos', 'grid-casos'), ('casos_diarios', 'home-daily-feed'), ('pericias', 'grid-forense')],
+        'forum.html': [('Casos', 'grid-casos'), ('casos_diarios', 'home-daily-feed'), ('pericias', 'grid-forense')],
         'garimpo.html': [('casos_diarios', 'daily-archive-grid')],
         'lendas.html': [('lendas', 'literary-grid')],
         'creepypastas.html': [('creepypastas', 'literary-grid')],
