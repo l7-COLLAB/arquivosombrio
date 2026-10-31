@@ -95,6 +95,12 @@ def audit(site: Path) -> dict:
                 errors.append(f"Meta {key} ausente ou duplicada: {rel}")
         if parser.metas.get("og:url") != [url]:
             errors.append(f"Open Graph URL divergente: {rel}")
+        for name in ("og:image", "twitter:image"):
+            values = parser.metas.get(name, [])
+            if len(values) != 1 or urlparse(values[0]).scheme not in ("http", "https") or not urlparse(values[0]).netloc:
+                errors.append(f"Imagem social {name} ausente ou inválida: {rel}")
+        if parser.metas.get("twitter:card") != ["summary_large_image"]:
+            errors.append(f"Twitter Card inconsistente: {rel}")
         robots = parser.metas.get("robots", [""])[0].lower()
         if "noindex" in robots: errors.append(f"Arquivo publicado com noindex: {rel}")
         if len(parser.schemas) != 1:
