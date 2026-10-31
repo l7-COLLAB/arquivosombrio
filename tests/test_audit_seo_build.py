@@ -37,6 +37,11 @@ class AuditTests(TestCase):
     def test_detects_orphan_sitemap_entry(self):
         self.target.unlink()
         self.assertTrue(any("Entrada no sitemap sem arquivo" in error for error in audit.audit(self.site)["errors"]))
+    def test_detects_missing_social_cover(self):
+        html = self.target.read_text()
+        html = html.replace('property="og:image"', 'property="og:photo"')
+        self.target.write_text(html)
+        self.assertTrue(any("Imagem social og:image" in error for error in audit.audit(self.site)["errors"]))
     def test_detects_missing_description(self):
         html = self.target.read_text()
         self.target.write_text(html.replace('name="description"', 'name="unknown"'))

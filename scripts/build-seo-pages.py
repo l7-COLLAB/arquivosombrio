@@ -27,6 +27,10 @@ listing_spec = importlib.util.spec_from_file_location("public_listings", Path(__
 listings = importlib.util.module_from_spec(listing_spec)
 listing_spec.loader.exec_module(listings)
 
+format_spec = importlib.util.spec_from_file_location("seo_article_format", Path(__file__).with_name("seo-article-format.py"))
+article_format = importlib.util.module_from_spec(format_spec)
+format_spec.loader.exec_module(article_format)
+
 PUBLIC_TABLES = {
     "Casos": ("caso.html", "Dossiês", "historia", "imagem"),
     "casos_diarios": ("garimpo.html", "Garimpo Sombrio", "conteudo", "imagem_capa"),
@@ -44,8 +48,12 @@ def public_rows(table, now=None):
     page, label, narrative, image = PUBLIC_TABLES[table]
     fields = ["id", "titulo", "resumo", "categoria", "status_publicacao",
               "created_at", "updated_at", narrative] + listings.LIST_FIELDS[table]
-    if table != "Casos":
-        fields.append("publicado_em")
+    if table == "Casos":
+        fields.append("documentos")
+    else:
+        fields.extend(["publicado_em", "fontes"])
+    if table == "pericias":
+        fields.extend(["legenda_imagem", "fonte_imagem"])
     params = urlencode({
         "select": ",".join(fields),
         "status_publicacao": "eq.publicado",
@@ -89,14 +97,23 @@ def render_page(table, row, related=None, cross_editorial=None):
     ident = safe_id(row["id"])
     title = plain_text(row["titulo"], 170)
     description = plain_text(row.get("resumo") or row.get(field) or title, 160)
-    narrative = plain_text(row.get(field), 100000)
-    if not narrative:
-        narrative = plain_text(row.get("resumo"), 100000)
+    narrative = row.get(field) or row.get("resumo") or description
+    article_body = article_format.render_narrative(narrative)
+    image_value = row.get("imagem" if table in ("Casos", "pericias") else "imagem_capa")
+    cover = article_format.cover_url(image_value)
+    image_figure = ""
+    if image_value and cover != article_format.FALLBACK_COVER:
+        caption = row.get("legenda_imagem") if table == "pericias" else None
+        caption_html = "<figcaption>" + escape(str(caption), quote=True) + "</figcaption>" if caption else ""
+        image_figure = ('<figure class="article-cover"><img src="' + escape(cover, quote=True) + '" alt="Capa do arquivo: '
+                        + escape(title, quote=True) + '" width="1200" height="700" decoding="async">'
+                        + caption_html + '</figure>')
+    references = article_format.render_references(row.get("documentos") if table == "Casos" else row.get("fontes"))
     path = canonical_path(page, ident)
     canonical = sitemap.BASE + path
     original = sitemap.BASE + page + "?id=" + ident
     headline = title + " — Arquivo Sombrio"
-    published = row.get("publicado_em") or row.get("created_at")
+    published = row.get("published_at") or row.get("publicado_em") or row.get("created_at")
     modified = row.get("updated_at") or published
     schema = {
         "@context": "https://schema.org",
@@ -107,15 +124,14 @@ def render_page(table, row, related=None, cross_editorial=None):
         "author": {"@type": "Organization", "name": "Arquivo Sombrio"},
         "publisher": {"@type": "Organization", "name": "Arquivo Sombrio"},
         "articleSection": label,
-        "inLanguage": "pt-BR"
+        "inLanguage": "pt-BR",
+        "image": [cover]
     }
     for key, date in (("datePublished", published), ("dateModified", modified)):
         if date:
             schema[key] = str(date)
     json_ld = json.dumps(schema, ensure_ascii=False).replace("<", "\\u003c")
     e = lambda value: escape(str(value or ""), quote=True)
-    chunks = [narrative[i:i+1900] for i in range(0, len(narrative), 1900)] or [description]
-    paragraphs = "\n".join("<p>" + e(part) + "</p>" for part in chunks)
     related_links = ""
     if related:
         links = []
@@ -157,12 +173,15 @@ def render_page(table, row, related=None, cross_editorial=None):
                            '<p>Leituras de outras categorias do acervo. Estas indicações não representam '
                            'vínculo factual entre os assuntos.</p>'
                            '<ul>' + "".join(items) + '</ul></aside>')
-    style = """body{margin:0;background:#12100f;color:#e7dcc6;font:17px/1.8 Georgia,serif}
-main,header,footer{max-width:800px;margin:auto;padding:24px}
-header{border-bottom:1px solid #a28758}h1{font:700 clamp(2rem,5vw,3rem)/1.2 Georgia,serif}
-a{color:#d9b77d}nav a{margin-right:18px}
-small{color:#bca882;letter-spacing:.08em}article{overflow-wrap:anywhere}
-article p{margin:0 0 1.35em}.related-documents{border-top:1px solid #a28758;margin:36px 0;padding:20px 0}.related-documents h2{font-size:1.3rem}.related-documents li{margin:9px 0}.cross-editorial{margin:30px 0;padding:22px 0;border-top:1px solid #a28758}.cross-editorial h2{font-size:1.3rem}.cross-editorial li{margin:12px 0}.cross-editorial span{color:#bca882;font:12px "DM Mono",monospace}a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}"""
+    style = """*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#0b0d10;color:#e7dcc6;font:17px/1.85 Georgia,"Times New Roman",serif}
+main,header,footer{width:min(100% - 36px,840px);margin:auto}header{padding:24px 0;border-bottom:1px solid #a28758}main{padding:35px 0 65px}footer{padding:22px 0 38px;border-top:1px solid #60503c}
+h1{font:700 clamp(2rem,5vw,3.1rem)/1.22 Georgia,serif;margin:13px 0 20px}a{color:#d9b77d;text-underline-offset:3px}nav{display:flex;gap:18px;flex-wrap:wrap}nav a{margin:0}
+small,.article-kicker{color:#bca882;letter-spacing:.08em;font:12px/1.6 "DM Mono",monospace;text-transform:uppercase}
+.article-summary{font-size:1.09rem;color:#dcccb1;line-height:1.75;max-width:72ch}.article-original-link{display:inline-block;padding:11px 0}
+article{overflow-wrap:anywhere;margin-top:34px}article p{margin:0 0 1.35em;max-width:76ch}article h2{color:#eed7ae;font:700 clamp(1.3rem,3vw,1.65rem)/1.35 Georgia,serif;margin:2.1em 0 .7em;border-left:2px solid #a28758;padding-left:16px}article h3{color:#e9d8bd;font-size:1.2rem;margin:1.7em 0 .6em}article ul{padding-left:25px;margin:0 0 1.5em}article li{margin:.45em 0}
+.article-cover{margin:32px 0 20px}.article-cover img{display:block;width:100%;height:auto;max-height:550px;object-fit:contain;background:#171a1e}.article-cover figcaption{padding:10px 0;color:#bca882;font-size:.85rem}
+.article-references,.related-documents,.cross-editorial{border-top:1px solid #a28758;margin:42px 0 0;padding:22px 0}.article-references h2,.related-documents h2,.cross-editorial h2{color:#eed7ae;font-size:1.35rem}.article-references ol,.related-documents ul,.cross-editorial ul{padding-left:24px}.article-references li,.related-documents li,.cross-editorial li{margin:13px 0;overflow-wrap:anywhere}.article-references p,.related-documents p,.cross-editorial p{color:#bca882;font-size:.91rem}.cross-editorial span{color:#bca882;font:12px "DM Mono",monospace}
+a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}@media(max-width:600px){body{font-size:16px}main,header,footer{width:min(100% - 30px,840px)}main{padding-top:25px}.article-cover{margin:22px 0}}"""
     html = f"""<!doctype html>
 <html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -176,7 +195,11 @@ article p{margin:0 0 1.35em}.related-documents{border-top:1px solid #a28758;marg
 <meta property="og:title" content="{e(headline)}">
 <meta property="og:description" content="{e(description)}">
 <meta property="og:url" content="{e(canonical)}">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="{e(cover)}">
+<meta property="og:image:alt" content="{e(title)}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{e(cover)}">
+<meta name="twitter:image:alt" content="{e(title)}">
 <script type="application/ld+json">{json_ld}</script>
 <style>{style}</style>
 </head><body>
@@ -186,9 +209,11 @@ article p{margin:0 0 1.35em}.related-documents{border-top:1px solid #a28758;marg
 <main id="conteudo-principal">
 <small>ARQUIVO SOMBRIO / {e(label.upper())}</small>
 <h1>{e(title)}</h1>
-<p>{e(description)}</p>
-<p><a href="{e(original)}">Abrir leitura interativa completa e anexos →</a></p>
-<article aria-label="Texto público do arquivo">{paragraphs}</article>
+<p class="article-summary">{e(description)}</p>
+<p><a class="article-original-link" href="{e(original)}">Abrir leitura interativa completa e anexos →</a></p>
+{image_figure}
+<article aria-label="Texto público do arquivo">{article_body}</article>
+{references}
 {related_links}
 {cross_links}
 <p><a href="{e(original)}">Consultar versão interativa, evidências e referências →</a></p>
