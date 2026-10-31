@@ -6,15 +6,15 @@ import vm from "node:vm";
 const src = fs.readFileSync(new URL("../js/public-suggestion.js", import.meta.url), "utf8");
 const key = "arquivo_sombrio_sugestao_pendente_v1";
 
-function fixture({ fetcher, saved, storageFailure = false } = {}) {
+function fixture({ fetcher, saved, storageFailure = false, empty = false } = {}) {
   const store = new Map();
   if (saved) store.set(key, JSON.stringify(saved));
   const events = {};
   const classes = new Set();
   const fields = {
-    "sug-nome": {value:"Leti",disabled:false},
-    "sug-titulo": {value:"Caso documental",disabled:false},
-    "sug-descricao": {value:"Contexto do caso",disabled:false}
+    "sug-nome": {value:empty?"":"Leti",disabled:false},
+    "sug-titulo": {value:empty?"":"Caso documental",disabled:false},
+    "sug-descricao": {value:empty?"":"Contexto do caso",disabled:false}
   };
   const button = {disabled:false};
   const message = {
@@ -99,13 +99,12 @@ test("draft recovery does not submit automatically",()=>{
   assert.equal(f.store.has(key),true);
 });
 test("draft recovery fills an empty form on revisit",()=>{
-  // The form fixtures are initialized with sample values for other tests.
-  const s=src.replace('if (draft && !nome.value && !titulo.value && !descricao.value)', 'if (draft)');
-  const f=fixture({saved:{nome:"Outro autor",titulo:"Caso recuperado",descricao:"Investigação"}});
-  // Verifies the production guard is present; guarded forms must not overwrite current text.
-  assert.match(src,/draft && !nome.value && !titulo.value && !descricao.value/);
-  assert.equal(f.fields["sug-titulo"].value,"Caso documental");
-  assert.ok(s.length>0);
+  const f=fixture({empty:true,saved:{nome:"Outro autor",titulo:"Caso recuperado",descricao:"Investigação"}});
+  assert.equal(f.fields["sug-nome"].value,"Outro autor");
+  assert.equal(f.fields["sug-titulo"].value,"Caso recuperado");
+  assert.equal(f.fields["sug-descricao"].value,"Investigação");
+  assert.match(f.message.textContent,/Rascunho não confirmado recuperado/);
+  assert.equal(f.requests.length,0);
 });
 
 test("validation avoids network and local persistence",async()=>{
