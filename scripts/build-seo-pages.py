@@ -31,6 +31,10 @@ format_spec = importlib.util.spec_from_file_location("seo_article_format", Path(
 article_format = importlib.util.module_from_spec(format_spec)
 format_spec.loader.exec_module(article_format)
 
+updates_spec = importlib.util.spec_from_file_location("public_updates", Path(__file__).with_name("build-public-updates.py"))
+updates = importlib.util.module_from_spec(updates_spec)
+updates_spec.loader.exec_module(updates)
+
 PUBLIC_TABLES = {
     "Casos": ("caso.html", "Dossiês", "historia", "imagem"),
     "casos_diarios": ("garimpo.html", "Garimpo Sombrio", "conteudo", "imagem_capa"),
@@ -189,6 +193,7 @@ a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}@media(max-width:60
 <meta name="description" content="{e(description)}">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="{e(canonical)}">
+<link rel="alternate" type="application/rss+xml" title="Atualizações do Arquivo Sombrio" href="https://arquivosombrio.net.br/rss.xml">
 <meta property="og:type" content="article">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="Arquivo Sombrio">
@@ -205,7 +210,7 @@ a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}@media(max-width:60
 </head><body>
 <header><nav aria-label="Navegação do acervo">
 <a href="/index.html">Início</a><a href="/pesquisa.html">Pesquisar</a>
-<a href="/{e(page)}">{e(label)}</a></nav></header>
+<a href="/{e(page)}">{e(label)}</a><a href="/atualizacoes.html">Atualizações</a></nav></header>
 <main id="conteudo-principal">
 <small>ARQUIVO SOMBRIO / {e(label.upper())}</small>
 <h1>{e(title)}</h1>
@@ -326,6 +331,11 @@ def main():
     base = sitemap_file.read_bytes()
     now = dt.datetime.now(dt.timezone.utc)
     data = {table: public_rows(table, now) for table in PUBLIC_TABLES}
+    public_update_rows = updates.public_updates()
+    updates_page = site / "atualizacoes.html"
+    if not updates_page.is_file() or (site / "rss.xml").exists():
+        raise ValueError("Template de atualizações ausente ou RSS duplicado")
+    updates_html, rss_xml, updates_count = updates.generate(updates_page, data, public_update_rows, PUBLIC_TABLES, now)
     listing_edits = listings.prepare(site, data)
     pages = build_all(site, data)
     # A mesma fotografia de dados serve ao sitemap e às páginas.
@@ -348,8 +358,10 @@ def main():
     search_file.write_text(updated_search, encoding="utf-8")
     for filename, html in listing_edits.items():
         (site / filename).write_text(html, encoding="utf-8")
+    updates_page.write_bytes(updates_html)
+    (site / "rss.xml").write_bytes(rss_xml)
     sitemap_file.write_bytes(updated_sitemap)
-    print(f"Pré-renderização: {len(pages)} páginas públicas com canonical e Article JSON-LD")
+    print(f"Pré-renderização: {len(pages)} páginas públicas; {updates_count} entradas na central de atualizações e RSS")
 
 if __name__ == "__main__":
     main()
