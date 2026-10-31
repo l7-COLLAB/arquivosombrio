@@ -21,11 +21,12 @@ class SitemapTests(TestCase):
         result = module.build(BASE, data)
         doc = ET.fromstring(result)
         locs = [x.text for x in doc.iter(module.tag("loc"))]
-        self.assertEqual(len(locs), 26)  # 21 páginas estáticas + cinco publicações
+        self.assertEqual(len(locs), 27)  # 22 páginas estáticas + cinco publicações
         self.assertIn("https://arquivosombrio.net.br/arquivo/caso-1.html", locs)
         self.assertNotIn("https://arquivosombrio.net.br/arquivo/caso-26.html", locs)
         self.assertEqual(len(locs), len(set(locs)))
         self.assertIn("https://arquivosombrio.net.br/pesquisa.html", locs)
+        self.assertIn("https://arquivosombrio.net.br/atualizacoes.html", locs)
 
     def test_draft_or_missing_editorial_stops_build(self):
         data = {table: [entry(1)] for table in module.SOURCES}
