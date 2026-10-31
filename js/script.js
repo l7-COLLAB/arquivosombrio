@@ -28,7 +28,10 @@ let promessaClienteSupabase = null;
 let promessaSupabaseSDK = null;
 let casosSupabase = window.ArquivoListagens?.read("Casos") || [];
 let livrosSupabase = [];
-let periciasSupabase = [];
+// A listagem pública usa a mesma fotografia de dados do build.
+ // Na rota de leitura ?id=, o texto integral continua vindo do Supabase.
+let periciasSupabase = new URLSearchParams(location.search).has("id")
+    ? [] : (window.ArquivoListagens?.read("pericias") || []);
 
 /* =========================================================
    CLOUDFLARE TURNSTILE
@@ -3801,7 +3804,8 @@ async function carregarPericiasSupabase() {
             erro
         );
 
-        periciasSupabase = [];
+        // Não apagar as perícias já entregues no HTML se a rede falhar.
+        periciasSupabase = window.ArquivoListagens?.read("pericias") || [];
     }
 }
 
@@ -4079,14 +4083,14 @@ function identificarTipoForense(caso) {
 const estadoFiltroForense = { busca: "", tipo: "todos", ordem: "recentes" };
 
 function obterPericiasParaGrade() {
-    const novas = (Array.isArray(periciasSupabase) ? periciasSupabase : []).filter(item => String(item.status_publicacao || "").trim().toLowerCase() === "publicado").map(item => ({ ...item, origem_forense: "nova" }));
+    const novas = (Array.isArray(periciasSupabase) ? periciasSupabase : []).filter(casoEstaPublicado).map(item => ({ ...item, origem_forense: "nova" }));
     const legadas = obterTodosCasos().filter(item => String(item.categoria).toUpperCase() === "PERÍCIA").map(item => ({ ...item, origem_forense: "legada" }));
     const titulosNovos = new Set(novas.map(item => normalizarTextoForense(item.titulo)));
     return novas.concat(legadas.filter(item => !titulosNovos.has(normalizarTextoForense(item.titulo))));
 }
 
 function criarCardPericia(pericia) {
-    const url = "pericia.html?id=" + encodeURIComponent(pericia.id) + "#forense";
+    const url = pericia.__static_url || ("pericia.html?id=" + encodeURIComponent(pericia.id) + "#forense");
     return '<article class="case-card" data-forensic-id="' + escaparHTML(pericia.id) + '">' +
         '<button type="button" class="content-favorite-button" aria-label="Adicionar perícia aos favoritos" data-favorite-type="forensic" data-favorite-id="' + escaparHTML(pericia.id) + '" data-favorite-title="' + escaparHTML(pericia.titulo || "Perícia") + '" data-favorite-subtitle="' + escaparHTML(pericia.categoria || "Ciência Forense") + '" data-favorite-image="' + escaparHTML(pericia.imagem || "") + '" data-favorite-url="' + escaparHTML(url) + '"><i class="fa-regular fa-bookmark"></i></button>' +
         '<a href="' + escaparHTML(url) + '" class="case-card-link" aria-label="Abrir perícia: ' + escaparHTML(pericia.titulo || "") + '">' +
