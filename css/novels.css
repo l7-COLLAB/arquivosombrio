@@ -156,3 +156,17 @@ body.novels:has(#novel-grid) .novel-banner{position:relative;margin:0;border:1px
   body.novels:has(#novel-grid) .novel-grid .novel-tags span {font-size:10px;padding:3px 4px}
   body.novels:has(#novel-grid) .novel-shell {width:calc(100% - 24px)}
 }
+
+/* Discovery entry shelf — novels catalogue only. */
+.novel-starter[hidden]{display:none!important}
+.novel-starter{margin:32px 0 44px}
+.novel-starter .novel-section-head{margin-top:0!important}
+.novel-starter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}
+.novel-starter-item{display:grid;grid-template-columns:76px minmax(0,1fr);gap:14px;align-items:center;min-width:0;padding:12px;border:1px solid #806447;background:#171411;color:#e9dcc4;text-decoration:none}
+.novel-starter-item:hover,.novel-starter-item:focus-visible{border-color:#d8b681}
+.novel-starter-item:focus-visible{outline:2px solid #d8b681;outline-offset:2px}
+.novel-starter-item .novel-cover{width:76px;aspect-ratio:2/3;object-fit:cover}
+.novel-starter-item strong{display:block;font:700 1rem/1.25 Georgia,serif;overflow-wrap:anywhere}
+.novel-starter-item small{display:block;margin-top:6px;color:#b9a58b;overflow-wrap:anywhere}
+.novel-starter-item em{display:block;margin-top:10px;color:#e0b779;font:normal .78rem Georgia,serif}
+@media(max-width:760px){.novel-starter-grid{grid-template-columns:1fr;gap:10px}.novel-starter-item{grid-template-columns:62px minmax(0,1fr)}.novel-starter-item .novel-cover{width:62px}}
