@@ -268,3 +268,22 @@ position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 0 46px #0
 .season-home.season-theme-halloween{background-image:linear-gradient(90deg,rgba(8,7,8,.83),rgba(8,7,8,.2)),url('/assets/especiais/halloween_fundo_cinematografico.webp')!important;background-size:cover,cover!important}
 .season-home.season-theme-halloween .season-hero-art{display:none!important}
 .season-home.season-theme-halloween .season-home-grid{grid-template-columns:minmax(0,1fr)!important}
+
+
+/* Acervo permanente: cards com capa, resumo e acesso ao arquivo completo. */
+.season-breadcrumb{display:flex;gap:9px;align-items:center;flex-wrap:wrap;padding:15px 0 5px;font:600 .78rem/1.5 system-ui,sans-serif;color:var(--sm)}
+.season-breadcrumb a{text-underline-offset:4px}
+.season-case-card{padding:0!important;overflow:hidden;min-height:0!important}
+.season-case-link{display:flex;flex-direction:column;height:100%;color:var(--sp)!important;text-decoration:none!important}
+.season-case-cover{height:clamp(155px,19vw,220px);background:radial-gradient(circle at 70% 20%,#86503255,transparent),linear-gradient(135deg,#231711,#0b0a0b);overflow:hidden;border-bottom:1px solid var(--sg);display:grid;place-items:center}
+.season-case-cover img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.season-case-cover-fallback{color:var(--sa);font:600 .77rem/1.5 'DM Mono',monospace;letter-spacing:.13em}
+.season-case-copy{padding:16px;display:flex;flex:1;flex-direction:column;gap:10px}
+.season-case-copy strong{font-size:clamp(1.03rem,1.8vw,1.25rem);line-height:1.3;color:var(--sp)}
+.season-case-summary{margin:0!important;font:400 .9rem/1.55 Georgia,serif!important;color:var(--sm)!important;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.season-case-cta{margin-top:auto;color:var(--sa);font:600 .8rem/1.45 system-ui,sans-serif;padding-top:5px}
+.season-case-link:hover .season-case-cta,.season-case-link:focus-visible .season-case-cta{text-decoration:underline}
+.season-case-link:focus-visible{outline:2px solid var(--sa);outline-offset:-3px}
+.season-entry-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,265px),1fr))}
+@media(max-width:600px){.season-entry-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.season-case-cover{height:150px}.season-case-copy{padding:12px}.season-case-summary{-webkit-line-clamp:3}}
+@media(max-width:420px){.season-entry-grid{grid-template-columns:1fr}.season-case-cover{height:205px}}
