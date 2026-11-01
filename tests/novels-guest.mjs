@@ -4,14 +4,17 @@ import vm from "node:vm";
 import { readFileSync } from "node:fs";
 
 const source=readFileSync(new URL("../js/novels.js",import.meta.url),"utf8");
-function mock({search="",books=[],chapters=[],progress=[],user=null,storage=new Map()}={}){
+function mock({search="",books=[],chapters=[],progress=[],library=[],user=null,storage=new Map(),writes=[]}={}){
  const nodes=new Map();
  const events=new Map();
  const element=(name)=>{if(!nodes.has(name))nodes.set(name,{innerHTML:"",hidden:true,value:"",style:{},dataset:{},classList:{add(){},remove(){},toggle(){return true}},setAttribute(){},insertAdjacentHTML(){},contains(){return false}});return nodes.get(name)};
  const api={
   from(table){
-   const rows=table==="novels"?books:table==="novel_capitulos"?chapters:progress;
+   const rows=table==="novels"?books:table==="novel_capitulos"?chapters:table==="novel_biblioteca"?library:progress;
    const q={select(){return q},eq(){return q},in(){return q},order(){return q},limit(){return q},
+    upsert(row){writes.push({table,action:"upsert",row});const i=library.findIndex(x=>x.novel_id===row.novel_id);if(i>=0)library[i]={...row};else library.push({...row});return Promise.resolve({error:null})},
+    insert(row){writes.push({table,action:"insert",row});library.push({...row});return Promise.resolve({error:null})},
+    delete(){writes.push({table,action:"delete"});return q},
     then(resolve,reject){return Promise.resolve({data:rows,error:null}).then(resolve,reject)},
     async single(){return {data:rows[0]??null,error:null}},
     async maybeSingle(){return {data:rows[0]??null,error:null}}
@@ -24,7 +27,7 @@ function mock({search="",books=[],chapters=[],progress=[],user=null,storage=new 
   location:{search,href:""},console,innerHeight:800,scrollY:0,
   document:{head:{appendChild(){}},body:{dataset:{},classList:{toggle(){return true},add(){},remove(){}}},documentElement:{scrollHeight:2000},fonts:{ready:Promise.resolve()},
    querySelector:element,querySelectorAll(){return []},createElement(){return {setAttribute(){}}},addEventListener(type,fn){events.set("document:"+type,fn)},visibilityState:"visible"},
-  localStorage:{getItem(k){return storage.get(k)??null},setItem(k,v){storage.set(k,v)}},
+  localStorage:{getItem(k){return storage.get(k)??null},setItem(k,v){storage.set(k,v)},removeItem(k){storage.delete(k)}},
   addEventListener(type,fn){events.set(type,fn)},
   setTimeout(){return 1},clearTimeout(){},
   requestAnimationFrame(fn){fn()},
@@ -33,7 +36,7 @@ function mock({search="",books=[],chapters=[],progress=[],user=null,storage=new 
  };
  vm.createContext(context);
  vm.runInContext(source,context,{filename:"js/novels.js"});
- return {context,nodes,events,storage,call:x=>vm.runInContext(x,context)};
+ return {context,nodes,events,storage,writes,call:x=>vm.runInContext(x,context)};
 }
 test("leitura anônima: dados locais válidos e corrompidos",()=>{
  const m=mock();
@@ -192,7 +195,7 @@ test("jornada inicial não promete conclusão e evita recomendações repetidas"
  const m=mock({books});
  await m.call("catalog()");
  assert.match(m.nodes.get("#novel-journey").innerHTML,/0<\/strong>/);
- assert.match(m.nodes.get("#novel-journey").innerHTML,/não necessariamente concluídas/);
+ assert.match(m.nodes.get("#novel-journey").innerHTML,/não são necessariamente concluídas/);
  assert.equal(m.nodes.get("#novel-next").hidden,true);
  assert.match(m.nodes.get("#novel-starter").innerHTML,/Um/);
  const storage=new Map([["as-novel-guest-progress-v1-a",JSON.stringify({chapter:1,scroll:0,percent:100,updated:1})]]);
@@ -201,4 +204,60 @@ test("jornada inicial não promete conclusão e evita recomendações repetidas"
  assert.equal(existing.nodes.get("#novel-next").hidden,true);
  assert.equal(existing.nodes.get("#novel-starter").hidden,true);
  assert.match(existing.nodes.get("#novel-journey").innerHTML,/1<\/strong>/);
+});
+
+test("conclusão anônima é explícita, reversível e independente da posição de leitura",async()=>{
+ const book={id:"b1",slug:"um-livro",titulo:"Livro",status_obra:"concluida"};
+ const m=mock();
+ m.context.book=book;
+ await m.call("wireNovelLibraryControls(book,null)");
+ const btn=m.nodes.get("#novel-complete-toggle");
+ assert.equal(btn.textContent,"Marcar como concluída");
+ assert.equal(m.call('readGuestCompleted("b1")'),false);
+ await btn.onclick();
+ assert.equal(m.call('readGuestCompleted("b1")'),true);
+ assert.equal(btn.textContent,"Desmarcar conclusão");
+ assert.equal(m.storage.get("as-novel-completed-v1-b1"),"1");
+ await btn.onclick();
+ assert.equal(m.call('readGuestCompleted("b1")'),false);
+ assert.equal(m.storage.has("as-novel-completed-v1-b1"),false);
+});
+test("conta autenticada persiste conclusão via estado existente com o próprio user_id",async()=>{
+ const book={id:"b1",slug:"um-livro",titulo:"Livro",status_obra:"concluida"};
+ const library=[{user_id:"user1",novel_id:"b1",estado:"acompanhando"}];
+ const m=mock({user:{id:"user1"},library});
+ m.context.book=book;
+ await m.call("wireNovelLibraryControls(book,{id:'user1'})");
+ const btn=m.nodes.get("#novel-complete-toggle");
+ await btn.onclick();
+ assert.equal(m.writes[0].table,"novel_biblioteca");
+ assert.equal(m.writes[0].row.user_id,"user1");
+ assert.equal(m.writes[0].row.estado,"concluido");
+ assert.equal(btn.textContent,"Desmarcar conclusão");
+ await btn.onclick();
+ assert.equal(m.writes[1].row.estado,"acompanhando");
+ assert.equal(m.storage.size,0);
+});
+test("jornada mostra concluídas declaradas e remove essas obras de continuar e próxima",async()=>{
+ const books=[
+  {id:"a",slug:"a",titulo:"Obra terminada",status_obra:"concluida",status_publicacao:"publicado",generos:["Mistério"]},
+  {id:"b",slug:"b",titulo:"Próxima obra",status_obra:"concluida",status_publicacao:"publicado",generos:["Mistério"]}
+ ];
+ const storage=new Map([
+  ["as-novel-guest-progress-v1-a",JSON.stringify({chapter:3,scroll:200,percent:100,updated:1})],
+  ["as-novel-completed-v1-a","1"]
+ ]);
+ const guest=mock({books,storage});
+ await guest.call("catalog()");
+ assert.match(guest.nodes.get("#novel-journey").innerHTML,/1<\/strong><span>obra concluída/);
+ assert.match(guest.nodes.get("#novel-journey").innerHTML,/Concluídas por você/);
+ assert.match(guest.nodes.get("#novel-journey").innerHTML,/Obra terminada/);
+ assert.equal(guest.nodes.get("#novel-continue").hidden,true);
+ assert.match(guest.nodes.get("#novel-next").innerHTML,/Próxima obra/);
+ assert.doesNotMatch(guest.nodes.get("#novel-starter").innerHTML,/href="novel.html\?obra=a"/);
+ const authed=mock({books,user:{id:"user1"},library:[{user_id:"user1",novel_id:"a",estado:"concluido"}]});
+ await authed.call("catalog()");
+ assert.match(authed.nodes.get("#novel-journey").innerHTML,/1<\/strong><span>obra concluída/);
+ assert.match(authed.nodes.get("#novel-next").innerHTML,/Próxima obra/);
+ assert.equal(authed.nodes.get("#novel-continue").hidden,true);
 });

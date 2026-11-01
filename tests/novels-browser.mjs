@@ -92,11 +92,34 @@ try {
    await page.locator("#novel-next a").first().click();
    await page.locator("#novel-detail h1").waitFor({timeout:10000});
    assert.match(await page.locator("#novel-detail h1").innerText(),/O Segredo da Casa/);
+
+
+
    if(viewport.width===390){
      const size=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,viewport:innerWidth}));
      assert(size.scrollWidth<=size.viewport+8,"Leitor ultrapassa viewport: "+JSON.stringify(size));
       assert.equal(await page.locator("#novel-detail h1").count(),1);
    }
+   await page.goto(server+"/novel.html?obra=misterio-da-biblioteca",{waitUntil:"domcontentloaded"});
+   await page.locator("#novel-complete-toggle").waitFor({timeout:10000});
+   assert.equal(await page.locator("#novel-complete-toggle").getAttribute("aria-pressed"),"false");
+   await page.locator("#novel-complete-toggle").click();
+   assert.equal(await page.locator("#novel-complete-toggle").getAttribute("aria-pressed"),"true");
+   await page.reload({waitUntil:"domcontentloaded"});
+   await page.locator("#novel-complete-toggle[aria-pressed='true']").waitFor({timeout:10000});
+   await page.goto(server+"/novels.html",{waitUntil:"domcontentloaded"});
+   await page.locator("#novel-journey .novel-journey-complete").waitFor({timeout:10000});
+   assert.match(await page.locator("#novel-journey .novel-journey-complete").innerText(),/1\s+obra concluída/);
+   assert.equal(await page.locator("#novel-continue").isVisible(),false);
+   assert.match(await page.locator("#novel-journey .novel-journey-finished").innerText(),/O Mistério da Biblioteca/);
+   await page.goto(server+"/novel.html?obra=misterio-da-biblioteca&capitulo=2",{waitUntil:"domcontentloaded"});
+   await page.locator("#novel-complete-toggle[aria-pressed='true']").waitFor({timeout:10000});
+   await page.locator("#novel-complete-toggle").click();
+   assert.equal(await page.locator("#novel-complete-toggle").getAttribute("aria-pressed"),"false");
+   await page.goto(server+"/novels.html",{waitUntil:"domcontentloaded"});
+   await page.locator("#novel-journey .novel-journey-complete").waitFor({timeout:10000});
+   assert.match(await page.locator("#novel-journey .novel-journey-complete").innerText(),/0\s+obras concluídas/);
+   assert.equal(await page.locator("#novel-continue").isVisible(),true);
    assert.deepEqual(faults,[],"Erros JavaScript: "+faults.join(" | "));
    await context.close();
    count++;
