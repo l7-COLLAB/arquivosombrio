@@ -6,6 +6,51 @@ const params=new URLSearchParams(location.search);const slug=params.get("obra"),
 const progressUrl=(book,chapter)=>"novel.html?obra="+encodeURIComponent(book)+"&capitulo="+encodeURIComponent(chapter);
 
 
+const novelWantKey=id=>"as-novel-want-v1-"+id;
+function readGuestWant(id){
+ try{return localStorage.getItem(novelWantKey(id))==="1"}catch{return false}
+}
+function writeGuestWant(id,wanted){
+ try{
+  if(wanted)localStorage.setItem(novelWantKey(id),"1");
+  else localStorage.removeItem(novelWantKey(id));
+  return true;
+ }catch{return false}
+}
+function renderWantShelf(section,books,wanted,user=null){
+ if(!section)return;
+ const saved=books.filter(book=>wanted.has(book.id));
+ if(!saved.length){section.hidden=true;section.innerHTML="";section.onclick=null;return;}
+ section.hidden=false;
+ section.innerHTML='<div class="novel-section-head"><div><span>SUA LISTA DE LEITURA</span><h2>Quero ler</h2></div><p>'+(user?"Obras salvas na sua conta.":"Obras salvas apenas neste navegador.")+'</p></div>'+
+  '<div class="novel-want-grid">'+saved.map(book=>'<article class="novel-want-item">'+cover(book,"novel-want-cover")+
+  '<div class="novel-want-info"><h3>'+esc(book.titulo)+'</h3><p>'+esc(book.autor_nome||"Autor não informado")+'</p>'+
+  '<div class="novel-want-actions"><a href="novel.html?obra='+encodeURIComponent(book.slug)+'">Conhecer a obra</a>'+
+  '<button type="button" data-want-remove="'+esc(book.id)+'" aria-label="Remover '+esc(book.titulo)+' de Quero ler">Remover</button></div></div></article>').join("")+'</div>'+
+  '<p class="novel-want-feedback" role="status" aria-live="polite"></p>';
+ let busy=false;
+ section.onclick=async event=>{
+  const button=event.target.closest?.("[data-want-remove]");
+  if(!button||!section.contains(button)||busy)return;
+  const id=button.dataset.wantRemove;
+  if(!wanted.has(id))return;
+  busy=true;button.disabled=true;
+  try{
+   if(user){
+    const {error}=await sb.from("novel_biblioteca").delete().eq("user_id",user.id).eq("novel_id",id).eq("estado","quero_ler");
+    if(error)throw error;
+   }else if(!writeGuestWant(id,false))throw new Error("Armazenamento indisponível");
+   wanted.delete(id);
+   renderWantShelf(section,books,wanted,user);
+  }catch(error){
+   console.warn("Não foi possível remover de Quero ler",error);
+   button.disabled=false;
+   const feedback=section.querySelector(".novel-want-feedback");
+   if(feedback)feedback.textContent="Não foi possível remover a obra. Tente novamente.";
+  }finally{busy=false}
+ };
+}
+
 const novelCompletedKey=id=>"as-novel-completed-v1-"+id;
 function readGuestCompleted(id){
  try{return localStorage.getItem(novelCompletedKey(id))==="1"}catch{return false}
@@ -26,60 +71,102 @@ async function getNovelLibraryStates(userId){
 async function wireNovelLibraryControls(book,user){
  const library=document.querySelector("#novel-library-toggle");
  const complete=document.querySelector("#novel-complete-toggle");
- if(!library&&!complete)return;
+ const want=document.querySelector("#novel-want-toggle");
+ if(!library&&!complete&&!want)return;
  let state=null,loadingError=false;
  if(user){
   const {data,error}=await sb.from("novel_biblioteca").select("estado").eq("user_id",user.id).eq("novel_id",book.id).maybeSingle();
   if(error){console.warn("Estado da leitura indisponível",error);loadingError=true}
   else state=data?.estado||null;
  }
- let guestFinished=!user&&readGuestCompleted(book.id),busy=false;
+ let guestFinished=!user&&readGuestCompleted(book.id);
+ let guestWanted=!user&&readGuestWant(book.id);
+ let busy=false;
  const status=document.querySelector("#novel-complete-status");
+ const wantStatus=document.querySelector("#novel-want-status");
  const finished=()=>user?state==="concluido":guestFinished;
+ const wanted=()=>user?state==="quero_ler":guestWanted;
  const paint=()=>{
-  if(library)library.textContent=state?"Remover das minhas leituras":"Adicionar às minhas leituras";
+  if(library){
+   library.textContent=state==="quero_ler"?"Começar acompanhamento":state?"Remover das minhas leituras":"Adicionar às minhas leituras";
+   library.disabled=busy||loadingError;
+  }
   if(complete){
    complete.textContent=finished()?"Desmarcar conclusão":"Marcar como concluída";
    complete.setAttribute("aria-pressed",String(finished()));
    complete.disabled=busy||loadingError;
   }
+  if(want){
+   want.textContent=wanted()?"Remover de Quero ler":state==="concluido"?"Leitura concluída":state==="acompanhando"?"Em acompanhamento":"Salvar em Quero ler";
+   want.setAttribute("aria-pressed",String(wanted()));
+   want.disabled=busy||loadingError||state==="concluido"||state==="acompanhando"||guestFinished;
+  }
   if(status&&!status.textContent)status.textContent="Só será concluída quando você confirmar.";
  };
  paint();
+ if(want){
+  want.onclick=async()=>{
+   if(busy||loadingError||state==="concluido"||state==="acompanhando"||guestFinished)return;
+   busy=true;paint();
+   const next=!wanted();
+   try{
+    if(user){
+     if(next){
+      const {error}=await sb.from("novel_biblioteca").upsert({user_id:user.id,novel_id:book.id,estado:"quero_ler"},{onConflict:"user_id,novel_id"});
+      if(error)throw error;
+      state="quero_ler";
+     }else{
+      const {error}=await sb.from("novel_biblioteca").delete().eq("user_id",user.id).eq("novel_id",book.id).eq("estado","quero_ler");
+      if(error)throw error;
+      state=null;
+     }
+    }else{
+     if(!writeGuestWant(book.id,next))throw new Error("Armazenamento indisponível");
+     guestWanted=next;
+    }
+    if(wantStatus)wantStatus.textContent=next?"Obra salva em Quero ler.":"Obra removida de Quero ler.";
+   }catch(error){console.warn("Falha ao salvar Quero ler",error);if(wantStatus)wantStatus.textContent="Não foi possível atualizar sua lista. Tente novamente."}
+   finally{busy=false;paint()}
+  };
+ }
  if(library){
   library.onclick=async()=>{
    if(!user){location.href="meu-arquivo.html";return}
    if(busy||loadingError)return;
-   busy=true;library.disabled=true;if(complete)complete.disabled=true;
+   busy=true;paint();
    try{
-    const op=state?sb.from("novel_biblioteca").delete().eq("user_id",user.id).eq("novel_id",book.id):
+    const previous=state;
+    const op=previous==="quero_ler"?
+     sb.from("novel_biblioteca").upsert({user_id:user.id,novel_id:book.id,estado:"acompanhando"},{onConflict:"user_id,novel_id"}):
+     previous?sb.from("novel_biblioteca").delete().eq("user_id",user.id).eq("novel_id",book.id):
      sb.from("novel_biblioteca").insert({user_id:user.id,novel_id:book.id,estado:"acompanhando"});
     const {error}=await op;
     if(error)throw error;
-    state=state?null:"acompanhando";
-    if(status)status.textContent=state?"Obra adicionada à biblioteca.":"Obra removida da biblioteca.";
+    state=previous==="quero_ler"?"acompanhando":previous?null:"acompanhando";
+    if(status)status.textContent=state?"Obra adicionada às suas leituras.":"Obra removida da sua biblioteca.";
    }catch(error){console.warn("Falha ao atualizar biblioteca",error);if(status)status.textContent="Não foi possível salvar. Tente novamente."}
-   finally{busy=false;library.disabled=false;paint()}
+   finally{busy=false;paint()}
   };
  }
  if(complete){
   complete.onclick=async()=>{
    if(busy||loadingError)return;
-   busy=true;complete.disabled=true;if(library)library.disabled=true;
+   busy=true;paint();
    const next=!finished();
    try{
     if(user){
      const {error}=await sb.from("novel_biblioteca")
-       .upsert({user_id:user.id,novel_id:book.id,estado:next?"concluido":"acompanhando"},{onConflict:"user_id,novel_id"});
+      .upsert({user_id:user.id,novel_id:book.id,estado:next?"concluido":"acompanhando"},{onConflict:"user_id,novel_id"});
      if(error)throw error;
      state=next?"concluido":"acompanhando";
     }else{
      if(!writeGuestCompleted(book.id,next))throw new Error("Armazenamento indisponível");
      guestFinished=next;
+     if(next){writeGuestWant(book.id,false);guestWanted=false}
     }
     if(status)status.textContent=next?"Conclusão registrada. Você pode desfazer quando quiser.":"A obra voltou para as leituras não concluídas.";
    }catch(error){console.warn("Não foi possível atualizar a conclusão",error);if(status)status.textContent="Não foi possível salvar. Tente novamente."}
-   finally{busy=false;if(library)library.disabled=false;paint()}
+   finally{busy=false;paint()}
   };
  }
 }
