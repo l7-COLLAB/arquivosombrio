@@ -43,6 +43,13 @@ try {
    await page.locator("#novel-grid .novel-card").first().waitFor({timeout:10000});
    assert.equal(await page.locator("#novel-grid .novel-card").count(),2);
    assert.equal(await page.locator("#novel-starter a").count(),2);
+   assert.equal(await page.locator("#novel-themes .novel-theme-item").count(),2);
+   assert.match(await page.locator("#novel-themes").innerText(),/Investigações clássicas/);
+   assert.match(await page.locator("#novel-themes").innerText(),/Segredos na penumbra/);
+   if(viewport.width===390){
+     const catalogSize=await page.evaluate(()=>({documentWidth:document.documentElement.scrollWidth,viewport:innerWidth}));
+     assert(catalogSize.documentWidth<=catalogSize.viewport+8,"Catálogo ultrapassa viewport: "+JSON.stringify(catalogSize));
+   }
    await page.locator("#novel-search").fill("sem resultado");
    assert.match(await page.locator("#novel-grid").innerText(),/Nenhuma obra encontrada/);
    await page.locator("#novel-search").fill("");
