@@ -1,0 +1,84 @@
+import importlib.util
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest import TestCase, main
+from xml.etree import ElementTree as ET
+
+path=Path(__file__).resolve().parent.parent/"scripts/build-novels-seo.py"
+spec=importlib.util.spec_from_file_location("novels_seo",path)
+mod=importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mod)
+
+def book(status="publicado",slug="a-mulher-de-branco"):
+    return {"id":"book-1","slug":slug,"titulo":"A Mulher de Branco","sinopse":"Mistério & segredo.","autor_nome":"Wilkie Collins","status_publicacao":status}
+
+class NovelSeoTests(TestCase):
+    def test_published_book_and_chapter(self):
+        with TemporaryDirectory() as d:
+            site=Path(d)
+            site.joinpath("sitemap.xml").write_text('<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>',encoding="utf-8")
+            count=mod.build(site,[book()],[{"novel_id":"book-1","numero":1,"titulo":"A chegada","status_publicacao":"publicado"}])
+            self.assertEqual(count,1)
+            html=(site/"novels/a-mulher-de-branco.html").read_text()
+            self.assertIn("application/ld+json",html)
+            self.assertIn("A Mulher de Branco",html)
+            self.assertIn("capitulo=1",html)
+            self.assertIn("Mistério &amp; segredo.",html)
+            root=ET.parse(site/"sitemap.xml").getroot()
+            self.assertEqual(len(root),1)
+    def test_rejects_draft_book_and_chapter(self):
+        with TemporaryDirectory() as d:
+            site=Path(d)
+            site.joinpath("sitemap.xml").write_text('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>')
+            with self.assertRaises(ValueError):mod.build(site,[book(status="rascunho")],[])
+            with self.assertRaises(ValueError):mod.build(site,[book()],[{"novel_id":"book-1","numero":2,"status_publicacao":"rascunho"}])
+    def test_rejects_invalid_slug(self):
+        with self.assertRaises(ValueError):mod.valid_slug("../admin")
+    def test_json_ld_escapes_literal_less_than(self):
+        html=mod.render({**book(),"titulo":"2 < 3 & mistério"},[]).decode()
+        self.assertIn('\\u003c',html)
+        self.assertNotIn('"name": "2 < 3',html)
+    def test_future_publication_is_excluded(self):
+        from unittest.mock import patch
+        future={**book(),"publicado_em":"2999-01-01T20:00:00-03:00"}
+        self.assertFalse(mod.released(future))
+        with patch.object(mod,"query",return_value=[future,book()]):
+            self.assertEqual(len(mod.public_books()),1)
+        chapter={"novel_id":"book-1","numero":1,"titulo":"Futuro","status_publicacao":"publicado","agendado_para":"2999-01-01T20:00:00-03:00"}
+        with patch.object(mod,"query",return_value=[chapter]):
+            self.assertEqual(mod.public_chapters(["book-1"]),[])
+    def test_rejects_future_book_in_build(self):
+        with TemporaryDirectory() as d:
+            site=Path(d)
+            site.joinpath("sitemap.xml").write_text('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>')
+            with self.assertRaises(ValueError):
+                mod.build(site,[{**book(),"publicado_em":"2999-01-01T20:00:00-03:00"}],[])
+    def test_audit_detects_missing_page_and_wrong_canonical(self):
+        with TemporaryDirectory() as d:
+            site=Path(d)
+            site.joinpath("sitemap.xml").write_text('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>',encoding="utf-8")
+            mod.build(site,[book()],[])
+            self.assertEqual(mod.audit_generated_novels(site),1)
+            filename=site/"novels/a-mulher-de-branco.html"
+            original=filename.read_text(encoding="utf-8")
+            filename.write_text(original.replace('rel="canonical"','rel="alternate"'),encoding="utf-8")
+            with self.assertRaisesRegex(ValueError,"Canonical"):
+                mod.audit_generated_novels(site)
+            filename.unlink()
+            with self.assertRaisesRegex(ValueError,"divergentes"):
+                mod.audit_generated_novels(site)
+    def test_audit_detects_tampered_structured_data(self):
+        with TemporaryDirectory() as d:
+            site=Path(d)
+            site.joinpath("sitemap.xml").write_text('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>',encoding="utf-8")
+            mod.build(site,[book()],[])
+            filename=site/"novels/a-mulher-de-branco.html"
+            filename.write_text(filename.read_text(encoding="utf-8").replace('"@type": "Book"','"@type": "Article"'),encoding="utf-8")
+            with self.assertRaisesRegex(ValueError,"estruturados"):
+                mod.audit_generated_novels(site)
+    def test_escapes_metadata(self):
+        html=mod.render({**book(),"titulo":"<script>bad</script> & teste"},[]).decode()
+        self.assertNotIn("<script>bad</script>",html)
+        self.assertIn("&amp; teste",html)
+
+if __name__=="__main__":main()
