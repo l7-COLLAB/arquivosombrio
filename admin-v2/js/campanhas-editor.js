@@ -29,7 +29,63 @@ try{
  if(saved.error)throw saved.error;
  for(const row of saved.data||[]){const i=data.campaigns.findIndex(c=>c.id===row.id);if(i>=0&&row.payload&&typeof row.payload==='object')data.campaigns[i]=row.payload;}
  validate();
- data.campaigns.forEach((c,i)=>{$('campaign').appendChild(option(String(i),c.title));if(!$('theme').querySelector('option[value="'+c.theme+'"]'))$('theme').appendChild(option(c.theme,c.title+' · tema próprio'));});$('campaign').addEventListener('change',()=>{if(localPreviewUrl)URL.revokeObjectURL(localPreviewUrl);localPreviewUrl=null;$('local-image').value='';render();});render();$('editor').hidden=false;say('Sessão validada. Editor local disponível; nenhuma mudança foi publicada.');
+
+ function campaignDiagnosticTime(value){
+  if(!value)return '—';
+  const d=new Date(value);
+  return Number.isFinite(d.getTime())?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(d):'—';
+ }
+ async function loadCampaignDiagnostics(){
+  const button=$('cover-diagnostics-refresh'),state=$('cover-diagnostics-status');
+  if(!button||button.disabled)return;
+  button.disabled=true;state.textContent='Consultando publicações e tentativas…';
+  try{
+   const result=await adminClient.rpc('admin_v2_campaign_cover_diagnostics');
+   if(result.error)throw result.error;
+   const report=result.data;
+   if(!report||!report.summary||!Array.isArray(report.items))throw Error('Resposta administrativa inválida.');
+   const total=report.summary;
+   $('cover-diagnostics-summary').textContent=[
+    'Campanhas registradas: '+Number(total.total||0),
+    'Agendadas: '+Number(total.scheduled||0),
+    'Capas privadas futuras: '+Number(total.private_scheduled||0),
+    'Capas vencidas pendentes: '+Number(total.due_pending||0),
+    'Em recuperação: '+Number(total.retrying||0),
+    'Rascunhos com capa privada: '+Number(total.draft_private||0)
+   ].join(' · ');
+   const job=report.job;
+   $('cover-diagnostics-cron').textContent=job
+    ?'Agendador: '+(job.active?'ativo':'inativo')+' ('+(job.schedule||'frequência não identificada')+'). Última execução registrada: '+campaignDiagnosticTime(job.last_run_at)+' · Estado do cron: '+(job.last_run_status||'sem dados')+'.'
+    :'Agendador de capas não encontrado. Confirme a configuração no Supabase.';
+   const items=$('cover-diagnostics-items');
+   items.replaceChildren();
+   const states={retry:'Falha · aguardando nova tentativa',due:'Pendente de liberação',scheduled_private:'Agendada · capa protegida',scheduled:'Agendada'};
+   if(!report.items.length){
+    const tr=make('tr');const td=make('td',{colspan:'4'},'Nenhuma campanha futura ou com capa pendente neste momento.');
+    tr.appendChild(td);items.appendChild(tr);
+   }
+   for(const entry of report.items){
+    const tr=make('tr');
+    const details=[];
+    if(entry.hero_private)details.push('Hero privado');
+    if(entry.card_private)details.push('Card privado');
+    if(Number(entry.failures)>0)details.push('Falhas: '+Number(entry.failures));
+    if(entry.error_code)details.push('Código: '+String(entry.error_code));
+    if(entry.retry_at)details.push('Nova tentativa: '+campaignDiagnosticTime(entry.retry_at));
+    for(const value of [entry.title||entry.id||'Campanha sem título',campaignDiagnosticTime(entry.publish_at),states[entry.state]||'Estado não identificado',details.join(' · ')||'Sem pendências de capa']){
+     tr.appendChild(make('td',{},String(value)));
+    }
+    items.appendChild(tr);
+   }
+   state.textContent='Diagnóstico atualizado em '+campaignDiagnosticTime(report.generated_at)+'. Dados restritos à administração.';
+  }catch(err){
+   state.textContent='Não foi possível consultar o diagnóstico: '+(err?.message||'erro não identificado');
+   state.style.color='#ffc2b8';
+  }finally{button.disabled=false}
+ }
+ $('cover-diagnostics-refresh').addEventListener('click',loadCampaignDiagnostics);
+
+ data.campaigns.forEach((c,i)=>{$('campaign').appendChild(option(String(i),c.title));if(!$('theme').querySelector('option[value="'+c.theme+'"]'))$('theme').appendChild(option(c.theme,c.title+' · tema próprio'));});$('campaign').addEventListener('change',()=>{if(localPreviewUrl)URL.revokeObjectURL(localPreviewUrl);localPreviewUrl=null;$('local-image').value='';render();});render();$('editor').hidden=false;say('Sessão validada. Editor local disponível; nenhuma mudança foi publicada.');void loadCampaignDiagnostics();
  let previewSequence=0;
  async function resolvePreviewImage(ref,slug){
   const image=String(ref||'');
@@ -148,8 +204,8 @@ try{
  $('upload-hero').addEventListener('click',()=>uploadMedia('hero'));
  $('upload-card').addEventListener('click',()=>uploadMedia('card'));
  function dateToIso(value){if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value))throw Error('Informe data e hora válidas.');const milliseconds=new Date(value+':00-03:00').getTime();if(!Number.isFinite(milliseconds))throw Error('Data inválida.');return new Date(milliseconds).toISOString()}
- $('publish-db').addEventListener('click',async()=>{try{readForm();const c=data.campaigns[Number($('campaign').value)];if(c.status==='draft')throw Error('Altere o estado de rascunho antes de publicar.');const auth=await adminClient.auth.getUser();if(auth.error||!auth.data?.user)throw Error('Sessão expirada.');const scheduled=$('publish-at').value;const at=scheduled?dateToIso(scheduled):new Date().toISOString();if(!confirm('Publicar a campanha '+c.title+(scheduled?' no horário agendado':' agora')+'?'))return;const result=await adminClient.from('published_campaigns').upsert({id:c.id,payload:c,updated_by:auth.data.user.id,updated_at:new Date().toISOString(),publish_at:at},{onConflict:'id'});if(result.error)throw result.error;if(Date.parse(at)<=Date.now()&&[c.heroImage,c.cardImage].some(x=>String(x||'').startsWith('staging:'))){const promoted=await adminClient.functions.invoke('promote-campaign-covers',{body:{id:c.id}});if(promoted.error||!promoted.data?.ok)throw Error('Agendamento salvo, mas a promoção da capa não foi concluída. Verifique a publicação antes de divulgar.');const fresh=await adminClient.from('published_campaigns').select('payload').eq('id',c.id).maybeSingle();if(!fresh.error&&fresh.data?.payload){c.heroImage=fresh.data.payload.heroImage||null;c.cardImage=fresh.data.payload.cardImage||null;render();}say('Campanha publicada e capa privada promovida com sucesso.')}else say('Publicação configurada para '+at+'. Capas privadas agendadas aguardam processamento automático.')}catch(e){say('Publicação não realizada: '+e.message,true)}});
- $('unpublish-db').addEventListener('click',async()=>{try{const c=data.campaigns[Number($('campaign').value)];const auth=await adminClient.auth.getUser();if(auth.error||!auth.data?.user)throw Error('Sessão expirada.');if(!confirm('Retirar do ar a versão personalizada de '+c.title+'? O manifesto padrão poderá continuar exibindo a campanha.'))return;const result=await adminClient.from('published_campaigns').update({publish_at:'2099-01-01T00:00:00Z',updated_at:new Date().toISOString(),updated_by:auth.data.user.id}).eq('id',c.id);if(result.error)throw result.error;say('Versão personalizada desativada; o manifesto estático continua independente.')}catch(e){say('Não foi possível desativar: '+e.message,true)}});
+ $('publish-db').addEventListener('click',async()=>{try{readForm();const c=data.campaigns[Number($('campaign').value)];if(c.status==='draft')throw Error('Altere o estado de rascunho antes de publicar.');const auth=await adminClient.auth.getUser();if(auth.error||!auth.data?.user)throw Error('Sessão expirada.');const scheduled=$('publish-at').value;const at=scheduled?dateToIso(scheduled):new Date().toISOString();if(!confirm('Publicar a campanha '+c.title+(scheduled?' no horário agendado':' agora')+'?'))return;const result=await adminClient.from('published_campaigns').upsert({id:c.id,payload:c,updated_by:auth.data.user.id,updated_at:new Date().toISOString(),publish_at:at},{onConflict:'id'});if(result.error)throw result.error;if(Date.parse(at)<=Date.now()&&[c.heroImage,c.cardImage].some(x=>String(x||'').startsWith('staging:'))){const promoted=await adminClient.functions.invoke('promote-campaign-covers',{body:{id:c.id}});if(promoted.error||!promoted.data?.ok)throw Error('Agendamento salvo, mas a promoção da capa não foi concluída. Verifique a publicação antes de divulgar.');const fresh=await adminClient.from('published_campaigns').select('payload').eq('id',c.id).maybeSingle();if(!fresh.error&&fresh.data?.payload){c.heroImage=fresh.data.payload.heroImage||null;c.cardImage=fresh.data.payload.cardImage||null;render();}say('Campanha publicada e capa privada promovida com sucesso.')}else say('Publicação configurada para '+at+'. Capas privadas agendadas aguardam processamento automático.');void loadCampaignDiagnostics()}catch(e){say('Publicação não realizada: '+e.message,true)}});
+ $('unpublish-db').addEventListener('click',async()=>{try{const c=data.campaigns[Number($('campaign').value)];const auth=await adminClient.auth.getUser();if(auth.error||!auth.data?.user)throw Error('Sessão expirada.');if(!confirm('Retirar do ar a versão personalizada de '+c.title+'? O manifesto padrão poderá continuar exibindo a campanha.'))return;const result=await adminClient.from('published_campaigns').update({publish_at:'2099-01-01T00:00:00Z',updated_at:new Date().toISOString(),updated_by:auth.data.user.id}).eq('id',c.id);if(result.error)throw result.error;say('Versão personalizada desativada; o manifesto estático continua independente.')void loadCampaignDiagnostics();}catch(e){say('Não foi possível desativar: '+e.message,true)}});
  $('clear-image').addEventListener('click',()=>{if(localPreviewUrl)URL.revokeObjectURL(localPreviewUrl);localPreviewUrl=null;$('local-image').value='';preview()});
  $('add-day').addEventListener('click',()=>{try{readForm();const c=data.campaigns[Number($('campaign').value)];c.days.push({date:c.start,title:'Novo arquivo',url:null,published:false});render();preview()}catch(e){say(e.message,true)}});
  $('save-db').addEventListener('click',async()=>{try{readForm();const c=data.campaigns[Number($('campaign').value)];const {data:auth,error:authErr}=await adminClient.auth.getUser();if(authErr||!auth?.user)throw Error('Sessão expirada. Entre novamente.');const result=await adminClient.from('editorial_campaigns').upsert({id:c.id,payload:c,updated_by:auth.user.id,updated_at:new Date().toISOString()},{onConflict:'id'}).select('id').single();if(result.error)throw result.error;say('Campanha salva no banco administrativo. Ainda não está publicada no site.');}catch(e){say('Falha ao salvar: '+e.message,true)}});
