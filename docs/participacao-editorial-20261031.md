@@ -48,3 +48,23 @@ As chaves de envio nunca devem estar em GitHub, JavaScript público, HTML ou com
 - Testes unitários de formulário, preservação do manuscrito após falhas, revisão privada, direitos e ausência de publicação automática.
 - Auditoria do build e sitemap, autenticação da V2 e confirmação da função implantada.
 - Não submeter textos reais de terceiros ou criar assinaturas de teste sem controle do endereço destinatário.
+
+## Estúdio editorial de newsletter na V2
+
+- Acesse /admin-v2/newsletter.html, também disponível pelo menu da Central V2.
+- Somente usuários administrativos podem consultar e criar edições; a sessão é verificada no navegador e o Supabase mantém políticas RLS administrativas.
+- A tabela editorial_newsletter_editions armazena título, assunto, prévia curta, texto, CTA HTTPS opcional e situação interna: rascunho, revisao, aprovado ou arquivado.
+- O estado aprovado significa apenas revisão editorial concluída. Não há botão, cron ou serviço de envio/agenda neste módulo.
+- A prévia usa textContent em vez de interpretação de HTML, e não representa o template final de e-mail.
+- O painel mostra apenas contagens de inscrições confirmadas, pendentes e canceladas. Não acessa e-mails individuais, tokens ou lista de destinatários.
+- Sem sessão administrativa, os controles permanecem desabilitados. Em erro de gravação, não há confirmação falsa.
+
+### Pré-requisitos de envio futuro
+
+1. Confirmar domínio remetente verificado e testar o ciclo de confirmação/cancelamento na Resend.
+2. Criar serviço de disparo separado e autorizado, auditado e com confirmação real de entregas pelo provedor.
+3. Selecionar somente assinaturas com status confirmado, revalidando imediatamente antes de cada envio.
+4. Incluir cancelamento individualizado em todos os e-mails, limites de taxa e controles de reclamação/bounce.
+5. Impedir mensagens duplicadas e não tratar a marcação editorial como envio.
+
+A criação de rascunhos é independente de RESEND_API_KEY, NEWSLETTER_FROM_EMAIL e NEWSLETTER_ENABLED; a ausência dessas credenciais continua bloqueando inscrições por e-mail.

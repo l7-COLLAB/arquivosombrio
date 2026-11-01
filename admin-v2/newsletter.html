@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Newsletter · Estúdio editorial | Arquivo Sombrio V2</title>
+<link rel="icon" href="../favicon.ico">
+<style>
+:root{color-scheme:dark;font-synthesis:none}*{box-sizing:border-box}
+body{margin:0;background:#0b0d10;color:#e8dcc7;font:15px/1.65 Arial,Helvetica,sans-serif}
+a{color:#d8b581;text-underline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #e7c693;outline-offset:3px}
+.wrap{width:min(calc(100% - 32px),1120px);margin:auto}.top{background:#14171b;border-bottom:1px solid #594938}
+.top-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:20px 0}
+.logo{font:700 16px Georgia,serif;letter-spacing:.14em;text-decoration:none}.top nav{display:flex;gap:16px;flex-wrap:wrap;font-size:12px}
+main{padding:32px 0 80px}.eyebrow{color:#c1a37a;font-size:12px;letter-spacing:.15em;text-transform:uppercase}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;color:#f0d8b3;line-height:1.3}
+h1{font-size:clamp(1.9rem,4vw,3rem);margin:.4rem 0}h2{font-size:1.55rem}
+.lead{max-width:72ch;color:#cabbab}.warning{padding:16px 20px;margin:22px 0;border-left:3px solid #ac8161;background:#1c1819;color:#e1cab2}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}
+.metric{padding:14px 18px;border:1px solid #5a4a38;background:#16191d}
+.metric strong{display:block;font:700 30px Georgia,serif;color:#f0d8b3;line-height:1.35}
+.metric span{font-size:12px;color:#bfa889}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,.92fr);gap:20px;align-items:start}
+.panel{background:#16191d;border:1px solid #574634;padding:20px;min-width:0}
+label{display:grid;gap:7px;margin:14px 0;font-size:13px;font-weight:600;color:#e1d1b8}
+input,textarea,select{width:100%;min-width:0;border:1px solid #675640;background:#0b0d10;color:#f4e8d5;border-radius:0;padding:12px;font:15px/1.5 Arial,sans-serif}
+textarea{resize:vertical;min-height:245px;font-family:Georgia,serif;line-height:1.7}
+fieldset{border:0;margin:0;padding:0;min-width:0}fieldset:disabled{opacity:.65}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{border:1px solid #b99a6d;background:#c2a277;color:#151210;padding:10px 15px;font:700 12px Arial,sans-serif;cursor:pointer}
+button.secondary{background:transparent;color:#e2caab}
+button[disabled]{opacity:.55;cursor:default}
+.feedback{min-height:1.35em;color:#d8ba8b;font-size:13px}
+.preview{background:#eee8dc;color:#27221b;padding:26px;margin:12px 0;border:1px solid #c5b28e;overflow-wrap:anywhere}
+.preview strong{font:700 21px Georgia,serif;display:block}.preview .subject{font-size:13px;color:#615543;margin:10px 0}
+.preview .body{white-space:pre-wrap;line-height:1.75;font:16px Georgia,serif}
+.preview a{color:#65491e;overflow-wrap:anywhere}.preview .footer{font:12px/1.6 Arial,sans-serif;border-top:1px solid #c2b6a7;margin-top:24px;padding-top:12px}
+.cards{display:grid;gap:10px;margin-top:16px}
+.item{padding:14px;border:1px solid #504334;background:#101215;display:flex;align-items:flex-start;justify-content:space-between;gap:13px}
+.item h3{font-size:17px;margin:0 0 7px}.item small{font-size:12px;color:#b7a385}
+.item button{flex-shrink:0}.footer-page{border-top:1px solid #4c3f2e;padding:18px 0;color:#b0a088;font-size:12px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:520px){.two{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.item{flex-direction:column}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" defer></script>
+<script src="./js/newsletter-editor.js?v=1" defer></script>
+</head>
+<body>
+<header class="top"><div class="wrap top-inner">
+<a class="logo" href="./index.html">ARQUIVO SOMBRIO · V2</a>
+<nav aria-label="Navegação administrativa"><a href="./index.html">Central V2</a><a href="./curadoria-ficcao.html">Curadoria de ficção</a><a href="../participar.html">Página pública</a></nav>
+</div></header>
+<main class="wrap">
+<p class="eyebrow">ESTÚDIO EDITORIAL / NEWSLETTER</p>
+<h1>Edições e assinaturas</h1>
+<p class="lead">Redija edições, revise o conteúdo e acompanhe as inscrições confirmadas. Nenhuma ação desta página envia mensagens ou agendará disparos.</p>
+<div class="warning" role="note"><strong>Envio ainda indisponível.</strong> Edições aprovadas permanecem somente no banco editorial. O envio requer remetente verificado, integração de disparo específica e cancelamento em todas as mensagens. Não há botão de envio nesta versão.</div>
+<p id="page-status" class="feedback" role="status" aria-live="polite">Verificando sua sessão administrativa…</p>
+<section class="metrics" aria-label="Inscrições por estado">
+<div class="metric"><strong id="sub-confirmed">—</strong><span>Confirmadas</span></div>
+<div class="metric"><strong id="sub-pending">—</strong><span>Aguardando confirmação</span></div>
+<div class="metric"><strong id="sub-cancelled">—</strong><span>Canceladas</span></div>
+</section>
+<div class="layout">
+<section class="panel" aria-labelledby="editor-heading">
+<h2 id="editor-heading">Editor de edição</h2>
+<form id="edition-form">
+<fieldset id="edition-fields" disabled>
+<label for="edition-title">Título interno<input id="edition-title" name="title" required minlength="3" maxlength="120" placeholder="Ex.: Os enigmas de novembro"></label>
+<label for="edition-subject">Assunto para o futuro e-mail<input id="edition-subject" name="subject" required minlength="5" maxlength="150" placeholder="Ex.: Arquivo Sombrio | Os casos desta semana"></label>
+<label for="edition-preheader">Prévia curta<input id="edition-preheader" name="preheader" maxlength="180" placeholder="Resumo que acompanha o assunto no leitor de e-mail"></label>
+<label for="edition-body">Texto editorial (100 a 12.000 caracteres)<textarea id="edition-body" name="body_text" required minlength="100" maxlength="12000" placeholder="Escreva a edição aqui. Os casos reais devem indicar fontes e distinguir fatos de hipóteses."></textarea></label>
+<div class="two">
+<label for="edition-cta-label">Texto do link (opcional)<input id="edition-cta-label" name="cta_label" maxlength="90" placeholder="Ler o arquivo"></label>
+<label for="edition-cta-url">URL HTTPS do link (opcional)<input id="edition-cta-url" name="cta_url" type="url" maxlength="500" placeholder="https://arquivosombrio.net.br/…"></label>
+</div>
+<label for="edition-status">Estado editorial<select id="edition-status" name="status">
+<option value="rascunho">Rascunho</option>
+<option value="revisao">Em revisão</option>
+<option value="aprovado">Revisão concluída (não enviada)</option>
+<option value="arquivado">Arquivada</option>
+</select></label>
+<div class="actions">
+<button type="submit" id="edition-save">Salvar edição</button>
+<button type="button" class="secondary" id="edition-new">Nova edição</button>
+<button type="button" class="secondary" id="edition-preview">Atualizar prévia</button>
+</div>
+</fieldset>
+<p class="feedback" id="edition-feedback" role="status" aria-live="polite"></p>
+</form>
+</section>
+<div>
+<section class="panel" aria-labelledby="preview-heading">
+<h2 id="preview-heading">Prévia de leitura</h2><p class="lead">Visualização em texto, sem envio. A aparência final dependerá do template de e-mail adotado.</p>
+<div class="preview" id="edition-preview-output" aria-label="Prévia do conteúdo"></div>
+</section>
+<section class="panel" style="margin-top:20px" aria-labelledby="existing-heading">
+<h2 id="existing-heading">Edições salvas</h2><div class="actions"><button id="refresh-editions" type="button" class="secondary" disabled>Atualizar lista</button></div>
+<div id="edition-list" class="cards" aria-live="polite"><p>Entre como administrador para carregar as edições.</p></div>
+</section>
+</div>
+</div>
+</main>
+<footer class="footer-page"><div class="wrap">Arquivo Sombrio · Gestão editorial privada · <a href="../privacidade.html">Privacidade</a></div></footer>
+</body></html>
