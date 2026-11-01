@@ -109,7 +109,7 @@ test("approved drafts do not deliver mail; storage only allows editorial states"
  assert.doesNotMatch(sql,/grant .* to anon/i);
  assert.doesNotMatch(src,/https:\/\/api\.resend\.com|\.sendEmail\(|\.send\(/);
  assert.doesNotMatch(src,/\.select\([^)]*email/);
- assert.match(html,/Não há botão de envio/);
+ assert.match(html,/Não há envio automático/);
  assert.match(html,/noindex,nofollow/);
  assert.match(html,/fieldset id="edition-fields" disabled/);
 });
