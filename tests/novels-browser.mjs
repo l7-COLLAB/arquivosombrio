@@ -82,6 +82,7 @@ try {
    await page.locator("#novel-reader #novel-related .novel-related-card").first().waitFor({timeout:10000});
    assert.equal(await page.locator("#novel-reader #novel-related .novel-related-card").count(),1);
    assert.match(await page.locator("#novel-reader #novel-related h2").innerText(),/Sua próxima leitura/);
+    if(viewport.width===390)assert.equal(await page.locator("#reader-menu-toggle").count(),1);
    await page.goto(server+"/novels.html",{waitUntil:"domcontentloaded"});
    await page.locator("#novel-next .novel-journey-next-card").first().waitFor({timeout:10000});
    assert.match(await page.locator("#novel-journey").innerText(),/1\s+obra iniciada/);
@@ -94,7 +95,7 @@ try {
    if(viewport.width===390){
      const size=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,viewport:innerWidth}));
      assert(size.scrollWidth<=size.viewport+8,"Leitor ultrapassa viewport: "+JSON.stringify(size));
-     assert.equal(await page.locator("#reader-menu-toggle").count(),1);
+      assert.equal(await page.locator("#novel-detail h1").count(),1);
    }
    assert.deepEqual(faults,[],"Erros JavaScript: "+faults.join(" | "));
    await context.close();
