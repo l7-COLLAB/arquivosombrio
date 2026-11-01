@@ -8,6 +8,9 @@ on:
       - 'tests/newsletter-editor.mjs'
       - 'tests/newsletter-sender-health.mjs'
       - 'tests/newsletter-distribution.mjs'
+      - 'supabase/functions/newsletter-dispatch/**'
+      - 'supabase/functions/newsletter-webhook/**'
+      - 'tests/newsletter-dispatch.mjs'
       - 'descadastrar-newsletter.html'
       - 'supabase/functions/newsletter-distribution/**'
       - 'supabase/migrations/20261101_newsletter_*.sql'
@@ -23,6 +26,9 @@ on:
       - 'tests/newsletter-editor.mjs'
       - 'tests/newsletter-sender-health.mjs'
       - 'tests/newsletter-distribution.mjs'
+      - 'supabase/functions/newsletter-dispatch/**'
+      - 'supabase/functions/newsletter-webhook/**'
+      - 'tests/newsletter-dispatch.mjs'
       - 'descadastrar-newsletter.html'
       - 'supabase/functions/newsletter-distribution/**'
       - 'supabase/migrations/20261101_newsletter_*.sql'
@@ -51,3 +57,5 @@ jobs:
           node --test tests/newsletter-sender-health.mjs
           node --check admin-v2/js/newsletter-distribution.js
           node --test tests/newsletter-distribution.mjs
+          node --check admin-v2/js/newsletter-send.js
+          node --test tests/newsletter-dispatch.mjs

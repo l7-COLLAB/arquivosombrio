@@ -106,3 +106,46 @@ A fila foi implantada no banco e a Edge Function `newsletter-distribution` está
 Teste transacional de criação de fila, duplicação, evento e bloqueio de edição executado com rollback; nenhum assinante ou edição de teste permaneceu no banco. Sem a conta Resend verificada, não é possível atestar entrega real ou testar descadastro por e-mail.
 
 **Revisão de permissões:** o teste com o papel efetivo `service_role` identificou que as tabelas privadas anteriores não concediam operações à função de backend. A migração `20261101_newsletter_service_role_grants.sql` concede somente leitura de edições e leitura/gravação de assinantes para `service_role`, preservando o isolamento público. O teste transacional foi repetido com `SET LOCAL ROLE service_role`: preparou 1 destinatário e foi revertido sem persistência.
+
+
+## Etapa 10 — Envio manual com travas e webhook (01/11/2026)
+
+**Código implementado; envio real permanece BLOQUEADO por padrão.** As funções `newsletter-dispatch` e `newsletter-webhook` são separadas da preparação da Etapa 9. A V2 mostra a situação da autorização e disponibiliza uma ação manual de até 5 mensagens, que só é ativada com todos os pré-requisitos confirmados pelo servidor.
+
+### Condições cumulativas para envio real
+
+No projeto Supabase `iuhotznurbyujzbyhizf`, em Edge Functions > Secrets:
+
+- `RESEND_API_KEY`: chave restrita e válida para envio, nunca publicada;
+- `NEWSLETTER_FROM_EMAIL`: endereço completo do remetente verificado;
+- `NEWSLETTER_VERIFIED_DOMAIN`: exatamente o domínio após `@` do remetente, configurado **apenas após a confirmação manual do status Verified / sending enabled na Resend**;
+- `NEWSLETTER_UNSUBSCRIBE_SECRET`: segredo aleatório com pelo menos 32 caracteres (compartilhado com a Etapa 9 para assinar os links); trocar o segredo invalida links antigos;
+- `RESEND_WEBHOOK_SECRET`: assinatura `whsec_...` obtida ao registrar o webhook, nunca enviada para GitHub;
+- `NEWSLETTER_ENABLED=true`: liberação de inscrições/duplo opt-in da Etapa 8;
+- `NEWSLETTER_DISPATCH_ENABLED=true`: **liberação independente** para envios reais; omita ou mantenha `false` até verificar todos os requisitos e fazer teste controlado com endereços da equipe.
+
+Se qualquer condição falhar, `newsletter-dispatch` responde bloqueado, sem chamar a Resend. A consulta de status exige autenticação real e `app_metadata.role=admin`; não expõe valores de segredos. Não existe cron para os disparos desta etapa.
+
+### Fluxo operacional após ativação
+
+1. Preparar edição `aprovado` e fila na V2. A preparação não envia e-mails e bloqueia alterações posteriores à edição que recebeu destinatários.
+2. Escolher a edição no painel e clicar em `Verificar liberação`.
+3. Clicar `Enviar até 5 mensagens` e digitar exatamente `ENVIAR`. A Edge Function valida a sessão com Supabase Auth, a função de administrador, as flags e aplica limite por IP.
+4. A função SQL `editorial_claim_newsletter_batch` reserva até 5 linhas usando bloqueio transacional e `FOR UPDATE SKIP LOCKED`; cota global de **50 tentativas em qualquer janela móvel de 24 horas** e intervalo mínimo de **7 dias por leitor entre edições**. O envio revalida que o assinante ainda está confirmado antes de cada chamada ao provedor.
+5. Cada mensagem é individual, em texto, inclui link HTTPS de leitura opcional e link assinado de descadastro; usa `Idempotency-Key: arquivo-newsletter-v1-<delivery-id>`. O cabeçalho `List-Unsubscribe` abre uma página com confirmação humana; **não** declarar `List-Unsubscribe-Post: One-Click` sem implementar o endpoint específico.
+6. Status `aceito` significa aceitação pelo provedor, **não** entrega. Erros definitivos viram `falhou`; resultados de rede/429/5xx ambíguos viram `incerto`, sem nova tentativa automática. A Resend retém chaves idempotentes por 24 horas; retentar manualmente após essa janela exige reconciliação para evitar mensagens duplicadas.
+7. Cadastre na Resend `https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/newsletter-webhook` para eventos `email.sent`, `email.delivered`, `email.bounced`, `email.complained`, `email.failed` e `email.suppressed`, conforme disponibilidade. A função verifica **o corpo bruto assinado** por Svix, valida `svix-id`, e grava eventos idempotentes no banco.
+8. Bounce ou reclamação cancela a assinatura e as mensagens ainda preparadas daquele leitor; o histórico é privado e não armazena endereços nas notificações de eventos.
+
+### Segurança e limites residuais
+
+- O acesso público aos registros e funções SQL de reserva/eventos permanece revogado; apenas `service_role` executa a movimentação sensível.
+- A assinatura do webhook tem que ser configurada pelo painel Resend; deploy da função, isoladamente, não significa que eventos estão chegando.
+- Há uma pequena janela de concorrência entre a última verificação de consentimento e a chamada à API de envio. O sistema reduz, mas não elimina, esta condição; requisições já aceitas pelo provedor não podem ser recolhidas após um descadastro.
+- A fila não reenvia automaticamente pedidos incertos e não oferece resolução automática para respostas sem ID; é necessária reconciliação operacional antes de qualquer tentativa adicional.
+- O botão não executa envio enquanto a configuração externa da Resend e o segredo separado de despacho estiverem ausentes. **Nenhum e-mail real foi enviado durante o desenvolvimento.**
+- Para evitar confusão: seções históricas anteriores descrevem as capacidades de suas próprias etapas. Esta é a implementação posterior de envio manual, sempre inicialmente bloqueada.
+
+### Verificações
+
+Teste SQL transacional com `SET LOCAL ROLE service_role`, contendo reserva do lote, elegibilidade, aceite, evento `delivered` duplicado, reclamação, supressão da assinatura e recusa de nova reserva. Executado com `ROLLBACK`. Os testes de código verificam autenticação, limites, segredos, link de descadastro, assinatura do webhook e ausência de cron. A entrega real depende da Resend e ainda não foi comprovada.

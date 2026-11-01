@@ -48,6 +48,7 @@ button[disabled]{opacity:.55;cursor:default}
 <script src="./js/newsletter-editor.js?v=1" defer></script>
 <script src="./js/newsletter-sender-health.js?v=1" defer></script>
 <script src="./js/newsletter-distribution.js?v=1" defer></script>
+<script src="./js/newsletter-send.js?v=1" defer></script>
 </head>
 <body>
 <header class="top"><div class="wrap top-inner">
@@ -57,8 +58,8 @@ button[disabled]{opacity:.55;cursor:default}
 <main class="wrap">
 <p class="eyebrow">ESTÚDIO EDITORIAL / NEWSLETTER</p>
 <h1>Edições e assinaturas</h1>
-<p class="lead">Redija edições, revise o conteúdo e acompanhe as inscrições confirmadas. Acompanhe as edições e prepare uma fila privada de leitores confirmados. Nenhum botão desta página envia e-mails.</p>
-<div class="warning" role="note"><strong>Envio ainda indisponível.</strong> Edições aprovadas podem ser incluídas na fila privada. Não há botão de envio nesta versão. Nenhum disparo é executado, mesmo se o remetente for configurado.</div>
+<p class="lead">Redija edições, acompanhe assinaturas, prepare listas privadas e monitore a distribuição. Envios reais requerem liberação explícita e confirmação administrativa.</p>
+<div class="warning" role="note"><strong>Envio bloqueado por padrão.</strong> Preparar uma fila não envia mensagens. Não há envio automático: a execução de um lote exige domínio e segredos configurados, ativação exclusiva do envio e confirmação manual da administração. Até essa configuração, o botão permanece desativado.</div>
 <p id="page-status" class="feedback" role="status" aria-live="polite">Verificando sua sessão administrativa…</p>
 <section class="panel" id="sender-panel" aria-labelledby="sender-heading" style="margin:20px 0">
 <h2 id="sender-heading">Diagnóstico do remetente</h2>
@@ -89,6 +90,16 @@ button[disabled]{opacity:.55;cursor:default}
 </div>
 <p id="newsletter-queue-message" role="status" aria-live="polite" class="feedback">Aguardando sessão administrativa…</p>
 <p class="lead">Um token exclusivo e assinado será exigido no link de descadastro de cada e-mail futuro. A página pública de cancelamento requer a ação explícita do destinatário, nunca o simples carregamento de um link.</p>
+</section>
+<section class="panel" id="newsletter-send-panel" aria-labelledby="newsletter-send-title" style="margin:20px 0">
+<h2 id="newsletter-send-title">Envio controlado · Etapa 10</h2>
+<p class="lead">A edição selecionada na fila acima será utilizada. Confirme a revisão e o consentimento antes de executar um lote. Não há disparo agendado.</p>
+<div class="actions">
+<button id="newsletter-send-check" type="button" class="secondary">Verificar liberação</button>
+<button id="newsletter-send-now" type="button" disabled>Enviar até 5 mensagens</button>
+</div>
+<p id="newsletter-send-status" class="feedback" role="status" aria-live="polite">Verificando habilitação do serviço…</p>
+<p class="lead">O envio utiliza limite de 50 tentativas por 24 horas e intervalo mínimo de 7 dias por leitor entre edições. Estados incertos não são reenviados automaticamente. A confirmação de entrega depende de um evento assinado da Resend.</p>
 </section>
 <section class="metrics" aria-label="Inscrições por estado">
 <div class="metric"><strong id="sub-confirmed">—</strong><span>Confirmadas</span></div>
