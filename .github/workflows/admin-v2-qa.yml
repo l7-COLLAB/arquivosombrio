@@ -5,6 +5,8 @@ on:
       - 'admin-v2/**'
       - 'tests/admin-v2-regressions.mjs'
       - 'tests/campaign-covers-v2.mjs'
+      - 'tests/campaign-cover-diagnostics.mjs'
+      - 'supabase/migrations/20261101151000_admin_v2_campaign_cover_diagnostics.sql'
       - 'tests/campaign-cover-reliability.mjs'
       - 'supabase/functions/promote-campaign-covers/**'
       - 'supabase/functions/promote-scheduled-campaign-covers/**'
@@ -31,6 +33,8 @@ on:
       - 'admin-v2/**'
       - 'tests/admin-v2-regressions.mjs'
       - 'tests/campaign-covers-v2.mjs'
+      - 'tests/campaign-cover-diagnostics.mjs'
+      - 'supabase/migrations/20261101151000_admin_v2_campaign_cover_diagnostics.sql'
       - 'tests/campaign-cover-reliability.mjs'
       - 'supabase/functions/promote-campaign-covers/**'
       - 'supabase/functions/promote-scheduled-campaign-covers/**'
@@ -67,6 +71,7 @@ jobs:
           node --test tests/admin-v2-regressions.mjs
           node --check admin-v2/js/campanhas-editor.js
           node --test tests/campaign-covers-v2.mjs
+          node --test tests/campaign-cover-diagnostics.mjs
           node --test tests/campaign-cover-reliability.mjs
           node --check admin-v2/js/newsletter-editor.js
           node --test tests/newsletter-editor.mjs
