@@ -23,7 +23,7 @@ function setupForm({ok=true,code=200,reply={ok:true},kind="fiction"}={}){
   addEventListener(name,cb){listeners[name]=cb;}};
  const document={
   readyState:"loading",
-  getElementById(id){return id==="fiction-form"||id==="newsletter-form"?form:status},
+  getElementById(id){return id===(kind==="fiction"?"fiction-form":"newsletter-form")?form:status},
   addEventListener(name,cb){if(name==="DOMContentLoaded")states.init=cb;}
  };
  let calls=[];
@@ -64,9 +64,10 @@ test("validates excerpt and synopsis lengths before transmission",async()=>{
  assert.match(f.status.textContent,/500 a 18.000/);
 });
 test("newsletter needs checked consent and only succeeds after server confirmation",async()=>{
- const f=setupForm({reply:{ok:true,email_sent:true}});
+ const f=setupForm({kind:"newsletter",reply:{ok:true,email_sent:true}});
  await f.submit();
- assert.equal(f.calls[0].kind,"fiction"); // the first handler bound to the fixture is shared
+ assert.equal(f.calls[0].kind,"newsletter_subscribe");
+ assert.match(f.status.textContent,/solicitação foi processada/);
  assert.match(src,/consent:inputs\.namedItem\("consent"\)\.checked/);
  assert.match(src,/data\.ok!==true/);
  assert.match(confirmSource,/newsletter_confirm/);
