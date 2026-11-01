@@ -62,9 +62,29 @@ function bindForm(id,kind,status){
   }finally{form.dataset.submitting="no";button.disabled=false}
  });
 }
+async function checkNewsletterReadiness(){
+ const form=document.getElementById("newsletter-form");
+ const fields=document.getElementById("newsletter-fields");
+ if(!form||!fields||!("disabled" in fields))return;
+ fields.disabled=true;
+ show("newsletter-readiness","Verificando se a confirmação por e-mail está disponível…",false);
+ try{
+  const result=await post({kind:"newsletter_status"});
+  if(result.available===true){
+   fields.disabled=false;
+   show("newsletter-readiness","Inscrições por e-mail disponíveis. A confirmação é obrigatória.",false);
+  }else{
+   show("newsletter-readiness","Inscrições por e-mail ainda em configuração. Acompanhe as atualizações pelo RSS.",false);
+  }
+ }catch(error){
+  fields.disabled=true;
+  show("newsletter-readiness","Não foi possível confirmar a disponibilidade do serviço de e-mail. Use o RSS por enquanto.",true);
+ }
+}
 function init(){
  bindForm("fiction-form","fiction","fiction-feedback");
  bindForm("newsletter-form","newsletter_subscribe","newsletter-feedback");
+ void checkNewsletterReadiness();
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});
 else init();

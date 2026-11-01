@@ -15,10 +15,12 @@ O código usa a **API Resend** exclusivamente para **enviar confirmação de ins
 
 Para habilitar pedidos de inscrição:
 1. Verificar um domínio remetente na Resend e configurar corretamente a autenticação do domínio (SPF/DKIM e demais exigências do fornecedor).
-2. No painel Supabase do projeto `iuhotznurbyujzbyhizf`, abrir **Edge Functions > Secrets** e definir `RESEND_API_KEY` e `NEWSLETTER_FROM_EMAIL` (e-mail do domínio verificado, sem nome de exibição).
-3. Realizar teste autorizado com endereço pertencente à equipe, confirmar manualmente o e-mail e cancelar. Não enviar campanhas de teste a terceiros.
-4. Antes de implantar campanhas, adicionar procedimento de descadastro em **todos** os e-mails, controle de frequência, modelos editoriais, histórico de envios e monitoramento de reclamações/bounces.
-5. Sem `RESEND_API_KEY` e `NEWSLETTER_FROM_EMAIL`, o endpoint retorna HTTP 503 **sem armazenar novos e-mails**. Os visitantes podem usar `/rss.xml`, que já funciona.
+2. Acesse [Resend — Domains](https://resend.com/domains) com uma conta da equipe, adicione o domínio remetente e copie os **registros DNS mostrados para sua conta**. Não use valores genéricos ou de terceiros; publique-os no provedor DNS que administra o domínio e confirme o status **Verified / Sending enabled** na Resend.
+3. No [Supabase — Edge Function Secrets](https://supabase.com/dashboard/project/iuhotznurbyujzbyhizf/settings/functions), adicione `RESEND_API_KEY` e `NEWSLETTER_FROM_EMAIL` (um e-mail pertencente ao domínio verificado, sem nome de exibição). **Nunca coloque a chave em GitHub, JavaScript ou neste chat.**
+4. Para ativação controlada, defina `NEWSLETTER_ENABLED=true` **somente após** o domínio e o remetente estarem verificados na Resend. Enquanto o segredo for omitido ou diferente de `true`, o backend retorna `available:false` na consulta sem e-mail, não registra novos assinantes e o formulário permanece desabilitado.
+5. Realize um teste autorizado com endereço de e-mail da equipe: receber confirmação, confirmar manualmente, confirmar o estado de banco e cancelar a inscrição. Não envie testes a terceiros.
+6. Antes de enviar campanhas, implementar descadastro em **todos** os e-mails, controle de frequência, histórico de envios, monitoramento de reclamações e bounces e envio periódico separado. Esta etapa ainda **não** envia newsletters.
+7. Sem as **três** variáveis validadas (`RESEND_API_KEY`, `NEWSLETTER_FROM_EMAIL`, `NEWSLETTER_ENABLED=true`), o endpoint retorna HTTP 503 **sem armazenar novos e-mails**. Os visitantes podem usar `/rss.xml`, que já funciona.
 
 As chaves de envio nunca devem estar em GitHub, JavaScript público, HTML ou commits.
 

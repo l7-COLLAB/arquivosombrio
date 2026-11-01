@@ -1,13 +1,19 @@
 import {createClient} from "npm:@supabase/supabase-js@2.116.0";
 const origins=new Set(["https://arquivosombrio.net.br","https://www.arquivosombrio.net.br"]);
 const genres=new Set(["terror","suspense","misterio","fantasia_sombria","outro"]);
-const kinds=new Set(["fiction","newsletter_subscribe","newsletter_confirm","newsletter_cancel"]);
+const kinds=new Set(["fiction","newsletter_subscribe","newsletter_confirm","newsletter_cancel","newsletter_status"]);
 const utf8=new TextEncoder();
 const hex=(bytes:Uint8Array)=>Array.from(bytes).map(n=>n.toString(16).padStart(2,"0")).join("");
 const digest=async(s:string)=>hex(new Uint8Array(await crypto.subtle.digest("SHA-256",utf8.encode(s))));
 const field=(b:Record<string,unknown>,k:string)=>typeof b[k]==="string"?(b[k] as string).trim():"";
 const emailOK=(s:string)=>s.length>=5&&s.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
 const token=()=>{const a=new Uint8Array(32);crypto.getRandomValues(a);return hex(a)};
+// Newsletter requests are only enabled after a human has verified the sender
+// in Resend and explicitly enabled the integration. Merely setting an API key
+// must never be mistaken for a working, verified mail service.
+const newsletterEnabled=()=>Deno.env.get("NEWSLETTER_ENABLED")==="true" &&
+  Boolean(Deno.env.get("RESEND_API_KEY")) &&
+  emailOK(Deno.env.get("NEWSLETTER_FROM_EMAIL")||"");
 function database(){
  const key=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")||"{}").default;
  const url=Deno.env.get("SUPABASE_URL");
@@ -70,6 +76,7 @@ Deno.serve(async(req:Request)=>{
  try{b=await bodyBounded(req)}catch{return reply({error:"Dados inválidos ou muito grandes."},400)}
  const kind=field(b,"kind");
  if(!kinds.has(kind)||field(b,"website"))return reply({error:"Formulário inválido."},400);
+ if(kind==="newsletter_status")return reply({ok:true,available:newsletterEnabled()});
  if(kind==="fiction"){
   const pen_name=field(b,"pen_name"),contact_email=field(b,"contact_email").toLowerCase();
   const title=field(b,"title"),genre=field(b,"genre");
@@ -96,7 +103,7 @@ Deno.serve(async(req:Request)=>{
  if(kind==="newsletter_subscribe"){
   const email=field(b,"email").toLowerCase();
   if(!emailOK(email)||b.consent!==true)return reply({error:"E-mail e consentimento obrigatórios."},400);
-  if(!Deno.env.get("RESEND_API_KEY")||!emailOK(Deno.env.get("NEWSLETTER_FROM_EMAIL")||""))
+  if(!newsletterEnabled())
    return reply({error:"Newsletter por e-mail indisponível no momento. Use o RSS."},503);
   try{
    const {db,key}=database();

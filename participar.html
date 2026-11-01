@@ -19,7 +19,7 @@ h1{font:700 clamp(2rem,5vw,3.1rem)/1.25 Georgia,serif;color:#f1ddba;margin:11px 
 .kicker{font:12px/1.5 Arial,sans-serif;letter-spacing:.15em;color:#c3a577;text-transform:uppercase}
 main{padding:42px 0 78px}h2{font-size:1.6rem;color:#efdaaf;margin:0 0 10px}p{max-width:74ch}
 .panel{border:1px solid #655039;background:#171a1e;padding:26px;margin:32px 0}.panel p{color:#d1c0a6}
-form{display:grid;gap:17px;margin:22px 0 0}.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+form{display:grid;gap:17px;margin:22px 0 0}fieldset{display:grid;gap:17px;border:0;margin:0;padding:0;min-width:0}fieldset:disabled{opacity:.82}.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 label{display:grid;gap:6px;font:600 13px/1.55 Arial,sans-serif;color:#e0d1ba}
 input,select,textarea{display:block;width:100%;border:1px solid #64553f;border-radius:0;background:#090b0e;color:#f0e5d2;padding:13px 12px;font:15px/1.6 Georgia,serif}
 textarea{resize:vertical;min-height:130px}
@@ -60,14 +60,17 @@ footer{border-top:1px solid #463c33;padding:24px 0;color:#ae9980;font:12px Arial
 <p class="kicker">02 / NOVIDADES</p><h2 id="titulo-newsletter">Receba novidades do Arquivo Sombrio</h2>
 <p>A assinatura por e-mail exige confirmação enviada ao endereço informado. Você só será incluído depois de confirmar, e poderá cancelar usando o link recebido. Não enviaremos campanhas enquanto a infraestrutura de e-mail não estiver disponível.</p>
 <form id="newsletter-form">
+<p class="feedback" id="newsletter-readiness" role="status" aria-live="polite">Verificando disponibilidade das inscrições por e-mail…</p>
+<fieldset id="newsletter-fields" disabled>
 <label>E-mail para a newsletter<input type="email" name="email" maxlength="254" autocomplete="email" required></label>
 <label class="check"><input type="checkbox" name="consent" required> Quero receber novidades editoriais por e-mail e aceito confirmar minha inscrição. Posso cancelar a qualquer momento.</label>
 <div class="honeypot" aria-hidden="true"><label>Site (deixe em branco)<input name="website" tabindex="-1" autocomplete="off"></label></div>
 <button type="submit">Solicitar confirmação por e-mail</button>
+</fieldset>
 <p class="feedback" id="newsletter-feedback" role="status" aria-live="polite"></p>
 </form>
 <p class="notes">Alternativa disponível agora: <a href="/rss.xml">assinar o feed RSS</a> de atualizações.</p>
 </section>
 </main><footer><div class="wrap"><a href="/privacidade.html">Privacidade</a> · <a href="/termos.html">Termos de Uso</a> · <a href="/fontes-direitos.html">Fontes e direitos</a></div></footer>
-<script src="/js/editorial-participation.js?v=1" defer></script>
+<script src="/js/editorial-participation.js?v=2" defer></script>
 </body></html>

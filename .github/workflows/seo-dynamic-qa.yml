@@ -141,6 +141,27 @@ jobs:
           python3 -m unittest discover -s tests -p 'test_audit_seo_build.py' -v
       - name: Testar metadados e status
         run: node --test tests/seo-dynamic.mjs
+      - name: Validar endpoint real de newsletter sem dados pessoais
+        run: |
+          python3 - <<'PY'
+          import json
+          from urllib.request import Request, urlopen
+          req = Request(
+              "https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/editorial-participation",
+              data=json.dumps({"kind": "newsletter_status"}).encode(),
+              headers={
+                  "Origin": "https://arquivosombrio.net.br",
+                  "Content-Type": "application/json",
+                  "apikey": "sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj",
+              },
+              method="POST",
+          )
+          with urlopen(req, timeout=20) as response:
+              payload = json.load(response)
+          assert payload.get("ok") is True, "Endpoint de newsletter indisponível"
+          assert isinstance(payload.get("available"), bool), "Status de disponibilidade inválido"
+          print("Newsletter status: pronta" if payload["available"] else "Newsletter status: bloqueada até configuração do remetente")
+          PY
       - name: Validar consulta pública real e sitemap de deploy
         run: |
           mkdir -p /tmp/arquivo-sombrio-sitemap-test
