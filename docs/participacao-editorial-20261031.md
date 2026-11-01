@@ -149,3 +149,37 @@ Se qualquer condição falhar, `newsletter-dispatch` responde bloqueado, sem cha
 ### Verificações
 
 Teste SQL transacional com `SET LOCAL ROLE service_role`, contendo reserva do lote, elegibilidade, aceite, evento `delivered` duplicado, reclamação, supressão da assinatura e recusa de nova reserva. Executado com `ROLLBACK`. Os testes de código verificam autenticação, limites, segredos, link de descadastro, assinatura do webhook e ausência de cron. A entrega real depende da Resend e ainda não foi comprovada.
+
+
+## Etapa 11 — Observabilidade administrativa e simulação segura (01/11/2026)
+
+A função `newsletter-monitor` foi criada e implantada no Supabase. O Estúdio da Newsletter na V2 inclui agora indicadores operacionais, checagem de pré-requisitos, alertas e uma simulação de lote.
+
+**O painel não envia e-mails nem agenda tarefas.** O sistema consulta dados sob demanda e exige token de usuário real por `auth.getUser` com `app_metadata.role=admin`. Os resultados contêm somente contagens e datas agregadas, sem dados de assinantes, IDs de destinatários, tokens ou chaves.
+
+### Indicadores monitorados
+
+- Assinaturas confirmadas, pendentes e canceladas; número de edições aprovadas.
+- Mensagens preparadas, em envio, aceitas pelo provedor, entregues segundo webhook, falhadas, incertas, canceladas, bounces e reclamações.
+- Reserva de tentativas em 24 horas e em 7 dias; cota residual de 50 tentativas por janela móvel de 24 horas.
+- Histórico agregado de eventos em 7 dias, última tentativa de envio, último evento recebido.
+- Atenção manual para: `em_envio` há mais de 15 minutos, `aceito` sem entrega confirmada após 48 horas, resultados incertos, falhas, bounces ou reclamações.
+
+**Interpretação:** `aceito` significa que a Resend aceitou o pedido; não significa entrega na caixa postal. Falta de eventos pode indicar webhook ausente ou problema de entrega. O painel não afirma entrega por ausência de bounces nem monitora aberturas/leitura.
+
+### Simulação, sem efeitos de envio
+
+Selecione uma edição aprovada na lista da fila e escolha `Simular até 5 destinatários`. A RPC `editorial_newsletter_simulate_dispatch(uuid)` calcula destinatários elegíveis (somente `confirmado` com `confirmed_at`), pendências de confirmação, intervalo de 7 dias por leitor e cota disponível. O resultado indica quantas mensagens **seriam reservadas** se o disparo ocorresse agora. A função é `STABLE SECURITY INVOKER`, exclusivamente para `service_role`, sem `INSERT`, `UPDATE`, `DELETE` ou chamada ao provedor. As métricas e simulações não reservam vagas para envio; concorrência posterior pode alterar a disponibilidade.
+
+### Pré-requisitos e dependências pendentes
+
+Os indicadores de configuração mostram apenas a presença/validade estrutural de variáveis do Supabase, não as credenciais. A coincidência do domínio declarado `NEWSLETTER_VERIFIED_DOMAIN` com `NEWSLETTER_FROM_EMAIL` **não comprova** verificação de DNS na Resend. A ativação real ainda depende das configurações externas da Etapa 8, da instalação do webhook e de testes controlados de confirmação, entrega e descadastro.
+
+`NEWSLETTER_DISPATCH_ENABLED` não foi habilitada por esta etapa. O painel não cria campanhas, não testa com e-mails reais e não publica indicadores para visitantes.
+
+### Auditoria
+
+- Teste SQL com dados temporários e `ROLLBACK`: contabilização de inscrito confirmado e pendente, fila agregada, exclusão de destinatário não confirmado e previsão de um lote elegível.
+- Execução das RPCs com `SET LOCAL ROLE service_role` confirmada; `anon` e `authenticated` não têm autorização para executar as funções SQL.
+- Testes do CI para autenticação, limites de payload, ausência de dados pessoais na resposta, ausência de disparos e integridade dos indicadores.
+- O painel é atualizado **sob demanda**, sem monitoramento contínuo nem alertas automáticos.
