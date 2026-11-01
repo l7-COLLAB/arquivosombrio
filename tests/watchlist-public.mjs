@@ -61,3 +61,19 @@ test("Meu Arquivo includes existing watchlist with explicit remove and open",()=
  assert.match(src,/normalizarLinkMeuArquivo\(item\.target_url\)/);
  assert.match(src,/carregarCasosObservacao\(\)/);
 });
+
+test("Meu Arquivo preserves nested canonical article paths and blocks external domains",()=>{
+ const source=fs.readFileSync(new URL("../js/meu-arquivo.js",import.meta.url),"utf8");
+ const begin=source.indexOf("function normalizarLinkMeuArquivo(valor)");
+ const end=source.indexOf("\n}\n",begin)+2;
+ assert.ok(begin>=0&&end>begin);
+ const fn=source.slice(begin,end)+";normalizarLinkMeuArquivo(input)";
+ function href(input){
+  return vm.runInNewContext(fn,{URL,location:{origin:"https://arquivosombrio.net.br",href:"https://arquivosombrio.net.br/meu-arquivo.html"},input});
+ }
+ assert.equal(href("/arquivo/caso-42.html"),"/arquivo/caso-42.html");
+ assert.equal(href("/arquivo/garimpo-27.html"),"/arquivo/garimpo-27.html");
+ assert.equal(href("https://arquivosombrio.net.br/arquivo/caso-42.html?tab=abc#fonte"),"/arquivo/caso-42.html?tab=abc#fonte");
+ assert.equal(href("https://external.example/private"),"#");
+ assert.equal(href("javascript:alert(1)"),"#");
+});
