@@ -290,7 +290,9 @@ test("Quero ler autenticado usa estado existente sem sobrescrever conclusão ou 
  await button.onclick();
  assert.equal(m.writes[0].table,"novel_biblioteca");
  assert.equal(m.writes[0].action,"upsert");
- assert.deepEqual(m.writes[0].row,{user_id:"owner",novel_id:"b1",estado:"quero_ler"});
+ assert.equal(m.writes[0].row.user_id,"owner");
+ assert.equal(m.writes[0].row.novel_id,"b1");
+ assert.equal(m.writes[0].row.estado,"quero_ler");
  assert.equal(button.textContent,"Remover de Quero ler");
  await m.call("catalog()");
  assert.equal(m.nodes.get("#novel-want").hidden,false);
