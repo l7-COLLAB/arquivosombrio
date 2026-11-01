@@ -46,7 +46,7 @@
    el("newsletter-queue-accepted").textContent=number((data.counts?.aceito||0)+(data.counts?.entregue||0));
    el("newsletter-queue-cancelled").textContent=number(data.counts?.cancelado);
    el("newsletter-queue-message").textContent=editions.length
-    ? "Fila pronta para preparo. Disparos reais seguem desativados."
+    ? "Fila disponível para preparo. Preparar não realiza envios."
     : "Nenhuma edição aprovada. Conclua a revisão editorial antes de preparar.";
    prepare.disabled=!editions.length||data.dispatch_enabled!==false;
   }catch(e){
