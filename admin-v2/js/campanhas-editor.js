@@ -77,7 +77,7 @@ try{
     }
     items.appendChild(tr);
    }
-   state.textContent='Diagnóstico atualizado em '+campaignDiagnosticTime(report.generated_at)+'. Dados restritos à administração.';
+   state.style.color='#c0dec3';state.textContent='Diagnóstico atualizado em '+campaignDiagnosticTime(report.generated_at)+'. Dados restritos à administração.';
   }catch(err){
    state.textContent='Não foi possível consultar o diagnóstico: '+(err?.message||'erro não identificado');
    state.style.color='#ffc2b8';
