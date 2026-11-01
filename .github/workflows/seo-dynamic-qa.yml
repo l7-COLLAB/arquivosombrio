@@ -8,6 +8,26 @@ on:
       - 'scripts/build-seo-pages.py'
       - 'scripts/build-novels-seo.py'
       - 'tests/test_build_novels_seo.py'
+      - 'scripts/build-public-indexes.py'
+      - 'js/watchlist-public.js'
+      - 'js/meu-arquivo.js'
+      - 'meu-arquivo.html'
+      - 'indices.html'
+      - 'tests/test_public_indexes.py'
+      - 'tests/watchlist-public.mjs'
+      - 'scripts/build-public-updates.py'
+      - 'tests/test_public_updates.py'
+      - 'atualizacoes.html'
+      - 'sitemap.xml'
+      - 'participar.html'
+      - 'confirmar-inscricao.html'
+      - 'js/editorial-participation.js'
+      - 'js/confirmar-inscricao.js'
+      - 'admin-v2/curadoria-ficcao.html'
+      - 'admin-v2/js/curadoria-ficcao.js'
+      - 'supabase/functions/editorial-participation/index.ts'
+      - 'supabase/migrations/20261031_editorial_participation.sql'
+      - 'tests/editorial-participation.mjs'
       - 'scripts/seo-article-format.py'
       - 'scripts/build-public-listings.py'
       - 'js/public-listings.js'
@@ -36,6 +56,26 @@ on:
       - 'scripts/build-seo-pages.py'
       - 'scripts/build-novels-seo.py'
       - 'tests/test_build_novels_seo.py'
+      - 'scripts/build-public-indexes.py'
+      - 'js/watchlist-public.js'
+      - 'js/meu-arquivo.js'
+      - 'meu-arquivo.html'
+      - 'indices.html'
+      - 'tests/test_public_indexes.py'
+      - 'tests/watchlist-public.mjs'
+      - 'scripts/build-public-updates.py'
+      - 'tests/test_public_updates.py'
+      - 'atualizacoes.html'
+      - 'sitemap.xml'
+      - 'participar.html'
+      - 'confirmar-inscricao.html'
+      - 'js/editorial-participation.js'
+      - 'js/confirmar-inscricao.js'
+      - 'admin-v2/curadoria-ficcao.html'
+      - 'admin-v2/js/curadoria-ficcao.js'
+      - 'supabase/functions/editorial-participation/index.ts'
+      - 'supabase/migrations/20261031_editorial_participation.sql'
+      - 'tests/editorial-participation.mjs'
       - 'scripts/seo-article-format.py'
       - 'scripts/build-public-listings.py'
       - 'js/public-listings.js'
@@ -69,6 +109,15 @@ jobs:
           python3 -m unittest discover -s tests -p 'test_build_*sitemap.py' -v
           python3 -m unittest discover -s tests -p 'test_build_seo_pages.py' -v
           python3 -m unittest discover -s tests -p 'test_build_novels_seo.py' -v
+          python3 -m unittest discover -s tests -p 'test_public_updates.py' -v
+          python3 -m unittest discover -s tests -p 'test_public_indexes.py' -v
+          node --check js/meu-arquivo.js
+          node --check js/watchlist-public.js
+          node --test tests/watchlist-public.mjs
+          node --check js/editorial-participation.js
+          node --check js/confirmar-inscricao.js
+          node --check admin-v2/js/curadoria-ficcao.js
+          node --test tests/editorial-participation.mjs
           python3 -m unittest discover -s tests -p 'test_public_listings.py' -v
           node --test tests/public-listings.mjs
           python3 -m unittest discover -s tests -p 'test_seo_internal_links.py' -v
@@ -80,9 +129,10 @@ jobs:
       - name: Validar consulta pública real e sitemap de deploy
         run: |
           mkdir -p /tmp/arquivo-sombrio-sitemap-test
-          cp sitemap.xml pesquisa.html index.html dossies.html pericia.html forum.html garimpo.html lendas.html creepypastas.html /tmp/arquivo-sombrio-sitemap-test/
+          cp participar.html indices.html atualizacoes.html sitemap.xml pesquisa.html index.html dossies.html pericia.html forum.html garimpo.html lendas.html creepypastas.html /tmp/arquivo-sombrio-sitemap-test/
           python3 scripts/build-seo-pages.py /tmp/arquivo-sombrio-sitemap-test
           python3 scripts/build-novels-seo.py /tmp/arquivo-sombrio-sitemap-test
+          python3 -c 'from xml.etree import ElementTree as ET; r=ET.parse("/tmp/arquivo-sombrio-sitemap-test/rss.xml").getroot(); assert r.tag=="rss" and len(r.findall("channel/item"))>0, "RSS vazio"'
           python3 scripts/audit-seo-build.py /tmp/arquivo-sombrio-sitemap-test --report /tmp/seo-audit-report.json
           python3 scripts/audit-internal-links.py /tmp/arquivo-sombrio-sitemap-test --report /tmp/internal-links-report.json
           python3 scripts/audit-mobile-seo-readiness.py /tmp/arquivo-sombrio-sitemap-test --report /tmp/mobile-seo-report.json
