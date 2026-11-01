@@ -36,7 +36,7 @@ test("editions are frozen after successful queue preparation",()=>{
  assert.match(schema,/before update on public\.editorial_newsletter_editions/);
  assert.match(schema,/new\.body_text/);
  assert.match(schema,/new\.status/);
- assert.match(schema,/with fila preparada/);
+ assert.match(schema,/com fila preparada/);
 });
 test("events append transactionally on changes, not through public input",()=>{
  assert.match(events,/after insert or update of status/);
