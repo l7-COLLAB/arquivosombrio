@@ -38,7 +38,7 @@ test("quota and frequency restrictions implemented at database claim with lockin
  assert.match(migration,/50-quota_used/);
  assert.match(compat,/least\(p_limit,greatest/);
  assert.match(migration,/p_limit > 5/);
- assert.match(dispatch,/p_limit:5/);
+ assert.match(dispatch,/p_limit:config\.pilotOnly\?1:5/);
 });
 test("prepared recipients need verified opt-in when claimed and again before contact",()=>{
  assert.match(migration,/s\.status='confirmado' and s\.confirmed_at is not null/);
