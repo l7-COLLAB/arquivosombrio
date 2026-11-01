@@ -258,3 +258,24 @@ body.novels:has(#novel-grid) .novel-banner{position:relative;margin:0;border:1px
  .novel-journey-next-cover{width:66px;height:100px;flex-basis:66px}
  .novel-journey-next-card strong{font-size:1rem}
 }
+
+/* Explicit completion is user-controlled; never inferred from last published chapter. */
+.novel-journey-grid{grid-template-columns:minmax(130px,1fr) minmax(130px,1fr) minmax(0,2fr)}
+.novel-journey-complete strong{color:#b9d4a3}
+.novel-journey-finished{margin-top:12px;padding:16px 18px;border:1px solid #65553f;background:#151717}
+.novel-journey-finished h3{margin:0 0 10px;font:700 1rem/1.3 Georgia,serif;color:#e9dcc4}
+.novel-journey-finished>div{display:flex;gap:8px;flex-wrap:wrap}
+.novel-journey-finished a{border:1px solid #806447;padding:7px 10px;color:#dcc29e;text-decoration:none;font-size:.8rem;line-height:1.35}
+.novel-journey-finished a:hover,.novel-journey-finished a:focus-visible{border-color:#e2bc86;color:#f5dfbc}
+.novel-completion{margin:14px 0 18px;padding:12px 15px;border:1px solid #776344;background:#171a1e}
+.novel-completion button{margin:4px 0}
+.novel-completion button[aria-pressed="true"]{background:#39472e;border:1px solid #a4c18d}
+.novel-completion p{min-height:1.4em;margin:8px 0 0;color:#ccbea9;font-size:.78rem;line-height:1.5}
+.novel-completion h2{font:700 1.3rem/1.35 Georgia,serif;color:#e9dcc4;margin:0 0 10px}
+.novel-completion-reader{margin-top:40px}
+@media(max-width:760px){
+ .novel-journey-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .novel-journey-last{grid-column:1/-1}
+ .novel-journey-finished{padding:12px}
+}
+@media(max-width:390px){.novel-journey-grid{grid-template-columns:1fr}.novel-journey-last{grid-column:auto}}
