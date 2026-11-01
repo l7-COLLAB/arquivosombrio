@@ -50,6 +50,7 @@ button[disabled]{opacity:.55;cursor:default}
 <script src="./js/newsletter-distribution.js?v=1" defer></script>
 <script src="./js/newsletter-send.js?v=1" defer></script>
 <script src="./js/newsletter-monitor.js?v=1" defer></script>
+<script src="./js/newsletter-activation.js?v=1" defer></script>
 </head>
 <body>
 <header class="top"><div class="wrap top-inner">
@@ -92,12 +93,27 @@ button[disabled]{opacity:.55;cursor:default}
 <p id="newsletter-queue-message" role="status" aria-live="polite" class="feedback">Aguardando sessão administrativa…</p>
 <p class="lead">Um token exclusivo e assinado será exigido no link de descadastro de cada e-mail futuro. A página pública de cancelamento requer a ação explícita do destinatário, nunca o simples carregamento de um link.</p>
 </section>
+<section class="panel" id="newsletter-activation-panel" aria-labelledby="newsletter-activation-title" style="margin:20px 0">
+<h2 id="newsletter-activation-title">Ativação supervisionada · Etapa 12</h2>
+<p class="lead">O primeiro envio deve ser um piloto para um único endereço configurado no servidor, inscrito e confirmado. Por padrão, o sistema nunca envia edições gerais, mesmo depois de configurar a Resend.</p>
+<div class="actions"><button type="button" id="newsletter-activation-refresh" class="secondary">Consultar validação na Resend</button>
+<a href="https://resend.com/domains" rel="noopener noreferrer" target="_blank">Domínios</a>
+<a href="https://resend.com/webhooks" rel="noopener noreferrer" target="_blank">Webhooks</a>
+<a href="https://supabase.com/dashboard/project/iuhotznurbyujzbyhizf/settings/functions" rel="noopener noreferrer" target="_blank">Segredos no Supabase</a>
+</div>
+<div class="two">
+<div><h3>Proteções e credenciais</h3><ul id="newsletter-activation-checks" aria-label="Condições técnicas de ativação"></ul></div>
+<div><h3>Verificação no provedor</h3><ul id="newsletter-activation-provider" aria-label="Verificações diretas na Resend"></ul></div>
+</div>
+<p id="newsletter-activation-result" class="feedback" role="status" aria-live="polite">Aguardando consulta do servidor…</p>
+<p class="lead">A verificação de domínio e webhook usa a API de leitura da Resend. Uma chave limitada a envios pode não permitir essa consulta; nesse caso o resultado será inconclusivo, não aprovado. A operação não cria destinatários, não modifica DNS e não envia mensagens.</p>
+</section>
 <section class="panel" id="newsletter-send-panel" aria-labelledby="newsletter-send-title" style="margin:20px 0">
 <h2 id="newsletter-send-title">Envio controlado · Etapa 10</h2>
 <p class="lead">A edição selecionada na fila acima será utilizada. Confirme a revisão e o consentimento antes de executar um lote. Não há disparo agendado.</p>
 <div class="actions">
 <button id="newsletter-send-check" type="button" class="secondary">Verificar liberação</button>
-<button id="newsletter-send-now" type="button" disabled>Enviar até 5 mensagens</button>
+<button id="newsletter-send-now" type="button" disabled>Envio bloqueado até a validação</button>
 </div>
 <p id="newsletter-send-status" class="feedback" role="status" aria-live="polite">Verificando habilitação do serviço…</p>
 <p class="lead">O envio utiliza limite de 50 tentativas por 24 horas e intervalo mínimo de 7 dias por leitor entre edições. Estados incertos não são reenviados automaticamente. A confirmação de entrega depende de um evento assinado da Resend.</p>
