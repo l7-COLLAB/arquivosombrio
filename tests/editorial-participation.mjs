@@ -67,7 +67,7 @@ test("newsletter needs checked consent and only succeeds after server confirmati
  const f=setupForm({kind:"newsletter",reply:{ok:true,email_sent:true}});
  await f.submit();
  assert.equal(f.calls[0].kind,"newsletter_subscribe");
- assert.match(f.status.textContent,/solicitação foi processada/);
+ assert.match(f.status.textContent,/Solicitação processada/);
  assert.match(src,/consent:inputs\.namedItem\("consent"\)\.checked/);
  assert.match(src,/data\.ok!==true/);
  assert.match(confirmSource,/newsletter_confirm/);
