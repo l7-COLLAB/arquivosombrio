@@ -97,7 +97,7 @@ async function setup() {
 }
 
 test('o HTML carrega a versão corrigida do editor', () => {
-  assert.match(html, /campanhas-editor\.js\?v=17-private-preview-datefix-20261101/);
+  assert.match(html, /campanhas-editor\.js\?v=18-campaign-diagnostics-20261101/);
 });
 
 test('prévia privada usa URLs assinadas de curta duração para hero e card', async () => {
