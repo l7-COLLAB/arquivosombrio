@@ -34,6 +34,8 @@ on:
       - 'supabase/functions/editorial-participation/index.ts'
       - 'supabase/migrations/20261031_editorial_participation.sql'
       - 'tests/editorial-participation.mjs'
+      - 'tests/newsletter-sender-health.mjs'
+      - 'admin-v2/js/newsletter-sender-health.js'
       - 'scripts/seo-article-format.py'
       - 'scripts/build-public-listings.py'
       - 'js/public-listings.js'
@@ -88,6 +90,8 @@ on:
       - 'supabase/functions/editorial-participation/index.ts'
       - 'supabase/migrations/20261031_editorial_participation.sql'
       - 'tests/editorial-participation.mjs'
+      - 'tests/newsletter-sender-health.mjs'
+      - 'admin-v2/js/newsletter-sender-health.js'
       - 'scripts/seo-article-format.py'
       - 'scripts/build-public-listings.py'
       - 'js/public-listings.js'
@@ -133,6 +137,7 @@ jobs:
           node --check js/confirmar-inscricao.js
           node --check admin-v2/js/curadoria-ficcao.js
           node --test tests/editorial-participation.mjs
+          node --test tests/newsletter-sender-health.mjs
           python3 -m unittest discover -s tests -p 'test_public_listings.py' -v
           node --test tests/public-listings.mjs
           python3 -m unittest discover -s tests -p 'test_seo_internal_links.py' -v

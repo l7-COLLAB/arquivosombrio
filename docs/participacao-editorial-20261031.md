@@ -68,3 +68,23 @@ As chaves de envio nunca devem estar em GitHub, JavaScript público, HTML ou com
 5. Impedir mensagens duplicadas e não tratar a marcação editorial como envio.
 
 A criação de rascunhos é independente de RESEND_API_KEY, NEWSLETTER_FROM_EMAIL e NEWSLETTER_ENABLED; a ausência dessas credenciais continua bloqueando inscrições por e-mail.
+
+## Etapa 8 — Diagnóstico seguro do remetente (01/11/2026)
+
+A Central V2 inclui uma área de diagnóstico na página `admin-v2/newsletter.html`. A função `editorial-participation` agora aceita `newsletter_admin_diagnostics` **somente com token de sessão administrativa real**, validado com Supabase Auth e `app_metadata.role=admin`. O endpoint não altera configurações nem envia e-mails.
+
+O relatório apresenta apenas indicadores: presença da chave Resend, formato do e-mail remetente, situação da chave `NEWSLETTER_ENABLED`, domínio remetente e estado de verificação obtido pela API `GET /domains`, quando a chave autoriza consultas. Os segredos e endereços dos assinantes nunca retornam ao navegador.
+
+Uma chave Resend com permissão limitada a envio pode receber HTTP 401/403 ao tentar listar domínios. Nesse caso, o diagnóstico indicará **sem permissão de consulta**, que **não deve** ser interpretado como domínio verificado nem como bloqueio comprovado para envio; verifique manualmente na Resend antes de habilitar o serviço. Não amplie permissões de chaves de produção apenas para permitir o diagnóstico.
+
+Resultado do acesso na sessão de implementação: a conexão Cloudflare retornou **zero zonas DNS**. Portanto, esta conexão não pode criar nem verificar os registros de `arquivosombrio.net.br`. Não houve manipulação DNS nem criação de chaves do provedor.
+
+**Para finalizar a configuração externa:**
+1. Na conta Resend da equipe, [adicionar/verificar o domínio](https://resend.com/domains), copiando os registros **exatos** oferecidos pelo provedor (SPF, DKIM, MX conforme aplicáveis).
+2. Inserir esses registros no **provedor DNS efetivamente autoritativo** pelo domínio (a integração Cloudflare deste ChatGPT não controla zonas). Não substituir registros de correio já existentes sem analisar impacto.
+3. Confirmar na Resend que a capacidade de envio está **enabled** e o domínio está **verified**.
+4. Criar uma chave Resend de envio apropriada, inserir `RESEND_API_KEY` e `NEWSLETTER_FROM_EMAIL` em **Supabase > Edge Functions > Secrets**. Nunca enviar segredos na conversa, GitHub ou HTML.
+5. Apenas depois de comprovada a verificação, definir `NEWSLETTER_ENABLED=true` em Secrets. O cadastro público continua desativado enquanto a chave não estiver definida como `true`.
+6. Testar com um endereço de propriedade da equipe, validar duplo opt-in e cancelamento. Não disparar e-mails a inscritos antes de concluir a Etapa 9/10.
+
+Não foi comprovada entrega de e-mails nem se ativou o disparador de newsletter nesta etapa.

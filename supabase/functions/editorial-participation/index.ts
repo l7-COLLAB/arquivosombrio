@@ -1,7 +1,7 @@
 import {createClient} from "npm:@supabase/supabase-js@2.116.0";
 const origins=new Set(["https://arquivosombrio.net.br","https://www.arquivosombrio.net.br"]);
 const genres=new Set(["terror","suspense","misterio","fantasia_sombria","outro"]);
-const kinds=new Set(["fiction","newsletter_subscribe","newsletter_confirm","newsletter_cancel","newsletter_status"]);
+const kinds=new Set(["fiction","newsletter_subscribe","newsletter_confirm","newsletter_cancel","newsletter_status","newsletter_admin_diagnostics"]);
 const utf8=new TextEncoder();
 const hex=(bytes:Uint8Array)=>Array.from(bytes).map(n=>n.toString(16).padStart(2,"0")).join("");
 const digest=async(s:string)=>hex(new Uint8Array(await crypto.subtle.digest("SHA-256",utf8.encode(s))));
@@ -34,7 +34,7 @@ async function bodyBounded(req:Request){
 async function rate(db:any,key:string,kind:string,req:Request){
  const actor=req.headers.get("cf-connecting-ip")||"unknown";
  for(const [scope,identity,max] of [
-  ["editorial_"+kind,actor,kind==="fiction"?3:5],
+  ["editorial_"+kind,actor,kind==="fiction"?3:kind==="newsletter_admin_diagnostics"?30:5],
   ["editorial_"+kind+"_global","global",kind==="fiction"?100:1500]
  ] as [string,string,number][]){
   const {data,error}=await db.rpc("security_consume_rate_limit",{
@@ -61,6 +61,36 @@ async function sendConfirmation(email:string,verifyToken:string){
  });
  if(!resp.ok)throw Error("Mail provider rejected message");
 }
+// Read-only, administrative verification. NEVER send sample e-mails, copy API
+// keys to the browser, or change a Resend domain / DNS record here.
+// A sending-only API key may not have permission to list domains; in that
+// situation, return 'sem_permissao' rather than pretending it is verified.
+async function inspectResendDomain(apiKey:string,domainName:string){
+ if(!apiKey || !domainName)return {state:"nao_configurado"};
+ try{
+  const response=await fetch("https://api.resend.com/domains?limit=100",{
+   method:"GET",redirect:"error",
+   headers:{Authorization:"Bearer "+apiKey,Accept:"application/json"},
+   signal:AbortSignal.timeout(8000)
+  });
+  if(response.status===401||response.status===403)return {state:"sem_permissao"};
+  if(!response.ok)return {state:"indisponivel"};
+  const data=await response.json();
+  if(!data || !Array.isArray(data.data))return {state:"indisponivel"};
+  const matched=data.data.find((d:unknown)=>{
+   if(!d || typeof d!=="object")return false;
+   return String((d as Record<string,unknown>).name||"").toLowerCase()===domainName;
+  });
+  if(!matched)return {state:data.has_more===true?"nao_determinado":"dominio_nao_encontrado"};
+  const record=matched as Record<string,unknown>;
+  const status=String(record.status||"");
+  const caps=record.capabilities && typeof record.capabilities==="object"
+   ? record.capabilities as Record<string,unknown> : {};
+  const senderVerified=status==="verified" && caps.sending==="enabled";
+  return {state:senderVerified?"verificado":"pendente",status:status.slice(0,40),sending:caps.sending==="enabled"};
+ }catch{return {state:"indisponivel"};}
+}
+
 Deno.serve(async(req:Request)=>{
  const origin=req.headers.get("origin")||"";
  const headers:Record<string,string>={"Content-Type":"application/json","Cache-Control":"no-store","Vary":"Origin"};
@@ -77,6 +107,31 @@ Deno.serve(async(req:Request)=>{
  const kind=field(b,"kind");
  if(!kinds.has(kind)||field(b,"website"))return reply({error:"Formulário inválido."},400);
  if(kind==="newsletter_status")return reply({ok:true,available:newsletterEnabled()});
+ if(kind==="newsletter_admin_diagnostics"){
+  const auth=req.headers.get("authorization")||"";
+  const tokenValue=auth.match(/^Bearer\s+(.+)$/i)?.[1];
+  if(!tokenValue)return reply({error:"Autenticação administrativa necessária."},401);
+  try{
+   const {db,key}=database();
+   const {data:{user},error}=await db.auth.getUser(tokenValue);
+   if(error||!user)return reply({error:"Sessão inválida."},401);
+   // Only immutable app_metadata is considered; user_metadata is never trusted.
+   if(user.app_metadata?.role!=="admin")return reply({error:"Acesso negado."},403);
+   if(!await rate(db,key,kind,req))return reply({error:"Limite de consultas administrativas."},429);
+   const apiKey=Deno.env.get("RESEND_API_KEY")||"";
+   const from=Deno.env.get("NEWSLETTER_FROM_EMAIL")||"";
+   const fromValid=emailOK(from);
+   const senderDomain=fromValid?from.split("@")[1].toLowerCase():"";
+   const provider=await inspectResendDomain(apiKey,senderDomain);
+   return reply({
+    ok:true,available:newsletterEnabled(),activation_flag:Deno.env.get("NEWSLETTER_ENABLED")==="true",
+    api_key_present:Boolean(apiKey),sender_configured:fromValid,
+    sender_domain:senderDomain||null,provider
+   });
+  }catch{
+   return reply({error:"Não foi possível concluir a verificação."},503);
+  }
+ }
  if(kind==="fiction"){
   const pen_name=field(b,"pen_name"),contact_email=field(b,"contact_email").toLowerCase();
   const title=field(b,"title"),genre=field(b,"genre");
