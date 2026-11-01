@@ -10,17 +10,20 @@ const sha=async(s:string)=>hex(new Uint8Array(await crypto.subtle.digest("SHA-25
 const str=(o:Record<string,unknown>,key:string)=>typeof o[key]==="string"?(o[key] as string).trim():"";
 function settings(){
  const from=Deno.env.get("NEWSLETTER_FROM_EMAIL")||"";
+ const pilotOnly=Deno.env.get("NEWSLETTER_PILOT_ONLY")!=="false";
+ const pilotEmail=(Deno.env.get("NEWSLETTER_PILOT_EMAIL")||"").trim().toLowerCase();
  const domain=from.includes("@")?from.split("@").pop()!.toLowerCase():"";
  const expected=(Deno.env.get("NEWSLETTER_VERIFIED_DOMAIN")||"").toLowerCase();
  return {
-  active:Deno.env.get("NEWSLETTER_DISPATCH_ENABLED")==="true" &&
+  active:(!pilotOnly || mailPattern.test(pilotEmail)) &&
+   Deno.env.get("NEWSLETTER_DISPATCH_ENABLED")==="true" &&
    Deno.env.get("NEWSLETTER_ENABLED")==="true" &&
    Boolean(Deno.env.get("RESEND_API_KEY")) &&
    mailPattern.test(from) &&
    expected.length>3 && domain===expected &&
    (Deno.env.get("NEWSLETTER_UNSUBSCRIBE_SECRET")||"").length>=32 &&
    (Deno.env.get("RESEND_WEBHOOK_SECRET")||"").startsWith("whsec_"),
-  from
+  from,pilotOnly,pilotEmail
  };
 }
 function database(){
@@ -157,14 +160,17 @@ Deno.serve(async(req:Request)=>{
   if(kind==="status")return reply({
    ok:true,dispatch_enabled:active,
    state:active?"ativado":"bloqueado",
-   max_batch:5,max_daily:50,frequency_days:7
+   max_batch:settings().pilotOnly?1:5,pilot_only:settings().pilotOnly,
+   pilot_recipient_configured:mailPattern.test(settings().pilotEmail),max_daily:50,frequency_days:7
   });
   if(!active)return reply({error:"Envio desativado. Verifique Resend, DNS e chaves de ativação."},503);
   if(str(b,"confirmation")!=="ENVIAR")return reply({error:"Confirmação explícita obrigatória."},400);
   const editionId=str(b,"edition_id");
   if(!idPattern.test(editionId))return reply({error:"Edição inválida."},400);
+  const config=settings();
   const {data:claimed,error:claimError}=await db.rpc("editorial_claim_newsletter_batch",{
-   p_edition:editionId,p_limit:5
+   p_edition:editionId,p_limit:config.pilotOnly?1:5,
+   p_pilot_email:config.pilotOnly?config.pilotEmail:null
   });
   if(claimError)throw Error("Claim failed");
   const counts:Record<string,number>={aceito:0,incerto:0,falhou:0,cancelado:0};
