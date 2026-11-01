@@ -195,7 +195,7 @@ test("jornada inicial não promete conclusão e evita recomendações repetidas"
  const m=mock({books});
  await m.call("catalog()");
  assert.match(m.nodes.get("#novel-journey").innerHTML,/0<\/strong>/);
- assert.match(m.nodes.get("#novel-journey").innerHTML,/não necessariamente concluídas/);
+ assert.match(m.nodes.get("#novel-journey").innerHTML,/não são necessariamente concluídas/);
  assert.equal(m.nodes.get("#novel-next").hidden,true);
  assert.match(m.nodes.get("#novel-starter").innerHTML,/Um/);
  const storage=new Map([["as-novel-guest-progress-v1-a",JSON.stringify({chapter:1,scroll:0,percent:100,updated:1})]]);
