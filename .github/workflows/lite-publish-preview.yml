@@ -77,6 +77,8 @@ jobs:
           cp ../lite-source/lite/dist/creepypastas*.html lite-preview/
           cp ../lite-source/lite/dist/biblioteca*.html ../lite-source/lite/dist/novels.html lite-preview/
           cp ../lite-source/lite/dist/pesquisa.html ../lite-source/lite/dist/conta.html ../lite-source/lite/dist/lite.js ../lite-source/lite/dist/lite.css lite-preview/
+          # Preserve server-side login requirements and safe text rendering on every rebuild.
+          python3 scripts/harden-lite.py lite-preview/lite.js
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A -- lite-preview sitemap.xml

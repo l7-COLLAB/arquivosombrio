@@ -64,11 +64,12 @@
   async function logMetric(ctx,eventType,metadata={}){
     try{
       const c=await getClient();
-      await c.from("audio_usage_events").insert({
-        event_type:eventType,
-        content_type:ctx.type,
-        content_id:Number(ctx.id),
-        metadata
+      const {data}=await c.auth.getSession();
+      const headers={"Content-Type":"application/json",apikey:KEY};
+      if(data?.session?.access_token)headers.Authorization="Bearer "+data.session.access_token;
+      await fetch(SUPABASE_URL+"/functions/v1/public-contribution-submit",{
+        method:"POST",headers,
+        body:JSON.stringify({kind:"audio_metric",event_type:eventType,content_type:ctx.type,content_id:Number(ctx.id),metadata})
       });
     }catch(_){}
   }

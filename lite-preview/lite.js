@@ -36,13 +36,13 @@ function authName(user){
 function initAccount(){
   var links=document.querySelectorAll("[data-lite-account-link]");
   authUser(authRead(),function(user){
-    for(var i=0;i<links.length;i++)if(user)links[i].innerHTML="Conta · "+authName(user);
+    for(var i=0;i<links.length;i++)if(user)links[i].textContent="Conta · "+authName(user);
     var current=document.querySelector("[data-lite-account-current]"),form=document.querySelector("[data-lite-login]");
     if(current){
       if(user){
         current.hidden=false;if(form)form.style.display="none";
         var n=current.querySelector("[data-lite-account-name]"),e=current.querySelector("[data-lite-account-email]");
-        if(n)n.innerHTML=authName(user);if(e)e.innerHTML=user.email||"";
+        if(n)n.textContent=authName(user);if(e)e.textContent=user.email||"";
       }else{current.hidden=true;if(form)form.style.display="block"}
     }
   });
@@ -51,12 +51,12 @@ function initAccount(){
     if(ev&&ev.preventDefault)ev.preventDefault();
     var email=form.elements.email.value.replace(/^\s+|\s+$/g,""),password=form.elements.password.value;
     var state=form.querySelector("[data-lite-login-state]"),btn=form.querySelector('button[type="submit"]');
-    if(state)state.innerHTML="Entrando...";if(btn)btn.disabled=true;
+    if(state)state.textContent="Entrando...";if(btn)btn.disabled=true;
     authRequest("POST",AUTH_URL+"/token?grant_type=password",{email:email,password:password},null,function(status,data){
       if(btn)btn.disabled=false;
       if(status>=200&&status<300&&data.access_token){
-        authWrite(data);if(state)state.innerHTML="Conta conectada.";setTimeout(function(){location.reload()},250);
-      }else if(state)state.innerHTML=(data&&((data.error_description)||(data.msg)||(data.message)))||"E-mail ou senha inválidos.";
+        authWrite(data);if(state)state.textContent="Conta conectada.";setTimeout(function(){location.reload()},250);
+      }else if(state)state.textContent=(data&&((data.error_description)||(data.msg)||(data.message)))||"E-mail ou senha inválidos.";
     });
     return false;
   };
@@ -76,19 +76,31 @@ var audioBox=document.querySelector("[data-lite-audio]");
 if(audioBox){
   var audioType=audioBox.getAttribute("data-type"),audioId=audioBox.getAttribute("data-id"),audioState=audioBox.querySelector("[data-lite-audio-state]"),audioPlayer=audioBox.querySelector("[data-lite-audio-player]");
   var audioBase="https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/lite-approved-audio";
-  try{
-    var xhr=new XMLHttpRequest();
-    xhr.open("GET",audioBase+"?check=1&type="+encodeURIComponent(audioType)+"&id="+encodeURIComponent(audioId),true);
-    xhr.onreadystatechange=function(){
-      if(xhr.readyState!==4)return;
-      if(xhr.status>=200&&xhr.status<300){
-        audioBox.hidden=false;
-        audioPlayer.src=audioBase+"?type="+encodeURIComponent(audioType)+"&id="+encodeURIComponent(audioId);
-        audioState.innerHTML="Narração Kokoro aprovada e pronta para reprodução.";
-      }
+  authRequest("GET",audioBase+"?check=1&type="+encodeURIComponent(audioType)+"&id="+encodeURIComponent(audioId),null,null,function(status,data){
+    if(status<200||status>=300||data.available!==true)return;
+    audioBox.hidden=false;
+    var enable=document.createElement("button");enable.type="button";enable.textContent="Liberar áudio";
+    audioBox.insertBefore(enable,audioPlayer);
+    audioState.textContent="Entre na sua conta para ouvir este arquivo.";
+    enable.onclick=function(){
+      enable.disabled=true;
+      authUser(authRead(),function(user){
+        var session=authRead();
+        if(!user||!session||!session.access_token){
+          enable.disabled=false;
+          audioState.textContent="Entre na sua conta para ouvir. ";
+          var link=document.createElement("a");link.href="../conta.html";link.textContent="Acessar conta";audioState.appendChild(link);return;
+        }
+        authRequest("GET",audioBase+"?format=json&type="+encodeURIComponent(audioType)+"&id="+encodeURIComponent(audioId),null,session.access_token,function(code,result){
+          enable.disabled=false;
+          if(code>=200&&code<300&&typeof result.url==="string"&&result.url.indexOf("https://")===0){
+            audioPlayer.src=result.url;audioPlayer.load();enable.textContent="Renovar acesso ao áudio";
+            audioState.textContent="Áudio liberado. Use os controles para reproduzir.";
+          }else audioState.textContent=result.error||"Não foi possível liberar o áudio.";
+        });
+      });
     };
-    xhr.send(null);
-  }catch(e){}
+  });
 }
 var q=document.getElementById("lite-query"),form=document.getElementById("lite-search"),rows=document.querySelectorAll("[data-search]"),category=document.getElementById("lite-category"),sort=document.getElementById("lite-sort");
 function filter(){if(!rows.length)return;var term=q?q.value.toLowerCase():"",cat=category?category.value:"all",tracking=document.getElementById("lite-tracking"),status=tracking?tracking.value:"";for(var i=0;i<rows.length;i++){var row=rows[i],show=(!status||row.getAttribute("data-tracking")===status)&&(cat==="all"||row.getAttribute("data-category")===cat)&&row.getAttribute("data-search").indexOf(term)!==-1;row.style.display=show?"":"none";}}

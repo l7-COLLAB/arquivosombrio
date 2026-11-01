@@ -1,0 +1,28 @@
+name: Public access security regressions
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/**'
+      - 'scripts/harden-*.py'
+      - 'js/public-narration.js'
+      - 'lite-preview/lite.js'
+      - 'tests/security-public-access.test.cjs'
+      - 'tests/test_static_security.py'
+      - '.github/workflows/security-public-access.yml'
+permissions:
+  contents: read
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: node --test tests/security-public-access.test.cjs
+      - run: python -m unittest discover -s tests -p test_static_security.py

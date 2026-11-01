@@ -36,3 +36,9 @@ verify_jwt = false # legacy device uses its own password/session auth
 
 [functions.reader-analytics]
 verify_jwt = false # anonymous event ingestion; payload capped
+
+[functions.lite-approved-audio]
+verify_jwt = false # availability is public; playback requires a verified user JWT in handler
+
+[functions.public-contribution-submit]
+verify_jwt = false # bounded public suggestion/metric ingestion with atomic rate limits
