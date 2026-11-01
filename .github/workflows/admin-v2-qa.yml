@@ -11,6 +11,8 @@ on:
       - 'supabase/functions/newsletter-dispatch/**'
       - 'supabase/functions/newsletter-webhook/**'
       - 'tests/newsletter-dispatch.mjs'
+      - 'tests/newsletter-monitor.mjs'
+      - 'supabase/functions/newsletter-monitor/**'
       - 'descadastrar-newsletter.html'
       - 'supabase/functions/newsletter-distribution/**'
       - 'supabase/migrations/20261101_newsletter_*.sql'
@@ -29,6 +31,8 @@ on:
       - 'supabase/functions/newsletter-dispatch/**'
       - 'supabase/functions/newsletter-webhook/**'
       - 'tests/newsletter-dispatch.mjs'
+      - 'tests/newsletter-monitor.mjs'
+      - 'supabase/functions/newsletter-monitor/**'
       - 'descadastrar-newsletter.html'
       - 'supabase/functions/newsletter-distribution/**'
       - 'supabase/migrations/20261101_newsletter_*.sql'
@@ -59,3 +63,5 @@ jobs:
           node --test tests/newsletter-distribution.mjs
           node --check admin-v2/js/newsletter-send.js
           node --test tests/newsletter-dispatch.mjs
+          node --check admin-v2/js/newsletter-monitor.js
+          node --test tests/newsletter-monitor.mjs

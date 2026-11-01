@@ -49,6 +49,7 @@ button[disabled]{opacity:.55;cursor:default}
 <script src="./js/newsletter-sender-health.js?v=1" defer></script>
 <script src="./js/newsletter-distribution.js?v=1" defer></script>
 <script src="./js/newsletter-send.js?v=1" defer></script>
+<script src="./js/newsletter-monitor.js?v=1" defer></script>
 </head>
 <body>
 <header class="top"><div class="wrap top-inner">
@@ -100,6 +101,28 @@ button[disabled]{opacity:.55;cursor:default}
 </div>
 <p id="newsletter-send-status" class="feedback" role="status" aria-live="polite">Verificando habilitação do serviço…</p>
 <p class="lead">O envio utiliza limite de 50 tentativas por 24 horas e intervalo mínimo de 7 dias por leitor entre edições. Estados incertos não são reenviados automaticamente. A confirmação de entrega depende de um evento assinado da Resend.</p>
+</section>
+<section class="panel" id="newsletter-monitor-panel" aria-labelledby="newsletter-monitor-heading" style="margin:20px 0">
+<h2 id="newsletter-monitor-heading">Indicadores e auditoria operacional · Etapa 11</h2>
+<p class="lead">Consulta administrativa sob demanda, sem rastrear aberturas de e-mail e sem expor destinatários individuais. A Resend precisa estar conectada para registrar eventos reais de entrega.</p>
+<div class="metrics" aria-label="Indicadores da newsletter">
+<div class="metric"><strong id="newsletter-monitor-subscribers">—</strong><span>Inscrições confirmadas</span></div>
+<div class="metric"><strong id="newsletter-monitor-attempts">—</strong><span>Tentativas nas últimas 24 horas</span></div>
+<div class="metric"><strong id="newsletter-monitor-remaining">—</strong><span>Cota restante (24 horas)</span></div>
+<div class="metric"><strong id="newsletter-monitor-prepared">—</strong><span>Mensagens preparadas</span></div>
+<div class="metric"><strong id="newsletter-monitor-delivered">—</strong><span>Entregas confirmadas pelo webhook</span></div>
+<div class="metric"><strong id="newsletter-monitor-uncertain">—</strong><span>Resultados de envio incertos</span></div>
+</div>
+<div class="actions"><button id="newsletter-monitor-refresh" type="button" class="secondary">Atualizar indicadores</button></div>
+<p id="newsletter-monitor-status" role="status" aria-live="polite" class="feedback">Aguardando verificação administrativa…</p>
+<div class="two">
+<div><h3>Pré-requisitos de envio</h3><ul id="newsletter-monitor-checks" aria-label="Validação sem segredos"></ul></div>
+<div><h3>Ocorrências para revisão</h3><ul id="newsletter-monitor-warnings" aria-label="Alertas operacionais"></ul></div>
+</div>
+<h3>Simular próximo lote, sem envio</h3>
+<p class="lead">Utiliza a edição selecionada acima, na fila de distribuição. O resultado estima a reserva atual e não cria registros, não envia mensagens e não altera a configuração do remetente.</p>
+<div class="actions"><button id="newsletter-monitor-simulate" type="button" class="secondary">Simular até 5 destinatários</button></div>
+<p id="newsletter-monitor-simulation" role="status" aria-live="polite" class="feedback">Selecione uma edição aprovada e execute a simulação.</p>
 </section>
 <section class="metrics" aria-label="Inscrições por estado">
 <div class="metric"><strong id="sub-confirmed">—</strong><span>Confirmadas</span></div>
