@@ -38,6 +38,21 @@ class NovelSeoTests(TestCase):
         html=mod.render({**book(),"titulo":"2 < 3 & mistério"},[]).decode()
         self.assertIn('\\u003c',html)
         self.assertNotIn('"name": "2 < 3',html)
+    def test_future_publication_is_excluded(self):
+        from unittest.mock import patch
+        future={**book(),"publicado_em":"2999-01-01T20:00:00-03:00"}
+        self.assertFalse(mod.released(future))
+        with patch.object(mod,"query",return_value=[future,book()]):
+            self.assertEqual(len(mod.public_books()),1)
+        chapter={"novel_id":"book-1","numero":1,"titulo":"Futuro","status_publicacao":"publicado","agendado_para":"2999-01-01T20:00:00-03:00"}
+        with patch.object(mod,"query",return_value=[chapter]):
+            self.assertEqual(mod.public_chapters(["book-1"]),[])
+    def test_rejects_future_book_in_build(self):
+        with TemporaryDirectory() as d:
+            site=Path(d)
+            site.joinpath("sitemap.xml").write_text('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>')
+            with self.assertRaises(ValueError):
+                mod.build(site,[{**book(),"publicado_em":"2999-01-01T20:00:00-03:00"}],[])
     def test_escapes_metadata(self):
         html=mod.render({**book(),"titulo":"<script>bad</script> & teste"},[]).decode()
         self.assertNotIn("<script>bad</script>",html)
