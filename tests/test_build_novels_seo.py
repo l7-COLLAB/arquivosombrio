@@ -53,6 +53,29 @@ class NovelSeoTests(TestCase):
             site.joinpath("sitemap.xml").write_text('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>')
             with self.assertRaises(ValueError):
                 mod.build(site,[{**book(),"publicado_em":"2999-01-01T20:00:00-03:00"}],[])
+    def test_audit_detects_missing_page_and_wrong_canonical(self):
+        with TemporaryDirectory() as d:
+            site=Path(d)
+            site.joinpath("sitemap.xml").write_text('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>',encoding="utf-8")
+            mod.build(site,[book()],[])
+            self.assertEqual(mod.audit_generated_novels(site),1)
+            filename=site/"novels/a-mulher-de-branco.html"
+            original=filename.read_text(encoding="utf-8")
+            filename.write_text(original.replace('rel="canonical"','rel="alternate"'),encoding="utf-8")
+            with self.assertRaisesRegex(ValueError,"Canonical"):
+                mod.audit_generated_novels(site)
+            filename.unlink()
+            with self.assertRaisesRegex(ValueError,"divergentes"):
+                mod.audit_generated_novels(site)
+    def test_audit_detects_tampered_structured_data(self):
+        with TemporaryDirectory() as d:
+            site=Path(d)
+            site.joinpath("sitemap.xml").write_text('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>',encoding="utf-8")
+            mod.build(site,[book()],[])
+            filename=site/"novels/a-mulher-de-branco.html"
+            filename.write_text(filename.read_text(encoding="utf-8").replace('"@type": "Book"','"@type": "Article"'),encoding="utf-8")
+            with self.assertRaisesRegex(ValueError,"estruturados"):
+                mod.audit_generated_novels(site)
     def test_escapes_metadata(self):
         html=mod.render({**book(),"titulo":"<script>bad</script> & teste"},[]).decode()
         self.assertNotIn("<script>bad</script>",html)
