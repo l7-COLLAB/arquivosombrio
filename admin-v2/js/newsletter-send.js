@@ -8,7 +8,7 @@
    autoRefreshToken:true,detectSessionInUrl:false}
  });
  const node=id=>document.getElementById(id);
- let enabled=false,busy=false;
+ let enabled=false,busy=false,pilotOnly=true;
  async function api(kind,data={}){
   const {data:{user},error:e}=await sb.auth.getUser();
   if(e||user?.app_metadata?.role!=="admin")throw Error("Sessão administrativa necessária.");
@@ -34,8 +34,10 @@
   try{
    const result=await api("status");
    enabled=result.dispatch_enabled===true;
+   pilotOnly=result.pilot_only!==false;
+   node("newsletter-send-now").textContent=pilotOnly?"Enviar 1 teste piloto":"Enviar até 5 mensagens";
    node("newsletter-send-status").textContent=enabled
-    ? "Envio manual habilitado: até 5 mensagens por ação, 50 em 24 horas e intervalo de 7 dias por leitor. Revise antes de confirmar."
+    ? (pilotOnly?"Piloto habilitado: somente um destinatário confirmado e previamente configurado.":"Distribuição geral habilitada: até 5 mensagens por lote.")+" Revise antes de confirmar."
     : "Envio real bloqueado no servidor. A fila pode ser preparada, mas não serão enviados e-mails.";
   }catch(e){node("newsletter-send-status").textContent="Envio indisponível: "+(e.message||"erro");}
   updateButton();
@@ -45,7 +47,7 @@
   const editionId=node("newsletter-queue-edition")?.value;
   if(!editionId)return;
   const confirm=window.prompt(
-   "Esta ação pode ENVIAR até 5 e-mails reais para leitores inscritos. Digite ENVIAR para confirmar:"
+   pilotOnly?"Esta ação envia uma mensagem REAL apenas ao endereço piloto confirmado. Digite ENVIAR para confirmar:":"Esta ação pode ENVIAR até 5 mensagens REAIS. Digite ENVIAR para confirmar:"
   );
   if(confirm!=="ENVIAR")return;
   busy=true;updateButton();node("newsletter-send-status").textContent="Executando lote limitado…";
