@@ -9,7 +9,7 @@ from urllib.parse import urlsplit
 LIST_FIELDS = {
     'Casos': ['imagem', 'local', 'ano', 'status', 'published_at', 'acompanhamento_status'],
     'casos_diarios': ['imagem_capa', 'local', 'data_caso', 'status_caso', 'acompanhamento_status'],
-    'lendas': ['imagem_capa', 'origem', 'periodo'],
+    'lendas': ['imagem_capa', 'origem', 'periodo', 'pais'],
     'creepypastas': ['imagem_capa', 'origem', 'periodo_origem'],
     'pericias': ['imagem'],
 }
