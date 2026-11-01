@@ -34,6 +34,10 @@ class NovelSeoTests(TestCase):
             with self.assertRaises(ValueError):mod.build(site,[book()],[{"novel_id":"book-1","numero":2,"status_publicacao":"rascunho"}])
     def test_rejects_invalid_slug(self):
         with self.assertRaises(ValueError):mod.valid_slug("../admin")
+    def test_json_ld_cannot_close_script(self):
+        html=mod.render({**book(),"titulo":"</script><script>alert(1)</script>"},[]).decode()
+        self.assertNotIn('</script><script>alert(1)</script>',html)
+        self.assertIn('\\\\u003c/script>',html)
     def test_escapes_metadata(self):
         html=mod.render({**book(),"titulo":"<script>bad</script> & teste"},[]).decode()
         self.assertNotIn("<script>bad</script>",html)
