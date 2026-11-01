@@ -5,6 +5,7 @@ const read=path=>fs.readFileSync(new URL("../"+path,import.meta.url),"utf8");
 const backend=read("supabase/functions/newsletter-distribution/index.ts");
 const schema=read("supabase/migrations/20261101_newsletter_distribution_queue.sql");
 const events=read("supabase/migrations/20261101_newsletter_delivery_events_trigger.sql");
+const grants=read("supabase/migrations/20261101_newsletter_service_role_grants.sql");
 const panel=read("admin-v2/newsletter.html");
 const ui=read("admin-v2/js/newsletter-distribution.js");
 const unsubscribe=read("descadastrar-newsletter.html");
@@ -76,4 +77,11 @@ test("admin page includes accessible feedback and separate staging",()=>{
  assert.match(ui,/window\.confirm/);
  assert.match(ui,/kind,...fields/);
  assert.doesNotMatch(ui,/\.send\(|\.sendEmail\(/);
+});
+
+test("existing private newsletter tables grant only required server privileges",()=>{
+ assert.match(grants,/grant select on public\.editorial_newsletter_editions to service_role/);
+ assert.match(grants,/grant select,insert,update on public\.editorial_newsletter_subscribers to service_role/);
+ assert.doesNotMatch(grants,/grant .* to anon/);
+ assert.doesNotMatch(grants,/grant .* to authenticated/);
 });
