@@ -4,8 +4,13 @@ on:
     paths:
       - 'admin-v2/**'
       - 'tests/admin-v2-regressions.mjs'
+      - 'tests/campaign-covers-v2.mjs'
       - 'tests/newsletter-editor.mjs'
       - 'tests/newsletter-sender-health.mjs'
+      - 'tests/newsletter-distribution.mjs'
+      - 'descadastrar-newsletter.html'
+      - 'supabase/functions/newsletter-distribution/**'
+      - 'supabase/migrations/20261101_newsletter_*.sql'
       - 'supabase/functions/editorial-participation/index.ts'
       - 'supabase/migrations/20261031_newsletter_editorial_editions.sql'
       - '.github/workflows/admin-v2-qa.yml'
@@ -14,8 +19,13 @@ on:
     paths:
       - 'admin-v2/**'
       - 'tests/admin-v2-regressions.mjs'
+      - 'tests/campaign-covers-v2.mjs'
       - 'tests/newsletter-editor.mjs'
       - 'tests/newsletter-sender-health.mjs'
+      - 'tests/newsletter-distribution.mjs'
+      - 'descadastrar-newsletter.html'
+      - 'supabase/functions/newsletter-distribution/**'
+      - 'supabase/migrations/20261101_newsletter_*.sql'
       - 'supabase/functions/editorial-participation/index.ts'
       - 'supabase/migrations/20261031_newsletter_editorial_editions.sql'
       - '.github/workflows/admin-v2-qa.yml'
@@ -33,7 +43,11 @@ jobs:
       - name: Verificar scripts e contratos do Admin V2
         run: |
           node --test tests/admin-v2-regressions.mjs
+          node --check admin-v2/js/campanhas-editor.js
+          node --test tests/campaign-covers-v2.mjs
           node --check admin-v2/js/newsletter-editor.js
           node --test tests/newsletter-editor.mjs
           node --check admin-v2/js/newsletter-sender-health.js
           node --test tests/newsletter-sender-health.mjs
+          node --check admin-v2/js/newsletter-distribution.js
+          node --test tests/newsletter-distribution.mjs

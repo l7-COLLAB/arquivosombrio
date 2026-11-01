@@ -30,13 +30,66 @@ try{
  for(const row of saved.data||[]){const i=data.campaigns.findIndex(c=>c.id===row.id);if(i>=0&&row.payload&&typeof row.payload==='object')data.campaigns[i]=row.payload;}
  validate();
  data.campaigns.forEach((c,i)=>{$('campaign').appendChild(option(String(i),c.title));if(!$('theme').querySelector('option[value="'+c.theme+'"]'))$('theme').appendChild(option(c.theme,c.title+' · tema próprio'));});$('campaign').addEventListener('change',()=>{if(localPreviewUrl)URL.revokeObjectURL(localPreviewUrl);localPreviewUrl=null;$('local-image').value='';render();});render();$('editor').hidden=false;say('Sessão validada. Editor local disponível; nenhuma mudança foi publicada.');
- function preview(){try{readForm();const c=data.campaigns[Number($('campaign').value)],target=$('campaign-preview');target.className=(mobileMode?'mobile-mode ':'')+'season-theme-'+c.theme;target.replaceChildren();const hero=make('div',{'class':'v2-campaign-hero'}),copy=make('div',{'class':'v2-campaign-copy'});const image=localPreviewUrl||c.heroImage||'/assets/especiais/banner-'+c.theme+'.svg';const safe=image.startsWith('blob:')||/^\/(?!\/)[a-zA-Z0-9_./-]+$/.test(image)||/^https:\/\/iuhotznurbyujzbyhizf\.supabase\.co\/storage\/v1\/object\/public\/campaign-images\/[a-zA-Z0-9_./-]+$/.test(image);hero.style.backgroundImage='linear-gradient(90deg,rgba(6,5,6,'+Number(c.overlay??55)/100+'),rgba(6,5,6,.15)),url("'+(safe?image:'/assets/especiais/banner-halloween.svg')+'")';hero.style.backgroundPosition='center,'+Number(c.heroPosition??65)+'% center';hero.style.borderColor=c.accent||'#de8c47';const heading=make('h2',{},c.title),sub=make('p',{},c.subtitle),kicker=make('div',{'class':'v2-campaign-sub'},c.label||'ARQUIVO ESPECIAL');heading.style.fontFamily=JSON.stringify(c.titleFont||'Cinzel')+',Georgia,serif';copy.append(kicker,heading,sub,make('p',{},'Início: '+c.start+' · Fim: '+c.end+' · '+c.status));if(previewMode==='detail'){copy.appendChild(make('p',{},'Próximos arquivos: '+c.days.length+' · Prévia sem publicação'));}else{copy.appendChild(make('p',{},'Explorar especial · Prévia do destaque da home'));}hero.appendChild(copy);target.appendChild(hero);say('Prévia atualizada — nenhuma alteração foi publicada.');}catch(e){say(e.message,true)}}
+ let previewSequence=0;
+ async function resolvePreviewImage(ref,slug){
+  const image=String(ref||'');
+  if(!image)return '';
+  if(/^staging:[a-z0-9-]+\/[a-z0-9-]+\.(?:webp|png|jpg)$/.test(image)){
+   const path=image.slice('staging:'.length);
+   if(!path.startsWith(slug+'/'))throw Error('A capa privada não corresponde à campanha selecionada.');
+   const signed=await adminClient.storage.from('campaign-covers-staging').createSignedUrl(path,300);
+   if(signed.error||!signed.data?.signedUrl)throw Error('Não foi possível gerar a prévia autenticada da capa.');
+   const url=new URL(signed.data.signedUrl);
+   if(url.origin!=='https://iuhotznurbyujzbyhizf.supabase.co'||url.pathname!=='/storage/v1/object/sign/campaign-covers-staging/'+path||!url.searchParams.has('token'))throw Error('Endereço da prévia privada inválido.');
+   return url.href.replace(/"/g,'%22');
+  }
+  if(/^\/(?!\/)[a-zA-Z0-9_./-]+$/.test(image)||/^https:\/\/iuhotznurbyujzbyhizf\.supabase\.co\/storage\/v1\/object\/public\/campaign-images\/[a-zA-Z0-9_./-]+$/.test(image))return image;
+  return '';
+ }
+ async function preview(){
+  const sequence=++previewSequence;
+  try{
+   readForm();
+   const c=data.campaigns[Number($('campaign').value)],target=$('campaign-preview');
+   const heroRef=localPreviewUrl||c.heroImage||'/assets/especiais/banner-'+c.theme+'.svg';
+   const [heroImage,cardImage]=await Promise.all([
+    localPreviewUrl?Promise.resolve(localPreviewUrl):resolvePreviewImage(heroRef,c.slug),
+    resolvePreviewImage(c.cardImage,c.slug)
+   ]);
+   if(sequence!==previewSequence)return;
+   target.className=(mobileMode?'mobile-mode ':'')+'season-theme-'+c.theme;
+   target.replaceChildren();
+   const hero=make('div',{'class':'v2-campaign-hero'}),copy=make('div',{'class':'v2-campaign-copy'});
+   const safeHero=heroImage||'/assets/especiais/banner-halloween.svg';
+   hero.style.backgroundImage='linear-gradient(90deg,rgba(6,5,6,'+Number(c.overlay??55)/100+'),rgba(6,5,6,.15)),url("'+safeHero+'")';
+   hero.style.backgroundPosition='center,'+Number(c.heroPosition??65)+'% center';
+   hero.style.borderColor=c.accent||'#de8c47';
+   const heading=make('h2',{},c.title),sub=make('p',{},c.subtitle),kicker=make('div',{'class':'v2-campaign-sub'},c.label||'ARQUIVO ESPECIAL');
+   heading.style.fontFamily=JSON.stringify(c.titleFont||'Cinzel')+',Georgia,serif';
+   copy.append(kicker,heading,sub,make('p',{},'Início: '+c.start+' · Fim: '+c.end+' · '+c.status));
+   copy.appendChild(make('p',{},previewMode==='detail'?'Próximos arquivos: '+c.days.length+' · Prévia sem publicação':'Explorar especial · Prévia do destaque da home'));
+   hero.appendChild(copy);target.appendChild(hero);
+   if(c.cardImage){
+    const wrap=make('div',{'class':'v2-campaign-cover-preview'});
+    wrap.style.cssText='display:flex;align-items:center;gap:12px;margin-top:16px;flex-wrap:wrap';
+    wrap.appendChild(make('span',{},'Capa do card · prévia administrativa'));
+    if(cardImage){
+     const img=make('img',{alt:'Prévia da capa do card'});
+     img.src=cardImage;
+     img.style.cssText='width:116px;max-height:160px;object-fit:cover;border-radius:6px';
+     wrap.appendChild(img);
+    }else wrap.appendChild(make('span',{},'Imagem não disponível para prévia'));
+    target.appendChild(wrap);
+   }
+   say('Prévia atualizada — nenhuma alteração foi publicada.');
+  }catch(e){if(sequence===previewSequence)say('Falha na prévia: '+e.message,true)}
+ }
  $('preview').addEventListener('click',preview);
  $('preview-home').addEventListener('click',()=>{previewMode='home';preview()});
  $('preview-detail').addEventListener('click',()=>{previewMode='detail';preview()});
  $('preview-mobile').addEventListener('click',()=>{mobileMode=!mobileMode;preview()});
  $('local-image').addEventListener('change',e=>{const file=e.target.files?.[0];if(localPreviewUrl)URL.revokeObjectURL(localPreviewUrl);localPreviewUrl=null;if(file){if(!['image/webp','image/png','image/jpeg'].includes(file.type)||file.size>6*1024*1024){say('A imagem deve ser JPG, PNG ou WebP e ter até 6 MB.',true);return;}localPreviewUrl=URL.createObjectURL(file)}preview()});
- async function uploadMedia(destination){try{const file=$('local-image').files?.[0];if(!file)throw Error('Selecione uma imagem antes de enviar.');if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>6291456)throw Error('Aceitos JPG, PNG ou WebP com até 6 MB.');readForm();const auth=await adminClient.auth.getUser();if(auth.error||!auth.data?.user)throw Error('Sessão administrativa expirada.');const c=data.campaigns[Number($('campaign').value)];const suffix=file.type==='image/webp'?'webp':file.type==='image/png'?'png':'jpg';const filename=c.slug+'/'+Date.now().toString(36)+'-'+(destination==='hero'?'hero':'card')+'.'+suffix;const result=await adminClient.storage.from('campaign-covers-staging').upload(filename,file,{contentType:file.type,upsert:false,cacheControl:'3600'});if(result.error)throw result.error;const ref='staging:'+filename;if(destination==='hero')$('hero-image').value=ref;else $('card-image').value=ref;preview();say('Imagem salva no armazenamento privado. A publicação desta capa ficará bloqueada até a promoção segura.')}catch(e){say('Upload não realizado: '+e.message,true)}}
+ async function uploadMedia(destination){try{const file=$('local-image').files?.[0];if(!file)throw Error('Selecione uma imagem antes de enviar.');if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>6291456)throw Error('Aceitos JPG, PNG ou WebP com até 6 MB.');readForm();const auth=await adminClient.auth.getUser();if(auth.error||!auth.data?.user)throw Error('Sessão administrativa expirada.');const c=data.campaigns[Number($('campaign').value)];const suffix=file.type==='image/webp'?'webp':file.type==='image/png'?'png':'jpg';const filename=c.slug+'/'+Date.now().toString(36)+'-'+(destination==='hero'?'hero':'card')+'.'+suffix;const result=await adminClient.storage.from('campaign-covers-staging').upload(filename,file,{contentType:file.type,upsert:false,cacheControl:'3600'});if(result.error)throw result.error;const ref='staging:'+filename;if(destination==='hero')$('hero-image').value=ref;else $('card-image').value=ref;if(localPreviewUrl)URL.revokeObjectURL(localPreviewUrl);localPreviewUrl=null;$('local-image').value='';preview();say('Imagem salva no armazenamento privado. A publicação desta capa ficará bloqueada até a promoção segura.')}catch(e){say('Upload não realizado: '+e.message,true)}}
 
  $('bulk-upload').addEventListener('click',async()=>{
  const report=$('bulk-report'),files=[...$('bulk-images').files||[]];if(!files.length){report.textContent='Selecione as capas extraídas do ZIP.';return}
@@ -94,8 +147,8 @@ try{
  });
  $('upload-hero').addEventListener('click',()=>uploadMedia('hero'));
  $('upload-card').addEventListener('click',()=>uploadMedia('card'));
- function dateToIso(value){if(!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(value))throw Error('Informe data e hora válidas.');const milliseconds=new Date(value+':00-03:00').getTime();if(!Number.isFinite(milliseconds))throw Error('Data inválida.');return new Date(milliseconds).toISOString()}
- $('publish-db').addEventListener('click',async()=>{try{readForm();const c=data.campaigns[Number($('campaign').value)];if(c.status==='draft')throw Error('Altere o estado de rascunho antes de publicar.');const auth=await adminClient.auth.getUser();if(auth.error||!auth.data?.user)throw Error('Sessão expirada.');const scheduled=$('publish-at').value;const at=scheduled?dateToIso(scheduled):new Date().toISOString();if(!confirm('Publicar a campanha '+c.title+(scheduled?' no horário agendado':' agora')+'?'))return;const result=await adminClient.from('published_campaigns').upsert({id:c.id,payload:c,updated_by:auth.data.user.id,updated_at:new Date().toISOString(),publish_at:at},{onConflict:'id'});if(result.error)throw result.error;if(Date.parse(at)<=Date.now()&&[c.heroImage,c.cardImage].some(x=>String(x||'').startsWith('staging:'))){const promoted=await adminClient.functions.invoke('promote-campaign-covers',{body:{id:c.id}});if(promoted.error||!promoted.data?.ok)throw Error('Agendamento salvo, mas a promoção da capa não foi concluída. Verifique a publicação antes de divulgar.');say('Campanha publicada e capa privada promovida com sucesso.')}else say('Publicação configurada para '+at+'. Capas privadas agendadas aguardam processamento automático.')}catch(e){say('Publicação não realizada: '+e.message,true)}});
+ function dateToIso(value){if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value))throw Error('Informe data e hora válidas.');const milliseconds=new Date(value+':00-03:00').getTime();if(!Number.isFinite(milliseconds))throw Error('Data inválida.');return new Date(milliseconds).toISOString()}
+ $('publish-db').addEventListener('click',async()=>{try{readForm();const c=data.campaigns[Number($('campaign').value)];if(c.status==='draft')throw Error('Altere o estado de rascunho antes de publicar.');const auth=await adminClient.auth.getUser();if(auth.error||!auth.data?.user)throw Error('Sessão expirada.');const scheduled=$('publish-at').value;const at=scheduled?dateToIso(scheduled):new Date().toISOString();if(!confirm('Publicar a campanha '+c.title+(scheduled?' no horário agendado':' agora')+'?'))return;const result=await adminClient.from('published_campaigns').upsert({id:c.id,payload:c,updated_by:auth.data.user.id,updated_at:new Date().toISOString(),publish_at:at},{onConflict:'id'});if(result.error)throw result.error;if(Date.parse(at)<=Date.now()&&[c.heroImage,c.cardImage].some(x=>String(x||'').startsWith('staging:'))){const promoted=await adminClient.functions.invoke('promote-campaign-covers',{body:{id:c.id}});if(promoted.error||!promoted.data?.ok)throw Error('Agendamento salvo, mas a promoção da capa não foi concluída. Verifique a publicação antes de divulgar.');const fresh=await adminClient.from('published_campaigns').select('payload').eq('id',c.id).maybeSingle();if(!fresh.error&&fresh.data?.payload){c.heroImage=fresh.data.payload.heroImage||null;c.cardImage=fresh.data.payload.cardImage||null;render();}say('Campanha publicada e capa privada promovida com sucesso.')}else say('Publicação configurada para '+at+'. Capas privadas agendadas aguardam processamento automático.')}catch(e){say('Publicação não realizada: '+e.message,true)}});
  $('unpublish-db').addEventListener('click',async()=>{try{const c=data.campaigns[Number($('campaign').value)];const auth=await adminClient.auth.getUser();if(auth.error||!auth.data?.user)throw Error('Sessão expirada.');if(!confirm('Retirar do ar a versão personalizada de '+c.title+'? O manifesto padrão poderá continuar exibindo a campanha.'))return;const result=await adminClient.from('published_campaigns').update({publish_at:'2099-01-01T00:00:00Z',updated_at:new Date().toISOString(),updated_by:auth.data.user.id}).eq('id',c.id);if(result.error)throw result.error;say('Versão personalizada desativada; o manifesto estático continua independente.')}catch(e){say('Não foi possível desativar: '+e.message,true)}});
  $('clear-image').addEventListener('click',()=>{if(localPreviewUrl)URL.revokeObjectURL(localPreviewUrl);localPreviewUrl=null;$('local-image').value='';preview()});
  $('add-day').addEventListener('click',()=>{try{readForm();const c=data.campaigns[Number($('campaign').value)];c.days.push({date:c.start,title:'Novo arquivo',url:null,published:false});render();preview()}catch(e){say(e.message,true)}});
