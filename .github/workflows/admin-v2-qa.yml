@@ -12,6 +12,8 @@ on:
       - 'supabase/functions/newsletter-webhook/**'
       - 'tests/newsletter-dispatch.mjs'
       - 'tests/newsletter-monitor.mjs'
+      - 'tests/newsletter-activation.mjs'
+      - 'supabase/functions/newsletter-activation/**'
       - 'supabase/functions/newsletter-monitor/**'
       - 'descadastrar-newsletter.html'
       - 'supabase/functions/newsletter-distribution/**'
@@ -32,6 +34,8 @@ on:
       - 'supabase/functions/newsletter-webhook/**'
       - 'tests/newsletter-dispatch.mjs'
       - 'tests/newsletter-monitor.mjs'
+      - 'tests/newsletter-activation.mjs'
+      - 'supabase/functions/newsletter-activation/**'
       - 'supabase/functions/newsletter-monitor/**'
       - 'descadastrar-newsletter.html'
       - 'supabase/functions/newsletter-distribution/**'
@@ -65,3 +69,5 @@ jobs:
           node --test tests/newsletter-dispatch.mjs
           node --check admin-v2/js/newsletter-monitor.js
           node --test tests/newsletter-monitor.mjs
+          node --check admin-v2/js/newsletter-activation.js
+          node --test tests/newsletter-activation.mjs

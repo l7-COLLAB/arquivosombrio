@@ -183,3 +183,46 @@ Os indicadores de configuração mostram apenas a presença/validade estrutural 
 - Execução das RPCs com `SET LOCAL ROLE service_role` confirmada; `anon` e `authenticated` não têm autorização para executar as funções SQL.
 - Testes do CI para autenticação, limites de payload, ausência de dados pessoais na resposta, ausência de disparos e integridade dos indicadores.
 - O painel é atualizado **sob demanda**, sem monitoramento contínuo nem alertas automáticos.
+
+## Etapa 12 — Ativação supervisionada e diagnóstico direto da Resend (01/11/2026)
+
+**Implementação técnica concluída, mas a ativação real permanece bloqueada até a Resend e um endereço de equipe serem configurados.** Esta etapa introduz um modo piloto restrito por padrão e uma Edge Function de diagnóstico com leitura da API do provedor, sem envio de mensagens.
+
+### Proteção obrigatória de piloto
+
+O módulo `newsletter-dispatch` agora assume `NEWSLETTER_PILOT_ONLY=true` quando essa variável não existe ou possui qualquer valor diferente de `false`. No modo piloto, ele só é ativável se `NEWSLETTER_PILOT_EMAIL` contiver um endereço de teste válido e configurado **diretamente nos segredos do Supabase**. O e-mail configurado deve estar inscrito na newsletter com consentimento duplo, `status=confirmado` e `confirmed_at` preenchido.
+
+A RPC nova `editorial_claim_newsletter_batch(uuid,integer,text)` restringe a reserva a esse e-mail, no banco, antes de devolver dados ao servidor. Só permite lote de **1** no modo piloto; se o endereço não constar na fila ou estiver pendente/cancelado, nada é reservado. A reserva mantém bloqueio transacional, cota global de 50 tentativas em 24h, intervalo de sete dias e proteção contra reenvio. A assinatura de dois parâmetros permanece apenas para compatibilidade de backend antigo, revogada para usuários públicos. **A Edge Function implantada usa apenas a assinatura nova com três parâmetros.**
+
+Para envio geral após o piloto, é necessária uma ação administrativa consciente: alterar `NEWSLETTER_PILOT_ONLY=false` nos segredos. Isso **não** é feito nesta etapa. A flag geral `NEWSLETTER_DISPATCH_ENABLED` também continua sem alteração.
+
+### Pré-verificação sem enviar e-mail
+
+A nova Edge Function `newsletter-activation` possui apenas a ação `preflight`, acessível por POST sob origem do site, Supabase Auth válido e `app_metadata.role=admin`. Ela compara o remetente declarado e, se houver API key com permissão, consulta as APIs **GET** da Resend:
+
+- `https://api.resend.com/domains`: busca o domínio do remetente, exige `status=verified` (ou `partially_verified` com capacidade de envio realmente liberada) e `capabilities.sending=enabled`;
+- `https://api.resend.com/webhooks`: exige endpoint ativo correspondente exatamente a `https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/newsletter-webhook`, recebendo pelo menos `email.delivered`, `email.bounced` e `email.complained`;
+- as respostas **nunca** incluem chaves, nomes de domínio cadastrados, contatos, segredos, endereços dos inscritos ou payloads brutos do provedor.
+
+A chave padrão `RESEND_API_KEY` pode ter permissão apenas de envio e recusar a API de listagem, resultando em `unauthorized`. Se a equipe desejar verificações automáticas, pode criar `RESEND_MANAGEMENT_API_KEY` separada, com permissão de consulta ao painel da Resend. Como a Resend pode exigir permissão Full Access para listagem, guarde esta credencial exclusivamente no Supabase, proteja-a com controles operacionais fortes e não a crie se a avaliação de risco não justificar essa capacidade. Sem essa chave, a checagem externa permanece inconclusiva, e a confirmação deve ser feita no painel da Resend. Em ambos os casos, o sistema **não** assume que a coincidência do domínio configurado comprova a verificação DNS.
+
+### Passo a passo externo pendente
+
+1. Na <https://resend.com/domains>, cadastre o domínio remetente desejado. Copie exatamente os registros DNS mostrados pela Resend e publique no provedor responsável pelo DNS autoritativo; não use registros genéricos. Confirme que a capacidade **Sending** está habilitada. A conexão Cloudflare disponível nesta sessão não retornou uma zona `arquivosombrio.net.br`, portanto nenhum DNS foi modificado.
+2. Na <https://resend.com/webhooks>, cadastre `https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/newsletter-webhook` com eventos de entrega, bounce e reclamação. Copie a chave de assinatura da Resend diretamente para o segredo `RESEND_WEBHOOK_SECRET` do Supabase. O teste definitivo requer ao menos um evento assinado aceito pela função.
+3. Em <https://supabase.com/dashboard/project/iuhotznurbyujzbyhizf/settings/functions>, configure `RESEND_API_KEY`, `NEWSLETTER_FROM_EMAIL`, `NEWSLETTER_VERIFIED_DOMAIN`, `NEWSLETTER_UNSUBSCRIBE_SECRET` (mínimo 32 caracteres) e `RESEND_WEBHOOK_SECRET`, além de `NEWSLETTER_PILOT_EMAIL` com um endereço real controlado pela equipe. `RESEND_MANAGEMENT_API_KEY` é opcional para inspeção da Resend.
+4. Com DNS e webhook prontos, e **após** confirmar consentimento do endereço piloto, habilite `NEWSLETTER_ENABLED=true`, `NEWSLETTER_DISPATCH_ENABLED=true` e mantenha `NEWSLETTER_PILOT_ONLY=true`. O envio geral continuará bloqueado.
+5. Acesse <https://arquivosombrio.net.br/admin-v2/newsletter.html>, clique em **Consultar validação na Resend** e confirme os resultados. Prepare uma edição de teste aprovada, com apenas um endereço piloto confirmado, e verifique a simulação.
+6. Execute no máximo um envio piloto manual e confirme `ENVIAR`. Confira recebimento real na caixa controlada, evento assinado `email.delivered`, link de descadastro, cancelamento na base e impossibilidade de incluir esse leitor novamente. Aceite pelo provedor não prova entrega.
+7. **Não** desative `NEWSLETTER_PILOT_ONLY` nem divulgue a newsletter como operacional até todos os testes passarem. Havendo falha em etapas críticas, mantenha `NEWSLETTER_DISPATCH_ENABLED=false`.
+
+### Auditoria realizada nesta etapa
+
+- Criada e aplicada a migração `20261101_newsletter_pilot_claim.sql`; testada com dois destinatários confirmados dentro de transação revertida: exatamente um endereço piloto foi reservado, a segunda tentativa não repetiu o envio, e o outro inscrito permaneceu preparado, sem alteração.
+- Implantadas `newsletter-dispatch` v2 com limitação piloto padrão e `newsletter-activation` v2 com diagnóstico de leitura.
+- Nenhum pedido de criação de domínio ou webhook foi executado na Resend, pois não havia credencial da conta acessível; nenhum segredo de Resend foi inserido no banco ou no GitHub.
+- **Não houve envio real, recebimento confirmado, teste SMTP nem descadastro real nesta sessão.** Esses testes dependem da configuração dos segredos, da conta e de um destinatário autorizado.
+
+### Notas de segurança
+
+O mecanismo não permite envio anônimo e não expõe emails individuais nos indicadores administrativos. Os testes automatizados de CI cobrem o bloqueio por padrão, a RPC seletiva, a política administrativa, a checagem remota de domínio/webhook e a ausência de operações de escrita no pré-voo. Ainda será necessário fazer uma auditoria final de entrega autenticada após o cadastro real da Resend. 
