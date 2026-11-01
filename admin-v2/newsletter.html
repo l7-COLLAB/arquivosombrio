@@ -46,6 +46,7 @@ button[disabled]{opacity:.55;cursor:default}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" defer></script>
 <script src="./js/newsletter-editor.js?v=1" defer></script>
+<script src="./js/newsletter-sender-health.js?v=1" defer></script>
 </head>
 <body>
 <header class="top"><div class="wrap top-inner">
@@ -58,6 +59,18 @@ button[disabled]{opacity:.55;cursor:default}
 <p class="lead">Redija edições, revise o conteúdo e acompanhe as inscrições confirmadas. Nenhuma ação desta página envia mensagens ou agendará disparos.</p>
 <div class="warning" role="note"><strong>Envio ainda indisponível.</strong> Edições aprovadas permanecem somente no banco editorial. O envio requer remetente verificado, integração de disparo específica e cancelamento em todas as mensagens. Não há botão de envio nesta versão.</div>
 <p id="page-status" class="feedback" role="status" aria-live="polite">Verificando sua sessão administrativa…</p>
+<section class="panel" id="sender-panel" aria-labelledby="sender-heading" style="margin:20px 0">
+<h2 id="sender-heading">Diagnóstico do remetente</h2>
+<p class="lead">Apenas administradores podem verificar esta configuração. Não são exibidas chaves de API, endereços de assinantes ou mensagens.</p>
+<p id="sender-health" class="feedback" role="status" aria-live="polite">Aguardando validação administrativa…</p>
+<ul id="sender-checks" aria-label="Pré-requisitos de e-mail"></ul>
+<div class="actions">
+<button id="check-sender" type="button" class="secondary" disabled>Verificar novamente</button>
+<a href="https://resend.com/domains" target="_blank" rel="noopener noreferrer">Verificar domínio na Resend</a>
+<a href="https://supabase.com/dashboard/project/iuhotznurbyujzbyhizf/settings/functions" target="_blank" rel="noopener noreferrer">Configurar segredos no Supabase</a>
+</div>
+<p class="lead">A configuração depende de um domínio com envio verificado, dos segredos RESEND_API_KEY e NEWSLETTER_FROM_EMAIL e da liberação explícita NEWSLETTER_ENABLED=true. O diagnóstico não altera esses valores.</p>
+</section>
 <section class="metrics" aria-label="Inscrições por estado">
 <div class="metric"><strong id="sub-confirmed">—</strong><span>Confirmadas</span></div>
 <div class="metric"><strong id="sub-pending">—</strong><span>Aguardando confirmação</span></div>
