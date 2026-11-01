@@ -31,6 +31,14 @@ format_spec = importlib.util.spec_from_file_location("seo_article_format", Path(
 article_format = importlib.util.module_from_spec(format_spec)
 format_spec.loader.exec_module(article_format)
 
+updates_spec = importlib.util.spec_from_file_location("public_updates", Path(__file__).with_name("build-public-updates.py"))
+updates = importlib.util.module_from_spec(updates_spec)
+updates_spec.loader.exec_module(updates)
+
+indexes_spec = importlib.util.spec_from_file_location("public_indexes", Path(__file__).with_name("build-public-indexes.py"))
+indexes = importlib.util.module_from_spec(indexes_spec)
+indexes_spec.loader.exec_module(indexes)
+
 PUBLIC_TABLES = {
     "Casos": ("caso.html", "Dossiês", "historia", "imagem"),
     "casos_diarios": ("garimpo.html", "Garimpo Sombrio", "conteudo", "imagem_capa"),
@@ -109,6 +117,20 @@ def render_page(table, row, related=None, cross_editorial=None):
                         + escape(title, quote=True) + '" width="1200" height="700" decoding="async">'
                         + caption_html + '</figure>')
     references = article_format.render_references(row.get("documentos") if table == "Casos" else row.get("fontes"))
+    watch_type = ""
+    if table == "Casos":
+        watch_type = "dossie"
+    elif table == "casos_diarios":
+        category = listings.normalize(row.get("categoria"))
+        if not (category.startswith("ESPECIAL") or category.startswith("PERICIA")):
+            watch_type = "garimpo"
+    watch_action = (
+        '<div class="watch-action"><button class="watch-button" type="button" '
+        'data-watch-type="' + watch_type + '" data-watch-id="' + ident + '" '
+        'data-watch-title="' + escape(title, quote=True) + '">Acompanhar este caso</button>'
+        '<p class="watch-feedback" role="status" aria-live="polite"></p></div>'
+    ) if watch_type else ""
+
     path = canonical_path(page, ident)
     canonical = sitemap.BASE + path
     original = sitemap.BASE + page + "?id=" + ident
@@ -181,7 +203,7 @@ small,.article-kicker{color:#bca882;letter-spacing:.08em;font:12px/1.6 "DM Mono"
 article{overflow-wrap:anywhere;margin-top:34px}article p{margin:0 0 1.35em;max-width:76ch}article h2{color:#eed7ae;font:700 clamp(1.3rem,3vw,1.65rem)/1.35 Georgia,serif;margin:2.1em 0 .7em;border-left:2px solid #a28758;padding-left:16px}article h3{color:#e9d8bd;font-size:1.2rem;margin:1.7em 0 .6em}article ul{padding-left:25px;margin:0 0 1.5em}article li{margin:.45em 0}
 .article-cover{margin:32px 0 20px}.article-cover img{display:block;width:100%;height:auto;max-height:550px;object-fit:contain;background:#171a1e}.article-cover figcaption{padding:10px 0;color:#bca882;font-size:.85rem}
 .article-references,.related-documents,.cross-editorial{border-top:1px solid #a28758;margin:42px 0 0;padding:22px 0}.article-references h2,.related-documents h2,.cross-editorial h2{color:#eed7ae;font-size:1.35rem}.article-references ol,.related-documents ul,.cross-editorial ul{padding-left:24px}.article-references li,.related-documents li,.cross-editorial li{margin:13px 0;overflow-wrap:anywhere}.article-references p,.related-documents p,.cross-editorial p{color:#bca882;font-size:.91rem}.cross-editorial span{color:#bca882;font:12px "DM Mono",monospace}
-a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}@media(max-width:600px){body{font-size:16px}main,header,footer{width:min(100% - 30px,840px)}main{padding-top:25px}.article-cover{margin:22px 0}}"""
+.watch-action{margin:20px 0;padding:14px 0}.watch-button{cursor:pointer;background:#181b20;border:1px solid #a28758;color:#eed4ab;padding:11px 15px;font:600 13px Arial,sans-serif}.watch-button[disabled]{opacity:.7;cursor:wait}.watch-feedback{font:12px Arial,sans-serif;color:#c5aa80;min-height:1.1em}a:focus-visible,.watch-button:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}@media(max-width:600px){body{font-size:16px}main,header,footer{width:min(100% - 30px,840px)}main{padding-top:25px}.article-cover{margin:22px 0}}"""
     html = f"""<!doctype html>
 <html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -189,6 +211,7 @@ a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}@media(max-width:60
 <meta name="description" content="{e(description)}">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="{e(canonical)}">
+<link rel="alternate" type="application/rss+xml" title="Atualizações do Arquivo Sombrio" href="https://arquivosombrio.net.br/rss.xml">
 <meta property="og:type" content="article">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="Arquivo Sombrio">
@@ -205,12 +228,13 @@ a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}@media(max-width:60
 </head><body>
 <header><nav aria-label="Navegação do acervo">
 <a href="/index.html">Início</a><a href="/pesquisa.html">Pesquisar</a>
-<a href="/{e(page)}">{e(label)}</a></nav></header>
+<a href="/{e(page)}">{e(label)}</a><a href="/indices.html">Índices A–Z</a><a href="/atualizacoes.html">Atualizações</a></nav></header>
 <main id="conteudo-principal">
 <small>ARQUIVO SOMBRIO / {e(label.upper())}</small>
 <h1>{e(title)}</h1>
 <p class="article-summary">{e(description)}</p>
 <p><a class="article-original-link" href="{e(original)}">Abrir leitura interativa completa e anexos →</a></p>
+{watch_action}
 {image_figure}
 <article aria-label="Texto público do arquivo">{article_body}</article>
 {references}
@@ -218,6 +242,7 @@ a:focus-visible{outline:2px solid #e7dcc6;outline-offset:3px}@media(max-width:60
 {cross_links}
 <p><a href="{e(original)}">Consultar versão interativa, evidências e referências →</a></p>
 </main><footer><a href="/pesquisa.html">Pesquisar outros arquivos</a></footer>
+<script src="/js/watchlist-public.js?v=1" defer></script>
 </body></html>
 """
     return html.encode("utf-8")
@@ -326,6 +351,15 @@ def main():
     base = sitemap_file.read_bytes()
     now = dt.datetime.now(dt.timezone.utc)
     data = {table: public_rows(table, now) for table in PUBLIC_TABLES}
+    public_update_rows = updates.public_updates()
+    updates_page = site / "atualizacoes.html"
+    if not updates_page.is_file() or (site / "rss.xml").exists():
+        raise ValueError("Template de atualizações ausente ou RSS duplicado")
+    updates_html, rss_xml, updates_count = updates.generate(updates_page, data, public_update_rows, PUBLIC_TABLES, now)
+    index_file = site / "indices.html"
+    if not index_file.is_file():
+        raise ValueError("Template de índices ausente")
+    index_html = indexes.render(index_file.read_text(encoding="utf-8"), data, PUBLIC_TABLES)
     listing_edits = listings.prepare(site, data)
     pages = build_all(site, data)
     # A mesma fotografia de dados serve ao sitemap e às páginas.
@@ -348,8 +382,11 @@ def main():
     search_file.write_text(updated_search, encoding="utf-8")
     for filename, html in listing_edits.items():
         (site / filename).write_text(html, encoding="utf-8")
+    index_file.write_bytes(index_html)
+    updates_page.write_bytes(updates_html)
+    (site / "rss.xml").write_bytes(rss_xml)
     sitemap_file.write_bytes(updated_sitemap)
-    print(f"Pré-renderização: {len(pages)} páginas públicas com canonical e Article JSON-LD")
+    print(f"Pré-renderização: {len(pages)} páginas públicas; {updates_count} entradas na central de atualizações e RSS")
 
 if __name__ == "__main__":
     main()
