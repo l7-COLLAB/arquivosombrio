@@ -320,5 +320,6 @@ test("Quero ler mantém contagem de obras iniciadas independente de livros salvo
  const c=mock({books,storage:new Map([["as-novel-want-v1-a","1"],["as-novel-completed-v1-a","1"]])});
  await c.call("catalog()");
  assert.equal(c.nodes.get("#novel-want").hidden,true);
- assert.equal(c.nodes.get("#novel-next").hidden,true);
+ assert.equal(c.nodes.get("#novel-next").hidden,false);
+ assert.match(c.nodes.get("#novel-next").innerHTML,/Outra obra/);
 });
