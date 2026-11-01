@@ -5,12 +5,91 @@ const esc=s=>String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const params=new URLSearchParams(location.search);const slug=params.get("obra"),hasChapter=params.has("capitulo"),cap=hasChapter?Number(params.get("capitulo")):null;
 const progressUrl=(book,chapter)=>"novel.html?obra="+encodeURIComponent(book)+"&capitulo="+encodeURIComponent(chapter);
 
+
+const novelCompletedKey=id=>"as-novel-completed-v1-"+id;
+function readGuestCompleted(id){
+ try{return localStorage.getItem(novelCompletedKey(id))==="1"}catch{return false}
+}
+function writeGuestCompleted(id,finished){
+ try{
+  if(finished)localStorage.setItem(novelCompletedKey(id),"1");
+  else localStorage.removeItem(novelCompletedKey(id));
+  return true;
+ }catch{return false}
+}
+async function getNovelLibraryStates(userId){
+ if(!userId)return new Map();
+ const {data,error}=await sb.from("novel_biblioteca").select("novel_id,estado").eq("user_id",userId);
+ if(error){console.warn("Situação da biblioteca indisponível",error);return new Map()}
+ return new Map((data||[]).map(row=>[row.novel_id,row.estado]));
+}
+async function wireNovelLibraryControls(book,user){
+ const library=document.querySelector("#novel-library-toggle");
+ const complete=document.querySelector("#novel-complete-toggle");
+ if(!library&&!complete)return;
+ let state=null,loadingError=false;
+ if(user){
+  const {data,error}=await sb.from("novel_biblioteca").select("estado").eq("user_id",user.id).eq("novel_id",book.id).maybeSingle();
+  if(error){console.warn("Estado da leitura indisponível",error);loadingError=true}
+  else state=data?.estado||null;
+ }
+ let guestFinished=!user&&readGuestCompleted(book.id),busy=false;
+ const status=document.querySelector("#novel-complete-status");
+ const finished=()=>user?state==="concluido":guestFinished;
+ const paint=()=>{
+  if(library)library.textContent=state?"Remover das minhas leituras":"Adicionar às minhas leituras";
+  if(complete){
+   complete.textContent=finished()?"Desmarcar conclusão":"Marcar como concluída";
+   complete.setAttribute("aria-pressed",String(finished()));
+   complete.disabled=busy||loadingError;
+  }
+  if(status&&!status.textContent)status.textContent="Só será concluída quando você confirmar.";
+ };
+ paint();
+ if(library){
+  library.onclick=async()=>{
+   if(!user){location.href="meu-arquivo.html";return}
+   if(busy||loadingError)return;
+   busy=true;library.disabled=true;if(complete)complete.disabled=true;
+   try{
+    const op=state?sb.from("novel_biblioteca").delete().eq("user_id",user.id).eq("novel_id",book.id):
+     sb.from("novel_biblioteca").insert({user_id:user.id,novel_id:book.id,estado:"acompanhando"});
+    const {error}=await op;
+    if(error)throw error;
+    state=state?null:"acompanhando";
+    if(status)status.textContent=state?"Obra adicionada à biblioteca.":"Obra removida da biblioteca.";
+   }catch(error){console.warn("Falha ao atualizar biblioteca",error);if(status)status.textContent="Não foi possível salvar. Tente novamente."}
+   finally{busy=false;library.disabled=false;paint()}
+  };
+ }
+ if(complete){
+  complete.onclick=async()=>{
+   if(busy||loadingError)return;
+   busy=true;complete.disabled=true;if(library)library.disabled=true;
+   const next=!finished();
+   try{
+    if(user){
+     const {error}=await sb.from("novel_biblioteca")
+       .upsert({user_id:user.id,novel_id:book.id,estado:next?"concluido":"acompanhando"},{onConflict:"user_id,novel_id"});
+     if(error)throw error;
+     state=next?"concluido":"acompanhando";
+    }else{
+     if(!writeGuestCompleted(book.id,next))throw new Error("Armazenamento indisponível");
+     guestFinished=next;
+    }
+    if(status)status.textContent=next?"Conclusão registrada. Você pode desfazer quando quiser.":"A obra voltou para as leituras não concluídas.";
+   }catch(error){console.warn("Não foi possível atualizar a conclusão",error);if(status)status.textContent="Não foi possível salvar. Tente novamente."}
+   finally{busy=false;if(library)library.disabled=false;paint()}
+  };
+ }
+}
+
 const guestProgressKey=id=>"as-novel-guest-progress-v1-"+id;
 function readGuestProgress(id){
  try{const p=JSON.parse(localStorage.getItem(guestProgressKey(id))||"null");return p&&Number.isInteger(p.chapter)&&p.chapter>=0&&Number.isFinite(p.scroll)&&p.scroll>=0&&Number.isFinite(p.percent)&&p.percent>=0&&p.percent<=100?p:null}catch{return null}
 }
 function renderGuestContinue(section,books){
- const rows=books.map(b=>({book:b,progress:readGuestProgress(b.id)})).filter(x=>x.progress).sort((a,b)=>b.progress.updated-a.progress.updated).slice(0,3);
+ const rows=books.map(b=>({book:b,progress:readGuestProgress(b.id)})).filter(x=>x.progress&&!readGuestCompleted(x.book.id)).sort((a,b)=>b.progress.updated-a.progress.updated).slice(0,3);
  if(!rows.length)return;
  section.hidden=false;
  section.innerHTML='<div class="novel-section-head"><div><span>SUA LEITURA NESTE DISPOSITIVO</span><h2>Continuar lendo</h2></div><p>Sem login: o progresso fica salvo apenas neste navegador.</p></div><div class="novel-continue-grid">'+rows.map(({book:b,progress:p})=>'<article class="novel-continue-card">'+cover(b)+'<div><h3>'+esc(b.titulo)+'</h3><p>Capítulo '+p.chapter+'</p><div class="novel-progress-track" role="progressbar" aria-label="Progresso do capítulo" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.round(p.percent)+'"><span style="width:'+p.percent+'%"></span></div><small>'+Math.round(p.percent)+'% deste capítulo</small><a class="novel-button" href="'+progressUrl(b.slug,p.chapter)+'">Continuar lendo →</a></div></article>').join("")+'</div>';
