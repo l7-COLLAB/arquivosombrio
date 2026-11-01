@@ -4,20 +4,25 @@ import vm from "node:vm";
 import { readFileSync } from "node:fs";
 
 const source=readFileSync(new URL("../js/novels.js",import.meta.url),"utf8");
-function mock({search="",books=[],chapters=[],progress=[],library=[],user=null,storage=new Map(),writes=[]}={}){
+function mock({search="",books=[],chapters=[],progress=[],library=[],user=null,storage=new Map(),writes=[],failRead=false,failInsertIds=new Set()}={}){
  const nodes=new Map();
  const events=new Map();
  const element=(name)=>{if(!nodes.has(name))nodes.set(name,{innerHTML:"",hidden:true,value:"",style:{},dataset:{},classList:{add(){},remove(){},toggle(){return true}},setAttribute(){},insertAdjacentHTML(){},contains(){return false}});return nodes.get(name)};
  const api={
   from(table){
    const rows=table==="novels"?books:table==="novel_capitulos"?chapters:table==="novel_biblioteca"?library:progress;
-   const q={select(){return q},eq(){return q},in(){return q},order(){return q},limit(){return q},
+   const filters=[];
+   const filtered=()=>table==="novel_biblioteca"?rows.filter(row=>filters.every(fn=>fn(row))):rows;
+   const q={select(){return q},eq(key,value){if(table==="novel_biblioteca")filters.push(row=>row[key]===value);return q},in(){return q},order(){return q},limit(){return q},
     upsert(row){writes.push({table,action:"upsert",row});const i=library.findIndex(x=>x.novel_id===row.novel_id);if(i>=0)library[i]={...row};else library.push({...row});return Promise.resolve({error:null})},
-    insert(row){writes.push({table,action:"insert",row});library.push({...row});return Promise.resolve({error:null})},
+    insert(row){writes.push({table,action:"insert",row});
+     if(failInsertIds.has(row.novel_id))return Promise.resolve({error:{code:"TEST_INSERT_FAILURE"}});
+     if(library.some(x=>x.user_id===row.user_id&&x.novel_id===row.novel_id))return Promise.resolve({error:{code:"23505"}});
+     library.push({...row});return Promise.resolve({error:null})},
     delete(){writes.push({table,action:"delete"});return q},
-    then(resolve,reject){return Promise.resolve({data:rows,error:null}).then(resolve,reject)},
+    then(resolve,reject){return Promise.resolve({data:filtered(),error:table==="novel_biblioteca"&&failRead?{code:"READ_FAILURE"}:null}).then(resolve,reject)},
     async single(){return {data:rows[0]??null,error:null}},
-    async maybeSingle(){return {data:rows[0]??null,error:null}}
+    async maybeSingle(){return {data:filtered()[0]??null,error:table==="novel_biblioteca"&&failRead?{code:"READ_FAILURE"}:null}}
    };
    return q;
   },
@@ -322,4 +327,89 @@ test("Quero ler mantém contagem de obras iniciadas independente de livros salvo
  assert.equal(c.nodes.get("#novel-want").hidden,true);
  assert.equal(c.nodes.get("#novel-next").hidden,false);
  assert.match(c.nodes.get("#novel-next").innerHTML,/Outra obra/);
+});
+
+test("importação opcional: visitante não vê painel e usuário importa sem criar outra conta",async()=>{
+ const books=[
+  {id:"a",slug:"a",titulo:"Mistério salvo",autor_nome:"Autor A",status_publicacao:"publicado",generos:["Mistério"]},
+  {id:"b",slug:"b",titulo:"Outra obra",autor_nome:"Autor B",status_publicacao:"publicado",generos:["Suspense"]}
+ ];
+ const storage=new Map([["as-novel-want-v1-a","1"]]);
+ const anon=mock({books,storage});
+ await anon.call("catalog()");
+ assert.equal(anon.nodes.get("#novel-import").hidden,true);
+ const account=mock({books,storage,user:{id:"owner"}});
+ await account.call("catalog()");
+ const panel=account.nodes.get("#novel-import");
+ assert.equal(panel.hidden,false);
+ assert.match(panel.innerHTML,/Importar para minha conta/);
+ assert.match(panel.innerHTML,/navegador pode ser compartilhado/);
+ assert.equal(account.writes.length,0);
+ await account.nodes.get("#novel-import-confirm").onclick();
+ assert.equal(account.writes.length,1);
+ assert.equal(account.writes[0].action,"insert");
+ assert.equal(account.writes[0].row.user_id,"owner");
+ assert.equal(account.writes[0].row.estado,"quero_ler");
+ assert.equal(storage.has("as-novel-want-v1-a"),false);
+ assert.equal(account.nodes.get("#novel-want").hidden,false);
+ assert.match(account.nodes.get("#novel-want").innerHTML,/Mistério salvo/);
+ assert.match(account.nodes.get("#novel-import").innerHTML,/1 importado/);
+ await account.call("catalog()");
+ assert.equal(account.writes.length,1,"importação não deve duplicar os registros");
+});
+test("importação preserva acompanhamentos e conclusões existentes, inclusive de outra conta",async()=>{
+ const books=[
+  {id:"a",slug:"a",titulo:"Concluído",status_publicacao:"publicado"},
+  {id:"b",slug:"b",titulo:"Acompanhando",status_publicacao:"publicado"},
+  {id:"c",slug:"c",titulo:"Novo",status_publicacao:"publicado"}
+ ];
+ const library=[
+  {user_id:"owner",novel_id:"a",estado:"concluido"},
+  {user_id:"owner",novel_id:"b",estado:"acompanhando"},
+  {user_id:"other",novel_id:"c",estado:"concluido"}
+ ];
+ const storage=new Map(books.map(book=>["as-novel-want-v1-"+book.id,"1"]));
+ const m=mock({books,library,storage,user:{id:"owner"}});
+ m.context.testBooks=books;
+ const outcome=await m.call('importGuestWants({id:"owner"},testBooks)');
+ // Expose only the source data needed by the code under test.
+ assert.equal(outcome.added,1);
+ assert.equal(outcome.existing,2);
+ assert.equal(outcome.failed,0);
+ assert.equal(library.find(x=>x.user_id==="owner"&&x.novel_id==="a").estado,"concluido");
+ assert.equal(library.find(x=>x.user_id==="owner"&&x.novel_id==="b").estado,"acompanhando");
+ assert.equal(library.find(x=>x.user_id==="other"&&x.novel_id==="c").estado,"concluido");
+ assert.equal(library.find(x=>x.user_id==="owner"&&x.novel_id==="c").estado,"quero_ler");
+ assert.equal(storage.size,0);
+});
+test("falha de leitura ou gravação não descarta favoritos locais",async()=>{
+ const books=[
+  {id:"a",slug:"a",titulo:"Falha",status_publicacao:"publicado"},
+  {id:"b",slug:"b",titulo:"Importável",status_publicacao:"publicado"}
+ ];
+ const storage=new Map(books.map(b=>["as-novel-want-v1-"+b.id,"1"]));
+ const unreadable=mock({books,storage,user:{id:"owner"},failRead:true});
+ unreadable.context.testBooks=books;
+ await assert.rejects(unreadable.call('importGuestWants({id:"owner"},testBooks)'));
+ assert.equal(unreadable.writes.length,0);
+ assert.equal(storage.size,2);
+ const partial=mock({books,storage,user:{id:"owner"},failInsertIds:new Set(["a"])});
+ partial.context.testBooks=books;
+ const result=await partial.call('importGuestWants({id:"owner"},testBooks)');
+ assert.equal(result.added,1);
+ assert.equal(result.failed,1);
+ assert.equal(storage.has("as-novel-want-v1-a"),true);
+ assert.equal(storage.has("as-novel-want-v1-b"),false);
+});
+test("agora não mantém os favoritos locais e impede importação automática",async()=>{
+ const books=[{id:"a",slug:"a",titulo:"Leitura pessoal",status_publicacao:"publicado"}];
+ const storage=new Map([["as-novel-want-v1-a","1"]]);
+ const m=mock({books,storage,user:{id:"owner"}});
+ await m.call("catalog()");
+ await m.nodes.get("#novel-import-later").onclick();
+ assert.equal(m.nodes.get("#novel-import").hidden,true);
+ assert.equal(storage.get("as-novel-want-v1-a"),"1");
+ assert.equal(m.writes.length,0);
+ await m.call("catalog()");
+ assert.equal(m.nodes.get("#novel-import").hidden,true);
 });
