@@ -50,7 +50,7 @@ const novelThemeRules=[
 ];
 function normalizedNovelGenres(book){
  const genres=Array.isArray(book.generos)?book.generos:[];
- return genres.join(" ").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase();
+ return genres.join(" ").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
 }
 function selectNovelThemeShelves(books){
  const assigned=new Set();
