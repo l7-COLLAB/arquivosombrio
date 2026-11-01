@@ -122,6 +122,7 @@ jobs:
           python3 -m unittest discover -s tests -p 'test_build_seo_pages.py' -v
           python3 -m unittest discover -s tests -p 'test_build_novels_seo.py' -v
           node --check js/novels.js
+          node --check tests/novels-browser.mjs
           node --test tests/novels-guest.mjs
           python3 -m unittest discover -s tests -p 'test_public_updates.py' -v
           python3 -m unittest discover -s tests -p 'test_public_indexes.py' -v
