@@ -45,7 +45,7 @@ try {
    assert.equal(await page.locator("#novel-grid .novel-card").count(),2);
    assert.equal(await page.locator("#novel-starter a").count(),2);
    assert.equal(await page.locator("#novel-journey").isVisible(),true);
-   assert.match(await page.locator("#novel-journey").innerText(),/0 obras iniciadas/);
+   assert.match(await page.locator("#novel-journey").innerText(),/0\s+obras iniciadas/);
    assert.equal(await page.locator("#novel-next").isVisible(),false);
    assert.equal(await page.locator("#novel-themes .novel-theme-item").count(),2);
    assert.match(await page.locator("#novel-themes").innerText(),/Investigações clássicas/);
@@ -84,7 +84,7 @@ try {
    assert.match(await page.locator("#novel-reader #novel-related h2").innerText(),/Sua próxima leitura/);
    await page.goto(server+"/novels.html",{waitUntil:"domcontentloaded"});
    await page.locator("#novel-next .novel-journey-next-card").first().waitFor({timeout:10000});
-   assert.match(await page.locator("#novel-journey").innerText(),/1 obra iniciada/);
+   assert.match(await page.locator("#novel-journey").innerText(),/1\s+obra iniciada/);
    assert.match(await page.locator("#novel-next").innerText(),/O Segredo da Casa/);
    assert.equal(await page.locator("#novel-starter a").count(),1);
    assert.equal(await page.locator("#novel-continue a.novel-button").count(),1);
