@@ -103,7 +103,7 @@ Deno.serve(async(req:Request)=>{
    if(!await rate(db,key,kind,req))return reply({error:"Limite de solicitações."},429);
    const existing=await db.from("editorial_newsletter_subscribers").select("id,status").eq("email",email).maybeSingle();
    if(existing.error)throw existing.error;
-   if(existing.data?.status==="confirmado")return reply({ok:true,already_confirmed:true});
+   if(existing.data?.status==="confirmado")return reply({ok:true});
    const random=token(),verification_hash=await digest(random);
    const values={email,status:"pendente",verification_hash,confirmed_at:null,cancelled_at:null,confirmation_requested_at:new Date().toISOString(),source:"participar"};
    const op=existing.data
