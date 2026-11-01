@@ -42,6 +42,35 @@ async function chapterNumbers(chapterIds){
  return new Map((data||[]).filter(c=>c.status_publicacao==="publicado").map(c=>[c.id,c.numero]));
 }
 function cover(x,cl="novel-cover"){return x.imagem_capa?'<img class="'+cl+'" src="'+esc(x.imagem_capa)+'" alt="Capa de '+esc(x.titulo)+'">':'<div class="'+cl+'"></div>'}
+
+const novelThemeRules=[
+ {id:"vestigios",title:"Enigmas e vestígios",description:"Mistérios guiados por provas, pistas e situações aparentemente impossíveis.",match:g=>g.includes("pericia")||g.includes("quarto fechado")},
+ {id:"sombras",title:"Segredos na penumbra",description:"Suspense, atmosfera gótica e histórias que revelam seus segredos aos poucos.",match:g=>g.includes("suspense")||g.includes("gotico")||g.includes("terror")},
+ {id:"investigacoes",title:"Investigações clássicas",description:"Detetives, crimes e enigmas para acompanhar pista por pista.",match:g=>g.includes("investigacao")||g.includes("misterio")}
+];
+function normalizedNovelGenres(book){
+ const genres=Array.isArray(book.generos)?book.generos:[];
+ return genres.join(" ").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase();
+}
+function selectNovelThemeShelves(books){
+ const assigned=new Set();
+ return novelThemeRules.map(rule=>{
+  const selected=books.filter(book=>!assigned.has(book.id)&&rule.match(normalizedNovelGenres(book))).slice(0,3);
+  selected.forEach(book=>assigned.add(book.id));
+  return {...rule,books:selected};
+ }).filter(shelf=>shelf.books.length>0);
+}
+function renderNovelThemeShelves(section,books){
+ if(!section||!books.length)return;
+ const shelves=selectNovelThemeShelves(books);
+ if(!shelves.length)return;
+ section.innerHTML='<div class="novel-section-head"><div><span>MAPAS DE LEITURA</span><h2>Explore por atmosfera</h2></div><p>Seleções organizadas a partir dos gêneros das obras publicadas.</p></div>'+
+  shelves.map(shelf=>'<section class="novel-theme-shelf" aria-labelledby="novel-theme-'+shelf.id+'"><div class="novel-theme-heading"><div><h3 id="novel-theme-'+shelf.id+'">'+shelf.title+'</h3><p>'+shelf.description+'</p></div><span class="novel-theme-count">'+shelf.books.length+' '+(shelf.books.length===1?'obra':'obras')+'</span></div><div class="novel-theme-grid">'+
+   shelf.books.map(book=>'<a class="novel-theme-item" href="novel.html?obra='+encodeURIComponent(book.slug)+'">'+cover(book,"novel-theme-cover")+'<span class="novel-theme-copy"><strong>'+esc(book.titulo)+'</strong><small>'+esc(book.autor_nome||"Autor não informado")+'</small><em>Conhecer a obra</em></span></a>').join("")+
+  '</div></section>').join("");
+ section.hidden=false;
+}
+
 async function catalog(){
  const root=document.querySelector("#novel-grid");if(!root)return;
  const {data,error}=await sb.from("novels").select("*").eq("status_publicacao","publicado").order("destaque",{ascending:false}).order("publicado_em",{ascending:false});
@@ -57,6 +86,7 @@ async function catalog(){
   starter.hidden=false;
   starter.innerHTML='<div class="novel-section-head"><div><span>PRIMEIRAS PÁGINAS</span><h2>Comece por aqui</h2></div><p>Uma seleção de obras do acervo para descobrir sua próxima leitura.</p></div><div class="novel-starter-grid">'+suggestions.map(x=>'<a class="novel-starter-item" href="novel.html?obra='+encodeURIComponent(x.slug)+'">'+cover(x)+'<span><strong>'+esc(x.titulo)+'</strong><small>'+esc(x.autor_nome||"Autor não informado")+'</small><em>Conhecer a obra →</em></span></a>').join("")+'</div>';
  }
+ renderNovelThemeShelves(document.querySelector("#novel-themes"),books);
  const section=document.querySelector("#novel-continue");if(!section||!books.length)return;
  const {data:{user}}=await sb.auth.getUser();if(!user){renderGuestContinue(section,books);return;}
  const progress=await getReadingProgress(user.id,books.map(x=>x.id));if(!progress.length)return;
