@@ -52,9 +52,7 @@ function bindForm(id,kind,status){
       "Este original já estava registrado na fila de avaliação. Não enviamos uma segunda cópia.":
       "Original recebido para avaliação editorial privada. O envio não garante publicação.",false);
    }else{
-    show(status,result.already_confirmed?
-      "O endereço informado já está inscrito. Nenhuma nova confirmação é necessária.":
-      "A solicitação foi processada. Abra o e-mail enviado e confirme a inscrição para ativá-la.",false);
+    show(status,"Solicitação processada. Se a inscrição ainda precisa de confirmação, verifique a mensagem enviada para seu e-mail.",false);
    }
    form.reset();
   }catch(e){
