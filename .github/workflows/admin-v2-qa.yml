@@ -5,6 +5,10 @@ on:
       - 'admin-v2/**'
       - 'tests/admin-v2-regressions.mjs'
       - 'tests/campaign-covers-v2.mjs'
+      - 'tests/campaign-cover-reliability.mjs'
+      - 'supabase/functions/promote-campaign-covers/**'
+      - 'supabase/functions/promote-scheduled-campaign-covers/**'
+      - 'supabase/migrations/20261101140000_campaign_cover_atomic_and_retry.sql'
       - 'tests/newsletter-editor.mjs'
       - 'tests/newsletter-sender-health.mjs'
       - 'tests/newsletter-distribution.mjs'
@@ -27,6 +31,10 @@ on:
       - 'admin-v2/**'
       - 'tests/admin-v2-regressions.mjs'
       - 'tests/campaign-covers-v2.mjs'
+      - 'tests/campaign-cover-reliability.mjs'
+      - 'supabase/functions/promote-campaign-covers/**'
+      - 'supabase/functions/promote-scheduled-campaign-covers/**'
+      - 'supabase/migrations/20261101140000_campaign_cover_atomic_and_retry.sql'
       - 'tests/newsletter-editor.mjs'
       - 'tests/newsletter-sender-health.mjs'
       - 'tests/newsletter-distribution.mjs'
@@ -59,6 +67,7 @@ jobs:
           node --test tests/admin-v2-regressions.mjs
           node --check admin-v2/js/campanhas-editor.js
           node --test tests/campaign-covers-v2.mjs
+          node --test tests/campaign-cover-reliability.mjs
           node --check admin-v2/js/newsletter-editor.js
           node --test tests/newsletter-editor.mjs
           node --check admin-v2/js/newsletter-sender-health.js
