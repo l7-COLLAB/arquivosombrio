@@ -909,23 +909,44 @@ async function carregarCasosObservacao() {
         );
 
 
-    renderizarColecaoGenerica(
-        "lista-observacao",
-        meuArquivoState.observacao,
-        {
-            vazio:
-                "Nenhum caso está sendo observado.",
-
-            titulo:
-                "Caso em observação",
-
-            icone:
-                "fa-eye"
-        }
-    );
+    renderizarObservacaoMeuArquivo();
 
 }
 
+
+
+/* =========================================================
+   LISTA DE OBSERVAÇÃO — user_watchlist existente
+   ========================================================= */
+
+function renderizarObservacaoMeuArquivo() {
+    const container = document.getElementById("lista-observacao");
+    if (!container) return;
+    const registros = meuArquivoState.observacao;
+    if (!Array.isArray(registros) || !registros.length) {
+        container.innerHTML = criarEstadoVazio("Você ainda não acompanha nenhum caso. Explore o índice para adicionar registros.", "fa-eye");
+        return;
+    }
+    container.innerHTML = registros.map(item => {
+        const id = escaparHTML(item.id || "");
+        const title = escaparHTML(item.title || "Caso em observação");
+        const subtitle = escaparHTML(item.subtitle || "Registrado na sua lista pessoal.");
+        const href = escaparHTML(normalizarLinkMeuArquivo(item.target_url));
+        return `
+            <article class="arquivo-item-card">
+                <div class="arquivo-item-thumb"><i class="fa-solid fa-eye"></i></div>
+                <div class="arquivo-item-info">
+                    <h4>${title}</h4>
+                    <p>${subtitle}</p>
+                    <small>Salvo em ${escaparHTML(formatarDataArquivo(item.created_at))}</small>
+                    <div class="arquivo-favorite-actions">
+                        <a class="arquivo-favorite-link" href="${href}">Abrir arquivo</a>
+                        <button type="button" class="arquivo-favorite-remove" data-remove-watchlist="${id}">Parar de acompanhar</button>
+                    </div>
+                </div>
+            </article>`;
+    }).join("");
+}
 
 /* =========================================================
    MARCADORES
@@ -7937,6 +7958,7 @@ async function removerRegistroPessoal(tabela, id) {
 
     if (tabela === "user_favorites") await carregarFavoritosUsuario();
     if (tabela === "user_highlights") await carregarDestaquesLeitura();
+    if (tabela === "user_watchlist") await carregarCasosObservacao();
     atualizarResumoMeuArquivo();
 }
 
@@ -7945,9 +7967,16 @@ function prepararEventosRegistrosPessoais() {
     document.addEventListener("click", evento => {
         const favorito = evento.target.closest("[data-remove-favorite]");
         const destaque = evento.target.closest("[data-remove-highlight]");
+        const observado = evento.target.closest("[data-remove-watchlist]");
 
         if (favorito) removerRegistroPessoal("user_favorites", favorito.dataset.removeFavorite);
         if (destaque) removerRegistroPessoal("user_highlights", destaque.dataset.removeHighlight);
+        if (observado && !observado.disabled) {
+            observado.disabled = true;
+            removerRegistroPessoal("user_watchlist", observado.dataset.removeWatchlist).finally(() => {
+                if (observado.isConnected) observado.disabled = false;
+            });
+        }
     });
 }
 
