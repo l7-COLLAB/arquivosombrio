@@ -226,3 +226,5 @@ body.novels:has(#novel-grid) .novel-banner{position:relative;margin:0;border:1px
  .novel-detail .novel-related-card{flex-direction:row}
  .novel-detail .novel-related-cover{width:64px;height:94px;flex:0 0 64px}
 }
+
+.novel-detail > .novel-related{grid-column:1/-1}
