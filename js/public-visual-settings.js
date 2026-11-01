@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const endpoint='https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/visual_site_versions?select=id,settings&order=id.desc&limit=1';
+const endpoint='https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/visual_site_public?select=id,settings&id=eq.1&limit=1';
 const key='sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj';
 const selectors=new Set(['body','.main-header','.hero','.hero-title','.section-title','.category-title','.container','.card','.btn','.main-footer']);
 function allowedSelector(s){return selectors.has(s)||(typeof s==='string'&&s.length<=380&&/^(?:body(?: > [a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,3}\)){1,12}|#[a-z][a-z0-9_-]{0,63}(?: > [a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,3}\)){0,12})(?: > [a-z][a-z0-9-]*(?:\.[a-z0-9_-]+){0,8})?$/i.test(s));}

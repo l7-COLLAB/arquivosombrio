@@ -42,6 +42,7 @@ jobs:
           if [ "$MAINTENANCE_MODE" = "true" ]; then
             python3 scripts/build-maintenance.py _site
           fi
+          python3 scripts/harden-static-html.py _site
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site

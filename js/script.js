@@ -13118,7 +13118,7 @@ async function carregarPainelEditorialHome() {
         const cliente = await obterClienteSupabase();
 
         const [configResp, garimpoResp, periciaResp] = await Promise.all([
-            cliente.from("home_featured_config")
+            cliente.from("home_featured_public")
                 .select("dossier_id,selected_at")
                 .eq("id", 1)
                 .maybeSingle(),
