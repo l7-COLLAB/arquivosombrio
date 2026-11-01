@@ -27,7 +27,7 @@ function supabaseStub(rows){
        async maybeSingle(){return {data:apply()[0]||null,error:null}}
      };return q;
    }
- }}}};
+ }}};
 }
 const stub="("+supabaseStub.toString()+")("+JSON.stringify(data)+")";
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
