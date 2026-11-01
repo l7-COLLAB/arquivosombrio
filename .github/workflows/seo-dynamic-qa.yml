@@ -9,6 +9,7 @@ on:
       - 'scripts/build-novels-seo.py'
       - 'tests/test_build_novels_seo.py'
       - 'tests/novels-guest.mjs'
+      - 'tests/novels-browser.mjs'
       - 'js/novels.js'
       - 'novels.html'
       - 'novel.html'
@@ -62,6 +63,7 @@ on:
       - 'scripts/build-novels-seo.py'
       - 'tests/test_build_novels_seo.py'
       - 'tests/novels-guest.mjs'
+      - 'tests/novels-browser.mjs'
       - 'js/novels.js'
       - 'novels.html'
       - 'novel.html'
@@ -149,3 +151,21 @@ jobs:
           python3 scripts/audit-internal-links.py /tmp/arquivo-sombrio-sitemap-test --report /tmp/internal-links-report.json
           python3 scripts/audit-mobile-seo-readiness.py /tmp/arquivo-sombrio-sitemap-test --report /tmp/mobile-seo-report.json
           python3 -c 'from xml.etree import ElementTree as ET; root=ET.parse("/tmp/arquivo-sombrio-sitemap-test/sitemap.xml").getroot(); assert len(root)>21, "Sitemap não inclui publicações"'
+
+  browser-smoke:
+    name: Navegador real — novels desktop e mobile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preparar Playwright
+        run: |
+          npm init -y >/dev/null
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Testar navegador desktop e mobile sem login
+        run: |
+          python3 -m http.server 8787 --bind 127.0.0.1 >/tmp/novels-browser-server.log 2>&1 &
+          node tests/novels-browser.mjs
