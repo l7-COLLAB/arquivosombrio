@@ -23,7 +23,7 @@ test('sitemap versionado preserva links históricos das cinco editorias',()=>{
  }
 });
 test('inclui a pesquisa e preserva URLs fundamentais',()=>{
- for(const p of ['/','/dossies.html','/garimpo.html','/pericia.html','/lendas.html','/creepypastas.html','/pesquisa.html','/atualizacoes.html'])assert.ok(urls.some(x=>x.url==='https://arquivosombrio.net.br'+p),p);
+ for(const p of ['/','/dossies.html','/garimpo.html','/pericia.html','/lendas.html','/creepypastas.html','/pesquisa.html','/atualizacoes.html','/indices.html'])assert.ok(urls.some(x=>x.url==='https://arquivosombrio.net.br'+p),p);
 });
 test('IDs representativos realmente publicados possuem URLs próprias',()=>{
  for(const p of ['caso.html?id=26','garimpo.html?id=28','pericia.html?id=10','lendas.html?id=4','creepypastas.html?id=4'])assert.ok(urls.some(x=>x.url.endsWith(p)),p);
