@@ -99,3 +99,57 @@ test("admin review cannot automatically publish manuscripts into the public libr
  assert.doesNotMatch(admin,/from\("(?:novels|novel_capitulos|Casos)"\)/);
  assert.match(admin,/textContent=String\(text\|\|""\)/);
 });
+
+
+test("newsletter check keeps fields unavailable without readiness or if the service is offline",async()=>{
+ async function verify({available=false,offline=false}={}){
+  const fields={disabled:true};
+  const updates={newsletterReadiness:{textContent:"",classList:{toggle(){}}},newsletterFeedback:{textContent:"",classList:{toggle(){}}}};
+  const form={dataset:{},addEventListener(){}};
+  let callback,calls=[];
+  const document={
+   readyState:"loading",
+   getElementById(id){
+    if(id==="fiction-form")return null;
+    if(id==="newsletter-form")return form;
+    if(id==="newsletter-fields")return fields;
+    if(id==="newsletter-readiness")return updates.newsletterReadiness;
+    if(id==="newsletter-feedback")return updates.newsletterFeedback;
+    return null;
+   },
+   addEventListener(event,cb){if(event==="DOMContentLoaded")callback=cb}
+  };
+  const context=vm.createContext({document,console,fetch:async(url,args)=>{
+   calls.push(JSON.parse(args.body));
+   if(offline)throw new TypeError("Offline");
+   return {ok:true,status:200,json:async()=>({ok:true,available})};
+  }});
+  vm.runInContext(src,context);callback();
+  await new Promise(done=>setImmediate(done));
+  await new Promise(done=>setImmediate(done));
+  return {fields,updates,calls};
+ }
+ const notConfigured=await verify({available:false});
+ assert.equal(notConfigured.fields.disabled,true);
+ assert.match(notConfigured.updates.newsletterReadiness.textContent,/em configuração/);
+ assert.equal(notConfigured.calls.length,1);
+ assert.equal(notConfigured.calls[0].kind,"newsletter_status");
+ assert.equal(Object.keys(notConfigured.calls[0]).length,1,"status check cannot collect personal data");
+ const ready=await verify({available:true});
+ assert.equal(ready.fields.disabled,false);
+ assert.match(ready.updates.newsletterReadiness.textContent,/Inscrições por e-mail disponíveis/);
+ const offline=await verify({offline:true});
+ assert.equal(offline.fields.disabled,true);
+ assert.match(offline.updates.newsletterReadiness.textContent,/Não foi possível confirmar/);
+});
+
+test("server requires explicit post-verification activation, never only the presence of an API key",()=>{
+ assert.match(edge,/NEWSLETTER_ENABLED/);
+ assert.match(edge,/newsletterEnabled\(\)/);
+ assert.match(edge,/kind==="newsletter_status"/);
+ assert.match(edge,/available:newsletterEnabled\(\)/);
+ assert.match(edge,/if\(!newsletterEnabled\(\)\)/);
+ const html=fs.readFileSync(new URL("../participar.html",import.meta.url),"utf8");
+ assert.match(html,/<fieldset id="newsletter-fields" disabled>/);
+ assert.match(html,/id="newsletter-readiness"/);
+});
