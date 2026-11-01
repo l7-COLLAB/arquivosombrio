@@ -18,7 +18,7 @@ async function bodyBounded(req:Request){
  const reader=req.body?.getReader();if(!reader)throw Error("Missing body");
  let count=0;const chunks:Uint8Array[]=[];
  for(;;){const {done,value}=await reader.read();if(done)break;count+=value.byteLength;
-   if(count>26000){await reader.cancel();throw Error("Too large")}chunks.push(value)}
+   if(count>80000){await reader.cancel();throw Error("Too large")}chunks.push(value)}
  const all=new Uint8Array(count);let offset=0;
  for(const c of chunks){all.set(c,offset);offset+=c.length}
  const b=JSON.parse(new TextDecoder().decode(all));
@@ -65,7 +65,7 @@ Deno.serve(async(req:Request)=>{
   "Access-Control-Allow-Headers":"apikey,authorization,content-type,x-client-info"
  }});
  if(req.method!=="POST"||!origins.has(origin))return reply({error:"Requisição não permitida."},403);
- if(Number(req.headers.get("content-length")||0)>26000)return reply({error:"Conteúdo muito grande."},413);
+ if(Number(req.headers.get("content-length")||0)>80000)return reply({error:"Conteúdo muito grande."},413);
  let b:Record<string,unknown>;
  try{b=await bodyBounded(req)}catch{return reply({error:"Dados inválidos ou muito grandes."},400)}
  const kind=field(b,"kind");
