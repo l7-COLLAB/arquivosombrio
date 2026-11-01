@@ -74,7 +74,7 @@ Deno.serve(async(req:Request)=>{
   const from=Deno.env.get("NEWSLETTER_FROM_EMAIL")||"";
   const declared=(Deno.env.get("NEWSLETTER_VERIFIED_DOMAIN")||"").trim().toLowerCase();
   const domain=from.includes("@")?from.split("@").pop()!.toLowerCase():"";
-  const match=Boolean(declared&&domain===declared);
+  const match=Boolean(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(from)&&declared&&domain===declared);
   const unsubscribeReady=(Deno.env.get("NEWSLETTER_UNSUBSCRIBE_SECRET")||"").length>=32;
   const webhookSecretReady=(Deno.env.get("RESEND_WEBHOOK_SECRET")||"").startsWith("whsec_");
   const pilotOnly=Deno.env.get("NEWSLETTER_PILOT_ONLY")!=="false";
@@ -112,6 +112,7 @@ Deno.serve(async(req:Request)=>{
     checked_at:new Date().toISOString()
    },
    pilot_ready:pilotOnly&&pilotReady&&verified&&registered!==null&&subscribed&&
+    Boolean(Deno.env.get("RESEND_API_KEY"))&&
     unsubscribeReady&&webhookSecretReady&&match&&
     Deno.env.get("NEWSLETTER_ENABLED")==="true" &&
     Deno.env.get("NEWSLETTER_DISPATCH_ENABLED")==="true",
