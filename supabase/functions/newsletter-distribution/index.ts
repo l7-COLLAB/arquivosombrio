@@ -20,9 +20,19 @@ function database(){
  return {key,db:createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}})};
 }
 async function readBody(req:Request){
- const raw=await req.text();
- if(raw.length>4096)throw Error("Too large");
- const data=JSON.parse(raw);
+ const reader=req.body?.getReader();
+ if(!reader)throw Error("Missing body");
+ let total=0;const chunks:Uint8Array[]=[];
+ for(;;){
+  const {done,value}=await reader.read();
+  if(done)break;
+  total+=value.byteLength;
+  if(total>4096){await reader.cancel();throw Error("Too large");}
+  chunks.push(value);
+ }
+ const all=new Uint8Array(total);let offset=0;
+ for(const chunk of chunks){all.set(chunk,offset);offset+=chunk.length;}
+ const data=JSON.parse(new TextDecoder().decode(all));
  if(!data || typeof data!=="object" || Array.isArray(data))throw Error("Invalid body");
  return data as Record<string,unknown>;
 }
