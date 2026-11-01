@@ -261,3 +261,65 @@ test("jornada mostra concluídas declaradas e remove essas obras de continuar e 
  assert.match(authed.nodes.get("#novel-next").innerHTML,/Próxima obra/);
  assert.equal(authed.nodes.get("#novel-continue").hidden,true);
 });
+
+test("Quero ler anônimo persiste somente no navegador e é reversível",async()=>{
+ const book={id:"b1",slug:"um-livro",titulo:"Obra para guardar",generos:["Mistério"],status_publicacao:"publicado"};
+ const m=mock({books:[book]});
+ m.context.book=book;
+ await m.call("wireNovelLibraryControls(book,null)");
+ const button=m.nodes.get("#novel-want-toggle");
+ assert.equal(button.textContent,"Salvar em Quero ler");
+ assert.equal(button.disabled,false);
+ await button.onclick();
+ assert.equal(button.textContent,"Remover de Quero ler");
+ assert.equal(m.storage.get("as-novel-want-v1-b1"),"1");
+ await m.call("catalog()");
+ assert.equal(m.nodes.get("#novel-want").hidden,false);
+ assert.match(m.nodes.get("#novel-want").innerHTML,/Obra para guardar/);
+ assert.equal(m.nodes.get("#novel-starter").hidden,true);
+ await button.onclick();
+ assert.equal(m.storage.has("as-novel-want-v1-b1"),false);
+});
+test("Quero ler autenticado usa estado existente sem sobrescrever conclusão ou acompanhamento",async()=>{
+ const book={id:"b1",slug:"um-livro",titulo:"Obra",generos:["Mistério"],status_publicacao:"publicado"};
+ const library=[];
+ const m=mock({books:[book],library,user:{id:"owner"}});
+ m.context.book=book;
+ await m.call('wireNovelLibraryControls(book,{id:"owner"})');
+ const button=m.nodes.get("#novel-want-toggle");
+ await button.onclick();
+ assert.equal(m.writes[0].table,"novel_biblioteca");
+ assert.equal(m.writes[0].action,"upsert");
+ assert.equal(m.writes[0].row.user_id,"owner");
+ assert.equal(m.writes[0].row.novel_id,"b1");
+ assert.equal(m.writes[0].row.estado,"quero_ler");
+ assert.equal(button.textContent,"Remover de Quero ler");
+ await m.call("catalog()");
+ assert.equal(m.nodes.get("#novel-want").hidden,false);
+ assert.equal(m.nodes.get("#novel-journey").innerHTML.includes("obra iniciada"),false);
+ const libraryButton=m.nodes.get("#novel-library-toggle");
+ assert.equal(libraryButton.textContent,"Começar acompanhamento");
+ await libraryButton.onclick();
+ assert.equal(m.writes[1].row.estado,"acompanhando");
+ assert.equal(button.disabled,true);
+ assert.equal(button.textContent,"Em acompanhamento");
+});
+test("Quero ler mantém contagem de obras iniciadas independente de livros salvos",async()=>{
+ const books=[
+  {id:"a",slug:"a",titulo:"Para mais tarde",generos:["Suspense"],status_publicacao:"publicado"},
+  {id:"b",slug:"b",titulo:"Outra obra",generos:["Suspense"],status_publicacao:"publicado"}
+ ];
+ const storage=new Map([["as-novel-want-v1-a","1"]]);
+ const m=mock({books,storage});
+ await m.call("catalog()");
+ assert.match(m.nodes.get("#novel-journey").innerHTML,/<strong>0<\/strong><span>obras iniciadas/);
+ assert.equal(m.nodes.get("#novel-want").hidden,false);
+ assert.match(m.nodes.get("#novel-want").innerHTML,/Para mais tarde/);
+ assert.doesNotMatch(m.nodes.get("#novel-starter").innerHTML,/href="novel.html\?obra=a"/);
+ assert.match(m.nodes.get("#novel-starter").innerHTML,/Outra obra/);
+ const c=mock({books,storage:new Map([["as-novel-want-v1-a","1"],["as-novel-completed-v1-a","1"]])});
+ await c.call("catalog()");
+ assert.equal(c.nodes.get("#novel-want").hidden,true);
+ assert.equal(c.nodes.get("#novel-next").hidden,false);
+ assert.match(c.nodes.get("#novel-next").innerHTML,/Outra obra/);
+});

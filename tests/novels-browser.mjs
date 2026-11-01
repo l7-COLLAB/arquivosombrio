@@ -120,6 +120,28 @@ try {
    await page.locator("#novel-journey .novel-journey-complete").waitFor({timeout:10000});
    assert.match(await page.locator("#novel-journey .novel-journey-complete").innerText(),/0\s+obras concluídas/);
    assert.equal(await page.locator("#novel-continue").isVisible(),true);
+
+   await page.goto(server+"/novel.html?obra=segredo-da-casa",{waitUntil:"domcontentloaded"});
+   await page.locator("#novel-want-toggle").waitFor({timeout:10000});
+   assert.equal(await page.locator("#novel-want-toggle").getAttribute("aria-pressed"),"false");
+   await page.locator("#novel-want-toggle").click();
+   assert.equal(await page.locator("#novel-want-toggle").getAttribute("aria-pressed"),"true");
+   await page.reload({waitUntil:"domcontentloaded"});
+   await page.locator("#novel-want-toggle[aria-pressed='true']").waitFor({timeout:10000});
+   await page.goto(server+"/novels.html",{waitUntil:"domcontentloaded"});
+   await page.locator("#novel-want .novel-want-item").first().waitFor({timeout:10000});
+   assert.equal(await page.locator("#novel-want .novel-want-item").count(),1);
+   assert.match(await page.locator("#novel-want").innerText(),/O Segredo da Casa/);
+   assert.match(await page.locator("#novel-journey .novel-journey-metric").first().innerText(),/1\s+obra iniciada/);
+   assert.equal(await page.locator("#novel-starter a").count(),0);
+   if(viewport.width===390){
+     const size=await page.evaluate(()=>({documentWidth:document.documentElement.scrollWidth,viewport:innerWidth}));
+     assert(size.documentWidth<=size.viewport+8,"Estante Quero ler ultrapassa viewport: "+JSON.stringify(size));
+   }
+   await page.locator("#novel-want [data-want-remove]").first().click();
+   await page.locator("#novel-want").waitFor({state:"hidden",timeout:10000});
+   assert.equal(await page.evaluate(()=>localStorage.getItem("as-novel-want-v1-22222222-2222-4222-8222-222222222222")),null);
+
    assert.deepEqual(faults,[],"Erros JavaScript: "+faults.join(" | "));
    await context.close();
    count++;
