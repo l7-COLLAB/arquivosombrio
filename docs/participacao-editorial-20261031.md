@@ -226,3 +226,16 @@ A chave padrão `RESEND_API_KEY` pode ter permissão apenas de envio e recusar a
 ### Notas de segurança
 
 O mecanismo não permite envio anônimo e não expõe emails individuais nos indicadores administrativos. Os testes automatizados de CI cobrem o bloqueio por padrão, a RPC seletiva, a política administrativa, a checagem remota de domínio/webhook e a ausência de operações de escrita no pré-voo. Ainda será necessário fazer uma auditoria final de entrega autenticada após o cadastro real da Resend. 
+
+
+## Etapa 13 — Reconciliação conservadora de tentativas antigas (01/11/2026)
+
+A Central V2 passa a permitir consultar incidentes de newsletter, sem revelar endereços de destinatários, tokens ou conteúdo do envio. Só é permitido encerrar manualmente uma tentativa `em_envio` para `incerto` quando `dispatch_started_at` tem mais de **15 minutos**, `attempts >= 1` e `provider_message_id IS NULL`. A transição nunca é automática e depende da confirmação literal **MARCAR INCERTO**, executada por administrador autenticado na Edge Function `newsletter-monitor`. Exige rate limit (até seis solicitações de encerramento/hora por escopo) e restringe no PostgreSQL a RPC de mudança a `service_role`.
+
+A consulta `editorial_newsletter_list_incidents(integer)` apresenta até dez registros por chamada e somente metadados operacionais: UUID da tentativa, status, horário de reserva, idade, existência de ID do provedor e elegibilidade para encerramento. Mostra `em_envio` antigos, `incerto` e `aceito` há mais de 48 horas sem confirmação de entrega. `aceito` e `incerto` são **somente leitura**, pois não devem ser confundidos com falha definitiva ou entrega confirmada. A mudança de `em_envio` para `incerto` utiliza o trigger existente de histórico de status.
+
+**Importante:** a reconciliação **não** reenvia, não altera cotas, não libera o destinatário para novo envio, não associa automaticamente IDs da Resend e não marca `entregue`. O status `incerto` permanece como impedimento para retransmissão automática. Para avaliar se o provedor aceitou ou entregou a mensagem, a equipe deverá consultar a Resend usando dados de sua conta e os eventos assinados do webhook. O fluxo de envio real continua dependente da verificação de domínio, chaves e aprovação do piloto da Etapa 12.
+
+### Validação transacional
+
+Foi executado `BEGIN ... ROLLBACK` contra o Supabase real com dois inscritos temporários confirmados. O lote reservado incluiu ambos, um ficou `em_envio` recente e o outro teve `dispatch_started_at` definido artificialmente com 21 minutos. A consulta listou apenas a tentativa antiga. A tentativa recente não pôde ser alterada; a antiga passou a `incerto` uma única vez, sem zerar `attempts`, e o trigger produziu o evento de estado correspondente. Nenhum dado fictício foi persistido, e nenhuma mensagem foi enviada. O fluxo continua exigindo consentimento, confirmação e abertura de uma edição real antes do primeiro piloto.
