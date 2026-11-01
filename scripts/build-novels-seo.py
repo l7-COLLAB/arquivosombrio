@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build crawlable, public-only novel landing pages inside a prepared Pages artifact."""
 from __future__ import annotations
+import datetime as dt
 from html import escape
 from pathlib import Path
 from urllib.parse import urlencode, quote
@@ -33,15 +34,36 @@ def valid_slug(value):
         raise ValueError("Slug inválido")
     return value
 
+def released(row, now=None):
+    """Fail closed for scheduled content even if an RLS policy changes."""
+    if row.get("status_publicacao") != "publicado":
+        return False
+    now = now or dt.datetime.now(dt.timezone.utc)
+    for field in ("publicado_em", "agendado_para"):
+        raw = row.get(field)
+        if not raw:
+            continue
+        try:
+            when = dt.datetime.fromisoformat(str(raw).replace("Z", "+00:00"))
+            if when.tzinfo is None:
+                raise ValueError("Timezone ausente")
+        except (ValueError, TypeError) as exc:
+            raise ValueError("Data de publicação inválida") from exc
+        if when > now:
+            return False
+    return True
+
 def public_books():
-    return query("novels","id,slug,titulo,autor_nome,sinopse,status_publicacao",
+    rows = query("novels","id,slug,titulo,autor_nome,sinopse,status_publicacao,publicado_em",
                  {"status_publicacao":"eq.publicado","order":"slug.asc"})
+    return [row for row in rows if released(row)]
 
 def public_chapters(book_ids):
     if not book_ids:return []
     # Only published chapters from published books, never query drafts or unpublished content.
-    return query("novel_capitulos","novel_id,numero,titulo,status_publicacao",
+    rows = query("novel_capitulos","novel_id,numero,titulo,status_publicacao,publicado_em,agendado_para",
                  {"status_publicacao":"eq.publicado","novel_id":"in.("+",".join(str(x) for x in book_ids)+")","order":"numero.asc"})
+    return [row for row in rows if released(row)]
 
 def render(book,chapters):
     slug=valid_slug(book["slug"])
@@ -78,11 +100,11 @@ def build(site,books,chapters):
     grouping={}
     allowed={str(book["id"]) for book in books if book.get("status_publicacao")=="publicado"}
     for chapter in chapters:
-        if chapter.get("status_publicacao")!="publicado" or str(chapter.get("novel_id")) not in allowed:
+        if not released(chapter) or str(chapter.get("novel_id")) not in allowed:
             raise ValueError("Capítulo não público recebido")
         grouping.setdefault(str(chapter["novel_id"]),[]).append(chapter)
     for book in books:
-        if book.get("status_publicacao")!="publicado":raise ValueError("Obra não publicada")
+        if not released(book):raise ValueError("Obra não publicada ou agendada")
         slug=valid_slug(book["slug"])
         rel="novels/"+slug+".html"
         url=BASE+rel
