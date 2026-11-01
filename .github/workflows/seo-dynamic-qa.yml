@@ -8,6 +8,11 @@ on:
       - 'scripts/build-seo-pages.py'
       - 'scripts/build-novels-seo.py'
       - 'tests/test_build_novels_seo.py'
+      - 'tests/novels-guest.mjs'
+      - 'js/novels.js'
+      - 'novels.html'
+      - 'novel.html'
+      - 'css/novels.css'
       - 'scripts/build-public-indexes.py'
       - 'js/watchlist-public.js'
       - 'js/meu-arquivo.js'
@@ -56,6 +61,11 @@ on:
       - 'scripts/build-seo-pages.py'
       - 'scripts/build-novels-seo.py'
       - 'tests/test_build_novels_seo.py'
+      - 'tests/novels-guest.mjs'
+      - 'js/novels.js'
+      - 'novels.html'
+      - 'novel.html'
+      - 'css/novels.css'
       - 'scripts/build-public-indexes.py'
       - 'js/watchlist-public.js'
       - 'js/meu-arquivo.js'
@@ -109,6 +119,8 @@ jobs:
           python3 -m unittest discover -s tests -p 'test_build_*sitemap.py' -v
           python3 -m unittest discover -s tests -p 'test_build_seo_pages.py' -v
           python3 -m unittest discover -s tests -p 'test_build_novels_seo.py' -v
+          node --check js/novels.js
+          node --test tests/novels-guest.mjs
           python3 -m unittest discover -s tests -p 'test_public_updates.py' -v
           python3 -m unittest discover -s tests -p 'test_public_indexes.py' -v
           node --check js/meu-arquivo.js
