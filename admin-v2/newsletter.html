@@ -47,6 +47,7 @@ button[disabled]{opacity:.55;cursor:default}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" defer></script>
 <script src="./js/newsletter-editor.js?v=1" defer></script>
 <script src="./js/newsletter-sender-health.js?v=1" defer></script>
+<script src="./js/newsletter-distribution.js?v=1" defer></script>
 </head>
 <body>
 <header class="top"><div class="wrap top-inner">
@@ -56,8 +57,8 @@ button[disabled]{opacity:.55;cursor:default}
 <main class="wrap">
 <p class="eyebrow">ESTÚDIO EDITORIAL / NEWSLETTER</p>
 <h1>Edições e assinaturas</h1>
-<p class="lead">Redija edições, revise o conteúdo e acompanhe as inscrições confirmadas. Nenhuma ação desta página envia mensagens ou agendará disparos.</p>
-<div class="warning" role="note"><strong>Envio ainda indisponível.</strong> Edições aprovadas permanecem somente no banco editorial. O envio requer remetente verificado, integração de disparo específica e cancelamento em todas as mensagens. Não há botão de envio nesta versão.</div>
+<p class="lead">Redija edições, revise o conteúdo e acompanhe as inscrições confirmadas. Acompanhe as edições e prepare uma fila privada de leitores confirmados. Nenhum botão desta página envia e-mails.</p>
+<div class="warning" role="note"><strong>Envio ainda indisponível.</strong> Edições aprovadas podem ser incluídas na fila privada, mas não há botão de envio nesta versão. Nenhum disparo é executado, mesmo se o remetente for configurado.</div>
 <p id="page-status" class="feedback" role="status" aria-live="polite">Verificando sua sessão administrativa…</p>
 <section class="panel" id="sender-panel" aria-labelledby="sender-heading" style="margin:20px 0">
 <h2 id="sender-heading">Diagnóstico do remetente</h2>
@@ -70,6 +71,24 @@ button[disabled]{opacity:.55;cursor:default}
 <a href="https://supabase.com/dashboard/project/iuhotznurbyujzbyhizf/settings/functions" target="_blank" rel="noopener noreferrer">Configurar segredos no Supabase</a>
 </div>
 <p class="lead">A configuração depende de um domínio com envio verificado, dos segredos RESEND_API_KEY e NEWSLETTER_FROM_EMAIL e da liberação explícita NEWSLETTER_ENABLED=true. O diagnóstico não altera esses valores.</p>
+</section>
+<section class="panel" id="newsletter-queue-panel" aria-labelledby="queue-heading" style="margin:20px 0">
+<h2 id="queue-heading">Distribuição segura · preparação da fila</h2>
+<p class="lead">Somente edições aprovadas e assinaturas confirmadas podem compor a fila. Repetir o preparo não duplica destinatários. Após a primeira inclusão, a edição fica congelada para preservar o conteúdo revisado.</p>
+<div class="metrics" aria-label="Estados agregados da distribuição">
+<div class="metric"><strong id="newsletter-queue-prepared">—</strong><span>Na fila, sem envio</span></div>
+<div class="metric"><strong id="newsletter-queue-accepted">—</strong><span>Aceitos/entregues (futuro)</span></div>
+<div class="metric"><strong id="newsletter-queue-cancelled">—</strong><span>Cancelados na fila</span></div>
+</div>
+<label for="newsletter-queue-edition">Edição aprovada
+<select id="newsletter-queue-edition" aria-describedby="newsletter-queue-message"></select>
+</label>
+<div class="actions">
+<button id="newsletter-queue-prepare" type="button" disabled>Preparar fila, sem envio</button>
+<button id="newsletter-queue-refresh" type="button" class="secondary" disabled>Atualizar fila</button>
+</div>
+<p id="newsletter-queue-message" role="status" aria-live="polite" class="feedback">Aguardando sessão administrativa…</p>
+<p class="lead">Um token exclusivo e assinado será exigido no link de descadastro de cada e-mail futuro. A página pública de cancelamento requer a ação explícita do destinatário, nunca o simples carregamento de um link.</p>
 </section>
 <section class="metrics" aria-label="Inscrições por estado">
 <div class="metric"><strong id="sub-confirmed">—</strong><span>Confirmadas</span></div>
