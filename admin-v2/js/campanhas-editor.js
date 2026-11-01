@@ -62,22 +62,29 @@ try{
    const copy={...c,cardImage:image};
    const savedRow=await adminClient.from('editorial_campaigns').upsert({id:c.id,payload:copy,updated_by:auth.data.user.id,updated_at:new Date().toISOString()},{onConflict:'id'});
    if(savedRow.error)throw savedRow.error;
-   // Publica apenas a nova capa: preserva a programação e demais dados editoriais.
+   // Atualiza o catálogo público apenas se a campanha já estiver efetivamente liberada.
    const existing=await adminClient.from('published_campaigns').select('payload,publish_at').eq('id',c.id).maybeSingle();
    if(existing.error)throw existing.error;
-   const publicPayload=existing.data?.payload&&typeof existing.data.payload==='object'?{...existing.data.payload,cardImage:image}:{...c,cardImage:image};
-   const updated=await adminClient.from('published_campaigns').upsert({
-    id:c.id,payload:publicPayload,updated_by:auth.data.user.id,
-    updated_at:new Date().toISOString(),publish_at:existing.data?.publish_at||new Date().toISOString()
-   },{onConflict:'id'});
-   if(updated.error)throw updated.error;
+   const releaseTime=existing.data?.publish_at?new Date(existing.data.publish_at).getTime():NaN;
+   const canUpdatePublic=existing.data&&Number.isFinite(releaseTime)&&releaseTime<=Date.now();
+   if(canUpdatePublic){
+    const publicPayload={...existing.data.payload,cardImage:image};
+    const updated=await adminClient.from('published_campaigns').update({
+     payload:publicPayload,updated_by:auth.data.user.id,updated_at:new Date().toISOString()
+    }).eq('id',c.id);
+    if(updated.error)throw updated.error;
+   }
    Object.assign(c,copy);saved++;
-   // Sincronização opcional com GitHub via função segura (sem token no navegador).
-   try{
-    const synced=await adminClient.functions.invoke('campaign-cover-github-sync',{body:{theme:c.theme,storagePath:path}});
-    if(synced.error||!synced.data?.ok)throw Error(synced.data?.error||synced.error?.message||'GitHub indisponível');
-    report.textContent='Capas salvas: '+saved+' de '+matched.length+'. GitHub: '+synced.data.path;
-   }catch(gitError){failures.push(file.name+': imagem salva na V2, mas NÃO enviada ao GitHub ('+gitError.message+')');}
+   // Nunca sincronizar uma capa de campanha ainda não liberada ao GitHub público.
+   if(canUpdatePublic){
+    try{
+     const synced=await adminClient.functions.invoke('campaign-cover-github-sync',{body:{theme:c.theme,storagePath:path}});
+     if(synced.error||!synced.data?.ok)throw Error(synced.data?.error||synced.error?.message||'GitHub indisponível');
+     report.textContent='Capas salvas: '+saved+' de '+matched.length+'. GitHub: '+synced.data.path;
+    }catch(gitError){failures.push(file.name+': imagem salva na V2, mas NÃO enviada ao GitHub ('+gitError.message+')');}
+   }else{
+    report.textContent='Capa salva apenas no rascunho. Sincronização pública adiada até a publicação.';
+   }
 
   }catch(e){failures.push(file.name+': '+e.message)}
  }
