@@ -90,6 +90,36 @@ def render(book,chapters):
             +('<section><h2>Capítulos disponíveis</h2><ol>'+chapter_links+'</ol></section>' if chapters else '')
             +'</main></body></html>').encode("utf-8")
 
+def audit_generated_novels(site):
+    """Validate generated Book pages against the final deployment sitemap."""
+    prefix = BASE + "novels/"
+    tag = "{" + NS + "}loc"
+    root = ET.parse(site / "sitemap.xml").getroot()
+    urls = [node.text or "" for node in root.iter(tag) if (node.text or "").startswith(prefix)]
+    if len(urls) != len(set(urls)):
+        raise ValueError("URLs de novels duplicadas no sitemap")
+    expected = {url.removeprefix(prefix) for url in urls}
+    files = {path.name for path in (site / "novels").glob("*.html")}
+    if expected != files:
+        raise ValueError("Sitemap e páginas de novels divergentes")
+    for filename in sorted(expected):
+        if not filename.endswith(".html"):
+            raise ValueError("URL de novel inválida")
+        valid_slug(filename[:-5])
+        url = prefix + filename
+        html = (site / "novels" / filename).read_text(encoding="utf-8")
+        if html.count('<link rel="canonical" href="' + escape(url, quote=True) + '">') != 1:
+            raise ValueError("Canonical incorreto: " + filename)
+        matches = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+        if len(matches) != 1:
+            raise ValueError("JSON-LD ausente ou duplicado: " + filename)
+        structured = json.loads(matches[0])
+        if structured.get("@type") != "Book" or structured.get("url") != url:
+            raise ValueError("Dados estruturados inconsistentes: " + filename)
+        if '<h1>' not in html or "Abrir obra no leitor interativo" not in html:
+            raise ValueError("Página incompleta: " + filename)
+    return len(expected)
+
 def build(site,books,chapters):
     sitemap_file=site/"sitemap.xml"
     root=ET.fromstring(sitemap_file.read_bytes())
@@ -122,6 +152,7 @@ def build(site,books,chapters):
     dest.mkdir()
     for rel,html in output.items(): (site/rel).write_bytes(html)
     sitemap_file.write_bytes(b'<?xml version="1.0" encoding="UTF-8"?>\n'+ET.tostring(root,encoding="utf-8")+b"\n")
+    audit_generated_novels(site)
     return len(output)
 
 if __name__=="__main__":
