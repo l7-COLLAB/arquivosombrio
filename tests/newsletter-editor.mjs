@@ -9,7 +9,7 @@ const html=fs.readFileSync(new URL("../admin-v2/newsletter.html",import.meta.url
 function fixture(admin=false){
  const calls=[],handles={};
  function node(name){
-  return {name,children:[],textContent:"",value:"",disabled:true,
+  return {name,children:[],textContent:"",value:"",disabled:false,
    appendChild(x){this.children.push(x);return x;},
    replaceChildren(){this.children=[];},
    addEventListener(event,callback){this["on"+event]=callback;},
@@ -23,6 +23,8 @@ function fixture(admin=false){
   "editor-heading","edition-feedback","sub-confirmed","sub-pending","sub-cancelled"]){
   els[name]=node(name);
  }
+ els["edition-fields"].disabled=true;
+ els["refresh-editions"].disabled=true;
  els["edition-form"].elements={
   namedItem(k){return (handles[k]??=Object.assign(node(k),{value:({
    title:"Edição documental",
