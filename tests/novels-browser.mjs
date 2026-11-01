@@ -4,7 +4,7 @@ const server = "http://127.0.0.1:8787";
 const data = {
   novels: [
     {id:"11111111-1111-4111-8111-111111111111",slug:"misterio-da-biblioteca",titulo:"O Mistério da Biblioteca",autor_nome:"Arquivo Sombrio",sinopse:"Um livro de mistério para o teste.",generos:["Mistério"],tags:[],destaque:true,status_obra:"concluida",status_publicacao:"publicado",imagem_capa:null},
-    {id:"22222222-2222-4222-8222-222222222222",slug:"segredo-da-casa",titulo:"O Segredo da Casa",autor_nome:"Autor de Teste",sinopse:"Outro mistério.",generos:["Suspense"],tags:[],destaque:false,status_obra:"concluida",status_publicacao:"publicado",imagem_capa:null}
+    {id:"22222222-2222-4222-8222-222222222222",slug:"segredo-da-casa",titulo:"O Segredo da Casa",autor_nome:"Autor de Teste",sinopse:"Outro mistério.",generos:["Mistério","Suspense"],tags:[],destaque:false,status_obra:"concluida",status_publicacao:"publicado",imagem_capa:null}
   ],
   novel_capitulos: [
     {id:"33333333-3333-4333-8333-333333333333",novel_id:"11111111-1111-4111-8111-111111111111",numero:1,titulo:"A Primeira Página",palavras:2200,status_publicacao:"publicado",publicado_em:null,conteudo:("Era uma noite silenciosa. A biblioteca guardava um segredo. \n\n").repeat(110)},
@@ -22,6 +22,7 @@ function supabaseStub(rows){
        eq(k,v){filters.push(x=>x[k]===v);return q},
        in(k,values){filters.push(x=>values.includes(x[k]));return q},
        order(k,{ascending=true}={}){sorters.push([k,ascending]);return q},
+       limit(){return q},
        then(resolve,reject){return Promise.resolve({data:apply(),error:null}).then(resolve,reject)},
        async single(){return {data:apply()[0]||null,error:null}},
        async maybeSingle(){return {data:apply()[0]||null,error:null}}
@@ -56,10 +57,14 @@ try {
    await page.locator('#novel-grid a[href*="misterio-da-biblioteca"]').first().click();
    await page.locator("#novel-detail h1").waitFor({timeout:10000});
    assert.match(await page.title(),/O Mistério da Biblioteca/);
+   await page.locator("#novel-detail #novel-related .novel-related-card").first().waitFor({timeout:10000});
+   assert.equal(await page.locator("#novel-detail #novel-related .novel-related-card").count(),1);
+   assert.match(await page.locator("#novel-detail #novel-related").innerText(),/O Segredo da Casa/);
    await page.locator("#novel-detail a.novel-button").first().click();
    await page.locator("#reader-body p").first().waitFor({timeout:10000});
    assert.equal(await page.locator("#reader-body p").count(),110);
    assert.match(await page.title(),/Capítulo 1/);
+   assert.equal(await page.locator("#novel-reader #novel-related").count(),0);
    await page.evaluate(()=>window.scrollTo({top:480,behavior:"instant"}));
    await page.evaluate(()=>window.dispatchEvent(new Event("pagehide")));
    const local=await page.evaluate(()=>JSON.parse(localStorage.getItem("as-novel-guest-progress-v1-11111111-1111-4111-8111-111111111111")));
@@ -71,6 +76,9 @@ try {
    await page.locator("#chapter-jump").selectOption("2");
    await page.locator("#reader-body p").first().waitFor({timeout:10000});
    assert.match(await page.title(),/Capítulo 2/);
+   await page.locator("#novel-reader #novel-related .novel-related-card").first().waitFor({timeout:10000});
+   assert.equal(await page.locator("#novel-reader #novel-related .novel-related-card").count(),1);
+   assert.match(await page.locator("#novel-reader #novel-related h2").innerText(),/Sua próxima leitura/);
    if(viewport.width===390){
      const size=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,viewport:innerWidth}));
      assert(size.scrollWidth<=size.viewport+8,"Leitor ultrapassa viewport: "+JSON.stringify(size));

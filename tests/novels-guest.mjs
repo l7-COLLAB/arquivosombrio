@@ -11,7 +11,7 @@ function mock({search="",books=[],chapters=[],progress=[],user=null,storage=new 
  const api={
   from(table){
    const rows=table==="novels"?books:table==="novel_capitulos"?chapters:progress;
-   const q={select(){return q},eq(){return q},in(){return q},order(){return q},
+   const q={select(){return q},eq(){return q},in(){return q},order(){return q},limit(){return q},
     then(resolve,reject){return Promise.resolve({data:rows,error:null}).then(resolve,reject)},
     async single(){return {data:rows[0]??null,error:null}},
     async maybeSingle(){return {data:rows[0]??null,error:null}}
@@ -112,4 +112,43 @@ test("estantes vazias ficam ocultas e não inventam recomendações",async()=>{
  await m.call("catalog()");
  assert.equal(m.nodes.get("#novel-themes").hidden,true);
  assert.equal(m.nodes.get("#novel-themes").innerHTML,"");
+});
+
+test("livros relacionados priorizam gêneros reais e excluem rascunhos e a própria obra",()=>{
+ const m=mock();
+ const current={id:"a",slug:"obra-a",generos:["Mistério","Investigação criminal"]};
+ const others=[
+  {id:"a",slug:"obra-a",titulo:"Eu",generos:["Mistério"],status_publicacao:"publicado"},
+  {id:"b",slug:"obra-b",titulo:"Investigação",generos:["Investigação"],status_publicacao:"publicado"},
+  {id:"c",slug:"obra-c",titulo:"Dossiê de crime",generos:["Mistério","Investigação criminal"],status_publicacao:"publicado"},
+  {id:"d",slug:"obra-d",titulo:"Rascunho",generos:["Mistério"],status_publicacao:"rascunho"},
+  {id:"e",slug:"obra-e",titulo:"Fantasia",generos:["Fantasia"],status_publicacao:"publicado"},
+  {id:"f",slug:"obra-f",titulo:"Outro mistério",generos:["Mistério"],status_publicacao:"publicado"}
+ ];
+ m.context.testCurrent=current;m.context.testOthers=others;
+ assert.equal(m.call("findRelatedNovels(testCurrent,testOthers).map(x=>x.book.slug).join(',')"),"obra-c,obra-f,obra-b");
+ assert.equal(m.call("findRelatedNovels(testCurrent,testOthers).length"),3);
+ assert.equal(m.call("findRelatedNovels({...testCurrent,generos:[]},testOthers).length"),0);
+});
+test("recomendações só mostram obras relacionadas e escapam conteúdo editorial",async()=>{
+ const current={id:"a",slug:"obra-a",generos:["Terror gótico"]};
+ const books=[
+  {...current,titulo:"Original",status_publicacao:"publicado"},
+  {id:"b",slug:"romance-gotico",titulo:"Um <mistério> & segredo",autor_nome:"Autora <teste>",generos:["Romance gótico"],status_publicacao:"publicado"},
+  {id:"c",slug:"fantasia",titulo:"Sem relação",generos:["Fantasia"],status_publicacao:"publicado"},
+  {id:"d",slug:"inedita",titulo:"Obra inédita",generos:["Terror gótico"],status_publicacao:"rascunho"}
+ ];
+ const m=mock({books});m.context.testCurrent=current;
+ await m.call('loadRelatedNovels(testCurrent,document.querySelector("#novel-related"))');
+ const node=m.nodes.get("#novel-related");
+ assert.equal(node.hidden,false);
+ assert.match(node.innerHTML,/romance-gotico/);
+ assert.match(node.innerHTML,/&lt;mistério&gt; &amp; segredo/);
+ assert.doesNotMatch(node.innerHTML,/obra-a|inedita|fantasia|<mistério>/);
+});
+test("recomendações sem gêneros compartilhados permanecem ocultas",async()=>{
+ const m=mock({books:[{id:"b",slug:"outro",titulo:"Outro",generos:["Fantasia"],status_publicacao:"publicado"}]});
+ m.context.testCurrent={id:"a",slug:"a",generos:["Mistério"]};
+ await m.call('loadRelatedNovels(testCurrent,document.querySelector("#novel-related"),true)');
+ assert.equal(m.nodes.get("#novel-related").hidden,true);
 });
