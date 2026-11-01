@@ -69,7 +69,7 @@ test("V2 rendering uses DOM-safe text and explicit clicks for manual status/simu
  assert.match(ui,/node\.textContent|\.textContent=/);
  assert.doesNotMatch(ui,/innerHTML|outerHTML|insertAdjacentHTML/);
  assert.match(ui,/addEventListener\("click"/);
- assert.match(ui,/kind:"simulate"/);
- assert.match(ui,/kind:"overview"/);
+ assert.match(ui,/api\("simulate",\{edition_id:id\}\)/);
+ assert.match(ui,/api\("overview"\)/);
  assert.doesNotMatch(ui,/RESEND_API_KEY|NEWSLETTER_UNSUBSCRIBE_SECRET|recipient_email/);
 });
