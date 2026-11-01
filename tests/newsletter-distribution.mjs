@@ -10,12 +10,12 @@ const panel=read("admin-v2/newsletter.html");
 const ui=read("admin-v2/js/newsletter-distribution.js");
 const unsubscribe=read("descadastrar-newsletter.html");
 
-test("no delivery code, Resend request, scheduled job or public send button",()=>{
+test("staging module does not itself send mail or schedule jobs",()=>{
  assert.doesNotMatch(backend,/api\.resend\.com|sendEmail|sendBatch|\/emails\b|Deno\.cron/i);
  assert.match(backend,/emails_sent:0/);
  assert.match(backend,/dispatch_enabled:false/);
  assert.doesNotMatch(ui,/api\.resend\.com|RESEND_API_KEY/);
- assert.match(panel,/Não há botão de envio/i);
+ assert.match(panel,/Não há envio automático/i);
 });
 test("prepare is exclusively administrative, confirmed recipients and idempotent",()=>{
  assert.match(backend,/db\.auth\.getUser\(bearer\)/);
