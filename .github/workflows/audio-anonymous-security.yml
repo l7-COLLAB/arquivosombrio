@@ -1,0 +1,77 @@
+name: Verificar bloqueio anônimo de áudio
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/audio-anonymous-security.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  requests-without-session:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Testar endpoints com chave pública mas sem sessão
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import sys
+          import urllib.request
+          import urllib.error
+
+          base = 'https://iuhotznurbyujzbyhizf.supabase.co/functions/v1/'
+          # Key is public/publishable. Never use service_role, sb_secret or a user token.
+          public_key = 'sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj'
+          headers = {'apikey': public_key, 'Content-Type': 'application/json', 'Accept': 'application/json'}
+
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, hdrs, newurl):
+                  return None
+          client = urllib.request.build_opener(NoRedirect)
+
+          tests = [
+              ('public-narration/manifest', 'public-narration',
+               {'type':'dossie', 'id':'2', 'action':'manifest'}, 'POST'),
+              ('public-narration/chunk', 'public-narration',
+               {'type':'dossie', 'id':'2', 'action':'chunk', 'index':0}, 'POST'),
+              ('novel-narration/url', 'novel-narration',
+               {'capitulo_id':'00000000-0000-0000-0000-000000000000','action':'url'}, 'POST'),
+              ('arquivo-voz-private-preview', 'arquivo-voz-private-preview',
+               {'job_id':'00000000-0000-0000-0000-000000000000'}, 'POST'),
+              ('lite-approved-audio/redirect', 'lite-approved-audio?type=dossie&id=2',
+               None, 'GET'),
+              ('lite-approved-audio/json', 'lite-approved-audio?type=dossie&id=2&format=json',
+               None, 'GET'),
+          ]
+          failures=[]
+          for mode, authorization in [('no_token', None),('invalid_token','Bearer invalid.jwt.value')]:
+              for name, path, payload, method in tests:
+                  req_headers=dict(headers)
+                  if authorization:
+                      req_headers['Authorization']=authorization
+                  req=urllib.request.Request(base+path, headers=req_headers,
+                      data=json.dumps(payload).encode() if payload is not None else None,
+                      method=method)
+                  try:
+                      resp=client.open(req,timeout=16)
+                      status=resp.status
+                      resp.close()
+                  except urllib.error.HTTPError as err:
+                      status=err.code
+                      err.close()
+                  except Exception as err:
+                      print(f'{mode} {name}: NETWORK_ERROR ({type(err).__name__})')
+                      failures.append(f'{mode} {name}: NETWORK_ERROR')
+                      continue
+                  # Do not print bodies or URLs that could contain a signed audio link.
+                  print(f'{mode} {name}: HTTP {status}')
+                  if status not in (401,403):
+                      failures.append(f'{mode} {name}: HTTP {status} instead of 401/403')
+          if failures:
+              print(f'FAILED: {len(failures)} routes could not be verified as protected')
+              for item in failures:print(item)
+              sys.exit(1)
+          print('PASS: all protected routes rejected requests without a valid user session.')
+          print('LIMITATION: authenticated playback, previously-issued signed URLs and private R2 objects were NOT tested.')
+          PY
