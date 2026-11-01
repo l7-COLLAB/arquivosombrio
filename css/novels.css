@@ -304,3 +304,19 @@ body.novels:has(#novel-grid) .novel-banner{position:relative;margin:0;border:1px
 .novel-want-controls p{min-height:1.1em;margin:7px 0 0;color:#c7b598;font-size:.78rem;line-height:1.5}
 @media(max-width:980px){.novel-want-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.novel-want-grid{grid-template-columns:1fr}.novel-want-item{padding:10px}.novel-want-cover{width:64px;height:94px;flex-basis:64px}}
+
+/* Explicit opt-in transfer from device-only reading list to signed-in library. */
+.novel-import[hidden]{display:none!important}
+.novel-import{margin:25px 0;padding:18px 20px;background:#191b1d;border:1px solid #977649}
+.novel-import-top>div>span{font-size:.66rem;letter-spacing:.16em;color:#d6ac73}
+.novel-import h2{margin:7px 0 10px;font:700 clamp(1.1rem,2vw,1.45rem)/1.35 Georgia,serif;color:#eaddc7}
+.novel-import p{font-size:.84rem;line-height:1.6;color:#d2c5b6;max-width:790px;margin:8px 0}
+.novel-import-preview{color:#e4bb80!important;font:italic .84rem/1.5 Georgia,serif!important}
+.novel-import-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.novel-import-actions button{font:700 .85rem/1.3 Arial,sans-serif;padding:11px 15px;min-height:42px;cursor:pointer}
+#novel-import-confirm{background:#742b34;border:1px solid #a6656c;color:#fff5eb}
+#novel-import-later{background:#242527;border:1px solid #846e54;color:#ecdac5}
+.novel-import-actions button:hover,.novel-import-actions button:focus-visible{outline:2px solid #e3ba7d;outline-offset:2px}
+.novel-import-actions button:disabled{opacity:.55;cursor:wait}
+#novel-import-status,.novel-import-result{margin:12px 0 0;min-height:1.4em;color:#e6c69c}
+@media(max-width:650px){.novel-import{padding:14px}.novel-import-actions button{flex:1 1 auto}}

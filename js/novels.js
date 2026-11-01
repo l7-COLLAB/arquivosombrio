@@ -6,6 +6,95 @@ const params=new URLSearchParams(location.search);const slug=params.get("obra"),
 const progressUrl=(book,chapter)=>"novel.html?obra="+encodeURIComponent(book)+"&capitulo="+encodeURIComponent(chapter);
 
 
+
+let novelImportDismissedFor=null;
+let novelImportFeedback="";
+let novelImportFeedbackFor=null;
+function pendingGuestWantBooks(books){
+ return books.filter(book=>book&&book.status_publicacao==="publicado"&&!readGuestCompleted(book.id)&&readGuestWant(book.id));
+}
+async function importGuestWants(user,books){
+ if(!user?.id)throw new Error("Login necessário para importar.");
+ const pending=pendingGuestWantBooks(books);
+ if(!pending.length)return {added:0,existing:0,failed:0};
+ // Read current account state first; never overwrite a started or completed book.
+ const {data,error}=await sb.from("novel_biblioteca").select("novel_id,estado").eq("user_id",user.id);
+ if(error)throw error;
+ const onAccount=new Set((data||[]).map(row=>row.novel_id));
+ let added=0,existing=0,failed=0;
+ for(const book of pending){
+  if(!readGuestWant(book.id))continue;
+  if(onAccount.has(book.id)){
+   // Existing account state is authoritative, including completed and following.
+   if(writeGuestWant(book.id,false))existing++;
+   else failed++;
+   continue;
+  }
+  try{
+   // INSERT + unique (user_id, novel_id): preserves concurrent writes and RLS ownership.
+   const {error:saveError}=await sb.from("novel_biblioteca").insert({
+    user_id:user.id,novel_id:book.id,estado:"quero_ler"
+   });
+   if(saveError)throw saveError;
+   added++;
+   writeGuestWant(book.id,false);
+  }catch(e){
+   console.warn("Falha ao importar uma novel de Quero ler",e);
+   failed++;
+  }
+ }
+ return {added,existing,failed};
+}
+function renderWantImport(section,books,user){
+ if(!section)return;
+ if(!user?.id){section.hidden=true;section.innerHTML="";return;}
+ if(novelImportFeedbackFor!==user.id){
+  novelImportFeedbackFor=user.id;
+  novelImportFeedback="";
+ }
+ const candidates=pendingGuestWantBooks(books);
+ if((!candidates.length&&!novelImportFeedback)||novelImportDismissedFor===user.id){
+  section.hidden=true;section.innerHTML="";return;
+ }
+ section.hidden=false;
+ if(!candidates.length){
+  section.innerHTML='<p class="novel-import-result" role="status">'+esc(novelImportFeedback)+'</p>';
+  return;
+ }
+ section.innerHTML='<div class="novel-import-top"><div><span>LISTA SALVA NESTE NAVEGADOR</span><h2>Importar para minha conta</h2>'+
+  '<p>Você tem '+candidates.length+' '+(candidates.length===1?'obra salva':'obras salvas')+' aqui. Importe apenas se forem suas; este navegador pode ser compartilhado. Leituras em andamento ou concluídas na conta serão preservadas.</p>'+
+  '<p class="novel-import-preview">'+candidates.slice(0,3).map(b=>esc(b.titulo)).join(" · ")+(candidates.length>3?' · e outras':"")+'</p></div></div>'+
+  '<div class="novel-import-actions"><button id="novel-import-confirm" type="button">Importar livros</button>'+
+  '<button id="novel-import-later" type="button">Agora não</button></div>'+
+  '<p id="novel-import-status" role="status" aria-live="polite">'+esc(novelImportFeedback)+'</p>';
+ const confirm=document.querySelector("#novel-import-confirm");
+ const later=document.querySelector("#novel-import-later");
+ const feedback=document.querySelector("#novel-import-status");
+ if(later)later.onclick=()=>{
+  novelImportDismissedFor=user.id;
+  section.hidden=true;
+  section.innerHTML="";
+ };
+ if(confirm)confirm.onclick=async()=>{
+  confirm.disabled=true;
+  if(later)later.disabled=true;
+  if(feedback)feedback.textContent="Conferindo os livros já presentes na conta...";
+  try{
+   // Authentication can change while the page is open: recheck before writing.
+   const {data:auth,error:authError}=await sb.auth.getUser();
+   if(authError||auth?.user?.id!==user.id)throw new Error("Sessão alterada. Entre novamente.");
+   const result=await importGuestWants(user,books);
+   novelImportFeedback=[result.added?result.added+" importado(s)":"",result.existing?result.existing+" já existente(s)":"",result.failed?result.failed+" não importado(s), disponíveis para tentar novamente":""].filter(Boolean).join(" · ")||"Nenhum livro pendente.";
+   await catalog();
+  }catch(error){
+   console.warn("Importação de Quero ler indisponível",error);
+   if(feedback)feedback.textContent="Importação não concluída. Nenhuma obra existente foi substituída; tente novamente.";
+   confirm.disabled=false;
+   if(later)later.disabled=false;
+  }
+ };
+}
+
 const novelWantKey=id=>"as-novel-want-v1-"+id;
 function readGuestWant(id){
  try{return localStorage.getItem(novelWantKey(id))==="1"}catch{return false}
@@ -337,9 +426,11 @@ async function catalog(){
  const journey=document.querySelector("#novel-journey");
  const next=document.querySelector("#novel-next");
  const wantSection=document.querySelector("#novel-want");
+ const importSection=document.querySelector("#novel-import");
  if(!books.length)return;
  const {data:{user}}=await sb.auth.getUser();
  if(!user){
+  renderWantImport(importSection,books,null);
   if(section)renderGuestContinue(section,books);
   const entries=books.map(book=>({book,progress:readGuestProgress(book.id)})).filter(row=>row.progress)
     .map(({book,progress})=>({book,chapter:progress.chapter,percent:progress.percent,updated:Number(progress.updated)||0}));
@@ -351,6 +442,7 @@ async function catalog(){
   renderReadingJourney(journey,next,books,entries,true,completed,wanted);
   return;
  }
+ renderWantImport(importSection,books,user);
  const libraryStates=await getNovelLibraryStates(user.id);
  const completed=new Set([...libraryStates].filter(([,estado])=>estado==="concluido").map(([id])=>id));
  const wanted=new Set([...libraryStates].filter(([,estado])=>estado==="quero_ler").map(([id])=>id));

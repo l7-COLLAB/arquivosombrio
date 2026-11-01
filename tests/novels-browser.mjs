@@ -13,9 +13,9 @@ const data = {
 };
 function supabaseStub(rows){
  window.supabase={createClient(){return {
-   auth:{getUser:async()=>({data:{user:null}})},
+   auth:{getUser:async()=>({data:{user:JSON.parse(localStorage.getItem("__test_user")||"null")}})},
    from(table){
-     const initial=(rows[table]||[]).slice();let filters=[];let sorters=[];
+     const initial=table==="novel_biblioteca"?JSON.parse(localStorage.getItem("__test_library")||"[]"):(rows[table]||[]).slice();let filters=[];let sorters=[];
      const apply=()=>{let r=initial.filter(x=>filters.every(f=>f(x)));for(const [field,asc] of sorters.slice().reverse())r.sort((a,b)=>(a[field]===b[field]?0:a[field]>b[field]?1:-1)*(asc?1:-1));return r};
      const q={
        select(){return q},
@@ -23,6 +23,12 @@ function supabaseStub(rows){
        in(k,values){filters.push(x=>values.includes(x[k]));return q},
        order(k,{ascending=true}={}){sorters.push([k,ascending]);return q},
        limit(){return q},
+       insert(row){
+         const existing=JSON.parse(localStorage.getItem("__test_library")||"[]");
+         if(existing.some(x=>x.user_id===row.user_id&&x.novel_id===row.novel_id))return Promise.resolve({error:{code:"23505"}});
+         localStorage.setItem("__test_library",JSON.stringify([...existing,row]));
+         return Promise.resolve({error:null});
+       },
        then(resolve,reject){return Promise.resolve({data:apply(),error:null}).then(resolve,reject)},
        async single(){return {data:apply()[0]||null,error:null}},
        async maybeSingle(){return {data:apply()[0]||null,error:null}}
@@ -141,6 +147,35 @@ try {
    await page.locator("#novel-want [data-want-remove]").first().click();
    await page.locator("#novel-want").waitFor({state:"hidden",timeout:10000});
    assert.equal(await page.evaluate(()=>localStorage.getItem("as-novel-want-v1-22222222-2222-4222-8222-222222222222")),null);
+
+   // Simulate signing in after a visitor saved two books. The first is already
+   // completed on the account: import must preserve its stronger state.
+   await page.evaluate(()=>{
+     localStorage.setItem("as-novel-want-v1-11111111-1111-4111-8111-111111111111","1");
+     localStorage.setItem("as-novel-want-v1-22222222-2222-4222-8222-222222222222","1");
+     localStorage.setItem("__test_user",JSON.stringify({id:"demo-user"}));
+     localStorage.setItem("__test_library",JSON.stringify([
+       {user_id:"demo-user",novel_id:"11111111-1111-4111-8111-111111111111",estado:"concluido"}
+     ]));
+   });
+   await page.goto(server+"/novels.html",{waitUntil:"domcontentloaded"});
+   await page.locator("#novel-import-confirm").waitFor({timeout:10000});
+   assert.match(await page.locator("#novel-import").innerText(),/Importar para minha conta/);
+   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem("__test_library")).length),1,"Importação não pode ocorrer automaticamente");
+   await page.locator("#novel-import-confirm").click();
+   await page.waitForFunction(()=>JSON.parse(localStorage.getItem("__test_library")||"[]").length===2,{timeout:10000});
+   await page.waitForFunction(()=>!localStorage.getItem("as-novel-want-v1-22222222-2222-4222-8222-222222222222"),{timeout:10000});
+   const imported=await page.evaluate(()=>JSON.parse(localStorage.getItem("__test_library")));
+   assert.equal(imported.find(x=>x.novel_id==="11111111-1111-4111-8111-111111111111").estado,"concluido");
+   assert.equal(imported.find(x=>x.novel_id==="22222222-2222-4222-8222-222222222222").estado,"quero_ler");
+   await page.locator("#novel-want .novel-want-item").first().waitFor({timeout:10000});
+   assert.match(await page.locator("#novel-want").innerText(),/O Segredo da Casa/);
+   assert.match(await page.locator("#novel-import").innerText(),/importado/);
+   if(viewport.width===390){
+     const size=await page.evaluate(()=>({documentWidth:document.documentElement.scrollWidth,viewport:innerWidth}));
+     assert(size.documentWidth<=size.viewport+8,"Painel de importação excede viewport");
+   }
+
 
    assert.deepEqual(faults,[],"Erros JavaScript: "+faults.join(" | "));
    await context.close();
