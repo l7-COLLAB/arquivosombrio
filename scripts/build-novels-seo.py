@@ -55,7 +55,7 @@ def render(book,chapters):
     chapter_links="".join('<li><a href="'+e(original+"&capitulo="+str(c["numero"]))+'">Capítulo '+e(c["numero"])+' · '+e(clean(c.get("titulo"),180))+'</a></li>' for c in chapters)
     schema={"@context":"https://schema.org","@type":"Book","name":title,"description":desc,"inLanguage":"pt-BR","url":url}
     if author:schema["author"]={"@type":"Person","name":author}
-    ld=json.dumps(schema,ensure_ascii=False).replace("<","\u003c")
+    ld=json.dumps(schema,ensure_ascii=False).replace("<","\\u003c")
     return ('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
             '<title>'+e(title)+' — Biblioteca de Novels | Arquivo Sombrio</title><meta name="description" content="'+e(desc)+'">'
             '<link rel="canonical" href="'+e(url)+'"><meta property="og:type" content="book">'
