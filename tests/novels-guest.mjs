@@ -82,3 +82,34 @@ test("leitor anônimo: salva e restaura a posição no mesmo dispositivo",async(
  await second.call("reader()");
  assert.equal(second.context.scrollY,250);
 });
+
+test("estantes temáticas usam gêneros reais, com acentos, sem duplicar obras",async()=>{
+ const titles=[
+  ["Enigma pericial","Perícia forense"],
+  ["O quarto","Quarto fechado"],
+  ["A mansão","Romance gótico"],
+  ["A sombra","Suspense psicológico"],
+  ["O mistério da floresta","Terror gótico"],
+  ["O detetive","Investigação criminal"],
+  ["O crime","Investigação"],
+  ["Outro caso","Mistério"]
+ ];
+ const books=titles.map(([titulo,genre],i)=>({id:"theme-"+i,slug:"obra-"+i,titulo,autor_nome:"Autor",generos:[genre],tags:[]}));
+ const m=mock({books});
+ await m.call("catalog()");
+ const section=m.nodes.get("#novel-themes");
+ assert.equal(section.hidden,false);
+ assert.match(section.innerHTML,/Enigmas e vestígios/);
+ assert.match(section.innerHTML,/Segredos na penumbra/);
+ assert.match(section.innerHTML,/Investigações clássicas/);
+ assert.equal((section.innerHTML.match(/class="novel-theme-item"/g)||[]).length,8);
+ for(const b of books){
+  assert.equal(section.innerHTML.split("obra="+b.slug).length-1,1,"Estante deve listar "+b.slug+" uma vez");
+ }
+});
+test("estantes vazias ficam ocultas e não inventam recomendações",async()=>{
+ const m=mock({books:[{id:"no-theme",slug:"romance",titulo:"História histórica",autor_nome:"Autora",generos:["Romance histórico"],tags:[]}]});
+ await m.call("catalog()");
+ assert.equal(m.nodes.get("#novel-themes").hidden,true);
+ assert.equal(m.nodes.get("#novel-themes").innerHTML,"");
+});
