@@ -1,5 +1,5 @@
-// Etapa 11: monitoramento administrativo somente leitura e simulacao sem envio.
-// Nunca consulta enderecos de e-mail, nunca chama o provedor e nunca libera campanhas.
+// Etapas 11-13: indicadores, simulação e reconciliação manual de envios parados.
+// Nunca lê emails, chama o provedor ou libera envios. Um update restrito encerra estado em_envio antigo como incerto.
 import {createClient} from "npm:@supabase/supabase-js@2.116.0";
 
 const origins=new Set(["https://arquivosombrio.net.br","https://www.arquivosombrio.net.br"]);
@@ -71,7 +71,7 @@ Deno.serve(async(req:Request)=>{
  let body:Record<string,unknown>;
  try{body=await readPayload(req);}catch{return reply({error:"Dados inválidos."},400);}
  const kind=field(body,"kind");
- if(!["overview","simulate"].includes(kind))return reply({error:"Operação inválida."},400);
+ if(!["overview","simulate","incidents","mark_stale"].includes(kind))return reply({error:"Operação inválida."},400);
  try{
   const {db,key}=database();
   const token=(req.headers.get("authorization")||"").match(/^Bearer\s+(.+)$/i)?.[1];
@@ -83,7 +83,7 @@ Deno.serve(async(req:Request)=>{
   const {data:allowed,error:rateError}=await db.rpc("security_consume_rate_limit",{
    p_scope:"newsletter_monitor_"+kind,
    p_subject_hash:await sha(key.slice(0,32)+actor),
-   p_max:kind==="overview"?60:30,p_window_seconds:3600,p_block_seconds:3600
+   p_max:kind==="overview"?60:kind==="mark_stale"?6:30,p_window_seconds:3600,p_block_seconds:3600
   });
   if(rateError)throw Error("Rate limiter unavailable");
   if(allowed!==true)return reply({error:"Limite de consultas alcançado."},429);
@@ -91,6 +91,24 @@ Deno.serve(async(req:Request)=>{
    const {data,error}=await db.rpc("editorial_newsletter_monitor_snapshot");
    if(error)throw Error("Monitor unavailable");
    return reply({ok:true,snapshot:data,configuration:checks(),read_only:true});
+  }
+  if(kind==="incidents"){
+   const {data,error}=await db.rpc("editorial_newsletter_list_incidents",{p_limit:10});
+   if(error)throw Error("Incident list unavailable");
+   return reply({ok:true,incidents:data||[],read_only:true,emails_sent:0});
+  }
+  if(kind==="mark_stale"){
+   if(field(body,"confirmation")!=="MARCAR INCERTO")
+    return reply({error:"Confirmação obrigatória: MARCAR INCERTO."},400);
+   const deliveryId=field(body,"delivery_id");
+   if(!uuid.test(deliveryId))return reply({error:"Tentativa inválida."},400);
+   const {data,error}=await db.rpc("editorial_newsletter_mark_stale_uncertain",{
+    p_delivery:deliveryId
+   });
+   if(error)throw Error("Reconciliation unavailable");
+   if(data!==true)return reply({error:"A tentativa não é elegível ou já foi revisada."},409);
+   return reply({ok:true,status:"incerto",resend_scheduled:false,
+    emails_sent:0,note:"Estado encerrado. Sem reenvio automático."});
   }
   const editionId=field(body,"edition_id");
   if(!uuid.test(editionId))return reply({error:"Identificador da edição inválido."},400);
