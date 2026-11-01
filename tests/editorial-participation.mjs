@@ -46,7 +46,7 @@ test("does not claim fiction delivery before verified JSON success",async()=>{
  const b=setupForm({ok:true,reply:{error:"not saved"}});
  await b.submit();
  assert.equal(b.states.reset,undefined);
- assert.match(b.status.textContent,/Não foi possível/);
+ assert.equal(b.status.textContent,"not saved");
 });
 test("server errors preserve manuscript contents",async()=>{
  const f=setupForm({ok:false,code:503,reply:{error:"Serviço indisponível"}});
