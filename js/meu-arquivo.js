@@ -7862,7 +7862,7 @@ function normalizarLinkMeuArquivo(valor) {
     try {
         const url = new URL(String(valor || ""), location.href);
         if (url.origin !== location.origin) return "#";
-        return url.pathname.split("/").pop() + url.search + url.hash;
+        return url.pathname + url.search + url.hash;
     } catch {
         return "#";
     }
