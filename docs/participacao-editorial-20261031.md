@@ -88,3 +88,19 @@ Resultado do acesso na sessão de implementação: a conexão Cloudflare retorno
 6. Testar com um endereço de propriedade da equipe, validar duplo opt-in e cancelamento. Não disparar e-mails a inscritos antes de concluir a Etapa 9/10.
 
 Não foi comprovada entrega de e-mails nem se ativou o disparador de newsletter nesta etapa.
+
+## Etapa 9 — Preparação segura de distribuição (01/11/2026)
+
+A fila foi implantada no banco e a Edge Function `newsletter-distribution` está ativa para **consultar estado, preparar fila e descadastrar**. **Não existe método de envio de edições nesta etapa**. O sistema continua sem cron, agendamento, webhooks externos nem disparos reais.
+
+- `editorial_newsletter_delivery_queue`: uma linha por par `(edition_id, subscriber_id)`, impedindo duplicação; apenas assinaturas `confirmado` com `confirmed_at` são elegíveis, e somente edições `aprovado` podem ser preparadas.
+- `editorial_prepare_newsletter_queue(uuid)`: função SQL `SECURITY INVOKER`, executável apenas por `service_role`; acesso público e de leitores revogado. A Edge Function valida `auth.getUser` e `app_metadata.role=admin` antes de chamar.
+- `editorial_newsletter_delivery_events`: log transacional privado das transições de estado; preparado/cancelado hoje e espaço para eventos de provedor no futuro. Padrão RLS fechado.
+- Depois da primeira inclusão na fila, o conteúdo editorial não pode mais ser modificado. Para revisar, crie outra edição; o preparo vazio (zero destinatários) não congela.
+- Admin V2: indicadores agregados, seletor de edições aprovadas e botão **Preparar fila, sem envio**. Não são exibidos e-mails, tokens ou segredos.
+- `/descadastrar-newsletter.html#token=<subscriber-uuid>.<hmac-hex>` oferece confirmação por clique do titular. O token usa HMAC-SHA256 sobre `arquivo-newsletter-unsubscribe:v1:` + UUID minúsculo, assinado com o segredo privado `NEWSLETTER_UNSUBSCRIBE_SECRET` (mínimo 32 caracteres). O token não aparece em URLs HTTP e só será criado pelo futuro serviço de envio, que deve usar exatamente esse contrato.
+- O descadastro exige `POST`, verifica a assinatura e altera a assinatura confirmada para `cancelado`, além de cancelar mensagens ainda preparadas. Abrir a página não provoca ação automática.
+
+**Configuração futura, não realizada agora:** manter a chave HMAC apenas nos segredos da Edge Function; confirmar o domínio e a chave Resend da Etapa 8; configurar `NEWSLETTER_ENABLED=true` apenas para confirmação de inscrições, quando o remetente estiver validado. Mesmo com esta variável ativada, a Etapa 9 não envia edições. Antes de habilitar envio real, a próxima etapa deve adicionar autorização separada de disparo, revalidar assinatura imediatamente antes de enviar, inserir link individual de descadastro no corpo, usar chave de idempotência por mensagem, limites de lote, eventos verificados do provedor, gestão de bounce/reclamação e inspeção dos resultados. Não confundir aceitação da API Resend com entrega na caixa postal.
+
+Teste transacional de criação de fila, duplicação, evento e bloqueio de edição executado com rollback; nenhum assinante ou edição de teste permaneceu no banco. Sem a conta Resend verificada, não é possível atestar entrega real ou testar descadastro por e-mail.
