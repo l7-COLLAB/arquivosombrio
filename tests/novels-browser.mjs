@@ -44,6 +44,9 @@ try {
    await page.locator("#novel-grid .novel-card").first().waitFor({timeout:10000});
    assert.equal(await page.locator("#novel-grid .novel-card").count(),2);
    assert.equal(await page.locator("#novel-starter a").count(),2);
+   assert.equal(await page.locator("#novel-journey").isVisible(),true);
+   assert.match(await page.locator("#novel-journey").innerText(),/0\s+obras iniciadas/);
+   assert.equal(await page.locator("#novel-next").isVisible(),false);
    assert.equal(await page.locator("#novel-themes .novel-theme-item").count(),2);
    assert.match(await page.locator("#novel-themes").innerText(),/Investigações clássicas/);
    assert.match(await page.locator("#novel-themes").innerText(),/Segredos na penumbra/);
@@ -79,10 +82,20 @@ try {
    await page.locator("#novel-reader #novel-related .novel-related-card").first().waitFor({timeout:10000});
    assert.equal(await page.locator("#novel-reader #novel-related .novel-related-card").count(),1);
    assert.match(await page.locator("#novel-reader #novel-related h2").innerText(),/Sua próxima leitura/);
+    if(viewport.width===390)assert.equal(await page.locator("#reader-menu-toggle").count(),1);
+   await page.goto(server+"/novels.html",{waitUntil:"domcontentloaded"});
+   await page.locator("#novel-next .novel-journey-next-card").first().waitFor({timeout:10000});
+   assert.match(await page.locator("#novel-journey").innerText(),/1\s+obra iniciada/);
+   assert.match(await page.locator("#novel-next").innerText(),/O Segredo da Casa/);
+   assert.equal(await page.locator("#novel-starter a").count(),1);
+   assert.equal(await page.locator("#novel-continue a.novel-button").count(),1);
+   await page.locator("#novel-next a").first().click();
+   await page.locator("#novel-detail h1").waitFor({timeout:10000});
+   assert.match(await page.locator("#novel-detail h1").innerText(),/O Segredo da Casa/);
    if(viewport.width===390){
      const size=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,viewport:innerWidth}));
      assert(size.scrollWidth<=size.viewport+8,"Leitor ultrapassa viewport: "+JSON.stringify(size));
-     assert.equal(await page.locator("#reader-menu-toggle").count(),1);
+      assert.equal(await page.locator("#novel-detail h1").count(),1);
    }
    assert.deepEqual(faults,[],"Erros JavaScript: "+faults.join(" | "));
    await context.close();

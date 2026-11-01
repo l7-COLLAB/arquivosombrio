@@ -152,3 +152,53 @@ test("recomendações sem gêneros compartilhados permanecem ocultas",async()=>{
  await m.call('loadRelatedNovels(testCurrent,document.querySelector("#novel-related"),true)');
  assert.equal(m.nodes.get("#novel-related").hidden,true);
 });
+
+test("jornada anônima usa apenas leituras locais e oferece obra ainda não iniciada",async()=>{
+ const books=[
+  {id:"a",slug:"a",titulo:"Primeiro Mistério",autor_nome:"Autor A",generos:["Mistério"],status_publicacao:"publicado"},
+  {id:"b",slug:"b",titulo:"Novo Mistério",autor_nome:"Autor B",generos:["Mistério"],status_publicacao:"publicado"},
+  {id:"c",slug:"c",titulo:"Suspense",autor_nome:"Autor C",generos:["Suspense"],status_publicacao:"publicado"}
+ ];
+ const storage=new Map([["as-novel-guest-progress-v1-a",JSON.stringify({chapter:2,scroll:160,percent:42,updated:100})]]);
+ const m=mock({books,storage});
+ await m.call("catalog()");
+ assert.equal(m.nodes.get("#novel-journey").hidden,false);
+ assert.match(m.nodes.get("#novel-journey").innerHTML,/1<\/strong>/);
+ assert.match(m.nodes.get("#novel-journey").innerHTML,/Primeiro Mistério · Capítulo 2/);
+ assert.match(m.nodes.get("#novel-journey").innerHTML,/obra=a&capitulo=2/);
+ assert.equal(m.nodes.get("#novel-next").hidden,false);
+ assert.match(m.nodes.get("#novel-next").innerHTML,/Novo Mistério/);
+ assert.doesNotMatch(m.nodes.get("#novel-next").innerHTML,/href="novel.html\?obra=a"/);
+ assert.doesNotMatch(m.nodes.get("#novel-starter").innerHTML,/href="novel.html\?obra=a"/);
+ assert.match(m.nodes.get("#novel-starter").innerHTML,/Por onde começar/);
+});
+test("jornada autenticada utiliza progresso Supabase e ignora o de visitante",async()=>{
+ const books=[{id:"a",slug:"a",titulo:"Livro da Conta",generos:["Mistério"],status_publicacao:"publicado"},
+  {id:"b",slug:"b",titulo:"Livro do Visitante",generos:["Mistério"],status_publicacao:"publicado"},
+  {id:"c",slug:"c",titulo:"Próxima História",generos:["Mistério"],status_publicacao:"publicado"}];
+ const progress=[{novel_id:"a",capitulo_id:"chapter-a",percentual:24,atualizado_em:"2026-10-31T13:00:00Z"}];
+ const chapters=[{id:"chapter-a",numero:4,status_publicacao:"publicado"}];
+ const storage=new Map([["as-novel-guest-progress-v1-b",JSON.stringify({chapter:20,scroll:400,percent:88,updated:999})]]);
+ const m=mock({books,chapters,progress,storage,user:{id:"logged"}});
+ await m.call("catalog()");
+ assert.match(m.nodes.get("#novel-journey").innerHTML,/Livro da Conta · Capítulo 4/);
+ assert.doesNotMatch(m.nodes.get("#novel-journey").innerHTML,/Livro do Visitante/);
+ assert.match(m.nodes.get("#novel-journey").innerHTML,/O histórico utiliza o progresso da sua conta/);
+ assert.match(m.nodes.get("#novel-next").innerHTML,/Próxima obra/);
+ assert.equal(m.nodes.get("#novel-next").hidden,false);
+});
+test("jornada inicial não promete conclusão e evita recomendações repetidas",async()=>{
+ const books=[{id:"a",slug:"a",titulo:"Um",generos:["Mistério"],status_publicacao:"publicado"}];
+ const m=mock({books});
+ await m.call("catalog()");
+ assert.match(m.nodes.get("#novel-journey").innerHTML,/0<\/strong>/);
+ assert.match(m.nodes.get("#novel-journey").innerHTML,/não necessariamente concluídas/);
+ assert.equal(m.nodes.get("#novel-next").hidden,true);
+ assert.match(m.nodes.get("#novel-starter").innerHTML,/Um/);
+ const storage=new Map([["as-novel-guest-progress-v1-a",JSON.stringify({chapter:1,scroll:0,percent:100,updated:1})]]);
+ const existing=mock({books,storage});
+ await existing.call("catalog()");
+ assert.equal(existing.nodes.get("#novel-next").hidden,true);
+ assert.equal(existing.nodes.get("#novel-starter").hidden,true);
+ assert.match(existing.nodes.get("#novel-journey").innerHTML,/1<\/strong>/);
+});
