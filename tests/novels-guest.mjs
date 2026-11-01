@@ -165,7 +165,7 @@ test("jornada anônima usa apenas leituras locais e oferece obra ainda não inic
  assert.equal(m.nodes.get("#novel-journey").hidden,false);
  assert.match(m.nodes.get("#novel-journey").innerHTML,/1<\/strong>/);
  assert.match(m.nodes.get("#novel-journey").innerHTML,/Primeiro Mistério · Capítulo 2/);
- assert.match(m.nodes.get("#novel-journey").innerHTML,/obra=a&amp;capitulo=2/);
+ assert.match(m.nodes.get("#novel-journey").innerHTML,/obra=a&capitulo=2/);
  assert.equal(m.nodes.get("#novel-next").hidden,false);
  assert.match(m.nodes.get("#novel-next").innerHTML,/Novo Mistério/);
  assert.doesNotMatch(m.nodes.get("#novel-next").innerHTML,/href="novel.html\?obra=a"/);
