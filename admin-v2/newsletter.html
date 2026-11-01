@@ -50,6 +50,7 @@ button[disabled]{opacity:.55;cursor:default}
 <script src="./js/newsletter-distribution.js?v=1" defer></script>
 <script src="./js/newsletter-send.js?v=1" defer></script>
 <script src="./js/newsletter-monitor.js?v=1" defer></script>
+<script src="./js/newsletter-reconciliation.js?v=1" defer></script>
 <script src="./js/newsletter-activation.js?v=1" defer></script>
 </head>
 <body>
@@ -139,6 +140,14 @@ button[disabled]{opacity:.55;cursor:default}
 <p class="lead">Utiliza a edição selecionada acima, na fila de distribuição. O resultado estima a reserva atual e não cria registros, não envia mensagens e não altera a configuração do remetente.</p>
 <div class="actions"><button id="newsletter-monitor-simulate" type="button" class="secondary">Simular até 5 destinatários</button></div>
 <p id="newsletter-monitor-simulation" role="status" aria-live="polite" class="feedback">Selecione uma edição aprovada e execute a simulação.</p>
+</section>
+<section class="panel" id="newsletter-reconciliation-panel" aria-labelledby="newsletter-reconciliation-heading" style="margin:20px 0">
+<h2 id="newsletter-reconciliation-heading">Ocorrências e reconciliação · Etapa 13</h2>
+<p class="lead">Mensagem sem confirmação pode ter sido recebida pelo provedor. Uma tentativa em processamento há mais de 15 minutos, sem ID da Resend, pode ser encerrada manualmente como <strong>incerta</strong>, nunca reenviada. Não há reenvio ou confirmação artificial de entrega.</p>
+<div class="actions"><button type="button" id="newsletter-incident-refresh" class="secondary">Consultar incidentes</button></div>
+<p id="newsletter-incident-status" class="feedback" role="status" aria-live="polite">Verificando registros privados…</p>
+<div id="newsletter-incident-list" class="cards" aria-label="Tentativas antigas e resultados incertos"></div>
+<p class="lead">Também são exibidas tentativas incertas e mensagens aceitas há mais de 48 horas sem evento de entrega. Esses estados exigem investigação na Resend; não podem ser encerrados como entregues por esta ferramenta. As operações são registradas no histórico e exigem confirmação explícita.</p>
 </section>
 <section class="metrics" aria-label="Inscrições por estado">
 <div class="metric"><strong id="sub-confirmed">—</strong><span>Confirmadas</span></div>
