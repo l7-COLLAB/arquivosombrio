@@ -23,7 +23,7 @@ function setupForm({ok=true,code=200,reply={ok:true},kind="fiction"}={}){
   addEventListener(name,cb){listeners[name]=cb;}};
  const document={
   readyState:"loading",
-  getElementById(id){return id===(kind==="fiction"?"fiction-form":"newsletter-form")?form:status},
+  getElementById(id){if(id.endsWith("-form"))return id===(kind==="fiction"?"fiction-form":"newsletter-form")?form:null;return status},
   addEventListener(name,cb){if(name==="DOMContentLoaded")states.init=cb;}
  };
  let calls=[];
