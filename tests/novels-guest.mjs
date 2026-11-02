@@ -12,17 +12,29 @@ function mock({search="",books=[],chapters=[],progress=[],library=[],user=null,s
   from(table){
    const rows=table==="novels"?books:table==="novel_capitulos"?chapters:table==="novel_biblioteca"?library:progress;
    const filters=[];
-   const filtered=()=>table==="novel_biblioteca"?rows.filter(row=>filters.every(fn=>fn(row))):rows;
-   const q={select(){return q},eq(key,value){if(table==="novel_biblioteca")filters.push(row=>row[key]===value);return q},in(){return q},order(){return q},limit(){return q},
-    upsert(row){writes.push({table,action:"upsert",row});const i=library.findIndex(x=>x.novel_id===row.novel_id);if(i>=0)library[i]={...row};else library.push({...row});return Promise.resolve({error:null})},
+   const filtered=()=>rows.filter(row=>filters.every(fn=>fn(row)));
+   let pendingUpdate=null;
+   const q={
+    select(){return q},
+    eq(key,value){if(table==="novel_biblioteca"||table==="novel_progresso")filters.push(row=>row[key]===value);return q},
+    in(key,values){if(table==="novel_biblioteca"||table==="novel_progresso")filters.push(row=>values.includes(row[key]));return q},
+    lt(key,value){filters.push(row=>String(row[key])<String(value));return q},
+    order(){return q},limit(){return q},
+    update(row){pendingUpdate=row;return q},
+    upsert(row){writes.push({table,action:"upsert",row});const i=rows.findIndex(x=>x.novel_id===row.novel_id);if(i>=0)rows[i]={...row};else rows.push({...row});return Promise.resolve({error:null})},
     insert(row){writes.push({table,action:"insert",row});
      if(failInsertIds.has(row.novel_id))return Promise.resolve({error:{code:"TEST_INSERT_FAILURE"}});
-     if(library.some(x=>x.user_id===row.user_id&&x.novel_id===row.novel_id))return Promise.resolve({error:{code:"23505"}});
-     library.push({...row});return Promise.resolve({error:null})},
+     if(rows.some(x=>x.user_id===row.user_id&&x.novel_id===row.novel_id))return Promise.resolve({error:{code:"23505"}});
+     rows.push({...row});return Promise.resolve({error:null})},
     delete(){writes.push({table,action:"delete"});return q},
-    then(resolve,reject){return Promise.resolve({data:filtered(),error:table==="novel_biblioteca"&&failRead?{code:"READ_FAILURE"}:null}).then(resolve,reject)},
-    async single(){return {data:rows[0]??null,error:null}},
-    async maybeSingle(){return {data:filtered()[0]??null,error:table==="novel_biblioteca"&&failRead?{code:"READ_FAILURE"}:null}}
+    then(resolve,reject){
+     const matches=filtered();
+     if(pendingUpdate){for(const record of matches)Object.assign(record,pendingUpdate);
+      writes.push({table,action:"update",row:pendingUpdate,matched:matches.length});pendingUpdate=null}
+     return Promise.resolve({data:matches,error:(table==="novel_biblioteca"||table==="novel_progresso")&&failRead?{code:"READ_FAILURE"}:null}).then(resolve,reject)
+    },
+    async single(){return {data:filtered()[0]??null,error:null}},
+    async maybeSingle(){return {data:filtered()[0]??null,error:(table==="novel_biblioteca"||table==="novel_progresso")&&failRead?{code:"READ_FAILURE"}:null}}
    };
    return q;
   },
@@ -68,7 +80,7 @@ test("catálogo: recomendações, busca e continuar lendo como visitante",async(
 });
 test("catálogo autenticado: progresso servidor tem prioridade sobre local anônimo",async()=>{
  const books=[{id:"b1",slug:"um-livro",titulo:"Livro",autor_nome:"Autor",generos:[],tags:[]}];
- const progress=[{novel_id:"b1",capitulo_id:"c2",percentual:40,scroll_y:100,atualizado_em:"2026-10-31T00:00:00Z"}];
+ const progress=[{user_id:"user1",novel_id:"b1",capitulo_id:"c2",percentual:40,scroll_y:100,atualizado_em:"2026-10-31T00:00:00Z"}];
  const chapters=[{id:"c2",numero:2,status_publicacao:"publicado"}];
  const storage=new Map([["as-novel-guest-progress-v1-b1",JSON.stringify({chapter:9,scroll:90,percent:30,updated:1})]]);
  const m=mock({books,progress,chapters,user:{id:"user1"},storage});
@@ -184,7 +196,7 @@ test("jornada autenticada utiliza progresso Supabase e ignora o de visitante",as
  const books=[{id:"a",slug:"a",titulo:"Livro da Conta",generos:["Mistério"],status_publicacao:"publicado"},
   {id:"b",slug:"b",titulo:"Livro do Visitante",generos:["Mistério"],status_publicacao:"publicado"},
   {id:"c",slug:"c",titulo:"Próxima História",generos:["Mistério"],status_publicacao:"publicado"}];
- const progress=[{novel_id:"a",capitulo_id:"chapter-a",percentual:24,atualizado_em:"2026-10-31T13:00:00Z"}];
+ const progress=[{user_id:"logged",novel_id:"a",capitulo_id:"chapter-a",percentual:24,atualizado_em:"2026-10-31T13:00:00Z"}];
  const chapters=[{id:"chapter-a",numero:4,status_publicacao:"publicado"}];
  const storage=new Map([["as-novel-guest-progress-v1-b",JSON.stringify({chapter:20,scroll:400,percent:88,updated:999})]]);
  const m=mock({books,chapters,progress,storage,user:{id:"logged"}});
@@ -412,4 +424,76 @@ test("agora não mantém os favoritos locais e impede importação automática",
  assert.equal(m.writes.length,0);
  await m.call("catalog()");
  assert.equal(m.nodes.get("#novel-import").hidden,true);
+});
+
+test("progresso local exige ação e importa só capítulo publicado",async()=>{
+ const now=Date.now();
+ const books=[{id:"book",slug:"livro",titulo:"Livro",status_publicacao:"publicado"}];
+ const chapters=[{id:"chapter-3",novel_id:"book",numero:3,status_publicacao:"publicado",publicado_em:null,agendado_para:null}];
+ const storage=new Map([["as-novel-guest-progress-v1-book",JSON.stringify({chapter:3,scroll:360,percent:45,updated:now})]]);
+ const m=mock({books,chapters,storage,user:{id:"user-one"}});
+ await m.call("catalog()");
+ assert.equal(m.nodes.get("#novel-progress-import").hidden,false);
+ assert.equal(m.writes.length,0,"não pode importar automaticamente");
+ await m.nodes.get("#novel-progress-import-confirm").onclick();
+ const saved=m.writes.filter(x=>x.table==="novel_progresso");
+ assert.equal(saved.length,1);
+ assert.equal(saved[0].action,"insert");
+ assert.equal(saved[0].row.user_id,"user-one");
+ assert.equal(saved[0].row.capitulo_id,"chapter-3");
+ assert.equal(saved[0].row.scroll_y,360);
+ assert.equal(storage.has("as-novel-guest-progress-v1-book"),false);
+});
+test("progresso mais recente da conta não é sobrescrito",async()=>{
+ const now=Date.now();
+ const books=[{id:"book",slug:"livro",titulo:"Livro",status_publicacao:"publicado"}];
+ const chapters=[{id:"chapter-1",novel_id:"book",numero:1,status_publicacao:"publicado"}];
+ const progress=[{user_id:"owner",novel_id:"book",capitulo_id:"chapter-1",percentual:81,scroll_y:400,atualizado_em:new Date(now+25000).toISOString()}];
+ const storage=new Map([["as-novel-guest-progress-v1-book",JSON.stringify({chapter:1,scroll:100,percent:20,updated:now})]]);
+ const m=mock({books,chapters,progress,storage,user:{id:"owner"}});
+ m.context.testBooks=books;
+ const result=await m.call('importGuestReadingProgress({id:"owner"},testBooks)');
+ assert.equal(result.existing,1);
+ assert.equal(m.writes.filter(x=>x.table==="novel_progresso").length,0);
+ assert.equal(progress[0].scroll_y,400);
+ assert.equal(storage.has("as-novel-guest-progress-v1-book"),false);
+});
+test("posição local mais recente atualiza a conta apenas com comparação de data",async()=>{
+ const now=Date.now();
+ const books=[{id:"book",slug:"livro",titulo:"Livro",status_publicacao:"publicado"}];
+ const chapters=[{id:"chapter-2",novel_id:"book",numero:2,status_publicacao:"publicado"}];
+ const progress=[{user_id:"owner",novel_id:"book",capitulo_id:"chapter-2",percentual:10,scroll_y:20,atualizado_em:new Date(now-86400000).toISOString()}];
+ const storage=new Map([["as-novel-guest-progress-v1-book",JSON.stringify({chapter:2,scroll:460,percent:65,updated:now})]]);
+ const m=mock({books,chapters,progress,storage,user:{id:"owner"}});
+ m.context.testBooks=books;
+ const result=await m.call('importGuestReadingProgress({id:"owner"},testBooks)');
+ assert.equal(result.updated,1);
+ assert.equal(m.writes[0].action,"update");
+ assert.equal(progress[0].scroll_y,460);
+ assert.equal(storage.has("as-novel-guest-progress-v1-book"),false);
+});
+test("capítulo agendado ou erro de leitura mantém progresso local",async()=>{
+ const now=Date.now();
+ const books=[{id:"book",slug:"livro",titulo:"Livro",status_publicacao:"publicado"}];
+ const chapters=[{id:"chapter-9",novel_id:"book",numero:9,status_publicacao:"publicado",agendado_para:new Date(now+86400000).toISOString()}];
+ const storage=new Map([["as-novel-guest-progress-v1-book",JSON.stringify({chapter:9,scroll:100,percent:10,updated:now})]]);
+ const m=mock({books,chapters,storage,user:{id:"owner"}});
+ m.context.testBooks=books;
+ const result=await m.call('importGuestReadingProgress({id:"owner"},testBooks)');
+ assert.equal(result.failed,1);
+ assert.equal(storage.has("as-novel-guest-progress-v1-book"),true);
+ const fail=mock({books,chapters,storage,user:{id:"owner"},failRead:true});
+ fail.context.testBooks=books;
+ await assert.rejects(fail.call('importGuestReadingProgress({id:"owner"},testBooks)'));
+ assert.equal(storage.has("as-novel-guest-progress-v1-book"),true);
+});
+test("Agora não não importa nem apaga a posição do visitante",async()=>{
+ const books=[{id:"book",slug:"livro",titulo:"Livro",status_publicacao:"publicado"}];
+ const storage=new Map([["as-novel-guest-progress-v1-book",JSON.stringify({chapter:1,scroll:100,percent:10,updated:Date.now()})]]);
+ const m=mock({books,storage,user:{id:"owner"}});
+ await m.call("catalog()");
+ await m.nodes.get("#novel-progress-import-later").onclick();
+ assert.equal(m.nodes.get("#novel-progress-import").hidden,true);
+ assert.equal(storage.size,1);
+ assert.equal(m.writes.length,0);
 });

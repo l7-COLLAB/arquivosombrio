@@ -9,6 +9,9 @@ on:
       - 'scripts/build-novels-seo.py'
       - 'tests/test_build_novels_seo.py'
       - 'tests/novels-guest.mjs'
+      - 'tests/novels-extras.mjs'
+      - 'docs/novels-auditoria-final-20261102.md'
+      - 'js/novels-extras.js'
       - 'tests/novels-browser.mjs'
       - 'js/novels.js'
       - 'novels.html'
@@ -65,6 +68,9 @@ on:
       - 'scripts/build-novels-seo.py'
       - 'tests/test_build_novels_seo.py'
       - 'tests/novels-guest.mjs'
+      - 'tests/novels-extras.mjs'
+      - 'docs/novels-auditoria-final-20261102.md'
+      - 'js/novels-extras.js'
       - 'tests/novels-browser.mjs'
       - 'js/novels.js'
       - 'novels.html'
@@ -128,6 +134,8 @@ jobs:
           node --check js/novels.js
           node --check tests/novels-browser.mjs
           node --test tests/novels-guest.mjs
+          node --check js/novels-extras.js
+          node --test tests/novels-extras.mjs
           python3 -m unittest discover -s tests -p 'test_public_updates.py' -v
           python3 -m unittest discover -s tests -p 'test_public_indexes.py' -v
           node --check js/meu-arquivo.js

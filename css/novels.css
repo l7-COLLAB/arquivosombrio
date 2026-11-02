@@ -320,3 +320,33 @@ body.novels:has(#novel-grid) .novel-banner{position:relative;margin:0;border:1px
 .novel-import-actions button:disabled{opacity:.55;cursor:wait}
 #novel-import-status,.novel-import-result{margin:12px 0 0;min-height:1.4em;color:#e6c69c}
 @media(max-width:650px){.novel-import{padding:14px}.novel-import-actions button{flex:1 1 auto}}
+
+/* Biblioteca pessoal: status filters, consented progress import and in-library alerts. */
+.novel-personal[hidden],.novel-chapter-alerts[hidden]{display:none!important}
+.novel-personal,.novel-chapter-alerts{margin:26px 0 32px}
+.novel-personal>.novel-section-head,.novel-chapter-alerts>.novel-section-head{margin-top:0!important}
+.novel-personal-filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.novel-personal-filters button,.novel-chapter-alert button,.novel-chapter-alert-controls button{
+ border:1px solid #987654;background:#272421;color:#f0dfc8;cursor:pointer;
+ font:600 .84rem/1.3 Arial,sans-serif;padding:9px 12px;min-height:40px;
+}
+.novel-personal-filters button[aria-pressed="true"]{background:#6b3037;border-color:#d9a980}
+.novel-personal-filters button:focus-visible,.novel-chapter-alert button:focus-visible,
+.novel-chapter-alert-controls button:focus-visible{outline:2px solid #e6c28d;outline-offset:3px}
+.novel-personal-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.novel-personal-results a{background:#17191b;border:1px solid #68513b;display:flex;flex-direction:column;
+ gap:6px;padding:12px;color:#eee1cc;text-decoration:none;min-width:0;overflow-wrap:anywhere}
+.novel-personal-results a:hover,.novel-personal-results a:focus-visible{border-color:#e6be85}
+.novel-personal-results strong{font:700 .96rem/1.35 Georgia,serif}
+.novel-personal-results small{color:#d5b58b;font-size:.76rem}
+.novel-personal-results p{color:#cbbca7}
+.novel-chapter-alert{display:flex;align-items:center;justify-content:space-between;gap:10px;
+ background:#17191b;border:1px solid #7c5d42;padding:12px;margin:8px 0}
+.novel-chapter-alert a{color:#f0d6a6;line-height:1.45;overflow-wrap:anywhere}
+.novel-chapter-alert-controls{border:1px solid #66513b;padding:12px;margin:14px 0;background:#18191a}
+.novel-chapter-alert-controls p{color:#c7b7a0;font-size:.79rem;line-height:1.55;margin:9px 0 0}
+@media(max-width:700px){
+ .novel-personal-results{grid-template-columns:1fr}
+ .novel-chapter-alert{align-items:flex-start;flex-direction:column}
+ .novel-personal-filters button{flex:1 1 125px}
+}

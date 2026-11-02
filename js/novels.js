@@ -95,6 +95,140 @@ function renderWantImport(section,books,user){
  };
 }
 
+
+let novelProgressImportDismissed=null;
+let novelProgressImportFeedback="";
+let novelProgressImportFor=null;
+function eligibleGuestProgress(books){
+ const now=Date.now();
+ return books.map(book=>({book,progress:readGuestProgress(book.id)}))
+  .filter(({book,progress})=>book?.status_publicacao==="publicado"&&progress&&Number.isFinite(Number(progress.updated))&&
+   Number(progress.updated)>0&&Number(progress.updated)<=now+300000&&
+   Number.isInteger(progress.chapter)&&progress.chapter>=0);
+}
+function chapterIsReleased(chapter,now=Date.now()){
+ const published=Date.parse(chapter.publicado_em||"");
+ const scheduled=Date.parse(chapter.agendado_para||"");
+ return chapter.status_publicacao==="publicado"&&
+   (!Number.isFinite(published)||published<=now)&&
+   (!Number.isFinite(scheduled)||scheduled<=now);
+}
+async function importGuestReadingProgress(user,books){
+ if(!user?.id)throw new Error("É necessário entrar na conta.");
+ const candidates=eligibleGuestProgress(books);
+ if(!candidates.length)return {added:0,updated:0,existing:0,failed:0};
+ const ids=candidates.map(item=>item.book.id);
+ const [chaptersResponse,serverResponse,libraryResponse]=await Promise.all([
+  sb.from("novel_capitulos").select("id,novel_id,numero,status_publicacao,publicado_em,agendado_para").in("novel_id",ids).eq("status_publicacao","publicado"),
+  sb.from("novel_progresso").select("novel_id,capitulo_id,percentual,scroll_y,atualizado_em").eq("user_id",user.id).in("novel_id",ids),
+  sb.from("novel_biblioteca").select("novel_id,estado").eq("user_id",user.id).in("novel_id",ids)
+ ]);
+ if(chaptersResponse.error)throw chaptersResponse.error;
+ if(serverResponse.error)throw serverResponse.error;
+ if(libraryResponse.error)throw libraryResponse.error;
+ const concluded=new Set((libraryResponse.data||[]).filter(x=>x.estado==="concluido").map(x=>x.novel_id));
+ const now=Date.now();
+ const chapterByBookNumber=new Map((chaptersResponse.data||[]).filter(ch=>chapterIsReleased(ch,now))
+  .map(ch=>[ch.novel_id+":"+ch.numero,ch]));
+ const existing=new Map((serverResponse.data||[]).map(row=>[row.novel_id,row]));
+ let added=0,updated=0,existingCount=0,failed=0;
+ for(const {book,progress} of candidates){
+  if(concluded.has(book.id)){existingCount++;continue;}
+  const fresh=readGuestProgress(book.id);
+  if(!fresh||fresh.chapter!==progress.chapter||fresh.updated!==progress.updated)continue;
+  const chapter=chapterByBookNumber.get(book.id+":"+fresh.chapter);
+  if(!chapter){failed++;continue}
+  const timestamp=new Date(Number(fresh.updated)).toISOString();
+  const onServer=existing.get(book.id);
+  if(onServer&&Number.isFinite(Date.parse(onServer.atualizado_em))&&Date.parse(onServer.atualizado_em)>=Number(fresh.updated)){
+   // A newer account position wins. Remove only this stale guest snapshot.
+   try{localStorage.removeItem(guestProgressKey(book.id));existingCount++}catch{failed++}
+   continue;
+  }
+  const row={user_id:user.id,novel_id:book.id,capitulo_id:chapter.id,
+   percentual:Math.max(0,Math.min(100,Number(fresh.percent))),
+   scroll_y:Math.max(0,Math.round(Number(fresh.scroll))),atualizado_em:timestamp};
+  try{
+   let result;
+   if(onServer){
+    // Atomic optimistic update: a concurrent, newer server write is never overwritten.
+    result=await sb.from("novel_progresso").update(row)
+     .eq("user_id",user.id).eq("novel_id",book.id).lt("atualizado_em",timestamp).select("novel_id");
+   }else result=await sb.from("novel_progresso").insert(row);
+   if(result.error)throw result.error;
+   if(onServer&&(!Array.isArray(result.data)||!result.data.length)){failed++;continue}
+   if(onServer)updated++;else added++;
+   try{localStorage.removeItem(guestProgressKey(book.id))}catch{}
+  }catch(error){failed++;console.warn("Importação do progresso não aplicada",error)}
+ }
+ return {added,updated,existing:existingCount,failed};
+}
+function renderProgressImport(section,books,user){
+ if(!section)return;
+ if(!user?.id){section.hidden=true;section.innerHTML="";return}
+ if(novelProgressImportFor!==user.id){novelProgressImportFor=user.id;novelProgressImportFeedback="";novelProgressImportDismissed=null}
+ const pending=eligibleGuestProgress(books);
+ if(novelProgressImportDismissed===user.id||(!pending.length&&!novelProgressImportFeedback)){
+  section.hidden=true;section.innerHTML="";return;
+ }
+ section.hidden=false;
+ if(!pending.length){section.innerHTML='<p class="novel-import-result" role="status">'+esc(novelProgressImportFeedback)+'</p>';return}
+ section.innerHTML='<div class="novel-import-top"><span>PROGRESSO DESTE NAVEGADOR</span><h2>Trazer minhas leituras para a conta</h2>'+
+ '<p>'+pending.length+' '+(pending.length===1?'obra com progresso local':'obras com progresso local')+
+ '. Importar é opcional. Se a conta já tiver uma posição mais recente, ela será mantida. Em um dispositivo compartilhado, importe somente seus próprios dados.</p></div>'+
+ '<div class="novel-import-actions"><button type="button" id="novel-progress-import-confirm">Importar progresso</button>'+
+ '<button type="button" id="novel-progress-import-later">Agora não</button></div>'+
+ '<p id="novel-progress-import-status" role="status" aria-live="polite">'+esc(novelProgressImportFeedback)+'</p>';
+ const confirm=document.querySelector("#novel-progress-import-confirm");
+ const later=document.querySelector("#novel-progress-import-later");
+ if(later)later.onclick=()=>{novelProgressImportDismissed=user.id;section.hidden=true;section.innerHTML=""};
+ if(confirm)confirm.onclick=async()=>{
+  confirm.disabled=true;if(later)later.disabled=true;
+  const status=document.querySelector("#novel-progress-import-status");
+  if(status)status.textContent="Conferindo a posição mais recente...";
+  try{
+   const {data:auth,error}=await sb.auth.getUser();
+   if(error||auth?.user?.id!==user.id)throw new Error("Sessão alterada.");
+   const result=await importGuestReadingProgress(user,books);
+   novelProgressImportFeedback=[result.added?result.added+" novo(s)":"",result.updated?result.updated+" atualizado(s)":"",
+    result.existing?result.existing+" preservado(s) na conta":"",result.failed?result.failed+" pendente(s) para nova tentativa":""].filter(Boolean).join(" · ")||"Sem alterações.";
+   await catalog();
+  }catch(error){
+   console.warn("Não foi possível importar o progresso",error);
+   if(status)status.textContent="Não foi possível importar. O progresso local foi mantido.";
+   confirm.disabled=false;if(later)later.disabled=false;
+  }
+ };
+}
+function clearLegacyAuthenticatedProgressCache(){
+ try{
+  for(let i=localStorage.length-1;i>=0;i--){
+   const key=localStorage.key(i);
+   if(key&&key.startsWith("novel-progress-"))localStorage.removeItem(key);
+  }
+ }catch{}
+}
+const authReadingCache=()=>typeof sessionStorage!=="undefined"?sessionStorage:null;
+function clearAccountSessionProgress(){
+ try{
+  const cache=authReadingCache();
+  if(!cache)return;
+  for(let i=cache.length-1;i>=0;i--){
+   const key=cache.key(i);
+   if(key?.startsWith("novel-progress-"))cache.removeItem(key);
+  }
+ }catch{}
+}
+let activeNovelAccount=null;
+try{
+ sb.auth.onAuthStateChange?.((event,session)=>{
+  const nextAccount=session?.user?.id||null;
+  if(event==="SIGNED_OUT"||(activeNovelAccount&&nextAccount&&activeNovelAccount!==nextAccount))
+   clearAccountSessionProgress();
+  activeNovelAccount=nextAccount;
+ });
+}catch{}
+
 const novelWantKey=id=>"as-novel-want-v1-"+id;
 function readGuestWant(id){
  try{return localStorage.getItem(novelWantKey(id))==="1"}catch{return false}
@@ -427,9 +561,13 @@ async function catalog(){
  const next=document.querySelector("#novel-next");
  const wantSection=document.querySelector("#novel-want");
  const importSection=document.querySelector("#novel-import");
+ const progressImportSection=document.querySelector("#novel-progress-import");
+ const personalSection=document.querySelector("#novel-personal");
+ const chapterAlerts=document.querySelector("#novel-chapter-alerts");
  if(!books.length)return;
  const {data:{user}}=await sb.auth.getUser();
  if(!user){
+  renderProgressImport(progressImportSection,books,null);
   renderWantImport(importSection,books,null);
   if(section)renderGuestContinue(section,books);
   const entries=books.map(book=>({book,progress:readGuestProgress(book.id)})).filter(row=>row.progress)
@@ -440,8 +578,12 @@ async function catalog(){
   const started=new Set([...entries.map(item=>item.book.id),...completed,...wanted]);
   renderNovelStarter(starter,books,started);
   renderReadingJourney(journey,next,books,entries,true,completed,wanted);
+  window.NovelExtras?.renderPersonalShelf(personalSection,books,entries,completed,wanted);
+  void window.NovelExtras?.renderChapterAlerts(chapterAlerts,books,null,sb);
   return;
  }
+ clearLegacyAuthenticatedProgressCache();
+ renderProgressImport(progressImportSection,books,user);
  renderWantImport(importSection,books,user);
  const libraryStates=await getNovelLibraryStates(user.id);
  const completed=new Set([...libraryStates].filter(([,estado])=>estado==="concluido").map(([id])=>id));
@@ -459,14 +601,17 @@ async function catalog(){
  const started=new Set([...entries.map(item=>item.book.id),...completed,...wanted]);
  renderNovelStarter(starter,books,started);
  renderReadingJourney(journey,next,books,entries,false,completed,wanted);
+ window.NovelExtras?.renderPersonalShelf(personalSection,books,entries,completed,wanted);
+ void window.NovelExtras?.renderChapterAlerts(chapterAlerts,books,user,sb);
 }
-async function detail(){const root=document.querySelector("#novel-detail");if(!root||!slug||hasChapter)return;root.hidden=false;const {data:n}=await sb.from("novels").select("*").eq("slug",slug).eq("status_publicacao","publicado").single();if(!n){root.innerHTML='<p class="empty">Obra não encontrada.</p>';return}const {data:chs}=await sb.from("novel_capitulos").select("id,numero,titulo,palavras,publicado_em").eq("novel_id",n.id).eq("status_publicacao","publicado").order("numero");setNovelMetadata(n.titulo+" — Novels · Arquivo Sombrio",n.sinopse||"Leia "+n.titulo+" na Biblioteca de Novels do Arquivo Sombrio.");const completionMarkup=chs?.length&&n.status_obra==="concluida"?'<div class="novel-completion"><button id="novel-complete-toggle" type="button" class="novel-button novel-completion-button" aria-pressed="false">Marcar como concluída</button><p id="novel-complete-status" role="status" aria-live="polite"></p></div>':"";root.innerHTML='<div>'+cover(n,"novel-detail-cover")+'</div><div><p class="novel-kicker">NOVEL · '+esc(n.status_obra.replaceAll("_"," ").toUpperCase())+'</p><h1>'+esc(n.titulo)+'</h1><p>'+esc(n.autor_nome)+'</p><div class="novel-tags">'+(n.generos||[]).map(t=>'<span>'+esc(t)+'</span>').join("")+'</div><p class="novel-synopsis">'+esc(n.sinopse)+'</p>'+(chs?.length?'<a class="novel-button" href="novel.html?obra='+encodeURIComponent(slug)+'&capitulo='+chs[0].numero+'">Começar a ler</a><button class="novel-button" id="novel-library-toggle" type="button">Adicionar às minhas leituras</button>':'')+'<div class="novel-want-controls"><button class="novel-button novel-want-button" id="novel-want-toggle" type="button" aria-pressed="false">Salvar em Quero ler</button><p id="novel-want-status" role="status" aria-live="polite"></p></div>'+completionMarkup+'<section class="chapter-area"><h2>Capítulos</h2><div class="chapter-list">'+(chs||[]).map(c=>'<a class="chapter-link" href="novel.html?obra='+encodeURIComponent(slug)+'&capitulo='+c.numero+'"><span>Capítulo '+c.numero+' · '+esc(c.titulo)+'</span><small>'+c.palavras+' palavras</small></a>').join("")+'</div></section></div><section id="novel-related" class="novel-related" aria-labelledby="novel-related-heading" hidden></section>';void loadRelatedNovels(n,document.querySelector("#novel-related"));const {data:{user}}=await sb.auth.getUser();
+async function detail(){const root=document.querySelector("#novel-detail");if(!root||!slug||hasChapter)return;root.hidden=false;const {data:n}=await sb.from("novels").select("*").eq("slug",slug).eq("status_publicacao","publicado").single();if(!n){root.innerHTML='<p class="empty">Obra não encontrada.</p>';return}const {data:chs}=await sb.from("novel_capitulos").select("id,numero,titulo,palavras,publicado_em,agendado_para,status_publicacao").eq("novel_id",n.id).eq("status_publicacao","publicado").order("numero");setNovelMetadata(n.titulo+" — Novels · Arquivo Sombrio",n.sinopse||"Leia "+n.titulo+" na Biblioteca de Novels do Arquivo Sombrio.");const completionMarkup=chs?.length&&n.status_obra==="concluida"?'<div class="novel-completion"><button id="novel-complete-toggle" type="button" class="novel-button novel-completion-button" aria-pressed="false">Marcar como concluída</button><p id="novel-complete-status" role="status" aria-live="polite"></p></div>':"";root.innerHTML='<div>'+cover(n,"novel-detail-cover")+'</div><div><p class="novel-kicker">NOVEL · '+esc(n.status_obra.replaceAll("_"," ").toUpperCase())+'</p><h1>'+esc(n.titulo)+'</h1><p>'+esc(n.autor_nome)+'</p><div class="novel-tags">'+(n.generos||[]).map(t=>'<span>'+esc(t)+'</span>').join("")+'</div><p class="novel-synopsis">'+esc(n.sinopse)+'</p>'+(chs?.length?'<a class="novel-button" href="novel.html?obra='+encodeURIComponent(slug)+'&capitulo='+chs[0].numero+'">Começar a ler</a><button class="novel-button" id="novel-library-toggle" type="button">Adicionar às minhas leituras</button>':'')+'<div class="novel-want-controls"><button class="novel-button novel-want-button" id="novel-want-toggle" type="button" aria-pressed="false">Salvar em Quero ler</button><p id="novel-want-status" role="status" aria-live="polite"></p></div>'+completionMarkup+'<section id="novel-chapter-alert-controls" class="novel-chapter-alert-controls"></section><section class="chapter-area"><h2>Capítulos</h2><div class="chapter-list">'+(chs||[]).map(c=>'<a class="chapter-link" href="novel.html?obra='+encodeURIComponent(slug)+'&capitulo='+c.numero+'"><span>Capítulo '+c.numero+' · '+esc(c.titulo)+'</span><small>'+c.palavras+' palavras</small></a>').join("")+'</div></section></div><section id="novel-related" class="novel-related" aria-labelledby="novel-related-heading" hidden></section>';void loadRelatedNovels(n,document.querySelector("#novel-related"));const {data:{user}}=await sb.auth.getUser();
  if(user&&chs?.length){
   const progress=await getReadingProgress(user.id,[n.id]);
   const current=chs.find(ch=>ch.id===progress[0]?.capitulo_id);
   if(current){const start=root.querySelector('a.novel-button');if(start){start.href=progressUrl(slug,current.numero);start.textContent="Continuar lendo · Capítulo "+current.numero;}}
  }
- await wireNovelLibraryControls(n,user);}
+ await wireNovelLibraryControls(n,user);
+ window.NovelExtras?.wireChapterAlerts(n,chs,user);}
 
 async function reader(){const root=document.querySelector("#novel-reader");if(!root||!slug||!hasChapter||!Number.isInteger(cap)||cap<0)return;const detailRoot=document.querySelector("#novel-detail");if(detailRoot)detailRoot.hidden=true;const {data:n}=await sb.from("novels").select("id,titulo,slug,generos,status_obra").eq("slug",slug).eq("status_publicacao","publicado").single();if(!n){root.hidden=false;root.innerHTML='<p class="empty">Obra indisponível.</p>';return;}const {data:chs}=await sb.from("novel_capitulos").select("id,numero,titulo,conteudo").eq("novel_id",n.id).eq("status_publicacao","publicado").order("numero");const i=chs.findIndex(x=>x.numero===cap),c=chs[i];if(!c){root.innerHTML='<p class="empty">Capítulo não encontrado.</p>';return}document.querySelector("#novel-detail").hidden=true;root.hidden=false;setNovelMetadata("Capítulo "+c.numero+" · "+n.titulo+" — Arquivo Sombrio","Leia o capítulo "+c.numero+": "+c.titulo+" da obra "+n.titulo+" na Biblioteca de Novels do Arquivo Sombrio.");const body=esc(c.conteudo).split(/\n\s*\n/).filter(Boolean).map(p=>"<p>"+p.replaceAll("\n","<br>")+"</p>").join("");root.innerHTML='<a class="novel-home" href="novel.html?obra='+encodeURIComponent(slug)+'">← '+esc(n.titulo)+'</a><p class="novel-kicker">CAPÍTULO '+c.numero+'</p><h1>'+esc(c.titulo)+'</h1><div class="reader-settings"><label for="chapter-jump">Capítulo</label><select id="chapter-jump" aria-label="Ir para capítulo">'+chs.map(ch=>'<option value="'+ch.numero+'"'+(ch.numero===c.numero?' selected':'')+'>'+ch.numero+' · '+esc(ch.titulo)+'</option>').join('')+'</select><button id="font-down">A−</button><button id="font-up">A+</button></div><article class="reader-body" id="reader-body">'+body+'</article><nav class="reader-nav">'+(chs[i-1]?'<a class="novel-home" href="novel.html?obra='+encodeURIComponent(slug)+'&capitulo='+chs[i-1].numero+'">← Anterior</a>':'<span></span>')+(chs[i+1]?'<a class="novel-home" href="novel.html?obra='+encodeURIComponent(slug)+'&capitulo='+chs[i+1].numero+'">Próximo →</a>':'<span>Fim disponível</span>')+'</nav>'+(!chs[i+1]&&n.status_obra==="concluida"?'<div class="novel-completion novel-completion-reader"><h2>Terminou esta obra?</h2><button id="novel-complete-toggle" class="novel-button novel-completion-button" type="button" aria-pressed="false">Marcar como concluída</button><p id="novel-complete-status" role="status" aria-live="polite"></p></div>':"")+(chs[i+1]?'':'<section id="novel-related" class="novel-related novel-related-reader" aria-labelledby="novel-related-heading" hidden></section>');if(!chs[i+1])void loadRelatedNovels(n,document.querySelector("#novel-related"),true);document.querySelector("#chapter-jump").onchange=e=>{location.href="novel.html?obra="+encodeURIComponent(slug)+"&capitulo="+encodeURIComponent(e.target.value)};const prefsKey="as-novel-reader-v1";
 const defaults={theme:"archive",font:"Georgia",size:1.16,spacing:"comfortable",immersive:false};
@@ -502,6 +647,7 @@ immersiveButton.onclick=()=>{prefs.immersive=!prefs.immersive;closeOptions();doc
 document.querySelector("#reader-reset").onclick=()=>{prefs={...defaults};apply()};
 apply();
 const {data:{user}}=await sb.auth.getUser();
+if(user)clearLegacyAuthenticatedProgressCache();
 await wireNovelLibraryControls(n,user);
 if(!user){
  const key=guestProgressKey(n.id);
@@ -525,7 +671,7 @@ if(user){
  const key="novel-progress-"+user.id+"-"+n.id;
  const maxScroll=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);
  const position=()=>{const max=maxScroll();return {user_id:user.id,novel_id:n.id,capitulo_id:c.id,percentual:max?Math.min(100,Math.max(0,Math.round(scrollY/max*10000)/100)):0,scroll_y:Math.round(scrollY),atualizado_em:new Date().toISOString()}};
- const save=async()=>{if(restoring||!dirty||saving)return;saving=true;dirty=false;const row=position();try{localStorage.setItem(key,JSON.stringify(row))}catch{}
+ const save=async()=>{if(restoring||!dirty||saving)return;saving=true;dirty=false;const row=position();try{authReadingCache()?.setItem(key,JSON.stringify(row))}catch{}
   const {error}=await sb.from("novel_progresso").upsert(row,{onConflict:"user_id,novel_id"});
   saving=false;if(error){console.warn("Falha ao salvar progresso",error);dirty=true}else lastSaved=row.scroll_y;
   if(dirty&&document.visibilityState==="visible")schedule();
@@ -536,7 +682,7 @@ if(user){
  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"){clearTimeout(timer);void save()}else if(dirty)schedule()});
  addEventListener("pagehide",()=>{clearTimeout(timer);void save()});
  const {data:server}=await sb.from("novel_progresso").select("scroll_y,capitulo_id,atualizado_em").eq("user_id",user.id).eq("novel_id",n.id).maybeSingle();
- let local=null;try{local=JSON.parse(localStorage.getItem(key)||"null")}catch{}
+ let local=null;try{local=JSON.parse(authReadingCache()?.getItem(key)||"null")}catch{}
  const candidate=local?.capitulo_id===c.id&&(!server||new Date(local.atualizado_em)>new Date(server.atualizado_em))?local:server;
  if(candidate?.capitulo_id===c.id&&candidate.scroll_y>0){
   // Wait for fonts and layout before restoring; do not save the initial jump as a new position.
