@@ -11,3 +11,9 @@ Usar imagens reais verificadas com créditos e direitos de uso, documentos judic
 Interface: texto de leitura fluida, poucos títulos discretos; sumário, cronologia, galeria, documentos e evidências como complementos. Áudio somente quando disponível. Preservar modos escuro, papel antigo, livro e scroll.
 
 Aplicar nos novos casos e auditar os publicados individualmente. Não considerar migrado até sincronizar conteúdo principal, V2 e Lite e validar em celular e desktop.
+
+## Norma específica — Perícia Forense (02/11/2026)
+
+Toda criação, revisão substancial ou preparação para publicação de artigos da categoria **Perícia Forense** deve seguir obrigatoriamente o [PROMPT RAIZ — PERÍCIA FORENSE](PROMPT_RAIZ_PERICIA_FORENSE.md). Esse documento define os quatro núcleos editoriais, pesquisa científica e documental, limites das inferências, comparação histórica "ontem versus hoje", respeito às vítimas, referências verificáveis, campos compatíveis com a Central V2 e auditoria antes da publicação.
+
+**Precedência:** aplicar em conjunto com este padrão narrativo; para conteúdos de Perícia, prevalecem os requisitos técnicos e de comprovação do prompt raiz. Não alterar automaticamente conteúdos publicados nem alegar publicação sem validação.
