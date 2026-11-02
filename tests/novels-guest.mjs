@@ -425,3 +425,75 @@ test("agora não mantém os favoritos locais e impede importação automática",
  await m.call("catalog()");
  assert.equal(m.nodes.get("#novel-import").hidden,true);
 });
+
+test("progresso local exige ação e importa só capítulo publicado",async()=>{
+ const now=Date.now();
+ const books=[{id:"book",slug:"livro",titulo:"Livro",status_publicacao:"publicado"}];
+ const chapters=[{id:"chapter-3",novel_id:"book",numero:3,status_publicacao:"publicado",publicado_em:null,agendado_para:null}];
+ const storage=new Map([["as-novel-guest-progress-v1-book",JSON.stringify({chapter:3,scroll:360,percent:45,updated:now})]]);
+ const m=mock({books,chapters,storage,user:{id:"user-one"}});
+ await m.call("catalog()");
+ assert.equal(m.nodes.get("#novel-progress-import").hidden,false);
+ assert.equal(m.writes.length,0,"não pode importar automaticamente");
+ await m.nodes.get("#novel-progress-import-confirm").onclick();
+ const saved=m.writes.filter(x=>x.table==="novel_progresso");
+ assert.equal(saved.length,1);
+ assert.equal(saved[0].action,"insert");
+ assert.equal(saved[0].row.user_id,"user-one");
+ assert.equal(saved[0].row.capitulo_id,"chapter-3");
+ assert.equal(saved[0].row.scroll_y,360);
+ assert.equal(storage.has("as-novel-guest-progress-v1-book"),false);
+});
+test("progresso mais recente da conta não é sobrescrito",async()=>{
+ const now=Date.now();
+ const books=[{id:"book",slug:"livro",titulo:"Livro",status_publicacao:"publicado"}];
+ const chapters=[{id:"chapter-1",novel_id:"book",numero:1,status_publicacao:"publicado"}];
+ const progress=[{user_id:"owner",novel_id:"book",capitulo_id:"chapter-1",percentual:81,scroll_y:400,atualizado_em:new Date(now+25000).toISOString()}];
+ const storage=new Map([["as-novel-guest-progress-v1-book",JSON.stringify({chapter:1,scroll:100,percent:20,updated:now})]]);
+ const m=mock({books,chapters,progress,storage,user:{id:"owner"}});
+ m.context.testBooks=books;
+ const result=await m.call('importGuestReadingProgress({id:"owner"},testBooks)');
+ assert.equal(result.existing,1);
+ assert.equal(m.writes.filter(x=>x.table==="novel_progresso").length,0);
+ assert.equal(progress[0].scroll_y,400);
+ assert.equal(storage.has("as-novel-guest-progress-v1-book"),false);
+});
+test("posição local mais recente atualiza a conta apenas com comparação de data",async()=>{
+ const now=Date.now();
+ const books=[{id:"book",slug:"livro",titulo:"Livro",status_publicacao:"publicado"}];
+ const chapters=[{id:"chapter-2",novel_id:"book",numero:2,status_publicacao:"publicado"}];
+ const progress=[{user_id:"owner",novel_id:"book",capitulo_id:"chapter-2",percentual:10,scroll_y:20,atualizado_em:new Date(now-86400000).toISOString()}];
+ const storage=new Map([["as-novel-guest-progress-v1-book",JSON.stringify({chapter:2,scroll:460,percent:65,updated:now})]]);
+ const m=mock({books,chapters,progress,storage,user:{id:"owner"}});
+ m.context.testBooks=books;
+ const result=await m.call('importGuestReadingProgress({id:"owner"},testBooks)');
+ assert.equal(result.updated,1);
+ assert.equal(m.writes[0].action,"update");
+ assert.equal(progress[0].scroll_y,460);
+ assert.equal(storage.has("as-novel-guest-progress-v1-book"),false);
+});
+test("capítulo agendado ou erro de leitura mantém progresso local",async()=>{
+ const now=Date.now();
+ const books=[{id:"book",slug:"livro",titulo:"Livro",status_publicacao:"publicado"}];
+ const chapters=[{id:"chapter-9",novel_id:"book",numero:9,status_publicacao:"publicado",agendado_para:new Date(now+86400000).toISOString()}];
+ const storage=new Map([["as-novel-guest-progress-v1-book",JSON.stringify({chapter:9,scroll:100,percent:10,updated:now})]]);
+ const m=mock({books,chapters,storage,user:{id:"owner"}});
+ m.context.testBooks=books;
+ const result=await m.call('importGuestReadingProgress({id:"owner"},testBooks)');
+ assert.equal(result.failed,1);
+ assert.equal(storage.has("as-novel-guest-progress-v1-book"),true);
+ const fail=mock({books,chapters,storage,user:{id:"owner"},failRead:true});
+ fail.context.testBooks=books;
+ await assert.rejects(fail.call('importGuestReadingProgress({id:"owner"},testBooks)'));
+ assert.equal(storage.has("as-novel-guest-progress-v1-book"),true);
+});
+test("Agora não não importa nem apaga a posição do visitante",async()=>{
+ const books=[{id:"book",slug:"livro",titulo:"Livro",status_publicacao:"publicado"}];
+ const storage=new Map([["as-novel-guest-progress-v1-book",JSON.stringify({chapter:1,scroll:100,percent:10,updated:Date.now()})]]);
+ const m=mock({books,storage,user:{id:"owner"}});
+ await m.call("catalog()");
+ await m.nodes.get("#novel-progress-import-later").onclick();
+ assert.equal(m.nodes.get("#novel-progress-import").hidden,true);
+ assert.equal(storage.size,1);
+ assert.equal(m.writes.length,0);
+});
