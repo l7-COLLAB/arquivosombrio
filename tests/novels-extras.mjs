@@ -67,6 +67,7 @@ test("novos capítulos aparecem somente depois da publicação e só na conta in
  assert.doesNotMatch(area.innerHTML,/Capítulo 4/);
  area.onclick({target:{closest(){return {dataset:{chapterAlertRead:"b1"}}}}});
  assert.equal(storage.get("as-novel-chapter-alert-v1-reader-a-b1"),"3");
+ await new Promise(resolve=>setImmediate(resolve));
  assert.equal(area.hidden,true);
  await m.api.renderChapterAlerts(area,books,{id:"reader-b"},m.sb);
  assert.equal(area.hidden,true);
