@@ -13,10 +13,10 @@ test('scripts do dossiê e marcador possuem sintaxe válida',()=>{
  assert.doesNotThrow(()=>new vm.Script(dossier));
 });
 test('marcador carrega antes do leitor e depois da autenticação pública não necessária',()=>{
- const marker='src="js/reader-bookmark.js?v=1" defer';
- const reader='src="js/caso.js?v=case-tracking-20261006-2"';
- assert.ok(html.indexOf(marker)>=0&&html.indexOf(marker)<html.indexOf(reader));
- assert.match(html,/css\/reader-bookmark\.css\?v=1/);
+ const marker=html.search(/src="js\/reader-bookmark\.js(?:\?[^"]*)?"\s+defer/);
+ const reader=html.search(/src="js\/caso\.js(?:\?[^"]*)?"/);
+ assert.ok(marker>=0&&reader>=0&&marker<reader);
+ assert.match(html,/href="css\/reader-bookmark\.css(?:\?[^\"]*)?"/);
  assert.match(dossier,/configurarSumarioDossie\(\);\s*window\.ArquivoMarcadorLeitura\?\.init\(casoId\)/);
 });
 test('marcador depende de ação explícita e não envia a posição para backend',()=>{

@@ -9,3 +9,7 @@ Fotografias de contexto são identificadas como tal; fotografias de parques, cid
 A mudança no banco altera somente a imagem, seus créditos/fontes e o horário de atualização. Não antecipa publicações, não modifica a narrativa e não muda o calendário. O processamento dos agendamentos lê a imagem atual do registro.
 
 As páginas de leitura e as páginas estáticas mostram legenda, atribuição e links para a fonte e licença das novas capas. O script de créditos só atua em imagens listadas no manifesto e em seletores de capa do artigo.
+
+## Validação
+
+As 33 atualizações foram confirmadas no banco; nenhum registro das seis categorias ficou com capa ausente ou com o modelo provisório `imagens/capas/*.svg`. Os 22 agendamentos ativos foram preservados. Os testes dos cards passaram. A regressão do marcador continha uma comparação com `reader-bookmark.js?v=1`, embora a página já usasse `v=inline-audio-20261022` antes desta alteração. O teste agora verifica a ordem real dos scripts sem depender da versão de cache, preservando a exigência de carregamento com `defer`.
