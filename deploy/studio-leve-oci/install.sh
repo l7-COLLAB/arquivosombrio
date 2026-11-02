@@ -28,6 +28,8 @@ if [[ "$(uname -s)" != "Linux" ]]; then
   exit 1
 fi
 
+sudo apt-get update
+sudo apt-get install -y python3.12 python3.12-venv ffmpeg fonts-dejavu-core unzip
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 unzip -tqq "$BUNDLE"
@@ -37,8 +39,6 @@ for f in studio_app.py requirements-studio.txt studio/auth.py studio/engine.py; 
   test -f "$SRC/$f" || { echo "Falta arquivo original: $f" >&2; exit 1; }
 done
 
-sudo apt-get update
-sudo apt-get install -y python3.12 python3.12-venv ffmpeg fonts-dejavu-core unzip
 if ! id "$APPUSER" >/dev/null 2>&1; then
   sudo useradd --system --home-dir "$APPDIR" --shell /usr/sbin/nologin "$APPUSER"
 fi
