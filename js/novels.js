@@ -118,18 +118,22 @@ async function importGuestReadingProgress(user,books){
  const candidates=eligibleGuestProgress(books);
  if(!candidates.length)return {added:0,updated:0,existing:0,failed:0};
  const ids=candidates.map(item=>item.book.id);
- const [chaptersResponse,serverResponse]=await Promise.all([
+ const [chaptersResponse,serverResponse,libraryResponse]=await Promise.all([
   sb.from("novel_capitulos").select("id,novel_id,numero,status_publicacao,publicado_em,agendado_para").in("novel_id",ids).eq("status_publicacao","publicado"),
-  sb.from("novel_progresso").select("novel_id,capitulo_id,percentual,scroll_y,atualizado_em").eq("user_id",user.id).in("novel_id",ids)
+  sb.from("novel_progresso").select("novel_id,capitulo_id,percentual,scroll_y,atualizado_em").eq("user_id",user.id).in("novel_id",ids),
+  sb.from("novel_biblioteca").select("novel_id,estado").eq("user_id",user.id).in("novel_id",ids)
  ]);
  if(chaptersResponse.error)throw chaptersResponse.error;
  if(serverResponse.error)throw serverResponse.error;
+ if(libraryResponse.error)throw libraryResponse.error;
+ const concluded=new Set((libraryResponse.data||[]).filter(x=>x.estado==="concluido").map(x=>x.novel_id));
  const now=Date.now();
  const chapterByBookNumber=new Map((chaptersResponse.data||[]).filter(ch=>chapterIsReleased(ch,now))
   .map(ch=>[ch.novel_id+":"+ch.numero,ch]));
  const existing=new Map((serverResponse.data||[]).map(row=>[row.novel_id,row]));
  let added=0,updated=0,existingCount=0,failed=0;
  for(const {book,progress} of candidates){
+  if(concluded.has(book.id)){existingCount++;continue;}
   const fresh=readGuestProgress(book.id);
   if(!fresh||fresh.chapter!==progress.chapter||fresh.updated!==progress.updated)continue;
   const chapter=chapterByBookNumber.get(book.id+":"+fresh.chapter);
