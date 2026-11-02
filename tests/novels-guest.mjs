@@ -80,7 +80,7 @@ test("catálogo: recomendações, busca e continuar lendo como visitante",async(
 });
 test("catálogo autenticado: progresso servidor tem prioridade sobre local anônimo",async()=>{
  const books=[{id:"b1",slug:"um-livro",titulo:"Livro",autor_nome:"Autor",generos:[],tags:[]}];
- const progress=[{novel_id:"b1",capitulo_id:"c2",percentual:40,scroll_y:100,atualizado_em:"2026-10-31T00:00:00Z"}];
+ const progress=[{user_id:"user1",novel_id:"b1",capitulo_id:"c2",percentual:40,scroll_y:100,atualizado_em:"2026-10-31T00:00:00Z"}];
  const chapters=[{id:"c2",numero:2,status_publicacao:"publicado"}];
  const storage=new Map([["as-novel-guest-progress-v1-b1",JSON.stringify({chapter:9,scroll:90,percent:30,updated:1})]]);
  const m=mock({books,progress,chapters,user:{id:"user1"},storage});
@@ -196,7 +196,7 @@ test("jornada autenticada utiliza progresso Supabase e ignora o de visitante",as
  const books=[{id:"a",slug:"a",titulo:"Livro da Conta",generos:["Mistério"],status_publicacao:"publicado"},
   {id:"b",slug:"b",titulo:"Livro do Visitante",generos:["Mistério"],status_publicacao:"publicado"},
   {id:"c",slug:"c",titulo:"Próxima História",generos:["Mistério"],status_publicacao:"publicado"}];
- const progress=[{novel_id:"a",capitulo_id:"chapter-a",percentual:24,atualizado_em:"2026-10-31T13:00:00Z"}];
+ const progress=[{user_id:"logged",novel_id:"a",capitulo_id:"chapter-a",percentual:24,atualizado_em:"2026-10-31T13:00:00Z"}];
  const chapters=[{id:"chapter-a",numero:4,status_publicacao:"publicado"}];
  const storage=new Map([["as-novel-guest-progress-v1-b",JSON.stringify({chapter:20,scroll:400,percent:88,updated:999})]]);
  const m=mock({books,chapters,progress,storage,user:{id:"logged"}});
