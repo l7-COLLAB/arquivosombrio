@@ -209,11 +209,23 @@ function clearLegacyAuthenticatedProgressCache(){
  }catch{}
 }
 const authReadingCache=()=>typeof sessionStorage!=="undefined"?sessionStorage:null;
+function clearAccountSessionProgress(){
+ try{
+  const cache=authReadingCache();
+  if(!cache)return;
+  for(let i=cache.length-1;i>=0;i--){
+   const key=cache.key(i);
+   if(key?.startsWith("novel-progress-"))cache.removeItem(key);
+  }
+ }catch{}
+}
+let activeNovelAccount=null;
 try{
- sb.auth.onAuthStateChange?.((event)=>{
-  if(event==="SIGNED_OUT"){try{const cache=authReadingCache();if(cache){
-   for(let i=cache.length-1;i>=0;i--){const key=cache.key(i);if(key?.startsWith("novel-progress-"))cache.removeItem(key)}
-  }}catch{}}
+ sb.auth.onAuthStateChange?.((event,session)=>{
+  const nextAccount=session?.user?.id||null;
+  if(event==="SIGNED_OUT"||(activeNovelAccount&&nextAccount&&activeNovelAccount!==nextAccount))
+   clearAccountSessionProgress();
+  activeNovelAccount=nextAccount;
  });
 }catch{}
 
