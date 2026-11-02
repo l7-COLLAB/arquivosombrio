@@ -16,8 +16,8 @@ function mock({search="",books=[],chapters=[],progress=[],library=[],user=null,s
    let pendingUpdate=null;
    const q={
     select(){return q},
-    eq(key,value){filters.push(row=>row[key]===value);return q},
-    in(key,values){filters.push(row=>values.includes(row[key]));return q},
+    eq(key,value){if(table==="novel_biblioteca"||table==="novel_progresso")filters.push(row=>row[key]===value);return q},
+    in(key,values){if(table==="novel_biblioteca"||table==="novel_progresso")filters.push(row=>values.includes(row[key]));return q},
     lt(key,value){filters.push(row=>String(row[key])<String(value));return q},
     order(){return q},limit(){return q},
     update(row){pendingUpdate=row;return q},
