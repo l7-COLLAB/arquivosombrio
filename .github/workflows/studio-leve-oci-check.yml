@@ -1,0 +1,33 @@
+name: Validate Studio Leve OCI bootstrap
+on:
+  pull_request:
+    paths:
+      - 'deploy/studio-leve-oci/**'
+      - '.github/workflows/studio-leve-oci-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate installer shell syntax
+        run: bash -n deploy/studio-leve-oci/install.sh
+      - name: Validate bind, security and source fingerprint
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          service=Path("deploy/studio-leve-oci/studio-leve.service").read_text()
+          script=Path("deploy/studio-leve-oci/install.sh").read_text()
+          doc=Path("deploy/studio-leve-oci/README.md").read_text()
+          assert "--server.address=127.0.0.1" in service
+          assert "--server.enableXsrfProtection=true" in service
+          assert "ReadWritePaths=/opt/arquivo-sombrio-studio/storage" in service
+          assert "0d085a162aa6b772a91e10770aae0c394b9479f5cc844b37d6fbaf6323e8ddb5" in script
+          assert "admin-v2/studio/" in doc
+          assert "sha256sum" in script
+          print("Static deployment checks passed")
+          PY
