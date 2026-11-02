@@ -12,17 +12,29 @@ function mock({search="",books=[],chapters=[],progress=[],library=[],user=null,s
   from(table){
    const rows=table==="novels"?books:table==="novel_capitulos"?chapters:table==="novel_biblioteca"?library:progress;
    const filters=[];
-   const filtered=()=>table==="novel_biblioteca"?rows.filter(row=>filters.every(fn=>fn(row))):rows;
-   const q={select(){return q},eq(key,value){if(table==="novel_biblioteca")filters.push(row=>row[key]===value);return q},in(){return q},order(){return q},limit(){return q},
-    upsert(row){writes.push({table,action:"upsert",row});const i=library.findIndex(x=>x.novel_id===row.novel_id);if(i>=0)library[i]={...row};else library.push({...row});return Promise.resolve({error:null})},
+   const filtered=()=>rows.filter(row=>filters.every(fn=>fn(row)));
+   let pendingUpdate=null;
+   const q={
+    select(){return q},
+    eq(key,value){filters.push(row=>row[key]===value);return q},
+    in(key,values){filters.push(row=>values.includes(row[key]));return q},
+    lt(key,value){filters.push(row=>String(row[key])<String(value));return q},
+    order(){return q},limit(){return q},
+    update(row){pendingUpdate=row;return q},
+    upsert(row){writes.push({table,action:"upsert",row});const i=rows.findIndex(x=>x.novel_id===row.novel_id);if(i>=0)rows[i]={...row};else rows.push({...row});return Promise.resolve({error:null})},
     insert(row){writes.push({table,action:"insert",row});
      if(failInsertIds.has(row.novel_id))return Promise.resolve({error:{code:"TEST_INSERT_FAILURE"}});
-     if(library.some(x=>x.user_id===row.user_id&&x.novel_id===row.novel_id))return Promise.resolve({error:{code:"23505"}});
-     library.push({...row});return Promise.resolve({error:null})},
+     if(rows.some(x=>x.user_id===row.user_id&&x.novel_id===row.novel_id))return Promise.resolve({error:{code:"23505"}});
+     rows.push({...row});return Promise.resolve({error:null})},
     delete(){writes.push({table,action:"delete"});return q},
-    then(resolve,reject){return Promise.resolve({data:filtered(),error:table==="novel_biblioteca"&&failRead?{code:"READ_FAILURE"}:null}).then(resolve,reject)},
-    async single(){return {data:rows[0]??null,error:null}},
-    async maybeSingle(){return {data:filtered()[0]??null,error:table==="novel_biblioteca"&&failRead?{code:"READ_FAILURE"}:null}}
+    then(resolve,reject){
+     const matches=filtered();
+     if(pendingUpdate){for(const record of matches)Object.assign(record,pendingUpdate);
+      writes.push({table,action:"update",row:pendingUpdate,matched:matches.length});pendingUpdate=null}
+     return Promise.resolve({data:matches,error:(table==="novel_biblioteca"||table==="novel_progresso")&&failRead?{code:"READ_FAILURE"}:null}).then(resolve,reject)
+    },
+    async single(){return {data:filtered()[0]??null,error:null}},
+    async maybeSingle(){return {data:filtered()[0]??null,error:(table==="novel_biblioteca"||table==="novel_progresso")&&failRead?{code:"READ_FAILURE"}:null}}
    };
    return q;
   },
