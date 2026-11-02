@@ -1,0 +1,596 @@
+[
+  {
+    "table": "casos_diarios",
+    "id": "46",
+    "asset_path": "assets/capas-reais/casos_diarios-46.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Brandon_Swanson.jpg",
+    "caption": "Brandon Swanson em fotografia divulgada no alerta de desaparecimento.",
+    "credit": "FBI / Wikimedia Commons",
+    "license": "Domínio público",
+    "license_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/garimpo-46-brandon-swanson.svg",
+    "previous_status": "publicado",
+    "sha256": "7cf72f1e13f0e35d6cc7a72099f72aa8d5bec8fa9b43a04e7a7a3636b70f39a2",
+    "dimensions": [
+      279,
+      357
+    ]
+  },
+  {
+    "table": "Casos",
+    "id": "103",
+    "asset_path": "assets/capas-reais/Casos-103.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Garritobackyard1.jpg",
+    "caption": "Quintal da propriedade dos Garrido, fotografado durante a investigação em 2009.",
+    "credit": "Mike Dunn / Radar01 / Claycord.com",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/dossie-103-jaycee-dugard.svg",
+    "previous_status": "rascunho",
+    "sha256": "e5e28bab1ef399e644b63b435ebf002a8f78f49e96e66f652a1f938f61b00280",
+    "dimensions": [
+      503,
+      333
+    ]
+  },
+  {
+    "table": "casos_diarios",
+    "id": "48",
+    "asset_path": "assets/capas-reais/casos_diarios-48.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Footpath_on_Wimbledon_Common_-_geograph.org.uk_-_879675.jpg",
+    "caption": "Caminho em Wimbledon Common. Fotografia do parque; não registra o local exato nem o momento do crime.",
+    "credit": "Shaun Ferguson",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/garimpo-48-rachel-nickell.svg",
+    "previous_status": "rascunho",
+    "sha256": "9ab0893eab87daad18c6a3c5c61a661d5efae98ed22e74c350a650ba2275b7a6",
+    "dimensions": [
+      640,
+      480
+    ]
+  },
+  {
+    "table": "casos_diarios",
+    "id": "49",
+    "asset_path": "assets/capas-reais/casos_diarios-49.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Valley_Municipal_Building.JPG",
+    "caption": "Van Nuys, Los Angeles: o bairro onde Sherri Rasmussen vivia. Fotografia de contexto, não da residência ou da cena do crime.",
+    "credit": "Cbl62",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/garimpo-49-sherri-rasmussen.svg",
+    "previous_status": "rascunho",
+    "sha256": "b300f9025322f9b650c50b473d3ba0aa2abdde97b7064dc8bf693bb92411657c",
+    "dimensions": [
+      960,
+      666
+    ]
+  },
+  {
+    "table": "casos_diarios",
+    "id": "51",
+    "asset_path": "assets/capas-reais/casos_diarios-51.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Route_foresti%C3%A8re_de_Chevaline_%40_Chevaline_%2851017544620%29.jpg",
+    "caption": "Estrada florestal de Chevaline, fotografada em 2021. Imagem de contexto geográfico; não é registro do ataque de 2012.",
+    "credit": "Guilhem Vellut",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/garimpo-51-annecy.svg",
+    "previous_status": "rascunho",
+    "sha256": "8c1ab607a6d6433cf7672c5fab228f025ffb1e33812eb583248ca3e407f098d5",
+    "dimensions": [
+      960,
+      640
+    ]
+  },
+  {
+    "table": "casos_diarios",
+    "id": "52",
+    "asset_path": "assets/capas-reais/casos_diarios-52.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:JohnSpreckelshomeCoronado1915.jpg",
+    "caption": "Imagem histórica da residência de John D. Spreckels em Coronado, publicada em 1915; não registra os acontecimentos de 2011.",
+    "credit": "C. T. Co. Publishers, Chicago / Internet Archive",
+    "license": "Domínio público",
+    "license_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/garimpo-52-rebecca-zahau.svg",
+    "previous_status": "rascunho",
+    "sha256": "ca4b6f04d7a5c26e69d11d6ab5d83d28687cfbdc1af23c89dbcdaa48c2f94d3d",
+    "dimensions": [
+      960,
+      333
+    ]
+  },
+  {
+    "table": "casos_diarios",
+    "id": "55",
+    "asset_path": "assets/capas-reais/casos_diarios-55.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Gateway%2C_Stubbylee_Park%2C_Bacup.jpg",
+    "caption": "Entrada do Stubbylee Park, em Bacup, onde Sophie Lancaster e Robert Maltby foram atacados. Fotografia posterior aos acontecimentos.",
+    "credit": "Dr Neil Clifton",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/garimpo-55-sophie-lancaster.svg",
+    "previous_status": "rascunho",
+    "sha256": "1226226e5ea3ba7a13551ba3576ab2b830de490590e504d6937124fed4b6502f",
+    "dimensions": [
+      960,
+      640
+    ]
+  },
+  {
+    "table": "casos_diarios",
+    "id": "57",
+    "asset_path": "assets/capas-reais/casos_diarios-57.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Main_Street%2C_Newtown_CT.jpg",
+    "caption": "Main Street, Newtown, Connecticut, cidade onde Helle Crafts vivia. Fotografia de contexto; não retrata a residência ou a cena do crime.",
+    "credit": "John Phelan",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/garimpo-57-helle-crafts.svg",
+    "previous_status": "rascunho",
+    "sha256": "04ef15049c6a332e46dc64e3ebc15ca9bb2935e8df3904b08f4c206c61348989",
+    "dimensions": [
+      960,
+      720
+    ]
+  },
+  {
+    "table": "casos_diarios",
+    "id": "59",
+    "asset_path": "assets/capas-reais/casos_diarios-59.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Boy_in_the_Box_memorial_sign.jpg",
+    "caption": "Marco memorial do caso de Joseph Augustus Zarelli, fotografado em 2022, antes da divulgação de seu nome.",
+    "credit": "TheXuitts",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/garimpo-59-joseph-zarelli.svg",
+    "previous_status": "rascunho",
+    "sha256": "1ab5ada8271e5009b5f6a252e2e6b7ff9dd5621c9e2aa266e7efeae294c18c43",
+    "dimensions": [
+      960,
+      935
+    ]
+  },
+  {
+    "table": "pericias",
+    "id": "16",
+    "asset_path": "assets/capas-reais/pericias-16.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Shoeprint%28forensic%29.jpg",
+    "caption": "Comparação fotográfica de uma impressão de calçado e de uma sola. Exemplo técnico, sem relação atribuída a um caso do acervo.",
+    "credit": "Stechondanet",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/pericia-16-impressoes-calcados.svg",
+    "previous_status": "publicado",
+    "sha256": "e720d18d2c0901089116ce16fdc13e8d2d9c57353111d6bc8482059293ee1973",
+    "dimensions": [
+      960,
+      1028
+    ]
+  },
+  {
+    "table": "pericias",
+    "id": "17",
+    "asset_path": "assets/capas-reais/pericias-17.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:The_Childrens_Museum_of_Indianapolis_-_Typewriter.jpg",
+    "caption": "Máquina de escrever Underwood do acervo do Children’s Museum of Indianapolis. Imagem temática sobre textos; não é evidência de uma investigação.",
+    "credit": "Debbie Winchester / The Children’s Museum of Indianapolis",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/pericia-17-linguistica-forense.svg",
+    "previous_status": "rascunho",
+    "sha256": "f3f3e27bc075dd675ad75a661ca0ace4d2f456f8852d74e1d4baa44b9d4056d9",
+    "dimensions": [
+      480,
+      321
+    ]
+  },
+  {
+    "table": "pericias",
+    "id": "18",
+    "asset_path": "assets/capas-reais/pericias-18.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Mercury_Thermometer.jpg",
+    "caption": "Termômetro de mercúrio para temperatura ambiente. Imagem temática; não representa um instrumento específico de medição post mortem.",
+    "credit": "Anonimski",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/pericia-18-cronotanatognose.svg",
+    "previous_status": "rascunho",
+    "sha256": "aa4848e28842393f3b1375d9005bf4245c113eaa5ccd031bb9e7689617702e21",
+    "dimensions": [
+      593,
+      1280
+    ]
+  },
+  {
+    "table": "lendas",
+    "id": "10",
+    "asset_path": "assets/capas-reais/lendas-10.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Francisco_de_Goya%2C_Que_viene_el_coco_%28Here_Comes_the_Bogey-Man%29%2C_published_1799%2C_NGA_7459.jpg",
+    "caption": "Que viene el coco, gravura de Francisco de Goya, de 1799. Representação histórica do bicho-papão; não é registro de uma criatura real.",
+    "credit": "Francisco de Goya / National Gallery of Art",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/lenda-10-homem-do-saco.svg",
+    "previous_status": "publicado",
+    "sha256": "902a17388ed0b75988a25c66eafd51c5cf643c33905518e7734f805d58d2347a",
+    "dimensions": [
+      923,
+      1280
+    ]
+  },
+  {
+    "table": "lendas",
+    "id": "11",
+    "asset_path": "assets/capas-reais/lendas-11.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Mulasemcabeca.JPG",
+    "caption": "Representação artística da Mula sem Cabeça, criada por OrsettoGommoso2. Ilustração de folclore, não fotografia de um ser real.",
+    "credit": "OrsettoGommoso2",
+    "license": "Domínio público",
+    "license_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/lenda-11-mula-sem-cabeca.svg",
+    "previous_status": "rascunho",
+    "sha256": "432ae0e6b23fc95f5ce18541c07afe28c3bc91afd27b227480b6705b3f1cbad9",
+    "dimensions": [
+      524,
+      600
+    ]
+  },
+  {
+    "table": "creepypastas",
+    "id": "8",
+    "asset_path": "assets/capas-reais/creepypastas-8.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Hospitals_corridor.jpg",
+    "caption": "Corredor do Royal Cornhill Hospital, em Aberdeen, fotografado em 2004. Imagem ilustrativa; sem relação documental com a narrativa fictícia The Expressionless.",
+    "credit": "Pamela Adam",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/creepypasta-8-the-expressionless.svg",
+    "previous_status": "publicado",
+    "sha256": "8009a5eb1022547797e3d22919daa4d3b3ebca6f8cc8ea2b95cb9f446a405351",
+    "dimensions": [
+      960,
+      689
+    ]
+  },
+  {
+    "table": "creepypastas",
+    "id": "9",
+    "asset_path": "assets/capas-reais/creepypastas-9.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Street_at_night%2C_black_and_white.jpg",
+    "caption": "Rua à noite em fotografia em preto e branco. Imagem ilustrativa; não é registro do encontro narrado em The Smiling Man.",
+    "credit": "www.Pixel.la Free Stock Photos",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://raw.githubusercontent.com/l7-COLLAB/arquivosombrio/main/imagens/capas/creepypasta-9-the-smiling-man.svg",
+    "previous_status": "rascunho",
+    "sha256": "2d49a229d85a6bb95a7320f1ca68ae6d61e1f6b247795d861fd76c01f6a42c5c",
+    "dimensions": [
+      853,
+      1280
+    ]
+  },
+  {
+    "table": "novels",
+    "id": "29e53684-0d84-4755-8889-2ab029bf77f5",
+    "asset_path": "assets/capas-reais/novels-29e53684-0d84-4755-8889-2ab029bf77f5.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Dracula_cover_600px.jpg",
+    "caption": "Capa histórica de Drácula, de Bram Stoker, preservada no Wikimedia Commons.",
+    "credit": "Bram Stoker / Wikimedia Commons",
+    "license": "Domínio público",
+    "license_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": null,
+    "previous_status": "rascunho",
+    "sha256": "65d66f6929673a855e6414fa63b42385d1ee88ad74b03d280f69de032becdfb9",
+    "dimensions": [
+      600,
+      928
+    ]
+  },
+  {
+    "table": "pericias",
+    "id": "4",
+    "asset_path": "assets/capas-reais/pericias-4.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Police_diver_in_icy_water.jpg",
+    "caption": "Mergulhador policial da North West Police em operação de busca. Fotografia documental de procedimento, sem vínculo atribuído a um caso do acervo.",
+    "credit": "Mark Hemans",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/pericias/capas/1789933044242-11c6g37-a3f52331-d175-43cd-8ff5-bebd65da438f.png",
+    "previous_status": "publicado",
+    "sha256": "b8a6119cadd33f4f1dd0990cbff95f2824b1a033662c87b96febaf1d1c7fe59e",
+    "dimensions": [
+      960,
+      718
+    ]
+  },
+  {
+    "table": "pericias",
+    "id": "6",
+    "asset_path": "assets/capas-reais/pericias-6.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Liquid_chromatograph_with_mass_spectrometer_in_CAFIA_laboratory%2C_Czech_Republic.png",
+    "caption": "Cromatógrafo líquido acoplado a espectrômetro de massas no laboratório CAFIA. Exemplo de instrumentação analítica para identificação de substâncias.",
+    "credit": "Sarka Na kopci",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/pericias/capas/1790294954075-mnis9y6-20f00f9e-a610-44ed-85d0-c502e06bee08.png",
+    "previous_status": "publicado",
+    "sha256": "d038a6a3900e454b7920bc17f24f54144cbb97e952f784d0a1a32e11823c15c9",
+    "dimensions": [
+      960,
+      629
+    ]
+  },
+  {
+    "table": "pericias",
+    "id": "7",
+    "asset_path": "assets/capas-reais/pericias-7.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Isotope_ratio_ms.jpg",
+    "caption": "Espectrômetro de razão isotópica com Gas Bench. Fotografia do equipamento; não registra uma investigação específica.",
+    "credit": "Environmental Protection Agency (EPA)",
+    "license": "Domínio público",
+    "license_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/pericias/capas/1790685955265-v6qlpij-laboratorio_forense_de_isotopos.png",
+    "previous_status": "publicado",
+    "sha256": "9184d6994a07f266729b684293a26d602030eeb51b3379d8babf513b8e883c33",
+    "dimensions": [
+      960,
+      720
+    ]
+  },
+  {
+    "table": "pericias",
+    "id": "8",
+    "asset_path": "assets/capas-reais/pericias-8.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:NHGRI_researcher_uses_a_pipette_to_remove_DNA_from_a_micro_test_tube.jpg",
+    "caption": "Pesquisadora do NHGRI manipulando uma amostra de DNA com pipeta. Imagem de laboratório; não demonstra por si só uma coleta de DNA de toque.",
+    "credit": "Maggie Bartlett / NHGRI",
+    "license": "Domínio público",
+    "license_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/pericias/capas/1791280614476-6kt4r7l-8e52c0f3-91ab-4a0c-8583-332a524daee3.png",
+    "previous_status": "publicado",
+    "sha256": "9f70f969e2ca18bbf3bd6e8d3cf780e0b8f17628dbaa060fb91b8180df4b3e3d",
+    "dimensions": [
+      960,
+      626
+    ]
+  },
+  {
+    "table": "pericias",
+    "id": "9",
+    "asset_path": "assets/capas-reais/pericias-9.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Ufed_mobile_phone_imaging_device_%288661348282%29.jpg",
+    "caption": "Equipamento Cellebrite UFED utilizado em extração de dados de dispositivos móveis. Fotografia de 2013, sem relação com um caso específico.",
+    "credit": "jon crel",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/pericias/capas/1790937544023-j0htlt7-48c8d47e-292c-467e-8f19-762bf9bd4a31.png",
+    "previous_status": "publicado",
+    "sha256": "22abadf76d4999b0680e3478b941f4410e15706f0a3a1a0fe982be5ab23d4d99",
+    "dimensions": [
+      720,
+      1280
+    ]
+  },
+  {
+    "table": "pericias",
+    "id": "10",
+    "asset_path": "assets/capas-reais/pericias-10.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Load_DNA_Gel.jpg",
+    "caption": "Milton English, pesquisador do NHGRI, carregando DNA em um gel. Exemplo documental de trabalho laboratorial; não é um teste de genealogia em execução.",
+    "credit": "Maggie Bartlett / NHGRI",
+    "license": "Domínio público",
+    "license_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/pericias/capas/1791841624128-hokgtgx-b69edc86-527e-4fab-8a51-42d9d6c369ca.png",
+    "previous_status": "publicado",
+    "sha256": "6e3b3a51a3fa1355512725f95df80a3b34eea67df8a28a1e80fec97ed0d44d71",
+    "dimensions": [
+      960,
+      626
+    ]
+  },
+  {
+    "table": "pericias",
+    "id": "15",
+    "asset_path": "assets/capas-reais/pericias-15.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Gen-Test_im_Labor_durch_eine_Biologin.jpg",
+    "caption": "Bióloga manipulando amostras em laboratório genético. Fotografia temática; não é registro de contaminação ou falha laboratorial.",
+    "credit": "Marc-Lautenbacher",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/pericias/capas/1793312337639-y5nb533-download.jfif",
+    "previous_status": "publicado",
+    "sha256": "64c12f5886c2bbb71b8105e5afc8020c7f6cadad7ae0a39b4ed8630d4030feb0",
+    "dimensions": [
+      853,
+      1280
+    ]
+  },
+  {
+    "table": "lendas",
+    "id": "4",
+    "asset_path": "assets/capas-reais/lendas-4.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Henry_Fuseli_%281741%E2%80%931825%29%2C_The_Nightmare%2C_1781.jpg",
+    "caption": "The Nightmare, de Henry Fuseli, 1781. Obra histórica utilizada como referência temática ao pesadelo; não representa uma prova da Pisadeira.",
+    "credit": "Henry Fuseli / fotografia: Tulip Hysteria",
+    "license": "CC BY 2.5",
+    "license_url": "https://creativecommons.org/licenses/by/2.5/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/literario/lendas/1790168252068-3k6czg11gp8.png",
+    "previous_status": "publicado",
+    "sha256": "2938c95addd8d3965a822a38ea9535825af49f38fecead990a1e4bc4bbb47cc9",
+    "dimensions": [
+      960,
+      769
+    ]
+  },
+  {
+    "table": "lendas",
+    "id": "5",
+    "asset_path": "assets/capas-reais/lendas-5.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Surgical_face_mask.jpg",
+    "caption": "Máscara cirúrgica em fotografia. Imagem simbólica relacionada ao elemento da máscara na lenda de Kuchisake-onna; não retrata uma personagem real.",
+    "credit": "NurseTogether",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/literario/lendas/1790340089835-4oqpqlnjyft.jfif",
+    "previous_status": "publicado",
+    "sha256": "86f64d283eedabedb2816cf7082d433b00f09e0bb23fed799429c2e245c2d0f4",
+    "dimensions": [
+      960,
+      607
+    ]
+  },
+  {
+    "table": "lendas",
+    "id": "6",
+    "asset_path": "assets/capas-reais/lendas-6.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Dead_tree.jpg",
+    "caption": "Tronco de árvore morta em fotografia. Imagem simbólica de ambientação; não é registro do personagem folclórico Corpo-Seco.",
+    "credit": "Ed g2s (atribuição registrada no Wikimedia Commons)",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/literario/lendas/1790793104876-9409l5dejs.png",
+    "previous_status": "publicado",
+    "sha256": "28779eaa0ad1ccba5d99e8f9635dc69a113ab5f1c45cdbde5e452e56673d521c",
+    "dimensions": [
+      960,
+      640
+    ]
+  },
+  {
+    "table": "lendas",
+    "id": "7",
+    "asset_path": "assets/capas-reais/lendas-7.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Llanos1.jpg",
+    "caption": "Paisagem dos Llanos venezuelanos, região associada à tradição de El Silbón. Fotografia geográfica, não registro de uma aparição.",
+    "credit": "Haroldarmitage",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/literario/lendas/1791679987419-p7c16n5jl68.png",
+    "previous_status": "publicado",
+    "sha256": "68f43a069fe34d3ac0fb04ec7ed42105eac16773f35a480fdfb72ef3c54ada48",
+    "dimensions": [
+      960,
+      331
+    ]
+  },
+  {
+    "table": "lendas",
+    "id": "8",
+    "asset_path": "assets/capas-reais/lendas-8.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Bathroom_Mirror_%285441761428%29.jpg",
+    "caption": "Espelho de banheiro com uma mensagem escrita no vapor. Fotografia de ambientação, sem relação documental com a lenda da Loira do Banheiro.",
+    "credit": "Sean MacEntee",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/literario/lendas/1792933406302-56dleg7r3k3.png",
+    "previous_status": "publicado",
+    "sha256": "7704fb923dd9ef618e5c0ce33b6c5718db437f6b9bbd372c49e747d52be6fb3a",
+    "dimensions": [
+      960,
+      720
+    ]
+  },
+  {
+    "table": "creepypastas",
+    "id": "1",
+    "asset_path": "assets/capas-reais/creepypastas-1.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Olympus_Digital_Voice_Recorder.jpg",
+    "caption": "Gravador digital Olympus. Fotografia ilustrativa; o objeto não pertence à personagem Helena e não comprova os eventos fictícios.",
+    "credit": "Theo",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/literario/creepypastas/1789757955423-cgsda66stq5.png",
+    "previous_status": "publicado",
+    "sha256": "ae4b6f412c749bcc882a25992e052e250e773fe56d88a5029b00b214909f7609",
+    "dimensions": [
+      960,
+      1280
+    ]
+  },
+  {
+    "table": "creepypastas",
+    "id": "2",
+    "asset_path": "assets/capas-reais/creepypastas-2.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Archive_shelves_%2841054237191%29.jpg",
+    "caption": "Estantes de arquivo em fotografia de Luke McKernan. Imagem ilustrativa, sem relação documental com os acontecimentos da narrativa fictícia.",
+    "credit": "Luke McKernan",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/literario/creepypastas/1789760557335-sobw0dz2hq.png",
+    "previous_status": "publicado",
+    "sha256": "03e5619f7f275b0c841bd4069f4689780452779265a440f8b0fc4cfae6da2147",
+    "dimensions": [
+      960,
+      640
+    ]
+  },
+  {
+    "table": "creepypastas",
+    "id": "4",
+    "asset_path": "assets/capas-reais/creepypastas-4.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Teddy_bear_early_1900s_-_Smithsonian_Museum_of_Natural_History.jpg",
+    "caption": "Urso de brinquedo histórico de acervo museológico. Fotografia ilustrativa da infância; não representa Mr. Widemouth nem um objeto da história.",
+    "credit": "Tim Evanson / Smithsonian Museum",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/literario/creepypastas/1790790377449-9j8e1fhsbvu.png",
+    "previous_status": "publicado",
+    "sha256": "99e226f9fd0b399db8d66614452b4edb988ffb3e23ee26d57b9509c3f15710b1",
+    "dimensions": [
+      777,
+      1000
+    ]
+  },
+  {
+    "table": "creepypastas",
+    "id": "5",
+    "asset_path": "assets/capas-reais/creepypastas-5.webp",
+    "source_url": "https://commons.wikimedia.org/wiki/File:NES-Console-Set.png",
+    "caption": "Console Nintendo Entertainment System e controle, fotografados por Evan-Amos. Imagem do equipamento real; não é um cartucho assombrado ou uma captura da creepypasta.",
+    "credit": "Evan-Amos",
+    "license": "Domínio público",
+    "license_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "changes": "Redimensionamento proporcional e conversão para WebP; sem recorte ou alteração de conteúdo.",
+    "previous_cover": "https://iuhotznurbyujzbyhizf.supabase.co/storage/v1/object/public/imagens/literario/creepypastas/1790769568315-2cxifa4nhzm.png",
+    "previous_status": "publicado",
+    "sha256": "5ebbebbdce4de296d2c56f3df24481593ec025d814b263ca8d5abec116e71908",
+    "dimensions": [
+      960,
+      521
+    ]
+  }
+]

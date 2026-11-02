@@ -243,6 +243,7 @@ article{overflow-wrap:anywhere;margin-top:34px}article p{margin:0 0 1.35em;max-w
 <p><a href="{e(original)}">Consultar versão interativa, evidências e referências →</a></p>
 </main><footer><a href="/pesquisa.html">Pesquisar outros arquivos</a></footer>
 <script src="/js/watchlist-public.js?v=1" defer></script>
+<script src="/js/cover-credits.js?v=20261101" defer></script>
 </body></html>
 """
     return html.encode("utf-8")
