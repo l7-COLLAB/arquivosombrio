@@ -8,14 +8,15 @@ const data = {
   ],
   novel_capitulos: [
     {id:"33333333-3333-4333-8333-333333333333",novel_id:"11111111-1111-4111-8111-111111111111",numero:1,titulo:"A Primeira Página",palavras:2200,status_publicacao:"publicado",publicado_em:null,conteudo:("Era uma noite silenciosa. A biblioteca guardava um segredo. \n\n").repeat(110)},
-    {id:"44444444-4444-4444-8444-444444444444",novel_id:"11111111-1111-4111-8111-111111111111",numero:2,titulo:"A Segunda Página",palavras:1800,status_publicacao:"publicado",publicado_em:null,conteudo:("Uma pista surgiu entre as páginas. \n\n").repeat(100)}
+    {id:"44444444-4444-4444-8444-444444444444",novel_id:"11111111-1111-4111-8111-111111111111",numero:2,titulo:"A Segunda Página",palavras:1800,status_publicacao:"publicado",publicado_em:null,conteudo:("Uma pista surgiu entre as páginas. \n\n").repeat(100)},
+    {id:"55555555-5555-4555-8555-555555555555",novel_id:"22222222-2222-4222-8222-222222222222",numero:1,titulo:"A Casa",palavras:600,status_publicacao:"publicado",publicado_em:null,conteudo:"Uma casa misteriosa."}
   ]
 };
 function supabaseStub(rows){
  window.supabase={createClient(){return {
    auth:{getUser:async()=>({data:{user:JSON.parse(localStorage.getItem("__test_user")||"null")}})},
    from(table){
-     const initial=table==="novel_biblioteca"?JSON.parse(localStorage.getItem("__test_library")||"[]"):(rows[table]||[]).slice();let filters=[];let sorters=[];
+     const initial=table==="novel_biblioteca"?JSON.parse(localStorage.getItem("__test_library")||"[]"):table==="novel_progresso"?JSON.parse(localStorage.getItem("__test_progress")||"[]"):(rows[table]||[]).slice();let filters=[];let sorters=[];
      const apply=()=>{let r=initial.filter(x=>filters.every(f=>f(x)));for(const [field,asc] of sorters.slice().reverse())r.sort((a,b)=>(a[field]===b[field]?0:a[field]>b[field]?1:-1)*(asc?1:-1));return r};
      const q={
        select(){return q},
@@ -24,9 +25,10 @@ function supabaseStub(rows){
        order(k,{ascending=true}={}){sorters.push([k,ascending]);return q},
        limit(){return q},
        insert(row){
-         const existing=JSON.parse(localStorage.getItem("__test_library")||"[]");
+         const key=table==="novel_progresso"?"__test_progress":"__test_library";
+         const existing=JSON.parse(localStorage.getItem(key)||"[]");
          if(existing.some(x=>x.user_id===row.user_id&&x.novel_id===row.novel_id))return Promise.resolve({error:{code:"23505"}});
-         localStorage.setItem("__test_library",JSON.stringify([...existing,row]));
+         localStorage.setItem(key,JSON.stringify([...existing,row]));
          return Promise.resolve({error:null});
        },
        then(resolve,reject){return Promise.resolve({data:apply(),error:null}).then(resolve,reject)},
@@ -171,6 +173,23 @@ try {
    await page.locator("#novel-want .novel-want-item").first().waitFor({timeout:10000});
    assert.match(await page.locator("#novel-want").innerText(),/O Segredo da Casa/);
    assert.match(await page.locator("#novel-import").innerText(),/importado/);
+
+   await page.evaluate(()=>{
+     localStorage.setItem("as-novel-guest-progress-v1-22222222-2222-4222-8222-222222222222",
+       JSON.stringify({chapter:1,scroll:160,percent:38,updated:Date.now()}));
+   });
+   await page.goto(server+"/novels.html",{waitUntil:"domcontentloaded"});
+   await page.locator("#novel-progress-import-confirm").waitFor({timeout:10000});
+   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem("__test_progress")||"[]").length),0);
+   await page.locator("#novel-progress-import-confirm").click();
+   await page.waitForFunction(()=>JSON.parse(localStorage.getItem("__test_progress")||"[]").length===1,{timeout:10000});
+   const importedProgress=await page.evaluate(()=>JSON.parse(localStorage.getItem("__test_progress"))[0]);
+   assert.equal(importedProgress.user_id,"demo-user");
+   assert.equal(importedProgress.scroll_y,160);
+   assert.equal(await page.evaluate(()=>localStorage.getItem("as-novel-guest-progress-v1-22222222-2222-4222-8222-222222222222")),null);
+   await page.locator("#novel-personal [data-personal-filter='quero']").click();
+   assert.match(await page.locator("#novel-personal").innerText(),/O Segredo da Casa/);
+
    if(viewport.width===390){
      const size=await page.evaluate(()=>({documentWidth:document.documentElement.scrollWidth,viewport:innerWidth}));
      assert(size.documentWidth<=size.viewport+8,"Painel de importação excede viewport");
