@@ -7,6 +7,14 @@ const tables:Record<string,string>={dossie:"Casos",garimpo:"casos_diarios",peric
 const uuid=/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i;
 const clip=(value:any,max:number)=>String(value??"").trim().slice(0,max);
 const mp3=(bytes:Uint8Array)=>bytes.length>=3&&((bytes[0]===73&&bytes[1]===68&&bytes[2]===51)||bytes.some((b,i)=>i<8&&b===255&&i+1<bytes.length&&(bytes[i+1]&224)===224));
+const wav=(bytes:Uint8Array)=>bytes.length>=36
+  &&String.fromCharCode(...bytes.subarray(0,4))==="RIFF"
+  &&String.fromCharCode(...bytes.subarray(8,12))==="WAVE"
+  &&String.fromCharCode(...bytes.subarray(12,16))==="fmt "
+  &&bytes[20]===1&&bytes[21]===0
+  &&bytes[22]>=1&&bytes[22]<=2&&bytes[23]===0
+  &&bytes[34]===16&&bytes[35]===0;
+const validAudio=(bytes:Uint8Array,mime:string)=>mime==="audio/wav"?wav(bytes):mime==="audio/mpeg"&&mp3(bytes);
 
 async function signed(aws:AwsClient,url:string,method="GET",ttl=600,headers?:HeadersInit){
   const target=new URL(url); target.searchParams.set("X-Amz-Expires",String(ttl));
@@ -54,7 +62,7 @@ Deno.serve(async(req:Request)=>{
     const now=new Date().toISOString();
     const load=async()=>{
       const [entries,active]=await Promise.all([
-        parts.select("id,sort_order,title,script_notes,audio_path,audio_size,duration_seconds,status,updated_at")
+        parts.select("id,sort_order,title,script_notes,audio_path,audio_mime,audio_size,duration_seconds,status,updated_at")
           .eq("set_id",set.id).order("sort_order",{ascending:true}),
         set.active_release_id?db.from("human_narration_releases").select("id,created_at,source_updated_at,duration_seconds,parts_manifest")
           .eq("id",set.active_release_id).eq("set_id",set.id).maybeSingle():Promise.resolve({data:null,error:null})
@@ -165,19 +173,20 @@ Deno.serve(async(req:Request)=>{
     const objectUrl=(path:string)=>endpoint.replace(/\/$/,"")+"/"+encodeURIComponent(bucket)+"/"+path.split("/").map(encodeURIComponent).join("/");
 
     if(action==="init_upload"){
-      const size=Number(body.size),seconds=Number(body.duration_seconds);
-      if(!Number.isSafeInteger(size)||size<1024||size>31457280)return json({error:"MP3 precisa ter de 1 KB a 30 MB"},400);
-      if(!Number.isFinite(seconds)||seconds<=0||seconds>86400)return json({error:"Duração do MP3 inválida"},400);
+      const size=Number(body.size),seconds=Number(body.duration_seconds),mime=String(body.mime||"audio/mpeg");
+      if(!["audio/mpeg","audio/wav"].includes(mime))return json({error:"Formato permitido: MP3 ou WAV PCM"},415);
+      if(!Number.isSafeInteger(size)||size<1024||size>31457280)return json({error:"Áudio precisa ter de 1 KB a 30 MB"},400);
+      if(!Number.isFinite(seconds)||seconds<=0||seconds>86400)return json({error:"Duração do áudio inválida"},400);
       const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(user.id));
       const subject=Array.from(new Uint8Array(digest)).map(v=>v.toString(16).padStart(2,"0")).join("");
       const limit=await db.rpc("security_consume_rate_limit",{p_scope:"human_audio_upload",p_subject_hash:subject,p_max:40,p_window_seconds:86400,p_block_seconds:900});
       if(limit.error)return json({error:"Limite de segurança indisponível"},503);
       if(limit.data!==true)return json({error:"Limite de envio atingido"},429);
       const uploadId=crypto.randomUUID();
-      const path="human-parts/"+contentType+"/"+contentId+"/"+partId+"/"+uploadId+".mp3";
-      const inserted=await uploads.insert({id:uploadId,part_id:partId,audio_path:path,file_size:size,duration_seconds:seconds,created_by:user.id});
+      const path="human-parts/"+contentType+"/"+contentId+"/"+partId+"/"+uploadId+(mime==="audio/wav"?".wav":".mp3");
+      const inserted=await uploads.insert({id:uploadId,part_id:partId,audio_path:path,audio_mime:mime,file_size:size,duration_seconds:seconds,created_by:user.id});
       if(inserted.error)throw inserted.error;
-      const signedUrl=await signed(aws,objectUrl(path),"PUT",900,{"Content-Type":"audio/mpeg"});
+      const signedUrl=await signed(aws,objectUrl(path),"PUT",900,{"Content-Type":mime});
       return json({upload_id:uploadId,upload_url:signedUrl.url,expires_in:900});
     }
     if(action==="preview"){
@@ -186,7 +195,7 @@ Deno.serve(async(req:Request)=>{
       return json({url:link.url,expires_in:600});
     }
     if(action==="approve_part"){
-      if(!part.audio_path||!part.duration_seconds)return json({error:"Envie um MP3 válido primeiro"},409);
+      if(!part.audio_path||!part.duration_seconds)return json({error:"Envie um áudio válido primeiro"},409);
       const changed=await parts.update({status:"ready",updated_at:now}).eq("id",partId).eq("set_id",set.id);
       if(changed.error)throw changed.error;
       return json(await load());
@@ -204,18 +213,19 @@ Deno.serve(async(req:Request)=>{
       let bytes:Uint8Array;
       try{bytes=Uint8Array.from(atob(encoded),c=>c.charCodeAt(0));}
       catch(_){return json({error:"Arquivo inválido"},400)}
-      if(bytes.length!==Number(upload.file_size)||!mp3(bytes))return json({error:"MP3 ou tamanho inválido"},422);
-      const put=await aws.fetch(objectUrl(upload.audio_path),{method:"PUT",headers:{"Content-Type":"audio/mpeg"},body:new Blob([bytes.buffer as ArrayBuffer],{type:"audio/mpeg"})});
+      if(bytes.length!==Number(upload.file_size)||!validAudio(bytes,upload.audio_mime))return json({error:"Áudio ou tamanho inválido"},422);
+      const put=await aws.fetch(objectUrl(upload.audio_path),{method:"PUT",headers:{"Content-Type":upload.audio_mime},body:new Blob([bytes.buffer as ArrayBuffer],{type:upload.audio_mime})});
       if(!put.ok)return json({error:"Falha ao enviar arquivo ao armazenamento"},502);
       return json({uploaded:true});
     }
     if(action==="finish_upload"){
       const head=await aws.fetch(objectUrl(upload.audio_path),{method:"HEAD"});
-      if(!head.ok)return json({error:"MP3 não recebido"},409);
+      if(!head.ok)return json({error:"Áudio não recebido"},409);
       if(Number(head.headers.get("content-length"))!==Number(upload.file_size))return json({error:"Tamanho divergente"},422);
       const sample=await aws.fetch(objectUrl(upload.audio_path),{method:"GET",headers:{"Range":"bytes=0-31"}});
-      if(!sample.ok||!mp3(new Uint8Array(await sample.arrayBuffer())))return json({error:"Arquivo não reconhecido como MP3"},422);
-      const updatePart=await parts.update({audio_path:upload.audio_path,audio_size:upload.file_size,
+      if(!sample.ok||!validAudio(new Uint8Array(await sample.arrayBuffer()),upload.audio_mime))
+        return json({error:"Arquivo não reconhecido como MP3 ou WAV PCM válido"},422);
+      const updatePart=await parts.update({audio_path:upload.audio_path,audio_mime:upload.audio_mime,audio_size:upload.file_size,
         duration_seconds:upload.duration_seconds,status:"pending",updated_at:now}).eq("id",partId).eq("set_id",set.id);
       if(updatePart.error)throw updatePart.error;
       const updateUpload=await uploads.update({state:"finished"}).eq("id",uploadId).eq("state","uploading");
