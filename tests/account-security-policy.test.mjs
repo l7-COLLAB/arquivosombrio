@@ -30,7 +30,7 @@ test('all public signup implementations verify length, case, digits and symbols'
 
 test('narration checks password before sending CAPTCHA or signup request',()=>{
  const source=read('js/public-narration.js');
- const from=source.indexOf('form="signup"]').addEventListener("submit"');
+ const from=source.indexOf('const password=form.querySelector("[data-signup-password]").value;');
  const end=source.indexOf('overlay._open=open;',from);
  assert.ok(from>=0&&end>from);
  const block=source.slice(from,end);
