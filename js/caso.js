@@ -5789,6 +5789,8 @@ if (
    SINCRONIZAÇÃO PRIVADA DOS TRECHOS SUBLINHADOS
    ========================================================================== */
 
+const filasSincronizacaoDestaques = new Map();
+
 function salvarSublinhadosLeitura(casoId, lista) {
     try {
         localStorage.setItem(chaveSublinhadosLeitura(casoId), JSON.stringify(lista));
@@ -5796,9 +5798,17 @@ function salvarSublinhadosLeitura(casoId, lista) {
         console.warn("Não foi possível salvar os sublinhados localmente.", erro);
     }
 
-    sincronizarDestaquesLeitura(casoId, lista).catch(erro => {
-        console.warn("Não foi possível sincronizar os sublinhados.", erro);
-    });
+    const chave = String(casoId);
+    const anterior = filasSincronizacaoDestaques.get(chave) || Promise.resolve();
+    const atual = anterior.catch(() => {}).then(() => sincronizarDestaquesLeitura(casoId, lista));
+    filasSincronizacaoDestaques.set(chave, atual);
+    atual.then(
+        () => { if (filasSincronizacaoDestaques.get(chave) === atual) filasSincronizacaoDestaques.delete(chave); },
+        erro => {
+            if (filasSincronizacaoDestaques.get(chave) === atual) filasSincronizacaoDestaques.delete(chave);
+            console.warn("Não foi possível sincronizar os sublinhados; cópia local preservada.", erro);
+        }
+    );
 }
 
 
@@ -5815,37 +5825,56 @@ function obterTituloDossieAtual() {
 
 async function sincronizarDestaquesLeitura(casoId, lista) {
     const supabase = await obterClienteSupabaseCaso();
-    const { data: sessaoData } = await supabase.auth.getSession();
-    const usuario = sessaoData?.session?.user;
+    const { data: usuarioData, error: erroUsuario } = await supabase.auth.getUser();
+    if (erroUsuario) throw erroUsuario;
+    const usuario = usuarioData?.user;
     if (!usuario) return;
 
-    const texto = obterTextoBaseLeitura();
-    const baseUrl = `caso.html?id=${encodeURIComponent(casoId)}`;
-
-    const { error: deleteError } = await supabase
+    const { data: atuais, error: leituraErro } = await supabase
         .from("user_highlights")
-        .delete()
+        .select("id,start_offset,end_offset")
         .eq("user_id", usuario.id)
         .eq("case_id", String(casoId));
+    if (leituraErro) throw leituraErro;
 
-    if (deleteError) throw deleteError;
+    const texto = obterTextoBaseLeitura();
+    const baseUrl = "caso.html?id=" + encodeURIComponent(casoId);
+    const faixas = Array.isArray(lista) ? lista.filter(item =>
+        Number.isInteger(item?.inicio) && Number.isInteger(item?.fim) &&
+        item.inicio >= 0 && item.fim > item.inicio
+    ) : [];
+    const desejados = new Map(faixas.map(item => [item.inicio + ":" + item.fim, item]));
+    const existentes = new Map((atuais || []).map(item => [
+        item.start_offset + ":" + item.end_offset, item
+    ]));
 
-    if (!Array.isArray(lista) || !lista.length) return;
+    // Inserir antes de apagar: se a gravação falhar, os trechos anteriores permanecem.
+    const novos = Array.from(desejados.entries())
+        .filter(([chave]) => !existentes.has(chave))
+        .map(([, item]) => ({
+            user_id: usuario.id,
+            case_id: String(casoId),
+            case_title: obterTituloDossieAtual(),
+            excerpt: texto.slice(item.inicio, item.fim).trim().slice(0, 500) || "Trecho sublinhado",
+            start_offset: item.inicio,
+            end_offset: item.fim,
+            target_url: baseUrl + "&highlight=" + item.inicio + "-" + item.fim
+        }));
+    if (novos.length) {
+        const { error: insertError } = await supabase.from("user_highlights").insert(novos);
+        if (insertError) throw insertError;
+    }
 
-    const registros = lista.map(item => ({
-        user_id: usuario.id,
-        case_id: String(casoId),
-        case_title: obterTituloDossieAtual(),
-        excerpt: texto.slice(item.inicio, item.fim).trim().slice(0, 500) || "Trecho sublinhado",
-        start_offset: item.inicio,
-        end_offset: item.fim,
-        target_url: `${baseUrl}&highlight=${item.inicio}-${item.fim}`
-    }));
-
-    const { error: insertError } = await supabase.from("user_highlights").insert(registros);
-    if (insertError) throw insertError;
+    const obsoletos = (atuais || [])
+        .filter(item => !desejados.has(item.start_offset + ":" + item.end_offset))
+        .map(item => item.id);
+    if (obsoletos.length) {
+        const { error: deleteError } = await supabase.from("user_highlights")
+            .delete().eq("user_id", usuario.id).eq("case_id", String(casoId))
+            .in("id", obsoletos);
+        if (deleteError) throw deleteError;
+    }
 }
-
 
 async function carregarDestaquesPrivadosDoCaso(casoId) {
     try {
