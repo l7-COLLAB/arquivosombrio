@@ -1,2 +1,111 @@
 "use strict";
-(async()=>{const host=document.querySelector("#favoritos");if(!host||!window.supabase)return;const panel=document.createElement("section");panel.className="novel-library-panel";panel.innerHTML='<h3>Minhas Leituras</h3><p>Novels que você acompanha e seu ponto atual de leitura.</p><div id="novel-library-list" class="novel-library-list">Carregando...</div>';host.parentNode.insertBefore(panel,host);const list=panel.querySelector("#novel-library-list");try{const client=window.supabase.createClient("https://iuhotznurbyujzbyhizf.supabase.co","sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj");const {data:{user}}=await client.auth.getUser();if(!user){list.innerHTML='<small>Entre na sua conta para sincronizar suas leituras.</small>';return}const {data:library}=await client.from("novel_biblioteca").select("novel_id,estado,novels(slug,titulo,imagem_capa)").eq("user_id",user.id);const {data:progress}=await client.from("novel_progresso").select("novel_id,percentual,novel_capitulos(numero,titulo)").eq("user_id",user.id);const pm=new Map((progress||[]).map(p=>[p.novel_id,p]));if(!library?.length){list.innerHTML='<small>Você ainda não adicionou nenhuma novel à sua biblioteca.</small>';return}list.innerHTML=library.map(x=>{const n=x.novels,p=pm.get(x.novel_id),cap=p?.novel_capitulos;const href="novel.html?obra="+encodeURIComponent(n.slug)+(cap?"&capitulo="+cap.numero:"");return '<a class="novel-library-item" href="'+href+'>'+(n.imagem_capa?'<img class="novel-library-thumb" src="'+n.imagem_capa+'" alt="">':'<span class="novel-library-thumb"></span>')+'<span class="novel-library-meta"><strong>'+n.titulo+'</strong><small>'+(cap?"Capítulo "+cap.numero+" · "+Math.round(Number(p.percentual||0))+"%":"Na biblioteca")+'</small></span></a>'}).join("")}catch(e){console.error(e);list.innerHTML='<small>Não foi possível carregar suas leituras agora.</small>'}})();
+
+/* Minha biblioteca de novels — usa o mesmo cliente autenticado de Meu Arquivo. */
+(async function iniciarLeiturasMeuArquivo() {
+    const favoritos = document.getElementById("favoritos");
+    if (!favoritos || typeof obterSupabaseMeuArquivo !== "function") return;
+
+    const painel = document.createElement("section");
+    painel.className = "novel-library-panel";
+    painel.setAttribute("aria-labelledby", "novel-library-title");
+
+    const titulo = document.createElement("h3");
+    titulo.id = "novel-library-title";
+    titulo.textContent = "Minhas Leituras";
+    const descricao = document.createElement("p");
+    descricao.textContent = "Novels salvas e o ponto em que você parou.";
+    const lista = document.createElement("div");
+    lista.id = "novel-library-list";
+    lista.className = "novel-library-list";
+    lista.setAttribute("aria-live", "polite");
+    lista.textContent = "Carregando leituras…";
+    painel.append(titulo, descricao, lista);
+    favoritos.parentNode.insertBefore(painel, favoritos);
+
+    function mensagem(texto, erro = false) {
+        lista.replaceChildren();
+        const textoVazio = document.createElement("p");
+        textoVazio.className = erro ? "novel-library-error" : "novel-library-empty";
+        textoVazio.textContent = texto;
+        lista.appendChild(textoVazio);
+    }
+
+    try {
+        const cliente = await obterSupabaseMeuArquivo();
+        const { data: usuarioData, error: erroUsuario } = await cliente.auth.getUser();
+        if (erroUsuario) throw erroUsuario;
+        const usuario = usuarioData?.user;
+        if (!usuario) {
+            mensagem("Entre em sua conta para sincronizar suas leituras.");
+            return;
+        }
+
+        const [bibliotecaResposta, progressoResposta] = await Promise.all([
+            cliente.from("novel_biblioteca")
+                .select("novel_id,estado,novels(slug,titulo,imagem_capa,status_publicacao)")
+                .eq("user_id", usuario.id),
+            cliente.from("novel_progresso")
+                .select("novel_id,percentual,novel_capitulos(numero,titulo)")
+                .eq("user_id", usuario.id)
+        ]);
+        if (bibliotecaResposta.error) throw bibliotecaResposta.error;
+        if (progressoResposta.error) throw progressoResposta.error;
+
+        const progressoPorLivro = new Map((progressoResposta.data || []).map(registro => [registro.novel_id, registro]));
+        const livros = (bibliotecaResposta.data || []).filter(registro => {
+            const obra = Array.isArray(registro.novels) ? registro.novels[0] : registro.novels;
+            return obra && obra.slug && obra.status_publicacao === "publicado";
+        });
+        if (!livros.length) {
+            mensagem("Você ainda não possui novels publicadas salvas na sua biblioteca.");
+            return;
+        }
+
+        const fragmento = document.createDocumentFragment();
+        for (const registro of livros) {
+            const obra = Array.isArray(registro.novels) ? registro.novels[0] : registro.novels;
+            const progresso = progressoPorLivro.get(registro.novel_id);
+            const capitulo = Array.isArray(progresso?.novel_capitulos)
+                ? progresso.novel_capitulos[0]
+                : progresso?.novel_capitulos;
+            const numero = Number(capitulo?.numero);
+            const numeroValido = Number.isInteger(numero) && numero > 0;
+            const link = document.createElement("a");
+            link.className = "novel-library-item";
+            link.href = "novel.html?obra=" + encodeURIComponent(obra.slug) +
+                (numeroValido ? "&capitulo=" + encodeURIComponent(numero) : "");
+
+            const capa = document.createElement("span");
+            capa.className = "novel-library-thumb";
+            try {
+                const origem = new URL(String(obra.imagem_capa || ""), location.href);
+                if (["http:", "https:"].includes(origem.protocol) && obra.imagem_capa) {
+                    const imagem = document.createElement("img");
+                    imagem.src = origem.href;
+                    imagem.alt = "";
+                    imagem.loading = "lazy";
+                    capa.appendChild(imagem);
+                }
+            } catch (_) {
+                // Capa inválida: mostrar o marcador visual neutro.
+            }
+
+            const meta = document.createElement("span");
+            meta.className = "novel-library-meta";
+            const nome = document.createElement("strong");
+            nome.textContent = String(obra.titulo || "Novel");
+            const subtitulo = document.createElement("small");
+            const percentual = Math.max(0, Math.min(100, Math.round(Number(progresso?.percentual) || 0)));
+            subtitulo.textContent = numeroValido
+                ? "Capítulo " + numero + " · " + percentual + "%"
+                : registro.estado === "concluido" ? "Leitura concluída" : "Na biblioteca";
+            meta.append(nome, subtitulo);
+            link.append(capa, meta);
+            fragmento.appendChild(link);
+        }
+        lista.replaceChildren(fragmento);
+    } catch (erro) {
+        console.error("Falha ao carregar Minhas Leituras:", erro);
+        mensagem("Não foi possível carregar suas leituras. Recarregue a página para tentar novamente.", true);
+    }
+})();
