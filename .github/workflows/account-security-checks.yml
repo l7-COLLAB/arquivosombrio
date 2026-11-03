@@ -1,0 +1,34 @@
+name: Segurança do cadastro e das contas
+on:
+  pull_request:
+    paths:
+      - "js/script.js"
+      - "js/filtros.js"
+      - "js/public-narration.js"
+      - "js/redefinir-senha.js"
+      - "tests/signup-reliability.mjs"
+      - "tests/account-security-policy.test.mjs"
+      - ".github/workflows/account-security-checks.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  account-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+      - name: Instalar dependências de teste fixadas no lockfile
+        run: npm ci --prefix tests --ignore-scripts
+      - name: Verificar sintaxe dos formulários de cadastro
+        run: |
+          node --check js/script.js
+          node --check js/filtros.js
+          node --check js/public-narration.js
+      - name: Testar senha forte e fluxos de cadastro
+        run: node --test tests/account-security-policy.test.mjs tests/signup-reliability.mjs
