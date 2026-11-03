@@ -72,7 +72,7 @@ test("public registry renders 50 source-credit entries and warns about limitatio
   const inPage = (creditsPage.match(/<article class="credit"/g) || []).length;
   assert.equal(inPage, 50);
   for (const record of verified) {
-    assert.ok(creditsPage.includes('id="' + key(record) + '"'), "Missing public credit: " + key(record));
+    assert.ok(creditsPage.includes('id="' + record.editoria + '-' + record.id + '"'), "Missing public credit: " + key(record));
   }
   assert.ok(creditsPage.includes("Relação parcial de 50 capas"));
   assert.ok(creditsPage.includes("não é um certificado"));
