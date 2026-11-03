@@ -1,0 +1,31 @@
+name: Validação de versões legais e consentimento
+
+on:
+  pull_request:
+    paths:
+      - "privacidade.html"
+      - "termos.html"
+      - "fontes-direitos.html"
+      - "js/script.js"
+      - "js/filtros.js"
+      - "js/public-narration.js"
+      - "migracoes/2026-11-03-registro-aceite-versoes-legais.sql"
+      - "css/legal-accessibility-20261103.css"
+      - "tests/legal-consent-consistency.test.mjs"
+      - ".github/workflows/legal-consent-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verificar versões, rotas e privacidade
+        run: node --test tests/legal-consent-consistency.test.mjs
