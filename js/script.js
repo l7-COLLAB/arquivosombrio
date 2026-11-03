@@ -6441,10 +6441,10 @@ async function cadastrarForumComEmail() {
               <input name="email" type="email" maxlength="254" autocomplete="email" required placeholder="voce@exemplo.com">
             </label>
             <label class="as-field">Senha
-              <input name="password" type="password" minlength="6" maxlength="128" autocomplete="new-password" required placeholder="Pelo menos 6 caracteres">
+              <input name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required placeholder="12+ caracteres, maiúscula, minúscula, número e símbolo">
             </label>
             <label class="as-field">Confirmar senha
-              <input name="password_confirm" type="password" minlength="6" maxlength="128" autocomplete="new-password" required>
+              <input name="password_confirm" type="password" minlength="12" maxlength="128" autocomplete="new-password" required>
             </label>
             <label class="as-check"><input type="checkbox" name="adult" required> <span>Confirmo que tenho 18 anos ou mais.</span></label>
             <label class="as-check"><input type="checkbox" name="legal" required>
@@ -6469,7 +6469,8 @@ async function cadastrarForumComEmail() {
             const senha = form.elements.namedItem("password").value;
             const confirmacao = form.elements.namedItem("password_confirm").value;
             const error = form.querySelector("[data-as-error]");
-            if (!nome || !email || senha.length<6) {error.textContent="Preencha todos os campos obrigatórios.";return;}
+            if (!nome || !email) {error.textContent="Preencha todos os campos obrigatórios.";return;}
+            if (!(senha.length >= 12 && /[a-z]/.test(senha) && /[A-Z]/.test(senha) && /\d/.test(senha) && /[^A-Za-z0-9]/.test(senha))) {error.textContent="Use pelo menos 12 caracteres, incluindo maiúscula, minúscula, número e símbolo.";return;}
             if (senha!==confirmacao) {error.textContent="As senhas não coincidem.";return;}
             if (!form.elements.namedItem("adult").checked || !form.elements.namedItem("legal").checked) {error.textContent="Confirme a idade e a leitura dos documentos.";return;}
             finish({nome,email,senha});
