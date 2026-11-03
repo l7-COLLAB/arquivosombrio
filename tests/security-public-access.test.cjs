@@ -66,3 +66,36 @@ test('rate-limited contributions do not write and metric metadata is allowlisted
 test('Lite refresh job reapplies the hardening and user-controlled names use textContent',()=>{
   const lite=read('lite-preview/lite.js');assert.ok(!lite.includes('innerHTML=authName(user)'));assert.ok(lite.includes('session.access_token'));assert.ok(read('.github/workflows/lite-publish-preview.yml').includes('scripts/harden-lite.py lite-preview/lite.js'));
 });
+
+
+test('SECURITY RLS: publicação tem barreira RESTRICTIVE, além das políticas permissivas',()=>{
+  const sql=read('supabase/migrations/20261103153000_publication_rls_restrictive_guards.sql');
+  const tables=['"Casos"','casos_diarios','pericias','lendas','creepypastas','novels',
+    'novel_capitulos','novel_volumes','novel_capitulo_audios','published_campaigns'];
+  const policies=[...sql.matchAll(/create policy security_publication_gate_20261103\s+on public\.("[^"]+"|[a-z_]+)\s+as restrictive for select to anon, authenticated\s+using\s*\(/gi)];
+  assert.deepEqual(policies.map(m=>m[1]),tables,'Cada editora e seus anexos têm gate independente');
+  assert.equal((sql.match(/public\.is_arquivo_sombrio_admin\(\)/g)||[]).length,tables.length);
+  const chapters=sql.split('on public.novel_capitulos as restrictive')[1].split('create policy')[0];
+  assert.match(chapters,/agendado_para\s+is null or agendado_para <= now\(\)/);
+  assert.match(chapters,/n\.status_publicacao\s*=\s*'publicado'/);
+  assert.match(chapters,/n\.publicado_em\s+is null or n\.publicado_em <= now\(\)/);
+  const campaign=sql.split('on public.published_campaigns as restrictive')[1];
+  assert.match(campaign,/publish_at <= now\(\)/);
+  assert.match(campaign,/heroImage.*not like 'staging:%'/);
+  assert.match(campaign,/cardImage.*not like 'staging:%'/);
+  assert.doesNotMatch(sql,/\bgrant\s+(select|all)\s+on/i);
+  assert.doesNotMatch(sql,/\bdrop\s+table\b|\btruncate\b|\bdelete\s+from\b/i);
+});
+
+test('URLs de áudio continuam exigindo login antes de qualquer assinatura',async()=>{
+  for(const name of ['public-narration','novel-narration']){
+    for(const bearer of [undefined,'invalid-token']){
+      const h=harness(name),headers={'Content-Type':'application/json'};
+      if(bearer)headers.Authorization='Bearer '+bearer;
+      const body=name==='public-narration'?{type:'dossie',id:'4',action:'chunk',index:0}:{capitulo_id:'00000000-0000-0000-0000-000000000004',action:'url'};
+      const response=await h.handler(new Request('https://project.supabase.co/functions/v1/'+name,{method:'POST',headers,body:JSON.stringify(body)}));
+      assert.equal(response.status,401,name+' deve negar token '+(bearer?'inválido':'ausente'));
+      assert.equal(h.signs.length,0,name+' não pode assinar objetos sem sessão');
+    }
+  }
+});
