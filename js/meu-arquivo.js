@@ -5626,75 +5626,94 @@ function atualizarEstadoSalvamentoMural(estado) {
 
 async function salvarMuralAberto(mostrarConfirmacao = false) {
     const mural = meuArquivoState.muralAberto;
-    if (!mural || meuArquivoState.muralSalvando) return;
+    if (!mural) return true;
 
     window.clearTimeout(meuArquivoState.muralSalvamentoTimer);
-    meuArquivoState.muralSalvando = true;
-    atualizarEstadoSalvamentoMural("salvando");
+    if (meuArquivoState.muralSalvamentoPromise) {
+        return meuArquivoState.muralSalvamentoPromise;
+    }
 
+    const operacao = (async () => {
+        meuArquivoState.muralSalvando = true;
+        atualizarEstadoSalvamentoMural("salvando");
+        try {
+            const supabase = await obterSupabaseMeuArquivo();
+            const usuarioId = meuArquivoState.usuario?.id;
+            if (!usuarioId) throw new Error("Sessão expirada.");
+
+            // Um envio em andamento deve preservar as novas edições.
+            for (let tentativa = 0; tentativa < 20; tentativa++) {
+                const snapshot = JSON.stringify(mural.board_data);
+                const { data, error } = await supabase
+                    .from("investigation_boards")
+                    .update({ board_data: JSON.parse(snapshot), updated_at: new Date().toISOString() })
+                    .eq("id", mural.id)
+                    .eq("user_id", usuarioId)
+                    .select("id, updated_at")
+                    .single();
+                if (error || !data) throw error || new Error("Mural não encontrado.");
+
+                mural.updated_at = data.updated_at;
+                if (JSON.stringify(mural.board_data) === snapshot) {
+                    try {
+                        localStorage.setItem(obterChaveRascunhoMural(mural.id),
+                            JSON.stringify({ saved_at: new Date(data.updated_at).getTime(), data: mural.board_data })
+                        );
+                    } catch (erroLocal) {
+                        console.warn("Mural salvo na nuvem, mas não na cópia local.", erroLocal);
+                    }
+                    atualizarEstadoSalvamentoMural("salvo");
+                    return true;
+                }
+                atualizarEstadoSalvamentoMural("alterado");
+            }
+            throw new Error("Novas alterações impedem a conclusão do salvamento.");
+        } catch (erro) {
+            console.error("Erro ao salvar mural:", erro);
+            atualizarEstadoSalvamentoMural("erro");
+            return false;
+        } finally {
+            meuArquivoState.muralSalvando = false;
+        }
+    })();
+
+    meuArquivoState.muralSalvamentoPromise = operacao;
     try {
-        const supabase = await obterSupabaseMeuArquivo();
-        const agora = new Date().toISOString();
-        const { data, error } = await supabase
-            .from("investigation_boards")
-            .update({ board_data: mural.board_data, updated_at: agora })
-            .eq("id", mural.id)
-            .eq("user_id", meuArquivoState.usuario.id)
-            .select("id, board_data, updated_at")
-            .single();
-
-        if (error) throw error;
-        mural.board_data = data.board_data;
-        mural.updated_at = data.updated_at;
-        localStorage.setItem(
-            obterChaveRascunhoMural(mural.id),
-            JSON.stringify({ saved_at: new Date(data.updated_at).getTime(), data: data.board_data })
-        );
-        atualizarEstadoSalvamentoMural("salvo");
-        if (mostrarConfirmacao) window.setTimeout(() => atualizarEstadoSalvamentoMural("salvo"), 600);
-    } catch (erro) {
-        console.error("Erro ao salvar mural:", erro);
-        atualizarEstadoSalvamentoMural("erro");
+        return await operacao;
     } finally {
-        meuArquivoState.muralSalvando = false;
+        if (meuArquivoState.muralSalvamentoPromise === operacao) {
+            meuArquivoState.muralSalvamentoPromise = null;
+        }
     }
 }
-
 
 /* =========================================================
    ABRIR REGISTRO GENÉRICO
    ========================================================= */
 
-function abrirRegistroArquivo(
-    itemId
-) {
-
-    if (!itemId) {
+function abrirRegistroArquivo(itemId) {
+    if (!itemId) return;
+    const registro = meuArquivoState.dossies.find(item => String(item.id) === String(itemId));
+    if (!registro) {
+        abrirModalArquivo("Registro indisponível",
+            criarEstadoVazio("Este registro não foi localizado na sua coleção pessoal.", "fa-folder-open"));
         return;
     }
 
-
-    abrirModalArquivo(
-        "Registro arquivado",
-        `
-            <div class="arquivo-form">
-
-                <div class="arquivo-message">
-
-                    <i class="fa-solid fa-folder-open"></i>
-
-                    <span>
-                        O registro está vinculado ao seu arquivo pessoal.
-                        A abertura direta do dossiê será conectada
-                        quando integrarmos esta coleção aos casos.
-                    </span>
-
-                </div>
-
-            </div>
-        `
-    );
-
+    const destinoInformado = String(registro.target_url || "").trim();
+    const destino = destinoInformado ? normalizarLinkMeuArquivo(destinoInformado) : "";
+    const idCaso = String(registro.case_id || "").trim();
+    const caminho = destino && destino !== "#"
+        ? destino
+        : idCaso ? "caso.html?id=" + encodeURIComponent(idCaso) : "";
+    if (caminho) {
+        window.location.assign(caminho);
+        return;
+    }
+    abrirModalArquivo("Registro indisponível", criarEstadoVazio(
+        "Este dossiê não possui um endereço de leitura válido. O registro permanece salvo em seu arquivo.",
+        "fa-folder-open"
+    ));
 }
 
 /* =========================================================
