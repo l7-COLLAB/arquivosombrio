@@ -54,6 +54,10 @@
         const titulo = texto(configuracao.titulo, 110);
         const descricao = texto(configuracao.descricao || configuracao.resumo, 160);
         const imagem = configuracao.imagem || `${SITE_URL}icon-512.png`;
+        // Redes sociais não dão suporte confiável ao SVG como miniatura Open Graph.
+        const imagemSocial = /\.svg(?:[?#]|$)/i.test(imagem)
+            ? `${SITE_URL}imagem-compartilhamento.jpg`
+            : imagem;
         const caminho = String(configuracao.caminho || location.pathname.split("/").pop() || "");
         const id = configuracao.id == null ? "" : String(configuracao.id);
         const url = new URL(caminho, SITE_URL);
@@ -78,11 +82,11 @@
         definirMeta('meta[property="og:title"]', "content", tituloCompleto);
         definirMeta('meta[property="og:description"]', "content", descricao);
         definirMeta('meta[property="og:url"]', "content", canonical);
-        definirMeta('meta[property="og:image"]', "content", imagem);
+        definirMeta('meta[property="og:image"]', "content", imagemSocial);
         definirMeta('meta[name="twitter:card"]', "content", "summary_large_image");
         definirMeta('meta[name="twitter:title"]', "content", tituloCompleto);
         definirMeta('meta[name="twitter:description"]', "content", descricao);
-        definirMeta('meta[name="twitter:image"]', "content", imagem);
+        definirMeta('meta[name="twitter:image"]', "content", imagemSocial);
 
         if (!indexavel) {
             // Um rascunho acessado pelo administrador não deve emitir Article JSON-LD.
