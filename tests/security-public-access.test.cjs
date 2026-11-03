@@ -66,3 +66,31 @@ test('rate-limited contributions do not write and metric metadata is allowlisted
 test('Lite refresh job reapplies the hardening and user-controlled names use textContent',()=>{
   const lite=read('lite-preview/lite.js');assert.ok(!lite.includes('innerHTML=authName(user)'));assert.ok(lite.includes('session.access_token'));assert.ok(read('.github/workflows/lite-publish-preview.yml').includes('scripts/harden-lite.py lite-preview/lite.js'));
 });
+
+
+test('public-narration does not leak internal exception messages to unauthenticated clients',async()=>{
+  const h=harness('public-narration');
+  const response=await h.handler(new Request('https://project.supabase.co/functions/v1/public-narration',{
+    method:'POST',headers:{'Content-Type':'application/json'},body:'{invalid-json'
+  }));
+  assert.equal(response.status,500);
+  assert.deepEqual(await response.json(),{error:'Serviço de narração temporariamente indisponível.'});
+  assert.equal(h.signs.length,0);
+});
+
+test('public-narration and novel-narration reject missing and expired credentials before signing',async()=>{
+  for(const name of ['public-narration','novel-narration']){
+    for(const token of [null,'invalid-token']){
+      const h=harness(name),headers={'Content-Type':'application/json'};
+      if(token)headers.Authorization='Bearer '+token;
+      const body=name==='public-narration'
+        ?{type:'dossie',id:'4',action:'chunk',index:0}
+        :{capitulo_id:'00000000-0000-0000-0000-000000000004',action:'url'};
+      const response=await h.handler(new Request('https://project.supabase.co/functions/v1/'+name,{
+        method:'POST',headers,body:JSON.stringify(body)
+      }));
+      assert.equal(response.status,401,name+' deve negar sessão ausente ou inválida');
+      assert.equal(h.signs.length,0,name+' não deve emitir URL assinada');
+    }
+  }
+});
