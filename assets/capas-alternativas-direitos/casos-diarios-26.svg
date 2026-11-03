@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
+<title id="title">ROBERT BERDELLA — capa editorial original</title>
+<desc id="desc">Arte vetorial de arquivo documental com símbolo abstrato. Ilustração, não fotografia ou representação de pessoa real.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0.8" y2="1"><stop stop-color="#28303a"/><stop offset="1" stop-color="#0b0f14"/></linearGradient><pattern id="grid" width="58" height="58" patternUnits="userSpaceOnUse"><path d="M58 0H0V58" fill="none" stroke="#d5bea2" stroke-width=".8" opacity=".1"/></pattern></defs>
+<rect width="900" height="1200" fill="url(#bg)"/><rect width="900" height="1200" fill="url(#grid)"/><rect x="41" y="39" width="818" height="1123" fill="none" stroke="#a6987e" stroke-width="2"/>
+<text x="76" y="125" font-family="Georgia,serif" font-size="39" font-weight="bold" letter-spacing="5" fill="#f2e7d7">ARQUIVO SOMBRIO</text><path d="M78 158H823" stroke="#b1a28c" stroke-width="2"/>
+<text x="78" y="201" font-family="Arial,sans-serif" font-size="20" letter-spacing="4" fill="#d3bdaa">GARIMPO SOMBRIO</text>
+<path d="M309 211H503L596 301V556H309Z" fill="#28313a" stroke="#c1ad91" stroke-width="9"/><path d="M502 211V302H597M345 364H559M345 407H557M345 452H520M345 496H542" stroke="#b4a996" stroke-width="7" fill="none" opacity=".8"/><circle cx="550" cy="498" r="42" fill="#862f30" opacity=".5"/>
+<rect x="0" y="650" width="900" height="390" fill="#0a0e12" opacity=".96"/><path d="M78 697H190" stroke="#a4574c" stroke-width="8"/>
+<text x="74" y="800" font-family="Georgia,serif" font-size="88" font-weight="bold" fill="#f0e6d8">ROBERT</text>
+<text x="74" y="918" font-family="Georgia,serif" font-size="88" font-weight="bold" fill="#f0e6d8">BERDELLA</text>
+<path d="M76 946H823" stroke="#b16555" stroke-width="3"/>
+<text x="77" y="1003" font-family="Arial,sans-serif" font-size="22" letter-spacing="2.2" fill="#c9bda9">INVESTIGAÇÃO · MISSOURI</text>
+<text x="75" y="1095" font-family="Arial,sans-serif" font-size="18" letter-spacing="1.8" fill="#c2b3a0">ILUSTRAÇÃO EDITORIAL ORIGINAL</text>
+<text x="75" y="1127" font-family="Arial,sans-serif" font-size="15" letter-spacing="1.5" fill="#a99988">NÃO É FOTOGRAFIA OU EVIDÊNCIA</text>
+</svg>

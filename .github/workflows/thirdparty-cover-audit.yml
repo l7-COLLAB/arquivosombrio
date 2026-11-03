@@ -1,0 +1,25 @@
+name: Validar alternativas de capas e proveniência
+on:
+  pull_request:
+    paths:
+      - "assets/capas-alternativas-direitos/**"
+      - "data/capas-alternativas-direitos-20261103.json"
+      - "docs/triagem-21-capas-terceiros-20261103.csv"
+      - "docs/rastreio-storage-capas-20261103.csv"
+      - "previews/capas-alternativas-direitos-20261103.html"
+      - "tests/thirdparty-cover-remediation.test.mjs"
+      - ".github/workflows/thirdparty-cover-audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Conferir as 21 capas vetoriais e 38 metadados anonimizados
+        run: node --test tests/thirdparty-cover-remediation.test.mjs
