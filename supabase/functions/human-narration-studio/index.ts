@@ -222,7 +222,7 @@ Deno.serve(async(req:Request)=>{
       const head=await aws.fetch(objectUrl(upload.audio_path),{method:"HEAD"});
       if(!head.ok)return json({error:"Áudio não recebido"},409);
       if(Number(head.headers.get("content-length"))!==Number(upload.file_size))return json({error:"Tamanho divergente"},422);
-      const sample=await aws.fetch(objectUrl(upload.audio_path),{method:"GET",headers:{"Range":"bytes=0-31"}});
+      const sample=await aws.fetch(objectUrl(upload.audio_path),{method:"GET",headers:{"Range":"bytes=0-63"}});
       if(!sample.ok||!validAudio(new Uint8Array(await sample.arrayBuffer()),upload.audio_mime))
         return json({error:"Arquivo não reconhecido como MP3 ou WAV PCM válido"},422);
       const updatePart=await parts.update({audio_path:upload.audio_path,audio_mime:upload.audio_mime,audio_rights_note:upload.audio_rights_note,audio_size:upload.file_size,
