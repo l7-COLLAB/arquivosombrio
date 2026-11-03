@@ -631,201 +631,97 @@ function preencherAvatarUsuario(
    ========================================================= */
 
 async function carregarDadosMeuArquivo() {
-
-    const supabase =
-    await obterSupabaseMeuArquivo();
-
-
-    const usuario =
-        meuArquivoState.usuario;
-
-
-    if (
-        !supabase ||
-        !usuario
-    ) {
-
-        return;
-
-    }
-
-
+    const supabase = await obterSupabaseMeuArquivo();
+    const usuario = meuArquivoState.usuario;
+    if (!supabase || !usuario) return;
     ativarEstadoCarregamento();
 
-
     try {
-
-        await Promise.allSettled([
-
-            carregarDossiesUsuario(),
-
-            carregarFavoritosUsuario(),
-
-            carregarDestaquesLeitura(),
-
-            carregarCasosObservacao(),
-
-            carregarMarcadoresUsuario(),
-
-            carregarHistoricoUsuario(),
-
-            carregarMuraisUsuario(),
-
-            carregarAnotacoesUsuario(),
-
-            carregarTeoriasUsuario(),
-
-            carregarEvidenciasUsuario(),
-
-            carregarLinhasDoTempoUsuario(),
-
-            carregarAtividadeComunidade(),
-
-            carregarAlertasUsuario(),
-
-            carregarPreferenciasUsuario(),
-
-            carregarCasosEnviadosUsuario()
-
-        ]);
-
-
+        const secoes = [
+            ["Dossiês", carregarDossiesUsuario()],
+            ["Favoritos", carregarFavoritosUsuario()],
+            ["Trechos sublinhados", carregarDestaquesLeitura()],
+            ["Observação", carregarCasosObservacao()],
+            ["Marcadores", carregarMarcadoresUsuario()],
+            ["Histórico", carregarHistoricoUsuario()],
+            ["Murais", carregarMuraisUsuario()],
+            ["Anotações", carregarAnotacoesUsuario()],
+            ["Teorias", carregarTeoriasUsuario()],
+            ["Evidências", carregarEvidenciasUsuario()],
+            ["Linhas do tempo", carregarLinhasDoTempoUsuario()],
+            ["Comunidade", carregarAtividadeComunidade()],
+            ["Notificações", carregarAlertasUsuario()],
+            ["Preferências", carregarPreferenciasUsuario()],
+            ["Casos enviados", carregarCasosEnviadosUsuario()]
+        ];
+        const resultados = await Promise.allSettled(secoes.map(item => item[1]));
+        const falhas = resultados
+            .map((resultado, indice) => resultado.status === "rejected" ? secoes[indice][0] : null)
+            .filter(Boolean);
+        mostrarFalhasCarregamentoMeuArquivo(falhas);
         atualizarResumoMeuArquivo();
-
-    }
-    catch (erro) {
-
-        console.error(
-            "Erro ao carregar dados do Meu Arquivo:",
-            erro
-        );
-
-    }
-    finally {
-
+    } catch (erro) {
+        console.error("Erro ao carregar dados do Meu Arquivo:", erro);
+        mostrarFalhasCarregamentoMeuArquivo(["Área pessoal"]);
+    } finally {
         desativarEstadoCarregamento();
-
     }
-
 }
 
+function mostrarFalhasCarregamentoMeuArquivo(falhas) {
+    const container = document.querySelector(".arquivo-dashboard > .container");
+    if (!container) return;
+    let aviso = document.getElementById("meu-arquivo-load-errors");
+    if (!falhas.length) {
+        aviso?.remove();
+        return;
+    }
+    if (!aviso) {
+        aviso = document.createElement("div");
+        aviso.id = "meu-arquivo-load-errors";
+        aviso.className = "meu-arquivo-load-errors";
+        aviso.setAttribute("role", "alert");
+        container.prepend(aviso);
+    }
+    aviso.replaceChildren();
+    const texto = document.createElement("p");
+    texto.textContent = "Não foi possível atualizar: " + falhas.join(", ") +
+        ". Alguns dados podem estar desatualizados. Seus registros não foram apagados.";
+    const tentar = document.createElement("button");
+    tentar.type = "button";
+    tentar.textContent = "Tentar carregar novamente";
+    tentar.addEventListener("click", () => void carregarDadosMeuArquivo());
+    aviso.append(texto, tentar);
+}
 
 /* =========================================================
    FUNÇÃO SEGURA PARA CONSULTAR TABELAS
    ========================================================= */
 
-async function consultarTabelaUsuario(
-    tabela,
-    colunaUsuario = "user_id",
-    configuracao = {}
-) {
-
-    const supabase =
-    await obterSupabaseMeuArquivo();
-
-
-    const usuario =
-        meuArquivoState.usuario;
-
-
-    if (
-        !supabase ||
-        !usuario
-    ) {
-
-        return [];
-
-    }
-
+async function consultarTabelaUsuario(tabela, colunaUsuario = "user_id", configuracao = {}) {
+    const supabase = await obterSupabaseMeuArquivo();
+    const usuario = meuArquivoState.usuario;
+    if (!supabase || !usuario) throw new Error("Sessão de usuário indisponível.");
 
     try {
+        let consulta = supabase.from(tabela)
+            .select(configuracao.select || "*")
+            .eq(colunaUsuario, usuario.id);
 
-        let consulta =
-            supabase
-                .from(tabela)
-                .select(
-                    configuracao.select || "*"
-                )
-                .eq(
-                    colunaUsuario,
-                    usuario.id
-                );
-
-
-        if (
-            configuracao.ordem
-        ) {
-
-            consulta =
-                consulta.order(
-                    configuracao.ordem,
-                    {
-                        ascending:
-                            configuracao.ascending ??
-                            false
-                    }
-                );
-
+        if (configuracao.ordem) {
+            consulta = consulta.order(configuracao.ordem, {
+                ascending: configuracao.ascending ?? false
+            });
         }
-
-
-        if (
-            configuracao.limite
-        ) {
-
-            consulta =
-                consulta.limit(
-                    configuracao.limite
-                );
-
-        }
-
-
-        const {
-            data,
-            error
-        } =
-            await consulta;
-
-
-        if (error) {
-
-            /*
-             * Algumas estruturas desta área ainda serão
-             * criadas no Supabase.
-             *
-             * Por isso uma tabela inexistente não deve
-             * derrubar toda a página Meu Arquivo.
-             */
-
-            console.warn(
-                `Meu Arquivo: não foi possível carregar "${tabela}".`,
-                error.message
-            );
-
-            return [];
-
-        }
-
-
-        return Array.isArray(data)
-            ? data
-            : [];
-
+        if (configuracao.limite) consulta = consulta.limit(configuracao.limite);
+        const { data, error } = await consulta;
+        if (error) throw error;
+        return Array.isArray(data) ? data : [];
+    } catch (erro) {
+        console.warn("Meu Arquivo: falha ao consultar " + tabela + ".", erro);
+        throw erro;
     }
-    catch (erro) {
-
-        console.warn(
-            `Meu Arquivo: falha ao consultar "${tabela}".`,
-            erro
-        );
-
-        return [];
-
-    }
-
 }
-
 
 /* =========================================================
    MEUS DOSSIÊS
