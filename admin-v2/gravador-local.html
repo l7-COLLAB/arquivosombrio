@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#15110e">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; media-src blob:; connect-src 'none'; object-src 'none'; form-action 'none'; base-uri 'none'">
+<title>Gravador Local | Arquivo Sombrio</title>
+<style>
+:root{color-scheme:dark;--bg:#0d0b09;--panel:#1b1612;--border:#4a372b;--ink:#eee2d3;--muted:#bdac9b;--gold:#d6b184;--accent:#b63730}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#352117 0,transparent 42%),var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5}
+.shell{width:min(100%,960px);margin:auto;padding:18px clamp(15px,4vw,34px) 50px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:24px}
+.brand{font-family:Georgia,serif;letter-spacing:.15em;color:var(--gold);font-weight:bold;font-size:16px;text-transform:uppercase}
+a{color:var(--gold)}.back{font-size:13px;text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:9px 12px}
+.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;font-weight:700}
+h1,h2{font-family:Georgia,serif;font-weight:500;color:#f4ddbd}h1{font-size:clamp(30px,5vw,46px);margin:8px 0 10px}h2{font-size:24px;margin:0 0 12px}
+p{margin:8px 0 12px;color:var(--muted)}.hero{margin-bottom:22px}.hero p{max-width:680px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:clamp(16px,3vw,25px);margin:15px 0;box-shadow:0 6px 24px #0002}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.stack{display:grid;gap:7px}label{display:grid;gap:7px;font-size:13px;color:#d8c7b5}
+input,select,textarea{width:100%;font:inherit;padding:11px 12px;background:#100d0b;border:1px solid #755943;color:var(--ink);border-radius:6px}
+textarea{min-height:112px;resize:vertical}.help{font-size:12px;color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:14px 0}
+button{border:1px solid #927253;background:#3b2b21;color:var(--ink);padding:11px 15px;min-height:43px;border-radius:7px;font:600 14px system-ui;cursor:pointer}
+button:hover:not(:disabled){background:#563727}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid #e0b57b;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:.45}.main-action{background:#932c28;border-color:#d2564b;color:#fff}.main-action:hover:not(:disabled){background:#bd4138}
+.subtle{background:transparent}.indicator{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.dot{height:8px;width:8px;border-radius:50%;background:#777}.indicator.recording .dot{background:#f55b4f;box-shadow:0 0 0 5px #f55b4f22;animation:pulse 1.5s infinite}
+@keyframes pulse{50%{opacity:.4}}
+.timer{font:500 clamp(30px,6vw,49px)/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;font-variant-numeric:tabular-nums;color:#f8e4c6}
+.meter{height:66px;width:100%;display:block;border:1px solid #423126;background:#0e0c0b;border-radius:6px}
+.status{min-height:20px;font-size:13px;color:#c8ddbe}.status.error{color:#f5a89e}
+.privacy{font-size:13px;background:#211910;padding:12px 14px;border-left:3px solid #bd996c;border-radius:3px}
+.list{display:grid;gap:12px}.item{border:1px solid var(--border);border-radius:9px;padding:14px;background:#120f0d}
+.item-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.item h3{font-size:16px;margin:0 0 4px}.item small{color:var(--muted)}
+.item audio{width:100%;margin:10px 0}.item .controls{margin:5px 0 0}
+.empty{padding:20px;border:1px dashed var(--border);text-align:center;color:var(--muted);border-radius:8px}
+hr{border:0;border-top:1px solid var(--border);margin:18px 0}footer{font-size:12px;color:var(--muted);margin-top:25px}
+@media(max-width:640px){.grid{grid-template-columns:1fr}.controls button{flex:1;min-width:115px}.item .controls button{flex:0 0 auto}.shell{padding-top:15px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header><span class="brand">ARQUIVO SOMBRIO</span><a class="back" href="./">Voltar ao Admin V2</a></header>
+<section class="hero">
+<div class="eyebrow">Produção de áudio · ferramenta local</div>
+<h1>Gravador de Narrações</h1>
+<p>Grave cada parte com seu microfone de lapela, pause quando precisar, revise, edite e baixe os arquivos. Você pode começar agora, sem publicar nada no site.</p>
+<p class="privacy"><strong>Privacidade:</strong> suas gravações não são enviadas para servidores. O navegador tenta guardá-las neste dispositivo; faça também o download dos arquivos para evitar perdas se limpar os dados do navegador ou trocar de aparelho.</p>
+</section>
+<section class="card" aria-labelledby="title-record">
+<h2 id="title-record">01 · Preparar a gravação</h2>
+<div class="grid">
+<label>Nome do arquivo / parte<input id="partTitle" type="text" maxlength="140" placeholder="Ex.: Madeleine McCann · parte 01 · abertura" autocomplete="off"></label>
+<label>Microfone<select id="microphones"><option value="">Padrão do dispositivo</option></select></label>
+</div>
+<div class="controls"><button type="button" class="subtle" id="reloadMics">Atualizar microfones</button><span class="help">Conecte a lapela antes de iniciar. O navegador solicitará acesso ao microfone.</span></div>
+<label>Roteiro falado ou pontos-chave (não altera o texto publicado)<textarea id="notes" placeholder="Anote a abertura, nomes, datas e informações que deseja narrar nesta parte."></textarea></label>
+<div class="help">O roteiro é salvo apenas neste navegador. Não confunda hipóteses, testemunhos e fatos comprovados.</div>
+<hr>
+<div class="indicator" id="indicator"><span class="dot"></span><span id="recordState">Pronto para gravar</span></div>
+<div class="timer" id="timer">00:00</div>
+<canvas id="meter" class="meter" height="66" aria-label="Medidor de intensidade do microfone"></canvas>
+<div class="controls">
+<button type="button" class="main-action" id="start">Iniciar gravação</button>
+<button type="button" id="pause" disabled>Pausar</button>
+<button type="button" id="resume" disabled>Continuar</button>
+<button type="button" id="stop" disabled>Encerrar e salvar</button>
+</div>
+<div id="status" class="status" role="status" aria-live="polite">Dica: faça uma gravação de teste de 15 segundos e escute antes de começar.</div>
+</section>
+<section class="card" aria-labelledby="title-library">
+<div class="item-top"><div><h2 id="title-library">02 · Suas partes gravadas</h2><p>Ouça, edite, baixe o original ou exporte a versão tratada. O original permanece preservado.</p></div><span id="count" class="eyebrow">0 partes</span></div>
+<label>Importar uma gravação existente (MP3, WAV, M4A, WebM ou OGG)<input type="file" id="importAudio" accept=".mp3,.wav,.m4a,.mp4,.webm,.ogg,audio/*"></label>
+<div id="recordings" class="list" aria-live="polite"><p class="empty">Nenhuma gravação neste navegador.</p></div>
+</section>
+<footer>Ferramenta de produção local do Arquivo Sombrio. Ao terminar, baixe os arquivos e guarde cópias. A publicação de narrações completas é um processo separado no Admin V2.</footer>
+</main>
+<script src="./js/audio-editor.js?v=20261103" defer></script>
+<script defer>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const DB="arquivo-sombrio-gravador-local",STORE="recordings",NOTES="arquivo-sombrio-roteiro-local-v1";
+let db=null,rows=new Map(),urls=[],stream=null,recorder=null,chunks=[],tick=null,meterFrame=null,
+ analyser=null,context=null,wake=null,elapsed=0,segmentStart=0,phase="idle",saveOk=true;
+const fmt=s=>{s=Math.floor(Math.max(0,s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");};
+const safeName=s=>String(s||"narracao").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,90)||"narracao";
+const say=(message,error=false)=>{$("status").textContent=message;$("status").classList.toggle("error",error);};
+function updateClock(){const ms=elapsed+(phase==="recording"?Date.now()-segmentStart:0);$("timer").textContent=fmt(ms/1000);}
+function controls(){
+ $("start").disabled=phase!=="idle";
+ $("pause").disabled=phase!=="recording";
+ $("resume").disabled=phase!=="paused";
+ $("stop").disabled=!["recording","paused"].includes(phase);
+ $("indicator").classList.toggle("recording",phase==="recording");
+ $("recordState").textContent={idle:"Pronto para gravar",starting:"Acessando microfone...",recording:"Gravando",paused:"Gravação pausada",stopping:"Salvando a parte..."}[phase]||"Pronto";
+ $("partTitle").disabled=phase!=="idle";$("microphones").disabled=phase!=="idle";
+}
+function mimeFor(){
+ const choices=["audio/webm;codecs=opus","audio/mp4;codecs=mp4a.40.2","audio/mp4","audio/ogg;codecs=opus","audio/webm"];
+ return choices.find(m=>window.MediaRecorder.isTypeSupported(m))||"";
+}
+function extension(mime){if(/mp4|aac/.test(mime))return "m4a";if(/ogg/.test(mime))return "ogg";if(/wav/.test(mime))return "wav";if(/mpeg/.test(mime))return "mp3";return "webm";}
+function openDatabase(){
+ return new Promise((resolve,reject)=>{
+  if(!window.indexedDB)return reject(Error("O navegador não oferece armazenamento local."));
+  const req=indexedDB.open(DB,1);
+  req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(STORE))req.result.createObjectStore(STORE,{keyPath:"id"});};
+  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||Error("Armazenamento indisponível."));
+ });
+}
+async function persist(row){
+ rows.set(row.id,row);
+ if(!db){saveOk=false;return;}
+ try{
+  await new Promise((resolve,reject)=>{
+   const tx=db.transaction(STORE,"readwrite");
+   tx.objectStore(STORE).put(row);
+   tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||Error("Falha ao guardar localmente."));tx.onabort=()=>reject(tx.error||Error("Gravação não foi guardada."));
+  });
+ }catch(_){saveOk=false;}
+}
+function loadRows(){
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(STORE,"readonly"),req=tx.objectStore(STORE).getAll();
+  req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);
+ });
+}
+async function removeRow(id){
+ rows.delete(id);
+ if(!db)return;
+ await new Promise((resolve,reject)=>{
+  const tx=db.transaction(STORE,"readwrite");
+  tx.objectStore(STORE).delete(id);
+  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||Error("Não foi possível excluir localmente."));
+ });
+}
+function dropUrls(){for(const url of urls)URL.revokeObjectURL(url);urls=[];}
+function audioUrl(blob){const url=URL.createObjectURL(blob);urls.push(url);return url;}
+function download(row){
+ const url=URL.createObjectURL(row.blob),a=document.createElement("a");a.href=url;
+ a.download=row.fileName;a.style.display="none";document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+function actionButton(label,handler,kind){
+ const button=document.createElement("button");button.type="button";button.textContent=label;
+ if(kind)button.className=kind;button.addEventListener("click",handler);return button;
+}
+function render(){
+ dropUrls();const list=$("recordings");list.replaceChildren();
+ const all=[...rows.values()].sort((a,b)=>b.createdAt-a.createdAt);
+ $("count").textContent=all.length+" parte"+(all.length===1?"":"s");
+ if(!all.length){const empty=document.createElement("p");empty.className="empty";empty.textContent="Nenhuma gravação neste navegador.";list.appendChild(empty);return;}
+ for(const row of all){
+  const item=document.createElement("article");item.className="item";
+  const top=document.createElement("div");top.className="item-top";
+  const main=document.createElement("div");
+  const name=document.createElement("h3");name.textContent=row.title;
+  const desc=document.createElement("small");desc.textContent=(row.edited?"Versão editada":"Gravação original")+" · "+(row.seconds>0?fmt(row.seconds)+" · ":"")+(row.blob.size/1024/1024).toFixed(1)+" MB · "+new Date(row.createdAt).toLocaleString("pt-BR");
+  main.append(name,desc);top.appendChild(main);
+  const player=document.createElement("audio");player.controls=true;player.preload="none";player.src=audioUrl(row.blob);
+  const buttons=document.createElement("div");buttons.className="controls";
+  buttons.append(
+   actionButton("Baixar arquivo",()=>download(row)),
+   actionButton("Editar áudio",()=>edit(row)),
+   actionButton("Excluir deste navegador",async()=>{
+    if(!confirm("Excluir esta cópia local? Confirme antes que você já baixou o arquivo."))return;
+    try{await removeRow(row.id);render();say("Gravação removida somente deste navegador.");}
+    catch(err){say(err.message,true);}
+   },"subtle")
+  );
+  item.append(top,player,buttons);
+  if(row.rightsNote){const credit=document.createElement("small");credit.textContent="Licença/fonte da trilha: "+row.rightsNote;item.appendChild(credit);}
+  list.appendChild(item);
+ }
+}
+async function edit(row){
+ try{
+  if(!window.ArquivoAudioEditor?.open)throw Error("O editor ainda não carregou. Reabra esta página.");
+  const file=new File([row.blob],row.fileName,{type:row.mime||row.blob.type});
+  await window.ArquivoAudioEditor.open({initialFile:file,onExport:async(file,meta)=>{
+   const record={id:crypto.randomUUID(),createdAt:Date.now(),title:row.title+" · edição",fileName:safeName(row.title)+"-editado-"+Date.now()+".wav",
+    mime:"audio/wav",blob:file,seconds:0,edited:true,rightsNote:meta?.credits||"",originalId:row.id};
+   await persist(record);render();
+   say(saveOk?"Edição criada e guardada neste navegador. Clique em Baixar arquivo para ter sua cópia.":"Edição criada, mas o armazenamento local falhou. Baixe imediatamente.",!saveOk);
+  }});
+ }catch(err){say(err.message||"Falha ao abrir editor.",true);}
+}
+async function devices(){
+ try{
+  if(!navigator.mediaDevices?.enumerateDevices)return;
+  const previous=$("microphones").value,items=(await navigator.mediaDevices.enumerateDevices()).filter(x=>x.kind==="audioinput");
+  const sel=$("microphones");sel.replaceChildren();
+  const normal=document.createElement("option");normal.value="";normal.textContent="Padrão do dispositivo";sel.appendChild(normal);
+  items.forEach((d,i)=>{const option=document.createElement("option");option.value=d.deviceId;option.textContent=d.label||"Microfone "+(i+1);sel.appendChild(option);});
+  if([...sel.options].some(o=>o.value===previous))sel.value=previous;
+ }catch(_){/* Alguns navegadores listam dispositivos somente após a permissão. */}
+}
+function stopGraph(){
+ if(meterFrame){cancelAnimationFrame(meterFrame);meterFrame=null;}
+ if(context){context.close().catch(()=>{});context=null;analyser=null;}
+ const canvas=$("meter"),ctx=canvas.getContext("2d");ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+function showMeter(s){
+ try{
+  const A=window.AudioContext||window.webkitAudioContext;if(!A)return;
+  context=new A();analyser=context.createAnalyser();analyser.fftSize=256;
+  context.createMediaStreamSource(s).connect(analyser);
+  const data=new Uint8Array(analyser.frequencyBinCount),canvas=$("meter"),ctx=canvas.getContext("2d");
+  function paint(){
+   canvas.width=Math.max(100,Math.round(canvas.clientWidth*devicePixelRatio));canvas.height=Math.round(66*devicePixelRatio);
+   ctx.clearRect(0,0,canvas.width,canvas.height);
+   analyser.getByteFrequencyData(data);
+   const count=44,step=canvas.width/count,scale=canvas.height/255;
+   for(let i=0;i<count;i++){
+    const index=Math.floor(i*data.length/count),height=Math.max(3,data[index]*scale*1.4);
+    ctx.fillStyle=phase==="paused"?"#79634c":"#b98a64";
+    ctx.fillRect(i*step+step*.2,(canvas.height-height)/2,step*.58,height);
+   }
+   meterFrame=requestAnimationFrame(paint);
+  }
+  paint();
+ }catch(_){stopGraph();}
+}
+function stopHardware(){
+ if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+ stopGraph();if(wake){wake.release().catch(()=>{});wake=null;}
+ clearInterval(tick);tick=null;
+}
+async function start(){
+ if(phase!=="idle")return;
+ if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){say("O navegador não oferece gravação pelo microfone. Use Chrome, Edge ou Safari atualizado em uma página HTTPS.",true);return;}
+ phase="starting";controls();elapsed=0;updateClock();chunks=[];
+ try{
+  const device=$("microphones").value;
+  stream=await navigator.mediaDevices.getUserMedia({audio:{deviceId:device?{exact:device}:undefined,echoCancellation:true,noiseSuppression:true,autoGainControl:false,channelCount:1}});
+  await devices();
+  const mime=mimeFor(),opts=mime?{mimeType:mime,audioBitsPerSecond:128000}:{audioBitsPerSecond:128000};
+  try{recorder=new MediaRecorder(stream,opts);}catch(_){recorder=new MediaRecorder(stream);}
+  recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data);};
+  recorder.onerror=e=>{say("A gravação apresentou um erro. Tente novamente e baixe as partes já salvas.",true);if(recorder?.state!=="inactive")recorder.stop();};
+  recorder.onstop=finish;
+  recorder.start(1000);
+  phase="recording";segmentStart=Date.now();tick=setInterval(updateClock,250);
+  showMeter(stream);controls();
+  if(navigator.wakeLock?.request){try{wake=await navigator.wakeLock.request("screen");}catch(_){}}
+  say("Gravação iniciada. Fale normalmente e mantenha a lapela afastada de atritos com a roupa.");
+ }catch(e){
+  phase="idle";stopHardware();controls();
+  say("Não foi possível acessar o microfone: "+(e?.message||"verifique a permissão e conexão da lapela"),true);
+ }
+}
+function pause(){
+ if(phase!=="recording"||recorder?.state!=="recording")return;
+ try{recorder.pause();elapsed+=Date.now()-segmentStart;phase="paused";updateClock();controls();say("Pausado. Clique em Continuar para retomar esta mesma parte.");}
+ catch(e){say("Não foi possível pausar: "+e.message,true);}
+}
+function resume(){
+ if(phase!=="paused"||recorder?.state!=="paused")return;
+ try{recorder.resume();phase="recording";segmentStart=Date.now();controls();say("Gravação retomada.");}
+ catch(e){say("Não foi possível continuar: "+e.message,true);}
+}
+function stop(){
+ if(!["recording","paused"].includes(phase))return;
+ if(phase==="recording")elapsed+=Date.now()-segmentStart;
+ phase="stopping";updateClock();controls();say("Encerrando e guardando a gravação...");
+ try{recorder.stop();}catch(e){phase="idle";stopHardware();controls();say("Erro ao encerrar gravação: "+e.message,true);}
+}
+async function finish(){
+ const mime=recorder?.mimeType||chunks[0]?.type||"audio/webm",blob=new Blob(chunks,{type:mime}),seconds=elapsed/1000;
+ chunks=[];stopHardware();phase="idle";controls();
+ if(blob.size<100){say("O microfone não gerou um áudio válido. Verifique o dispositivo e tente novamente.",true);return;}
+ const title=$("partTitle").value.trim()||"Narração · parte "+String(rows.size+1).padStart(2,"0");
+ const row={id:crypto.randomUUID(),createdAt:Date.now(),title,fileName:safeName(title)+"-"+Date.now()+"."+extension(mime),mime,seconds,blob,edited:false,rightsNote:""};
+ try{await persist(row);render();
+  say(saveOk?"Gravação guardada neste navegador. Ouça e baixe o original antes de fechar.":"Gravação pronta, mas o armazenamento permanente não funcionou. Baixe este arquivo agora.",!saveOk);
+ }catch(e){rows.set(row.id,row);render();say("Falha no armazenamento: "+e.message+". Baixe a gravação agora.",true);}
+}
+async function importAudio(){
+ const file=$("importAudio").files?.[0];if(!file)return;
+ if(!/\.(mp3|wav|webm|m4a|mp4|ogg)$/i.test(file.name)){say("Formato não aceito; selecione MP3, WAV, WebM, OGG ou M4A.",true);return;}
+ if(file.size>30*1024*1024){say("Importe gravações menores que 30 MB para editar neste navegador.",true);return;}
+ const row={id:crypto.randomUUID(),createdAt:Date.now(),title:file.name.replace(/\.[^.]+$/,""),fileName:file.name,blob:file,mime:file.type||"audio/mpeg",seconds:0,edited:false,rightsNote:""};
+ await persist(row);render();$("importAudio").value="";
+ say(saveOk?"Gravação importada para a área local.":"Importação temporária: baixe o arquivo antes de sair.",!saveOk);
+}
+async function init(){
+ controls();
+ try{$("notes").value=localStorage.getItem(NOTES)||"";}catch(_){}
+ $("notes").addEventListener("input",()=>{try{localStorage.setItem(NOTES,$("notes").value);}catch(_){say("Não foi possível salvar automaticamente o roteiro neste navegador.",true);}});
+ try{db=await openDatabase();for(const row of await loadRows())rows.set(row.id,row);}
+ catch(_){saveOk=false;say("Seu navegador bloqueou o armazenamento local. Baixe cada gravação antes de fechar.",true);}
+ render();await devices();
+ $("start").addEventListener("click",start);$("pause").addEventListener("click",pause);
+ $("resume").addEventListener("click",resume);$("stop").addEventListener("click",stop);
+ $("reloadMics").addEventListener("click",devices);
+ $("importAudio").addEventListener("change",()=>importAudio().catch(e=>say(e.message,true)));
+ window.addEventListener("beforeunload",event=>{if(phase!=="idle"){event.preventDefault();event.returnValue="";}});
+ window.addEventListener("pagehide",()=>{if(phase!=="idle")stopHardware();});
+}
+init();
+})();
+</script>
+</body>
+</html>
