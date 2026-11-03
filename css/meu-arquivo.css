@@ -7062,3 +7062,14 @@ body.menu-arquivo-aberto { overflow: hidden; }
 .novel-library-error { color: #ffd3c2; border: 1px solid #a75140; }
 .meu-arquivo-load-errors { margin: 1rem 0; padding: 1rem; border: 1px solid #b96653; background: rgba(120,38,22,.12); color: #ffded6; }
 .meu-arquivo-load-errors button { margin-top: .7rem; padding: .6rem .8rem; border: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer; }
+
+
+/* Editor de acontecimentos da cronologia pessoal */
+.arquivo-timeline-events { display: grid; gap: .75rem; max-height: 38vh; overflow: auto; padding-right: .35rem; }
+.arquivo-timeline-event { padding: .9rem; border: 1px solid rgba(201,167,142,.3); background: rgba(255,255,255,.025); }
+.arquivo-timeline-event strong { display: block; overflow-wrap: anywhere; color: #f2e6d3; }
+.arquivo-timeline-event small { color: #c5b6a5; display: block; margin-top: .25rem; }
+.arquivo-timeline-event p { margin: .6rem 0; white-space: pre-wrap; }
+.arquivo-timeline-event .arquivo-form-actions { display: flex; gap: .4rem; justify-content: flex-start; flex-wrap: wrap; }
+.arquivo-timeline-event .arquivo-button { font-size: .75rem; padding: .5rem .65rem; }
+.timeline-content > .arquivo-button { margin-top: .75rem; }
