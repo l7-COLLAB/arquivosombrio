@@ -491,6 +491,108 @@ async function carregarCaso() {
         caso
     );
     carregarRelacionadosDossie(caso);
+    void registrarHistoricoConsultaCaso(caso);
+    void prepararArquivoPessoalCaso(caso);
+}
+
+/* Meu Arquivo: histórico privado apenas para usuário autenticado e caso publicado. */
+async function registrarHistoricoConsultaCaso(caso) {
+    if (!caso?.id || String(caso.status_publicacao || "").toLowerCase() !== "publicado") return;
+    try {
+        const cliente = await obterClienteSupabaseCaso();
+        const { data: usuarioData, error: erroUsuario } = await cliente.auth.getUser();
+        if (erroUsuario || !usuarioData?.user) return;
+        const usuario = usuarioData.user;
+        const { data: recente, error: erroRecente } = await cliente
+            .from("user_history").select("viewed_at")
+            .eq("user_id", usuario.id).eq("item_type", "dossier")
+            .eq("item_id", String(caso.id))
+            .order("viewed_at", { ascending: false }).limit(1);
+        if (erroRecente) throw erroRecente;
+
+        const ultimo = recente?.[0]?.viewed_at;
+        if (ultimo && Date.now() - new Date(ultimo).getTime() < 20 * 60 * 1000) return;
+        const { error } = await cliente.from("user_history").insert({
+            user_id: usuario.id,
+            item_type: "dossier",
+            item_id: String(caso.id),
+            title: String(caso.titulo || "Dossiê"),
+            target_url: "caso.html?id=" + encodeURIComponent(caso.id),
+            viewed_at: new Date().toISOString()
+        });
+        if (error) throw error;
+    } catch (erro) {
+        console.warn("Não foi possível registrar a leitura privada no Meu Arquivo.", erro);
+    }
+}
+
+/* Arquivar/retirar dos meus dossiês é uma ação explícita e reversível. */
+async function prepararArquivoPessoalCaso(caso) {
+    if (!caso?.id || String(caso.status_publicacao || "").toLowerCase() !== "publicado") return;
+    const acoes = document.querySelector(".case-reader-actions");
+    if (!acoes || document.getElementById("case-reader-archive")) return;
+    try {
+        const cliente = await obterClienteSupabaseCaso();
+        const { data: usuarioData, error: erroUsuario } = await cliente.auth.getUser();
+        if (erroUsuario || !usuarioData?.user) return;
+        const usuario = usuarioData.user;
+        const caseId = String(caso.id);
+        const { data: registro, error: erroConsulta } = await cliente
+            .from("user_dossiers").select("id").eq("user_id", usuario.id)
+            .eq("case_id", caseId).maybeSingle();
+        if (erroConsulta) throw erroConsulta;
+
+        let idSalvo = registro?.id || null;
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "case-reader-action";
+        botao.id = "case-reader-archive";
+        const icone = document.createElement("i");
+        icone.className = "fa-regular fa-bookmark";
+        const rotulo = document.createElement("small");
+        function atualizarRotulo() {
+            const texto = idSalvo ? "Arquivado" : "Arquivar";
+            botao.title = idSalvo ? "Retirar de Meus Dossiês" : "Adicionar a Meus Dossiês";
+            botao.setAttribute("aria-label", botao.title);
+            rotulo.textContent = texto;
+        }
+        botao.append(icone, rotulo);
+        atualizarRotulo();
+        botao.addEventListener("click", async () => {
+            if (botao.disabled) return;
+            botao.disabled = true;
+            try {
+                if (idSalvo) {
+                    const { error } = await cliente.from("user_dossiers")
+                        .delete().eq("id", idSalvo).eq("user_id", usuario.id);
+                    if (error) throw error;
+                    idSalvo = null;
+                } else {
+                    const { data, error } = await cliente.from("user_dossiers")
+                        .upsert({
+                            user_id: usuario.id,
+                            case_id: caseId,
+                            title: String(caso.titulo || "Dossiê"),
+                            subtitle: String(caso.resumo || "").slice(0, 250),
+                            image_url: String(caso.imagem || caso.imagem_capa || ""),
+                            target_url: "caso.html?id=" + encodeURIComponent(caseId)
+                        }, { onConflict: "user_id,case_id" })
+                        .select("id").single();
+                    if (error) throw error;
+                    idSalvo = data.id;
+                }
+                atualizarRotulo();
+            } catch (erro) {
+                console.error("Falha ao atualizar Meus Dossiês:", erro);
+                window.alert("Não foi possível atualizar Meus Dossiês. Tente novamente.");
+            } finally {
+                botao.disabled = false;
+            }
+        });
+        acoes.appendChild(botao);
+    } catch (erro) {
+        console.warn("O botão de arquivar está indisponível nesta sessão.", erro);
+    }
 }
 
 async function carregarRelacionadosDossie(caso) {
