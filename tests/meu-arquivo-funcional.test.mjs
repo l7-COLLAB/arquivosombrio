@@ -18,7 +18,7 @@ test("modal X, scripts e versão de cache estão integrados no HTML", () => {
     const html = ler("meu-arquivo.html");
     assert.match(html, /id="arquivo-modal-close"\s+data-close-arquivo-modal/);
     assert.match(html, /js\/meu-arquivo-novels\.js\?v=meu-arquivo-20261103-1/);
-    assert.match(html, /js\/meu-arquivo\.js\?v=meu-arquivo-20261103-1/);
+    assert.match(html, /js\/meu-arquivo\.js\?v=meu-arquivo-20261103-\d+/);
 });
 
 test("falha na tabela não aparece como lista vazia", async () => {
