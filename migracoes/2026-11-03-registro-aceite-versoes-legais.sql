@@ -1,9 +1,7 @@
 -- Arquivo Sombrio — coordenação de versões legais, 03/11/2026.
 -- APLICAR NO BANCO ANTES DE PUBLICAR O FRONTEND QUE REGISTRA 1.2/1.4.
 -- Aceita versões anteriores durante a transição; preserva registros históricos.
--- Função invocada exclusivamente pelo trigger AFTER INSERT em auth.users.
-begin;
-
+-- Função invocada somente por triggers de INSERT/UPDATE em auth.users.
 create or replace function public.record_legal_acceptance()
 returns trigger
 language plpgsql
@@ -38,9 +36,18 @@ $function$;
 -- Esta função é utilizada como trigger; não é endpoint de API.
 revoke all on function public.record_legal_acceptance() from public, anon, authenticated;
 
-commit;
+-- Captura também aceite após retorno de OAuth Google (updateUser),
+-- que ocorre DEPOIS da criação inicial de auth.users.
+-- O gatilho não reescreve versões já aceitas e ON CONFLICT evita duplicatas.
+drop trigger if exists on_auth_user_legal_acceptance_update on auth.users;
+create trigger on_auth_user_legal_acceptance_update
+after update of raw_user_meta_data on auth.users
+for each row
+when (old.raw_user_meta_data is distinct from new.raw_user_meta_data)
+execute function public.record_legal_acceptance();
 
 -- Validação após aplicar:
 -- select pg_get_functiondef('public.record_legal_acceptance()'::regprocedure);
 -- select count(*) from public.legal_acceptances;
+-- select tgname, pg_get_triggerdef(oid) from pg_trigger where tgrelid='auth.users'::regclass and tgname like '%legal_acceptance%';
 -- Nunca atualizar retroativamente termos_version/privacy_version de aceites antigos.
