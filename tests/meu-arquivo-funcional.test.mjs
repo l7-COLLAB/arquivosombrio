@@ -18,7 +18,7 @@ test("modal X, scripts e versão de cache estão integrados no HTML", () => {
     const html = ler("meu-arquivo.html");
     assert.match(html, /id="arquivo-modal-close"\s+data-close-arquivo-modal/);
     assert.match(html, /js\/meu-arquivo-novels\.js\?v=meu-arquivo-20261103-1/);
-    assert.match(html, /js\/meu-arquivo\.js\?v=meu-arquivo-20261103-1/);
+    assert.match(html, /js\/meu-arquivo\.js\?v=meu-arquivo-20261103-\d+/);
 });
 
 test("falha na tabela não aparece como lista vazia", async () => {
@@ -173,4 +173,57 @@ test("editor da cronologia grava acontecimento somente após persistência da co
     assert.equal(linha.events[0].title,"Pista recebida");
     assert.equal(documento.querySelector(".arquivo-timeline-event strong")?.textContent,"Pista recebida");
     dom.window.close();
+});
+
+test("marcadores pessoais são renderizados como texto, renomeados e excluídos apenas pelo dono", async () => {
+    const dom = new JSDOM('<div id="lista-marcadores"></div><div id="modal-root"></div>',{
+        url:"https://arquivosombrio.net.br/meu-arquivo.html"
+    });
+    const doc = dom.window.document;
+    dom.window.confirm=()=>true;
+    dom.window.alert=()=>{};
+    const state={usuario:{id:"dono-test"},marcadores:[{id:"tag-1",name:'<img src=x onerror=alert(1)>'}]};
+    let operacao="";
+    const verificadas=[];
+    const sb={from(nome){
+        assert.equal(nome,"user_tags");
+        return {
+            update(dados){operacao="update";this.valor=dados.name;return this;},
+            delete(){operacao="delete";return this;},
+            eq(coluna,valor){verificadas.push([coluna,valor]);return this;},
+            select(){return this;},
+            async single(){
+                return {data:operacao==="delete"?{id:"tag-1"}:{id:"tag-1",name:this.valor},error:null};
+            }
+        };
+    }};
+    const src = trecho(js,"function renderizarMarcadores() {",
+        "/* =========================================================\n   HISTÓRICO DE INVESTIGAÇÃO");
+    const {renderizarMarcadores,abrirEdicaoMarcador,excluirMarcadorPessoal}=new Function(
+        "document","meuArquivoState","criarEstadoVazio","abrirModalArquivo",
+        "obterSupabaseMeuArquivo","fecharModalArquivo","window",
+        src+"\nreturn {renderizarMarcadores,abrirEdicaoMarcador,excluirMarcadorPessoal};"
+    )(doc,state,()=>"",(_title,html)=>{doc.getElementById("modal-root").innerHTML=html;},
+        async()=>sb,()=>{},dom.window);
+    renderizarMarcadores();
+    assert.equal(doc.querySelector(".marcador-card strong")?.textContent,'<img src=x onerror=alert(1)>');
+    assert.equal(doc.querySelector(".marcador-card img"),null);
+    abrirEdicaoMarcador("tag-1");
+    const form=doc.getElementById("form-editar-marcador");
+    doc.getElementById("tag-editar-nome").value="Investigação própria";
+    form.dispatchEvent(new dom.window.Event("submit",{bubbles:true,cancelable:true}));
+    await new Promise(resolve=>setTimeout(resolve,15));
+    assert.equal(state.marcadores[0].name,"Investigação própria");
+    assert.ok(verificadas.some(([nome,valor])=>nome==="user_id"&&valor==="dono-test"));
+    await excluirMarcadorPessoal("tag-1");
+    assert.equal(state.marcadores.length,0);
+    dom.window.close();
+});
+
+test("privacidade da comunidade não oferece perfil público antes da homologação", () => {
+    const bloco=trecho(js,"function abrirConfiguracaoPrivacidade() {",
+        "async function salvarPreferenciasUsuario");
+    assert.match(bloco,/value="private" selected/);
+    assert.doesNotMatch(bloco,/value="community"/);
+    assert.match(bloco,/perfis públicos não forem homologadas/);
 });

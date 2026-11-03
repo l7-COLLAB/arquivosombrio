@@ -1562,84 +1562,99 @@ function renderizarColecaoGenerica(
    ========================================================= */
 
 function renderizarMarcadores() {
-
-    const container =
-        document.getElementById(
-            "lista-marcadores"
-        );
-
-
-    if (!container) {
+    const container = document.getElementById("lista-marcadores");
+    if (!container) return;
+    const marcadores = meuArquivoState.marcadores;
+    if (!Array.isArray(marcadores) || !marcadores.length) {
+        container.innerHTML = criarEstadoVazio("Você ainda não criou nenhum marcador.", "fa-tags");
         return;
     }
 
-
-    const itens =
-        meuArquivoState.marcadores;
-
-
-    if (
-        !Array.isArray(itens) ||
-        itens.length === 0
-    ) {
-
-        container.innerHTML =
-            criarEstadoVazio(
-                "Você ainda não criou nenhum marcador.",
-                "fa-tags"
-            );
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        itens
-            .map(
-                function (item) {
-
-                    const nome =
-                        obterPrimeiroValor(
-                            item,
-                            [
-                                "name",
-                                "nome",
-                                "title",
-                                "titulo"
-                            ],
-                            "Marcador"
-                        );
-
-
-                    return `
-                        <article class="marcador-card">
-
-                            <div class="marcador-icon">
-                                <i class="fa-solid fa-tag"></i>
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    ${escaparHTML(nome)}
-                                </strong>
-
-                                <span>
-                                    Marcador pessoal
-                                </span>
-
-                            </div>
-
-                        </article>
-                    `;
-
-                }
-            )
-            .join("");
-
+    const fragmento = document.createDocumentFragment();
+    marcadores.forEach(item => {
+        const cartao = document.createElement("article");
+        cartao.className = "marcador-card";
+        const icone = document.createElement("div");
+        icone.className = "marcador-icon";
+        icone.innerHTML = '<i class="fa-solid fa-tag"></i>';
+        const detalhes = document.createElement("div");
+        const nome = document.createElement("strong");
+        nome.textContent = String(item.name || item.nome || "Marcador");
+        const subtitulo = document.createElement("span");
+        subtitulo.textContent = "Marcador pessoal";
+        detalhes.append(nome, subtitulo);
+        const acoes = document.createElement("div");
+        acoes.className = "arquivo-form-actions";
+        const editar = document.createElement("button");
+        editar.type = "button";
+        editar.className = "arquivo-button arquivo-button-secondary";
+        editar.dataset.editTag = String(item.id);
+        editar.textContent = "Renomear";
+        const excluir = document.createElement("button");
+        excluir.type = "button";
+        excluir.className = "arquivo-button arquivo-button-secondary";
+        excluir.dataset.removeTag = String(item.id);
+        excluir.textContent = "Excluir";
+        acoes.append(editar, excluir);
+        cartao.append(icone, detalhes, acoes);
+        fragmento.appendChild(cartao);
+    });
+    container.replaceChildren(fragmento);
 }
 
+function abrirEdicaoMarcador(id) {
+    const item = meuArquivoState.marcadores.find(tag => String(tag.id) === String(id));
+    if (!item) return;
+    abrirModalArquivo("Renomear marcador", '<form id="form-editar-marcador" class="arquivo-form"><div class="arquivo-field"><label for="tag-editar-nome">Nome do marcador</label><input type="text" id="tag-editar-nome" maxlength="60" required></div><p id="tag-editar-mensagem" role="status"></p><div class="arquivo-form-actions"><button type="button" class="arquivo-button arquivo-button-secondary" data-close-arquivo-modal>Cancelar</button><button type="submit" class="arquivo-button">Salvar nome</button></div></form>');
+    const formulario = document.getElementById("form-editar-marcador");
+    const campo = document.getElementById("tag-editar-nome");
+    const mensagem = document.getElementById("tag-editar-mensagem");
+    if (!formulario || !campo) return;
+    campo.value = String(item.name || "");
+    formulario.addEventListener("submit", async evento => {
+        evento.preventDefault();
+        const nome = campo.value.trim();
+        if (!nome) return;
+        const botao = formulario.querySelector('[type="submit"]');
+        botao.disabled = true;
+        try {
+            const supabase = await obterSupabaseMeuArquivo();
+            const usuarioId = meuArquivoState.usuario?.id;
+            if (!usuarioId) throw new Error("Sessão expirada.");
+            const { data, error } = await supabase.from("user_tags")
+                .update({ name: nome }).eq("id", item.id).eq("user_id", usuarioId)
+                .select("id,name").single();
+            if (error || !data) throw error || new Error("Marcador indisponível.");
+            item.name = data.name;
+            renderizarMarcadores();
+            void fecharModalArquivo();
+        } catch (erro) {
+            console.error("Erro ao renomear marcador:", erro);
+            mensagem.textContent = "Não foi possível salvar. Confira se esse nome já existe.";
+        } finally {
+            botao.disabled = false;
+        }
+    });
+}
+
+async function excluirMarcadorPessoal(id) {
+    const item = meuArquivoState.marcadores.find(tag => String(tag.id) === String(id));
+    if (!item || !window.confirm("Excluir este marcador pessoal?")) return;
+    try {
+        const supabase = await obterSupabaseMeuArquivo();
+        const usuarioId = meuArquivoState.usuario?.id;
+        if (!usuarioId) throw new Error("Sessão expirada.");
+        const { data, error } = await supabase.from("user_tags")
+            .delete().eq("id", item.id).eq("user_id", usuarioId)
+            .select("id").single();
+        if (error || !data) throw error || new Error("Marcador indisponível.");
+        meuArquivoState.marcadores = meuArquivoState.marcadores.filter(tag => String(tag.id) !== String(item.id));
+        renderizarMarcadores();
+    } catch (erro) {
+        console.error("Erro ao excluir marcador:", erro);
+        window.alert("O marcador não pôde ser excluído. Tente novamente.");
+    }
+}
 
 /* =========================================================
    HISTÓRICO DE INVESTIGAÇÃO
@@ -4653,6 +4668,13 @@ function prepararEventosColecoes() {
 
     }
 
+    document.getElementById("lista-marcadores")?.addEventListener("click", evento => {
+        const editar = evento.target.closest("[data-edit-tag]");
+        if (editar) { abrirEdicaoMarcador(editar.dataset.editTag); return; }
+        const excluir = evento.target.closest("[data-remove-tag]");
+        if (excluir) void excluirMarcadorPessoal(excluir.dataset.removeTag);
+    });
+
 
     if (limparHistorico) {
 
@@ -7030,7 +7052,7 @@ function preferenciaMarcada(chave) {
 function abrirConfiguracaoNotificacoes() {
     abrirModalArquivo("Notificações", `
         <form id="form-preferencias-notificacoes" class="arquivo-form">
-            <p class="arquivo-form-intro">Escolha quais movimentações poderão gerar alertas dentro do Meu Arquivo.</p>
+            <p class="arquivo-form-intro">Escolha suas preferências. Elas ficam salvas na conta, mas algumas notificações automáticas ainda estão em implantação.</p>
             <label class="arquivo-toggle-row"><span><strong>Comentários</strong><small>Interações em suas publicações</small></span><input type="checkbox" name="notify_comments" ${preferenciaMarcada("notify_comments")}></label>
             <label class="arquivo-toggle-row"><span><strong>Respostas</strong><small>Respostas diretas aos seus comentários</small></span><input type="checkbox" name="notify_replies" ${preferenciaMarcada("notify_replies")}></label>
             <label class="arquivo-toggle-row"><span><strong>Atualizações de casos</strong><small>Novidades em casos acompanhados</small></span><input type="checkbox" name="notify_case_updates" ${preferenciaMarcada("notify_case_updates")}></label>
@@ -7048,9 +7070,8 @@ function abrirConfiguracaoPrivacidade() {
     abrirModalArquivo("Privacidade", `
         <form id="form-preferencias-privacidade" class="arquivo-form">
             <div class="arquivo-message"><i class="fa-solid fa-lock"></i><span>Observações, murais, trechos, histórico e investigações pessoais permanecem privados em qualquer opção.</span></div>
-            <div class="arquivo-field"><label for="profile-visibility">Visibilidade do perfil na comunidade</label><select id="profile-visibility" name="profile_visibility"><option value="private" ${preferencias.profile_visibility !== "community" ? "selected" : ""}>Privado</option><option value="community" ${preferencias.profile_visibility === "community" ? "selected" : ""}>Visível na comunidade</option></select></div>
-            <label class="arquivo-toggle-row"><span><strong>Exibir biografia</strong><small>Mostra a nota do perfil quando o perfil estiver visível</small></span><input type="checkbox" name="show_bio" ${preferenciaMarcada("show_bio")}></label>
-            <label class="arquivo-toggle-row"><span><strong>Exibir atividade pública</strong><small>Mostra apenas publicações e comentários já públicos</small></span><input type="checkbox" name="show_activity" ${preferenciaMarcada("show_activity")}></label>
+            <div class="arquivo-field"><label for="profile-visibility">Visibilidade do perfil</label><select id="profile-visibility" name="profile_visibility"><option value="private" selected>Privado — publicação de perfis em preparação</option></select></div>
+            <div class="arquivo-message"><i class="fa-solid fa-shield-halved"></i><span>Enquanto as regras de privacidade dos perfis públicos não forem homologadas, esta área permite apenas o perfil privado. Preferências anteriores de biografia e atividade são preservadas, mas não são expostas.</span></div>
             <div id="preferencias-mensagem" aria-live="polite"></div>
             <div class="arquivo-form-actions"><button type="button" class="arquivo-button arquivo-button-secondary" data-close-arquivo-modal>Cancelar</button><button type="submit" class="arquivo-button">Salvar</button></div>
         </form>

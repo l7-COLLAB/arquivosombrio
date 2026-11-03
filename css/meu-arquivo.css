@@ -7073,3 +7073,10 @@ body.menu-arquivo-aberto { overflow: hidden; }
 .arquivo-timeline-event .arquivo-form-actions { display: flex; gap: .4rem; justify-content: flex-start; flex-wrap: wrap; }
 .arquivo-timeline-event .arquivo-button { font-size: .75rem; padding: .5rem .65rem; }
 .timeline-content > .arquivo-button { margin-top: .75rem; }
+
+
+/* Gerenciamento de marcadores pessoais */
+.marcador-card { flex-wrap: wrap; gap: .8rem; }
+.marcador-card > .arquivo-form-actions { margin-left: auto; display: flex; flex-wrap: wrap; gap: .4rem; justify-content: flex-end; }
+.marcador-card > .arquivo-form-actions .arquivo-button { padding: .45rem .65rem; font-size: .75rem; }
+@media (max-width: 560px) { .marcador-card > .arquivo-form-actions { width: 100%; justify-content: flex-start; } }
