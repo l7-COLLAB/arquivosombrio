@@ -115,6 +115,7 @@ async function open({initialFile=null,onExport}={}){
  '<label>Arquivo de efeito autorizado (MP3 ou WAV)<input data-ae-effect type="file" accept=".mp3,.wav,audio/mpeg,audio/wav"></label>',
  '<div class="ae-grid"><label>Iniciar efeito no segundo<input data-ae-effect-at type="number" min="0" step="0.1" value="0"></label>',
  '<label>Volume do efeito (%)<input data-ae-effect-volume type="number" min="0" max="50" step="5" value="20"></label></div>',
+ '<label>Créditos, fonte e licença da música/efeito<input data-ae-credits type="text" maxlength="1000" placeholder="Ex.: Trilha X, autor Y, licença CC0, URL da fonte"></label>',
  '<label class="ae-check"><input data-ae-rights type="checkbox"><span>Confirmo ter direito de utilizar e publicar a música e os efeitos selecionados.</span></label>',
  '<small>Não é permitido presumir que músicas de filmes, séries ou artistas estejam liberadas por terem sido encontradas na internet.</small></section>',
  '<section><h3>4. Prévia e exportação</h3>',
@@ -156,7 +157,7 @@ async function open({initialFile=null,onExport}={}){
   try{
    notify("Lendo arquivo "+kind+" neste navegador...");
    const result=await decode(file);
-   if(kind==="voz"){voiceBuffer=result;$("[data-ae-details]").textContent=esc(file.name)+" · "+format(result.duration);$("[data-ae-start]").value="0";$("[data-ae-end]").value=String(Math.round(result.duration*10)/10);}
+   if(kind==="voz"){voiceBuffer=result;$("[data-ae-details]").textContent=esc(file.name)+" · "+format(result.duration);$("[data-ae-start]").value="0";$("[data-ae-end]").value=String(result.duration);}
    else if(kind==="música")musicBuffer=result;
    else effectBuffer=result;
    durationLabel();notify(kind+" carregada. Nenhum arquivo foi enviado ao servidor.");
@@ -175,6 +176,8 @@ async function open({initialFile=null,onExport}={}){
   if(!voiceBuffer)throw Error("Selecione primeiro a gravação da voz.");
   if((musicBuffer||effectBuffer)&&!$("[data-ae-rights]").checked)
    throw Error("Confirme os direitos de uso da música e dos efeitos.");
+  if((musicBuffer||effectBuffer)&&$("[data-ae-credits]").value.trim().length<10)
+   throw Error("Informe os créditos, fonte e licença da trilha ou do efeito.");
   const start=number($("[data-ae-start]").value),end=number($("[data-ae-end]").value)||voiceBuffer.duration,
    speed=number($("[data-ae-speed]").value,1),total=lengthOf(),
    offset=preview?clamp(number($("[data-ae-preview-from]").value),0,Math.max(0,total-0.1)):0,
@@ -231,7 +234,7 @@ async function open({initialFile=null,onExport}={}){
    if(blob.size>MAX_FILE)throw Error("O WAV final excede 30 MB. Divida esta parte.");
    const file=new File([blob],"arquivo-sombrio-parte-editada-"+Date.now()+".wav",{type:"audio/wav"});
    if(typeof onExport!=="function")throw Error("Destino de exportação indisponível.");
-   await onExport(file);
+   await onExport(file,{credits:$("[data-ae-credits]").value.trim(),externalAudio:!!(musicBuffer||effectBuffer)});
    notify("Edição pronta. Use o botão Enviar áudio da parte para salvá-la no servidor.");
    releasePreview();document.removeEventListener("keydown",onKey);overlay.remove();
   }catch(error){notify(error.message||"Falha ao processar áudio",true)}finally{lock(false);}
