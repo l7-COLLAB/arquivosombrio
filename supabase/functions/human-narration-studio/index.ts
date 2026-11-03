@@ -205,7 +205,7 @@ Deno.serve(async(req:Request)=>{
       try{bytes=Uint8Array.from(atob(encoded),c=>c.charCodeAt(0));}
       catch(_){return json({error:"Arquivo inválido"},400)}
       if(bytes.length!==Number(upload.file_size)||!mp3(bytes))return json({error:"MP3 ou tamanho inválido"},422);
-      const put=await aws.fetch(objectUrl(upload.audio_path),{method:"PUT",headers:{"Content-Type":"audio/mpeg"},body:bytes});
+      const put=await aws.fetch(objectUrl(upload.audio_path),{method:"PUT",headers:{"Content-Type":"audio/mpeg"},body:new Blob([bytes.buffer as ArrayBuffer],{type:"audio/mpeg"})});
       if(!put.ok)return json({error:"Falha ao enviar arquivo ao armazenamento"},502);
       return json({uploaded:true});
     }
