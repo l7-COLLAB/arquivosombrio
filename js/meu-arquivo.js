@@ -6864,10 +6864,15 @@ function prepararEventosPreferencias() {
             "click",
             function () {
 
-                abrirPainelPreferencia(
-                    "Preferências do Arquivo",
-                    "Aqui você poderá ajustar opções de exibição e comportamento da sua área pessoal."
-                );
+                abrirModalArquivo("Preferências do Arquivo", `
+                    <div class="arquivo-form arquivo-quick-actions">
+                        <p class="arquivo-form-intro">Gerencie as opções disponíveis para sua conta.</p>
+                        <button type="button" class="settings-row" id="preferencias-abrir-notificacoes"><i class="fa-solid fa-bell"></i><span><strong>Notificações</strong><small>Escolher os alertas que deseja receber</small></span></button>
+                        <button type="button" class="settings-row" id="preferencias-abrir-privacidade"><i class="fa-solid fa-lock"></i><span><strong>Privacidade</strong><small>Definir a visibilidade do perfil</small></span></button>
+                    </div>
+                `);
+                document.getElementById("preferencias-abrir-notificacoes")?.addEventListener("click", abrirConfiguracaoNotificacoes);
+                document.getElementById("preferencias-abrir-privacidade")?.addEventListener("click", abrirConfiguracaoPrivacidade);
 
             }
         );
@@ -7611,7 +7616,7 @@ const secoesMeuArquivo = {
         "marcadores", "linha-do-tempo"
     ],
     atividade: ["historico", "atividade-comunidade", "alertas", "casos-enviados", "compartilhar-teoria"],
-    configuracoes: ["configuracoes-hub"]
+    configuracoes: ["configuracoes-hub", "seguranca"]
 };
 
 
@@ -7716,7 +7721,15 @@ function inicializarNavegacaoMeuArquivo() {
         "#caderno": "investigacoes",
         "#teorias": "investigacoes",
         "#historico": "atividade",
-        "#configuracoes-hub": "configuracoes"
+        "#configuracoes-hub": "configuracoes",
+        "#seguranca": "configuracoes",
+        "#minhas-publicacoes": "atividade",
+        "#atividade-comunidade": "atividade",
+        "#alertas": "atividade",
+        "#casos-enviados": "atividade",
+        "#linha-do-tempo": "investigacoes",
+        "#marcadores": "investigacoes",
+        "#evidencias": "investigacoes"
     };
 
     document.querySelectorAll(".setor-card").forEach(link => {
@@ -7730,6 +7743,19 @@ function inicializarNavegacaoMeuArquivo() {
             window.requestAnimationFrame(() => {
                 document.querySelector(seletor)?.scrollIntoView({ behavior: "smooth", block: "start" });
             });
+        });
+    });
+
+    document.querySelectorAll('a[href^="#"]:not(.setor-card)').forEach(link => {
+        const hash = link.getAttribute("href");
+        const grupo = gruposSetores[hash];
+        if (!grupo) return;
+        link.addEventListener("click", evento => {
+            const alvo = document.getElementById(hash.slice(1));
+            if (!alvo) return;
+            evento.preventDefault();
+            abrirSecaoMeuArquivo(grupo);
+            window.requestAnimationFrame(() => alvo.scrollIntoView({ behavior: "smooth", block: "start" }));
         });
     });
 
