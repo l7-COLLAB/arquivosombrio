@@ -6374,8 +6374,8 @@ async function concluirCadastroGoogleForum(sessao) {
                 display_name: sessao.user.user_metadata?.display_name || nomeGoogle,
                 age_18_confirmed: true,
                 legal_acceptance: true,
-                terms_version: "1.1",
-                privacy_version: "1.2",
+                terms_version: "1.2",
+                privacy_version: "1.4",
                 guidelines_version: "1.0",
                 legal_accepted_at: new Date().toISOString(),
                 signup_method: "google"
@@ -6517,11 +6517,9 @@ async function cadastrarForumComEmail() {
                         legal_acceptance:
                             true,
 
-                        terms_version:
-                            "1.1",
+                        terms_version: "1.2",
 
-                        privacy_version:
-                            "1.2",
+                        privacy_version: "1.4",
 
                         guidelines_version:
                             "1.0",
