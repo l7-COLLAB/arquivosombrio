@@ -491,6 +491,108 @@ async function carregarCaso() {
         caso
     );
     carregarRelacionadosDossie(caso);
+    void registrarHistoricoConsultaCaso(caso);
+    void prepararArquivoPessoalCaso(caso);
+}
+
+/* Meu Arquivo: histórico privado apenas para usuário autenticado e caso publicado. */
+async function registrarHistoricoConsultaCaso(caso) {
+    if (!caso?.id || String(caso.status_publicacao || "").toLowerCase() !== "publicado") return;
+    try {
+        const cliente = await obterClienteSupabaseCaso();
+        const { data: usuarioData, error: erroUsuario } = await cliente.auth.getUser();
+        if (erroUsuario || !usuarioData?.user) return;
+        const usuario = usuarioData.user;
+        const { data: recente, error: erroRecente } = await cliente
+            .from("user_history").select("viewed_at")
+            .eq("user_id", usuario.id).eq("item_type", "dossier")
+            .eq("item_id", String(caso.id))
+            .order("viewed_at", { ascending: false }).limit(1);
+        if (erroRecente) throw erroRecente;
+
+        const ultimo = recente?.[0]?.viewed_at;
+        if (ultimo && Date.now() - new Date(ultimo).getTime() < 20 * 60 * 1000) return;
+        const { error } = await cliente.from("user_history").insert({
+            user_id: usuario.id,
+            item_type: "dossier",
+            item_id: String(caso.id),
+            title: String(caso.titulo || "Dossiê"),
+            target_url: "caso.html?id=" + encodeURIComponent(caso.id),
+            viewed_at: new Date().toISOString()
+        });
+        if (error) throw error;
+    } catch (erro) {
+        console.warn("Não foi possível registrar a leitura privada no Meu Arquivo.", erro);
+    }
+}
+
+/* Arquivar/retirar dos meus dossiês é uma ação explícita e reversível. */
+async function prepararArquivoPessoalCaso(caso) {
+    if (!caso?.id || String(caso.status_publicacao || "").toLowerCase() !== "publicado") return;
+    const acoes = document.querySelector(".case-reader-actions");
+    if (!acoes || document.getElementById("case-reader-archive")) return;
+    try {
+        const cliente = await obterClienteSupabaseCaso();
+        const { data: usuarioData, error: erroUsuario } = await cliente.auth.getUser();
+        if (erroUsuario || !usuarioData?.user) return;
+        const usuario = usuarioData.user;
+        const caseId = String(caso.id);
+        const { data: registro, error: erroConsulta } = await cliente
+            .from("user_dossiers").select("id").eq("user_id", usuario.id)
+            .eq("case_id", caseId).maybeSingle();
+        if (erroConsulta) throw erroConsulta;
+
+        let idSalvo = registro?.id || null;
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "case-reader-action";
+        botao.id = "case-reader-archive";
+        const icone = document.createElement("i");
+        icone.className = "fa-regular fa-bookmark";
+        const rotulo = document.createElement("small");
+        function atualizarRotulo() {
+            const texto = idSalvo ? "Arquivado" : "Arquivar";
+            botao.title = idSalvo ? "Retirar de Meus Dossiês" : "Adicionar a Meus Dossiês";
+            botao.setAttribute("aria-label", botao.title);
+            rotulo.textContent = texto;
+        }
+        botao.append(icone, rotulo);
+        atualizarRotulo();
+        botao.addEventListener("click", async () => {
+            if (botao.disabled) return;
+            botao.disabled = true;
+            try {
+                if (idSalvo) {
+                    const { error } = await cliente.from("user_dossiers")
+                        .delete().eq("id", idSalvo).eq("user_id", usuario.id);
+                    if (error) throw error;
+                    idSalvo = null;
+                } else {
+                    const { data, error } = await cliente.from("user_dossiers")
+                        .upsert({
+                            user_id: usuario.id,
+                            case_id: caseId,
+                            title: String(caso.titulo || "Dossiê"),
+                            subtitle: String(caso.resumo || "").slice(0, 250),
+                            image_url: String(caso.imagem || caso.imagem_capa || ""),
+                            target_url: "caso.html?id=" + encodeURIComponent(caseId)
+                        }, { onConflict: "user_id,case_id" })
+                        .select("id").single();
+                    if (error) throw error;
+                    idSalvo = data.id;
+                }
+                atualizarRotulo();
+            } catch (erro) {
+                console.error("Falha ao atualizar Meus Dossiês:", erro);
+                window.alert("Não foi possível atualizar Meus Dossiês. Tente novamente.");
+            } finally {
+                botao.disabled = false;
+            }
+        });
+        acoes.appendChild(botao);
+    } catch (erro) {
+        console.warn("O botão de arquivar está indisponível nesta sessão.", erro);
+    }
 }
 
 async function carregarRelacionadosDossie(caso) {
@@ -5789,6 +5891,8 @@ if (
    SINCRONIZAÇÃO PRIVADA DOS TRECHOS SUBLINHADOS
    ========================================================================== */
 
+const filasSincronizacaoDestaques = new Map();
+
 function salvarSublinhadosLeitura(casoId, lista) {
     try {
         localStorage.setItem(chaveSublinhadosLeitura(casoId), JSON.stringify(lista));
@@ -5796,9 +5900,17 @@ function salvarSublinhadosLeitura(casoId, lista) {
         console.warn("Não foi possível salvar os sublinhados localmente.", erro);
     }
 
-    sincronizarDestaquesLeitura(casoId, lista).catch(erro => {
-        console.warn("Não foi possível sincronizar os sublinhados.", erro);
-    });
+    const chave = String(casoId);
+    const anterior = filasSincronizacaoDestaques.get(chave) || Promise.resolve();
+    const atual = anterior.catch(() => {}).then(() => sincronizarDestaquesLeitura(casoId, lista));
+    filasSincronizacaoDestaques.set(chave, atual);
+    atual.then(
+        () => { if (filasSincronizacaoDestaques.get(chave) === atual) filasSincronizacaoDestaques.delete(chave); },
+        erro => {
+            if (filasSincronizacaoDestaques.get(chave) === atual) filasSincronizacaoDestaques.delete(chave);
+            console.warn("Não foi possível sincronizar os sublinhados; cópia local preservada.", erro);
+        }
+    );
 }
 
 
@@ -5815,37 +5927,56 @@ function obterTituloDossieAtual() {
 
 async function sincronizarDestaquesLeitura(casoId, lista) {
     const supabase = await obterClienteSupabaseCaso();
-    const { data: sessaoData } = await supabase.auth.getSession();
-    const usuario = sessaoData?.session?.user;
+    const { data: usuarioData, error: erroUsuario } = await supabase.auth.getUser();
+    if (erroUsuario) throw erroUsuario;
+    const usuario = usuarioData?.user;
     if (!usuario) return;
 
-    const texto = obterTextoBaseLeitura();
-    const baseUrl = `caso.html?id=${encodeURIComponent(casoId)}`;
-
-    const { error: deleteError } = await supabase
+    const { data: atuais, error: leituraErro } = await supabase
         .from("user_highlights")
-        .delete()
+        .select("id,start_offset,end_offset")
         .eq("user_id", usuario.id)
         .eq("case_id", String(casoId));
+    if (leituraErro) throw leituraErro;
 
-    if (deleteError) throw deleteError;
+    const texto = obterTextoBaseLeitura();
+    const baseUrl = "caso.html?id=" + encodeURIComponent(casoId);
+    const faixas = Array.isArray(lista) ? lista.filter(item =>
+        Number.isInteger(item?.inicio) && Number.isInteger(item?.fim) &&
+        item.inicio >= 0 && item.fim > item.inicio
+    ) : [];
+    const desejados = new Map(faixas.map(item => [item.inicio + ":" + item.fim, item]));
+    const existentes = new Map((atuais || []).map(item => [
+        item.start_offset + ":" + item.end_offset, item
+    ]));
 
-    if (!Array.isArray(lista) || !lista.length) return;
+    // Inserir antes de apagar: se a gravação falhar, os trechos anteriores permanecem.
+    const novos = Array.from(desejados.entries())
+        .filter(([chave]) => !existentes.has(chave))
+        .map(([, item]) => ({
+            user_id: usuario.id,
+            case_id: String(casoId),
+            case_title: obterTituloDossieAtual(),
+            excerpt: texto.slice(item.inicio, item.fim).trim().slice(0, 500) || "Trecho sublinhado",
+            start_offset: item.inicio,
+            end_offset: item.fim,
+            target_url: baseUrl + "&highlight=" + item.inicio + "-" + item.fim
+        }));
+    if (novos.length) {
+        const { error: insertError } = await supabase.from("user_highlights").insert(novos);
+        if (insertError) throw insertError;
+    }
 
-    const registros = lista.map(item => ({
-        user_id: usuario.id,
-        case_id: String(casoId),
-        case_title: obterTituloDossieAtual(),
-        excerpt: texto.slice(item.inicio, item.fim).trim().slice(0, 500) || "Trecho sublinhado",
-        start_offset: item.inicio,
-        end_offset: item.fim,
-        target_url: `${baseUrl}&highlight=${item.inicio}-${item.fim}`
-    }));
-
-    const { error: insertError } = await supabase.from("user_highlights").insert(registros);
-    if (insertError) throw insertError;
+    const obsoletos = (atuais || [])
+        .filter(item => !desejados.has(item.start_offset + ":" + item.end_offset))
+        .map(item => item.id);
+    if (obsoletos.length) {
+        const { error: deleteError } = await supabase.from("user_highlights")
+            .delete().eq("user_id", usuario.id).eq("case_id", String(casoId))
+            .in("id", obsoletos);
+        if (deleteError) throw deleteError;
+    }
 }
-
 
 async function carregarDestaquesPrivadosDoCaso(casoId) {
     try {

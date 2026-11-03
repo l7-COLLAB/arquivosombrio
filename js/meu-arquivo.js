@@ -183,6 +183,10 @@ const meuArquivoState = {
 
     muralSalvando: false,
 
+    muralSalvamentoPromise: null,
+
+    muralFechando: false,
+
     focoAntesModal: null
 
 };
@@ -627,201 +631,97 @@ function preencherAvatarUsuario(
    ========================================================= */
 
 async function carregarDadosMeuArquivo() {
-
-    const supabase =
-    await obterSupabaseMeuArquivo();
-
-
-    const usuario =
-        meuArquivoState.usuario;
-
-
-    if (
-        !supabase ||
-        !usuario
-    ) {
-
-        return;
-
-    }
-
-
+    const supabase = await obterSupabaseMeuArquivo();
+    const usuario = meuArquivoState.usuario;
+    if (!supabase || !usuario) return;
     ativarEstadoCarregamento();
 
-
     try {
-
-        await Promise.allSettled([
-
-            carregarDossiesUsuario(),
-
-            carregarFavoritosUsuario(),
-
-            carregarDestaquesLeitura(),
-
-            carregarCasosObservacao(),
-
-            carregarMarcadoresUsuario(),
-
-            carregarHistoricoUsuario(),
-
-            carregarMuraisUsuario(),
-
-            carregarAnotacoesUsuario(),
-
-            carregarTeoriasUsuario(),
-
-            carregarEvidenciasUsuario(),
-
-            carregarLinhasDoTempoUsuario(),
-
-            carregarAtividadeComunidade(),
-
-            carregarAlertasUsuario(),
-
-            carregarPreferenciasUsuario(),
-
-            carregarCasosEnviadosUsuario()
-
-        ]);
-
-
+        const secoes = [
+            ["Dossiês", carregarDossiesUsuario()],
+            ["Favoritos", carregarFavoritosUsuario()],
+            ["Trechos sublinhados", carregarDestaquesLeitura()],
+            ["Observação", carregarCasosObservacao()],
+            ["Marcadores", carregarMarcadoresUsuario()],
+            ["Histórico", carregarHistoricoUsuario()],
+            ["Murais", carregarMuraisUsuario()],
+            ["Anotações", carregarAnotacoesUsuario()],
+            ["Teorias", carregarTeoriasUsuario()],
+            ["Evidências", carregarEvidenciasUsuario()],
+            ["Linhas do tempo", carregarLinhasDoTempoUsuario()],
+            ["Comunidade", carregarAtividadeComunidade()],
+            ["Notificações", carregarAlertasUsuario()],
+            ["Preferências", carregarPreferenciasUsuario()],
+            ["Casos enviados", carregarCasosEnviadosUsuario()]
+        ];
+        const resultados = await Promise.allSettled(secoes.map(item => item[1]));
+        const falhas = resultados
+            .map((resultado, indice) => resultado.status === "rejected" ? secoes[indice][0] : null)
+            .filter(Boolean);
+        mostrarFalhasCarregamentoMeuArquivo(falhas);
         atualizarResumoMeuArquivo();
-
-    }
-    catch (erro) {
-
-        console.error(
-            "Erro ao carregar dados do Meu Arquivo:",
-            erro
-        );
-
-    }
-    finally {
-
+    } catch (erro) {
+        console.error("Erro ao carregar dados do Meu Arquivo:", erro);
+        mostrarFalhasCarregamentoMeuArquivo(["Área pessoal"]);
+    } finally {
         desativarEstadoCarregamento();
-
     }
-
 }
 
+function mostrarFalhasCarregamentoMeuArquivo(falhas) {
+    const container = document.querySelector(".arquivo-dashboard > .container");
+    if (!container) return;
+    let aviso = document.getElementById("meu-arquivo-load-errors");
+    if (!falhas.length) {
+        aviso?.remove();
+        return;
+    }
+    if (!aviso) {
+        aviso = document.createElement("div");
+        aviso.id = "meu-arquivo-load-errors";
+        aviso.className = "meu-arquivo-load-errors";
+        aviso.setAttribute("role", "alert");
+        container.prepend(aviso);
+    }
+    aviso.replaceChildren();
+    const texto = document.createElement("p");
+    texto.textContent = "Não foi possível atualizar: " + falhas.join(", ") +
+        ". Alguns dados podem estar desatualizados. Seus registros não foram apagados.";
+    const tentar = document.createElement("button");
+    tentar.type = "button";
+    tentar.textContent = "Tentar carregar novamente";
+    tentar.addEventListener("click", () => void carregarDadosMeuArquivo());
+    aviso.append(texto, tentar);
+}
 
 /* =========================================================
    FUNÇÃO SEGURA PARA CONSULTAR TABELAS
    ========================================================= */
 
-async function consultarTabelaUsuario(
-    tabela,
-    colunaUsuario = "user_id",
-    configuracao = {}
-) {
-
-    const supabase =
-    await obterSupabaseMeuArquivo();
-
-
-    const usuario =
-        meuArquivoState.usuario;
-
-
-    if (
-        !supabase ||
-        !usuario
-    ) {
-
-        return [];
-
-    }
-
+async function consultarTabelaUsuario(tabela, colunaUsuario = "user_id", configuracao = {}) {
+    const supabase = await obterSupabaseMeuArquivo();
+    const usuario = meuArquivoState.usuario;
+    if (!supabase || !usuario) throw new Error("Sessão de usuário indisponível.");
 
     try {
+        let consulta = supabase.from(tabela)
+            .select(configuracao.select || "*")
+            .eq(colunaUsuario, usuario.id);
 
-        let consulta =
-            supabase
-                .from(tabela)
-                .select(
-                    configuracao.select || "*"
-                )
-                .eq(
-                    colunaUsuario,
-                    usuario.id
-                );
-
-
-        if (
-            configuracao.ordem
-        ) {
-
-            consulta =
-                consulta.order(
-                    configuracao.ordem,
-                    {
-                        ascending:
-                            configuracao.ascending ??
-                            false
-                    }
-                );
-
+        if (configuracao.ordem) {
+            consulta = consulta.order(configuracao.ordem, {
+                ascending: configuracao.ascending ?? false
+            });
         }
-
-
-        if (
-            configuracao.limite
-        ) {
-
-            consulta =
-                consulta.limit(
-                    configuracao.limite
-                );
-
-        }
-
-
-        const {
-            data,
-            error
-        } =
-            await consulta;
-
-
-        if (error) {
-
-            /*
-             * Algumas estruturas desta área ainda serão
-             * criadas no Supabase.
-             *
-             * Por isso uma tabela inexistente não deve
-             * derrubar toda a página Meu Arquivo.
-             */
-
-            console.warn(
-                `Meu Arquivo: não foi possível carregar "${tabela}".`,
-                error.message
-            );
-
-            return [];
-
-        }
-
-
-        return Array.isArray(data)
-            ? data
-            : [];
-
+        if (configuracao.limite) consulta = consulta.limit(configuracao.limite);
+        const { data, error } = await consulta;
+        if (error) throw error;
+        return Array.isArray(data) ? data : [];
+    } catch (erro) {
+        console.warn("Meu Arquivo: falha ao consultar " + tabela + ".", erro);
+        throw erro;
     }
-    catch (erro) {
-
-        console.warn(
-            `Meu Arquivo: falha ao consultar "${tabela}".`,
-            erro
-        );
-
-        return [];
-
-    }
-
 }
-
 
 /* =========================================================
    MEUS DOSSIÊS
@@ -1966,95 +1866,43 @@ function renderizarMurais() {
    ========================================================= */
 
 function renderizarLinhasDoTempo() {
+    const container = document.getElementById("lista-linhas-tempo");
+    if (!container) return;
+    const linhas = meuArquivoState.linhasDoTempo;
 
-    const container =
-        document.getElementById(
-            "lista-linhas-tempo"
+    if (!Array.isArray(linhas) || !linhas.length) {
+        container.innerHTML = criarEstadoVazio("Nenhuma linha do tempo foi criada.", "fa-timeline");
+        return;
+    }
+
+    const fragmento = document.createDocumentFragment();
+    linhas.forEach(item => {
+        const artigo = document.createElement("article");
+        artigo.className = "timeline-item";
+        const marcador = document.createElement("div");
+        marcador.className = "timeline-marker";
+        const conteudo = document.createElement("div");
+        conteudo.className = "timeline-content";
+        const titulo = document.createElement("strong");
+        titulo.textContent = obterPrimeiroValor(item, ["title", "titulo"], "Linha do tempo");
+        const descricao = document.createElement("p");
+        descricao.textContent = obterPrimeiroValor(
+            item, ["description", "descricao"], "Cronologia particular de investigação."
         );
-
-
-    if (!container) {
-        return;
-    }
-
-
-    const linhas =
-        meuArquivoState.linhasDoTempo;
-
-
-    if (
-        !Array.isArray(linhas) ||
-        linhas.length === 0
-    ) {
-
-        container.innerHTML =
-            criarEstadoVazio(
-                "Nenhuma linha do tempo foi criada.",
-                "fa-timeline"
-            );
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        linhas
-            .map(
-                function (item) {
-
-                    const titulo =
-                        obterPrimeiroValor(
-                            item,
-                            [
-                                "title",
-                                "titulo",
-                                "name",
-                                "nome"
-                            ],
-                            "Linha do tempo"
-                        );
-
-
-                    const descricao =
-                        obterPrimeiroValor(
-                            item,
-                            [
-                                "description",
-                                "descricao",
-                                "notes",
-                                "nota"
-                            ],
-                            "Cronologia particular de investigação."
-                        );
-
-
-                    return `
-                        <article class="timeline-item">
-
-                            <div class="timeline-marker"></div>
-
-                            <div class="timeline-content">
-
-                                <strong>
-                                    ${escaparHTML(titulo)}
-                                </strong>
-
-                                <p>
-                                    ${escaparHTML(descricao)}
-                                </p>
-
-                            </div>
-
-                        </article>
-                    `;
-
-                }
-            )
-            .join("");
-
+        const quantidade = document.createElement("small");
+        const total = Array.isArray(item.events) ? item.events.length : 0;
+        quantidade.textContent = total + (total === 1 ? " acontecimento" : " acontecimentos");
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "arquivo-button arquivo-button-secondary";
+        botao.dataset.openTimeline = String(item.id);
+        botao.textContent = "Editar acontecimentos";
+        conteudo.append(titulo, descricao, quantidade, botao);
+        artigo.append(marcador, conteudo);
+        fragmento.appendChild(artigo);
+    });
+    container.replaceChildren(fragmento);
 }
-
 
 /* =========================================================
    ALERTAS
@@ -2285,7 +2133,9 @@ function abrirModalArquivo(
         return;
     }
 
-    meuArquivoState.focoAntesModal = document.activeElement;
+    if (modal.hidden || !meuArquivoState.focoAntesModal?.isConnected) {
+        meuArquivoState.focoAntesModal = document.activeElement;
+    }
 
 
     if (
@@ -2345,55 +2195,37 @@ function abrirModalArquivo(
 }
 
 
-function fecharModalArquivo() {
-
-    const modal =
-        arquivoElements.modal;
-
-
-    if (!modal) {
-        return;
-    }
+async function fecharModalArquivo() {
+    const modal = arquivoElements.modal;
+    if (!modal || modal.hidden || meuArquivoState.muralFechando) return;
 
     if (meuArquivoState.muralAberto) {
-        salvarMuralAberto(false);
+        meuArquivoState.muralFechando = true;
+        const editor = modal.querySelector(".mural-editor");
+        if (editor) editor.inert = true;
+        const salvo = await salvarMuralAberto(false);
+        meuArquivoState.muralFechando = false;
+        if (!salvo) {
+            const fecharComRascunho = window.confirm(
+                "O mural não pôde ser salvo na nuvem. Uma cópia permanece neste navegador. Fechar e conservar o rascunho local?"
+            );
+            if (!fecharComRascunho) {
+                if (editor) editor.inert = false;
+                return;
+            }
+        }
         meuArquivoState.muralAberto = null;
         window.clearTimeout(meuArquivoState.muralSalvamentoTimer);
     }
 
-
-    modal.hidden =
-        true;
-
+    modal.hidden = true;
     modal.setAttribute("aria-hidden", "true");
-
-
-    document.body.classList.remove(
-        "arquivo-modal-aberto"
-    );
-
-    modal.classList.remove(
-        "arquivo-modal--mural"
-    );
-
-
-    if (
-        arquivoElements.modalContent
-    ) {
-
-        arquivoElements
-            .modalContent
-            .innerHTML = "";
-
-    }
-
-    if (meuArquivoState.focoAntesModal?.isConnected) {
-        meuArquivoState.focoAntesModal.focus();
-    }
+    document.body.classList.remove("arquivo-modal-aberto");
+    modal.classList.remove("arquivo-modal--mural");
+    if (arquivoElements.modalContent) arquivoElements.modalContent.innerHTML = "";
+    if (meuArquivoState.focoAntesModal?.isConnected) meuArquivoState.focoAntesModal.focus();
     meuArquivoState.focoAntesModal = null;
-
 }
-
 
 /* =========================================================
    EDIÇÃO DO PERFIL
@@ -2899,54 +2731,38 @@ function mostrarErroInicial(
    ========================================================= */
 
 function prepararEventosModal() {
+    const modal = arquivoElements.modal;
+    if (!modal) return;
 
-    const modal =
-        arquivoElements.modal;
-
-
-    if (!modal) {
-        return;
-    }
-
-
-    modal.addEventListener(
-        "click",
-        function (evento) {
-
-            const fechar =
-                evento.target.closest(
-                    "[data-close-arquivo-modal]"
-                );
-
-
-            if (fechar) {
-
-                fecharModalArquivo();
-
-            }
-
+    modal.addEventListener("click", evento => {
+        if (evento.target.closest("[data-close-arquivo-modal]")) void fecharModalArquivo();
+    });
+    document.addEventListener("keydown", evento => {
+        if (modal.hidden) return;
+        if (evento.key === "Escape") {
+            evento.preventDefault();
+            void fecharModalArquivo();
+            return;
         }
-    );
+        if (evento.key !== "Tab") return;
 
-
-    document.addEventListener(
-        "keydown",
-        function (evento) {
-
-            if (
-                evento.key === "Escape" &&
-                !modal.hidden
-            ) {
-
-                fecharModalArquivo();
-
-            }
-
+        const foco = Array.from(modal.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )).filter(item => !item.closest("[hidden]") && !item.inert && item.getClientRects().length);
+        if (!foco.length) {
+            evento.preventDefault();
+            return;
         }
-    );
-
+        const primeiro = foco[0], ultimo = foco[foco.length - 1];
+        if (evento.shiftKey && (document.activeElement === primeiro || !modal.contains(document.activeElement))) {
+            evento.preventDefault();
+            ultimo.focus();
+        } else if (!evento.shiftKey && (document.activeElement === ultimo || !modal.contains(document.activeElement))) {
+            evento.preventDefault();
+            primeiro.focus();
+        }
+    });
 }
-
 
 /* =========================================================
    EVENTOS PRINCIPAIS DO MEU ARQUIVO
@@ -3453,6 +3269,11 @@ function prepararEventosInvestigacao() {
         );
 
     }
+
+    document.getElementById("lista-linhas-tempo")?.addEventListener("click", evento => {
+        const botao = evento.target.closest("[data-open-timeline]");
+        if (botao) abrirEditorLinhaTempo(botao.dataset.openTimeline);
+    });
 
 }
 
@@ -4618,6 +4439,193 @@ async function salvarNovaLinhaTempo(
 }
 
 
+/* Editor seguro da cronologia pessoal: mantém eventos no JSON da própria conta. */
+function abrirEditorLinhaTempo(id) {
+    const linha = meuArquivoState.linhasDoTempo.find(item => String(item.id) === String(id));
+    if (!linha) return;
+
+    abrirModalArquivo("Acontecimentos da cronologia", '<div class="arquivo-form" id="arquivo-timeline-editor"></div>');
+    const host = document.getElementById("arquivo-timeline-editor");
+    if (!host) return;
+
+    const descricao = document.createElement("p");
+    descricao.className = "arquivo-form-intro";
+    descricao.textContent = String(linha.title || "Linha do tempo") + " — cronologia privada. Organize os fatos na ordem desejada.";
+    const lista = document.createElement("div");
+    lista.className = "arquivo-timeline-events";
+    lista.setAttribute("aria-label", "Acontecimentos registrados");
+
+    const formulario = document.createElement("form");
+    formulario.className = "arquivo-form";
+    formulario.id = "arquivo-timeline-event-form";
+    const dataLabel = document.createElement("label");
+    dataLabel.textContent = "Data do acontecimento (opcional)";
+    const dataInput = document.createElement("input");
+    dataInput.type = "date";
+    dataInput.name = "date";
+    const tituloLabel = document.createElement("label");
+    tituloLabel.textContent = "Título do acontecimento";
+    const tituloInput = document.createElement("input");
+    tituloInput.type = "text";
+    tituloInput.name = "title";
+    tituloInput.required = true;
+    tituloInput.maxLength = 180;
+    const descricaoLabel = document.createElement("label");
+    descricaoLabel.textContent = "Descrição (opcional)";
+    const descricaoInput = document.createElement("textarea");
+    descricaoInput.name = "description";
+    descricaoInput.maxLength = 1200;
+    const gravar = document.createElement("button");
+    gravar.type = "submit";
+    gravar.className = "arquivo-button";
+    gravar.textContent = "Adicionar acontecimento";
+    const cancelarEdicao = document.createElement("button");
+    cancelarEdicao.type = "button";
+    cancelarEdicao.className = "arquivo-button arquivo-button-secondary";
+    cancelarEdicao.textContent = "Cancelar edição";
+    cancelarEdicao.hidden = true;
+    const aviso = document.createElement("p");
+    aviso.setAttribute("role", "status");
+
+    formulario.append(dataLabel, dataInput, tituloLabel, tituloInput,
+        descricaoLabel, descricaoInput, gravar, cancelarEdicao, aviso);
+    host.append(descricao, lista, formulario);
+
+    let editando = null;
+    let salvando = false;
+    function eventos() {
+        return Array.isArray(linha.events) ? linha.events : [];
+    }
+    function restaurarFormulario() {
+        editando = null;
+        formulario.reset();
+        gravar.textContent = "Adicionar acontecimento";
+        cancelarEdicao.hidden = true;
+    }
+    cancelarEdicao.addEventListener("click", restaurarFormulario);
+
+    function botaoAcao(rotulo, acao, idEvento) {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "arquivo-button arquivo-button-secondary";
+        botao.dataset.timelineAction = acao;
+        botao.dataset.timelineEvent = String(idEvento);
+        botao.textContent = rotulo;
+        return botao;
+    }
+    function exibirEventos() {
+        lista.replaceChildren();
+        if (!eventos().length) {
+            const vazio = document.createElement("p");
+            vazio.textContent = "Nenhum acontecimento cadastrado. Adicione o primeiro abaixo.";
+            lista.appendChild(vazio);
+            return;
+        }
+        eventos().forEach((evento, indice) => {
+            const artigo = document.createElement("article");
+            artigo.className = "arquivo-timeline-event";
+            const cabecalho = document.createElement("strong");
+            cabecalho.textContent = String(evento.title || "Acontecimento");
+            const data = document.createElement("small");
+            data.textContent = String(evento.date || "Data não definida");
+            const detalhes = document.createElement("p");
+            detalhes.textContent = String(evento.description || "");
+            const acoes = document.createElement("div");
+            acoes.className = "arquivo-form-actions";
+            const idEvento = evento.id || String(indice);
+            acoes.append(
+                botaoAcao("Editar", "edit", idEvento),
+                botaoAcao("Subir", "up", idEvento),
+                botaoAcao("Descer", "down", idEvento),
+                botaoAcao("Excluir", "delete", idEvento)
+            );
+            artigo.append(cabecalho, data, detalhes, acoes);
+            lista.appendChild(artigo);
+        });
+    }
+    async function persistir(proximos) {
+        if (salvando) return false;
+        salvando = true;
+        gravar.disabled = true;
+        aviso.textContent = "Salvando...";
+        try {
+            const supabase = await obterSupabaseMeuArquivo();
+            const usuarioId = meuArquivoState.usuario?.id;
+            if (!usuarioId) throw new Error("Sua sessão expirou.");
+            const { data, error } = await supabase.from("investigation_timelines")
+                .update({ events: proximos, updated_at: new Date().toISOString() })
+                .eq("id", linha.id).eq("user_id", usuarioId)
+                .select("events,updated_at").single();
+            if (error || !data) throw error || new Error("Cronologia indisponível.");
+            linha.events = Array.isArray(data.events) ? data.events : proximos;
+            linha.updated_at = data.updated_at;
+            renderizarLinhasDoTempo();
+            exibirEventos();
+            aviso.textContent = "Acontecimentos salvos.";
+            return true;
+        } catch (erro) {
+            console.error("Falha ao salvar a cronologia:", erro);
+            aviso.textContent = "Não foi possível salvar. Seus dados anteriores foram preservados.";
+            return false;
+        } finally {
+            salvando = false;
+            gravar.disabled = false;
+        }
+    }
+
+    formulario.addEventListener("submit", async evento => {
+        evento.preventDefault();
+        if (salvando) return;
+        const titulo = tituloInput.value.trim();
+        if (!titulo) return;
+        const atualizados = eventos().map(item => ({ ...item }));
+        if (!editando && atualizados.length >= 150) {
+            aviso.textContent = "Limite de 150 acontecimentos por cronologia.";
+            return;
+        }
+        const registro = {
+            id: editando || criarIdItemMural(),
+            date: dataInput.value,
+            title: titulo,
+            description: descricaoInput.value.trim()
+        };
+        const posicao = atualizados.findIndex(item => String(item.id) === String(editando));
+        if (posicao >= 0) atualizados[posicao] = registro;
+        else atualizados.push(registro);
+        if (await persistir(atualizados)) restaurarFormulario();
+    });
+    lista.addEventListener("click", async evento => {
+        const botao = evento.target.closest("[data-timeline-action]");
+        if (!botao || salvando) return;
+        const atualizados = eventos().map(item => ({ ...item }));
+        const indice = atualizados.findIndex((item, i) =>
+            String(item.id || i) === botao.dataset.timelineEvent);
+        if (indice < 0) return;
+        const acao = botao.dataset.timelineAction;
+        if (acao === "edit") {
+            const item = atualizados[indice];
+            editando = item.id || String(indice);
+            dataInput.value = String(item.date || "");
+            tituloInput.value = String(item.title || "");
+            descricaoInput.value = String(item.description || "");
+            gravar.textContent = "Salvar alterações";
+            cancelarEdicao.hidden = false;
+            tituloInput.focus();
+            return;
+        }
+        if (acao === "delete") {
+            if (!window.confirm("Excluir este acontecimento da cronologia?")) return;
+            atualizados.splice(indice, 1);
+        } else if (acao === "up" && indice > 0) {
+            [atualizados[indice - 1], atualizados[indice]] = [atualizados[indice], atualizados[indice - 1]];
+        } else if (acao === "down" && indice < atualizados.length - 1) {
+            [atualizados[indice + 1], atualizados[indice]] = [atualizados[indice], atualizados[indice + 1]];
+        } else return;
+        if (await persistir(atualizados)) restaurarFormulario();
+    });
+    exibirEventos();
+}
+
 /* =========================================================
    EVENTOS DAS COLEÇÕES
    ========================================================= */
@@ -5654,75 +5662,94 @@ function atualizarEstadoSalvamentoMural(estado) {
 
 async function salvarMuralAberto(mostrarConfirmacao = false) {
     const mural = meuArquivoState.muralAberto;
-    if (!mural || meuArquivoState.muralSalvando) return;
+    if (!mural) return true;
 
     window.clearTimeout(meuArquivoState.muralSalvamentoTimer);
-    meuArquivoState.muralSalvando = true;
-    atualizarEstadoSalvamentoMural("salvando");
+    if (meuArquivoState.muralSalvamentoPromise) {
+        return meuArquivoState.muralSalvamentoPromise;
+    }
 
+    const operacao = (async () => {
+        meuArquivoState.muralSalvando = true;
+        atualizarEstadoSalvamentoMural("salvando");
+        try {
+            const supabase = await obterSupabaseMeuArquivo();
+            const usuarioId = meuArquivoState.usuario?.id;
+            if (!usuarioId) throw new Error("Sessão expirada.");
+
+            // Um envio em andamento deve preservar as novas edições.
+            for (let tentativa = 0; tentativa < 20; tentativa++) {
+                const snapshot = JSON.stringify(mural.board_data);
+                const { data, error } = await supabase
+                    .from("investigation_boards")
+                    .update({ board_data: JSON.parse(snapshot), updated_at: new Date().toISOString() })
+                    .eq("id", mural.id)
+                    .eq("user_id", usuarioId)
+                    .select("id, updated_at")
+                    .single();
+                if (error || !data) throw error || new Error("Mural não encontrado.");
+
+                mural.updated_at = data.updated_at;
+                if (JSON.stringify(mural.board_data) === snapshot) {
+                    try {
+                        localStorage.setItem(obterChaveRascunhoMural(mural.id),
+                            JSON.stringify({ saved_at: new Date(data.updated_at).getTime(), data: mural.board_data })
+                        );
+                    } catch (erroLocal) {
+                        console.warn("Mural salvo na nuvem, mas não na cópia local.", erroLocal);
+                    }
+                    atualizarEstadoSalvamentoMural("salvo");
+                    return true;
+                }
+                atualizarEstadoSalvamentoMural("alterado");
+            }
+            throw new Error("Novas alterações impedem a conclusão do salvamento.");
+        } catch (erro) {
+            console.error("Erro ao salvar mural:", erro);
+            atualizarEstadoSalvamentoMural("erro");
+            return false;
+        } finally {
+            meuArquivoState.muralSalvando = false;
+        }
+    })();
+
+    meuArquivoState.muralSalvamentoPromise = operacao;
     try {
-        const supabase = await obterSupabaseMeuArquivo();
-        const agora = new Date().toISOString();
-        const { data, error } = await supabase
-            .from("investigation_boards")
-            .update({ board_data: mural.board_data, updated_at: agora })
-            .eq("id", mural.id)
-            .eq("user_id", meuArquivoState.usuario.id)
-            .select("id, board_data, updated_at")
-            .single();
-
-        if (error) throw error;
-        mural.board_data = data.board_data;
-        mural.updated_at = data.updated_at;
-        localStorage.setItem(
-            obterChaveRascunhoMural(mural.id),
-            JSON.stringify({ saved_at: new Date(data.updated_at).getTime(), data: data.board_data })
-        );
-        atualizarEstadoSalvamentoMural("salvo");
-        if (mostrarConfirmacao) window.setTimeout(() => atualizarEstadoSalvamentoMural("salvo"), 600);
-    } catch (erro) {
-        console.error("Erro ao salvar mural:", erro);
-        atualizarEstadoSalvamentoMural("erro");
+        return await operacao;
     } finally {
-        meuArquivoState.muralSalvando = false;
+        if (meuArquivoState.muralSalvamentoPromise === operacao) {
+            meuArquivoState.muralSalvamentoPromise = null;
+        }
     }
 }
-
 
 /* =========================================================
    ABRIR REGISTRO GENÉRICO
    ========================================================= */
 
-function abrirRegistroArquivo(
-    itemId
-) {
-
-    if (!itemId) {
+function abrirRegistroArquivo(itemId) {
+    if (!itemId) return;
+    const registro = meuArquivoState.dossies.find(item => String(item.id) === String(itemId));
+    if (!registro) {
+        abrirModalArquivo("Registro indisponível",
+            criarEstadoVazio("Este registro não foi localizado na sua coleção pessoal.", "fa-folder-open"));
         return;
     }
 
-
-    abrirModalArquivo(
-        "Registro arquivado",
-        `
-            <div class="arquivo-form">
-
-                <div class="arquivo-message">
-
-                    <i class="fa-solid fa-folder-open"></i>
-
-                    <span>
-                        O registro está vinculado ao seu arquivo pessoal.
-                        A abertura direta do dossiê será conectada
-                        quando integrarmos esta coleção aos casos.
-                    </span>
-
-                </div>
-
-            </div>
-        `
-    );
-
+    const destinoInformado = String(registro.target_url || "").trim();
+    const destino = destinoInformado ? normalizarLinkMeuArquivo(destinoInformado) : "";
+    const idCaso = String(registro.case_id || "").trim();
+    const caminho = destino && destino !== "#"
+        ? destino
+        : idCaso ? "caso.html?id=" + encodeURIComponent(idCaso) : "";
+    if (caminho) {
+        window.location.assign(caminho);
+        return;
+    }
+    abrirModalArquivo("Registro indisponível", criarEstadoVazio(
+        "Este dossiê não possui um endereço de leitura válido. O registro permanece salvo em seu arquivo.",
+        "fa-folder-open"
+    ));
 }
 
 /* =========================================================
@@ -6977,10 +7004,15 @@ function prepararEventosPreferencias() {
             "click",
             function () {
 
-                abrirPainelPreferencia(
-                    "Preferências do Arquivo",
-                    "Aqui você poderá ajustar opções de exibição e comportamento da sua área pessoal."
-                );
+                abrirModalArquivo("Preferências do Arquivo", `
+                    <div class="arquivo-form arquivo-quick-actions">
+                        <p class="arquivo-form-intro">Gerencie as opções disponíveis para sua conta.</p>
+                        <button type="button" class="settings-row" id="preferencias-abrir-notificacoes"><i class="fa-solid fa-bell"></i><span><strong>Notificações</strong><small>Escolher os alertas que deseja receber</small></span></button>
+                        <button type="button" class="settings-row" id="preferencias-abrir-privacidade"><i class="fa-solid fa-lock"></i><span><strong>Privacidade</strong><small>Definir a visibilidade do perfil</small></span></button>
+                    </div>
+                `);
+                document.getElementById("preferencias-abrir-notificacoes")?.addEventListener("click", abrirConfiguracaoNotificacoes);
+                document.getElementById("preferencias-abrir-privacidade")?.addEventListener("click", abrirConfiguracaoPrivacidade);
 
             }
         );
@@ -7724,7 +7756,7 @@ const secoesMeuArquivo = {
         "marcadores", "linha-do-tempo"
     ],
     atividade: ["historico", "atividade-comunidade", "alertas", "casos-enviados", "compartilhar-teoria"],
-    configuracoes: ["configuracoes-hub"]
+    configuracoes: ["configuracoes-hub", "seguranca"]
 };
 
 
@@ -7829,7 +7861,15 @@ function inicializarNavegacaoMeuArquivo() {
         "#caderno": "investigacoes",
         "#teorias": "investigacoes",
         "#historico": "atividade",
-        "#configuracoes-hub": "configuracoes"
+        "#configuracoes-hub": "configuracoes",
+        "#seguranca": "configuracoes",
+        "#minhas-publicacoes": "atividade",
+        "#atividade-comunidade": "atividade",
+        "#alertas": "atividade",
+        "#casos-enviados": "atividade",
+        "#linha-do-tempo": "investigacoes",
+        "#marcadores": "investigacoes",
+        "#evidencias": "investigacoes"
     };
 
     document.querySelectorAll(".setor-card").forEach(link => {
@@ -7843,6 +7883,19 @@ function inicializarNavegacaoMeuArquivo() {
             window.requestAnimationFrame(() => {
                 document.querySelector(seletor)?.scrollIntoView({ behavior: "smooth", block: "start" });
             });
+        });
+    });
+
+    document.querySelectorAll('a[href^="#"]:not(.setor-card)').forEach(link => {
+        const hash = link.getAttribute("href");
+        const grupo = gruposSetores[hash];
+        if (!grupo) return;
+        link.addEventListener("click", evento => {
+            const alvo = document.getElementById(hash.slice(1));
+            if (!alvo) return;
+            evento.preventDefault();
+            abrirSecaoMeuArquivo(grupo);
+            window.requestAnimationFrame(() => alvo.scrollIntoView({ behavior: "smooth", block: "start" }));
         });
     });
 

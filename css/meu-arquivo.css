@@ -7044,3 +7044,32 @@ body.menu-arquivo-aberto { overflow: hidden; }
 }
 .historico-heading {display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
 @media(max-width:560px){.historico-clear {width:100%;}}
+
+
+/* Biblioteca de novels integrada ao painel do leitor — 03/11/2026 */
+.novel-library-panel { margin: 1.5rem 0; border: 1px solid var(--arquivo-border, rgba(190,155,125,.3)); padding: clamp(1rem, 3vw, 1.6rem); background: rgba(15, 12, 10, .4); }
+.novel-library-panel h3 { margin: 0 0 .4rem; color: #f0e3d1; }
+.novel-library-panel > p { margin: 0 0 1rem; color: #c8bcae; }
+.novel-library-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: .75rem; }
+.novel-library-item { display: flex; align-items: center; gap: .9rem; min-width: 0; padding: .65rem; border: 1px solid rgba(200,174,144,.25); color: #f0e3d1; text-decoration: none; background: rgba(255,255,255,.025); }
+.novel-library-item:hover, .novel-library-item:focus-visible { border-color: #ba7562; outline-offset: 3px; }
+.novel-library-thumb { width: 54px; height: 76px; flex: 0 0 54px; background: #352c27; display: block; overflow: hidden; }
+.novel-library-thumb img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.novel-library-meta { min-width: 0; display: flex; flex-direction: column; gap: .35rem; }
+.novel-library-meta strong { overflow-wrap: anywhere; }
+.novel-library-meta small { color: #c8bcae; }
+.novel-library-empty, .novel-library-error { grid-column: 1/-1; padding: 1rem; margin: 0; }
+.novel-library-error { color: #ffd3c2; border: 1px solid #a75140; }
+.meu-arquivo-load-errors { margin: 1rem 0; padding: 1rem; border: 1px solid #b96653; background: rgba(120,38,22,.12); color: #ffded6; }
+.meu-arquivo-load-errors button { margin-top: .7rem; padding: .6rem .8rem; border: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer; }
+
+
+/* Editor de acontecimentos da cronologia pessoal */
+.arquivo-timeline-events { display: grid; gap: .75rem; max-height: 38vh; overflow: auto; padding-right: .35rem; }
+.arquivo-timeline-event { padding: .9rem; border: 1px solid rgba(201,167,142,.3); background: rgba(255,255,255,.025); }
+.arquivo-timeline-event strong { display: block; overflow-wrap: anywhere; color: #f2e6d3; }
+.arquivo-timeline-event small { color: #c5b6a5; display: block; margin-top: .25rem; }
+.arquivo-timeline-event p { margin: .6rem 0; white-space: pre-wrap; }
+.arquivo-timeline-event .arquivo-form-actions { display: flex; gap: .4rem; justify-content: flex-start; flex-wrap: wrap; }
+.arquivo-timeline-event .arquivo-button { font-size: .75rem; padding: .5rem .65rem; }
+.timeline-content > .arquivo-button { margin-top: .75rem; }
