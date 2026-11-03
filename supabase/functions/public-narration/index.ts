@@ -334,7 +334,7 @@ Deno.serve(async(req:Request)=>{
             if(action==="chunk"){
               const idx=Number(body?.index);
               if(!Number.isInteger(idx)||idx<0||idx>=items.length)return json({error:"Trecho inválido."},400);
-              const base=endpoint.replace(/\\/$/,"");
+              const base=endpoint.endsWith("/")?endpoint.slice(0,-1):endpoint;
               const url=base+"/"+encodeURIComponent(bucket)+"/"+items[idx].path.split("/").map(encodeURIComponent).join("/");
               const aws=new AwsClient({accessKeyId:key,secretAccessKey:secret,region:"auto",service:"s3"});
               const signed=await signR2(aws,url);
