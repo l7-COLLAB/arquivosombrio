@@ -54,8 +54,7 @@ test('novels e especial de Halloween têm descoberta estática e metadados consi
   assert.ok(urls.some(x=>x.url===canonical),url);
   const html=fs.readFileSync(path.join(root,file),'utf8');
   assert.ok(html.includes('rel="canonical" href="'+canonical+'"'),file+' canonical');
-  if(file==='novels.html')assert.ok(html.includes('property="og:url" content="'+canonical+'"'),file+' og:url');
-  if(file.includes('arquivo/index.html'))assert.ok(html.includes('property="og:url" content="'+canonical+'"'),file+' og:url');
+  assert.ok(html.includes('property="og:url" content="'+canonical+'"'),file+' og:url');
  }
  assert.match(fs.readFileSync(path.join(root,'especiais/index.html'),'utf8'),/href="\/especiais\/7-noites-de-horror-real\/"/);
  assert.match(fs.readFileSync(path.join(root,'especiais/7-noites-de-horror-real/index.html'),'utf8'),/href="\/especiais\/7-noites-de-horror-real\/arquivo\/"/);
