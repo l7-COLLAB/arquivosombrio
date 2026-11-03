@@ -8,7 +8,7 @@ test("21 published-substitute entries retain editorial illustration policy",()=>
  assert.equal(new Set(manifest.records.map(r=>r.editoria+":"+r.id)).size,21);
  for(const r of manifest.records){
   assert.match(r.alternative_path,/^assets\/capas-alternativas-direitos\/[a-z0-9-]+\.svg$/);
-  assert.equal(r.status,"revisao_editorial_pendente");
+  assert.equal(r.status,"publicado_no_banco_20261103");
   assert.ok(r.previous_cover_url.startsWith("https://"));
   const xml=read(r.alternative_path);
   assert.ok(xml.includes("ILUSTRAÇÃO EDITORIAL ORIGINAL"));
