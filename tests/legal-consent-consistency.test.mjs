@@ -40,6 +40,11 @@ test("database migration retains legacy consent and records Google updates", () 
   assert.match(sql, /after update of raw_user_meta_data on auth\.users/i);
   assert.match(sql, /revoke all on function public\.record_legal_acceptance\(\)/i);
   assert.doesNotMatch(sql, /^\s*(?:begin|commit);\s*$/im);
+  const guard = file("migracoes/2026-11-03-gatilho-aceite-update-restrito.sql");
+  assert.ok(guard.includes("new.raw_user_meta_data ->> 'legal_acceptance' = 'true'"));
+  for (const field of ["legal_acceptance","age_18_confirmed","terms_version","privacy_version","guidelines_version"]) {
+    assert.ok(guard.includes("is distinct from new.raw_user_meta_data ->> '" + field + "'"), field);
+  }
 });
 
 test("legal pages have keyboard skip target and readable focus styling", () => {
