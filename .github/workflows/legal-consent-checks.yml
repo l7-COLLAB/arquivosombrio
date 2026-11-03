@@ -10,6 +10,7 @@ on:
       - "js/filtros.js"
       - "js/public-narration.js"
       - "migracoes/2026-11-03-registro-aceite-versoes-legais.sql"
+      - "migracoes/2026-11-03-gatilho-aceite-update-restrito.sql"
       - "css/legal-accessibility-20261103.css"
       - "tests/legal-consent-consistency.test.mjs"
       - ".github/workflows/legal-consent-checks.yml"
