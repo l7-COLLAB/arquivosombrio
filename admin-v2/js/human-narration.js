@@ -64,7 +64,7 @@ async function mount({target,dossier,project,client}){
  <audio controls preload="none" data-hv-player hidden></audio>`;
  const $=sel=>target.querySelector(sel), feedback=$("[data-hv-feedback]"), player=$("[data-hv-player]");
  const inform=(text,error=false)=>{feedback.textContent=text;feedback.style.color=error?"#eab0a1":"#b9d5b8";};
- const busy=(state)=>{operation=state;if(state)target.querySelectorAll("button").forEach(btn=>btn.disabled=true);else if(current)render();};
+ const busy=(state)=>{operation=state;target.querySelectorAll("button").forEach(btn=>btn.disabled=state);if(!state&&current)render();};
  async function refresh(){
   const loaded=await api("state");current=loaded;render();return loaded;
  }
