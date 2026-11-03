@@ -62,7 +62,7 @@ Deno.serve(async(req:Request)=>{
     const now=new Date().toISOString();
     const load=async()=>{
       const [entries,active]=await Promise.all([
-        parts.select("id,sort_order,title,script_notes,audio_path,audio_mime,audio_size,duration_seconds,status,updated_at")
+        parts.select("id,sort_order,title,script_notes,audio_path,audio_mime,audio_rights_note,audio_size,duration_seconds,status,updated_at")
           .eq("set_id",set.id).order("sort_order",{ascending:true}),
         set.active_release_id?db.from("human_narration_releases").select("id,created_at,source_updated_at,duration_seconds,parts_manifest")
           .eq("id",set.active_release_id).eq("set_id",set.id).maybeSingle():Promise.resolve({data:null,error:null})
@@ -184,7 +184,7 @@ Deno.serve(async(req:Request)=>{
       if(limit.data!==true)return json({error:"Limite de envio atingido"},429);
       const uploadId=crypto.randomUUID();
       const path="human-parts/"+contentType+"/"+contentId+"/"+partId+"/"+uploadId+(mime==="audio/wav"?".wav":".mp3");
-      const inserted=await uploads.insert({id:uploadId,part_id:partId,audio_path:path,audio_mime:mime,file_size:size,duration_seconds:seconds,created_by:user.id});
+      const inserted=await uploads.insert({id:uploadId,part_id:partId,audio_path:path,audio_mime:mime,audio_rights_note:clip(body.rights_note,1000),file_size:size,duration_seconds:seconds,created_by:user.id});
       if(inserted.error)throw inserted.error;
       const signedUrl=await signed(aws,objectUrl(path),"PUT",900,{"Content-Type":mime});
       return json({upload_id:uploadId,upload_url:signedUrl.url,expires_in:900});
@@ -225,7 +225,7 @@ Deno.serve(async(req:Request)=>{
       const sample=await aws.fetch(objectUrl(upload.audio_path),{method:"GET",headers:{"Range":"bytes=0-31"}});
       if(!sample.ok||!validAudio(new Uint8Array(await sample.arrayBuffer()),upload.audio_mime))
         return json({error:"Arquivo não reconhecido como MP3 ou WAV PCM válido"},422);
-      const updatePart=await parts.update({audio_path:upload.audio_path,audio_mime:upload.audio_mime,audio_size:upload.file_size,
+      const updatePart=await parts.update({audio_path:upload.audio_path,audio_mime:upload.audio_mime,audio_rights_note:upload.audio_rights_note,audio_size:upload.file_size,
         duration_seconds:upload.duration_seconds,status:"pending",updated_at:now}).eq("id",partId).eq("set_id",set.id);
       if(updatePart.error)throw updatePart.error;
       const updateUpload=await uploads.update({state:"finished"}).eq("id",uploadId).eq("state","uploading");
