@@ -53,6 +53,8 @@ for(const failure of ['cancel','error','expired','render']){
  const {w,widgets,authCalls}=env();const form=signup(w),p=submit(w,form);await submit(w,form);await flush();
  widgets[0].callback('signup-token');await p;
  assert.equal(authCalls.length,1);assert.equal(authCalls[0][1].options.captchaToken,'signup-token');assert.equal(authCalls[0][1].options.data.legal_acceptance,true);
+ assert.equal(authCalls[0][1].options.data.terms_version,'1.2');
+ assert.equal(authCalls[0][1].options.data.privacy_version,'1.4');
  assert.equal(form.isConnected,true);assert.match(form.querySelector('#arquivo-cadastro-mensagem').textContent,/Solicitação recebida/);assert.equal(form.querySelector('#arquivo-cadastro-senha').value,'');
  assert.equal(form.querySelector('[type=submit]').hidden,true);assert.equal(form.querySelectorAll('a').length,3);
  // The cooldown avoids immediately repeating an email send.
