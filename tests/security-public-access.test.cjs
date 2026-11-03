@@ -7,10 +7,10 @@ const root=path.resolve(__dirname,'..');
 const read=name=>fs.readFileSync(path.join(root,name),'utf8');
 const source=name=>read('supabase/functions/'+name+'/index.ts');
 
-function harness(name,{limited=false}={}){
+function harness(name,{limited=false,throwOnAuth=false}={}){
   let handler;const inserts=[],signs=[],limits=[];
   const env={SUPABASE_URL:'https://project.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'test-service-key',R2_ENDPOINT:'https://test.r2.cloudflarestorage.com',R2_ACCESS_KEY_ID:'test-access',R2_SECRET_ACCESS_KEY:'test-secret',R2_BUCKET:'test-bucket'};
-  const db={auth:{getUser:async token=>token==='valid-user'?{data:{user:{id:'verified-user'}},error:null}:{data:{user:null},error:{message:'Invalid token'}}},
+  const db={auth:{getUser:async token=>{if(throwOnAuth)throw Error('internal-error-marker');return token==='valid-user'?{data:{user:{id:'verified-user'}},error:null}:{data:{user:null},error:{message:'Invalid token'}}}},
     rpc:async(name,values)=>{limits.push({name,values});return {data:limited?false:true,error:null}},
     from:table=>{
       const chain={};
@@ -69,9 +69,10 @@ test('Lite refresh job reapplies the hardening and user-controlled names use tex
 
 
 test('public-narration does not leak internal exception messages to unauthenticated clients',async()=>{
-  const h=harness('public-narration');
+  const h=harness('public-narration',{throwOnAuth:true});
   const response=await h.handler(new Request('https://project.supabase.co/functions/v1/public-narration',{
-    method:'POST',headers:{'Content-Type':'application/json'},body:'{invalid-json'
+    method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer valid-user'},
+    body:JSON.stringify({type:'dossie',id:'4',action:'chunk',index:0})
   }));
   assert.equal(response.status,500);
   assert.deepEqual(await response.json(),{error:'Serviço de narração temporariamente indisponível.'});
