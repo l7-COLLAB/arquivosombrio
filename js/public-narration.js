@@ -160,7 +160,7 @@
         <form class="narration-auth-form" data-auth-form="signup" hidden>
           <label>Nome ou codinome<input type="text" autocomplete="nickname" required maxlength="60" data-signup-name></label>
           <label>E-mail<input type="email" autocomplete="email" required data-signup-email></label>
-          <label>Senha<input type="password" autocomplete="new-password" minlength="6" required data-signup-password></label>
+          <label>Senha<input type="password" autocomplete="new-password" minlength="12" required aria-describedby="narration-password-rule" data-signup-password></label>\n          <p id="narration-password-rule">Use pelo menos 12 caracteres, incluindo maiúscula, minúscula, número e símbolo.</p>
           <label class="narration-auth-check"><input type="checkbox" required data-signup-age><span>Confirmo que tenho 18 anos ou mais.</span></label>
           <label class="narration-auth-check"><input type="checkbox" required data-signup-legal><span>Li e aceito os <a href="termos.html" target="_blank" rel="noopener">Termos</a>, a <a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a> e as <a href="diretrizes.html" target="_blank" rel="noopener">Diretrizes</a>.</span></label>
           <button type="submit" class="narration-auth-primary">Criar conta e ouvir</button>
@@ -233,13 +233,16 @@
       state.textContent="Criando sua conta...";
       try{
         const c=await getClient();
-        const token=await captchaToken();
         const name=form.querySelector("[data-signup-name]").value.trim();
         const email=form.querySelector("[data-signup-email]").value.trim();
         const password=form.querySelector("[data-signup-password]").value;
+        if(!(password.length>=12 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /\d/.test(password) && /[^A-Za-z0-9]/.test(password))){
+          throw new Error("Use pelo menos 12 caracteres, incluindo maiúscula, minúscula, número e símbolo.");
+        }
         if(!form.querySelector("[data-signup-age]").checked||!form.querySelector("[data-signup-legal]").checked){
           throw new Error("Confirme a idade e os documentos legais para continuar.");
         }
+        const token=await captchaToken();
         localStorage.setItem(PENDING_KEY,contextKey(ctx));
         await logMetric(ctx,"signup_started");
         const options={
