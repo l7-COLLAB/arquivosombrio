@@ -250,6 +250,17 @@ Deno.serve(async(req:Request)=>{
     if(action==="availability"){
       const article=await admin.from(tableMap[type]).select("id,updated_at").eq("id",Number(id)).eq("status_publicacao","publicado").or((type==="dossie"?"published_at":"publicado_em")+".is.null,"+(type==="dossie"?"published_at":"publicado_em")+".lte."+new Date().toISOString()).maybeSingle();
       if(!article.data)return json({available:false});
+      const set=await admin.from("human_narration_sets").select("id,active_release_id")
+        .eq("content_type",type).eq("content_id",Number(id)).maybeSingle();
+      if(!set.error&&set.data?.active_release_id){
+        const release=await admin.from("human_narration_releases")
+          .select("parts_manifest,source_updated_at").eq("id",set.data.active_release_id).eq("set_id",set.data.id).maybeSingle();
+        const manifest=release.data?.parts_manifest;
+        const r2Ready=["R2_ENDPOINT","R2_ACCESS_KEY_ID","R2_SECRET_ACCESS_KEY","R2_BUCKET"].every(x=>Boolean(Deno.env.get(x)));
+        if(!release.error&&r2Ready&&Array.isArray(manifest)&&manifest.length>0
+           &&String(release.data?.source_updated_at||"")===String(article.data.updated_at||""))
+          return json({available:true});
+      }
       const manual=await admin.from("arquivo_voz_manual_imports").select("id,audio_path,source_updated_at").eq("content_type",type).eq("content_id",Number(id)).eq("status","approved").not("audio_path","is",null).order("created_at",{ascending:false}).limit(5);
       const configured=["R2_ENDPOINT","R2_ACCESS_KEY_ID","R2_SECRET_ACCESS_KEY","R2_BUCKET"].every(x=>Boolean(Deno.env.get(x)));
       if(configured&&!manual.error&&(manual.data||[]).some(x=>x.source_updated_at===article.data.updated_at))return json({available:true});
@@ -301,6 +312,39 @@ Deno.serve(async(req:Request)=>{
       .or((type==="dossie"?"published_at":"publicado_em")+".is.null,"+(type==="dossie"?"published_at":"publicado_em")+".lte."+new Date().toISOString()).maybeSingle();
     if(released.error)return json({error:"Serviço temporariamente indisponível."},503);
     if(!released.data)return json({error:"Arquivo indisponível."},404);
+
+    // Áudio humano: somente snapshots aprovados e completos chegam ao público.
+    // Trechos em edição jamais entram nesta consulta, mesmo após novo upload.
+    if(body?.force_polly!==true){
+      const {data:set,error:setError}=await admin.from("human_narration_sets")
+        .select("id,active_release_id").eq("content_type",type).eq("content_id",Number(id)).maybeSingle();
+      if(!setError&&set?.active_release_id){
+        const {data:version,error:versionError}=await admin.from("human_narration_releases")
+          .select("id,parts_manifest,source_updated_at").eq("id",set.active_release_id).eq("set_id",set.id).maybeSingle();
+        const article=await admin.from(tableMap[type]).select("updated_at").eq("id",Number(id)).maybeSingle();
+        const items=version?.parts_manifest;
+        if(!versionError&&version&&Array.isArray(items)&&items.length>0&&items.length<=60
+           &&String(version?.source_updated_at||"")===String(article.data?.updated_at||"")
+           &&items.every((p:any)=>typeof p.path==="string"&&p.path.startsWith("human-parts/"+type+"/"+id+"/"))){
+          const endpoint=Deno.env.get("R2_ENDPOINT"),key=Deno.env.get("R2_ACCESS_KEY_ID"),
+            secret=Deno.env.get("R2_SECRET_ACCESS_KEY"),bucket=Deno.env.get("R2_BUCKET");
+          if(endpoint&&key&&secret&&bucket){
+            if(action==="manifest")return json({title:type,type,total_chunks:items.length,
+              source_hash:version.id,voice:"Narração humana",engine:"human-recorded"});
+            if(action==="chunk"){
+              const idx=Number(body?.index);
+              if(!Number.isInteger(idx)||idx<0||idx>=items.length)return json({error:"Trecho inválido."},400);
+              const base=endpoint.endsWith("/")?endpoint.slice(0,-1):endpoint;
+              const url=base+"/"+encodeURIComponent(bucket)+"/"+items[idx].path.split("/").map(encodeURIComponent).join("/");
+              const aws=new AwsClient({accessKeyId:key,secretAccessKey:secret,region:"auto",service:"s3"});
+              const signed=await signR2(aws,url);
+              return json({index:idx,total_chunks:items.length,url:signed.url,
+                source_hash:version.id,engine:"human-recorded"});
+            }
+          }
+        }
+      }
+    }
 
     // Approved desktop imports take priority only while the source article is unchanged.
     if(body?.force_polly!==true){
