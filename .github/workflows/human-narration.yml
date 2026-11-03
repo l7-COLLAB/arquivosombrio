@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'admin-v2/js/human-narration.js'
+      - 'admin-v2/js/audio-editor.js'
       - 'admin-v2/js/narration.js'
       - 'admin-v2/index.html'
       - 'supabase/functions/human-narration-studio/index.ts'
