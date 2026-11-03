@@ -1,3 +1,5 @@
+> **Atualização posterior — 03/11/2026:** a etapa de publicação foi concluída após este diagnóstico inicial. As 21 capas externas foram efetivamente substituídas no Supabase por ilustrações originais (5 Dossiês, 14 Garimpos, 2 Perícias), com 21 backups em `private.cover_replacement_audit_20261103`, gatilhos de narração preservados e legendas atualizadas. Consulte [Registro de publicação e reversão](REGISTRO_PUBLICACAO_21_CAPAS_20261103.md). As seções históricas abaixo descrevem o estado **antes da substituição**. Restam 44 capas sem comprovação documental adequada.
+
 # Arquivo Sombrio — triagem de 21 capas externas e rastreio de 38 uploads
 
 **Data de corte:** 03/11/2026. **Escopo:** as 59 capas de duas classes do inventário de 65 pendências de direitos autorais. **Resultado:** pesquisa documental, 21 alternativas originais e 38 objetos rastreados; não houve autorização obtida de titular, substituição de fotos publicadas nem remoção de dados.
