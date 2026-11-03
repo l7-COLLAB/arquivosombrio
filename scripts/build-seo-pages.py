@@ -109,12 +109,16 @@ def render_page(table, row, related=None, cross_editorial=None):
     article_body = article_format.render_narrative(narrative)
     image_value = row.get("imagem" if table in ("Casos", "pericias") else "imagem_capa")
     cover = article_format.cover_url(image_value)
+    illustrated = cover.lower().split("?", 1)[0].endswith(".svg") and "/assets/capas-alternativas-direitos/" in cover
+    social_cover = sitemap.BASE + "imagem-compartilhamento.jpg" if illustrated else cover
     image_figure = ""
     if image_value and cover != article_format.FALLBACK_COVER:
-        caption = row.get("legenda_imagem") if table == "pericias" else None
+        caption = ("Capa ilustrativa original do Arquivo Sombrio. Não é fotografia nem evidência do caso."
+                   if illustrated else (row.get("legenda_imagem") if table == "pericias" else None))
         caption_html = "<figcaption>" + escape(str(caption), quote=True) + "</figcaption>" if caption else ""
-        image_figure = ('<figure class="article-cover"><img src="' + escape(cover, quote=True) + '" alt="Capa do arquivo: '
-                        + escape(title, quote=True) + '" width="1200" height="700" decoding="async">'
+        image_alt = ("Capa ilustrativa de " if illustrated else "Capa do arquivo: ") + title
+        image_figure = ('<figure class="article-cover"><img src="' + escape(cover, quote=True) + '" alt="'
+                        + escape(image_alt, quote=True) + '" width="900" height="1200" decoding="async">'
                         + caption_html + '</figure>')
     references = article_format.render_references(row.get("documentos") if table == "Casos" else row.get("fontes"))
     watch_type = ""
@@ -218,10 +222,10 @@ article{overflow-wrap:anywhere;margin-top:34px}article p{margin:0 0 1.35em;max-w
 <meta property="og:title" content="{e(headline)}">
 <meta property="og:description" content="{e(description)}">
 <meta property="og:url" content="{e(canonical)}">
-<meta property="og:image" content="{e(cover)}">
-<meta property="og:image:alt" content="{e(title)}">
+<meta property="og:image" content="{e(social_cover)}">
+<meta property="og:image:alt" content="{e("Imagem institucional do Arquivo Sombrio" if illustrated else title)}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="{e(cover)}">
+<meta name="twitter:image" content="{e(social_cover)}">
 <meta name="twitter:image:alt" content="{e(title)}">
 <script type="application/ld+json">{json_ld}</script>
 <style>{style}</style>
@@ -243,7 +247,7 @@ article{overflow-wrap:anywhere;margin-top:34px}article p{margin:0 0 1.35em;max-w
 <p><a href="{e(original)}">Consultar versão interativa, evidências e referências →</a></p>
 </main><footer><a href="/pesquisa.html">Pesquisar outros arquivos</a></footer>
 <script src="/js/watchlist-public.js?v=1" defer></script>
-<script src="/js/cover-credits.js?v=20261101" defer></script>
+<script src="/js/cover-credits.js?v=20261103-2" defer></script>
 </body></html>
 """
     return html.encode("utf-8")
