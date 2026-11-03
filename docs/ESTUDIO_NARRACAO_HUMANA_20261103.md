@@ -41,3 +41,12 @@ Permitir narrar com a própria voz, em partes pequenas, com **roteiro independen
 - Somente MP3 nesta versão; edição de ruído, redução de pausas e corte devem ser feitos antes do upload.
 - O player público já reproduz chunks, mas a timeline marca a duração da parte atual; melhoria futura: timeline global com capítulos clicáveis e retomada por parte.
 - Revisão editorial humana permanece obrigatória antes da publicação: datas, nomes, atribuição, hipóteses e créditos.
+
+## Editor de áudio integrado — extensão de 03/11/2026
+Esta PR também inclui `admin-v2/js/audio-editor.js`, integrado diretamente ao botão **Editar áudio** de cada parte. Processamento inteiramente local no navegador por Web Audio API: corte de início/fim, velocidade (0,90–1,25×), volume de voz, fade, filtros natural/clareza/grave/rádio/eco, trilha musical opcional em volume baixo e efeito pontual posicionado por segundos. O usuário pode ouvir prévia de 20 s a partir de um ponto selecionado e exportar a parte editada em WAV PCM mono 32 kHz. O botão de envio aceita MP3 ou WAV (até 30 MB por parte) e valida o cabeçalho no R2 antes de liberar para revisão.
+
+**Limite técnico:** alteração de velocidade via `AudioBufferSourceNode.playbackRate` altera também o tom da voz; não anunciar preservação de pitch. WAV consome espaço maior que MP3; para duração acima de ~8 minutos, dividir a parte. Em celular, renderização longa pode falhar por falta de memória; usar trechos menores. Nem a prévia nem a edição são enviadas ao servidor antes do comando explícito de upload.
+
+Música e efeitos são arquivos importados pelo administrador. Não existe catálogo incorporado de músicas comerciais. Quando há trilha ou efeito, o editor exige confirmação de direitos e informação de fonte/licença, persistida em `audio_rights_note` (dado administrativo). Antes da publicação, conferir se a licença exige atribuição pública no próprio artigo. O sistema não comprova automaticamente o direito autoral dos arquivos.
+
+**Futuras melhorias:** preservar tom ao acelerar, redução de ruído por processamento especializado, compressão/exportação MP3 via backend seguro ou encoder local, waveform com corte visual, edição multipista e histórico de edição. Não declarar essas melhorias como entregues.
