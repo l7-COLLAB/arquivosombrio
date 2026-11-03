@@ -117,8 +117,9 @@ def render_page(table, row, related=None, cross_editorial=None):
                    if illustrated else (row.get("legenda_imagem") if table == "pericias" else None))
         caption_html = "<figcaption>" + escape(str(caption), quote=True) + "</figcaption>" if caption else ""
         image_alt = ("Capa ilustrativa de " if illustrated else "Capa do arquivo: ") + title
+        image_dimensions = ' width="900" height="1200"' if illustrated else ' width="1200" height="700"'
         image_figure = ('<figure class="article-cover"><img src="' + escape(cover, quote=True) + '" alt="'
-                        + escape(image_alt, quote=True) + '" width="900" height="1200" decoding="async">'
+                        + escape(image_alt, quote=True) + '"' + image_dimensions + ' decoding="async">'
                         + caption_html + '</figure>')
     references = article_format.render_references(row.get("documentos") if table == "Casos" else row.get("fontes"))
     watch_type = ""
