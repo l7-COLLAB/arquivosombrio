@@ -258,7 +258,7 @@ Deno.serve(async(req:Request)=>{
         const manifest=release.data?.parts_manifest;
         const r2Ready=["R2_ENDPOINT","R2_ACCESS_KEY_ID","R2_SECRET_ACCESS_KEY","R2_BUCKET"].every(x=>Boolean(Deno.env.get(x)));
         if(!release.error&&r2Ready&&Array.isArray(manifest)&&manifest.length>0
-           &&String(release.data.source_updated_at||"")===String(article.data.updated_at||""))
+           &&String(release.data?.source_updated_at||"")===String(article.data.updated_at||""))
           return json({available:true});
       }
       const manual=await admin.from("arquivo_voz_manual_imports").select("id,audio_path,source_updated_at").eq("content_type",type).eq("content_id",Number(id)).eq("status","approved").not("audio_path","is",null).order("created_at",{ascending:false}).limit(5);
@@ -323,7 +323,7 @@ Deno.serve(async(req:Request)=>{
           .select("id,parts_manifest,source_updated_at").eq("id",set.active_release_id).eq("set_id",set.id).maybeSingle();
         const article=await admin.from(tableMap[type]).select("updated_at").eq("id",Number(id)).maybeSingle();
         const items=version?.parts_manifest;
-        if(!versionError&&Array.isArray(items)&&items.length>0&&items.length<=60
+        if(!versionError&&version&&Array.isArray(items)&&items.length>0&&items.length<=60
            &&String(version?.source_updated_at||"")===String(article.data?.updated_at||"")
            &&items.every((p:any)=>typeof p.path==="string"&&p.path.startsWith("human-parts/"+type+"/"+id+"/"))){
           const endpoint=Deno.env.get("R2_ENDPOINT"),key=Deno.env.get("R2_ACCESS_KEY_ID"),
