@@ -86,6 +86,44 @@ Deno.serve(async(req:Request)=>{
       return json(await load());
     }
 
+    if(action==="unpublish"){
+      const stop=await sets.update({active_release_id:null,updated_at:now}).eq("id",set.id);
+      if(stop.error)throw stop.error;
+      set.active_release_id=null;
+      return json(await load());
+    }
+    if(action==="publish"){
+      const {data:entries,error}=await parts.select("*").eq("set_id",set.id).order("sort_order",{ascending:true});
+      if(error)throw error;
+      if(!entries?.length||entries.length!==Number(set.expected_parts))
+        return json({error:"Cadastre exatamente "+set.expected_parts+" partes antes de publicar."},409);
+      if(entries.some((p:any)=>p.status!=="ready"||!p.audio_path||!(Number(p.duration_seconds)>0)))
+        return json({error:"Todas as partes precisam ter MP3 enviado, ouvido e aprovado."},409);
+      if(new Set(entries.map((p:any)=>p.sort_order)).size!==entries.length)
+        return json({error:"Reordene as partes para resolver posições duplicadas."},409);
+      const endpoint=Deno.env.get("R2_ENDPOINT"),key=Deno.env.get("R2_ACCESS_KEY_ID"),
+        secret=Deno.env.get("R2_SECRET_ACCESS_KEY"),bucket=Deno.env.get("R2_BUCKET");
+      if(!endpoint||!key||!secret||!bucket)return json({error:"Armazenamento privado indisponível"},503);
+      const aws=new AwsClient({accessKeyId:key,secretAccessKey:secret,region:"auto",service:"s3"});
+      const objectUrl=(path:string)=>endpoint.replace(/\\/$/,"")+"/"+encodeURIComponent(bucket)+"/"+path.split("/").map(encodeURIComponent).join("/");
+      for(const p of entries){
+        const head=await aws.fetch(objectUrl(p.audio_path),{method:"HEAD"});
+        if(!head.ok)return json({error:"MP3 não localizado: "+p.title},409);
+      }
+      const manifest=entries.map((p:any,i:number)=>({index:i,title:p.title||"Parte "+(i+1),
+        path:p.audio_path,duration_seconds:Number(p.duration_seconds)}));
+      const total=manifest.reduce((n:number,p:any)=>n+p.duration_seconds,0);
+      const release=await db.from("human_narration_releases").insert({
+        set_id:set.id,parts_manifest:manifest,source_updated_at:article.updated_at,
+        duration_seconds:total,approved_by:user.id
+      }).select("id").single();
+      if(release.error)throw release.error;
+      const published=await sets.update({active_release_id:release.data.id,updated_at:now}).eq("id",set.id);
+      if(published.error)throw published.error;
+      set.active_release_id=release.data.id;
+      return json(await load());
+    }
+
     const partId=clip(body.part_id,50);
     if(!uuid.test(partId))return json({error:"Selecione uma parte"},400);
     const {data:part,error:partError}=await parts.select("*").eq("id",partId).eq("set_id",set.id).maybeSingle();
