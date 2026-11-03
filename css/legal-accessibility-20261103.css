@@ -1,0 +1,46 @@
+/* Arquivo Sombrio — acessibilidade das páginas legais.
+   Cores mantêm identidade editorial e elevam contraste para texto pequeno.
+   Foco e link de salto são visíveis somente durante navegação por teclado.
+   Revisar com testes manuais WCAG 2.2 AA após publicação. */
+
+.as-legal-skip {
+  position: fixed;
+  z-index: 2147483640;
+  top: 8px;
+  left: 8px;
+  transform: translateY(-180%);
+  background: #f0e8dc;
+  color: #080706;
+  border: 2px solid #080706;
+  padding: 12px 16px;
+  font: 700 14px/1.4 Arial, sans-serif;
+  text-decoration: underline;
+}
+.as-legal-skip:focus,
+.as-legal-skip:focus-visible { transform: none; }
+
+.legal-eyebrow,
+.legal-section-number,
+.legal-page .legal-eyebrow,
+.legal-page .legal-section-number { color: #d47872; }
+
+.legal-meta-item small,
+.legal-page .legal-meta-item small {
+  color: #a9a195;
+  font-size: max(0.75rem, 12px);
+  line-height: 1.5;
+}
+.legal-logo small { color: #a9a195; font-size: 0.75rem; }
+.legal-footer { color: #a9a195; }
+.legal-page .legal-meta-item strong { font-size: max(0.8rem, 13px); }
+
+:where(a, button, input, textarea, select, summary):focus-visible {
+  outline: 3px solid #e1aaa4;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .as-legal-skip, .legal-page *, .legal-main * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
