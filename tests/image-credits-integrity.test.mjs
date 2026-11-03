@@ -64,17 +64,21 @@ test("prioritized inventory never confuses declared license with legal clearance
   assert.ok(!triage.some(x => x.url_capa_curta.includes("base64,")), "Do not store entire embedded pictures in compact public export");
 });
 
-test("public registry renders 50 source-credit entries and warns about limitations", () => {
+test("public registry renders 51 source-credit entries and warns about limitations", () => {
   const old = inventory.filter(x => manifest.some(m =>
     m.table === x.editoria && String(m.id) === x.id && x.url_publicada_sem_parametros.includes(m.asset_path)
   ));
   assert.equal(old.length, 21);
   const inPage = (creditsPage.match(/<article class="credit"/g) || []).length;
-  assert.equal(inPage, 50);
+  assert.equal(inPage, 51);
   for (const record of verified) {
     assert.ok(creditsPage.includes('id="' + record.editoria + '-' + record.id + '"'), "Missing public credit: " + key(record));
   }
-  assert.ok(creditsPage.includes("Relação parcial de 50 capas"));
+  assert.ok(creditsPage.includes("Relação parcial de 51 capas"));
   assert.ok(creditsPage.includes("não é um certificado"));
   assert.ok(file("fontes-direitos.html").includes('href="creditos-imagens.html"'));
+  assert.ok(creditsPage.includes('id="pericias-12"'));
+  assert.ok(creditsPage.includes("https://www.nist.gov/copyrights-disclaimers"));
+  assert.ok(creditsPage.includes("verificação territorial"));
+
 });

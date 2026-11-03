@@ -1,0 +1,45 @@
+{
+  "data_corte": "2026-11-03",
+  "escopo": "Capas de fontes institucionais ainda não classificadas no manifesto de direitos",
+  "disclaimer": "Esta triagem documenta condições publicadas pela instituição. Não substitui avaliação territorial da Lei 9.610/1998 nem cobre imagens externas de terceiros incorporadas por agências.",
+  "records": [
+    {
+      "editoria": "pericias",
+      "id": "12",
+      "instituicao": "NIST",
+      "titulo": "Using 'Minutiae' to Match Fingerprints Can Be Accurate",
+      "data_arte": "2006-03-22",
+      "referencia": "06ITL001",
+      "credito": "NIST",
+      "origem": "https://www.nist.gov/image/using-minutiae-match-fingerprints-can-be-accurate",
+      "termos": "https://www.nist.gov/copyrights-disclaimers",
+      "condicoes": "Informações e imagens NIST não marcadas como protegidas por copyright podem ser copiadas/distribuídas com crédito adequado, conforme aviso institucional; página da imagem atribui crédito NIST.",
+      "estado": "termos_institucionais_documentados",
+      "ressalvas": "Material educativo; não é prova ou fotografia do caso Nicholas Barclay. Não há conclusão sobre domínio público no Brasil, imagens derivadas, e direitos de terceiros não citados."
+    },
+    {
+      "editoria": "casos_diarios",
+      "id": "33",
+      "instituicao": "FBI",
+      "titulo": "Sketches of D.B. Cooper",
+      "origem": "https://www.fbi.gov/image-repository/cooper-sketches.jpeg/view",
+      "referencia_multimidia": "https://multimedia.fbi.gov/item?id=6790&type=image",
+      "credito": "FBI (esboços atribuídos a artista do FBI)",
+      "termos": "https://multimedia.fbi.gov/",
+      "condicoes": "Repositório multimídia afirma disponibilizar imagens para uso na divulgação do FBI, com crédito. É necessário verificar se a publicação específica e o uso no Arquivo Sombrio se enquadram nesse propósito.",
+      "estado": "pendente_validacao_escopo",
+      "ressalvas": "A distribuição de esboços pelo FBI não prova, isoladamente, inexistência de direitos de terceiros e de limitações territoriais."
+    },
+    {
+      "editoria": "Casos",
+      "id": "7",
+      "instituicao": "City of Boulder",
+      "titulo": "JonBenét Ramsey — School Photo",
+      "origem": "https://bouldercolorado.gov/sites/default/files/styles/small_768w/public/2023-10/jonbenet-ramsey-school-photo.jpg.webp",
+      "credito": "Fotógrafo/titular não identificado",
+      "condicoes": "Hospedagem municipal não constitui prova de licença irrestrita; foto escolar pode ter direitos pertencentes a terceiro.",
+      "estado": "sem_licenca_ou_autoria_comprovada",
+      "ressalvas": "Direitos autorais da fotografia e direito à imagem de criança falecida devem ser avaliados separadamente; recomendar autorização comprovável ou alternativa editorial não fotográfica."
+    }
+  ]
+}
