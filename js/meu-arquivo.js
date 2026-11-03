@@ -183,6 +183,10 @@ const meuArquivoState = {
 
     muralSalvando: false,
 
+    muralSalvamentoPromise: null,
+
+    muralFechando: false,
+
     focoAntesModal: null
 
 };
@@ -2285,7 +2289,9 @@ function abrirModalArquivo(
         return;
     }
 
-    meuArquivoState.focoAntesModal = document.activeElement;
+    if (modal.hidden || !meuArquivoState.focoAntesModal?.isConnected) {
+        meuArquivoState.focoAntesModal = document.activeElement;
+    }
 
 
     if (
@@ -2345,55 +2351,37 @@ function abrirModalArquivo(
 }
 
 
-function fecharModalArquivo() {
-
-    const modal =
-        arquivoElements.modal;
-
-
-    if (!modal) {
-        return;
-    }
+async function fecharModalArquivo() {
+    const modal = arquivoElements.modal;
+    if (!modal || modal.hidden || meuArquivoState.muralFechando) return;
 
     if (meuArquivoState.muralAberto) {
-        salvarMuralAberto(false);
+        meuArquivoState.muralFechando = true;
+        const editor = modal.querySelector(".mural-editor");
+        if (editor) editor.inert = true;
+        const salvo = await salvarMuralAberto(false);
+        meuArquivoState.muralFechando = false;
+        if (!salvo) {
+            const fecharComRascunho = window.confirm(
+                "O mural não pôde ser salvo na nuvem. Uma cópia permanece neste navegador. Fechar e conservar o rascunho local?"
+            );
+            if (!fecharComRascunho) {
+                if (editor) editor.inert = false;
+                return;
+            }
+        }
         meuArquivoState.muralAberto = null;
         window.clearTimeout(meuArquivoState.muralSalvamentoTimer);
     }
 
-
-    modal.hidden =
-        true;
-
+    modal.hidden = true;
     modal.setAttribute("aria-hidden", "true");
-
-
-    document.body.classList.remove(
-        "arquivo-modal-aberto"
-    );
-
-    modal.classList.remove(
-        "arquivo-modal--mural"
-    );
-
-
-    if (
-        arquivoElements.modalContent
-    ) {
-
-        arquivoElements
-            .modalContent
-            .innerHTML = "";
-
-    }
-
-    if (meuArquivoState.focoAntesModal?.isConnected) {
-        meuArquivoState.focoAntesModal.focus();
-    }
+    document.body.classList.remove("arquivo-modal-aberto");
+    modal.classList.remove("arquivo-modal--mural");
+    if (arquivoElements.modalContent) arquivoElements.modalContent.innerHTML = "";
+    if (meuArquivoState.focoAntesModal?.isConnected) meuArquivoState.focoAntesModal.focus();
     meuArquivoState.focoAntesModal = null;
-
 }
-
 
 /* =========================================================
    EDIÇÃO DO PERFIL
@@ -2899,54 +2887,38 @@ function mostrarErroInicial(
    ========================================================= */
 
 function prepararEventosModal() {
+    const modal = arquivoElements.modal;
+    if (!modal) return;
 
-    const modal =
-        arquivoElements.modal;
-
-
-    if (!modal) {
-        return;
-    }
-
-
-    modal.addEventListener(
-        "click",
-        function (evento) {
-
-            const fechar =
-                evento.target.closest(
-                    "[data-close-arquivo-modal]"
-                );
-
-
-            if (fechar) {
-
-                fecharModalArquivo();
-
-            }
-
+    modal.addEventListener("click", evento => {
+        if (evento.target.closest("[data-close-arquivo-modal]")) void fecharModalArquivo();
+    });
+    document.addEventListener("keydown", evento => {
+        if (modal.hidden) return;
+        if (evento.key === "Escape") {
+            evento.preventDefault();
+            void fecharModalArquivo();
+            return;
         }
-    );
+        if (evento.key !== "Tab") return;
 
-
-    document.addEventListener(
-        "keydown",
-        function (evento) {
-
-            if (
-                evento.key === "Escape" &&
-                !modal.hidden
-            ) {
-
-                fecharModalArquivo();
-
-            }
-
+        const foco = Array.from(modal.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )).filter(item => !item.closest("[hidden]") && !item.inert && item.getClientRects().length);
+        if (!foco.length) {
+            evento.preventDefault();
+            return;
         }
-    );
-
+        const primeiro = foco[0], ultimo = foco[foco.length - 1];
+        if (evento.shiftKey && (document.activeElement === primeiro || !modal.contains(document.activeElement))) {
+            evento.preventDefault();
+            ultimo.focus();
+        } else if (!evento.shiftKey && (document.activeElement === ultimo || !modal.contains(document.activeElement))) {
+            evento.preventDefault();
+            primeiro.focus();
+        }
+    });
 }
-
 
 /* =========================================================
    EVENTOS PRINCIPAIS DO MEU ARQUIVO
