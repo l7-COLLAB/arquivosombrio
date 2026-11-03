@@ -20,6 +20,8 @@ async function mount({target,dossier,project,client}){
   return data;
  };
  let current=null,operation=false;
+ const editedUploads=new Map();
+ let localAudioUrl=null;
  target.className="human-voice-studio";
  target.innerHTML=`
  <style>
@@ -79,7 +81,7 @@ async function mount({target,dossier,project,client}){
     :"Versão pública: "+current.published.parts_count+" partes · "+fmt(current.published.total_seconds)+". Alterações neste rascunho não modificam a versão publicada.")
    :"Nenhuma narração humana liberada. Outros motores de áudio, caso existentes, continuam independentes.";
   const publish=$("[data-hv-publish]");
-  const canPublish=parts.length===Number(current.expected_parts)&&parts.length>0&&ready===parts.length;
+  const canPublish=parts.length===Number(current.expected_parts)&&parts.length>0&&ready===parts.length&&parts.every(p=>!editedUploads.has(p.id));
   publish.disabled=!canPublish;
   publish.dataset.hvBlocked=String(!canPublish);
   publish.textContent=current.published?"Publicar nova versão completa":"Publicar narração completa";
@@ -90,16 +92,17 @@ async function mount({target,dossier,project,client}){
    const section=document.createElement("section");section.className="hv-part";section.dataset.partId=part.id;
    section.innerHTML=`
    <div class="hv-part-top"><h4>Parte ${index+1} <span class="hv-muted">· ${part.audio_path?fmt(part.duration_seconds):"sem MP3"}</span></h4>
-   <small>${part.status==="ready"?"✓ Aprovada":part.audio_path?"MP3 recebido · aguardando aprovação":"Ainda não gravada"}</small></div>
+   <small>${editedUploads.has(part.id)?"Edição local pronta · precisa ser enviada":part.status==="ready"?"✓ Aprovada":part.audio_path?"Áudio recebido · aguardando aprovação":"Ainda não gravada"}</small></div>
    <div class="hv-part-grid">
    <label>Título da parte<input data-part-title value="${esc(part.title)}" maxlength="180"></label>
    <label>Roteiro ou lembretes de gravação<textarea data-part-script rows="3" placeholder="Escreva como deseja contar esta parte. Não altera o texto do site.">${esc(part.script_notes)}</textarea></label></div>
    <div class="hv-actions"><button type="button" data-part-save>Salvar texto</button>
    <button type="button" data-part-up ${index===0?"disabled":""} aria-label="Mover parte para cima">↑</button>
    <button type="button" data-part-down ${index===parts.length-1?"disabled":""} aria-label="Mover parte para baixo">↓</button>
-   <label>Arquivo MP3<input type="file" data-part-file accept=".mp3,audio/mpeg" aria-label="Enviar áudio da parte ${index+1}"></label>
-   <button type="button" data-part-upload>Enviar MP3</button>
-   <button type="button" data-part-play ${!part.audio_path?"disabled":""}>Ouvir</button>
+   <label>Gravação original ou áudio editado (MP3/WAV)<input type="file" data-part-file accept=".mp3,.wav,audio/mpeg,audio/wav" aria-label="Selecionar áudio da parte ${index+1}"></label>
+   <button type="button" data-part-editor>Editar áudio</button>
+   <button type="button" data-part-upload>Enviar MP3/WAV</button>
+   <button type="button" data-part-play ${!part.audio_path&&!editedUploads.has(part.id)?"disabled":""}>Ouvir</button>
    <button type="button" data-part-approve ${!part.audio_path||part.status==="ready"?"disabled":""}>Aprovar parte</button>
    <button type="button" data-part-remove class="hv-danger">Excluir parte</button></div>`;
    list.appendChild(section);
@@ -109,26 +112,55 @@ async function mount({target,dossier,project,client}){
    section.querySelector("[data-part-down]").onclick=()=>task(()=>api("move",{part_id:part.id,direction:"down"}));
    section.querySelector("[data-part-remove]").onclick=()=>{
     if(!confirm("Excluir esta parte do rascunho? Versões já publicadas não serão alteradas."))return;
+    editedUploads.delete(part.id);
     task(()=>api("remove",{part_id:part.id}));
+   };
+   section.querySelector("[data-part-file]").onchange=()=>{editedUploads.delete(part.id);inform("Gravação selecionada. Você pode editá-la antes de enviar.");};
+   section.querySelector("[data-part-editor]").onclick=async()=>{
+    if(operation)return;
+    const fileInput=section.querySelector("[data-part-file]");
+    let file=editedUploads.get(part.id)||fileInput.files?.[0]||null;
+    if(!file&&part.audio_path){
+      try{
+        const data=await api("preview",{part_id:part.id});
+        const res=await fetch(data.url,{cache:"no-store"});
+        if(!res.ok)throw Error("A gravação armazenada não pôde ser recuperada.");
+        const blob=await res.blob(),ext=part.audio_path.endsWith(".wav")?"wav":"mp3";
+        file=new File([blob],"parte-"+(index+1)+"."+ext,{type:ext==="wav"?"audio/wav":"audio/mpeg"});
+      }catch(_){inform("Selecione o MP3/WAV original no campo desta parte para editá-lo. O navegador não conseguiu recuperar a gravação remota.",true);return;}
+    }
+    try{
+      await window.ArquivoAudioEditor.open({initialFile:file,onExport:async output=>{
+        editedUploads.set(part.id,output);
+        const badge=section.querySelector(".hv-part-top small");
+        if(badge)badge.textContent="Edição local pronta · precisa ser enviada";
+        inform("Edição gerada ("+(output.size/1024/1024).toFixed(1)+" MB). Clique em Enviar MP3/WAV e aprove novamente. O original remoto não foi apagado.");
+        const publish=$("[data-hv-publish]");publish.disabled=true;publish.dataset.hvBlocked="true";
+      }});
+    }catch(e){inform(e.message||"Não foi possível abrir o editor",true)}
    };
    section.querySelector("[data-part-play]").onclick=async()=>{
     if(operation)return;try{
-     const preview=await api("preview",{part_id:part.id});
-     player.hidden=false;player.src=preview.url;await player.play();
+     if(localAudioUrl){URL.revokeObjectURL(localAudioUrl);localAudioUrl=null;}
+     let url;
+     if(editedUploads.has(part.id)){localAudioUrl=URL.createObjectURL(editedUploads.get(part.id));url=localAudioUrl;}
+     else{const preview=await api("preview",{part_id:part.id});url=preview.url;}
+     player.hidden=false;player.src=url;await player.play();
      inform("Prévia privada da parte "+(index+1)+".");
     }catch(e){inform(e.message||"Falha ao reproduzir",true);}
    };
    section.querySelector("[data-part-approve]").onclick=()=>task(()=>api("approve_part",{part_id:part.id}));
    section.querySelector("[data-part-upload]").onclick=()=>task(async()=>{
-    const file=section.querySelector("[data-part-file]").files?.[0];
-    if(!file||!/\.mp3$/i.test(file.name))throw Error("Selecione um MP3 para esta parte.");
-    if(file.size<1024||file.size>30*1024*1024)throw Error("Cada MP3 deve ter até 30 MB.");
+    const file=editedUploads.get(part.id)||section.querySelector("[data-part-file]").files?.[0];
+    if(!file||!/\.(mp3|wav)$/i.test(file.name))throw Error("Selecione um arquivo MP3 ou WAV para esta parte.");
+    if(file.size<1024||file.size>30*1024*1024)throw Error("Cada áudio deve ter até 30 MB.");
+    const mime=/\.wav$/i.test(file.name)?"audio/wav":"audio/mpeg";
     const duration=await durationOf(file);
     if(!duration||duration<=0)throw Error("Não foi possível reconhecer a duração. Verifique o arquivo MP3.");
     inform("Enviando parte "+(index+1)+" para o armazenamento privado...");
-    const init=await api("init_upload",{part_id:part.id,size:file.size,duration_seconds:duration});
+    const init=await api("init_upload",{part_id:part.id,size:file.size,duration_seconds:duration,mime});
     let sent=false;
-    try{const put=await fetch(init.upload_url,{method:"PUT",headers:{"Content-Type":"audio/mpeg"},body:file});sent=put.ok;}
+    try{const put=await fetch(init.upload_url,{method:"PUT",headers:{"Content-Type":mime},body:file});sent=put.ok;}
     catch(_){}
     if(!sent){
      if(file.size>10*1024*1024)throw Error("Envio direto ao R2 indisponível. Use MP3 até 10 MB ou revise a configuração de CORS.");
@@ -138,7 +170,8 @@ async function mount({target,dossier,project,client}){
      await api("proxy_upload",{part_id:part.id,upload_id:init.upload_id,base64:btoa(binary)});
     }
     await api("finish_upload",{part_id:part.id,upload_id:init.upload_id});
-    inform("MP3 recebido. Ouça e clique em Aprovar parte.");
+    editedUploads.delete(part.id);
+    inform("Áudio recebido. Ouça e clique em Aprovar parte.");
    });
   });
  }
