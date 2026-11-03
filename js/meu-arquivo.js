@@ -1866,95 +1866,43 @@ function renderizarMurais() {
    ========================================================= */
 
 function renderizarLinhasDoTempo() {
+    const container = document.getElementById("lista-linhas-tempo");
+    if (!container) return;
+    const linhas = meuArquivoState.linhasDoTempo;
 
-    const container =
-        document.getElementById(
-            "lista-linhas-tempo"
+    if (!Array.isArray(linhas) || !linhas.length) {
+        container.innerHTML = criarEstadoVazio("Nenhuma linha do tempo foi criada.", "fa-timeline");
+        return;
+    }
+
+    const fragmento = document.createDocumentFragment();
+    linhas.forEach(item => {
+        const artigo = document.createElement("article");
+        artigo.className = "timeline-item";
+        const marcador = document.createElement("div");
+        marcador.className = "timeline-marker";
+        const conteudo = document.createElement("div");
+        conteudo.className = "timeline-content";
+        const titulo = document.createElement("strong");
+        titulo.textContent = obterPrimeiroValor(item, ["title", "titulo"], "Linha do tempo");
+        const descricao = document.createElement("p");
+        descricao.textContent = obterPrimeiroValor(
+            item, ["description", "descricao"], "Cronologia particular de investigação."
         );
-
-
-    if (!container) {
-        return;
-    }
-
-
-    const linhas =
-        meuArquivoState.linhasDoTempo;
-
-
-    if (
-        !Array.isArray(linhas) ||
-        linhas.length === 0
-    ) {
-
-        container.innerHTML =
-            criarEstadoVazio(
-                "Nenhuma linha do tempo foi criada.",
-                "fa-timeline"
-            );
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        linhas
-            .map(
-                function (item) {
-
-                    const titulo =
-                        obterPrimeiroValor(
-                            item,
-                            [
-                                "title",
-                                "titulo",
-                                "name",
-                                "nome"
-                            ],
-                            "Linha do tempo"
-                        );
-
-
-                    const descricao =
-                        obterPrimeiroValor(
-                            item,
-                            [
-                                "description",
-                                "descricao",
-                                "notes",
-                                "nota"
-                            ],
-                            "Cronologia particular de investigação."
-                        );
-
-
-                    return `
-                        <article class="timeline-item">
-
-                            <div class="timeline-marker"></div>
-
-                            <div class="timeline-content">
-
-                                <strong>
-                                    ${escaparHTML(titulo)}
-                                </strong>
-
-                                <p>
-                                    ${escaparHTML(descricao)}
-                                </p>
-
-                            </div>
-
-                        </article>
-                    `;
-
-                }
-            )
-            .join("");
-
+        const quantidade = document.createElement("small");
+        const total = Array.isArray(item.events) ? item.events.length : 0;
+        quantidade.textContent = total + (total === 1 ? " acontecimento" : " acontecimentos");
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "arquivo-button arquivo-button-secondary";
+        botao.dataset.openTimeline = String(item.id);
+        botao.textContent = "Editar acontecimentos";
+        conteudo.append(titulo, descricao, quantidade, botao);
+        artigo.append(marcador, conteudo);
+        fragmento.appendChild(artigo);
+    });
+    container.replaceChildren(fragmento);
 }
-
 
 /* =========================================================
    ALERTAS
@@ -3322,6 +3270,11 @@ function prepararEventosInvestigacao() {
 
     }
 
+    document.getElementById("lista-linhas-tempo")?.addEventListener("click", evento => {
+        const botao = evento.target.closest("[data-open-timeline]");
+        if (botao) abrirEditorLinhaTempo(botao.dataset.openTimeline);
+    });
+
 }
 
 
@@ -4485,6 +4438,193 @@ async function salvarNovaLinhaTempo(
 
 }
 
+
+/* Editor seguro da cronologia pessoal: mantém eventos no JSON da própria conta. */
+function abrirEditorLinhaTempo(id) {
+    const linha = meuArquivoState.linhasDoTempo.find(item => String(item.id) === String(id));
+    if (!linha) return;
+
+    abrirModalArquivo("Acontecimentos da cronologia", '<div class="arquivo-form" id="arquivo-timeline-editor"></div>');
+    const host = document.getElementById("arquivo-timeline-editor");
+    if (!host) return;
+
+    const descricao = document.createElement("p");
+    descricao.className = "arquivo-form-intro";
+    descricao.textContent = String(linha.title || "Linha do tempo") + " — cronologia privada. Organize os fatos na ordem desejada.";
+    const lista = document.createElement("div");
+    lista.className = "arquivo-timeline-events";
+    lista.setAttribute("aria-label", "Acontecimentos registrados");
+
+    const formulario = document.createElement("form");
+    formulario.className = "arquivo-form";
+    formulario.id = "arquivo-timeline-event-form";
+    const dataLabel = document.createElement("label");
+    dataLabel.textContent = "Data do acontecimento (opcional)";
+    const dataInput = document.createElement("input");
+    dataInput.type = "date";
+    dataInput.name = "date";
+    const tituloLabel = document.createElement("label");
+    tituloLabel.textContent = "Título do acontecimento";
+    const tituloInput = document.createElement("input");
+    tituloInput.type = "text";
+    tituloInput.name = "title";
+    tituloInput.required = true;
+    tituloInput.maxLength = 180;
+    const descricaoLabel = document.createElement("label");
+    descricaoLabel.textContent = "Descrição (opcional)";
+    const descricaoInput = document.createElement("textarea");
+    descricaoInput.name = "description";
+    descricaoInput.maxLength = 1200;
+    const gravar = document.createElement("button");
+    gravar.type = "submit";
+    gravar.className = "arquivo-button";
+    gravar.textContent = "Adicionar acontecimento";
+    const cancelarEdicao = document.createElement("button");
+    cancelarEdicao.type = "button";
+    cancelarEdicao.className = "arquivo-button arquivo-button-secondary";
+    cancelarEdicao.textContent = "Cancelar edição";
+    cancelarEdicao.hidden = true;
+    const aviso = document.createElement("p");
+    aviso.setAttribute("role", "status");
+
+    formulario.append(dataLabel, dataInput, tituloLabel, tituloInput,
+        descricaoLabel, descricaoInput, gravar, cancelarEdicao, aviso);
+    host.append(descricao, lista, formulario);
+
+    let editando = null;
+    let salvando = false;
+    function eventos() {
+        return Array.isArray(linha.events) ? linha.events : [];
+    }
+    function restaurarFormulario() {
+        editando = null;
+        formulario.reset();
+        gravar.textContent = "Adicionar acontecimento";
+        cancelarEdicao.hidden = true;
+    }
+    cancelarEdicao.addEventListener("click", restaurarFormulario);
+
+    function botaoAcao(rotulo, acao, idEvento) {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "arquivo-button arquivo-button-secondary";
+        botao.dataset.timelineAction = acao;
+        botao.dataset.timelineEvent = String(idEvento);
+        botao.textContent = rotulo;
+        return botao;
+    }
+    function exibirEventos() {
+        lista.replaceChildren();
+        if (!eventos().length) {
+            const vazio = document.createElement("p");
+            vazio.textContent = "Nenhum acontecimento cadastrado. Adicione o primeiro abaixo.";
+            lista.appendChild(vazio);
+            return;
+        }
+        eventos().forEach((evento, indice) => {
+            const artigo = document.createElement("article");
+            artigo.className = "arquivo-timeline-event";
+            const cabecalho = document.createElement("strong");
+            cabecalho.textContent = String(evento.title || "Acontecimento");
+            const data = document.createElement("small");
+            data.textContent = String(evento.date || "Data não definida");
+            const detalhes = document.createElement("p");
+            detalhes.textContent = String(evento.description || "");
+            const acoes = document.createElement("div");
+            acoes.className = "arquivo-form-actions";
+            const idEvento = evento.id || String(indice);
+            acoes.append(
+                botaoAcao("Editar", "edit", idEvento),
+                botaoAcao("Subir", "up", idEvento),
+                botaoAcao("Descer", "down", idEvento),
+                botaoAcao("Excluir", "delete", idEvento)
+            );
+            artigo.append(cabecalho, data, detalhes, acoes);
+            lista.appendChild(artigo);
+        });
+    }
+    async function persistir(proximos) {
+        if (salvando) return false;
+        salvando = true;
+        gravar.disabled = true;
+        aviso.textContent = "Salvando...";
+        try {
+            const supabase = await obterSupabaseMeuArquivo();
+            const usuarioId = meuArquivoState.usuario?.id;
+            if (!usuarioId) throw new Error("Sua sessão expirou.");
+            const { data, error } = await supabase.from("investigation_timelines")
+                .update({ events: proximos, updated_at: new Date().toISOString() })
+                .eq("id", linha.id).eq("user_id", usuarioId)
+                .select("events,updated_at").single();
+            if (error || !data) throw error || new Error("Cronologia indisponível.");
+            linha.events = Array.isArray(data.events) ? data.events : proximos;
+            linha.updated_at = data.updated_at;
+            renderizarLinhasDoTempo();
+            exibirEventos();
+            aviso.textContent = "Acontecimentos salvos.";
+            return true;
+        } catch (erro) {
+            console.error("Falha ao salvar a cronologia:", erro);
+            aviso.textContent = "Não foi possível salvar. Seus dados anteriores foram preservados.";
+            return false;
+        } finally {
+            salvando = false;
+            gravar.disabled = false;
+        }
+    }
+
+    formulario.addEventListener("submit", async evento => {
+        evento.preventDefault();
+        if (salvando) return;
+        const titulo = tituloInput.value.trim();
+        if (!titulo) return;
+        const atualizados = eventos().map(item => ({ ...item }));
+        if (!editando && atualizados.length >= 150) {
+            aviso.textContent = "Limite de 150 acontecimentos por cronologia.";
+            return;
+        }
+        const registro = {
+            id: editando || criarIdItemMural(),
+            date: dataInput.value,
+            title: titulo,
+            description: descricaoInput.value.trim()
+        };
+        const posicao = atualizados.findIndex(item => String(item.id) === String(editando));
+        if (posicao >= 0) atualizados[posicao] = registro;
+        else atualizados.push(registro);
+        if (await persistir(atualizados)) restaurarFormulario();
+    });
+    lista.addEventListener("click", async evento => {
+        const botao = evento.target.closest("[data-timeline-action]");
+        if (!botao || salvando) return;
+        const atualizados = eventos().map(item => ({ ...item }));
+        const indice = atualizados.findIndex((item, i) =>
+            String(item.id || i) === botao.dataset.timelineEvent);
+        if (indice < 0) return;
+        const acao = botao.dataset.timelineAction;
+        if (acao === "edit") {
+            const item = atualizados[indice];
+            editando = item.id || String(indice);
+            dataInput.value = String(item.date || "");
+            tituloInput.value = String(item.title || "");
+            descricaoInput.value = String(item.description || "");
+            gravar.textContent = "Salvar alterações";
+            cancelarEdicao.hidden = false;
+            tituloInput.focus();
+            return;
+        }
+        if (acao === "delete") {
+            if (!window.confirm("Excluir este acontecimento da cronologia?")) return;
+            atualizados.splice(indice, 1);
+        } else if (acao === "up" && indice > 0) {
+            [atualizados[indice - 1], atualizados[indice]] = [atualizados[indice], atualizados[indice - 1]];
+        } else if (acao === "down" && indice < atualizados.length - 1) {
+            [atualizados[indice + 1], atualizados[indice]] = [atualizados[indice], atualizados[indice + 1]];
+        } else return;
+        if (await persistir(atualizados)) restaurarFormulario();
+    });
+    exibirEventos();
+}
 
 /* =========================================================
    EVENTOS DAS COLEÇÕES
