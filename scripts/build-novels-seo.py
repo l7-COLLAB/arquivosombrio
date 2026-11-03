@@ -90,6 +90,31 @@ def render(book,chapters):
             +('<section><h2>Capítulos disponíveis</h2><ol>'+chapter_links+'</ol></section>' if chapters else '')
             +'</main></body></html>').encode("utf-8")
 
+def render_catalog(template, books):
+    """Render crawlable book links in initial HTML; the client replaces them after loading."""
+    marker = '<p class="empty">Carregando acervo...</p>'
+    if template.count('id="novel-grid"') != 1 or template.count(marker) != 1:
+        raise ValueError("Marcador da biblioteca ausente ou duplicado")
+    cards = []
+    for book in books:
+        if not released(book):
+            raise ValueError("Obra não pública no catálogo")
+        slug = valid_slug(book["slug"])
+        title = clean(book.get("titulo"), 160)
+        if not title:
+            raise ValueError("Livro sem título no catálogo")
+        author = clean(book.get("autor_nome"), 180)
+        summary = clean(book.get("sinopse"), 220)
+        e = lambda value: escape(str(value), quote=True)
+        cards.append(
+            '<a class="novel-card" href="/novels/' + e(slug) + '.html">'
+            + '<h2>' + e(title) + '</h2>'
+            + ('<p>' + e(author) + '</p>' if author else '')
+            + ('<p>' + e(summary) + '</p>' if summary else '')
+            + '</a>'
+        )
+    return template.replace(marker, "".join(cards) or '<p class="empty">Nenhuma obra publicada.</p>')
+
 def audit_generated_novels(site):
     """Validate generated Book pages against the final deployment sitemap."""
     prefix = BASE + "novels/"
@@ -153,6 +178,12 @@ def build(site,books,chapters):
     for rel,html in output.items(): (site/rel).write_bytes(html)
     sitemap_file.write_bytes(b'<?xml version="1.0" encoding="UTF-8"?>\n'+ET.tostring(root,encoding="utf-8")+b"\n")
     audit_generated_novels(site)
+    catalog_file = site / "novels.html"
+    if catalog_file.is_file():
+        catalog_file.write_text(
+            render_catalog(catalog_file.read_text(encoding="utf-8"), books),
+            encoding="utf-8",
+        )
     return len(output)
 
 if __name__=="__main__":
