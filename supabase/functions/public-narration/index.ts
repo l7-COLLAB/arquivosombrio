@@ -357,6 +357,6 @@ Deno.serve(async(req:Request)=>{
     },404);
   }catch(e){
     console.error(e);
-    return json({error:e instanceof Error?e.message:"Falha ao preparar a narração."},500);
+    return json({error:"Serviço de narração temporariamente indisponível."},500);
   }
 });

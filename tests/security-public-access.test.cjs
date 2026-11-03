@@ -7,10 +7,10 @@ const root=path.resolve(__dirname,'..');
 const read=name=>fs.readFileSync(path.join(root,name),'utf8');
 const source=name=>read('supabase/functions/'+name+'/index.ts');
 
-function harness(name,{limited=false}={}){
+function harness(name,{limited=false,throwOnAuth=false}={}){
   let handler;const inserts=[],signs=[],limits=[];
   const env={SUPABASE_URL:'https://project.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'test-service-key',R2_ENDPOINT:'https://test.r2.cloudflarestorage.com',R2_ACCESS_KEY_ID:'test-access',R2_SECRET_ACCESS_KEY:'test-secret',R2_BUCKET:'test-bucket'};
-  const db={auth:{getUser:async token=>token==='valid-user'?{data:{user:{id:'verified-user'}},error:null}:{data:{user:null},error:{message:'Invalid token'}}},
+  const db={auth:{getUser:async token=>{if(throwOnAuth)throw Error('internal-error-marker');return token==='valid-user'?{data:{user:{id:'verified-user'}},error:null}:{data:{user:null},error:{message:'Invalid token'}}}},
     rpc:async(name,values)=>{limits.push({name,values});return {data:limited?false:true,error:null}},
     from:table=>{
       const chain={};
@@ -65,4 +65,33 @@ test('rate-limited contributions do not write and metric metadata is allowlisted
 });
 test('Lite refresh job reapplies the hardening and user-controlled names use textContent',()=>{
   const lite=read('lite-preview/lite.js');assert.ok(!lite.includes('innerHTML=authName(user)'));assert.ok(lite.includes('session.access_token'));assert.ok(read('.github/workflows/lite-publish-preview.yml').includes('scripts/harden-lite.py lite-preview/lite.js'));
+});
+
+
+test('public-narration does not leak internal exception messages to unauthenticated clients',async()=>{
+  const h=harness('public-narration',{throwOnAuth:true});
+  const response=await h.handler(new Request('https://project.supabase.co/functions/v1/public-narration',{
+    method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer valid-user'},
+    body:JSON.stringify({type:'dossie',id:'4',action:'chunk',index:0})
+  }));
+  assert.equal(response.status,500);
+  assert.deepEqual(await response.json(),{error:'Serviço de narração temporariamente indisponível.'});
+  assert.equal(h.signs.length,0);
+});
+
+test('public-narration and novel-narration reject missing and expired credentials before signing',async()=>{
+  for(const name of ['public-narration','novel-narration']){
+    for(const token of [null,'invalid-token']){
+      const h=harness(name),headers={'Content-Type':'application/json'};
+      if(token)headers.Authorization='Bearer '+token;
+      const body=name==='public-narration'
+        ?{type:'dossie',id:'4',action:'chunk',index:0}
+        :{capitulo_id:'00000000-0000-0000-0000-000000000004',action:'url'};
+      const response=await h.handler(new Request('https://project.supabase.co/functions/v1/'+name,{
+        method:'POST',headers,body:JSON.stringify(body)
+      }));
+      assert.equal(response.status,401,name+' deve negar sessão ausente ou inválida');
+      assert.equal(h.signs.length,0,name+' não deve emitir URL assinada');
+    }
+  }
 });
