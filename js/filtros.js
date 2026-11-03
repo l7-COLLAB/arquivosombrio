@@ -124,7 +124,7 @@ async function cadastrarUsuarioSeguro(evento){
     if(!form.querySelector("#arquivo-cadastro-politicas").checked){mostrar("Confirme a idade e a aceitação dos termos e políticas para criar a conta.");return;}
     mostrar("Conclua a verificação de segurança para criar a conta.");
     await executarAuthNoFormulario(form,botao,mostrar,async(client,captchaToken)=>{
-        const {data,error}=await client.auth.signUp({email,password:senha,options:{captchaToken,emailRedirectTo:"https://arquivosombrio.net.br/index.html",data:{display_name:nome,nome,age_18_confirmed:true,legal_acceptance:true,terms_version:"1.1",privacy_version:"1.2",guidelines_version:"1.0",legal_accepted_at:new Date().toISOString()}}});
+        const {data,error}=await client.auth.signUp({email,password:senha,options:{captchaToken,emailRedirectTo:"https://arquivosombrio.net.br/index.html",data:{display_name:nome,nome,age_18_confirmed:true,legal_acceptance:true,terms_version: "1.2",privacy_version: "1.4",guidelines_version:"1.0",legal_accepted_at:new Date().toISOString()}}});
         if(error)throw error;
         if(!data?.user)throw new Error("O servidor não confirmou o cadastro. Confira seu e-mail antes de tentar novamente.");
         if(data.session){
