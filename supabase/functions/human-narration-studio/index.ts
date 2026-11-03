@@ -105,7 +105,7 @@ Deno.serve(async(req:Request)=>{
         secret=Deno.env.get("R2_SECRET_ACCESS_KEY"),bucket=Deno.env.get("R2_BUCKET");
       if(!endpoint||!key||!secret||!bucket)return json({error:"Armazenamento privado indisponível"},503);
       const aws=new AwsClient({accessKeyId:key,secretAccessKey:secret,region:"auto",service:"s3"});
-      const objectUrl=(path:string)=>endpoint.replace(/\\/$/,"")+"/"+encodeURIComponent(bucket)+"/"+path.split("/").map(encodeURIComponent).join("/");
+      const objectUrl=(path:string)=>endpoint.replace(/\/$/,"")+"/"+encodeURIComponent(bucket)+"/"+path.split("/").map(encodeURIComponent).join("/");
       for(const p of entries){
         const head=await aws.fetch(objectUrl(p.audio_path),{method:"HEAD"});
         if(!head.ok)return json({error:"MP3 não localizado: "+p.title},409);
