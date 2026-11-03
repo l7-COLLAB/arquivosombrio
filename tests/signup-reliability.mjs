@@ -19,7 +19,7 @@ function env(){
 }
 function signup(w){
   w.abrirCadastroSeguro();const form=w.document.querySelector('form');
-  for(const [id,value] of Object.entries({nome:'Pessoa Teste',email:'test@example.com',senha:'test-only-password',confirmar:'test-only-password'}))form.querySelector('#arquivo-cadastro-'+id).value=value;
+  for(const [id,value] of Object.entries({nome:'Pessoa Teste',email:'test@example.com',senha:'Senha-Segura2026!',confirmar:'Senha-Segura2026!'}))form.querySelector('#arquivo-cadastro-'+id).value=value;
   form.querySelector('#arquivo-cadastro-politicas').checked=true;
   return form;
 }
@@ -44,10 +44,22 @@ for(const failure of ['cancel','error','expired','render']){
  if(failure==='error')widgets[0]['error-callback']('110200');
  if(failure==='expired')widgets[0]['expired-callback']();
  await p;assert.equal(authCalls.length,0);assert.equal(form.querySelector('#arquivo-cadastro-nome').value,'Pessoa Teste');
- assert.equal(form.querySelector('#arquivo-cadastro-senha').value,'test-only-password');assert.equal(form.querySelector('[type=submit]').disabled,false);assert.equal(timers.size,0);
+ assert.equal(form.querySelector('#arquivo-cadastro-senha').value,'Senha-Segura2026!');assert.equal(form.querySelector('[type=submit]').disabled,false);assert.equal(timers.size,0);
  if(failure==='error')assert.match(form.querySelector('#arquivo-cadastro-mensagem').textContent,/110200/);
  w.close();
 }
+// Password policy rejects weak signup credentials before rendering CAPTCHA.
+for (const weak of ["abc123", "tudominusculo123!", "SOMENTEMAIUSCULO123!", "SemNumero!SemNumero!", "SemSimbolo123Abc"]) {
+ const {w,widgets,authCalls}=env(),form=signup(w);
+ form.querySelector('#arquivo-cadastro-senha').value=weak;
+ form.querySelector('#arquivo-cadastro-confirmar').value=weak;
+ await submit(w,form);
+ assert.equal(authCalls.length,0,'weak password must never reach Auth');
+ assert.equal(widgets.length,0,'weak password must not trigger CAPTCHA');
+ assert.match(form.querySelector('#arquivo-cadastro-mensagem').textContent,/12 caracteres/);
+ w.close();
+}
+
 // Duplicate submits: one challenge, one request; persistent success, no plaintext password left.
 {
  const {w,widgets,authCalls}=env();const form=signup(w),p=submit(w,form);await submit(w,form);await flush();
