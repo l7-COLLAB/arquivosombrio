@@ -119,7 +119,7 @@ async function mount({target,dossier,project,client}){
    section.querySelector("[data-part-editor]").onclick=async()=>{
     if(operation)return;
     const fileInput=section.querySelector("[data-part-file]");
-    let file=editedUploads.get(part.id)||fileInput.files?.[0]||null;
+    let file=editedUploads.get(part.id)?.file||fileInput.files?.[0]||null;
     if(!file&&part.audio_path){
       try{
         const data=await api("preview",{part_id:part.id});
@@ -130,8 +130,8 @@ async function mount({target,dossier,project,client}){
       }catch(_){inform("Selecione o MP3/WAV original no campo desta parte para editá-lo. O navegador não conseguiu recuperar a gravação remota.",true);return;}
     }
     try{
-      await window.ArquivoAudioEditor.open({initialFile:file,onExport:async output=>{
-        editedUploads.set(part.id,output);
+      await window.ArquivoAudioEditor.open({initialFile:file,onExport:async (output,meta={})=>{
+        editedUploads.set(part.id,{file:output,credits:meta.credits||""});
         const badge=section.querySelector(".hv-part-top small");
         if(badge)badge.textContent="Edição local pronta · precisa ser enviada";
         inform("Edição gerada ("+(output.size/1024/1024).toFixed(1)+" MB). Clique em Enviar MP3/WAV e aprove novamente. O original remoto não foi apagado.");
@@ -143,7 +143,7 @@ async function mount({target,dossier,project,client}){
     if(operation)return;try{
      if(localAudioUrl){URL.revokeObjectURL(localAudioUrl);localAudioUrl=null;}
      let url;
-     if(editedUploads.has(part.id)){localAudioUrl=URL.createObjectURL(editedUploads.get(part.id));url=localAudioUrl;}
+     if(editedUploads.has(part.id)){localAudioUrl=URL.createObjectURL(editedUploads.get(part.id).file);url=localAudioUrl;}
      else{const preview=await api("preview",{part_id:part.id});url=preview.url;}
      player.hidden=false;player.src=url;await player.play();
      inform("Prévia privada da parte "+(index+1)+".");
@@ -151,14 +151,14 @@ async function mount({target,dossier,project,client}){
    };
    section.querySelector("[data-part-approve]").onclick=()=>task(()=>api("approve_part",{part_id:part.id}));
    section.querySelector("[data-part-upload]").onclick=()=>task(async()=>{
-    const file=editedUploads.get(part.id)||section.querySelector("[data-part-file]").files?.[0];
+    const file=editedUploads.get(part.id)?.file||section.querySelector("[data-part-file]").files?.[0];
     if(!file||!/\.(mp3|wav)$/i.test(file.name))throw Error("Selecione um arquivo MP3 ou WAV para esta parte.");
     if(file.size<1024||file.size>30*1024*1024)throw Error("Cada áudio deve ter até 30 MB.");
     const mime=/\.wav$/i.test(file.name)?"audio/wav":"audio/mpeg";
     const duration=await durationOf(file);
     if(!duration||duration<=0)throw Error("Não foi possível reconhecer a duração. Verifique o arquivo MP3.");
     inform("Enviando parte "+(index+1)+" para o armazenamento privado...");
-    const init=await api("init_upload",{part_id:part.id,size:file.size,duration_seconds:duration,mime});
+    const init=await api("init_upload",{part_id:part.id,size:file.size,duration_seconds:duration,mime,rights_note:editedUploads.get(part.id)?.credits||""});
     let sent=false;
     try{const put=await fetch(init.upload_url,{method:"PUT",headers:{"Content-Type":mime},body:file});sent=put.ok;}
     catch(_){}
