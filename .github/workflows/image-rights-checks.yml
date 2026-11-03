@@ -1,0 +1,30 @@
+name: Conferir créditos e direitos das capas
+on:
+  pull_request:
+    paths:
+      - "data/capas-documentais.json"
+      - "data/creditos-capas-verificados-20261103.json"
+      - "docs/inventario-direitos-capas-20261103.csv"
+      - "docs/inventario-direitos-capas-priorizado-20261103.csv"
+      - "creditos-imagens.html"
+      - "fontes-direitos.html"
+      - "tests/image-credits-integrity.test.mjs"
+      - ".github/workflows/image-rights-checks.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Conferir cadastros de licença e créditos públicos
+        run: node --test tests/image-credits-integrity.test.mjs
+      - name: Conferir existência do catálogo no artefato
+        run: |
+          test -s creditos-imagens.html
+          test -s data/creditos-capas-verificados-20261103.json
