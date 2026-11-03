@@ -26,6 +26,27 @@ class NovelSeoTests(TestCase):
             self.assertIn("Mistério &amp; segredo.",html)
             root=ET.parse(site/"sitemap.xml").getroot()
             self.assertEqual(len(root),1)
+    def test_catalog_is_crawlable_without_javascript(self):
+        template = '<main><section id="novel-grid"><p class="empty">Carregando acervo...</p></section><script src="js/novels.js"></script></main>'
+        html = mod.render_catalog(template, [{**book(), "titulo": "A & B", "sinopse": "Mistério & segredo."}])
+        self.assertIn('href="/novels/a-mulher-de-branco.html"', html)
+        self.assertIn("<h2>A &amp; B</h2>", html)
+        self.assertIn("Mistério &amp; segredo.", html)
+        self.assertNotIn("Carregando acervo...", html)
+        self.assertIn('<script src="js/novels.js"></script>', html)
+        with self.assertRaisesRegex(ValueError, "Marcador"):
+            mod.render_catalog('<section id="novel-grid"></section>', [book()])
+        with self.assertRaisesRegex(ValueError, "não pública"):
+            mod.render_catalog(template, [book(status="rascunho")])
+
+    def test_build_updates_existing_catalog(self):
+        with TemporaryDirectory() as d:
+            site = Path(d)
+            site.joinpath("sitemap.xml").write_text('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>')
+            site.joinpath("novels.html").write_text('<section id="novel-grid"><p class="empty">Carregando acervo...</p></section>')
+            self.assertEqual(mod.build(site, [book()], []), 1)
+            self.assertIn('/novels/a-mulher-de-branco.html', site.joinpath("novels.html").read_text())
+
     def test_rejects_draft_book_and_chapter(self):
         with TemporaryDirectory() as d:
             site=Path(d)
