@@ -1,7 +1,7 @@
 {
   "data_corte": "2026-11-03",
-  "status": "alternativas_ilustrativas_preparadas_sem_troca_no_banco",
-  "caveat": "SVG com arte geométrica original sem fotografia; não publicar sem verificar legibilidade, relevância editorial e URLs de referência.",
+  "status": "21_capas_ilustrativas_aplicadas_no_banco_20261103",
+  "caveat": "As capas foram trocadas no banco por SVGs originais, sem remover fotos antigas do backup privado. Não se trata de laudo jurídico e não inclui imagens internas dos artigos.",
   "records": [
     {
       "editoria": "Casos",
@@ -10,11 +10,12 @@
       "dominio_original": "dnm.nflximg.net",
       "prioridade": "CRITICA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-25.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Denise Huskins: o sequestro real que a polícia chamou de fraude",
-      "previous_cover_url": "https://dnm.nflximg.net/api/v6/BvVbc2Wxr2w6QuoANoSpJKEIWjQ/AAAAQYCK7le2q-Pn6Bp0e0oSG6bUde2niiMQdsxIsmADcmYQQGVhKqt0qKwHiqWnA1crsz4dKyqU4ctxPKlRDHhKAj3DN0bZLIqdjZeEyPJvYYChMJ8Cngc-wGPm6I-lPEIRqN_CpjvOBZlbWcAkJlAGrMkVoB0.jpg"
+      "previous_cover_url": "https://dnm.nflximg.net/api/v6/BvVbc2Wxr2w6QuoANoSpJKEIWjQ/AAAAQYCK7le2q-Pn6Bp0e0oSG6bUde2niiMQdsxIsmADcmYQQGVhKqt0qKwHiqWnA1crsz4dKyqU4ctxPKlRDHhKAj3DN0bZLIqdjZeEyPJvYYChMJ8Cngc-wGPm6I-lPEIRqN_CpjvOBZlbWcAkJlAGrMkVoB0.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "Casos",
@@ -23,11 +24,12 @@
       "dominio_original": "s.abcnews.com",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-26.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Cari Farver: a vítima que foi transformada em perseguidora",
-      "previous_cover_url": "https://s.abcnews.com/images/US/ht_cari2_le_201125_1606321595947_hpMain_4x3t_992.jpg"
+      "previous_cover_url": "https://s.abcnews.com/images/US/ht_cari2_le_201125_1606321595947_hpMain_4x3t_992.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "Casos",
@@ -36,11 +38,12 @@
       "dominio_original": "pizzabomber.com",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-27.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Brian Wells: a bomba no pescoço e a conspiração por trás do assalto",
-      "previous_cover_url": "https://pizzabomber.com/wp-content/uploads/2016/02/wells4.jpg"
+      "previous_cover_url": "https://pizzabomber.com/wp-content/uploads/2016/02/wells4.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "Casos",
@@ -49,11 +52,12 @@
       "dominio_original": "www.cinematorio.com.br",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-28.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Escola Base: a acusação infundada que destruiu vidas",
-      "previous_cover_url": "https://www.cinematorio.com.br/wp-content/uploads/2023/06/ocasoescolabase.jpg"
+      "previous_cover_url": "https://www.cinematorio.com.br/wp-content/uploads/2023/06/ocasoescolabase.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "Casos",
@@ -62,11 +66,12 @@
       "dominio_original": "assets1.cbsnewsstatic.com",
       "prioridade": "CRITICA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-5.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Caso Dana Chandler",
-      "previous_cover_url": "https://assets1.cbsnewsstatic.com/hub/i/r/2025/05/31/1ad1c828-e9df-40c4-ae53-8509d1dff85b/thumbnail/620x349/76d3b6885bc79e2d8cc33445ab679908/chandler-mike-karen.jpg"
+      "previous_cover_url": "https://assets1.cbsnewsstatic.com/hub/i/r/2025/05/31/1ad1c828-e9df-40c4-ae53-8509d1dff85b/thumbnail/620x349/76d3b6885bc79e2d8cc33445ab679908/chandler-mike-karen.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -75,11 +80,12 @@
       "dominio_original": "s.abcnews.com",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-12.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Hana Williams: a adolescente adotada que morreu após um longo período de abusos e privação",
-      "previous_cover_url": "https://s.abcnews.com/images/US/HT_hana_williams_ml_130910_16x9_992.jpg"
+      "previous_cover_url": "https://s.abcnews.com/images/US/HT_hana_williams_ml_130910_16x9_992.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -88,11 +94,12 @@
       "dominio_original": "s.abcnews.com",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-22.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Bruce McArthur: os desaparecidos da comunidade de Toronto",
-      "previous_cover_url": "https://s.abcnews.com/images/US/bruce-mcarthur1-rt-ml-180130_v12x5_4x3_992.jpg"
+      "previous_cover_url": "https://s.abcnews.com/images/US/bruce-mcarthur1-rt-ml-180130_v12x5_4x3_992.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -101,11 +108,12 @@
       "dominio_original": "investigationdiscovery.sndimg.com",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-26.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Robert Berdella: a fuga que revelou seis assassinatos",
-      "previous_cover_url": "https://investigationdiscovery.sndimg.com/content/dam/images/investigationdiscovery/crimefeed/legacy/2015/10/Untitled-1.jpg.rend.hgtvcom.1280.960.suffix/1538013080287.jpeg"
+      "previous_cover_url": "https://investigationdiscovery.sndimg.com/content/dam/images/investigationdiscovery/crimefeed/legacy/2015/10/Untitled-1.jpg.rend.hgtvcom.1280.960.suffix/1538013080287.jpeg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -114,11 +122,12 @@
       "dominio_original": "images.squarespace-cdn.com",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-28.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Ronald Cotton: a certeza que condenou o homem errado",
-      "previous_cover_url": "https://images.squarespace-cdn.com/content/v1/5c4900512487fdfd161c8006/1548351125702-LJ2ZR6WWS8NHJ6FANGHR/23_pardonofinnocence001.jpg"
+      "previous_cover_url": "https://images.squarespace-cdn.com/content/v1/5c4900512487fdfd161c8006/1548351125702-LJ2ZR6WWS8NHJ6FANGHR/23_pardonofinnocence001.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -127,11 +136,12 @@
       "dominio_original": "i.abcnewsfe.com",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-29.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Sherri Papini: os 22 dias que viraram uma fraude",
-      "previous_cover_url": "https://i.abcnewsfe.com/a/83f1d94c-653b-4a63-94f7-4fd7601f74d1/sherri-papini-abc-jef-250620_1750422148538_hpMain_16x9.jpg"
+      "previous_cover_url": "https://i.abcnewsfe.com/a/83f1d94c-653b-4a63-94f7-4fd7601f74d1/sherri-papini-abc-jef-250620_1750422148538_hpMain_16x9.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -140,11 +150,12 @@
       "dominio_original": "dnm.nflximg.net",
       "prioridade": "CRITICA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-30.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Dorothea Puente: o que havia sob o jardim",
-      "previous_cover_url": "https://dnm.nflximg.net/api/v6/Rzjo4m-VcRyE32Swxls9Vg-Ew2k/AAAAQW88B-bzAcxdwNw8uwpSutuAFFvQQrxYv23pPSJ16cfaSCCKmKzz1wzh7jT_t_aQzYK8nZH8myl5SDRGDEwKPhMnFeQGpw7BYDBT9P0nHgBCNz1gNh5RA2cuI2R9.jpg"
+      "previous_cover_url": "https://dnm.nflximg.net/api/v6/Rzjo4m-VcRyE32Swxls9Vg-Ew2k/AAAAQW88B-bzAcxdwNw8uwpSutuAFFvQQrxYv23pPSJ16cfaSCCKmKzz1wzh7jT_t_aQzYK8nZH8myl5SDRGDEwKPhMnFeQGpw7BYDBT9P0nHgBCNz1gNh5RA2cuI2R9.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -153,11 +164,12 @@
       "dominio_original": "www.missingkids.org",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-31.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Nicholas Barclay: o menino que voltou era um impostor",
-      "previous_cover_url": "https://www.missingkids.org/bin/ncmec/poster/image"
+      "previous_cover_url": "https://www.missingkids.org/bin/ncmec/poster/image",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -166,11 +178,12 @@
       "dominio_original": "res.cloudinary.com",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-32.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Terry Jo Duperrault: a menina que desmentiu o capitão",
-      "previous_cover_url": "https://res.cloudinary.com/aenetworks/image/upload/c_fill,w_1200,h_630,g_auto/v1/Terry-Jo-Duperrault_zq1yzg"
+      "previous_cover_url": "https://res.cloudinary.com/aenetworks/image/upload/c_fill,w_1200,h_630,g_auto/v1/Terry-Jo-Duperrault_zq1yzg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -179,11 +192,12 @@
       "dominio_original": "assets3.cbsnewsstatic.com",
       "prioridade": "CRITICA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-34.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Amy Allwine: a ameaça que estava dentro de casa",
-      "previous_cover_url": "https://assets3.cbsnewsstatic.com/hub/i/r/2018/09/29/ceaf6ac8-abe6-4ca6-9405-b102fe163f53/thumbnail/620x465/86a96e726939b6a46b9dc8ed78e9c640/amy-allwine-training.jpg"
+      "previous_cover_url": "https://assets3.cbsnewsstatic.com/hub/i/r/2018/09/29/ceaf6ac8-abe6-4ca6-9405-b102fe163f53/thumbnail/620x465/86a96e726939b6a46b9dc8ed78e9c640/amy-allwine-training.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -192,11 +206,12 @@
       "dominio_original": "images.squarespace-cdn.com",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-35.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para John List: cinco mortes e uma segunda vida",
-      "previous_cover_url": "https://images.squarespace-cdn.com/content/v1/64344796d754fd7d72df30ef/c8d31b88-3192-4e30-86ba-8f6024e5b1e5/IMG_8188.jpeg"
+      "previous_cover_url": "https://images.squarespace-cdn.com/content/v1/64344796d754fd7d72df30ef/c8d31b88-3192-4e30-86ba-8f6024e5b1e5/IMG_8188.jpeg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -205,11 +220,12 @@
       "dominio_original": "bc.gmg.io",
       "prioridade": "ALTA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-61.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Chelsea Bruck: a fantasia que levou ao assassino",
-      "previous_cover_url": "https://bc.gmg.io/image/upload/q_auto,c_lfill,w_1280,h_720,f_webp/media/gmg/QDJ37VY4XVCT3BQQVJOBFE3JGQ.jpg"
+      "previous_cover_url": "https://bc.gmg.io/image/upload/q_auto,c_lfill,w_1280,h_720,f_webp/media/gmg/QDJ37VY4XVCT3BQQVJOBFE3JGQ.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -218,11 +234,12 @@
       "dominio_original": "assets2.cbsnewsstatic.com",
       "prioridade": "CRITICA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-64.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Duplo homicídio de Napa: a pista deixada nos cigarros",
-      "previous_cover_url": "https://assets2.cbsnewsstatic.com/hub/i/r/2007/04/20/894b3c98-a643-11e2-a3f0-029118418759/thumbnail/1200x630/62465dc3d91c6e545dea3724fd545c6b/image2710674x.jpg"
+      "previous_cover_url": "https://assets2.cbsnewsstatic.com/hub/i/r/2007/04/20/894b3c98-a643-11e2-a3f0-029118418759/thumbnail/1200x630/62465dc3d91c6e545dea3724fd545c6b/image2710674x.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -231,11 +248,12 @@
       "dominio_original": "rtvc-informativo.s3.amazonaws.com",
       "prioridade": "CRITICA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-66.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Luis Andrés Colmenares: a madrugada que permaneceu em disputa",
-      "previous_cover_url": "https://rtvc-informativo.s3.amazonaws.com/assets/public/2026-04/caso-colmenares_corte-deja-en-firma-absolucion-de-laura-moreno.webp"
+      "previous_cover_url": "https://rtvc-informativo.s3.amazonaws.com/assets/public/2026-04/caso-colmenares_corte-deja-en-firma-absolucion-de-laura-moreno.webp",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "casos_diarios",
@@ -244,11 +262,12 @@
       "dominio_original": "assets2.cbsnewsstatic.com",
       "prioridade": "CRITICA",
       "alternative_path": "assets/capas-alternativas-direitos/casos-diarios-8.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Zahra Baker: a menina que sobreviveu ao câncer e desapareceu dentro da própria casa",
-      "previous_cover_url": "https://assets2.cbsnewsstatic.com/hub/i/r/2010/10/11/9ecf7678-a642-11e2-a3f0-029118418759/thumbnail/620x465/b29550a4f845fe2bdb857b11efdd17d8/zahra1.jpg"
+      "previous_cover_url": "https://assets2.cbsnewsstatic.com/hub/i/r/2010/10/11/9ecf7678-a642-11e2-a3f0-029118418759/thumbnail/620x465/b29550a4f845fe2bdb857b11efdd17d8/zahra1.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "pericias",
@@ -257,11 +276,12 @@
       "dominio_original": "assets3.cbsnewsstatic.com",
       "prioridade": "CRITICA",
       "alternative_path": "assets/capas-alternativas-direitos/pericias-14.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para Uma cena encenada: a investigação da morte de Amy Allwine",
-      "previous_cover_url": "https://assets3.cbsnewsstatic.com/hub/i/r/2018/09/29/ceaf6ac8-abe6-4ca6-9405-b102fe163f53/thumbnail/620x465/86a96e726939b6a46b9dc8ed78e9c640/amy-allwine-training.jpg"
+      "previous_cover_url": "https://assets3.cbsnewsstatic.com/hub/i/r/2018/09/29/ceaf6ac8-abe6-4ca6-9405-b102fe163f53/thumbnail/620x465/86a96e726939b6a46b9dc8ed78e9c640/amy-allwine-training.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     },
     {
       "editoria": "pericias",
@@ -270,11 +290,14 @@
       "dominio_original": "www.zeiss.com",
       "prioridade": "CRITICA",
       "alternative_path": "assets/capas-alternativas-direitos/pericias-3.svg",
-      "status": "revisao_editorial_pendente",
+      "status": "publicado_no_banco_20261103",
       "licensing_basis": "arte_vetorial_editorial_sem_ativos_externos",
       "cover_kind": "ilustrativa",
       "alt": "Capa ilustrativa vetorial original para O solo que denuncia um caminho",
-      "previous_cover_url": "https://www.zeiss.com/content/dam/rms/reference-master/applications/forensics/forensics_soil-investigation.jpg/_jcr_content/renditions/original.image_file.3529.3529.828%2C0%2C4357%2C3529.file/forensics_soil-investigation.jpg"
+      "previous_cover_url": "https://www.zeiss.com/content/dam/rms/reference-master/applications/forensics/forensics_soil-investigation.jpg/_jcr_content/renditions/original.image_file.3529.3529.828%2C0%2C4357%2C3529.file/forensics_soil-investigation.jpg",
+      "backup_ref": "private.cover_replacement_audit_20261103"
     }
-  ]
+  ],
+  "verified_at": "2026-11-03",
+  "audit_storage": "private.cover_replacement_audit_20261103"
 }
