@@ -20,8 +20,8 @@ test('21 distinct third-party covers have exactly one original visual alternativ
   const a=alts.records.find(a=>key(a)===key(p));
   assert.ok(a,'missing '+key(p));
   assert.equal(a.alternative_path,p.alternativa_original_svg);
-  assert.equal(a.status,'revisao_editorial_pendente');
-  assert.equal(p.estado_substituicao,'alternativa_preparada_nao_publicada');
+  assert.equal(a.status,'publicado_no_banco_20261103');
+  assert.equal(p.estado_substituicao,'substituida_em_20261103_backup_privado');
   assert.equal(p.situacao_licenca,'licenca_especifica_nao_comprovada');
  }
 });
