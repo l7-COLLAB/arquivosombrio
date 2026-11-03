@@ -127,3 +127,50 @@ test("Minhas Leituras trata títulos e imagens não confiáveis como texto", asy
     assert.match(href,/novel\.html\?obra=obra-test&capitulo=3/);
     dom.window.close();
 });
+
+test("editor da cronologia grava acontecimento somente após persistência da conta", async () => {
+    const dom = new JSDOM('<div id="editor-modal-root"></div>', {
+        url: "https://arquivosombrio.net.br/meu-arquivo.html"
+    });
+    const documento = dom.window.document;
+    const linha = {id:"linha-1",title:"Cronologia teste",events:[]};
+    const state = {usuario:{id:"usuario-test"},linhasDoTempo:[linha]};
+    const chamadas = [];
+    const cliente = {
+        from(nome) {
+            assert.equal(nome,"investigation_timelines");
+            return {
+                update(dados){chamadas.push(dados.events);return this;},
+                eq(coluna,valor){
+                    if(coluna==="user_id")assert.equal(valor,"usuario-test");
+                    return this;
+                },
+                select(){return this;},
+                single: async()=>({
+                    data:{events:chamadas.at(-1),updated_at:new Date().toISOString()},
+                    error:null
+                })
+            };
+        }
+    };
+    const codigo=trecho(js,"function abrirEditorLinhaTempo(", "/* =========================================================\n   EVENTOS DAS COLEÇÕES");
+    const abrir = new Function("document","meuArquivoState","abrirModalArquivo","obterSupabaseMeuArquivo",
+        "criarIdItemMural","renderizarLinhasDoTempo","window",
+        codigo+"\nreturn abrirEditorLinhaTempo;"
+    )(documento,state,(_titulo,html)=>{
+        documento.getElementById("editor-modal-root").innerHTML=html;
+    },async()=>cliente,()=> "evento-1",()=>{},dom.window);
+    abrir("linha-1");
+    const form = documento.querySelector("#arquivo-timeline-event-form");
+    assert.ok(form);
+    form.querySelector('[name="title"]').value="Pista recebida";
+    form.querySelector('[name="date"]').value="2026-11-03";
+    form.querySelector('[name="description"]').value="Registro privado";
+    form.dispatchEvent(new dom.window.Event("submit",{bubbles:true,cancelable:true}));
+    await new Promise(resolve=>setTimeout(resolve,15));
+    assert.equal(chamadas.length,1);
+    assert.equal(linha.events.length,1);
+    assert.equal(linha.events[0].title,"Pista recebida");
+    assert.equal(documento.querySelector(".arquivo-timeline-event strong")?.textContent,"Pista recebida");
+    dom.window.close();
+});
