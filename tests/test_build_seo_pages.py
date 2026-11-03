@@ -89,6 +89,23 @@ class SeoPagesTests(TestCase):
   fallback=pages.render_page("Casos",record(3)).decode()
   self.assertIn('content="https://arquivosombrio.net.br/imagem-compartilhamento.jpg"',fallback)
   self.assertNotIn('<figure class="article-cover">',fallback)
+ def test_svg_editorial_covers_get_illustrative_caption_and_jpeg_social_card(self):
+  row=record(25,title="Denise Huskins: o sequestro real")
+  row["imagem"]="https://arquivosombrio.net.br/assets/capas-alternativas-direitos/casos-25.svg"
+  html=pages.render_page("Casos",row).decode()
+  self.assertIn('<img src="'+row["imagem"]+'" alt="Capa ilustrativa de',html)
+  self.assertIn('width="900" height="1200"',html)
+  self.assertIn('<figcaption>Capa ilustrativa original do Arquivo Sombrio. Não é fotografia nem evidência do caso.</figcaption>',html)
+  self.assertIn('<meta property="og:image" content="https://arquivosombrio.net.br/imagem-compartilhamento.jpg">',html)
+  self.assertIn('<meta name="twitter:image" content="https://arquivosombrio.net.br/imagem-compartilhamento.jpg">',html)
+  self.assertIn('"image": ["'+row["imagem"]+'"]',html)
+  self.assertNotIn('<meta property="og:image" content="'+row["imagem"]+'">',html)
+  forensic=record(14,title="Amy Allwine: cena encenada")
+  forensic["imagem"]="https://arquivosombrio.net.br/assets/capas-alternativas-direitos/pericias-14.svg"
+  forensic["legenda_imagem"]="Legenda antiga da foto CBS News"
+  forensic_html=pages.render_page("pericias",forensic).decode()
+  self.assertNotIn("Legenda antiga da foto CBS News",forensic_html)
+  self.assertIn("Não é fotografia nem evidência",forensic_html)
  def test_pericia_sources_image_caption_and_full_text(self):
   row=record(8,text="INTRODUÇÃO METODOLÓGICA\n\nConteúdo técnico.")
   row["fontes"]="Documento oficial do NIST\nhttps://www.nist.gov/report"
