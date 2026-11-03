@@ -157,7 +157,7 @@ async function open({initialFile=null,onExport}={}){
   try{
    notify("Lendo arquivo "+kind+" neste navegador...");
    const result=await decode(file);
-   if(kind==="voz"){voiceBuffer=result;$("[data-ae-details]").textContent=esc(file.name)+" · "+format(result.duration);$("[data-ae-start]").value="0";$("[data-ae-end]").value=String(result.duration);}
+   if(kind==="voz"){voiceBuffer=result;$("[data-ae-details]").textContent=file.name+" · "+format(result.duration);$("[data-ae-start]").value="0";$("[data-ae-end]").value=String(result.duration);}
    else if(kind==="música")musicBuffer=result;
    else effectBuffer=result;
    durationLabel();notify(kind+" carregada. Nenhum arquivo foi enviado ao servidor.");
