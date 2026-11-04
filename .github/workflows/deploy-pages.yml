@@ -110,16 +110,25 @@ jobs:
         run: |
           python3 - <<'PY'
           import time
+          import re
+          from pathlib import Path
           from urllib.parse import quote
           from urllib.request import Request, urlopen
 
           origin='https://arquivosombrio.net.br'
           revision=quote(__import__('os').environ['GITHUB_SHA'])
+          # Ler versões diretamente do artefato a ser publicado, sem adivinhar cache busting.
+          admin_html=Path('_site/admin-v2/atlas.html').read_text(encoding='utf-8')
+          public_html=Path('_site/atlas.html').read_text(encoding='utf-8')
+          admin_match=re.search(r'atlas-admin\.js\?v=([A-Za-z0-9._-]+)',admin_html)
+          public_match=re.search(r'atlas-criminal\.js\?v=([A-Za-z0-9._-]+)',public_html)
+          if not admin_match or not public_match:
+            raise SystemExit('Versão de JavaScript do Atlas não encontrada no artefato')
           paths={
-            '/atlas.html':('id="atlas-map"','atlas-criminal.js?v=2'),
-            '/admin-v2/atlas.html':('id="location-form"','atlas-admin.js?v=1'),
+            '/atlas.html':('id="atlas-map"', 'atlas-criminal.js?v='+public_match.group(1)),
+            '/admin-v2/atlas.html':('id="location-form"', 'atlas-admin.js?v='+admin_match.group(1)),
             '/js/atlas-criminal.js':('case_atlas_public','fitItems(matching)'),
-            '/admin-v2/js/atlas-admin.js':('case_atlas_locations','app_metadata?.role'),
+            '/admin-v2/js/atlas-admin.js':('case_atlas_locations','updateReferenceLink'),
           }
           for attempt in range(1,7):
             try:
