@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const {STAGES, QUESTIONS, validateState, evaluate, progress} = require('../js/pericia-trilha.js');
+const {STAGES, QUESTIONS, validateState, evaluate, progress, reviewMistakes, recommendedReadings} = require('../js/pericia-trilha.js');
 
 test('nove questões distribuídas em três etapas com alternativas válidas', () => {
   assert.equal(STAGES.length, 3);
@@ -84,4 +84,47 @@ test('erros não se transformam em aprovação profissional',()=>{
   assert.match(QUESTIONS[3].explanation,/não provam/i);
   assert.match(QUESTIONS[5].explanation,/testes.*avaliação profissional/i);
   assert.match(QUESTIONS[7].explanation,/cadeia de custódia/i);
+});
+
+
+test('a revisão traz apenas erros e preserva as explicações corretas', () => {
+  const answers = QUESTIONS.map(q => q.correct);
+  assert.deepEqual(reviewMistakes(answers), []);
+  answers[0] = (answers[0] + 1) % 4;
+  answers[4] = (answers[4] + 1) % 4;
+  const review = reviewMistakes(answers);
+  assert.equal(review.length, 2);
+  assert.deepEqual(review.map(x => x.index), [1, 5]);
+  assert.equal(review[0].selected, QUESTIONS[0].choices[answers[0]]);
+  assert.equal(review[0].correct, QUESTIONS[0].choices[QUESTIONS[0].correct]);
+  assert.equal(review[1].explanation, QUESTIONS[4].explanation);
+  assert.equal(progress(answers).points, 70);
+  assert.equal(progress(answers).badges, 3);
+  assert.equal(reviewMistakes(null).length, 0);
+});
+
+test('as sugestões priorizam etapas com mais erros e apontam a artigos do acervo', () => {
+  const answers = QUESTIONS.map(q => q.correct);
+  answers[3] = (answers[3]+1)%4;
+  answers[4] = (answers[4]+1)%4;
+  answers[5] = (answers[5]+1)%4;
+  answers[8] = (answers[8]+1)%4;
+  const links = recommendedReadings(answers);
+  assert.deepEqual(links.map(x => x.stage), [1, 2]);
+  assert.deepEqual(links.map(x => x.href), [
+    'pericia.html?id=8#forense',
+    'pericia.html?id=11#forense'
+  ]);
+  assert.deepEqual(recommendedReadings(QUESTIONS.map(q=>q.correct)).map(x=>x.stage), [0,1]);
+  assert.equal(new Set(links.map(x => x.href)).size, links.length);
+});
+
+test('a revisão é informativa: não altera o resultado original', () => {
+  const answers=QUESTIONS.map(q=>q.correct);
+  answers[6]=(answers[6]+2)%4;
+  const snapshot=JSON.stringify(answers);
+  reviewMistakes(answers);
+  recommendedReadings(answers);
+  assert.equal(JSON.stringify(answers), snapshot);
+  assert.deepEqual(progress(answers), {done:9,correct:8,points:80,badges:3,completed:true});
 });
