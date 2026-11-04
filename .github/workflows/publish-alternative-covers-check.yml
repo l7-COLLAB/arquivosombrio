@@ -3,6 +3,12 @@ on:
   pull_request:
     paths:
       - "js/cover-credits.js"
+      - "js/novels.js"
+      - "scripts/original-covers-svg.mjs"
+      - "data/alternativas-originais-uploads-20261103.json"
+      - "assets/capas-alternativas-direitos/**"
+      - "previews/capas-uploads-originais-20261103.html"
+      - "tests/upload-cover-replacement-integrity.test.mjs"
       - "js/seo-publicacao.js"
       - "scripts/build-seo-pages.py"
       - "caso.html"
@@ -26,8 +32,10 @@ jobs:
       - name: Conferir JS e contratos do conteúdo
         run: |
           node --check js/cover-credits.js
+          node --check scripts/original-covers-svg.mjs
+          node --check js/novels.js
           node --check js/seo-publicacao.js
           python3 -m py_compile scripts/build-seo-pages.py
-          node --test tests/publish-alternative-covers.test.mjs tests/thirdparty-cover-remediation.test.mjs
+          node --test tests/publish-alternative-covers.test.mjs tests/thirdparty-cover-remediation.test.mjs tests/upload-cover-replacement-integrity.test.mjs
       - name: Testar geração SEO do artigo
         run: python3 -m unittest discover -s tests -p 'test_build_seo_pages.py'
