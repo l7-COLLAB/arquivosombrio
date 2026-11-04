@@ -219,6 +219,7 @@
       fields.viewport.disabled = true;
       return;
     }
+    byId('atlas-map').replaceChildren();
     map = window.L.map('atlas-map', {zoomControl:true,scrollWheelZoom:false,minZoom:1,maxZoom:12,worldCopyJump:true});
     window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -297,8 +298,8 @@
       if (records.length) fitItems(records);
       renderList();
     } catch (error) {
-      loaded = true;
-      initMap();
+      loaded = false;
+      byId('atlas-map').replaceChildren(createElement('p','map-placeholder','Mapa temporariamente indisponível.'));
       updateChoices();
       feedback.textContent = 'Não foi possível consultar os registros geográficos agora. Tente atualizar esta página.';
       list.replaceChildren(createElement('p','empty','O acervo geográfico está temporariamente indisponível. Os demais artigos do site continuam acessíveis.'));
