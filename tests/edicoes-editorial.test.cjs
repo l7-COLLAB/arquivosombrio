@@ -6,11 +6,13 @@ const path = require("node:path");
 const root = path.join(__dirname,"..");
 const read = p => fs.readFileSync(path.join(root,p),"utf8");
 
-test("Editora pública não expõe manuscritos", () => {
-  const html = read("edicoes/index.html");
-  assert.match(html,/EM PRODUÇÃO EDITORIAL/);
-  assert.doesNotMatch(html,/sb_publishable_|service_role|editorial_chapters/);
-  assert.match(html,/ainda não há data de lançamento/i);
+test("Editora em desenvolvimento não possui entrada pública", () => {
+  assert.equal(fs.existsSync(path.join(root,"edicoes","index.html")),false);
+  const home = read("index.html");
+  const studio = read("admin-v2/editorial/index.html");
+  assert.doesNotMatch(home,/href=["'](?:\\/)?edicoes\\/["']/);
+  assert.doesNotMatch(studio,/href=["']\\.\\.\\/\\.\\.\\/edicoes\\/["']/);
+  assert.match(studio,/Estúdio Editorial/);
 });
 
 test("Estúdio exige administrador e não contém publicação automática", () => {
