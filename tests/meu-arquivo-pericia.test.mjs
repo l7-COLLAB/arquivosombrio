@@ -118,6 +118,24 @@ test("Meu Arquivo apresenta selos e importa a cópia local apenas após escolha 
   dom.window.close();
 });
 
+test("uma gravação pendente da própria conta é retomada ao abrir Meu Arquivo",async()=>{
+  const uid="33333333-3333-4333-8333-333333333333";
+  mockSupabase(uid,[]);
+  const dom=domFor(fs.readFileSync("meu-arquivo.html","utf8"));
+  const key="as-forensic-member-"+uid+"-papiloscopia";
+  const state={compared:true,complete:true,reference:"r17",marks:true};
+  dom.window.localStorage.setItem(key,JSON.stringify({pending:true,state}));
+  dom.window.eval(source);
+  dom.window.eval(panelSource);
+  await tick();
+  assert.equal(mock.saved.length,1);
+  assert.equal(mock.saved[0].activity_code,"papiloscopia");
+  assert.equal(mock.saved[0].ever_completed,true);
+  assert.equal(dom.window.localStorage.getItem(key),null);
+  assert.equal(dom.window.document.getElementById("forensic-awards").textContent,"1");
+  dom.window.close();
+});
+
 test("arquivos públicos utilizam cliente publicável e o Meu Arquivo não publica selos de terceiros",()=>{
   const member=fs.readFileSync("meu-arquivo.html","utf8");
   const quiz=fs.readFileSync("laboratorio-forense.html","utf8");
