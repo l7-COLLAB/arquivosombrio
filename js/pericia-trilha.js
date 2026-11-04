@@ -3,6 +3,12 @@
   "use strict";
 
   var KEY = "arquivo-sombrio-pericia-trilha-v1";
+  /* O índice das questões e as respostas anteriores permanecem inalterados. */
+  var GUIDE_CHAPTERS = Object.freeze(["metodo","manchas","manchas","comparacao","comparacao","hemacias","hipoteses","custodia","hipoteses"]);
+  function guideForQuestion(index) {
+    return Number.isInteger(index) && index >= 0 && index < GUIDE_CHAPTERS.length
+      ? "guia-pericia.html#" + GUIDE_CHAPTERS[index] : null;
+  }
   var DIDACTIC = typeof document === "undefined" && typeof require === "function"
     ? require("./pericia-visuais.js")
     : (typeof window !== "undefined" ? window.ArquivoPericiaVisuals : null);
@@ -151,7 +157,7 @@
     }).slice(0,2);
   }
 
-  var API = Object.freeze({STAGES:STAGES, QUESTIONS:QUESTIONS, validateState:validateState, evaluate:evaluate, progress:progress, reviewMistakes:reviewMistakes, recommendedReadings:recommendedReadings});
+  var API = Object.freeze({STAGES:STAGES, QUESTIONS:QUESTIONS, validateState:validateState, evaluate:evaluate, progress:progress, reviewMistakes:reviewMistakes, recommendedReadings:recommendedReadings, guideForQuestion:guideForQuestion});
   if (typeof module !== "undefined" && module.exports) module.exports = API;
   if (typeof document === "undefined") return;
 
@@ -275,6 +281,7 @@
       replaceText("quest-question-count", "QUESTÃO " + (state.index + 1) + " DE " + QUESTIONS.length);
       replaceText("quest-title", q.prompt);
       replaceText("quest-context", q.context);
+      byId("quest-study-link").href = guideForQuestion(state.index);
       replaceText("quest-visual-title", q.label);
       display.dataset.kind = q.kind;
       // Apenas os nove SVGs estáticos produzidos no arquivo local de ilustrações.
