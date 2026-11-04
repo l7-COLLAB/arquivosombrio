@@ -12,6 +12,7 @@ on:
       - "js/pericia-visuais.js"
       - "assets/apostila-pericia-forense.pdf"
       - "tests/pericia-homologacao-browser.py"
+      - "tests/pericia-corrigir-acento-pdf.py"
       - ".github/workflows/qa-pericia-visual.yml"
   workflow_dispatch:
   push:
@@ -51,6 +52,8 @@ jobs:
           fi
       - name: Validar PDF, fluxos e visualização 1365px e 390px
         run: python tests/pericia-homologacao-browser.py
+      - name: Preparar PDF com acentuação corrigida para revisão
+        run: python tests/pericia-corrigir-acento-pdf.py
       - name: Gerar amostras compactas de capturas para revisão visual
         if: always()
         run: |
