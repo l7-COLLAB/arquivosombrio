@@ -8,6 +8,9 @@
     #arquivo-share-widget button,#arquivo-share-widget a{font:inherit}
     .as-share-trigger{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:transparent;color:inherit;border:1px solid currentColor;border-radius:50%;cursor:pointer;opacity:.82;transition:opacity .15s,background .15s}
     .as-share-trigger:hover{opacity:1;background:rgba(127,127,127,.12)}
+    #arquivo-share-widget.as-share-home{margin:14px 0 0;z-index:5;color:#c9ae82}
+    #arquivo-share-widget.as-share-home .as-share-trigger{box-sizing:border-box;min-width:36px;width:auto;height:36px;padding:0 12px;gap:8px;border-radius:999px}
+    #arquivo-share-widget.as-share-home .as-share-trigger::after{content:"Compartilhar";font:500 12px/1.4 "DM Mono",monospace;letter-spacing:.03em}
     .as-share-trigger svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     .as-share-panel{position:absolute;right:0;top:calc(100% + 8px);width:min(310px,calc(100vw - 32px));max-height:min(510px,75vh);overflow:auto;background:#191715;color:#f4eadb;border:1px solid #8a7153;border-radius:13px;padding:16px;box-shadow:0 18px 40px #0009}
     .as-share-panel[hidden]{display:none}
@@ -29,6 +32,21 @@
   widget.innerHTML = '<button type="button" class="as-share-trigger" aria-expanded="false" aria-controls="as-share-panel" aria-label="Compartilhar este conteúdo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7 8m5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button><section class="as-share-panel" id="as-share-panel" hidden aria-label="Opções de compartilhamento"><h2>Compartilhar arquivo</h2><div class="as-share-options"><button type="button" data-action="native">Pessoas e aplicativos</button><a data-action="whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp</a><a data-action="telegram" target="_blank" rel="noopener noreferrer">Telegram</a><button type="button" data-action="instagram">Instagram Stories</button><button type="button" data-action="copy">Copiar link</button><a data-action="email">E-mail</a></div><p class="as-share-note">Para Stories, copie o link e adicione-o ao sticker de link no Instagram. No celular, “Pessoas e aplicativos” abre as opções disponíveis no aparelho.</p><div class="as-share-status" role="status" aria-live="polite"></div></section>';
   function mountShare() {
     const path=location.pathname.toLowerCase();
+    // A home possui um H1 em uma seção oculta; o compartilhamento deve
+    // ficar após os botões do hero, nunca dentro da navegação do cabeçalho.
+    if (document.body.classList.contains('home-page')) {
+      const homeActions=document.querySelector('.hero-content .gabinete-actions');
+      const homeContent=document.querySelector('.hero-content');
+      widget.classList.add('as-share-home');
+      if (homeActions) {
+        homeActions.insertAdjacentElement('afterend',widget);
+        return;
+      }
+      if (homeContent) {
+        homeContent.appendChild(widget);
+        return;
+      }
+    }
     let anchor;
     if (/novel\.html$/.test(path)) {
       anchor=document.querySelector('.novel-top');
@@ -41,7 +59,7 @@
     } else if (/pericia\.html$/.test(path)) {
       anchor=document.querySelector('main h1, .hero h1, h1');
     } else {
-      anchor=document.querySelector('main h1, .hero h1, h1, .main-header .header-content');
+      anchor=document.querySelector('main h1, .hero h1, h1');
     }
     if (anchor && anchor.classList.contains('novel-top')) {anchor.appendChild(widget);return;}
     if (anchor && anchor.tagName==='H1') {
@@ -53,6 +71,8 @@
       return;
     }
     if (anchor) {anchor.appendChild(widget);return;}
+    const content=document.querySelector('main, article');
+    if (content) {content.insertBefore(widget,content.firstChild);return;}
     document.body.insertBefore(widget,document.body.firstChild);
   }
   mountShare();
