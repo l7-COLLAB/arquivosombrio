@@ -289,6 +289,19 @@
     <link rel="stylesheet" href="css/editorias-identidade-20261018.css?v=2-compacto">
 <link rel="stylesheet" href="css/acessibilidade-publica-20261018.css?v=1">
 <link rel="stylesheet" href="css/related-reading.css?v=1">
+
+<style>
+.forensic-interactive-card{margin:24px 0 30px;padding:clamp(20px,3vw,30px);border:1px solid #895b63;border-left:4px solid #bb5765;border-radius:12px;background:linear-gradient(115deg,#2b171e,#151214);color:#f3e7dc}
+.forensic-interactive-eyebrow{font-size:.73rem;font-weight:800;letter-spacing:.11em;color:#edc08e;margin:0 0 8px}
+.forensic-interactive-card h3{font:700 clamp(1.45rem,2.5vw,2.05rem)/1.25 Georgia,serif;color:#f6e5d2;margin:0 0 14px}
+.forensic-interactive-card p:not(.forensic-interactive-eyebrow){font-size:1rem;line-height:1.75;max-width:780px;color:#e8d8d0}
+.forensic-interactive-actions{display:flex;gap:12px;flex-wrap:wrap;margin:17px 0}
+.forensic-interactive-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:10px 15px;border-radius:8px;background:#963e4d;color:#fff9f2;font-size:.92rem;font-weight:750;text-decoration:none;border:1px solid #d37d8a}
+.forensic-interactive-actions a:hover{background:#b24d5d}
+.forensic-interactive-actions a:focus-visible{outline:3px solid #ffe8a4;outline-offset:3px}
+.forensic-interactive-card small{display:block;color:#d6c4ba;font-size:.85rem;line-height:1.55}
+@media(max-width:520px){.forensic-interactive-actions a{width:100%}}
+</style>
 </head>
 
 
@@ -1329,6 +1342,17 @@
                     <span aria-hidden="true">01 / MÉTODO</span>
                     <p>O foco é compreender técnicas, possibilidades e limites da perícia. Cada arquivo apresenta um assunto científico, não um resultado pericial emitido pelo site.</p>
                 </div>
+
+                <section class="forensic-interactive-card" aria-labelledby="forensic-interactive-title">
+                    <p class="forensic-interactive-eyebrow">EXPERIÊNCIA INTERATIVA · CIÊNCIA COM LIMITES</p>
+                    <h3 id="forensic-interactive-title">Você conseguiria interpretar um vestígio?</h3>
+                    <p>Explore desenhos de manchas de sangue, compare grupos ABO/RhD em uma hipótese forense e conheça as regras básicas de compatibilidade de hemácias. Os exercícios mostram também o que <strong>não</strong> pode ser concluído.</p>
+                    <div class="forensic-interactive-actions">
+                        <a href="laboratorio-forense.html#padroes">Analisar manchas ilustrativas</a>
+                        <a href="laboratorio-forense.html#tipagem">Comparar grupos sanguíneos</a>
+                    </div>
+                    <small>Simulações educativas, sem dados de casos reais e sem valor de laudo.</small>
+                </section>
 
                 <div class="forensic-tools" aria-label="Pesquisar e filtrar perícias">
                     <label class="forensic-search">
