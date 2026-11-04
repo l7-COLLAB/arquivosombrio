@@ -158,3 +158,81 @@ test("arquivos públicos utilizam cliente publicável e o Meu Arquivo não publi
   const tighten=fs.readFileSync("supabase/migrations/20261104190100_forensic_progress_restrict_extra_grants.sql","utf8");
   assert.match(tighten,/revoke all.*authenticated/i);
 });
+
+
+test("erro de autenticação não mantém conquistas da conta anterior visíveis",async()=>{
+  const uid="44444444-4444-4444-8444-444444444444";
+  mockSupabase(uid,[{
+    activity_code:"papiloscopia",state:{compared:true,complete:true,reference:"r17",marks:true},
+    best_steps:2,best_score:0,ever_completed:true
+  }]);
+  const dom=domFor("<main></main>");
+  dom.window.eval(source);
+  const api=dom.window.ArquivoPericiaProgresso;
+  await api.connect();
+  assert.equal(api.isAccountActive(),true);
+  assert.equal(api.listRecords()[2].ever_completed,true);
+  mock.client.auth.getSession=async()=>({data:null,error:new Error("Sessão não verificável")});
+  await api.connect(true);
+  assert.equal(api.isAccountActive(),false);
+  assert.ok(api.listRecords().every(row=>row===null));
+  dom.window.close();
+});
+
+test("troca de usuário limpa imediatamente a conta antiga",async()=>{
+  const uidA="55555555-5555-4555-8555-555555555555";
+  const uidB="66666666-6666-4666-8666-666666666666";
+  mockSupabase(uidA,[{
+    activity_code:"custodia",state:{order:[0,1,2,3,4],sorted:true,complete:true},
+    best_steps:2,best_score:0,ever_completed:true
+  }]);
+  const dom=domFor("<main></main>");
+  dom.window.eval(source);
+  const api=dom.window.ArquivoPericiaProgresso;
+  await api.connect();
+  assert.equal(api.listRecords()[1].ever_completed,true);
+  mock.client.auth.getSession=async()=>({data:{session:{user:{id:uidB}}},error:null});
+  mock.client.auth.getUser=async()=>({data:{user:null},error:new Error("Sessão inválida")});
+  const [handler]=mock.subscribers;
+  handler("SIGNED_IN",{user:{id:uidB}});
+  assert.equal(api.isAccountActive(),false);
+  assert.ok(api.listRecords().every(row=>row===null));
+  await tick();
+  assert.equal(api.isAccountActive(),false);
+  dom.window.close();
+});
+
+test("gravação antiga não apaga resposta posterior ainda não sincronizada",async()=>{
+  const uid="77777777-7777-4777-8777-777777777777";
+  mockSupabase(uid,[]);
+  const dom=domFor("<main></main>");
+  dom.window.eval(source);
+  const api=dom.window.ArquivoPericiaProgresso;
+  await api.connect();
+  const originalFrom=mock.client.from;
+  const delayed=[];
+  mock.client.from=(name)=>{
+    const service=originalFrom(name);
+    service.upsert=(row)=>new Promise(resolve=>{delayed.push({row,resolve});});
+    return service;
+  };
+  const partial={order:[0,1,2,3,4],sorted:true,complete:false};
+  const finished={order:[0,1,2,3,4],sorted:true,complete:true};
+  const first=api.save("custodia",partial);
+  const second=api.save("custodia",finished);
+  await tick();
+  assert.equal(delayed.length,1);
+  assert.equal(api.pendingCount(),1);
+  const pendingKey="as-forensic-member-"+uid+"-custodia";
+  assert.equal(JSON.parse(dom.window.localStorage.getItem(pendingKey)).state.complete,true);
+  delayed[0].resolve({data:null,error:null});
+  await tick();
+  assert.equal(delayed.length,2);
+  assert.equal(api.pendingCount(),1,"A gravação anterior não pode limpar a nova");
+  assert.equal(JSON.parse(dom.window.localStorage.getItem(pendingKey)).state.complete,true);
+  delayed[1].resolve({data:null,error:null});
+  await Promise.all([first,second]);
+  assert.equal(api.pendingCount(),0);
+  assert.equal(dom.window.localStorage.getItem(pendingKey),null);
+  dom.window.close();
+});
