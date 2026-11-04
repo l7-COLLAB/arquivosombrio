@@ -1,0 +1,30 @@
+/* Meu Arquivo — atividades e selos recreativos de Perícia (privados por RLS). */
+.forensic-personal-section{padding:2rem 0;scroll-margin-top:5rem}
+.forensic-personal-intro{max-width:65rem;color:var(--arquivo-text-soft);line-height:1.75}
+.forensic-personal-status{color:#dfd2b6;min-height:1.6em;font-size:.9rem}
+.forensic-personal-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin:1.4rem 0 1.5rem}
+.forensic-personal-stats p{background:#151211;border:1px solid var(--arquivo-border-strong);margin:0;padding:1.1rem;display:flex;flex-direction:column;gap:.4rem;min-width:0}
+.forensic-personal-stats strong{font:700 2rem Georgia,serif;color:#ead3a1}
+.forensic-personal-stats span{font-family:"DM Mono",monospace;font-size:.75rem;color:#c3b6a3}
+.forensic-personal-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+.forensic-personal-card{border:1px solid #6f4e40;background:linear-gradient(155deg,#1b1818,#100e0e);padding:1.25rem;min-width:0;display:flex;flex-direction:column;gap:.55rem}
+.forensic-personal-card-head{display:flex;gap:.8rem;align-items:flex-start}
+.forensic-personal-card-icon{display:grid;place-items:center;flex:0 0 44px;height:44px;background:#352b28;border:1px solid #765e4b;border-radius:50%;font-size:1.3rem;color:#ffdd88}
+.forensic-personal-card h3{font:700 1.12rem/1.4 Georgia,serif;color:#f1e0bd;margin:.12rem 0}
+.forensic-personal-card small{display:block;color:#c9b8a2;font:500 .72rem/1.5 "DM Mono",monospace}
+.forensic-personal-card p{color:#d5c9bd;margin:.3rem 0;font-size:.88rem;line-height:1.6}
+.forensic-personal-progress{height:9px;background:#2b2525;border:1px solid #665044;border-radius:30px;overflow:hidden;margin:.25rem 0}
+.forensic-personal-progress span{display:block;height:100%;background:linear-gradient(90deg,#b53235,#e2c06b);transition:width .18s linear}
+.forensic-personal-medals{display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0}
+.forensic-personal-medal{border:1px solid #8b733d;border-radius:20px;background:#30291c;color:#f7d998;padding:.24rem .6rem;font-size:.69rem;line-height:1.5}
+.forensic-personal-medal-muted{color:#b7a89a;border-color:#4e4540;background:#1c1a18}
+.forensic-personal-card>a{margin-top:auto;min-height:44px;display:inline-flex;justify-content:center;align-items:center;border:1px solid #b99662;padding:.6rem .8rem;color:#fff0d4;text-decoration:none;font:500 .77rem "DM Mono",monospace;text-align:center}
+.forensic-personal-card>a:hover{background:#382725}
+.forensic-import-local{margin-top:1.5rem;padding:1.2rem;border-left:3px solid #b98954;background:#171310;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.forensic-import-local h3{color:#ead3ac;font:700 1rem Georgia,serif;margin:0 0 .35rem}
+.forensic-import-local p{margin:0;color:#cbbdaf;font-size:.86rem;line-height:1.7}
+.forensic-import-local button{flex-shrink:0}
+.forensic-personal-foot{color:#ab9c90;font-size:.82rem;margin:1.2rem 0}
+@media(max-width:980px){.forensic-personal-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.forensic-personal-grid,.forensic-personal-stats{grid-template-columns:1fr}.forensic-import-local{flex-direction:column;align-items:stretch}.forensic-personal-section{padding:1.3rem 0}}
+@media(prefers-reduced-motion:reduce){.forensic-personal-progress span{transition:none}}
