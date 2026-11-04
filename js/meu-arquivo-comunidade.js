@@ -336,7 +336,8 @@
                     const favorite=meuArquivoState.favoritos.find(x=>String(x.id)===String(item.item_id));
                     if(favorite){name=favorite.title||"Favorito";href=normalizarLinkMeuArquivo(favorite.target_url);}
                 }else if(item.item_type==="novel"){
-                    const tagButton=document.querySelector('[data-archive-tag="novel"][data-tag-item-id="'+CSS.escape(item.item_id)+'"]');
+                    const tagButton=Array.from(document.querySelectorAll('[data-archive-tag="novel"]'))
+                        .find(button=>button.dataset.tagItemId===String(item.item_id));
                     const link=tagButton?.closest(".novel-library-entry")?.querySelector("a.novel-library-item");
                     if(link){name=link.querySelector("strong")?.textContent||"Novel";href=link.getAttribute("href")||"";}
                 }
