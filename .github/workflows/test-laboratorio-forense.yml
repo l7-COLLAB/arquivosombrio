@@ -1,0 +1,56 @@
+name: Laboratório Forense — testes educativos
+
+on:
+  pull_request:
+    paths:
+      - "laboratorio-forense.html"
+      - "pericia.html"
+      - "css/laboratorio-forense.css"
+      - "js/laboratorio-forense.js"
+      - "tests/laboratorio-forense.test.cjs"
+      - ".github/workflows/test-laboratorio-forense.yml"
+  push:
+    branches: [main]
+    paths:
+      - "laboratorio-forense.html"
+      - "pericia.html"
+      - "css/laboratorio-forense.css"
+      - "js/laboratorio-forense.js"
+      - "tests/laboratorio-forense.test.cjs"
+      - ".github/workflows/test-laboratorio-forense.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  valida-laboratorios:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validar sintaxe JavaScript
+        run: node --check js/laboratorio-forense.js
+      - name: Testar comparações de 64 combinações e cenas
+        run: node --test tests/laboratorio-forense.test.cjs
+      - name: Verificar integração e presença dos controles
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path("laboratorio-forense.html").read_text()
+          listing = Path("pericia.html").read_text()
+          js = Path("js/laboratorio-forense.js").read_text()
+          css = Path("css/laboratorio-forense.css").read_text()
+          ids = ["scene-select", "check-scene", "next-scene", "scene-result", "check-trace", "check-donation", "trace-type", "reference-type", "donor-type", "recipient-type"]
+          assert all('id="' + item + '"' in html for item in ids), "Faltam controles HTML"
+          assert html.count('value="') >= 3
+          assert "laboratorio-forense.html#padroes" in listing
+          assert "laboratorio-forense.html#tipagem" in listing
+          assert "js/laboratorio-forense.js" in html
+          assert "css/laboratorio-forense.css" in html
+          assert "sem dados de casos reais" in listing
+          assert "readability" not in css or "min-height" in css
+          assert "redCellsCompatible" in js and "compareForensic" in js
+          print("Integração HTML, JS e CSS consistente")
+          PY
