@@ -70,11 +70,13 @@ def main():
         p_url = origin + "/atlas.html"
         a_url = origin + "/admin-v2/atlas.html"
         ps, public_page = request(p_url)
-        check("atlas_page", ps == 200 and 'id="atlas-map"' in public_page,
-              f"HTTP {ps}, mapa presente: {'id=\"atlas-map\"' in public_page}")
+        has_map = 'id="atlas-map"' in public_page
+        check("atlas_page", ps == 200 and has_map,
+              f"HTTP {ps}, mapa presente: {has_map}")
         ad, admin_page = request(a_url)
-        check("admin_page", ad == 200 and 'id="location-form"' in admin_page,
-              f"HTTP {ad}, formulário presente: {'id=\"location-form\"' in admin_page}")
+        has_form = 'id="location-form"' in admin_page
+        check("admin_page", ad == 200 and has_form,
+              f"HTTP {ad}, formulário presente: {has_form}")
         check("admin_noindex", bool(re.search(r'<meta[^>]+name="robots"[^>]+noindex', admin_page)),
               "Painel administrativo deve incluir noindex")
 
