@@ -18,7 +18,7 @@
   var records = new Map();
   var user = null, client = null, loading = null, connected = false;
   var queue = Promise.resolve(), generation = 0;
-  var authSubscriber = false;
+  var authSubscriber = false, writeCounter = 0;
   function changed() {
     if(root && root.dispatchEvent) root.dispatchEvent(new Event("arquivo-pericia-progresso"));
   }
@@ -89,6 +89,12 @@
       client.auth.onAuthStateChange(function(event,session){
         if(event==="SIGNED_IN" && connected && user && session?.user?.id===user.id) return;
         if (event==="SIGNED_OUT" || event==="SIGNED_IN") {
+          // Ocultar imediatamente a conta anterior durante qualquer troca de identidade.
+          if(event==="SIGNED_OUT" || (user && session?.user?.id!==user.id)) {
+            connected=false;user=null;records.clear();
+            ADAPTERS.forEach(function(adapter,code){adapter.apply(guestState(code));});
+            status("working");changed();
+          }
           // A verificação de identidade e as consultas são feitas fora do callback.
           Promise.resolve().then(function(){return connect(true);}).catch(function(){status("offline");});
         }
@@ -99,7 +105,7 @@
   async function connect(force) {
     if (loading && !force) return loading;
     var token=++generation;
-    var previousUser=user;
+    var previousUser=user, verifiedUserId=null;
     connected=false;
     loading=(async function(){
       status("working");
@@ -109,6 +115,7 @@
         var ses=await sb.auth.getSession();
         if (ses.error) throw ses.error;
         if (!ses.data?.session) {
+          if(token!==generation)return null;
           user=null;records.clear();
           ADAPTERS.forEach(function(adapter,code){adapter.apply(guestState(code));});
           connected=true;status("guest");changed();return null;
@@ -116,6 +123,7 @@
         var result=await sb.auth.getUser();
         if (result.error || !result.data?.user) throw result.error||new Error("Sessão inválida");
         var next=result.data.user;
+        verifiedUserId=next.id;
         var query=await sb.from(TABLE).select("activity_code,state,best_steps,best_score,ever_completed,updated_at")
           .eq("user_id",next.id);
         if (query.error) throw query.error;
@@ -147,8 +155,14 @@
         if(token!==generation)return null;
         console.warn("Perícia: sincronização indisponível",error);
         // Falha de rede não confirma logout. Manter somente o estado atual no navegador.
-        if(previousUser){user=previousUser;connected=true;status("offline");changed();return previousUser;}
-        user=null;connected=false;status("offline");changed();return null;
+        if(previousUser && verifiedUserId===previousUser.id){
+          // A identidade foi verificada: somente a consulta de progresso falhou.
+          user=previousUser;connected=true;status("offline");changed();return previousUser;
+        }
+        // Erro de sessão ou troca de conta: não mostrar registros da identidade anterior.
+        user=null;records.clear();connected=false;
+        if(previousUser)ADAPTERS.forEach(function(adapter,code){adapter.apply(defaultState(code));});
+        status("offline");changed();return null;
       }
     })();
     return loading;
@@ -164,10 +178,21 @@
   }
   function isAccountActive(){return Boolean(connected&&user);}
   function safePending(code,row){
-    try {localStorage.setItem(memberKey(code,user.id),JSON.stringify({pending:true,state:row.state}));}catch(_){}
+    var writeId=Date.now().toString(36)+"-"+(++writeCounter).toString(36);
+    try {
+      localStorage.setItem(memberKey(code,user.id),JSON.stringify({
+        pending:true,state:row.state,write_id:writeId
+      }));
+    }catch(_){}
+    return writeId;
   }
-  function clearPending(code,id){
-    try {localStorage.removeItem(memberKey(code,id));}catch(_){}
+  function clearPending(code,id,writeId){
+    try {
+      var key=memberKey(code,id);
+      var current=JSON.parse(localStorage.getItem(key));
+      // Nunca apagar uma resposta mais recente quando um pedido antigo termina.
+      if(current?.write_id===writeId)localStorage.removeItem(key);
+    }catch(_){}
   }
   function pendingCount(){
     if(!user)return 0;
@@ -186,7 +211,7 @@
       best_score:Math.max(Number(old?.best_score)||0,m.score),
       ever_completed:Boolean(old?.ever_completed)||m.completed,
       updated_at:new Date().toISOString()};
-    safePending(code,row);
+    var writeId=safePending(code,row);
     records.set(code,row);
     changed();
     // Serializar gravações: uma resposta lenta não deve sobrescrever a seguinte.
@@ -196,7 +221,7 @@
         var sb=await getClient();
         var result=await sb.from(TABLE).upsert(row,{onConflict:"user_id,activity_code"});
         if(result.error)throw result.error;
-        clearPending(code,owner);changed();
+        clearPending(code,owner,writeId);changed();
         return true;
       }catch(err){console.warn("Não foi possível sincronizar o exercício",err);status("offline");return false;}
     });
