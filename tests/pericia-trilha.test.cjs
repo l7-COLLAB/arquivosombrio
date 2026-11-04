@@ -25,7 +25,7 @@ test('todas as 36 opções são avaliadas consistentemente', () => {
       const result=evaluate(i,choice);
       assert.equal(result.correct,choice===q.correct);
       assert.match(result.detail,/\.|;/);
-      if(!result.correct) assert.match(result.detail,/melhor resposta/);
+      if(!result.correct) assert.match(result.detail,/opção mais adequada/);
       n++;
     }
   });
