@@ -13,6 +13,7 @@ on:
       - "css/pericia-novos-modulos.css"
       - "tests/pericia-novos-modulos.test.cjs"
       - "tests/pericia-modulos-browser.py"
+      - "tests/pericia-mobile-a11y-browser.py"
       - "laboratorio-forense.html"
       - ".github/workflows/qa-pericia-novos-modulos.yml"
   push:
@@ -28,6 +29,7 @@ on:
       - "css/pericia-novos-modulos.css"
       - "tests/pericia-novos-modulos.test.cjs"
       - "tests/pericia-modulos-browser.py"
+      - "tests/pericia-mobile-a11y-browser.py"
       - "laboratorio-forense.html"
       - ".github/workflows/qa-pericia-novos-modulos.yml"
   workflow_dispatch:
@@ -88,5 +90,36 @@ jobs:
         with:
           name: pericia-novos-modulos-visual
           path: qa-pericia-modulos/
+          if-no-files-found: warn
+          retention-days: 14
+
+
+  mobile-acessibilidade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Preparar Chromium e WebKit
+        run: |
+          python -m pip install --disable-pip-version-check "playwright>=1.50,<2"
+          python -m playwright install --with-deps webkit
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "CHROME_PATH=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          elif command -v chromium >/dev/null 2>&1; then
+            echo "CHROME_PATH=$(command -v chromium)" >> "$GITHUB_ENV"
+          else
+            python -m playwright install --with-deps chromium
+          fi
+      - name: Validar foco teclado e toque com layouts 320 390 e 428
+        run: python tests/pericia-mobile-a11y-browser.py
+      - name: Arquivar evidências visuais e relatório
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pericia-mobile-acessibilidade
+          path: qa-pericia-mobile/
           if-no-files-found: warn
           retention-days: 14

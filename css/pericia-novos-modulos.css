@@ -65,7 +65,7 @@ button{cursor:pointer;touch-action:manipulation}
 .m-evidence>span{flex:1;min-width:0;font-size:.93rem}
 .m-evidence>span strong{display:block;color:#ffe28e}
 .m-move{display:flex;gap:7px;flex-shrink:0}
-.m-move button{min-height:42px;min-width:39px;border-radius:7px;border:1px solid #91acd1;background:#284774;color:white;font-weight:750;font-size:1rem}
+.m-move button{min-height:44px;min-width:44px;border-radius:7px;border:1px solid #91acd1;background:#284774;color:white;font-weight:750;font-size:1rem}
 .m-move button:disabled{opacity:.32;cursor:not-allowed}
 .m-choices{border:0;padding:0;margin:15px 0}
 .m-choices legend{color:#e8f0ff;font-weight:700;margin-bottom:10px}
@@ -95,3 +95,11 @@ button{cursor:pointer;touch-action:manipulation}
 @media(max-width:430px){.m-wrap{width:calc(100% - 22px)}.m-head-inner{min-height:76px}.m-brand{font-size:.82rem}.m-back{font-size:.76rem}.m-card,.m-step{padding:17px}.m-evidence{align-items:flex-start;flex-wrap:wrap}.m-move{margin-left:auto}.m-btn{width:100%}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.m-print-art svg{transition:none}}
 @media print{@page{size:A4;margin:18mm}html{color-scheme:light}body{background:white;color:#132238;font:11pt/1.5 Georgia,serif}.m-head,.m-actions,.m-practice-header,.m-foot,.m-reset,.m-btn,.m-controls{display:none!important}.m-wrap{width:100%}.m-intro{padding:0 0 14px}.m-intro h1{font-size:26pt;color:#172d56}.m-kicker{color:#22396a}.m-lead,.m-section-intro,.m-subtle,.m-chapter p,.m-chapter li{color:#243244}.m-card{background:white;border:0;padding:0}.m-guide-index{display:none}.m-chapter{break-inside:avoid-page}.m-chapter h3{color:#183665}.m-note,.m-review{background:#f2f4f8;color:#1b2b3b}.m-source-list a{color:#1b508c}}
+
+/* Navegação acessível e controles dimensionados para toque em telas pequenas. */
+.m-evidence:focus-visible{outline:3px solid var(--m-focus);outline-offset:2px}
+.m-move button:focus-visible{outline:3px solid var(--m-gold);outline-offset:2px}
+#ficha-titulo:focus-visible,#finger-limit-title:focus-visible{outline-offset:7px}
+#fp-zoom-status{margin:0 0 15px;color:#d5e5ff;font-size:.88rem}
+.m-reset:disabled,.m-primary:disabled,.m-secondary:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:360px){.m-move{gap:6px}.m-move button{min-height:44px;min-width:44px}.m-evidence{padding:12px 11px}}
