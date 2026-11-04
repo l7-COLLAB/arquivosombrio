@@ -27,7 +27,7 @@ test('fluxo de estudo vem antes de responder e conserva laboratórios',()=>{
   assert.ok(lab.includes('id="quest-study-link"'));
   assert.ok(lab.includes('href="guia-pericia.html"'));
   assert.ok(lab.includes('assets/apostila-pericia-forense.pdf'));
-  assert.equal((lab.match(/class="study-section"/g)||[]).length,0); // inclui classes adicionais
+  assert.equal((lab.match(/class="lab-section study-section"/g)||[]).length,1);
   assert.equal((lab.match(/id="apostila"/g)||[]).length,1);
 });
 
