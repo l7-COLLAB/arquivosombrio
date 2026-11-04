@@ -14,9 +14,9 @@
   <meta property="og:description" content="Explore exemplos de manchas de sangue e comparação de grupos ABO/RhD, com explicações sobre os limites dos resultados.">
   <meta property="og:url" content="https://arquivosombrio.net.br/laboratorio-forense.html">
   <link rel="stylesheet" href="css/laboratorio-forense.css?v=20261104-2">
-  <link rel="stylesheet" href="css/pericia-trilha.css?v=20261104-1">
+  <link rel="stylesheet" href="css/pericia-trilha.css?v=20261104-2">
   <script src="js/laboratorio-forense.js?v=20261104-2" defer></script>
-  <script src="js/pericia-trilha.js?v=20261104-1" defer></script>
+  <script src="js/pericia-trilha.js?v=20261104-2" defer></script>
   <title>Laboratório Forense Interativo | Arquivo Sombrio</title>
 </head>
 <body>
@@ -71,6 +71,7 @@
         </div>
       </div>
       <p class="method-note"><strong>Sobre os exemplos:</strong> os desenhos não permitem determinar altura de queda, arma utilizada, quantidade de pessoas ou sequência de acontecimentos. Em análises reais, é necessário considerar a superfície, o local e outros vestígios.</p>
+      <p class="lab-follow-up"><a href="#trilha">Quer testar o que aprendeu? Faça o desafio de Perícia.</a></p>
     </section>
     <section class="lab-section" id="tipagem" aria-labelledby="tipagem-title">
       <div class="section-heading"><span class="section-index">02 / TIPO SANGUÍNEO</span><h2 id="tipagem-title">Comparação de grupos sanguíneos</h2><p>Escolha dois grupos sanguíneos ABO/RhD e compare os resultados. O primeiro exercício trata da análise de vestígios; o segundo mostra as regras básicas para transfusão de hemácias. São situações diferentes.</p></div>
@@ -99,6 +100,7 @@
         </article>
       </div>
       <p class="method-note"><strong>Importante:</strong> uma tipagem sanguínea exige exames específicos. Amostras misturadas ou degradadas, transfusões e transplantes podem complicar a análise. Para transfusões reais, também são necessários testes de compatibilidade e avaliação clínica.</p>
+      <p class="lab-follow-up"><a href="#trilha">Pratique com perguntas sobre grupos sanguíneos e vestígios.</a></p>
     </section>
 
     <section class="lab-section quest-section" id="trilha" aria-labelledby="quest-title-section">
@@ -123,6 +125,7 @@
               <strong id="quest-visual-mark">●  ●   ●</strong>
             </div>
             <p class="quest-local-note" id="quest-local-note">O progresso fica salvo apenas neste navegador.</p>
+            <button type="button" class="quest-reset-link" id="quest-reset">Reiniciar desafio</button>
           </aside>
           <div class="lab-card quest-question-card" id="quest-question-card">
             <p class="eyebrow" id="quest-question-count">QUESTÃO 1 DE 9</p>
@@ -146,6 +149,19 @@
           <strong id="quest-final-score">0 de 9 respostas corretas · 0 pontos</strong>
           <p id="quest-final-note">Confira as leituras recomendadas para continuar.</p>
           <p class="quest-perfect" id="quest-perfect" hidden>★ Bônus: rodada completa sem erros</p>
+          <section class="quest-review" aria-labelledby="quest-review-heading">
+            <h4 id="quest-review-heading">Revise suas respostas</h4>
+            <p id="quest-review-perfect" hidden>Você acertou todas as perguntas desta rodada. Nenhuma resposta precisa ser revisada.</p>
+            <button type="button" id="quest-review-toggle" class="quest-review-toggle" aria-controls="quest-review-panel" aria-expanded="false" hidden>Revisar respostas</button>
+            <div id="quest-review-panel" class="quest-review-panel" tabindex="-1" hidden>
+              <ol id="quest-review-list"></ol>
+            </div>
+          </section>
+          <section class="quest-readings" aria-labelledby="quest-reading-title">
+            <h4 id="quest-reading-title">Para continuar estudando</h4>
+            <p>Estes artigos do acervo abordam os temas que apareceram no desafio.</p>
+            <ul id="quest-reading-list"></ul>
+          </section>
           <div class="quest-finish-actions">
             <a href="pericia.html#forense">Explorar outros artigos de Perícia</a>
             <button type="button" id="quest-copy">Copiar meu resultado</button>
