@@ -116,7 +116,37 @@
     return {done:length, correct:correct, points:correct * 10, badges:Math.floor(length / 3), completed:length === QUESTIONS.length};
   }
 
-  var API = Object.freeze({STAGES:STAGES, QUESTIONS:QUESTIONS, validateState:validateState, evaluate:evaluate, progress:progress});
+  /* A revisão usa as respostas originais; não altera pontos ou selos conquistados. */
+  function reviewMistakes(answers) {
+    if (!Array.isArray(answers)) return [];
+    var mistakes = [];
+    QUESTIONS.slice(0, Math.min(answers.length, QUESTIONS.length)).forEach(function(q, i) {
+      var answer = evaluate(i, answers[i]);
+      if (!answer || answer.correct) return;
+      mistakes.push({
+        index:i + 1, stage:q.stage, prompt:q.prompt,
+        selected:q.choices[answers[i]], correct:q.choices[q.correct],
+        explanation:q.explanation
+      });
+    });
+    return mistakes;
+  }
+
+  /* Links para artigos existentes no acervo: evitar rotas inventadas e conteúdo externo. */
+  var READINGS = Object.freeze([
+    {stage:0, title:"Análise de manchas de sangue", href:"pericia.html?id=5#forense", description:"O que os formatos das manchas permitem observar e quais são as limitações da análise."},
+    {stage:1, title:"DNA de toque", href:"pericia.html?id=8#forense", description:"Por que um vestígio biológico nem sempre revela quem participou de uma ação."},
+    {stage:2, title:"Reconhecimento de pessoas", href:"pericia.html?id=11#forense", description:"Como a interpretação das evidências pode falhar e por que a conclusão precisa ser contextualizada."}
+  ]);
+  function recommendedReadings(answers) {
+    var misses = [0,0,0];
+    reviewMistakes(answers).forEach(function(m) {misses[m.stage] += 1;});
+    return READINGS.slice().sort(function(a,b) {
+      return misses[b.stage] - misses[a.stage] || a.stage - b.stage;
+    }).slice(0,2);
+  }
+
+  var API = Object.freeze({STAGES:STAGES, QUESTIONS:QUESTIONS, validateState:validateState, evaluate:evaluate, progress:progress, reviewMistakes:reviewMistakes, recommendedReadings:recommendedReadings});
   if (typeof module !== "undefined" && module.exports) module.exports = API;
   if (typeof document === "undefined") return;
 
@@ -153,6 +183,56 @@
     var questionArea = byId("quest-question-card");
     var display = byId("quest-illustration");
     var saved = byId("quest-local-note");
+    var reviewOpen = false;
+
+    function renderReview(answers) {
+      var mistakes = reviewMistakes(answers);
+      var reviewToggle = byId("quest-review-toggle");
+      var reviewPanel = byId("quest-review-panel");
+      var list = byId("quest-review-list");
+      list.replaceChildren();
+      mistakes.forEach(function(m) {
+        var item = document.createElement("li");
+        var heading = document.createElement("strong");
+        heading.textContent = "Questão " + m.index + " · " + STAGES[m.stage].title;
+        var prompt = document.createElement("p");
+        prompt.textContent = m.prompt;
+        var chosen = document.createElement("p");
+        chosen.textContent = "Sua resposta: " + m.selected;
+        var correct = document.createElement("p");
+        correct.textContent = "Resposta mais adequada: " + m.correct;
+        var explanation = document.createElement("p");
+        explanation.textContent = m.explanation;
+        item.append(heading,prompt,chosen,correct,explanation);
+        list.appendChild(item);
+      });
+      reviewToggle.hidden = mistakes.length === 0;
+      reviewToggle.textContent = "Revisar " + mistakes.length + (mistakes.length===1 ? " resposta" : " respostas");
+      reviewToggle.setAttribute("aria-expanded", String(reviewOpen && mistakes.length > 0));
+      reviewPanel.hidden = !reviewOpen || mistakes.length === 0;
+      byId("quest-review-perfect").hidden = mistakes.length > 0;
+
+      var readings = byId("quest-reading-list");
+      readings.replaceChildren();
+      recommendedReadings(answers).forEach(function(item) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = item.href;
+        a.textContent = item.title;
+        var caption = document.createElement("p");
+        caption.textContent = item.description;
+        li.append(a,caption);
+        readings.appendChild(li);
+      });
+    }
+    function reset() {
+      if (state.answers.length && !window.confirm("Reiniciar a trilha? As respostas e os selos desta rodada serão apagados neste navegador.")) return;
+      state = validateState(null);
+      reviewOpen = false;
+      remove();
+      render();
+      byId("quest-title").focus();
+    }
 
     function render() {
       var stats = progress(state.answers);
@@ -173,6 +253,7 @@
           "Você concluiu as três etapas. Confira os artigos para aprofundar os métodos estudados." :
           "Você concluiu as três etapas. Pode refazer o desafio e revisar as explicações das respostas.");
         byId("quest-perfect").hidden = stats.correct !== QUESTIONS.length;
+        renderReview(state.answers);
         return;
       }
 
@@ -219,6 +300,12 @@
         var paragraph = document.createElement("p");
         paragraph.textContent = outcome.detail;
         explanation.append(heading, paragraph);
+        if (state.answers.length % 3 === 0 && state.answers.length === state.index + 1) {
+          var milestone = document.createElement("p");
+          milestone.className = "quest-milestone";
+          milestone.textContent = STAGES[q.stage].badge + " liberado. Etapa " + STAGES[q.stage].code + " concluída.";
+          explanation.appendChild(milestone);
+        }
         check.hidden = true;
         next.hidden = false;
         next.textContent = state.index === QUESTIONS.length - 1 ? "Ver meus selos" :
@@ -257,11 +344,13 @@
       if (state.index >= QUESTIONS.length) finish.focus();
       else byId("quest-title").focus();
     });
-    byId("quest-restart").addEventListener("click",function(){
-      state = validateState(null);
-      remove();
-      render();
-      byId("quest-title").focus();
+    byId("quest-restart").addEventListener("click", reset);
+    byId("quest-reset").addEventListener("click", reset);
+    byId("quest-review-toggle").addEventListener("click", function() {
+      reviewOpen = !reviewOpen;
+      byId("quest-review-panel").hidden = !reviewOpen;
+      byId("quest-review-toggle").setAttribute("aria-expanded", String(reviewOpen));
+      if (reviewOpen) byId("quest-review-panel").focus();
     });
     byId("quest-copy").addEventListener("click",function(){
       var stats = progress(state.answers);

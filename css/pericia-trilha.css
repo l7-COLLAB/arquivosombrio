@@ -62,3 +62,28 @@
 @media(max-width:850px){.quest-board{grid-template-columns:1fr}.quest-overview{position:static}.quest-badge{min-height:110px}.quest-illustration{min-height:120px}}
 @media(max-width:480px){.quest-badges{gap:6px}.quest-badge{min-height:108px;padding:9px 3px}.quest-badge-symbol{height:35px;width:35px;font-size:1.1rem}.quest-badge strong{font-size:.73rem}.quest-badge small{font-size:.67rem}.quest-illustration{padding:13px}.quest-actions button,.quest-finish-actions button,.quest-finish-actions a{width:100%}.quest-finish{padding:22px}}
 @media(prefers-reduced-motion:reduce){.quest-progress-fill{transition:none}}
+
+
+/* Retomada, revisão e navegação editorial após as atividades. */
+.quest-reset-link{display:inline-flex;justify-content:center;align-items:center;min-height:44px;margin-top:14px;width:100%;padding:9px 12px;border:1px solid #657fa7;background:transparent;color:#e1eafe;font-size:.82rem;font-weight:650}
+.quest-reset-link:hover{background:#20385c;border-color:#b3c9ee}
+.quest-milestone{margin:14px 0 2px!important;padding:11px 13px;border:1px solid #f0d05c;border-radius:8px;background:#2a2c25;color:#ffe6a3!important;font-weight:750;font-size:.92rem}
+.quest-review,.quest-readings{margin-top:20px;padding:19px 21px;border-radius:12px;background:#0d203b;border:1px solid #4a70a3}
+.quest-review h4,.quest-readings h4{font:700 1.22rem/1.4 Georgia,serif;color:#f5f8ff;margin:0 0 8px}
+.quest-review p,.quest-readings p{font-size:.95rem;line-height:1.7}
+.quest-review-toggle{background:#175acf;border:1px solid #87b4ff;color:#fff;min-height:44px;margin:8px 0 0}
+.quest-review-toggle:hover{background:#1447a4}
+.quest-review-panel{margin-top:14px;outline:none}
+.quest-review-panel ol{padding:0 0 0 20px;margin:0;display:grid;gap:13px}
+.quest-review-panel li{padding:15px 15px 15px 8px;border-top:1px solid #47658d;line-height:1.65;color:#e4eaf8}
+.quest-review-panel li strong{font-size:1rem;color:#ffd43b}
+.quest-review-panel li p{margin:7px 0}
+.quest-readings ul{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:12px}
+.quest-readings li{padding:12px 14px;border:1px solid #375d93;border-radius:9px;background:#101c31}
+.quest-readings li a{color:#ffdd6a;font-weight:750;text-underline-offset:4px}
+.quest-readings li a:hover{color:#fff2af}
+.quest-readings li p{margin:5px 0 0;font-size:.88rem;color:#cbd9f1}
+.lab-follow-up{margin:13px 0 5px}
+.lab-follow-up a{display:inline-flex;align-items:center;min-height:44px;padding:9px 13px;border:1px solid #477cbe;border-radius:7px;background:#122b52;color:#e8f0ff;font-size:.95rem;font-weight:700;text-decoration:none}
+.lab-follow-up a:hover{background:#1c437e;border-color:#92bcff}
+@media(max-width:520px){.quest-review,.quest-readings{padding:16px}.quest-review-toggle,.lab-follow-up a{width:100%;justify-content:center}}

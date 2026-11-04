@@ -74,15 +74,22 @@ jobs:
           assert "redCellsCompatible" in js and "compareForensic" in js
           assert 'id="padroes"' in html and 'id="tipagem"' in html, "Ambos laboratórios continuam disponíveis"
           assert 'id="trilha"' in html
-          assert "js/pericia-trilha.js?v=20261104-1" in html
-          assert "css/pericia-trilha.css?v=20261104-1" in html
-          ids_game = ["quest-app", "quest-answer", "quest-next", "quest-options", "quest-feedback", "quest-finish", "quest-final-score", "quest-restart", "quest-copy", "quest-progress-bar"]
+          assert "js/pericia-trilha.js?v=20261104-2" in html
+          assert "css/pericia-trilha.css?v=20261104-2" in html
+          ids_game = ["quest-app", "quest-answer", "quest-next", "quest-options", "quest-feedback", "quest-finish", "quest-final-score", "quest-restart", "quest-copy", "quest-progress-bar", "quest-reset", "quest-review-toggle", "quest-review-panel", "quest-review-list", "quest-reading-list"]
           assert all('id="' + item + '"' in html for item in ids_game), "Faltam controles do desafio"
           assert html.count('data-quest-badge=') == 3, "Selos ausentes"
           game_js = Path("js/pericia-trilha.js").read_text()
           game_css = Path("css/pericia-trilha.css").read_text()
           assert 'localStorage' in game_js and 'fetch(' not in game_js, "Não usar API externa no desafio"
           assert 'Math.floor(length / 3)' in game_js, "Selos não vinculados às etapas"
+          assert "reviewMistakes" in game_js and "recommendedReadings" in game_js
+          assert "quest-review-panel" in game_css and "quest-reset-link" in game_css
+          assert html.count('class="lab-follow-up"') == 2
+          sitemap = Path("sitemap.xml").read_text()
+          for article_id in (5, 8, 11):
+            url = "https://arquivosombrio.net.br/pericia.html?id=" + str(article_id) + "</loc>"
+            assert url in sitemap, "Leitura recomendada sem URL no sitemap: " + str(article_id)
           assert ".quest-badge-unlocked" in game_css
           assert 'aria-valuemax="9"' in html
           print("Desafio: 9 questões, 3 selos e links verificados")
