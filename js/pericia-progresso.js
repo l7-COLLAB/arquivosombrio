@@ -134,6 +134,14 @@
           adapter.apply(state);
           if (localPending) save(code,state);
         });
+        // Retomar gravações pendentes também na página Meu Arquivo (sem laboratório aberto).
+        CODES.forEach(function(code){
+          if(ADAPTERS.has(code))return;
+          var saved=null;
+          try{saved=JSON.parse(localStorage.getItem(memberKey(code,next.id)));}catch(_){}
+          var pendingState=saved?.pending && normalise(code,saved.state);
+          if(pendingState)save(code,pendingState);
+        });
         status("member");changed();return next;
       }catch(error) {
         if(token!==generation)return null;
