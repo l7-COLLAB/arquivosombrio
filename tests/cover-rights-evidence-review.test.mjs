@@ -57,7 +57,7 @@ test("institutions have transparent evidence and no blanket licence claims", () 
   assert.equal(map.get("casos_diarios:33").estado, "pendente_validacao_escopo");
   assert.match(map.get("pericias:12").termos, /^https:\/\/www\.nist\.gov\/copyrights-disclaimers$/);
   assert.ok(credits.includes('id="pericias-12"'));
-  assert.equal((credits.match(/<article class="credit"/g) || []).length, 51);
+  assert.equal((credits.match(/<article class="credit"/g) || []).length, 110);
 });
 
 test("rights inventory does not publish embedded image data or user identity", () => {
