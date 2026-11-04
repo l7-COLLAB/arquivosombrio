@@ -23,6 +23,7 @@ on:
     types: [completed]
 permissions:
   contents: read
+  actions: read
 jobs:
   fixture-browser:
     if: github.event_name != 'workflow_run'
@@ -85,6 +86,29 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Listar execuções recentes do deploy GitHub Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${{ github.repository }}/actions/workflows/deploy-pages.yml/runs?branch=main&per_page=8" \
+            --jq '.workflow_runs[] | "run_id=\(.id) status=\(.status) conclusao=\(.conclusion) commit=\(.head_sha) inicio=\(.created_at)"'
+      - name: Comparar versão publicada com código do GitHub
+        run: |
+          python3 - <<'PY'
+          import re, urllib.request
+          from pathlib import Path
+          local=Path('atlas.html').read_text(encoding='utf-8')
+          req=urllib.request.Request('https://arquivosombrio.net.br/atlas.html',headers={'Cache-Control':'no-cache','User-Agent':'Atlas-QA-Revision-Inspector'})
+          with urllib.request.urlopen(req,timeout=18) as response:
+            remote=response.read().decode('utf-8')
+          pattern=r'atlas-criminal\\.js\\?v=([0-9]+)'
+          a=re.search(pattern,local)
+          b=re.search(pattern,remote)
+          print('Versão no repositório:',a.group(1) if a else 'não encontrada')
+          print('Versão publicada:',b.group(1) if b else 'não encontrada')
+          if a and b and a.group(1)!=b.group(1):
+            print('AVISO: site publicado está atrás do código principal (revisão de deploy pendente).')
+          PY
       - name: Diagnosticar DNS do domínio de produção
         run: |
           python3 - <<'PY'
