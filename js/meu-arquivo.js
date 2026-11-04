@@ -7440,7 +7440,7 @@ const supabase =
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${accessToken}`
                     },
-                    body: JSON.stringify({ content_choice: escolhaConteudo })
+                    body: JSON.stringify({ content_choice: escolhaConteudo, confirmation: confirmacao })
                 }
             );
 
