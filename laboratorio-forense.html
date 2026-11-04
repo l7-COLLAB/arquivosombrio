@@ -17,13 +17,15 @@
   <link rel="stylesheet" href="css/pericia-trilha.css?v=20261104-3">
   <script src="js/laboratorio-forense.js?v=20261104-2" defer></script>
   <script src="js/pericia-visuais.js?v=20261104-1" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" defer></script>
+  <script src="js/pericia-progresso.js?v=20261104-1" defer></script>
   <script src="js/pericia-trilha.js?v=20261104-4" defer></script>
   <title>Laboratório Forense Interativo | Arquivo Sombrio</title>
 <style>
 .m-new-module-button{display:inline-flex;align-items:center;justify-content:center;min-height:46px;background:#1955c4;color:white;border:1px solid #79a9ff;border-radius:8px;padding:10px 16px;font-weight:750;text-decoration:none;margin-top:12px}
 .m-new-module-button:hover{color:white;background:#1769ff}
 .m-new-module-sub{font-size:.82rem;color:#c9d7ed!important}
-</style></head>
+</style><style>.quest-account-link{display:inline-flex;align-items:center;min-height:44px;margin-top:10px;color:#ffe085;font-size:.86rem;font-weight:700}</style></head>
 <body>
   <a href="#conteudo" class="skip-link">Ir para os laboratórios</a>
   <header class="site-header">
@@ -99,6 +101,8 @@
             </div>
             <p class="quest-local-note" id="quest-local-note">O progresso fica salvo apenas neste navegador.</p>
             <button type="button" class="quest-reset-link" id="quest-reset">Reiniciar desafio</button>
+            <p class="quest-local-note" data-forensic-sync-status aria-live="polite">Progresso salvo apenas neste navegador.</p>
+            <a class="quest-account-link" href="meu-arquivo.html#conquistas-pericia">Ver conquistas no Meu Arquivo</a>
           </aside>
           <div class="lab-card quest-question-card" id="quest-question-card">
             <p class="eyebrow" id="quest-question-count">QUESTÃO 1 DE 9</p>
