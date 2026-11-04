@@ -7,6 +7,17 @@ on:
       - "js/meu-arquivo.js"
       - "js/meu-arquivo-novels.js"
       - "js/meu-arquivo-comunidade.js"
+      - "js/meu-arquivo-pericia.js"
+      - "js/pericia-progresso.js"
+      - "js/pericia-trilha.js"
+      - "js/pericia-novos-modulos.js"
+      - "css/meu-arquivo-pericia.css"
+      - "pericia-custodia.html"
+      - "pericia-papiloscopia.html"
+      - "laboratorio-forense.html"
+      - "tests/meu-arquivo-pericia.test.mjs"
+      - "supabase/migrations/20261104190000_forensic_activity_progress_private_rls.sql"
+      - "supabase/migrations/20261104190100_forensic_progress_restrict_extra_grants.sql"
       - "js/forum-deep-link.js"
       - "forum.html"
       - "supabase/migrations/20261103221500_member_community_notifications_tags.sql"
@@ -37,6 +48,10 @@ jobs:
           node --check js/meu-arquivo-novels.js
           node --check js/caso.js
           node --check js/meu-arquivo-comunidade.js
+          node --check js/meu-arquivo-pericia.js
+          node --check js/pericia-progresso.js
+          node --check js/pericia-trilha.js
+          node --check js/pericia-novos-modulos.js
           node --check js/forum-deep-link.js
       - name: Testar modais, queries, mural, destaques e novels
-        run: node --test tests/meu-arquivo-funcional.test.mjs tests/meu-arquivo-comunidade.test.mjs
+        run: node --test tests/meu-arquivo-funcional.test.mjs tests/meu-arquivo-comunidade.test.mjs tests/meu-arquivo-pericia.test.mjs
