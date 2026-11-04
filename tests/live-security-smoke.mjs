@@ -73,3 +73,34 @@ test('LIVE: endpoint de contribuicao rejeita origem nao autorizada antes de grav
  const r=await call('/functions/v1/public-contribution-submit',{payload:{kind:'suggestion'},origin:'https://invalid.example'});
  assert.equal(r.status,403);
 });
+
+
+test('LIVE: importação manual e sincronização de capas não podem ser usadas sem sessão',async()=>{
+ const routes=[
+  ['/functions/v1/arquivo-voz-manual-import',{action:'init',content_type:'dossie',content_id:1}],
+  ['/functions/v1/campaign-cover-github-sync',{theme:'teste',storagePath:'x/capa-teste-y.png'}]
+ ];
+ for(const [url,payload] of routes){
+   for(const bearer of [null,'invalid-or-expired-token']){
+     const r=await call(url,{payload,bearer});
+     assert.ok([401,403].includes(r.status),url+': expected authentication denial, got '+r.status);
+     assert.ok(!r.data?.upload_url && !r.data?.url && !r.data?.commit,url+': unexpected privileged output');
+   }
+ }
+});
+test('LIVE: solicitações de exclusão de conta e cron de narração não executam sem autorização',async()=>{
+ const routes=[
+  ['/functions/v1/delete-own-account',{content_choice:'delete_all'}],
+  ['/functions/v1/narration-prewarm',{}]
+ ];
+ for(const [url,payload] of routes){
+   const r=await call(url,{payload});
+   assert.ok([401,403].includes(r.status),url+': unexpected HTTP '+r.status);
+   assert.equal(r.data?.success,undefined,url+': no destructive action permitted');
+ }
+});
+test('LIVE: Supabase Auth rejeita token inválido em endpoint de sessão',async()=>{
+ const r=await call('/auth/v1/user',{method:'GET',bearer:'expired-or-revoked-token-simulator'});
+ assert.equal(r.status,401);
+ assert.equal(r.data?.id,undefined);
+});
