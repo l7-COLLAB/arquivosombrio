@@ -10,6 +10,7 @@
   }});
   let articles = [];
   let locations = [];
+  let visibleSourceIds = new Set();
   let selectedId = null;
   let dirty = false;
   let loading = false;
@@ -63,6 +64,8 @@
   function clearForm() {
     selectedId=null;
     $('location-form').reset();
+    $('source-type').disabled=false;
+    $('source-id').disabled=false;
     $('source-type').value='dossie';
     sourceOptions();
     fields.forEach(id => {
@@ -109,6 +112,8 @@
     const kind=row.dossier_id?'dossie':'garimpo',id=row.dossier_id||row.daily_id;
     $('source-type').value=kind;
     sourceOptions(id);
+    $('source-type').disabled=true;
+    $('source-id').disabled=true;
     setField('country',row.country);
     setField('state-region',row.state_region);
     setField('city',row.city);
@@ -135,13 +140,14 @@
       const kind=row.dossier_id?'dossie':'garimpo',id=row.dossier_id||row.daily_id;
       const a=articleBy(kind,id);
       if (selected && ![a?.title,row.country,row.city,row.state_region].some(v=>norm(v).includes(norm(selected))))return;
-      const state=row.is_active&&row.reviewed?'published':row.reviewed?'inactive':'pending';
+      const visible=visibleSourceIds.has(kind+':'+id);
+      const state=row.is_active&&row.reviewed?(visible?'published':'awaiting'):row.reviewed?'inactive':'pending';
       if(statusFilter!=='all'&&state!==statusFilter)return;
       found++;
       const button=text('button',null,'record-button '+state);
       button.type='button';
       button.setAttribute('aria-pressed',String(selectedId===row.id));
-      button.append(text('span',state==='published'?'ATIVO':state==='inactive'?'DESATIVADO':'PENDENTE','state'));
+      button.append(text('span',state==='published'?'PÚBLICO':state==='awaiting'?'APROVADO · NÃO EXIBIDO':state==='inactive'?'DESATIVADO':'PENDENTE','state'));
       button.append(text('strong',a?.title||'Registro #'+id));
       button.append(text('small',row.city+' · '+row.country+' · '+row.event_year));
       button.addEventListener('click',()=>pickLocation(row));
@@ -162,21 +168,23 @@
     });
     if(!pending.length)unmapped.append(text('p','Todos os registros têm pelo menos uma localidade cadastrada.','empty'));
     $('summary').textContent=locations.length+' locais cadastrados · '+
-      locations.filter(l=>l.reviewed&&l.is_active).length+' ativados';
+      locations.filter(l=>l.reviewed&&l.is_active&&visibleSourceIds.has((l.dossier_id?'dossie:':'garimpo:')+(l.dossier_id||l.daily_id))).length+' públicos';
   }
   async function fetchAll() {
     if (!db) throw new Error('Biblioteca de autenticação não disponível.');
-    const [d,g,l] = await Promise.all([
+    const [d,g,l,v] = await Promise.all([
       db.from('Casos').select('id,titulo,local,ano,status_publicacao,categoria').order('id').limit(500),
       db.from('casos_diarios').select('id,titulo,local,data_caso,status_publicacao,categoria').order('id').limit(500),
-      db.from('case_atlas_locations').select('id,dossier_id,daily_id,place_key,country,state_region,city,neighborhood,latitude,longitude,event_year,location_precision,reviewed,is_active,review_reference,review_note,reviewed_at,updated_at').order('id').limit(1000)
+      db.from('case_atlas_locations').select('id,dossier_id,daily_id,place_key,country,state_region,city,neighborhood,latitude,longitude,event_year,location_precision,reviewed,is_active,review_reference,review_note,reviewed_at,updated_at').order('id').limit(1000),
+      db.from('case_atlas_public').select('source_type,source_id').limit(1000)
     ]);
-    for(const result of [d,g,l])if(result.error)throw result.error;
+    for(const result of [d,g,l,v])if(result.error)throw result.error;
     articles=[
       ...(d.data||[]).map(a=>({id:a.id,kind:'dossie',title:a.titulo,place:a.local,date:a.ano,status:a.status_publicacao})),
       ...(g.data||[]).map(a=>({id:a.id,kind:'garimpo',title:a.titulo,place:a.local,date:a.data_caso,status:a.status_publicacao}))
     ];
     locations=l.data||[];
+    visibleSourceIds=new Set((v.data||[]).map(x=>x.source_type+':'+x.source_id));
     sourceOptions($('source-id').value);
     refreshLists();
   }
