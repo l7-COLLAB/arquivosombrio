@@ -1,9 +1,9 @@
 {
   "created_on": "2026-11-03",
   "version": 1,
-  "status": "alternativas_em_preparacao",
+  "status": "38_capas_e_11_stories_publicados_no_banco_20261103",
   "rights_notice": "Ilustrações vetoriais desenhadas exclusivamente com texto e formas geométricas, sem retrato fotográfico ou elementos visuais importados; não representam pessoa, cena ou evidência real.",
-  "remediation": "Somente publicar após arquivos existirem na main, QA e backup transacional; não remover os uploads originais.",
+  "remediation": "38 capas e 11 campos story_imagem substituídos no Supabase em 03/11/2026, com backups privados e gatilhos de narração reabilitados. Arquivos anteriores preservados no Storage.",
   "records": [
     {
       "editoria": "Casos",
@@ -18,7 +18,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "Casos:100"
     },
     {
       "editoria": "Casos",
@@ -33,7 +34,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "Casos:101"
     },
     {
       "editoria": "Casos",
@@ -48,7 +50,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "Casos:13"
     },
     {
       "editoria": "Casos",
@@ -63,7 +66,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "Casos:17"
     },
     {
       "editoria": "Casos",
@@ -78,7 +82,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "Casos:18"
     },
     {
       "editoria": "Casos",
@@ -93,7 +98,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "Casos:19"
     },
     {
       "editoria": "Casos",
@@ -108,7 +114,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "Casos:21"
     },
     {
       "editoria": "Casos",
@@ -123,7 +130,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "Casos:4"
     },
     {
       "editoria": "Casos",
@@ -138,7 +146,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "Casos:9"
     },
     {
       "editoria": "casos_diarios",
@@ -153,7 +162,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:10"
     },
     {
       "editoria": "casos_diarios",
@@ -168,7 +178,8 @@
       "story_identical_copies": 2,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:11"
     },
     {
       "editoria": "casos_diarios",
@@ -183,7 +194,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:13"
     },
     {
       "editoria": "casos_diarios",
@@ -198,7 +210,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:14"
     },
     {
       "editoria": "casos_diarios",
@@ -213,7 +226,8 @@
       "story_identical_copies": 2,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:15"
     },
     {
       "editoria": "casos_diarios",
@@ -228,7 +242,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:16"
     },
     {
       "editoria": "casos_diarios",
@@ -243,7 +258,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:17"
     },
     {
       "editoria": "casos_diarios",
@@ -258,7 +274,8 @@
       "story_identical_copies": 1,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:18"
     },
     {
       "editoria": "casos_diarios",
@@ -273,7 +290,8 @@
       "story_identical_copies": 1,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:19"
     },
     {
       "editoria": "casos_diarios",
@@ -288,7 +306,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:2"
     },
     {
       "editoria": "casos_diarios",
@@ -303,7 +322,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:20"
     },
     {
       "editoria": "casos_diarios",
@@ -318,7 +338,8 @@
       "story_identical_copies": 1,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:21"
     },
     {
       "editoria": "casos_diarios",
@@ -333,7 +354,8 @@
       "story_identical_copies": 1,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:23"
     },
     {
       "editoria": "casos_diarios",
@@ -348,7 +370,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:25"
     },
     {
       "editoria": "casos_diarios",
@@ -363,7 +386,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:27"
     },
     {
       "editoria": "casos_diarios",
@@ -378,7 +402,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:3"
     },
     {
       "editoria": "casos_diarios",
@@ -393,7 +418,8 @@
       "story_identical_copies": 1,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:36"
     },
     {
       "editoria": "casos_diarios",
@@ -408,7 +434,8 @@
       "story_identical_copies": 1,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:38"
     },
     {
       "editoria": "casos_diarios",
@@ -423,7 +450,8 @@
       "story_identical_copies": 2,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:39"
     },
     {
       "editoria": "casos_diarios",
@@ -438,7 +466,8 @@
       "story_identical_copies": 1,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:40"
     },
     {
       "editoria": "casos_diarios",
@@ -453,7 +482,8 @@
       "story_identical_copies": 1,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:48"
     },
     {
       "editoria": "casos_diarios",
@@ -468,7 +498,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:5"
     },
     {
       "editoria": "casos_diarios",
@@ -483,7 +514,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "casos_diarios:9"
     },
     {
       "editoria": "creepypastas",
@@ -498,7 +530,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "creepypastas:3"
     },
     {
       "editoria": "novels",
@@ -513,7 +546,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "novels:41130cbd-a572-4373-880e-175c244db938"
     },
     {
       "editoria": "novels",
@@ -528,7 +562,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "novels:473ee573-2cff-4961-8e1e-8076debe3a1b"
     },
     {
       "editoria": "novels",
@@ -543,7 +578,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "novels:79bc6219-5a67-44be-8663-83ac311d1a5c"
     },
     {
       "editoria": "novels",
@@ -558,7 +594,8 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "novels:e558b8ab-005d-442f-9e0e-93861c93f9e0"
     },
     {
       "editoria": "pericias",
@@ -573,7 +610,9 @@
       "story_identical_copies": 0,
       "credit": "Arte vetorial editorial original do Arquivo Sombrio, 2026.",
       "kind": "ilustracao_sem_retrato",
-      "status": "preparacao_sem_troca_de_banco"
+      "status": "publicado_no_banco_20261103",
+      "audit_backup_key": "pericias:5"
     }
-  ]
+  ],
+  "backup_table": "private.cover_upload_replacement_audit_20261103"
 }
