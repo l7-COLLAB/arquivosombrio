@@ -84,3 +84,30 @@ button:hover{background:#b91721}
 .lab-result[data-status="negative"] strong{color:#ff9299}
 .lab-result[data-status="neutral"] strong{color:#94c0ff}
 @media(hover:hover){.option-set label:hover{border-color:#6ea2ff;background:#142d57}}
+
+
+/* Material de estudo vem antes dos desafios sem criar uma caixa na editoria pública. */
+.study-section{scroll-margin-top:20px}
+.study-card{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(220px,.85fr);gap:30px;align-items:center;background:linear-gradient(135deg,#16284a,#111a2a);border:1px solid #5479b1;border-top:3px solid #ffd43b;border-radius:15px;padding:clamp(22px,4vw,36px)}
+.study-card-copy h3{font:700 clamp(1.4rem,2.6vw,1.85rem)/1.3 Georgia,serif;color:#fff1c7;margin:8px 0 16px}
+.study-card-copy>p:not(.eyebrow){font-size:1rem;line-height:1.75;color:#e1ebfb}
+.study-card-actions{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0 12px}
+.study-card-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:11px 17px;border-radius:8px;font-size:.95rem;font-weight:750;text-decoration:none}
+.study-primary{background:#1769ff;border:1px solid #86b0ff;color:white}
+.study-primary:hover{background:#1358d6;color:white}
+.study-secondary{background:#222b3f;border:1px solid #a4b8dc;color:#f5f8ff}
+.study-secondary:hover{background:#33415f;color:#fff}
+.study-card-foot{font-size:.85rem!important;color:#bfcee5!important;margin-bottom:0}
+.study-card-index{padding:20px;border:1px solid #5e779f;background:#0c182d;border-radius:11px}
+.study-card-index ol{margin:12px 0 0;padding-left:23px}
+.study-card-index li{margin:0 0 17px;padding-left:4px;color:#ffd43b}
+.study-card-index li:last-child{margin-bottom:0}
+.study-card-index li strong{display:block;color:#f0f4ff;font-size:.96rem}
+.study-card-index li span{display:block;color:#c4d7ef;font-size:.88rem;line-height:1.6}
+.study-next{margin:16px 0}
+.study-next a{color:#ffde75;font-size:1rem;font-weight:750}
+.quest-source-line{margin:14px 0 6px!important;padding:13px 15px;background:#122e60;border-left:4px solid #ffd43b;border-radius:0 8px 8px 0;color:#e7efff!important;font-size:.92rem!important;line-height:1.6!important}
+.quest-source-line a{color:#ffde81;font-weight:700}
+.quest-source-separator{margin:0 8px;color:#bdcfe9}
+@media(max-width:780px){.study-card{grid-template-columns:1fr}.study-card-index ol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding-left:18px}.study-card-index li{margin:0}}
+@media(max-width:560px){.study-card{padding:20px}.study-card-index ol{display:block}.study-card-index li{margin-bottom:14px}.study-card-actions a{width:100%}.quest-source-separator{display:none}.quest-source-line a{display:inline-block;margin-right:12px}}
