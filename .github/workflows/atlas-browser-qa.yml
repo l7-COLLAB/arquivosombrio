@@ -23,6 +23,7 @@ on:
     types: [completed]
 permissions:
   contents: read
+  actions: read
 jobs:
   fixture-browser:
     if: github.event_name != 'workflow_run'
@@ -75,3 +76,80 @@ jobs:
           path: artifacts/atlas-production-browser/
           if-no-files-found: warn
           retention-days: 7
+
+  production-diagnostic-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Listar execuções recentes do deploy GitHub Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${{ github.repository }}/actions/workflows/deploy-pages.yml/runs?branch=main&per_page=8" \
+            --jq '.workflow_runs[] | "run_id=\(.id) status=\(.status) conclusao=\(.conclusion) commit=\(.head_sha) inicio=\(.created_at)"'
+      - name: Comparar versão publicada com código do GitHub
+        run: |
+          python3 - <<'PY'
+          import re, urllib.request
+          from pathlib import Path
+          local=Path('atlas.html').read_text(encoding='utf-8')
+          req=urllib.request.Request('https://arquivosombrio.net.br/atlas.html',headers={'Cache-Control':'no-cache','User-Agent':'Atlas-QA-Revision-Inspector'})
+          with urllib.request.urlopen(req,timeout=18) as response:
+            remote=response.read().decode('utf-8')
+          pattern=r'atlas-criminal\.js\?v=([0-9]+)'
+          a=re.search(pattern,local)
+          b=re.search(pattern,remote)
+          print('Versão no repositório:',a.group(1) if a else 'não encontrada')
+          print('Versão publicada:',b.group(1) if b else 'não encontrada')
+          if a and b and a.group(1)!=b.group(1):
+            print('AVISO: site publicado está atrás do código principal (revisão de deploy pendente).')
+          PY
+      - name: Diagnosticar DNS do domínio de produção
+        run: |
+          python3 - <<'PY'
+          import socket
+          for host in ('arquivosombrio.net.br', 'iuhotznurbyujzbyhizf.supabase.co', 'l7-collab.github.io'):
+            try:
+              print(host, sorted({entry[4][0] for entry in socket.getaddrinfo(host,443)}))
+            except OSError as error:
+              print(host, type(error).__name__, str(error))
+          PY
+      - name: Validar HTTP, API pública e proteção de notas
+        id: http
+        continue-on-error: true
+        run: |
+          python3 scripts/qa-atlas-production.py --report /tmp/atlas-prod-http.json
+      - name: Instalar Chromium para inspeção pública
+        run: |
+          python -m pip install 'playwright==1.55.0'
+          python -m playwright install --with-deps chromium
+      - name: Homologar Atlas real em celular e desktop
+        id: browser
+        continue-on-error: true
+        run: |
+          python3 scripts/qa-atlas-production-browser.py --output artifacts/atlas-production-preflight/browser
+      - name: Consolidar evidências
+        if: always()
+        run: |
+          mkdir -p artifacts/atlas-production-preflight
+          if test -f /tmp/atlas-prod-http.json; then
+            cp /tmp/atlas-prod-http.json artifacts/atlas-production-preflight/http.json
+          fi
+      - name: Anexar relatórios e capturas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-live-diagnostic-pr
+          path: artifacts/atlas-production-preflight/
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Falhar caso homologação HTTP ou navegador falhe
+        if: always() && (steps.http.outcome == 'failure' || steps.browser.outcome == 'failure')
+        run: |
+          echo 'Falha na homologação de produção: consultar os artefatos e corrigir a causa.' >&2
+          exit 1
