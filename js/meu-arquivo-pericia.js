@@ -79,7 +79,10 @@
       number("forensic-awards",awards);
       var guest=sync.guestStats();
       importButton.hidden=guest.length===0;
-      status.textContent="Progresso privado, vinculado à sua conta. "+awards+" de 5 selos educativos liberados.";
+      var pending=sync.pendingCount();
+      status.textContent=pending
+        ?pending+" atividade(s) aguardando sincronização. Sua cópia neste navegador foi preservada."
+        :"Progresso privado, vinculado à sua conta. "+awards+" de 5 selos educativos liberados.";
     }
     importButton.addEventListener("click",async function(){
       var available=sync.guestStats();
