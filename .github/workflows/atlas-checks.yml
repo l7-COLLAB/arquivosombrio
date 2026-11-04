@@ -9,6 +9,8 @@ on:
       - sitemap.xml
       - supabase/migrations/20261104173837_atlas_reservar_notas_editoriais_e_incluir_especiais.sql
       - tests/atlas-public.test.cjs
+      - scripts/qa-atlas-production.py
+      - tests/test_atlas_prod_qa.py
       - sql/atlas-criminal-localidades-20261104.sql
       - .github/workflows/atlas-checks.yml
   push:
@@ -20,6 +22,8 @@ on:
       - index.html
       - sitemap.xml
       - tests/atlas-public.test.cjs
+      - scripts/qa-atlas-production.py
+      - tests/test_atlas_prod_qa.py
 jobs:
   atlas-check:
     runs-on: ubuntu-latest
@@ -31,6 +35,8 @@ jobs:
         run: node --check js/atlas-criminal.js
       - name: Testar proteção de dados e pesquisa por cidade
         run: node --test tests/atlas-public.test.cjs
+      - name: Testar homologação de produção sem rede
+        run: python3 -m unittest discover -s tests -p 'test_atlas_prod_qa.py' -v
       - name: Validar HTML, links e sitemap
         run: |
           python3 - <<'PY'
