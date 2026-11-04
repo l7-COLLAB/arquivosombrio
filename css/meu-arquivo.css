@@ -7100,3 +7100,12 @@ body.menu-arquivo-aberto { overflow: hidden; }
  .arquivo-community-person > button { margin-left:0; }
  #descobrir-investigadores { width:100%; }
 }
+
+.novel-library-entry { display:flex; flex-direction:column; min-width:0; gap:.45rem; }
+.novel-library-entry .novel-library-item { flex:1; }
+.novel-library-entry > .arquivo-button { align-self:stretch; font-size:.75rem; padding:.55rem; }
+#arquivo-community-modal .arquivo-form { gap:.75rem; }
+#arquivo-community-modal .arquivo-form input,
+#arquivo-community-modal .arquivo-form select,
+#arquivo-community-modal .arquivo-form textarea { width:100%; max-width:100%; min-width:0; box-sizing:border-box; }
+.forum-post-targeted { outline: 2px solid #b97d63; outline-offset: 4px; scroll-margin-top: 7rem; }
