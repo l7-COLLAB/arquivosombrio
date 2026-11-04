@@ -64,13 +64,13 @@ jobs:
           ids = ["scene-select", "check-scene", "next-scene", "scene-result", "check-trace", "check-donation", "trace-type", "reference-type", "donor-type", "recipient-type"]
           assert all('id="' + item + '"' in html for item in ids), "Faltam controles HTML"
           assert html.count('value="') >= 3
-          assert 'href="laboratorio-forense.html"' in listing
-          assert listing.count('class="forensic-exercises-link"') == 1, "O botão único deve aparecer na listagem"
-          assert "EXERCÍCIOS INTERATIVOS" in listing, "Rótulo do botão deve estar visível"
+          assert 'href="laboratorio-forense.html"' not in listing, "Acesso deve permanecer oculto durante a revisão"
+          assert 'class="forensic-exercises-link"' not in listing, "Botão de exercícios não deve aparecer"
+          assert "EXERCÍCIOS INTERATIVOS" not in listing, "Rótulo não deve ficar visível"
           assert "forensic-interactive-card" not in listing, "O card antigo não pode reaparecer"
           assert "js/laboratorio-forense.js" in html
           assert "css/laboratorio-forense.css" in html
-          assert "forensic-exercises-row" in listing, "Botão deve ficar fora do card"
+          assert "forensic-exercises-row" not in listing, "Espaço do botão deve ser removido"
           assert "Padrões de manchas de sangue" in html
           assert "Comparação de grupos sanguíneos" in html
           assert "A evidência <em>não conta</em>" not in html
