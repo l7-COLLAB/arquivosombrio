@@ -61,6 +61,19 @@
       ' · Publicação: '+article.status : 'Selecione um artigo para consultar o local registrado no acervo.';
   }
   function setField(id,value) { $(id).value=value==null?'':String(value); }
+  function updateReferenceLink() {
+    const input=$('reference').value;
+    const raw=input.match(/https?:\/\/[^\s]+/i)?.[0]||'';
+    const link=$('reference-link');
+    link.hidden=true;
+    if(!raw)return;
+    try {
+      const u=new URL(raw);
+      if(u.protocol!=='https:')return;
+      link.href=u.href;
+      link.hidden=false;
+    }catch(_error){/* A referência continua disponível para revisão manual. */}
+  }
   function clearForm() {
     selectedId=null;
     $('location-form').reset();
@@ -78,6 +91,7 @@
     dirty=false;
     updateActions();
     updateMapLink();
+    updateReferenceLink();
   }
   function updateActions() {
     $('publish').disabled=!selectedId||dirty||loading||!locations.some(l=>l.id===selectedId&&!l.is_active);
@@ -128,6 +142,7 @@
     dirty=false;
     updateActions();
     updateMapLink();
+    updateReferenceLink();
     document.querySelector('.editor').scrollIntoView({behavior:'smooth',block:'start'});
   }
   function refreshLists() {
@@ -342,6 +357,7 @@
     fields.forEach(id=>$(id).addEventListener('input',()=>{
       dirty=true;updateActions();
       if(id==='latitude'||id==='longitude')updateMapLink();
+      if(id==='reference')updateReferenceLink();
       if(['city','country','state-region'].includes(id))$('geocode-results').hidden=true;
     }));
     $('precision').addEventListener('change',()=>{dirty=true;updateActions();});
