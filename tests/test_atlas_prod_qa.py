@@ -17,7 +17,7 @@ spec.loader.exec_module(qa)
 
 
 class AtlasProductionQATests(unittest.TestCase):
-    PUBLIC_HTML = '<div id="atlas-map"></div><script src="/js/atlas-criminal.js?v=2"></script>'
+    PUBLIC_HTML = '<div id="atlas-map"></div><script src="/js/atlas-criminal.js?v=3"></script>'
     ADMIN_HTML = '<meta name="robots" content="noindex,nofollow"><form id="location-form"></form><script src="./js/atlas-admin.js?v=2"></script>'
     PUBLIC_JS = "const API = '/rest/v1/case_atlas_public'; const KEY = 'sb_publishable_fixture_123';"
     ADMIN_JS = "const T = 'case_atlas_locations'; function updateReferenceLink() {}"
@@ -41,7 +41,7 @@ class AtlasProductionQATests(unittest.TestCase):
                 return 200, self.ADMIN_HTML
             if url.endswith("/atlas.html"):
                 return 200, self.PUBLIC_HTML
-            if "atlas-criminal.js?v=2" in url:
+            if "atlas-criminal.js?v=3" in url:
                 return 200, self.PUBLIC_JS
             if "atlas-admin.js?v=2" in url:
                 return 200, self.ADMIN_JS
