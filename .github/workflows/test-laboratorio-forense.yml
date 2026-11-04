@@ -49,7 +49,17 @@ jobs:
           assert "laboratorio-forense.html#tipagem" in listing
           assert "js/laboratorio-forense.js" in html
           assert "css/laboratorio-forense.css" in html
-          assert "sem dados de casos reais" in listing
+          assert "Exercícios com imagens e amostras fictícias" in listing
+          assert "Padrões de manchas de sangue" in html
+          assert "Comparação de grupos sanguíneos" in html
+          assert "A evidência <em>não conta</em>" not in html
+          assert "Vestígios sob a lente" not in html
+          assert "CADERNO DE OBSERVAÇÃO" not in html
+          assert "Confrontar interpretação" not in html
+          assert "essa opção" in js.lower()
+          assert all(code in css.lower() for code in ["#1769ff", "#d8222b", "#ffd43b"])
+          assert "css/laboratorio-forense.css?v=20261104-2" in html
+          assert "js/laboratorio-forense.js?v=20261104-2" in html
           assert "readability" not in css or "min-height" in css
           assert "redCellsCompatible" in js and "compareForensic" in js
           print("Integração HTML, JS e CSS consistente")

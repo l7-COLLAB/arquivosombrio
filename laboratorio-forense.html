@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0d0b0b">
-  <meta name="description" content="Explore dois laboratórios educativos do Arquivo Sombrio: análise de padrões de manchas de sangue e comparação de grupos sanguíneos ABO/Rh.">
+  <meta name="description" content="Use dois exercícios interativos para conhecer padrões de manchas de sangue e comparar grupos sanguíneos ABO/RhD.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://arquivosombrio.net.br/laboratorio-forense.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:site_name" content="Arquivo Sombrio">
   <meta property="og:title" content="Laboratório Forense Interativo | Arquivo Sombrio">
-  <meta property="og:description" content="Observe vestígios ilustrativos e descubra o que a ciência pode — e não pode — concluir.">
+  <meta property="og:description" content="Explore exemplos de manchas de sangue e comparação de grupos ABO/RhD, com explicações sobre os limites dos resultados.">
   <meta property="og:url" content="https://arquivosombrio.net.br/laboratorio-forense.html">
-  <link rel="stylesheet" href="css/laboratorio-forense.css?v=20261104-1">
-  <script src="js/laboratorio-forense.js?v=20261104-1" defer></script>
+  <link rel="stylesheet" href="css/laboratorio-forense.css?v=20261104-2">
+  <script src="js/laboratorio-forense.js?v=20261104-2" defer></script>
   <title>Laboratório Forense Interativo | Arquivo Sombrio</title>
 </head>
 <body>
@@ -31,76 +31,76 @@
   <main id="conteudo" class="shell">
     <nav class="breadcrumb" aria-label="Você está aqui"><a href="index.html">Início</a> <span aria-hidden="true">/</span> <a href="pericia.html">Perícia Forense</a> <span aria-hidden="true">/</span> Laboratório interativo</nav>
     <section class="intro" aria-labelledby="page-title">
-      <p class="eyebrow">ARQUIVO SOMBRIO / EXPERIMENTOS DIDÁTICOS / 01</p>
-      <h1 id="page-title">A evidência <em>não conta</em> toda a história.</h1>
-      <p class="lead">Uma mancha pode sugerir um mecanismo. Um grupo sanguíneo pode limitar possibilidades. Nenhum desses resultados, sozinho, identifica um autor ou reconstrói um crime. Explore os exercícios para entender por quê.</p>
-      <div class="disclaimer" role="note"><strong>Simulações educativas.</strong> Desenhos fictícios, sem vestígios reais, sem coleta de dados pessoais e sem emissão de laudos. Não use resultados para decisões médicas, policiais ou judiciais.</div>
-      <div class="quick-links"><a href="#padroes">01 — Analisar manchas</a><a href="#tipagem">02 — Comparar grupos sanguíneos</a></div>
+      <p class="eyebrow">PERÍCIA FORENSE / LABORATÓRIOS INTERATIVOS</p>
+      <h1 id="page-title">Laboratórios de <em>Perícia Forense</em></h1>
+      <p class="lead">Experimente reconhecer padrões de manchas de sangue e comparar grupos sanguíneos ABO/RhD. Cada resultado explica o que é possível observar e o que depende de exames e informações adicionais.</p>
+      <div class="disclaimer" role="note"><strong>Exercícios educativos.</strong> As imagens e as amostras são fictícias. Esta página não coleta informações pessoais nem produz resultados periciais ou médicos. Não use os exercícios para tomar decisões reais.</div>
+      <div class="quick-links"><a href="#padroes">01 — Manchas de sangue</a><a href="#tipagem">02 — Grupos sanguíneos</a></div>
     </section>
     <section class="lab-section" id="padroes" aria-labelledby="padroes-title">
-      <div class="section-heading"><span class="section-index">01 / OBSERVAÇÃO</span><h2 id="padroes-title">Vestígios sob a lente</h2><p>Observe três padrões desenhados para ensino. Selecione a interpretação inicial mais coerente com as marcas visíveis e depois confronte seu raciocínio com os limites do método.</p></div>
+      <div class="section-heading"><span class="section-index">01 / MANCHAS DE SANGUE</span><h2 id="padroes-title">Padrões de manchas de sangue</h2><p>Observe os três exemplos e escolha a opção que melhor descreve as manchas. Depois, veja como esse tipo de padrão pode ser interpretado e quais conclusões não podem ser tiradas apenas da imagem.</p></div>
       <div class="lab-card scene-layout">
         <div>
-          <label for="scene-select">Cena ilustrativa</label>
+          <label for="scene-select">Exemplo ilustrativo</label>
           <select id="scene-select">
-            <option value="gotas">A — Gotas separadas</option>
-            <option value="contato">B — Marca por contato</option>
+            <option value="gotas">A — Gotas isoladas</option>
+            <option value="contato">B — Marcas de contato</option>
             <option value="direcionais">C — Manchas alongadas</option>
           </select>
           <div class="scene-frame" id="scene-frame" aria-live="off">
-            <svg viewBox="0 0 600 330" role="img" aria-label="Preparando ilustração didática de manchas de sangue"><rect width="600" height="330" fill="#ded1b7"></rect></svg>
+            <svg viewBox="0 0 600 330" role="img" aria-label="Preparando ilustração didática de manchas de sangue"><rect width="600" height="330" fill="#e7edf6"></rect></svg>
           </div>
-          <p class="scene-caption" id="scene-caption">Observe formato, distribuição e relação entre as marcas.</p>
+          <p class="scene-caption" id="scene-caption">Observe o formato e a distribuição das manchas.</p>
         </div>
         <div class="scene-panel">
-          <p class="eyebrow">CADERNO DE OBSERVAÇÃO</p>
-          <h3>Qual interpretação é mais compatível com o desenho?</h3>
+          <p class="eyebrow">SUA ANÁLISE</p>
+          <h3>Qual opção descreve melhor essas manchas?</h3>
           <fieldset class="option-set" id="scene-options">
-            <legend class="visually-hidden">Escolha uma interpretação</legend>
-            <label><input type="radio" name="interpretacao" value="gotas"> Deposição de gotas isoladas</label>
-            <label><input type="radio" name="interpretacao" value="contato"> Transferência por contato</label>
-            <label><input type="radio" name="interpretacao" value="direcionais"> Marcas com orientação aparente</label>
+            <legend class="visually-hidden">Escolha a opção mais adequada</legend>
+            <label><input type="radio" name="interpretacao" value="gotas"> Gotas isoladas</label>
+            <label><input type="radio" name="interpretacao" value="contato"> Marcas por contato</label>
+            <label><input type="radio" name="interpretacao" value="direcionais"> Manchas com orientação semelhante</label>
           </fieldset>
           <div class="button-line">
-            <button id="check-scene" type="button">Confrontar interpretação</button>
-            <button id="next-scene" type="button" class="button-secondary">Próximo desenho</button>
+            <button id="check-scene" type="button">Ver resultado</button>
+            <button id="next-scene" type="button" class="button-secondary">Próximo exemplo</button>
           </div>
-          <div id="scene-result" class="lab-result" role="status" aria-live="polite">Escolha uma hipótese para revelar a análise e suas limitações.</div>
+          <div id="scene-result" class="lab-result" role="status" aria-live="polite">Marque uma alternativa para conferir a explicação.</div>
         </div>
       </div>
-      <p class="method-note"><strong>Atenção:</strong> não é possível deduzir, apenas pelo desenho, a altura de queda, uma arma, o número de pessoas ou a sequência completa de eventos. Superfície, contexto e outras evidências são indispensáveis. Manchas semelhantes podem admitir mecanismos diferentes.</p>
+      <p class="method-note"><strong>Sobre os exemplos:</strong> os desenhos não permitem determinar altura de queda, arma utilizada, quantidade de pessoas ou sequência de acontecimentos. Em análises reais, é necessário considerar a superfície, o local e outros vestígios.</p>
     </section>
     <section class="lab-section" id="tipagem" aria-labelledby="tipagem-title">
-      <div class="section-heading"><span class="section-index">02 / COMPARAÇÃO</span><h2 id="tipagem-title">O sangue é compatível?</h2><p>O termo “compatível” tem sentidos diferentes na investigação e na medicina. Aqui você pode testar ambos sem confundir associação de vestígios com segurança transfusional.</p></div>
+      <div class="section-heading"><span class="section-index">02 / TIPO SANGUÍNEO</span><h2 id="tipagem-title">Comparação de grupos sanguíneos</h2><p>Escolha dois grupos sanguíneos ABO/RhD e compare os resultados. O primeiro exercício trata da análise de vestígios; o segundo mostra as regras básicas para transfusão de hemácias. São situações diferentes.</p></div>
       <div class="two-cards">
         <article class="lab-card">
-          <p class="eyebrow">EXERCÍCIO FORENSE / HIPOTÉTICO</p>
-          <h3>Vestígio × amostra de referência</h3>
-          <p>Suponha que duas amostras foram corretamente tipadas em laboratório. Grupos iguais não individualizam uma pessoa; grupos diferentes podem excluir a hipótese simplificada de mesma origem.</p>
+          <p class="eyebrow">ANÁLISE FORENSE / EXEMPLO</p>
+          <h3>Vestígio e amostra de referência</h3>
+          <p>Neste exercício, considere que os grupos sanguíneos de duas amostras já foram identificados corretamente em laboratório. Grupos iguais não provam que o sangue veio da mesma pessoa.</p>
           <div class="compare-grid">
-            <div><label for="trace-type">Grupo ABO/Rh do vestígio</label><select id="trace-type" required><option value="">Selecione</option><option>O-</option><option>O+</option><option>A-</option><option>A+</option><option>B-</option><option>B+</option><option>AB-</option><option>AB+</option></select></div>
-            <div><label for="reference-type">Grupo ABO/Rh de referência</label><select id="reference-type" required><option value="">Selecione</option><option>O-</option><option>O+</option><option>A-</option><option>A+</option><option>B-</option><option>B+</option><option>AB-</option><option>AB+</option></select></div>
+            <div><label for="trace-type">Grupo sanguíneo do vestígio</label><select id="trace-type" required><option value="">Selecione</option><option>O-</option><option>O+</option><option>A-</option><option>A+</option><option>B-</option><option>B+</option><option>AB-</option><option>AB+</option></select></div>
+            <div><label for="reference-type">Grupo sanguíneo de referência</label><select id="reference-type" required><option value="">Selecione</option><option>O-</option><option>O+</option><option>A-</option><option>A+</option><option>B-</option><option>B+</option><option>AB-</option><option>AB+</option></select></div>
           </div>
-          <button type="button" id="check-trace">Comparar vestígio e referência</button>
-          <div class="lab-result" id="trace-result" role="status" aria-live="polite">Aguardando os dois grupos sanguíneos.</div>
+          <button type="button" id="check-trace">Comparar amostras</button>
+          <div class="lab-result" id="trace-result" role="status" aria-live="polite">Selecione os dois grupos para ver o resultado.</div>
         </article>
         <article class="lab-card">
-          <p class="eyebrow">EXERCÍCIO DE HEMOTERAPIA / HIPOTÉTICO</p>
-          <h3>Doação × receptor de hemácias</h3>
-          <p>Confira apenas as regras básicas ABO e RhD para transfusão de <strong>hemácias</strong>, não de plasma ou sangue total. A compatibilidade clínica exige testes e avaliação profissional.</p>
+          <p class="eyebrow">HEMOTERAPIA / EXEMPLO</p>
+          <h3>Doador e receptor de hemácias</h3>
+          <p>Compare um doador e um receptor pelas regras básicas ABO/RhD para <strong>hemácias</strong>. Isso não vale para plasma ou sangue total e não substitui os testes feitos antes de uma transfusão.</p>
           <div class="compare-grid">
-            <div><label for="donor-type">Grupo ABO/Rh do doador</label><select id="donor-type" required><option value="">Selecione</option><option>O-</option><option>O+</option><option>A-</option><option>A+</option><option>B-</option><option>B+</option><option>AB-</option><option>AB+</option></select></div>
-            <div><label for="recipient-type">Grupo ABO/Rh do receptor</label><select id="recipient-type" required><option value="">Selecione</option><option>O-</option><option>O+</option><option>A-</option><option>A+</option><option>B-</option><option>B+</option><option>AB-</option><option>AB+</option></select></div>
+            <div><label for="donor-type">Grupo sanguíneo do doador</label><select id="donor-type" required><option value="">Selecione</option><option>O-</option><option>O+</option><option>A-</option><option>A+</option><option>B-</option><option>B+</option><option>AB-</option><option>AB+</option></select></div>
+            <div><label for="recipient-type">Grupo sanguíneo do receptor</label><select id="recipient-type" required><option value="">Selecione</option><option>O-</option><option>O+</option><option>A-</option><option>A+</option><option>B-</option><option>B+</option><option>AB-</option><option>AB+</option></select></div>
           </div>
-          <button type="button" id="check-donation">Comparar hemácias</button>
-          <div class="lab-result" id="donation-result" role="status" aria-live="polite">Aguardando os dois grupos sanguíneos.</div>
+          <button type="button" id="check-donation">Ver compatibilidade</button>
+          <div class="lab-result" id="donation-result" role="status" aria-live="polite">Selecione os dois grupos para ver o resultado.</div>
         </article>
       </div>
-      <p class="method-note"><strong>Limites:</strong> tipar sangue exige exames adequados. Misturas, degradação, histórico transfusional, transplantes e outras condições podem complicar a interpretação forense. Em hemoterapia, outros antígenos, anticorpos, provas de compatibilidade e protocolos clínicos também importam.</p>
+      <p class="method-note"><strong>Importante:</strong> uma tipagem sanguínea exige exames específicos. Amostras misturadas ou degradadas, transfusões e transplantes podem complicar a análise. Para transfusões reais, também são necessários testes de compatibilidade e avaliação clínica.</p>
     </section>
     <section class="sources" aria-labelledby="sources-title">
-      <h2 id="sources-title">Fundamentação e leitura complementar</h2>
-      <p>Os exercícios são simplificações didáticas. Para conhecer critérios e limitações reais, consulte as referências técnicas.</p>
+      <h2 id="sources-title">Fontes para consulta</h2>
+      <p>Estas referências apresentam informações técnicas sobre tipagem sanguínea, transfusões e análise de manchas de sangue.</p>
       <ul>
         <li><a href="https://www.hematology.org/Resources/Patients/Blood-Basics/Blood-Banking-and-Donation/Blood-Safety-and-Matching" target="_blank" rel="noopener noreferrer">American Society of Hematology — Blood Safety and Matching</a></li>
         <li><a href="https://www.redcrossblood.org/donate-blood/blood-types.html" target="_blank" rel="noopener noreferrer">American Red Cross — Blood Types and Transfusion</a></li>
@@ -109,6 +109,6 @@
       </ul>
     </section>
   </main>
-  <footer class="site-footer"><div class="shell"><span>ARQUIVO SOMBRIO · CIÊNCIA FORENSE</span><a href="pericia.html">Continuar explorando a Perícia Forense</a></div></footer>
+  <footer class="site-footer"><div class="shell"><span>ARQUIVO SOMBRIO · CIÊNCIA FORENSE</span><a href="pericia.html">Voltar à Perícia Forense</a></div></footer>
 </body>
 </html>
