@@ -87,6 +87,7 @@ function initCustody(){
     }else{
       output("custody-gap-feedback","Volte à ficha","O código do item e o horário estão registrados. Observe o campo do responsável pelo recebimento; uma lacuna não comprova substituição de material.");
     }render();
+    if(state.complete)el("custody-award").focus();
   });
   el("custody-reset").addEventListener("click",function(){
     if((state.sorted||state.complete)&&!window.confirm("Reiniciar o exercício de cadeia de custódia?"))return;
@@ -159,6 +160,7 @@ function initPrint(){
     if(checkConclusion(chosen.value)){state.complete=true;store(KEY,state);output("fp-conclusion-feedback","Conclusão adequada","A atividade só demonstra uma semelhança ilustrada. Uma comparação pericial real exige exame técnico, material de qualidade suficiente e avaliação fundamentada.");}
     else output("fp-conclusion-feedback","Sem identificação individual","Dois pontos esquemáticos ou uma aparência semelhante não são suficientes para determinar de quem é uma impressão. Consulte o guia e tente novamente.");
     render();
+    if(state.complete)el("fp-award").focus();
   });
   el("fp-reset").addEventListener("click",function(){
     if((state.compared||state.complete)&&!window.confirm("Reiniciar a comparação? O selo desta rodada será desfeito neste navegador."))return;
