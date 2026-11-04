@@ -58,6 +58,8 @@
     }
     function render() {
       if(!sync.isAccountActive()){
+        grid.replaceChildren();
+        ["forensic-completed","forensic-in-progress","forensic-awards"].forEach(function(id){document.getElementById(id).textContent="0";});
         status.textContent="Entre na sua conta para consultar o histórico privado.";
         importButton.hidden=true;
         return;
