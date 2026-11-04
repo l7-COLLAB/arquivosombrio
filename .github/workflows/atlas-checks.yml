@@ -7,6 +7,8 @@ on:
       - css/atlas-criminal.css
       - index.html
       - sitemap.xml
+      - supabase/migrations/20261104173837_atlas_reservar_notas_editoriais_e_incluir_especiais.sql
+      - tests/atlas-public.test.cjs
       - sql/atlas-criminal-localidades-20261104.sql
       - .github/workflows/atlas-checks.yml
   push:
@@ -17,6 +19,7 @@ on:
       - css/atlas-criminal.css
       - index.html
       - sitemap.xml
+      - tests/atlas-public.test.cjs
 jobs:
   atlas-check:
     runs-on: ubuntu-latest
@@ -26,6 +29,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validar sintaxe JavaScript
         run: node --check js/atlas-criminal.js
+      - name: Testar proteção de dados e pesquisa por cidade
+        run: node --test tests/atlas-public.test.cjs
       - name: Validar HTML, links e sitemap
         run: |
           python3 - <<'PY'
