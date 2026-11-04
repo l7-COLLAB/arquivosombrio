@@ -8,6 +8,9 @@ on:
       - "css/laboratorio-forense.css"
       - "js/laboratorio-forense.js"
       - "tests/laboratorio-forense.test.cjs"
+      - "css/pericia-trilha.css"
+      - "js/pericia-trilha.js"
+      - "tests/pericia-trilha.test.cjs"
       - ".github/workflows/test-laboratorio-forense.yml"
   push:
     branches: [main]
@@ -17,6 +20,9 @@ on:
       - "css/laboratorio-forense.css"
       - "js/laboratorio-forense.js"
       - "tests/laboratorio-forense.test.cjs"
+      - "css/pericia-trilha.css"
+      - "js/pericia-trilha.js"
+      - "tests/pericia-trilha.test.cjs"
       - ".github/workflows/test-laboratorio-forense.yml"
 
 permissions:
@@ -31,9 +37,11 @@ jobs:
         with:
           node-version: "22"
       - name: Validar sintaxe JavaScript
-        run: node --check js/laboratorio-forense.js
+        run: |
+          node --check js/laboratorio-forense.js
+          node --check js/pericia-trilha.js
       - name: Testar comparações de 64 combinações e cenas
-        run: node --test tests/laboratorio-forense.test.cjs
+        run: node --test tests/laboratorio-forense.test.cjs tests/pericia-trilha.test.cjs
       - name: Verificar integração e presença dos controles
         run: |
           python3 - <<'PY'
@@ -62,5 +70,19 @@ jobs:
           assert "js/laboratorio-forense.js?v=20261104-2" in html
           assert "readability" not in css or "min-height" in css
           assert "redCellsCompatible" in js and "compareForensic" in js
+          assert "laboratorio-forense.html#trilha" in listing
+          assert 'id="trilha"' in html
+          assert "js/pericia-trilha.js?v=20261104-1" in html
+          assert "css/pericia-trilha.css?v=20261104-1" in html
+          ids_game = ["quest-app", "quest-answer", "quest-next", "quest-options", "quest-feedback", "quest-finish", "quest-final-score", "quest-restart", "quest-copy", "quest-progress-bar"]
+          assert all('id="' + item + '"' in html for item in ids_game), "Faltam controles do desafio"
+          assert html.count('data-quest-badge=') == 3, "Selos ausentes"
+          game_js = Path("js/pericia-trilha.js").read_text()
+          game_css = Path("css/pericia-trilha.css").read_text()
+          assert 'localStorage' in game_js and 'fetch(' not in game_js, "Não usar API externa no desafio"
+          assert 'Math.floor(length / 3)' in game_js, "Selos não vinculados às etapas"
+          assert ".quest-badge-unlocked" in game_css
+          assert 'aria-valuemax="9"' in html
+          print("Desafio: 9 questões, 3 selos e links verificados")
           print("Integração HTML, JS e CSS consistente")
           PY
