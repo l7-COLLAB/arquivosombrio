@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-04",
+  "scope": "Dossiês publicados da tabela Casos",
+  "status": "fonte e condições declaradas verificadas; revisão jurídica final ainda recomendada",
+  "total": 4,
+  "entries": [
+    {
+      "id": 4,
+      "title": "Lizzie Borden: quem matou Andrew e Abby Borden?",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lizzie_Borden_1890.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Lizzie_Borden_1890.jpg",
+      "credit": "Autoria não identificada / Wikimedia Commons",
+      "license": "Domínio público nos EUA (fotografia de 1890)",
+      "license_url": "https://commons.wikimedia.org/wiki/File:Lizzie_Borden_1890.jpg",
+      "caption": "Retrato de Lizzie Borden datado de 1890; fotografia histórica, não registro da cena do crime.",
+      "note": "Retrato histórico; direitos territoriais e de personalidade sujeitos a revisão editorial."
+    },
+    {
+      "id": 9,
+      "title": "Caso Madeleine McCann: o desaparecimento, as falhas e o suspeito nunca acusado",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tributes_for_Madeleine_McCann%2C_Rothley%2C_17_May_2007.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Tributes_for_Madeleine_McCann,_Rothley,_17_May_2007.jpg",
+      "credit": "Thesevenseas / Wikimedia Commons",
+      "license": "Domínio público declarado pelo autor (PD-self, abrangência mundial)",
+      "license_url": "https://commons.wikimedia.org/wiki/File:Tributes_for_Madeleine_McCann,_Rothley,_17_May_2007.jpg",
+      "caption": "Homenagens públicas a Madeleine McCann em Rothley em 17 de maio de 2007; não é retrato da criança nem registro do desaparecimento.",
+      "note": "Imagem documental de contexto; evitar legenda que sugira flagrante do desaparecimento."
+    },
+    {
+      "id": 18,
+      "title": "Marc Dutroux: as falhas policiais e a marcha que abalou a Bélgica",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dutroux-_Haus_Charleroi.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Dutroux-_Haus_Charleroi.jpg",
+      "credit": "STYX69 / Wikimedia Commons",
+      "license": "Creative Commons BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "caption": "Fotografia de 2015 de uma casa onde vítimas foram mantidas em cativeiro, segundo a descrição do autor.",
+      "note": "Imagem contextual; crédito, link da licença e informação de eventual adaptação obrigatórios."
+    },
+    {
+      "id": 27,
+      "title": "Brian Wells: a bomba no pescoço e a conspiração por trás do assalto",
+      "image": "https://archives.fbi.gov/archiveresources/d/4/0/d4093eff88c67d3922fb5095d82670eb",
+      "source": "https://archives.fbi.gov/archives/news/stories/2007/july/collar_071107",
+      "credit": "Federal Bureau of Investigation (FBI)",
+      "license": "Imagem oficial de divulgação FBI; atribuição institucional",
+      "license_url": "https://multimedia.fbi.gov/?page=35&perpage=50&q=&searchType=image",
+      "caption": "Fotografia oficial do colar metálico utilizado no caso Brian Wells, disponibilizada pelo FBI; não mostra a vítima.",
+      "note": "O portal de imagens do FBI permite uso para divulgação do FBI com atribuição; direitos de terceiros devem ser sempre observados."
+    }
+  ]
+}
