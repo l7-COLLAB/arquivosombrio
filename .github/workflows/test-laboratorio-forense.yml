@@ -10,7 +10,9 @@ on:
       - "tests/laboratorio-forense.test.cjs"
       - "css/pericia-trilha.css"
       - "js/pericia-trilha.js"
+      - "js/pericia-visuais.js"
       - "tests/pericia-trilha.test.cjs"
+      - "tests/pericia-visuais.test.cjs"
       - ".github/workflows/test-laboratorio-forense.yml"
   push:
     branches: [main]
@@ -22,7 +24,9 @@ on:
       - "tests/laboratorio-forense.test.cjs"
       - "css/pericia-trilha.css"
       - "js/pericia-trilha.js"
+      - "js/pericia-visuais.js"
       - "tests/pericia-trilha.test.cjs"
+      - "tests/pericia-visuais.test.cjs"
       - ".github/workflows/test-laboratorio-forense.yml"
 
 permissions:
@@ -40,8 +44,9 @@ jobs:
         run: |
           node --check js/laboratorio-forense.js
           node --check js/pericia-trilha.js
+          node --check js/pericia-visuais.js
       - name: Testar comparações de 64 combinações e cenas
-        run: node --test tests/laboratorio-forense.test.cjs tests/pericia-trilha.test.cjs
+        run: node --test tests/laboratorio-forense.test.cjs tests/pericia-trilha.test.cjs tests/pericia-visuais.test.cjs
       - name: Verificar integração e presença dos controles
         run: |
           python3 - <<'PY'
@@ -74,9 +79,9 @@ jobs:
           assert "redCellsCompatible" in js and "compareForensic" in js
           assert 'id="padroes"' in html and 'id="tipagem"' in html, "Ambos laboratórios continuam disponíveis"
           assert 'id="trilha"' in html
-          assert "js/pericia-trilha.js?v=20261104-2" in html
-          assert "css/pericia-trilha.css?v=20261104-2" in html
-          ids_game = ["quest-app", "quest-answer", "quest-next", "quest-options", "quest-feedback", "quest-finish", "quest-final-score", "quest-restart", "quest-copy", "quest-progress-bar", "quest-reset", "quest-review-toggle", "quest-review-panel", "quest-review-list", "quest-reading-list"]
+          assert "js/pericia-trilha.js?v=20261104-3" in html
+          assert "css/pericia-trilha.css?v=20261104-3" in html
+          ids_game = ["quest-app", "quest-answer", "quest-next", "quest-options", "quest-feedback", "quest-finish", "quest-final-score", "quest-restart", "quest-copy", "quest-progress-bar", "quest-reset", "quest-review-toggle", "quest-review-panel", "quest-review-list", "quest-reading-list", "quest-hint", "quest-hint-text", "quest-graphic"]
           assert all('id="' + item + '"' in html for item in ids_game), "Faltam controles do desafio"
           assert html.count('data-quest-badge=') == 3, "Selos ausentes"
           game_js = Path("js/pericia-trilha.js").read_text()
@@ -84,6 +89,13 @@ jobs:
           assert 'localStorage' in game_js and 'fetch(' not in game_js, "Não usar API externa no desafio"
           assert 'Math.floor(length / 3)' in game_js, "Selos não vinculados às etapas"
           assert "reviewMistakes" in game_js and "recommendedReadings" in game_js
+          assert "js/pericia-visuais.js?v=20261104-1" in html
+          assert html.index("js/pericia-visuais.js") < html.index("js/pericia-trilha.js")
+          visuals = Path("js/pericia-visuais.js").read_text()
+          assert "CHOICE_NOTES" in visuals and "HINTS" in visuals and "VISUALS" in visuals
+          assert "Por que sua alternativa foi avaliada assim" in game_js
+          assert "aria-expanded" in html
+          assert 'id="quest-visual-mark"' not in html
           assert "quest-review-panel" in game_css and "quest-reset-link" in game_css
           assert html.count('class="lab-follow-up"') == 2
           sitemap = Path("sitemap.xml").read_text()
