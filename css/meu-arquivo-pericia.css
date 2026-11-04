@@ -28,3 +28,27 @@
 @media(max-width:980px){.forensic-personal-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.forensic-personal-grid,.forensic-personal-stats{grid-template-columns:1fr}.forensic-import-local{flex-direction:column;align-items:stretch}.forensic-personal-section{padding:1.3rem 0}}
 @media(prefers-reduced-motion:reduce){.forensic-personal-progress span{transition:none}}
+
+
+/* Retomada orientada por atividade real, sem inventar conclusão de leitura. */
+.forensic-resume-panel{margin:1.3rem 0 1.5rem;border:1px solid #996f51;border-left:4px solid #d13c43;background:linear-gradient(125deg,#2a1f1d,#161517);padding:clamp(1.1rem,3vw,1.8rem)}
+.forensic-resume-panel[hidden],.forensic-study-materials[hidden]{display:none!important}
+.forensic-resume-heading{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.75rem}
+.forensic-resume-kicker{color:#eabf83;font:700 .72rem/1.5 "DM Mono",monospace;letter-spacing:.13em}
+.forensic-resume-count{font:.76rem/1.5 "DM Mono",monospace;color:#e4d4bf;border:1px solid #95725b;padding:.35rem .65rem}
+.forensic-resume-panel h3{font:700 clamp(1.4rem,2.7vw,1.85rem)/1.3 Georgia,serif;color:#fff0ce;margin:0 0 .7rem}
+.forensic-resume-panel>p:not(.forensic-resume-footnote){font-size:.94rem;line-height:1.75;max-width:57rem;color:#e1d5c8;margin:.45rem 0 1rem}
+.forensic-resume-actions{display:flex;flex-wrap:wrap;gap:.7rem;margin:.9rem 0}
+.forensic-resume-actions a{min-height:44px;display:inline-flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;padding:.6rem 1.1rem;font-size:.85rem;font-weight:750;border-radius:5px}
+#forensic-resume-action{background:#b92d38;color:#fff;border:1px solid #f3737f}
+#forensic-resume-action:hover{background:#da3949}
+#forensic-resume-reading{background:#29221e;color:#f4ddaf;border:1px solid #b78d58}
+#forensic-resume-reading:hover{background:#403027}
+.forensic-resume-footnote{font-size:.77rem;line-height:1.6;color:#b9aa9d;margin:.85rem 0 0}
+.forensic-study-materials{border-top:1px solid #604c40;margin-top:1.6rem;padding-top:1.3rem}
+.forensic-study-materials h3{font:700 1.2rem Georgia,serif;color:#eddbb9;margin:0 0 .5rem}
+.forensic-study-materials p{color:#cfc0af;font-size:.86rem;line-height:1.7}
+.forensic-study-guide-links{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}
+.forensic-study-guide-links a{display:inline-flex;min-height:44px;align-items:center;padding:.55rem .8rem;border:1px solid #755a45;color:#efddbd;text-decoration:none;font-size:.8rem}
+.forensic-study-guide-links a:hover{background:#32241e}
+@media(max-width:650px){.forensic-resume-panel{margin-top:1rem}.forensic-resume-actions{flex-direction:column}.forensic-resume-actions a{width:100%}.forensic-study-guide-links{flex-direction:column}.forensic-study-guide-links a{width:100%}}
