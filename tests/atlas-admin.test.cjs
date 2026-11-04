@@ -49,3 +49,9 @@ test('Não há dados de endereço individual nem rastreamento do visitante',()=>
  assert.doesNotMatch(js,/navigator\.geolocation|watchPosition|getCurrentPosition|service_role/);
  assert.match(html,/nunca a residência de vítimas/);
 });
+test('Curadoria permite abrir apenas fontes externas HTTPS',()=>{
+ assert.match(html,/id="reference-link"/);
+ assert.match(js,/function updateReferenceLink\(\)/);
+ assert.match(js,/u\.protocol!=='https:'/);
+ assert.match(js,/link\.href=u\.href/);
+});

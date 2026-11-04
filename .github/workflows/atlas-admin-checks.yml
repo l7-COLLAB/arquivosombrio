@@ -24,4 +24,4 @@ jobs:
       - name: Validar JavaScript do painel
         run: node --check admin-v2/js/atlas-admin.js
       - name: Testar revisão, permissões e integração
-        run: node --test tests/atlas-admin.test.cjs
+        run: node --test tests/atlas-admin.test.cjs tests/atlas-geographic-audit.test.cjs
