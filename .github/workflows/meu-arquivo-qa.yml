@@ -6,6 +6,12 @@ on:
       - "css/meu-arquivo.css"
       - "js/meu-arquivo.js"
       - "js/meu-arquivo-novels.js"
+      - "js/meu-arquivo-comunidade.js"
+      - "js/forum-deep-link.js"
+      - "forum.html"
+      - "supabase/migrations/20261103221500_member_community_notifications_tags.sql"
+      - "supabase/migrations/20261103222500_blocked_member_forum_comments.sql"
+      - "tests/meu-arquivo-comunidade.test.mjs"
       - "js/caso.js"
       - "tests/meu-arquivo-funcional.test.mjs"
       - ".github/workflows/meu-arquivo-qa.yml"
@@ -30,5 +36,7 @@ jobs:
           node --check js/meu-arquivo.js
           node --check js/meu-arquivo-novels.js
           node --check js/caso.js
+          node --check js/meu-arquivo-comunidade.js
+          node --check js/forum-deep-link.js
       - name: Testar modais, queries, mural, destaques e novels
-        run: node --test tests/meu-arquivo-funcional.test.mjs
+        run: node --test tests/meu-arquivo-funcional.test.mjs tests/meu-arquivo-comunidade.test.mjs
