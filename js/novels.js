@@ -430,7 +430,7 @@ async function chapterNumbers(chapterIds){
  if(error){console.warn("Capítulos do progresso indisponíveis",error);return new Map()}
  return new Map((data||[]).filter(c=>c.status_publicacao==="publicado").map(c=>[c.id,c.numero]));
 }
-function cover(x,cl="novel-cover"){return x.imagem_capa?'<img class="'+cl+'" src="'+esc(x.imagem_capa)+'" alt="Capa de '+esc(x.titulo)+'">':'<div class="'+cl+'"></div>'}
+function cover(x,cl="novel-cover"){const ilustrativa=String(x.imagem_capa||"").includes("/assets/capas-alternativas-direitos/");const alt=(ilustrativa?"Capa ilustrativa original, sem fotografia, de ":"Capa de ")+x.titulo;return x.imagem_capa?'<img class="'+cl+'" src="'+esc(x.imagem_capa)+'" alt="'+esc(alt)+'">':'<div class="'+cl+'"></div>'}
 
 const novelThemeRules=[
  {id:"vestigios",title:"Enigmas e vestígios",description:"Mistérios guiados por provas, pistas e situações aparentemente impossíveis.",match:g=>g.includes("pericia")||g.includes("quarto fechado")},
