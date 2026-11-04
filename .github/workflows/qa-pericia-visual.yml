@@ -1,0 +1,83 @@
+name: Perícia — homologação PDF, desktop, celular e produção
+
+on:
+  pull_request:
+    paths:
+      - "guia-pericia.html"
+      - "laboratorio-forense.html"
+      - "pericia.html"
+      - "css/laboratorio-forense.css"
+      - "css/pericia-trilha.css"
+      - "js/pericia-trilha.js"
+      - "js/pericia-visuais.js"
+      - "assets/apostila-pericia-forense.pdf"
+      - "tests/pericia-homologacao-browser.py"
+      - ".github/workflows/qa-pericia-visual.yml"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "guia-pericia.html"
+      - "laboratorio-forense.html"
+      - "pericia.html"
+      - "css/laboratorio-forense.css"
+      - "css/pericia-trilha.css"
+      - "js/pericia-trilha.js"
+      - "assets/apostila-pericia-forense.pdf"
+      - "tests/pericia-homologacao-browser.py"
+      - ".github/workflows/qa-pericia-visual.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  homologar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Preparar verificadores e navegador
+        run: |
+          python -m pip install --disable-pip-version-check "PyMuPDF>=1.24,<2" "playwright>=1.50,<2" "Pillow>=11,<13"
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "CHROME_PATH=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          elif command -v chromium >/dev/null 2>&1; then
+            echo "CHROME_PATH=$(command -v chromium)" >> "$GITHUB_ENV"
+          else
+            python -m playwright install --with-deps chromium
+          fi
+      - name: Validar PDF, fluxos e visualização 1365px e 390px
+        run: python tests/pericia-homologacao-browser.py
+      - name: Gerar amostras compactas de capturas para revisão visual
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, io
+          from PIL import Image
+          p=Path("qa-pericia-artifacts")
+          for name in ("pdf-pagina-1", "pdf-pagina-3", "pdf-pagina-7", "desktop-estudo", "mobile-estudo", "mobile-questao", "mobile-resultado"):
+              f=p/(name+".png")
+              if not f.exists(): continue
+              im=Image.open(f).convert("RGB")
+              # Preservar o topo do conteúdo ao reduzir capturas longas.
+              if im.width > 860:
+                  ratio=860/im.width
+                  im=im.resize((860,round(im.height*ratio)))
+              if im.height>1450:
+                  im=im.crop((0,0,im.width,1450))
+              b=io.BytesIO()
+              im.save(b,"JPEG",quality=62,optimize=True)
+              print("QA_IMAGE_"+name+"="+base64.b64encode(b.getvalue()).decode())
+          PY
+      - name: Guardar capturas e resultados
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pericia-homologacao-visual
+          path: qa-pericia-artifacts/
+          if-no-files-found: warn
+          retention-days: 14

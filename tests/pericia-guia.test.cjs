@@ -33,15 +33,15 @@ test('fluxo de estudo vem antes de responder e conserva laboratórios',()=>{
 
 test('PDF de estudo tem cabeçalho, índice de páginas e estrutura íntegra',()=>{
   assert.equal(pdf.subarray(0,8).toString('latin1'),'%PDF-1.4');
-  assert.ok(pdf.length>15000);
+  assert.ok(pdf.length>8000,'PDF otimizado precisa ter conteúdo');
   assert.match(pdf.toString('latin1').slice(-500),/%%EOF/);
   const text=pdf.toString('latin1');
   const pos=/startxref\s+(\d+)\s+%%EOF/.exec(text);
   assert.ok(pos,'faltou startxref');
   assert.equal(text.slice(Number(pos[1]),Number(pos[1])+4),'xref');
-  assert.equal((text.match(/\/Type \/Page \/Parent/g)||[]).length,7);
-  assert.ok(text.includes('CAPITULO 01'));
-  assert.ok(text.includes('Fontes e leitura complementar'));
+  assert.equal((text.match(/\/Type\s*\/Page\b/g)||[]).length,7);
+  // Streams podem estar comprimidos; a verificação de texto/acento é feita pelo PyMuPDF no QA visual.
+  assert.ok(text.includes('/FlateDecode'),'PDF otimizado deve conter stream comprimido');
 });
 
 test('recompensas e histórico de respostas permanecem válidos',()=>{
