@@ -1,0 +1,92 @@
+name: Perícia — custódia e papiloscopia
+
+on:
+  pull_request:
+    paths:
+      - "pericia-custodia.html"
+      - "pericia-papiloscopia.html"
+      - "guia-pericia-custodia.html"
+      - "guia-pericia-papiloscopia.html"
+      - "assets/guia-pericia-custodia.pdf"
+      - "assets/guia-pericia-papiloscopia.pdf"
+      - "js/pericia-novos-modulos.js"
+      - "css/pericia-novos-modulos.css"
+      - "tests/pericia-novos-modulos.test.cjs"
+      - "tests/pericia-modulos-browser.py"
+      - "laboratorio-forense.html"
+      - ".github/workflows/qa-pericia-novos-modulos.yml"
+  push:
+    branches: [main]
+    paths:
+      - "pericia-custodia.html"
+      - "pericia-papiloscopia.html"
+      - "guia-pericia-custodia.html"
+      - "guia-pericia-papiloscopia.html"
+      - "assets/guia-pericia-custodia.pdf"
+      - "assets/guia-pericia-papiloscopia.pdf"
+      - "js/pericia-novos-modulos.js"
+      - "css/pericia-novos-modulos.css"
+      - "tests/pericia-novos-modulos.test.cjs"
+      - "tests/pericia-modulos-browser.py"
+      - "laboratorio-forense.html"
+      - ".github/workflows/qa-pericia-novos-modulos.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  homologar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validar JavaScript e regras educativas
+        run: |
+          node --check js/pericia-novos-modulos.js
+          node --test tests/pericia-novos-modulos.test.cjs
+      - name: Preparar navegador e leitor de PDF
+        run: |
+          python -m pip install --disable-pip-version-check "PyMuPDF>=1.24,<2" "playwright>=1.50,<2" "Pillow>=11,<13"
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "CHROME_PATH=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          elif command -v chromium >/dev/null 2>&1; then
+            echo "CHROME_PATH=$(command -v chromium)" >> "$GITHUB_ENV"
+          else
+            python -m playwright install --with-deps chromium
+          fi
+      - name: Testar PDFs, exercícios e selos em desktop e celular
+        run: python tests/pericia-modulos-browser.py
+      - name: Prévia compacta para revisão visual
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, io
+          from PIL import Image
+          p=Path("qa-pericia-modulos")
+          for name in ("pdf-custodia-capa","pdf-papiloscopia-capa","mobile-custodia-guia","mobile-papiloscopia-conclusao"):
+              f=p/(name+".png")
+              if not f.exists(): continue
+              im=Image.open(f).convert("RGB")
+              scale=min(1,760/im.width)
+              if scale<1: im=im.resize((round(im.width*scale),round(im.height*scale)))
+              if im.height>1300: im=im.crop((0,0,im.width,1300))
+              b=io.BytesIO()
+              im.save(b,"JPEG",quality=58,optimize=True)
+              print("QA_PREVIEW_"+name+"="+base64.b64encode(b.getvalue()).decode())
+          PY
+      - name: Salvar capturas e relatórios
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pericia-novos-modulos-visual
+          path: qa-pericia-modulos/
+          if-no-files-found: warn
+          retention-days: 14
