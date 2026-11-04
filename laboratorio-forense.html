@@ -14,9 +14,10 @@
   <meta property="og:description" content="Explore exemplos de manchas de sangue e comparação de grupos ABO/RhD, com explicações sobre os limites dos resultados.">
   <meta property="og:url" content="https://arquivosombrio.net.br/laboratorio-forense.html">
   <link rel="stylesheet" href="css/laboratorio-forense.css?v=20261104-2">
-  <link rel="stylesheet" href="css/pericia-trilha.css?v=20261104-2">
+  <link rel="stylesheet" href="css/pericia-trilha.css?v=20261104-3">
   <script src="js/laboratorio-forense.js?v=20261104-2" defer></script>
-  <script src="js/pericia-trilha.js?v=20261104-2" defer></script>
+  <script src="js/pericia-visuais.js?v=20261104-1" defer></script>
+  <script src="js/pericia-trilha.js?v=20261104-3" defer></script>
   <title>Laboratório Forense Interativo | Arquivo Sombrio</title>
 </head>
 <body>
@@ -107,7 +108,7 @@
       <div class="section-heading quest-lead">
         <span class="section-index">03 / DESAFIO INTERATIVO</span>
         <h2 id="quest-title-section">Trilha de Perícia</h2>
-        <p>São nove perguntas divididas em três etapas. A cada três respostas, você recebe um selo de conclusão. Cada acerto vale 10 pontos, mas você pode continuar mesmo quando errar.</p>
+        <p>Observe os desenhos, compare as informações e decida qual resposta faz mais sentido. São nove perguntas em três etapas, com dicas opcionais e explicações para cada alternativa. Cada acerto vale 10 pontos; você continua mesmo quando errar.</p>
       </div>
       <div id="quest-app">
         <div class="quest-board">
@@ -120,9 +121,12 @@
               <div class="quest-badge" data-quest-badge="1" aria-label="Selo de Comparação ainda não liberado"><span class="quest-badge-symbol" aria-hidden="true">II</span><strong>Comparação</strong><small>A concluir</small></div>
               <div class="quest-badge" data-quest-badge="2" aria-label="Selo de Interpretação ainda não liberado"><span class="quest-badge-symbol" aria-hidden="true">III</span><strong>Interpretação</strong><small>A concluir</small></div>
             </div>
-            <div class="quest-illustration" id="quest-illustration" data-kind="drops" aria-hidden="true">
+            <div class="quest-illustration" id="quest-illustration" data-kind="drops">
               <p id="quest-visual-title">Manchas isoladas</p>
-              <strong id="quest-visual-mark">●  ●   ●</strong>
+              <div id="quest-graphic" class="quest-graphic" aria-label="Diagrama da questão">
+                <p>Ilustração disponível com JavaScript.</p>
+              </div>
+              <small class="quest-visual-caption">Ilustração esquemática para estudo, sem escala e sem vínculo com um caso real.</small>
             </div>
             <p class="quest-local-note" id="quest-local-note">O progresso fica salvo apenas neste navegador.</p>
             <button type="button" class="quest-reset-link" id="quest-reset">Reiniciar desafio</button>
@@ -135,6 +139,8 @@
               <legend class="visually-hidden">Escolha uma resposta</legend>
               <p>Carregando perguntas...</p>
             </fieldset>
+            <button type="button" id="quest-hint" class="quest-hint" aria-expanded="false" aria-controls="quest-hint-text">Ver uma dica</button>
+            <p id="quest-hint-text" class="quest-hint-text" hidden></p>
             <div class="quest-feedback" id="quest-feedback" role="status" aria-live="polite" tabindex="-1" hidden></div>
             <div class="quest-actions">
               <button type="button" id="quest-answer">Conferir resposta</button>

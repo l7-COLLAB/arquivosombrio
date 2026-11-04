@@ -87,3 +87,19 @@
 .lab-follow-up a{display:inline-flex;align-items:center;min-height:44px;padding:9px 13px;border:1px solid #477cbe;border-radius:7px;background:#122b52;color:#e8f0ff;font-size:.95rem;font-weight:700;text-decoration:none}
 .lab-follow-up a:hover{background:#1c437e;border-color:#92bcff}
 @media(max-width:520px){.quest-review,.quest-readings{padding:16px}.quest-review-toggle,.lab-follow-up a{width:100%;justify-content:center}}
+
+
+/* Diagramas próprios, legíveis e acessíveis, para os nove desafios já publicados. */
+.quest-illustration{padding:16px 14px 13px;gap:7px;min-height:0;align-items:stretch}
+.quest-illustration #quest-visual-title{font-size:.8rem;color:#ffe078;text-align:left;letter-spacing:.1em}
+.quest-graphic{display:block;min-width:0;width:100%;line-height:0;border-radius:11px;overflow:hidden}
+.quest-graphic svg{width:100%;height:auto;display:block;aspect-ratio:560/260}
+.quest-visual-caption{display:block;margin:0;color:#bfcde7;font-size:.72rem;line-height:1.6;text-align:left}
+.quest-hint{display:inline-flex;align-items:center;justify-content:center;min-height:42px;margin-top:14px;padding:8px 15px;background:transparent!important;border:1px solid #6985b0!important;border-radius:8px;color:#dae6fa!important;font-size:.89rem;font-weight:650}
+.quest-hint:hover{background:#213e67!important;color:white!important}
+.quest-hint[aria-expanded="true"]{border-color:#ffd43b!important;color:#ffe17e!important}
+.quest-hint-text{background:#253348;border-left:4px solid #ffd43b;padding:13px 16px;margin:10px 0 0;color:#f3e9bc!important;border-radius:0 7px 7px 0;font-size:.95rem}
+.quest-choice-reason{margin:12px 0 0!important;padding:12px 15px;border-left:3px solid #599aff;background:#1b3151;border-radius:0 7px 7px 0;color:#e9f2ff!important}
+#quest-app [hidden]{display:none!important}
+@media(max-width:850px){.quest-illustration{max-width:620px;width:100%;margin-inline:auto}.quest-graphic{max-height:310px}}
+@media(max-width:520px){.quest-illustration{padding:12px 8px}.quest-hint{width:100%}.quest-graphic{min-height:120px}}
