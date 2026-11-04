@@ -120,8 +120,8 @@ jobs:
           # Ler versões diretamente do artefato a ser publicado, sem adivinhar cache busting.
           admin_html=Path('_site/admin-v2/atlas.html').read_text(encoding='utf-8')
           public_html=Path('_site/atlas.html').read_text(encoding='utf-8')
-          admin_match=re.search(r'atlas-admin\\.js\\?v=([A-Za-z0-9._-]+)',admin_html)
-          public_match=re.search(r'atlas-criminal\\.js\\?v=([A-Za-z0-9._-]+)',public_html)
+          admin_match=re.search(r'atlas-admin\.js\?v=([A-Za-z0-9._-]+)',admin_html)
+          public_match=re.search(r'atlas-criminal\.js\?v=([A-Za-z0-9._-]+)',public_html)
           if not admin_match or not public_match:
             raise SystemExit('Versão de JavaScript do Atlas não encontrada no artefato')
           paths={
