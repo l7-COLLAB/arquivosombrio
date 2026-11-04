@@ -19,6 +19,9 @@
   var user = null, client = null, loading = null, connected = false;
   var queue = Promise.resolve(), generation = 0;
   var authSubscriber = false;
+  function changed() {
+    if(root && root.dispatchEvent) root.dispatchEvent(new Event("arquivo-pericia-progresso"));
+  }
   function defaultState(code) {
     if (code === "trilha") return {index:0,answers:[]};
     if (code === "custodia") return {order:[3,0,4,1,2],sorted:false,complete:false};
@@ -106,7 +109,7 @@
         if (!ses.data?.session) {
           user=null;records.clear();
           ADAPTERS.forEach(function(adapter,code){adapter.apply(guestState(code));});
-          connected=true;status("guest");return null;
+          connected=true;status("guest");changed();return null;
         }
         var result=await sb.auth.getUser();
         if (result.error || !result.data?.user) throw result.error||new Error("Sessão inválida");
@@ -119,6 +122,7 @@
         (query.data||[]).forEach(function(row){
           if (CODES.includes(row.activity_code) && normalise(row.activity_code,row.state)) records.set(row.activity_code,row);
         });
+        connected=true;
         ADAPTERS.forEach(function(adapter,code){
           var row=records.get(code);
           var pending=null;
@@ -128,12 +132,12 @@
           adapter.apply(state);
           if (localPending) save(code,state);
         });
-        connected=true;status("member");return next;
+        status("member");changed();return next;
       }catch(error) {
         if(token!==generation)return null;
         console.warn("Perícia: sincronização indisponível",error);
         // Falha de rede não confirma logout. Manter somente o estado atual no navegador.
-        user=null;connected=false;status("offline");return null;
+        user=null;connected=false;status("offline");changed();return null;
       }
     })();
     return loading;
@@ -167,6 +171,7 @@
       updated_at:new Date().toISOString()};
     safePending(code,row);
     records.set(code,row);
+    changed();
     // Serializar gravações: uma resposta lenta não deve sobrescrever a seguinte.
     queue=queue.catch(function(){}).then(async function(){
       if(!user || user.id!==owner) return false;
@@ -174,7 +179,7 @@
         var sb=await getClient();
         var result=await sb.from(TABLE).upsert(row,{onConflict:"user_id,activity_code"});
         if(result.error)throw result.error;
-        clearPending(code,owner);
+        clearPending(code,owner);changed();
         return true;
       }catch(err){console.warn("Não foi possível sincronizar o exercício",err);status("offline");return false;}
     });
