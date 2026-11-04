@@ -314,6 +314,41 @@
         }catch(error){notifyError(host,error);}
     }
 
+    async function viewTag(tagId) {
+        const tag=meuArquivoState.marcadores.find(x=>String(x.id)===String(tagId));
+        if(!tag)return;
+        const host=containerModal("Conteúdos do marcador",tag.name||"Marcador");
+        try{
+            const {client,user}=await actor();
+            const assignments=verify(await client.from("user_item_tags")
+                .select("item_type,item_id").eq("user_id",user.id).eq("tag_id",tag.id))||[];
+            if(!assignments.length){host.append(elem("p","Nenhum conteúdo associado a este marcador."));return;}
+            for(const item of assignments){
+                let name="Registro não disponível";
+                let href="";
+                if(item.item_type==="dossier"){
+                    const dossier=meuArquivoState.dossies.find(x=>String(x.id)===String(item.item_id));
+                    if(dossier){
+                        name=dossier.title||"Dossiê";
+                        href=normalizarLinkMeuArquivo(dossier.target_url||("caso.html?id="+encodeURIComponent(dossier.case_id)));
+                    }
+                }else if(item.item_type==="favorite"){
+                    const favorite=meuArquivoState.favoritos.find(x=>String(x.id)===String(item.item_id));
+                    if(favorite){name=favorite.title||"Favorito";href=normalizarLinkMeuArquivo(favorite.target_url);}
+                }else if(item.item_type==="novel"){
+                    const tagButton=document.querySelector('[data-archive-tag="novel"][data-tag-item-id="'+CSS.escape(item.item_id)+'"]');
+                    const link=tagButton?.closest(".novel-library-entry")?.querySelector("a.novel-library-item");
+                    if(link){name=link.querySelector("strong")?.textContent||"Novel";href=link.getAttribute("href")||"";}
+                }
+                const row=elem("article",null,"arquivo-community-person");
+                if(href&&href!=="#"){
+                    const link=elem("a",name);link.href=href;row.append(link);
+                }else row.append(elem("span",name));
+                host.append(row);
+            }
+        }catch(error){notifyError(host,error);}
+    }
+
     function install() {
         const following=document.getElementById("abrir-seguidos");
         if(following){
@@ -344,16 +379,33 @@
                 void handler();
                 return;
             }
+            if(target.dataset.viewTag){
+                event.preventDefault();event.stopPropagation();
+                void viewTag(target.dataset.viewTag);
+                return;
+            }
             if(target.dataset.archiveTag){
                 event.preventDefault();event.stopPropagation();
                 const kind=target.dataset.archiveTag, itemId=target.dataset.tagItemId;
                 const item=kind==="dossier"?meuArquivoState.dossies.find(x=>String(x.id)===itemId)
-                    :meuArquivoState.favoritos.find(x=>String(x.id)===itemId);
-                void tags(kind,itemId,item?.title||"Conteúdo");
+                    :kind==="favorite"?meuArquivoState.favoritos.find(x=>String(x.id)===itemId):null;
+                const title=kind==="novel"?
+                    target.closest(".novel-library-entry")?.querySelector("strong")?.textContent:
+                    item?.title;
+                void tags(kind,itemId,title||"Conteúdo");
             }
         },true);
 
         const enhance=()=>{
+            for(const [index,card] of Array.from(document.querySelectorAll("#lista-marcadores .marcador-card")).entries()){
+                if(card.querySelector("[data-view-tag]"))continue;
+                const tag=meuArquivoState.marcadores[index];
+                if(!tag)continue;
+                const view=elem("button","Ver conteúdos","arquivo-button arquivo-button-secondary");
+                view.type="button";
+                view.dataset.viewTag=String(tag.id);
+                card.querySelector(".arquivo-form-actions")?.prepend(view);
+            }
             for(const button of document.querySelectorAll("#lista-meus-dossies [data-arquivo-item-id]")){
                 const article=button.closest(".arquivo-item-card");
                 if(!article||article.querySelector("[data-archive-tag]"))continue;
