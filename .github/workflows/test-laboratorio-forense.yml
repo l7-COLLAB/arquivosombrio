@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - "laboratorio-forense.html"
+      - "guia-pericia.html"
+      - "assets/apostila-pericia-forense.pdf"
       - "pericia.html"
       - "css/laboratorio-forense.css"
       - "js/laboratorio-forense.js"
@@ -13,11 +15,14 @@ on:
       - "js/pericia-visuais.js"
       - "tests/pericia-trilha.test.cjs"
       - "tests/pericia-visuais.test.cjs"
+      - "tests/pericia-guia.test.cjs"
       - ".github/workflows/test-laboratorio-forense.yml"
   push:
     branches: [main]
     paths:
       - "laboratorio-forense.html"
+      - "guia-pericia.html"
+      - "assets/apostila-pericia-forense.pdf"
       - "pericia.html"
       - "css/laboratorio-forense.css"
       - "js/laboratorio-forense.js"
@@ -27,6 +32,7 @@ on:
       - "js/pericia-visuais.js"
       - "tests/pericia-trilha.test.cjs"
       - "tests/pericia-visuais.test.cjs"
+      - "tests/pericia-guia.test.cjs"
       - ".github/workflows/test-laboratorio-forense.yml"
 
 permissions:
@@ -46,7 +52,7 @@ jobs:
           node --check js/pericia-trilha.js
           node --check js/pericia-visuais.js
       - name: Testar comparações de 64 combinações e cenas
-        run: node --test tests/laboratorio-forense.test.cjs tests/pericia-trilha.test.cjs tests/pericia-visuais.test.cjs
+        run: node --test tests/laboratorio-forense.test.cjs tests/pericia-trilha.test.cjs tests/pericia-visuais.test.cjs tests/pericia-guia.test.cjs
       - name: Verificar integração e presença dos controles
         run: |
           python3 - <<'PY'
@@ -73,13 +79,13 @@ jobs:
           assert "Confrontar interpretação" not in html
           assert "essa opção" in js.lower()
           assert all(code in css.lower() for code in ["#1769ff", "#d8222b", "#ffd43b"])
-          assert "css/laboratorio-forense.css?v=20261104-2" in html
+          assert "css/laboratorio-forense.css?v=20261104-3" in html
           assert "js/laboratorio-forense.js?v=20261104-2" in html
           assert "readability" not in css or "min-height" in css
           assert "redCellsCompatible" in js and "compareForensic" in js
           assert 'id="padroes"' in html and 'id="tipagem"' in html, "Ambos laboratórios continuam disponíveis"
           assert 'id="trilha"' in html
-          assert "js/pericia-trilha.js?v=20261104-3" in html
+          assert "js/pericia-trilha.js?v=20261104-4" in html
           assert "css/pericia-trilha.css?v=20261104-3" in html
           ids_game = ["quest-app", "quest-answer", "quest-next", "quest-options", "quest-feedback", "quest-finish", "quest-final-score", "quest-restart", "quest-copy", "quest-progress-bar", "quest-reset", "quest-review-toggle", "quest-review-panel", "quest-review-list", "quest-reading-list", "quest-hint", "quest-hint-text", "quest-graphic"]
           assert all('id="' + item + '"' in html for item in ids_game), "Faltam controles do desafio"
@@ -104,6 +110,16 @@ jobs:
             assert url in sitemap, "Leitura recomendada sem URL no sitemap: " + str(article_id)
           assert ".quest-badge-unlocked" in game_css
           assert 'aria-valuemax="9"' in html
+          guide = Path("guia-pericia.html").read_text()
+          pdf = Path("assets/apostila-pericia-forense.pdf").read_bytes()
+          assert guide.count('class="chapter"') == 8
+          assert pdf[:8] == b"%PDF-1.4", "PDF ausente/inválido"
+          assert 'id="apostila"' in html
+          assert html.index('id="apostila"') < html.index('id="trilha"') < html.index('id="padroes"')
+          assert 'id="quest-study-link"' in html
+          assert 'guia-pericia.html#' in game_js
+          assert "assets/apostila-pericia-forense.pdf" in html
+          print("Apostila e material PDF vinculados antes das questões")
           print("Desafio: 9 questões, 3 selos e links verificados")
           print("Integração HTML, JS e CSS consistente")
           PY
