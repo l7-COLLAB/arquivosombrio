@@ -12,7 +12,7 @@ test('38 missing-provenance covers and 11 stories are mapped without duplicates'
   assert.equal(new Set(manifest.records.map(key)).size, 38);
   assert.equal(manifest.records.filter(r => r.story_path).length, 11);
   assert.equal(manifest.records.reduce((n, r) => n + r.story_identical_copies, 0), 14);
-  assert.ok(manifest.records.every(r => r.status === 'preparacao_sem_troca_de_banco'));
+  assert.ok(manifest.records.every(r => r.status === 'publicado_no_banco_20261103'));
   assert.ok(!manifest.records.some(r => previous.some(p => key(p) === key(r))));
   const counts = Object.groupBy(manifest.records, r => r.editoria);
   assert.equal(counts.Casos.length, 9);
