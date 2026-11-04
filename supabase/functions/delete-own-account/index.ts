@@ -65,9 +65,11 @@ Deno.serve(
         }
 
         const body = await req.json().catch(() => ({}));
-        const contentChoice = String(body?.content_choice || "delete_all");
-        if (!ALLOWED_CHOICES.has(contentChoice)) {
-          return Response.json({ error: "Escolha de contribuições inválida." }, { status: 400 });
+        const contentChoice = typeof body?.content_choice === "string" ? body.content_choice : "";
+        // Destructive action requires both the explicit content choice and the user's confirmation.
+        // A missing or malformed body must never default to delete_all.
+        if (!ALLOWED_CHOICES.has(contentChoice) || body?.confirmation !== "EXCLUIR") {
+          return Response.json({ error: "Confirmação de exclusão inválida." }, { status: 400 });
         }
 
         const { data: requestId, error: requestError } = await ctx.supabase

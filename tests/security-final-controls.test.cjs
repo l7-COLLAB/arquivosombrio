@@ -38,7 +38,7 @@ test('funções Deno alteradas são sintaticamente válidas após remover tipos 
  }
 });
 
-function harness({id='f7777777-0000-4000-8000-000000000001',choice='delete_all',missingUser=false,
+function harness({id='f7777777-0000-4000-8000-000000000001',choice='delete_all',confirmation='EXCLUIR',missingUser=false,
                    cleanupError=false,deleteError=false,finalUpdateError=false}={}){
  const calls={deleteUser:[],storageBuckets:[],phases:[],rpc:[]};
  let handler;
@@ -78,7 +78,7 @@ function harness({id='f7777777-0000-4000-8000-000000000001',choice='delete_all',
  const ctx={userClaims:missingUser?null:{id},supabase,supabaseAdmin:admin};
  const run=async()=> {
   const req=new Request('https://test.invalid/functions/v1/delete-own-account',
-    {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({content_choice:choice})});
+    {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({content_choice:choice,confirmation})});
   const response=await handler(req,ctx);
   return {status:response.status,data:await response.json(),calls};
  };
@@ -133,4 +133,26 @@ test('falha no registro final após remover Auth sinaliza necessidade de reconci
  assert.equal(r.status,200);
  assert.equal(r.data.reconciliation_required,true);
  assert.equal(r.calls.deleteUser.length,1);
+});
+
+test('corpo vazio, escolha omitida e confirmação faltante são negados antes de qualquer RPC',async()=>{
+ for(const opts of [
+  {choice:''},
+  {confirmation:''},
+  {confirmation:'excluir'},
+  {choice:'delete_all',confirmation:null}
+ ]){
+  const r=await harness(opts).run();
+  assert.equal(r.status,400);
+  assert.equal(r.calls.rpc.length,0);
+  assert.equal(r.calls.deleteUser.length,0);
+ }
+});
+
+test('interface envia confirmação digitada para função, não apenas valida no navegador',()=>{
+ const frontend=read('js/meu-arquivo.js');
+ const server=read('supabase/functions/delete-own-account/index.ts');
+ assert.match(frontend,/body: JSON\.stringify\(\{ content_choice: escolhaConteudo, confirmation: confirmacao \}\)/);
+ assert.match(server,/body\?\.confirmation !== "EXCLUIR"/);
+ assert.doesNotMatch(server,/content_choice \|\| "delete_all"/);
 });
