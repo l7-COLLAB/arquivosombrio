@@ -27,7 +27,13 @@ function output(id,title,detail){
   var strong=document.createElement("strong"),text=document.createElement("p");
   strong.textContent=title;text.textContent=detail;box.append(strong,text);
 }
-function store(key,state){try{localStorage.setItem(key,JSON.stringify(state));}catch(e){}}
+function store(key,state){
+  var bridge=window.ArquivoPericiaProgresso;
+  var code=key==="arquivo-sombrio-custodia-v1"?"custodia":
+    key==="arquivo-sombrio-papiloscopia-v1"?"papiloscopia":null;
+  if(code && bridge && bridge.isAccountActive()){bridge.save(code,state);return;}
+  try{localStorage.setItem(key,JSON.stringify(state));}catch(e){}
+}
 function restore(key){try{return JSON.parse(localStorage.getItem(key));}catch(e){return null;}}
 function initCustody(){
   var KEY="arquivo-sombrio-custodia-v1",state=normalizeCustody(restore(KEY));
@@ -98,6 +104,17 @@ function initCustody(){
     render();
   });
   render();
+  if(window.ArquivoPericiaProgresso) {
+    window.ArquivoPericiaProgresso.register("custodia",{
+      apply:function(remote){
+        state=normalizeCustody(remote);
+        el("custody-order-feedback").replaceChildren();
+        el("custody-gap-feedback").replaceChildren();
+        document.querySelectorAll('input[name="custody-gap"]').forEach(function(x){x.checked=false;});
+        render();
+      }
+    });
+  }
 }
 function fingerprintSvg(ref,marks){
   var source=ref==="v03"?"v03":ref==="r24"?"r24":"r17";
@@ -171,6 +188,17 @@ function initPrint(){
     el("fp-reference").focus();
   });
   render();
+  if(window.ArquivoPericiaProgresso) {
+    window.ArquivoPericiaProgresso.register("papiloscopia",{
+      apply:function(remote){
+        state=normalizePrint(remote);zoom=1;
+        el("fp-match-feedback").replaceChildren();
+        el("fp-conclusion-feedback").replaceChildren();
+        document.querySelectorAll('input[name="fp-conclusion"]').forEach(function(x){x.checked=false;});
+        render();
+      }
+    });
+  }
 }
 function ready(){var mode=document.body.getAttribute("data-lab");if(mode==="custodia")initCustody();if(mode==="papiloscopia")initPrint();}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",ready);else ready();
