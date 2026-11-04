@@ -53,11 +53,13 @@ jobs:
           ids = ["scene-select", "check-scene", "next-scene", "scene-result", "check-trace", "check-donation", "trace-type", "reference-type", "donor-type", "recipient-type"]
           assert all('id="' + item + '"' in html for item in ids), "Faltam controles HTML"
           assert html.count('value="') >= 3
-          assert "laboratorio-forense.html#padroes" in listing
-          assert "laboratorio-forense.html#tipagem" in listing
+          assert 'href="laboratorio-forense.html"' in listing
+          assert listing.count('class="forensic-exercises-link"') == 1, "O botão único deve aparecer na listagem"
+          assert "EXERCÍCIOS INTERATIVOS" in listing, "Rótulo do botão deve estar visível"
+          assert "forensic-interactive-card" not in listing, "O card antigo não pode reaparecer"
           assert "js/laboratorio-forense.js" in html
           assert "css/laboratorio-forense.css" in html
-          assert "Exercícios com imagens e amostras fictícias" in listing
+          assert "forensic-exercises-row" in listing, "Botão deve ficar fora do card"
           assert "Padrões de manchas de sangue" in html
           assert "Comparação de grupos sanguíneos" in html
           assert "A evidência <em>não conta</em>" not in html
@@ -70,7 +72,7 @@ jobs:
           assert "js/laboratorio-forense.js?v=20261104-2" in html
           assert "readability" not in css or "min-height" in css
           assert "redCellsCompatible" in js and "compareForensic" in js
-          assert "laboratorio-forense.html#trilha" in listing
+          assert 'id="padroes"' in html and 'id="tipagem"' in html, "Ambos laboratórios continuam disponíveis"
           assert 'id="trilha"' in html
           assert "js/pericia-trilha.js?v=20261104-1" in html
           assert "css/pericia-trilha.css?v=20261104-1" in html
