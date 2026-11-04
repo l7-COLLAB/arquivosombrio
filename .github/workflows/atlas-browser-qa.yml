@@ -1,0 +1,77 @@
+name: Atlas Criminal — navegador mobile e desktop
+on:
+  pull_request:
+    paths:
+      - atlas.html
+      - js/atlas-criminal.js
+      - css/atlas-criminal.css
+      - tests/test_atlas_browser.py
+      - scripts/qa-atlas-production-browser.py
+      - .github/workflows/atlas-browser-qa.yml
+  push:
+    branches: [main]
+    paths:
+      - atlas.html
+      - js/atlas-criminal.js
+      - css/atlas-criminal.css
+      - tests/test_atlas_browser.py
+      - scripts/qa-atlas-production-browser.py
+      - .github/workflows/atlas-browser-qa.yml
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Deploy Arquivo Sombrio (GitHub Pages)"]
+    types: [completed]
+permissions:
+  contents: read
+jobs:
+  fixture-browser:
+    if: github.event_name != 'workflow_run'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Instalar Chromium para testes
+        run: |
+          python -m pip install 'playwright==1.55.0'
+          python -m playwright install --with-deps chromium
+      - name: Testar layout, filtros e mapa sem dependências externas
+        run: python -m unittest discover -s tests -p 'test_atlas_browser.py' -v
+      - name: Anexar capturas das cinco larguras de tela
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-browser-fixture
+          path: artifacts/atlas-browser/
+          if-no-files-found: warn
+          retention-days: 7
+  published-browser:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Instalar Chromium para homologação
+        run: |
+          python -m pip install 'playwright==1.55.0'
+          python -m playwright install --with-deps chromium
+      - name: Verificar navegador real no domínio publicado
+        run: |
+          python scripts/qa-atlas-production-browser.py --output artifacts/atlas-production-browser
+      - name: Anexar capturas mobile/desktop e relatório JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-browser-production
+          path: artifacts/atlas-production-browser/
+          if-no-files-found: warn
+          retention-days: 7
