@@ -62,10 +62,11 @@ test('guias e PDFs existem e vêm antes da atividade',()=>{
   }
 });
 
-test('integração mantém trilha original e botão discreto da editoria',()=>{
+test('integração mantém trilha original com acesso temporariamente oculto na editoria',()=>{
   const listing=read('pericia.html');
   const home=read('laboratorio-forense.html');
-  assert.equal((listing.match(/class="forensic-exercises-link"/g)||[]).length,1);
+  assert.equal((listing.match(/class="forensic-exercises-link"/g)||[]).length,0);
+  assert.ok(!listing.includes('href="laboratorio-forense.html"'));
   assert.ok(!listing.includes('forensic-interactive-card'));
   assert.ok(home.includes('href="pericia-custodia.html"'));
   assert.ok(home.includes('href="pericia-papiloscopia.html"'));

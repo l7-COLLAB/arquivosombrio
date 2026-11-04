@@ -119,14 +119,13 @@ def check_html(base_url, browser, width, height, label, is_mobile):
 
     pericia = page.goto(base_url + "/pericia.html", wait_until="domcontentloaded")
     assert pericia.status == 200
-    assert page.locator(".forensic-exercises-link").count() == 1
+    assert page.locator(".forensic-exercises-link").count() == 0
     assert page.locator(".forensic-interactive-card").count() == 0
-    assert page.locator(".forensic-exercises-link").get_attribute("href") == "laboratorio-forense.html"
+    assert page.locator('a[href="laboratorio-forense.html"]').count() == 0
     assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 2"), "Listagem de perícia transborda na largura"
-    page.locator(".forensic-exercises-link").screenshot(path=str(OUT / f"{label}-botao.png"))
     assert not errors, "Erros de console ou rede: " + repr(errors)
     context.close()
-    return {"perfil":label,"viewport":f"{width}x{height}","questoes":9,"resultado":80,"capturas":5}
+    return {"perfil":label,"viewport":f"{width}x{height}","questoes":9,"resultado":80,"capturas":4}
 
 
 def check_production():
@@ -153,7 +152,7 @@ def check_production():
                     except Exception:
                         valid = False
                 else:
-                    valid = token in decoded
+                    valid = token not in decoded if path == "/pericia.html" else token in decoded
                 out.append({"url":url, "status":r.status, "bytes":len(body),
                             "content_type":r.headers.get("Content-Type"),"conteudo_confere":valid})
         except Exception as e:
