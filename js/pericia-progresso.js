@@ -161,6 +161,12 @@
   function clearPending(code,id){
     try {localStorage.removeItem(memberKey(code,id));}catch(_){}
   }
+  function pendingCount(){
+    if(!user)return 0;
+    return CODES.reduce(function(count,code){
+      try {return count+(localStorage.getItem(memberKey(code,user.id))?1:0);}catch(_){return count;}
+    },0);
+  }
   function upsert(code,state,forced) {
     if(!CODES.includes(code))return Promise.resolve(false);
     state=normalise(code,state);
@@ -197,10 +203,16 @@
     for(const item of items){
       var old=records.get(item.activity_code),oldSteps=Number(old?.best_steps)||0;
       var oldScore=Number(old?.best_score)||0;
-      if (old && (oldSteps>item.best_steps || (oldSteps===item.best_steps && oldScore>=item.best_score))) continue;
+      if (old && (oldSteps>item.best_steps || (oldSteps===item.best_steps && oldScore>=item.best_score))) {
+        // Importação foi autorizada; a conta já possui conquista superior.
+        try{localStorage.removeItem(GUEST_KEYS[item.activity_code]);}catch(_){}
+        continue;
+      }
       // Se a conta já possui resultados, preserve a maior conquista.
       var result=await upsert(item.activity_code,item.state,true);
-      if(result){imported++;try{localStorage.removeItem(GUEST_KEYS[item.activity_code]);}catch(_){}}
+      if(!result)throw new Error("Não foi possível concluir a gravação da atividade.");
+      imported++;
+      try{localStorage.removeItem(GUEST_KEYS[item.activity_code]);}catch(_){}
     }
     return {available:items.length,imported:imported};
   }
@@ -208,7 +220,7 @@
   var API=Object.freeze({CODES:CODES,GUEST_KEYS:GUEST_KEYS,normalise:normalise,metrics:metrics,
     guestState:guestState,guestStats:guestStats,register:register,save:save,
     connect:connect,subscribeAuth:subscribeAuth,isAccountActive:isAccountActive,
-    importGuest:importGuest,listRecords:listRecords,defaultState:defaultState});
+    importGuest:importGuest,listRecords:listRecords,pendingCount:pendingCount,defaultState:defaultState});
   if(typeof module!=="undefined" && module.exports)module.exports=API;
   if(root && root.document)root.ArquivoPericiaProgresso=API;
 }(typeof window!=="undefined"?window:null));
