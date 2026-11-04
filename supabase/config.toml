@@ -1,5 +1,6 @@
 # Arquivo Sombrio: security policy for Supabase CLI deployments.
-# JWT is mandatory for account, admin and direct Polly endpoints.
+# JWT gateway is mandatory for account, admin-secure RPC and direct Polly endpoints.
+# Manual audio import performs verified user+admin auth inside the handler; keep config matching deployed gateway.
 [functions.admin-secure-rpc]
 verify_jwt = true
 
@@ -7,7 +8,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.arquivo-voz-manual-import]
-verify_jwt = true
+verify_jwt = false # deployed gateway setting; handler requires auth.getUser() AND is_arquivo_sombrio_admin()
 
 [functions.narration-polly]
 verify_jwt = true
