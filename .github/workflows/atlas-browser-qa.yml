@@ -101,7 +101,7 @@ jobs:
           req=urllib.request.Request('https://arquivosombrio.net.br/atlas.html',headers={'Cache-Control':'no-cache','User-Agent':'Atlas-QA-Revision-Inspector'})
           with urllib.request.urlopen(req,timeout=18) as response:
             remote=response.read().decode('utf-8')
-          pattern=r'atlas-criminal\\.js\\?v=([0-9]+)'
+          pattern=r'atlas-criminal\.js\?v=([0-9]+)'
           a=re.search(pattern,local)
           b=re.search(pattern,remote)
           print('Versão no repositório:',a.group(1) if a else 'não encontrada')
