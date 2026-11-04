@@ -21,7 +21,7 @@ test('cadeia de custódia: lacuna é recebedor não identificado, sem inferir fr
   assert.equal(lab.checkGap(2),false);
   const html=read('pericia-custodia.html');
   assert.match(html,/Responsável pelo recebimento: —/);
-  assert.match(html,/não identifica de quem recebeu/i);
+  assert.match(html,/Não há identificação de quem recebeu/i);
   assert.match(html,/não comprova|não prova|não demonstra|não identifica/i);
 });
 
