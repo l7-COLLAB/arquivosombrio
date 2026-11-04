@@ -1,0 +1,64 @@
+/* Trilha de Perícia — usa o design do Laboratório Forense. */
+.quest-section{padding-bottom:74px}
+.quest-lead{max-width:880px}
+.quest-board{display:grid;grid-template-columns:minmax(290px,.86fr) minmax(0,1.14fr);gap:22px;align-items:start}
+.quest-overview{position:sticky;top:20px}
+.quest-stage-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.quest-stage-head strong{color:#ffe269;font-size:1.05rem}
+.quest-stage-head span{color:#cbd9f3;font-size:.85rem}
+.quest-counter{display:block;color:#cbd9f3;font-weight:650;margin:12px 0 8px}
+.quest-progress{height:14px;background:#0b1323;border:1px solid #4573c8;overflow:hidden;border-radius:999px}
+.quest-progress-fill{display:block;height:100%;width:0;background:linear-gradient(90deg,#246fff,#ffd43b);border-radius:999px;transition:width .2s ease}
+.quest-badges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:22px}
+.quest-badge{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;justify-content:center;text-align:center;min-height:124px;background:#0c1524;border:1px dashed #587096;border-radius:12px;padding:12px 5px;color:#a6b4cf}
+.quest-badge-symbol{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#243249;border:2px solid #5a6b87;font:800 1.2rem Georgia,serif}
+.quest-badge strong{font-size:.82rem;line-height:1.2}
+.quest-badge small{font-size:.71rem;line-height:1.25}
+.quest-badge-unlocked{background:linear-gradient(150deg,#2b2a20,#182a47);color:#fff0ae;border:1px solid #ffd43b;box-shadow:inset 0 2px 0 #ffd43b}
+.quest-badge-unlocked .quest-badge-symbol{background:#ffd43b;color:#141922;border-color:#fff0a0}
+.quest-illustration{margin-top:20px;border:1px solid #315ac4;border-radius:12px;background:linear-gradient(125deg,#102444,#0b1427);padding:22px 18px;text-align:center;min-height:175px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.quest-illustration p{margin:0;color:#c8d7f7;font-size:.79rem;letter-spacing:.12em;text-transform:uppercase;font-weight:750}
+.quest-illustration strong{color:#ff4a58;font-size:clamp(1.7rem,3vw,2.3rem);line-height:1.5;letter-spacing:.15em;overflow-wrap:anywhere}
+.quest-illustration[data-kind=abo] strong{color:#ffd43b}
+.quest-illustration[data-kind=records] strong{color:#77a9ff;font-size:1.7rem;letter-spacing:.025em}
+.quest-illustration[data-kind=reason] strong{color:#ffe075}
+.quest-illustration[data-kind=contact] strong,.quest-illustration[data-kind=ellipses] strong{letter-spacing:.08em}
+.quest-question-card{min-width:0}
+.quest-question-card h3{font:700 clamp(1.45rem,2.6vw,2rem)/1.3 Georgia,serif;margin:8px 0 15px;color:#f7faff}
+.quest-context{padding:14px 17px;background:#102e65;border-left:4px solid #ffd43b;color:#fff!important;border-radius:0 8px 8px 0;font-size:.97rem;line-height:1.6}
+.quest-options{border:0;margin:17px 0 0;padding:0;display:grid;gap:10px}
+.quest-choice{display:flex;align-items:center;gap:14px;padding:15px 16px;background:#0b1425;color:#fff;border:1px solid #536987;border-radius:10px;cursor:pointer;font-weight:550;line-height:1.4;margin:0;min-height:54px}
+.quest-choice input{flex:0 0 auto;margin:0;width:20px;height:20px;accent-color:#ffd43b}
+.quest-choice:has(input:checked){background:#1c4188;border-color:#7bb0ff}
+.quest-choice:has(input:focus-visible){outline:3px solid #ffd43b;outline-offset:2px}
+.quest-choice:has(input:disabled){cursor:default}
+.quest-choice-correct{border-color:#ffd43b;background:#242a25;color:#ffea99}
+.quest-choice-correct:has(input:checked){border-color:#ffd43b;background:#273c50;color:#ffea99}
+.quest-feedback{background:#0c1423;border:1px solid #5a769f;border-left:5px solid #2f79ff;border-radius:10px;padding:17px 20px;margin-top:18px;color:#eef5ff;outline:none}
+.quest-feedback[data-result=correct]{border-left-color:#ffd43b}
+.quest-feedback strong{font-size:1.07rem;color:#ffd43b}
+.quest-feedback[data-result=review] strong{color:#9fc3ff}
+.quest-feedback p{margin:6px 0 0;line-height:1.7}
+.quest-actions{display:flex;gap:11px;margin-top:18px;flex-wrap:wrap}
+.quest-actions button{min-width:170px}
+#quest-answer{background:#d8222b;border-color:#ff7178}
+#quest-answer:hover{background:#b81722}
+#quest-next{background:#175acf;border-color:#70a4ff}
+#quest-next:hover{background:#154aab}
+.quest-finish{padding:26px 30px;border:2px solid #ffd43b;border-radius:14px;background:linear-gradient(130deg,#142c58,#18202c);margin:22px 0 0;outline:none}
+.quest-finish-mark{font-size:2.5rem;line-height:1;color:#ffd43b}
+.quest-finish h3{font:700 clamp(1.5rem,3vw,2rem)/1.3 Georgia,serif;margin:15px 0 10px;color:#fff3ad}
+.quest-finish p{color:#e3ebfa;margin:10px 0}
+.quest-finish strong{color:#ffd43b}
+.quest-perfect{display:inline-block;border:1px solid #ffd43b;background:#332b10;color:#ffedaa;border-radius:999px;padding:7px 14px;font-weight:750;margin:9px 0}
+.quest-finish-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px;align-items:center}
+.quest-finish-actions a{display:inline-flex;min-height:49px;align-items:center;justify-content:center;border:1px solid #74a8ff;background:#124aaa;color:#fff;border-radius:9px;padding:10px 16px;text-decoration:none;font-weight:750}
+.quest-finish-actions a:hover{background:#1769ff}
+.quest-finish-actions button{background:#d8222b}
+.quest-copy-status{font-size:.89rem;min-height:1.3em}
+.quest-local-note{margin:14px 0 0;color:#c3d2e9;font-size:.83rem}
+.quest-fine-print{margin-top:15px;color:#d6e4fa}
+#quest-app [hidden]{display:none!important}
+@media(max-width:850px){.quest-board{grid-template-columns:1fr}.quest-overview{position:static}.quest-badge{min-height:110px}.quest-illustration{min-height:120px}}
+@media(max-width:480px){.quest-badges{gap:6px}.quest-badge{min-height:108px;padding:9px 3px}.quest-badge-symbol{height:35px;width:35px;font-size:1.1rem}.quest-badge strong{font-size:.73rem}.quest-badge small{font-size:.67rem}.quest-illustration{padding:13px}.quest-actions button,.quest-finish-actions button,.quest-finish-actions a{width:100%}.quest-finish{padding:22px}}
+@media(prefers-reduced-motion:reduce){.quest-progress-fill{transition:none}}
