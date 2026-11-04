@@ -102,11 +102,11 @@ def mobile_run(browser, base, engine, width):
     assert page.locator("#fp-show-marks").get_attribute("aria-pressed") == "true"
     page.locator("#fp-reference").select_option("r24")
     page.locator("#fp-check-match").click()
-    assert page.locator("#fp-conclusion-choices").is_disabled()
+    assert page.locator("#fp-conclusion-choices").evaluate("(e) => e.disabled === true"), "As opções devem continuar bloqueadas se a referência não corresponde"
     page.locator("#fp-reference").select_option("r17")
     page.locator("#fp-check-match").click()
     assert page.locator("#fp-reference").is_disabled()
-    assert page.locator("#fp-conclusion-choices").is_enabled()
+    assert page.locator("#fp-conclusion-choices").evaluate("(e) => e.disabled === false"), "As opções precisam desbloquear após a referência correta"
     assert page.evaluate("document.activeElement.id") == "finger-limit-title"
     page.locator('input[name="fp-conclusion"][value="1"]').check()
     page.locator("#fp-check-conclusion").click()
