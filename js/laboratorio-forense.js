@@ -5,9 +5,9 @@
   var GROUPS = Object.freeze(["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"]);
   var SCENES = Object.freeze(["gotas", "contato", "direcionais"]);
   var CATEGORY = Object.freeze({
-    gotas: "Deposição de gotas isoladas",
-    contato: "Transferência por contato",
-    direcionais: "Marcas com orientação aparente"
+    gotas: "Gotas isoladas",
+    contato: "Marcas por contato",
+    direcionais: "Manchas com orientação semelhante"
   });
 
   function validGroup(value) { return GROUPS.indexOf(value) !== -1; }
@@ -22,14 +22,14 @@
 
   function compareForensic(trace, reference) {
     if (!validGroup(trace) || !validGroup(reference)) {
-      return {status:"neutral",title:"Selecione dois grupos válidos.",detail:"Escolha a tipagem hipotética do vestígio e da referência."};
+      return {status:"neutral",title:"Selecione os dois grupos sanguíneos.",detail:"Escolha o grupo do vestígio e o da amostra de referência."};
     }
     if (trace === reference) {
-      return {status:"positive",title:"Grupos iguais: não há exclusão por ABO/RhD.",
-        detail:"Este resultado não prova que as amostras vieram da mesma pessoa. Muitas pessoas compartilham esse grupo. Identificação de origem exige outros exames, contexto e cadeia de custódia."};
+      return {status:"positive",title:"Os grupos sanguíneos coincidem.",
+        detail:"Ter o mesmo grupo ABO/RhD não prova que o sangue veio da mesma pessoa. Esse grupo pode ser encontrado em muitas pessoas. Para investigar a origem de uma amostra, são necessários outros exames e informações sobre a coleta."};
     }
-    return {status:"negative",title:"Grupos diferentes nesta comparação simplificada.",
-      detail:"Assumindo tipagens corretas, amostras não misturadas e condições usuais, a diferença contraria a hipótese de mesma origem. Um caso real exige verificar qualidade das amostras, tratamentos e outras explicações antes de concluir."};
+    return {status:"negative",title:"Os grupos sanguíneos são diferentes.",
+      detail:"Se os exames estiverem corretos e as amostras não estiverem misturadas, essa diferença contraria a hipótese de que o sangue veio da mesma pessoa. Numa investigação real, a qualidade das amostras e as condições do exame precisam ser avaliadas."};
   }
 
   function redCellsCompatible(donor, recipient) {
@@ -44,31 +44,31 @@
   function compareTransfusion(donor, recipient) {
     var compatible = redCellsCompatible(donor, recipient);
     if (compatible === null) {
-      return {status:"neutral",title:"Selecione dois grupos válidos.",detail:"Escolha os grupos ABO/RhD do doador e receptor."};
+      return {status:"neutral",title:"Selecione os dois grupos sanguíneos.",detail:"Escolha o grupo sanguíneo do doador e o do receptor."};
     }
     if (compatible) {
-      return {status:"positive",title:"Compatível pelas regras básicas ABO/RhD para hemácias.",
-        detail:"Isso não autoriza uma transfusão. Provas de compatibilidade, outros antígenos e anticorpos, histórico clínico e avaliação profissional continuam necessários. Não vale para plasma."};
+      return {status:"positive",title:"Compatível no modelo básico de hemácias.",
+        detail:"O resultado não autoriza uma transfusão. Antes de um procedimento real, a equipe de saúde precisa avaliar outros antígenos, anticorpos, histórico clínico e testes de compatibilidade. Esta regra não vale para plasma."};
     }
-    return {status:"negative",title:"Incompatível pelas regras básicas ABO/RhD para hemácias.",
-      detail:"Os antígenos das hemácias do doador podem não ser aceitos pelo receptor neste modelo. Apenas serviços de hemoterapia podem avaliar compatibilidade clínica. A regra é diferente para plasma."};
+    return {status:"negative",title:"Incompatível no modelo básico de hemácias.",
+      detail:"Pelas regras básicas ABO/RhD, essas hemácias não são compatíveis com o receptor. A avaliação clínica deve ser feita por profissionais de hemoterapia. Para plasma, as regras são diferentes."};
   }
 
   function assessScene(scene, answer) {
     if (SCENES.indexOf(scene) === -1 || !CATEGORY[answer]) {
-      return {status:"neutral",title:"Escolha uma hipótese.",detail:"Compare a forma e a distribuição das marcas antes de avaliar."};
+      return {status:"neutral",title:"Escolha uma alternativa.",detail:"Marque a opção que melhor descreve as manchas."};
     }
     var explanations = {
-      gotas:"As marcas arredondadas e separadas foram desenhadas para ilustrar gotas isoladas em superfície relativamente lisa. Não permitem concluir altura de queda, origem biológica ou sequência dos fatos.",
-      contato:"As áreas conectadas e o contorno repetido foram desenhados para ilustrar transferência de material por contato. Não identificam objeto, pessoa ou a ordem dos acontecimentos.",
-      direcionais:"As formas alongadas com orientação semelhante foram desenhadas para destacar uma direção aparente. O mecanismo exato não pode ser estabelecido sem documentação da cena e análises adicionais."
+      gotas:"As manchas são arredondadas e aparecem separadas. Esse formato pode ser compatível com gotas isoladas sobre uma superfície lisa. A imagem não permite determinar a altura de origem, identificar a fonte do material ou reconstruir os acontecimentos.",
+      contato:"As marcas estão conectadas, como pode acontecer quando um material é transferido por contato. Só pelo desenho, não é possível identificar o objeto, a pessoa ou a ordem dos acontecimentos.",
+      direcionais:"As manchas são alongadas e têm orientação semelhante. Essa característica pode ajudar a formular hipóteses, mas não basta para identificar o mecanismo que produziu as marcas."
     };
     if (scene === answer) {
-      return {status:"positive",title:"Interpretação coerente com o desenho didático.",
-        detail:explanations[scene] + " Na prática, podem existir explicações alternativas; uma imagem isolada não constitui laudo."};
+      return {status:"positive",title:"Essa opção corresponde ao exemplo.",
+        detail:explanations[scene] + " Na perícia real, a imagem precisa ser analisada junto com as informações da cena e outros exames."};
     }
-    return {status:"negative",title:"O desenho foi preparado para destacar outra característica.",
-      detail:"Neste exercício, a opção-alvo é: " + CATEGORY[scene] + ". " + explanations[scene] + " Essa comparação não permite descartar categoricamente outras hipóteses em uma cena real."};
+    return {status:"negative",title:"Observe a característica principal deste exemplo.",
+      detail:"A resposta esperada para este desenho é: " + CATEGORY[scene] + ". " + explanations[scene] + " Isso não permite descartar outras explicações em uma análise real."};
   }
 
   var api = Object.freeze({
@@ -81,16 +81,16 @@
 
   var visuals = {
     gotas: {
-      caption:"Cinco gotas arredondadas e isoladas sobre uma superfície lisa simulada. Não há escala ou relação com um caso real.",
-      image:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 330" role="img" aria-label="Ilustração fictícia de gotas arredondadas separadas sobre superfície clara"><rect width="600" height="330" fill="#ded1b7"/><path d="M0 72H600M0 167H600M0 270H600" stroke="#b4a58e" opacity=".43" stroke-width="2"/><circle cx="105" cy="85" r="22" fill="#903844"/><circle cx="225" cy="185" r="31" fill="#a64651"/><circle cx="365" cy="104" r="19" fill="#8e3947"/><circle cx="460" cy="227" r="25" fill="#9e3f49"/><circle cx="524" cy="94" r="10" fill="#9d4149"/></svg>'
+      caption:"Cinco manchas arredondadas e separadas em uma superfície ilustrada. Não há escala nem relação com um caso real.",
+      image:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 330" role="img" aria-label="Ilustração fictícia de gotas arredondadas separadas sobre superfície clara"><rect width="600" height="330" fill="#e7edf6"/><path d="M0 72H600M0 167H600M0 270H600" stroke="#b6c5d7" opacity=".43" stroke-width="2"/><circle cx="105" cy="85" r="22" fill="#b41529"/><circle cx="225" cy="185" r="31" fill="#cf2034"/><circle cx="365" cy="104" r="19" fill="#c51b30"/><circle cx="460" cy="227" r="25" fill="#c21c2d"/><circle cx="524" cy="94" r="10" fill="#d02638"/></svg>'
     },
     contato: {
-      caption:"Marcas conectadas de contato e arrasto esquemático. Não é impressão de mão real nem vestígio coletado.",
-      image:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 330" role="img" aria-label="Ilustração fictícia de uma marca irregular por contato e um rastro contínuo"><rect width="600" height="330" fill="#ded1b7"/><path d="M85 128Q140 80 183 121Q224 91 254 142Q245 189 180 210Q140 234 89 194Q61 168 85 128Z" fill="#a54551" opacity=".85"/><path d="M197 149Q289 126 342 161T512 142" stroke="#993d49" stroke-width="28" stroke-linecap="round" fill="none" opacity=".70"/><path d="M207 185Q318 196 396 191T520 211" stroke="#aa4b54" stroke-width="10" stroke-linecap="round" fill="none" opacity=".62"/><path d="M80 252Q268 240 490 255" stroke="#b4a58e" stroke-width="2" opacity=".35" fill="none"/></svg>'
+      caption:"Manchas conectadas para ilustrar contato com uma superfície. Não é um vestígio real.",
+      image:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 330" role="img" aria-label="Ilustração fictícia de uma marca irregular por contato e um rastro contínuo"><rect width="600" height="330" fill="#e7edf6"/><path d="M85 128Q140 80 183 121Q224 91 254 142Q245 189 180 210Q140 234 89 194Q61 168 85 128Z" fill="#c92135" opacity=".85"/><path d="M197 149Q289 126 342 161T512 142" stroke="#b51a2b" stroke-width="28" stroke-linecap="round" fill="none" opacity=".70"/><path d="M207 185Q318 196 396 191T520 211" stroke="#e02c41" stroke-width="10" stroke-linecap="round" fill="none" opacity=".62"/><path d="M80 252Q268 240 490 255" stroke="#b6c5d7" stroke-width="2" opacity=".35" fill="none"/></svg>'
     },
     direcionais: {
-      caption:"Elipses alongadas com orientação semelhante. O desenho não permite inferir velocidade, trajetória exata ou agente causador.",
-      image:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 330" role="img" aria-label="Ilustração fictícia de manchas alongadas orientadas para a direita"><rect width="600" height="330" fill="#ded1b7"/><g fill="#983c4b"><ellipse cx="132" cy="100" rx="65" ry="15" transform="rotate(-15 132 100)"/><path d="M175 75L227 66L191 94Z"/><ellipse cx="310" cy="170" rx="76" ry="20" transform="rotate(-15 310 170)"/><path d="M367 143L423 137L384 163Z"/><ellipse cx="212" cy="254" rx="52" ry="13" transform="rotate(-15 212 254)"/><path d="M247 233L288 227L258 249Z"/><ellipse cx="490" cy="88" rx="29" ry="10" transform="rotate(-15 490 88)"/></g></svg>'
+      caption:"Manchas alongadas na mesma orientação. A ilustração não permite calcular velocidade nem trajetória.",
+      image:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 330" role="img" aria-label="Ilustração fictícia de manchas alongadas orientadas para a direita"><rect width="600" height="330" fill="#e7edf6"/><g fill="#c31d31"><ellipse cx="132" cy="100" rx="65" ry="15" transform="rotate(-15 132 100)"/><path d="M175 75L227 66L191 94Z"/><ellipse cx="310" cy="170" rx="76" ry="20" transform="rotate(-15 310 170)"/><path d="M367 143L423 137L384 163Z"/><ellipse cx="212" cy="254" rx="52" ry="13" transform="rotate(-15 212 254)"/><path d="M247 233L288 227L258 249Z"/><ellipse cx="490" cy="88" rx="29" ry="10" transform="rotate(-15 490 88)"/></g></svg>'
     }
   };
 
@@ -119,7 +119,7 @@
       caption.textContent = scene.caption;
       document.querySelectorAll('input[name="interpretacao"]').forEach(function (radio) {radio.checked = false;});
       sceneResult.removeAttribute("data-status");
-      sceneResult.textContent = "Escolha uma hipótese para revelar a análise e suas limitações.";
+      sceneResult.textContent = "Marque uma alternativa para conferir a explicação.";
     }
     sceneSelect.addEventListener("change", showScene);
     document.getElementById("check-scene").addEventListener("click", function () {
