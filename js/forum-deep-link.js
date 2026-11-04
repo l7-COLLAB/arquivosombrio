@@ -1,7 +1,7 @@
 "use strict";
 (function () {
     const id = new URLSearchParams(location.search).get("post");
-    if (!id || !/^\\d{1,20}$/.test(id)) return;
+    if (!id || !/^\d{1,20}$/.test(id)) return;
 
     function locate() {
         const card = Array.from(document.querySelectorAll(".forum-post-card[data-post-id]"))
