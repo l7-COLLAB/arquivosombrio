@@ -1997,6 +1997,9 @@ function renderizarAlertas() {
                         );
 
 
+                    const destino = alerta.target_url ? normalizarLinkMeuArquivo(alerta.target_url) : "";
+                    const linkSeguro = destino && destino !== "#" ? destino : "";
+
                     return `
                         <article class="alerta-item">
 
@@ -2011,6 +2014,8 @@ function renderizarAlertas() {
                                 <p>
                                     ${escaparHTML(mensagem)}
                                 </p>
+
+                                ${linkSeguro ? `<a class="arquivo-favorite-link" href="${escaparHTML(linkSeguro)}">Abrir publicação</a>` : ""}
 
                             </div>
 
@@ -7161,73 +7166,8 @@ function abrirPainelPreferencia(
    ========================================================= */
 
 function prepararEventoCompartilharTeoria() {
-
-    const botao =
-        document.getElementById(
-            "compartilhar-teoria"
-        );
-
-
-    if (!botao) {
-        return;
-    }
-
-
-    botao.addEventListener(
-        "click",
-        function () {
-
-            abrirModalArquivo(
-                "Compartilhar teoria",
-                `
-                    <div class="arquivo-form">
-
-                        <div class="arquivo-message">
-
-                            <i class="fa-solid fa-share-nodes"></i>
-
-                            <span>
-                                No futuro, você poderá selecionar uma
-                                teoria privada e publicá-la na comunidade.
-                                Nenhuma teoria será compartilhada
-                                automaticamente.
-                            </span>
-
-                        </div>
-
-
-                        <div class="arquivo-message">
-
-                            <i class="fa-solid fa-scale-balanced"></i>
-
-                            <span>
-                                Ao publicar hipóteses sobre casos reais,
-                                fatos documentados e interpretações pessoais
-                                deverão permanecer claramente diferenciados.
-                            </span>
-
-                        </div>
-
-
-                        <div class="arquivo-form-actions">
-
-                            <button
-                                type="button"
-                                class="arquivo-button"
-                                data-close-arquivo-modal
-                            >
-                                Entendido
-                            </button>
-
-                        </div>
-
-                    </div>
-                `
-            );
-
-        }
-    );
-
+    // O botão de envio e sua confirmação são gerenciados exclusivamente pelo
+    // módulo de comunidade, para não abrir o antigo modal de funcionalidade futura.
 }
 
 /* =========================================================

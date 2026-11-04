@@ -101,7 +101,16 @@
                 : registro.estado === "concluido" ? "Leitura concluída" : "Na biblioteca";
             meta.append(nome, subtitulo);
             link.append(capa, meta);
-            fragmento.appendChild(link);
+            const entrada = document.createElement("div");
+            entrada.className = "novel-library-entry";
+            const marcadores = document.createElement("button");
+            marcadores.type = "button";
+            marcadores.className = "arquivo-button arquivo-button-secondary";
+            marcadores.dataset.archiveTag = "novel";
+            marcadores.dataset.tagItemId = String(registro.novel_id);
+            marcadores.textContent = "Marcadores";
+            entrada.append(link, marcadores);
+            fragmento.appendChild(entrada);
         }
         lista.replaceChildren(fragmento);
     } catch (erro) {
