@@ -95,7 +95,8 @@
   }
   function renderList() {
     if (!loaded) return;
-    const visible = locationMatches().filter(inViewport).sort(sortRecords);
+    const matching = locationMatches();
+    const visible = matching.filter(inViewport).sort(sortRecords);
     // Um dossiê pode ter várias localidades: liste a publicação uma única vez.
     const seen = new Set();
     const uniqueCases = visible.filter(item => {
@@ -108,7 +109,11 @@
     counter.textContent = uniqueCases.length + (uniqueCases.length === 1 ? ' caso' : ' casos');
     if (!uniqueCases.length) {
       list.append(createElement('p', 'empty', 'Nenhum registro catalogado nesta seleção. Isso não significa que a região não tenha casos: o atlas é ampliado conforme novas localidades são revisadas.'));
-      feedback.textContent = fields.viewport.checked ? 'Ajuste o zoom, mova o mapa ou desmarque “Resultados na área visível”.' : 'Tente pesquisar outra cidade ou limpar os filtros.';
+      feedback.textContent = !matching.length ?
+        'Nenhum registro corresponde a esta pesquisa ou combinação de filtros. Tente outra cidade ou limpe os filtros.' :
+        fields.viewport.checked ?
+          'Há registros catalogados fora da área visível. Mova ou afaste o mapa, ou desmarque “Resultados na área visível”.' :
+          'Tente outra cidade ou limpe os filtros.';
       return;
     }
     feedback.textContent = 'Ordem cronológica: ano inicial do acontecimento, do mais antigo ao mais recente.';
