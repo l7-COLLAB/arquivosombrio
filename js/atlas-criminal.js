@@ -244,7 +244,13 @@
     ['country','region','city','neighborhood'].forEach(name => {
       fields[name].addEventListener('change', () => refreshFilters(name));
     });
-    fields.search.addEventListener('input', () => {rebuildMarkers();renderList();});
+    // Localização pesquisada deve ficar visível mesmo quando o usuário estava com zoom em outra cidade.
+    fields.search.addEventListener('input', () => {
+      rebuildMarkers();
+      const matching = locationMatches();
+      if (matching.length) fitItems(matching);
+      renderList();
+    });
     fields.viewport.addEventListener('change', renderList);
     form.addEventListener('submit', event => {
       event.preventDefault();
