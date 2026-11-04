@@ -71,7 +71,6 @@ test("visitante sem login mantém respostas locais e não grava na nuvem",async(
     "https://arquivosombrio.net.br/laboratorio-forense.html");
   dom.window.localStorage.setItem("arquivo-sombrio-pericia-trilha-v1",JSON.stringify({index:2,answers:[0,2]}));
   dom.window.eval(source);dom.window.eval(quizSource);
-  dom.window.document.dispatchEvent(new dom.window.Event("DOMContentLoaded"));
   await tick();
   const bridge=dom.window.ArquivoPericiaProgresso;
   assert.equal(bridge.isAccountActive(),false);
@@ -90,7 +89,6 @@ test("conta autenticada retoma atividade do banco, sem importar a cópia do visi
     "https://arquivosombrio.net.br/laboratorio-forense.html");
   dom.window.localStorage.setItem("arquivo-sombrio-pericia-trilha-v1",JSON.stringify({index:9,answers:Array(9).fill(1)}));
   dom.window.eval(source);dom.window.eval(quizSource);
-  dom.window.document.dispatchEvent(new dom.window.Event("DOMContentLoaded"));
   await tick();
   assert.equal(dom.window.ArquivoPericiaProgresso.isAccountActive(),true);
   assert.match(dom.window.document.getElementById("quest-counter").textContent,/3 \/ 9/);
@@ -106,7 +104,6 @@ test("Meu Arquivo apresenta selos e importa a cópia local apenas após escolha 
   dom.window.localStorage.setItem("arquivo-sombrio-pericia-trilha-v1",JSON.stringify({index:3,answers:[0,2,1]}));
   dom.window.localStorage.setItem("arquivo-sombrio-custodia-v1",JSON.stringify({order:[0,1,2,3,4],sorted:true,complete:true}));
   dom.window.eval(source);dom.window.eval(panelSource);
-  dom.window.document.dispatchEvent(new dom.window.Event("DOMContentLoaded"));
   await tick();
   const btn=dom.window.document.getElementById("forensic-import-local");
   assert.equal(btn.hidden,false);
