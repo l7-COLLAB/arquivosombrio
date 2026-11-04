@@ -37,10 +37,10 @@ class AtlasProductionQATests(unittest.TestCase):
                 return private_status, '{"code":"42501","message":"permission denied"}'
             if "/rest/v1/case_atlas_public" in url:
                 return public_status, json.dumps(rows)
-            if url.endswith("/atlas.html"):
-                return 200, self.PUBLIC_HTML
             if url.endswith("/admin-v2/atlas.html"):
                 return 200, self.ADMIN_HTML
+            if url.endswith("/atlas.html"):
+                return 200, self.PUBLIC_HTML
             if "atlas-criminal.js?v=2" in url:
                 return 200, self.PUBLIC_JS
             if "atlas-admin.js?v=2" in url:
