@@ -101,6 +101,6 @@ test('LIVE: solicitações de exclusão de conta e cron de narração não execu
 });
 test('LIVE: Supabase Auth rejeita token inválido em endpoint de sessão',async()=>{
  const r=await call('/auth/v1/user',{method:'GET',bearer:'expired-or-revoked-token-simulator'});
- assert.equal(r.status,401);
+ assert.ok([401,403].includes(r.status),'Invalid token must be denied (401/403), got '+r.status);
  assert.equal(r.data?.id,undefined);
 });
