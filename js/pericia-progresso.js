@@ -86,7 +86,8 @@
     } else throw new Error("Cliente de autenticação indisponível");
     if (!authSubscriber) {
       authSubscriber=true;
-      client.auth.onAuthStateChange(function(event){
+      client.auth.onAuthStateChange(function(event,session){
+        if(event==="SIGNED_IN" && connected && user && session?.user?.id===user.id) return;
         if (event==="SIGNED_OUT" || event==="SIGNED_IN") {
           // A verificação de identidade e as consultas são feitas fora do callback.
           Promise.resolve().then(function(){return connect(true);}).catch(function(){status("offline");});
@@ -98,6 +99,7 @@
   async function connect(force) {
     if (loading && !force) return loading;
     var token=++generation;
+    var previousUser=user;
     connected=false;
     loading=(async function(){
       status("working");
@@ -137,6 +139,7 @@
         if(token!==generation)return null;
         console.warn("Perícia: sincronização indisponível",error);
         // Falha de rede não confirma logout. Manter somente o estado atual no navegador.
+        if(previousUser){user=previousUser;connected=true;status("offline");changed();return previousUser;}
         user=null;connected=false;status("offline");changed();return null;
       }
     })();
@@ -194,7 +197,7 @@
     for(const item of items){
       var old=records.get(item.activity_code),oldSteps=Number(old?.best_steps)||0;
       var oldScore=Number(old?.best_score)||0;
-      if (old && oldSteps>item.best_steps && oldScore>=item.best_score) continue;
+      if (old && (oldSteps>item.best_steps || (oldSteps===item.best_steps && oldScore>=item.best_score))) continue;
       // Se a conta já possui resultados, preserve a maior conquista.
       var result=await upsert(item.activity_code,item.state,true);
       if(result){imported++;try{localStorage.removeItem(GUEST_KEYS[item.activity_code]);}catch(_){}}
