@@ -262,7 +262,9 @@
       bar.setAttribute("aria-valuenow", String(stats.done));
       byId("quest-progress-fill").style.width = ((stats.done / QUESTIONS.length) * 100) + "%";
       describeBadges(stats.badges);
-      saved.textContent = "O progresso fica salvo apenas neste navegador. Você pode reiniciar quando quiser.";
+      saved.textContent = window.ArquivoPericiaProgresso?.isAccountActive()
+        ? "Sua rodada é sincronizada com sua conta. Os melhores resultados continuam guardados após reiniciar."
+        : "O progresso fica salvo apenas neste navegador. Você pode reiniciar quando quiser.";
 
       if (state.index >= QUESTIONS.length) {
         questionArea.hidden = true;
