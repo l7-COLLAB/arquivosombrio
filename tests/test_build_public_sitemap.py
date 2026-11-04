@@ -21,7 +21,9 @@ class SitemapTests(TestCase):
         result = module.build(BASE, data)
         doc = ET.fromstring(result)
         locs = [x.text for x in doc.iter(module.tag("loc"))]
-        self.assertEqual(len(locs), 29)  # 24 páginas estáticas + cinco publicações
+        static_count = len([x.text for x in ET.fromstring(BASE).iter(module.tag("loc")) if "?id=" not in (x.text or "")])
+        self.assertEqual(len(locs), static_count + len(module.SOURCES))  # estáticas do sitemap atual + editorias
+        self.assertIn("https://arquivosombrio.net.br/atlas.html", locs)
         self.assertIn("https://arquivosombrio.net.br/arquivo/caso-1.html", locs)
         self.assertNotIn("https://arquivosombrio.net.br/arquivo/caso-26.html", locs)
         self.assertEqual(len(locs), len(set(locs)))
