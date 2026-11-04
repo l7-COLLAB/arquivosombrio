@@ -8,6 +8,9 @@ on:
       - "docs/inventario-direitos-capas-priorizado-20261103.csv"
       - "creditos-imagens.html"
       - "data/termos-institucionais-capas-20261103.json"
+      - "data/alternativas-originais-uploads-20261103.json"
+      - "docs/estado-atual-44-direitos-capas-20261103.csv"
+      - "tests/upload-covers-published-state.test.mjs"
       - "docs/inventario-direitos-44-pendencias-20261103.csv"
       - "tests/cover-rights-evidence-review.test.mjs"
       - "fontes-direitos.html"
@@ -26,7 +29,7 @@ jobs:
         with:
           node-version: "22"
       - name: Conferir cadastros de licença e créditos públicos
-        run: node --test tests/image-credits-integrity.test.mjs tests/cover-rights-evidence-review.test.mjs
+        run: node --test tests/image-credits-integrity.test.mjs tests/cover-rights-evidence-review.test.mjs tests/upload-covers-published-state.test.mjs
       - name: Conferir existência do catálogo no artefato
         run: |
           test -s creditos-imagens.html

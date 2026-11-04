@@ -1,3 +1,5 @@
+> **Atualização verificada — 03/11/2026:** as 38 capas e os 11 campos `story_imagem` foram efetivamente substituídos no banco por SVGs criados para o projeto, após o PR #145 (4 verificações verdes). A consulta de confirmação retornou 38/38 registros publicados com capa correta, 11/11 Stories com referência correta, 38 backups individuais em `private.cover_upload_replacement_audit_20261103` e quatro gatilhos de narração reabilitados. O documento abaixo descreve **o planejamento prévio**; para o estado final, consulte [Registro de publicação 38 capas e 11 Stories](REGISTRO_PUBLICACAO_38_CAPAS_E_11_STORIES_20261103.md). Permanecem seis situações especiais a resolver, incluindo uma com termos NIST documentados, e 14 objetos antigos de Stories no Storage não apagados.
+
 # Substituição das 38 capas do Storage — relatório de origem e execução controlada
 
 **Data do ciclo:** 03/11/2026. **Status inicial:** alternativas originais preparadas em branch para homologação técnica antes de alterar o banco.
