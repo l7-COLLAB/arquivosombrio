@@ -6,6 +6,7 @@ import {JSDOM} from "jsdom";
 const source = fs.readFileSync("js/pericia-progresso.js","utf8");
 const quizSource=fs.readFileSync("js/pericia-trilha.js","utf8");
 const panelSource=fs.readFileSync("js/meu-arquivo-pericia.js","utf8");
+const resumeSource=fs.readFileSync("js/pericia-retomada.js","utf8");
 const normalize = (value)=>JSON.parse(JSON.stringify(value));
 
 function domFor(html,url="https://arquivosombrio.net.br/meu-arquivo.html") {
@@ -235,4 +236,102 @@ test("gravação antiga não apaga resposta posterior ainda não sincronizada",a
   assert.equal(api.pendingCount(),0);
   assert.equal(dom.window.localStorage.getItem(pendingKey),null);
   dom.window.close();
+});
+
+
+test("retomada e leitura da Trilha usam a questão realmente em andamento",async()=>{
+  const uid="88888888-8888-4888-8888-888888888888";
+  mockSupabase(uid,[{
+    activity_code:"trilha",state:{index:2,answers:[0,2]},
+    best_steps:9,best_score:90,ever_completed:true,updated_at:"2026-11-04T14:00:00Z"
+  },{
+    activity_code:"custodia",state:{order:[0,1,2,3,4],sorted:true,complete:true},
+    best_steps:2,best_score:0,ever_completed:true,updated_at:"2026-11-04T13:00:00Z"
+  }]);
+  const dom=domFor(fs.readFileSync("meu-arquivo.html","utf8"));
+  dom.window.eval(source);dom.window.eval(panelSource);dom.window.eval(resumeSource);
+  await tick();
+  const panel=dom.window.document.getElementById("forensic-resume-panel");
+  assert.equal(panel.hidden,false);
+  assert.equal(dom.window.document.getElementById("forensic-resume-title").textContent,"Trilha de Perícia");
+  assert.match(dom.window.document.getElementById("forensic-resume-progress").textContent,/Questão 3 de 9/);
+  assert.equal(dom.window.document.getElementById("forensic-resume-action").getAttribute("href"),"laboratorio-forense.html#trilha");
+  assert.equal(dom.window.document.getElementById("forensic-resume-reading").getAttribute("href"),"guia-pericia.html#manchas");
+  assert.equal(dom.window.document.getElementById("forensic-awards").textContent,"4");
+  dom.window.close();
+});
+
+test("cadeia de custódia concluída pela metade retorna diretamente à ficha",async()=>{
+  mockSupabase("99999999-9999-4999-8999-999999999999",[
+    {activity_code:"custodia",state:{order:[0,1,2,3,4],sorted:true,complete:false},
+     best_steps:1,best_score:0,ever_completed:false,updated_at:"2026-11-04T13:00:00Z"}
+  ]);
+  const dom=domFor(fs.readFileSync("meu-arquivo.html","utf8"));
+  dom.window.eval(source);dom.window.eval(panelSource);dom.window.eval(resumeSource);
+  await tick();
+  assert.equal(dom.window.document.getElementById("forensic-resume-action").getAttribute("href"),"pericia-custodia.html#custodia-ficha");
+  assert.equal(dom.window.document.getElementById("forensic-resume-reading").getAttribute("href"),"guia-pericia-custodia.html#cap-4");
+  dom.window.close();
+});
+
+test("papiloscopia retoma a interpretação, não reinicia a comparação",async()=>{
+  mockSupabase("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",[
+    {activity_code:"papiloscopia",state:{compared:true,complete:false,reference:"r17",marks:true},
+     best_steps:1,best_score:0,ever_completed:false,updated_at:"2026-11-04T13:00:00Z"}
+  ]);
+  const dom=domFor(fs.readFileSync("meu-arquivo.html","utf8"));
+  dom.window.eval(source);dom.window.eval(panelSource);dom.window.eval(resumeSource);
+  await tick();
+  assert.equal(dom.window.document.getElementById("forensic-resume-action").getAttribute("href"),"pericia-papiloscopia.html#finger-limit-title");
+  assert.equal(dom.window.document.getElementById("forensic-resume-reading").getAttribute("href"),"guia-pericia-papiloscopia.html#cap-3");
+  dom.window.close();
+});
+
+test("uma conta sem atividades recebe a rota inicial, sem inventar materiais já estudados",async()=>{
+  mockSupabase("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",[]);
+  const dom=domFor(fs.readFileSync("meu-arquivo.html","utf8"));
+  dom.window.eval(source);dom.window.eval(panelSource);dom.window.eval(resumeSource);
+  await tick();
+  assert.equal(dom.window.document.getElementById("forensic-resume-title").textContent,"Trilha de Perícia");
+  assert.equal(dom.window.document.getElementById("forensic-resume-reading").getAttribute("href"),"guia-pericia.html#metodo");
+  assert.equal(dom.window.document.getElementById("forensic-resume-action").textContent,"Começar atividade");
+  assert.match(dom.window.document.querySelector(".forensic-resume-footnote").textContent,/não é registrada automaticamente/);
+  dom.window.close();
+});
+
+test("ao sair, cartões e botão de retomada da conta anterior desaparecem",async()=>{
+  const uid="cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+  mockSupabase(uid,[{
+    activity_code:"trilha",state:{index:3,answers:[0,2,1]},
+    best_steps:3,best_score:30,ever_completed:false
+  }]);
+  const dom=domFor(fs.readFileSync("meu-arquivo.html","utf8"));
+  dom.window.eval(source);dom.window.eval(panelSource);dom.window.eval(resumeSource);
+  await tick();
+  assert.ok(dom.window.document.querySelectorAll(".forensic-personal-card").length===3);
+  assert.equal(dom.window.document.getElementById("forensic-resume-panel").hidden,false);
+  mock.client.auth.getSession=async()=>({data:{session:null},error:null});
+  mock.subscribers[0]("SIGNED_OUT",null);
+  assert.equal(dom.window.document.getElementById("forensic-resume-panel").hidden,true);
+  assert.equal(dom.window.document.getElementById("forensic-study-materials").hidden,true);
+  assert.equal(dom.window.document.querySelectorAll(".forensic-personal-card").length,0);
+  await tick();
+  assert.equal(dom.window.document.getElementById("forensic-awards").textContent,"0");
+  dom.window.close();
+});
+
+test("links da retomada e dos guias existem, sem novas tabelas ou rastreamento de leitura",()=>{
+  const page=fs.readFileSync("meu-arquivo.html","utf8");
+  assert.ok(page.includes('id="forensic-resume-panel"'));
+  assert.ok(page.includes('id="forensic-study-materials"'));
+  assert.ok(page.includes('js/pericia-retomada.js'));
+  const files=["guia-pericia.html","guia-pericia-custodia.html","guia-pericia-papiloscopia.html"];
+  for(const file of files)assert.ok(fs.existsSync(file));
+  for(const id of ["custodia-ficha","custodia-ordem"]){
+    assert.ok(fs.readFileSync("pericia-custodia.html","utf8").includes('id="'+id+'"'));
+  }
+  for(const id of ["finger-limit-title","finger-compare-title"]){
+    assert.ok(fs.readFileSync("pericia-papiloscopia.html","utf8").includes('id="'+id+'"'));
+  }
+  assert.doesNotMatch(resumeSource,/fetch\(|sendBeacon|XMLHttpRequest|service_role|sb_secret_/);
 });

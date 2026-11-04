@@ -8,6 +8,7 @@ on:
       - "js/meu-arquivo-novels.js"
       - "js/meu-arquivo-comunidade.js"
       - "js/meu-arquivo-pericia.js"
+      - "js/pericia-retomada.js"
       - "js/pericia-progresso.js"
       - "js/pericia-trilha.js"
       - "js/pericia-novos-modulos.js"
@@ -49,6 +50,7 @@ jobs:
           node --check js/caso.js
           node --check js/meu-arquivo-comunidade.js
           node --check js/meu-arquivo-pericia.js
+          node --check js/pericia-retomada.js
           node --check js/pericia-progresso.js
           node --check js/pericia-trilha.js
           node --check js/pericia-novos-modulos.js
