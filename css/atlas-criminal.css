@@ -10,3 +10,9 @@ a{color:inherit}button,input,select{font:inherit}button,a,select,input{touch-act
 @media(max-width:900px){.intro-seal{display:none}.filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filters .searchbox{grid-column:span 1}.topbar-inner{padding:14px 0;flex-direction:column;align-items:flex-start}.topbar nav{gap:10px 18px}}
 @media(max-width:570px){.shell{width:min(100% - 24px,1240px)}.topbar-inner{min-height:0}.topbar nav{font-size:11px}.intro{padding:36px 0 28px}.eyebrow{letter-spacing:.09em}.filters{grid-template-columns:1fr;padding:13px 14px 18px;gap:12px}.filters .searchbox{grid-column:auto}.panel-head{align-items:flex-start;flex-direction:column;padding:19px 15px 11px;gap:8px}.panel-head p{text-align:left}.map-meta{align-items:flex-start;flex-direction:column;padding:13px 15px}.map-note{padding:13px 15px}.count{white-space:normal}.feedback{margin:14px 15px 7px}.timeline{padding:11px 12px 23px}.case{grid-template-columns:53px 11px minmax(0,1fr);gap:7px}.year{font-size:12px}.track:before{left:5px}.track:after{left:0}.case-body{padding:12px}.case-meta{font-size:10px}.case-body p{font-size:12px}.method-note{padding:15px}.footer-inner{align-items:flex-start;flex-direction:column}#atlas-map{height:430px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+/* Revisão de usabilidade móvel e acessibilidade do atlas. */
+.case-body,.case-meta span,.case-body h3,.map-note,.empty{overflow-wrap:anywhere}
+.viewport-toggle{min-height:44px}
+.atlas-popup button{min-height:44px}
+.leaflet-control-zoom a{width:40px!important;height:40px!important;line-height:40px!important}
+@media(max-width:570px){.filters .searchbox{order:-1}.case-meta span{max-width:100%}}
