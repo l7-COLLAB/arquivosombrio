@@ -1997,6 +1997,9 @@ function renderizarAlertas() {
                         );
 
 
+                    const destino = alerta.target_url ? normalizarLinkMeuArquivo(alerta.target_url) : "";
+                    const linkSeguro = destino && destino !== "#" ? destino : "";
+
                     return `
                         <article class="alerta-item">
 
@@ -2011,6 +2014,8 @@ function renderizarAlertas() {
                                 <p>
                                     ${escaparHTML(mensagem)}
                                 </p>
+
+                                ${linkSeguro ? `<a class="arquivo-favorite-link" href="${escaparHTML(linkSeguro)}">Abrir publicação</a>` : ""}
 
                             </div>
 
