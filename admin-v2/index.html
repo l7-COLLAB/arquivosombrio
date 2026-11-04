@@ -32,9 +32,6 @@ body.admin-dashboard-open .admin-hub-panels{overflow:visible!important;min-heigh
 body.admin-dashboard-open .admin-hub-panel{min-height:0!important}
 body.admin-dashboard-open .admin-hub-sidebar{overflow:visible!important;min-height:100dvh!important}
 body.admin-dashboard-open .admin-hub-sidebar nav{overflow:visible!important}
-.admin-v2-extra-nav{display:grid;gap:6px;margin-top:14px;padding-top:14px;border-top:1px solid #312820}
-.admin-v2-extra-nav a,.admin-v2-extra-nav button{display:grid;grid-template-columns:25px 1fr;align-items:center;gap:10px;width:100%;min-height:45px;padding:10px 12px;border:1px solid transparent;background:transparent;color:#988c7c;text-decoration:none;text-align:left;font:600 11px "IBM Plex Mono",monospace;letter-spacing:.05em;cursor:pointer}
-.admin-v2-extra-nav a:hover,.admin-v2-extra-nav button:hover{border-color:#4f2422;background:#21100f;color:#eee5d7}
 .admin-v2-registrations{margin-top:22px}
 .admin-v2-registrations h2{font:700 24px "Cormorant Garamond",serif;color:#eee5d7}
 .admin-v2-registrations p{color:#a79b8c;font:12px/1.7 "IBM Plex Mono",monospace}
@@ -47,7 +44,6 @@ body.admin-dashboard-open .admin-hub-sidebar nav{overflow:visible!important}
 <link rel="stylesheet" href="./css/admin-identity-20261018.css?v=1">
 <link rel="stylesheet" href="./css/easy-navigation.css?v=1">
 <link rel="stylesheet" href="./css/content-assist.css?v=1">
-<link rel="stylesheet" href="./css/moneyprinter-access.css?v=20261020-1">
 </head>
 <body>
 <main id="admin-panel-loading"><div><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><p id="admin-panel-status">Abrindo a Central de Arquivo...</p></div></main>
@@ -111,9 +107,8 @@ if(params.get("section")==="especiais"){
  catch(editorError){alert(editorError.message);}
 }
 if(hub){
- var nav=hub.querySelector(".admin-hub-sidebar nav");
- if(nav){var extras=document.createElement("div");extras.className="admin-v2-extra-nav";extras.innerHTML='<a href="./gravador-local.html"><i class="fa-solid fa-microphone-lines" aria-hidden="true"></i><span>Gravador de narrações</span></a><a href="./studio/"><i class="fa-solid fa-film" aria-hidden="true"></i><span>Studio de vídeos</span></a><a href="./feedback.html"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span>Mensagens dos leitores</span></a><a href="./editorial/"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span>Estúdio de livros</span></a><a href="./editorial.html"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i><span>Expediente e revisões</span></a><a href="./curadoria-ficcao.html"><i class="fa-solid fa-feather-pointed" aria-hidden="true"></i><span>Originais de ficção</span></a><a href="./newsletter.html"><i class="fa-solid fa-newspaper" aria-hidden="true"></i><span>Newsletter editorial</span></a><a href="./campanhas.html"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span>Campanhas temáticas</span></a><button type="button" id="admin-v2-registration-link"><i class="fa-solid fa-user-check" aria-hidden="true"></i><span>Cadastros de leitores</span></button>';nav.appendChild(extras);extras.querySelector("#admin-v2-registration-link").onclick=function(){hub.querySelector('[data-admin-hub-view="overview"]')?.click();metrics.scrollIntoView({behavior:"smooth",block:"start"});};}
- try { await load("o acesso ao MoneyPrinterTurbo original","./js/moneyprinter-access.js?v=20261020-2",12000); window.ArquivoMoneyPrinter?.init(); } catch (moneyError) { console.warn("Acesso ao MoneyPrinterTurbo indisponível; painel preservado.",moneyError); }
+ // Entradas experimentais permanecem fora do menu até a liberação editorial.
+ // As páginas e os dados existentes não são removidos por esta simplificação.
  var overview=hub.querySelector('[data-admin-hub-panel="overview"]');if(overview){overview.appendChild(metrics);updateRegistrations();}
  try {
    await load("a busca de funções","./js/easy-navigation.js?v=1",12000);

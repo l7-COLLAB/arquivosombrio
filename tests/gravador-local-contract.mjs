@@ -12,8 +12,8 @@ test('Gravador e editor têm JavaScript válido',()=>{
  new vm.Script(inline,{filename:'gravador-local-inline.js'});
  new vm.Script(editor,{filename:'audio-editor.js'});
 });
-test('Acesso no Admin V2 e isolamento estrito local',()=>{
- assert.match(admin,/href="\.\/gravador-local\.html"/);
+test('Ferramenta local preservada, sem entrada temporária no menu V2',()=>{
+ assert.doesNotMatch(admin,/href="\.\/gravador-local\.html"/);
  assert.match(page,/<meta name="robots" content="noindex,nofollow,noarchive">/);
  assert.match(page,/connect-src 'none'/);
  assert.match(page,/getUserMedia/);
