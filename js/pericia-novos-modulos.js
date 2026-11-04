@@ -36,6 +36,7 @@ function initCustody(){
     list.replaceChildren();
     state.order.forEach(function(id,pos){
       var item=ITEMS[id],li=document.createElement("li");li.className="m-evidence";
+      li.tabIndex=-1;
       var span=document.createElement("span"),title=document.createElement("strong");
       title.textContent=item.time+" · "+item.label;
       span.append(title,document.createTextNode(item.detail));
@@ -48,8 +49,13 @@ function initCustody(){
           var newIndex=pos+op.offset;if(newIndex<0||newIndex>4||state.sorted)return;
           var tmp=state.order[newIndex];state.order[newIndex]=state.order[pos];state.order[pos]=tmp;
           store(KEY,state);render();
-          var next=list.children[newIndex].querySelector('button[aria-label^="'+op.word+'"]');
-          if(next&&!next.disabled)next.focus();
+          var moved=list.children[newIndex];
+          if(moved){
+            var enabled=Array.from(moved.querySelectorAll("button")).filter(function(b){return !b.disabled;});
+            var next=enabled.find(function(b){return b.getAttribute("aria-label").indexOf(op.word)===0;})||enabled[0]||moved;
+            next.focus();
+          }
+          el("custody-move-status").textContent=item.time+" movido para a posição "+(newIndex+1)+" de 5.";
         });
         controls.appendChild(btn);
       });
@@ -70,6 +76,7 @@ function initCustody(){
       output("custody-order-feedback","Confira os horários","A sequência ainda tem registros fora da ordem. Compare os horários e mova cada item com os botões de seta. Não há desconto de pontos por tentar novamente.");
     }
     render();
+    if(state.sorted)el("ficha-titulo").focus();
   });
   el("custody-check-gap").addEventListener("click",function(){
     if(!state.sorted||state.complete)return;
@@ -85,6 +92,7 @@ function initCustody(){
     if((state.sorted||state.complete)&&!window.confirm("Reiniciar o exercício de cadeia de custódia?"))return;
     state=freshCustody();store(KEY,state);
     el("custody-order-feedback").replaceChildren();el("custody-gap-feedback").replaceChildren();
+    el("custody-move-status").textContent="A sequência foi reiniciada.";
     document.querySelectorAll('input[name="custody-gap"]').forEach(function(x){x.checked=false;});
     render();
   });
@@ -110,13 +118,16 @@ function fingerprintSvg(ref,marks){
 function initPrint(){
   var KEY="arquivo-sombrio-papiloscopia-v1",state=normalizePrint(restore(KEY)),zoom=1;
   function render(){
-    var sel=el("fp-reference");sel.value=state.reference;
+    var sel=el("fp-reference");sel.value=state.reference;sel.disabled=state.compared;
     el("fp-ref-label").textContent=state.reference==="r17"?"Referência R-17":"Referência R-24";
     el("fp-latent").innerHTML=fingerprintSvg("v03",state.marks);
     el("fp-known").innerHTML=fingerprintSvg(state.reference,state.marks);
     [el("fp-latent"),el("fp-known")].forEach(function(container){
       var svg=container.querySelector("svg");svg.style.maxWidth="none";svg.style.width=(zoom*100)+"%";
     });
+    el("fp-zoom-status").textContent="Ampliação: "+Math.round(zoom*100)+"%";
+    el("fp-zoom-in").disabled=zoom>=2;
+    el("fp-zoom-out").disabled=zoom<=1;
     el("fp-show-marks").setAttribute("aria-pressed",String(state.marks));
     el("fp-show-marks").textContent=state.marks?"Ocultar regiões A e B":"Mostrar regiões A e B";
     el("fp-check-match").disabled=state.compared;
@@ -139,6 +150,7 @@ function initPrint(){
     }else{
       output("fp-match-feedback","Observe a posição das marcações","Na referência R-24, as zonas A e B foram desenhadas em posições diferentes. Compare com R-17 antes de concluir.");
     }render();
+    if(state.compared)el("finger-limit-title").focus();
   });
   el("fp-check-conclusion").addEventListener("click",function(){
     if(!state.compared||state.complete)return;
@@ -147,6 +159,14 @@ function initPrint(){
     if(checkConclusion(chosen.value)){state.complete=true;store(KEY,state);output("fp-conclusion-feedback","Conclusão adequada","A atividade só demonstra uma semelhança ilustrada. Uma comparação pericial real exige exame técnico, material de qualidade suficiente e avaliação fundamentada.");}
     else output("fp-conclusion-feedback","Sem identificação individual","Dois pontos esquemáticos ou uma aparência semelhante não são suficientes para determinar de quem é uma impressão. Consulte o guia e tente novamente.");
     render();
+  });
+  el("fp-reset").addEventListener("click",function(){
+    if((state.compared||state.complete)&&!window.confirm("Reiniciar a comparação? O selo desta rodada será desfeito neste navegador."))return;
+    state=freshPrint();zoom=1;store(KEY,state);
+    el("fp-match-feedback").replaceChildren();el("fp-conclusion-feedback").replaceChildren();
+    document.querySelectorAll('input[name="fp-conclusion"]').forEach(function(input){input.checked=false;});
+    render();
+    el("fp-reference").focus();
   });
   render();
 }
