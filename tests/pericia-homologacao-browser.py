@@ -28,6 +28,8 @@ class NoLogs(http.server.SimpleHTTPRequestHandler):
 def inspect_pdf():
     doc = fitz.open(PDF)
     assert doc.page_count == 7, f"PDF deve ter 7 páginas: {doc.page_count}"
+    cover = doc[0].get_text("text")
+    assert "Perícia Forense" in cover and "exercícios" in cover, "Acentuação da capa do PDF incorreta"
     stats = []
     for i, page in enumerate(doc):
         txt = page.get_text("text")
@@ -142,7 +144,16 @@ def check_production():
             with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent":"ArquivoSombrio-QA/1.0"}),timeout=24) as r:
                 body = r.read()
                 decoded = body.decode("utf-8",errors="ignore")
-                valid = body.startswith(b"%PDF-1.4") if path.endswith(".pdf") else token in decoded
+                if path.endswith(".pdf"):
+                    try:
+                        remote_pdf = fitz.open(stream=body, filetype="pdf")
+                        cover = remote_pdf[0].get_text("text")
+                        valid = remote_pdf.page_count == 7 and "Perícia Forense" in cover and "exercícios" in cover
+                        remote_pdf.close()
+                    except Exception:
+                        valid = False
+                else:
+                    valid = token in decoded
                 out.append({"url":url, "status":r.status, "bytes":len(body),
                             "content_type":r.headers.get("Content-Type"),"conteudo_confere":valid})
         except Exception as e:
