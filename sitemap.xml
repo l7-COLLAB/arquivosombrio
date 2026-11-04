@@ -539,4 +539,34 @@
     <loc>https://arquivosombrio.net.br/garimpo.html?id=49</loc>
     <lastmod>2026-11-04</lastmod>
   </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/laboratorio-forense.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/guia-pericia.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia-custodia.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/pericia-papiloscopia.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/guia-pericia-custodia.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://arquivosombrio.net.br/guia-pericia-papiloscopia.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
 </urlset>
