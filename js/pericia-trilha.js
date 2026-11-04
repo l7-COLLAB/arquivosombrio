@@ -3,6 +3,9 @@
   "use strict";
 
   var KEY = "arquivo-sombrio-pericia-trilha-v1";
+  var DIDACTIC = typeof document === "undefined" && typeof require === "function"
+    ? require("./pericia-visuais.js")
+    : (typeof window !== "undefined" ? window.ArquivoPericiaVisuals : null);
   var STAGES = Object.freeze([
     {title:"Observação", code:"01", subtitle:"Reconheça características visíveis", badge:"Selo de Observação"},
     {title:"Comparação", code:"02", subtitle:"Compare resultados ABO/RhD", badge:"Selo de Comparação"},
@@ -101,8 +104,9 @@
     if (!Number.isInteger(choice) || choice < 0 || choice >= q.choices.length) return null;
     return {
       correct:choice === q.correct,
-      title:choice === q.correct ? "Resposta correta" : "Confira a explicação",
-      detail:(choice === q.correct ? "" : "Neste exemplo, a melhor resposta é: " + q.choices[q.correct] + ". ") + q.explanation
+      title:choice === q.correct ? "Interpretação adequada" : "Vale revisar este ponto",
+      detail:(choice === q.correct ? "" : "Neste exercício, a opção mais adequada é: " + q.choices[q.correct] + ". ") + q.explanation,
+      reason:DIDACTIC ? DIDACTIC.CHOICE_NOTES[index][choice] : ""
     };
   }
 
@@ -126,7 +130,8 @@
       mistakes.push({
         index:i + 1, stage:q.stage, prompt:q.prompt,
         selected:q.choices[answers[i]], correct:q.choices[q.correct],
-        explanation:q.explanation
+        explanation:q.explanation,
+        reason:answer.reason
       });
     });
     return mistakes;
@@ -183,6 +188,9 @@
     var questionArea = byId("quest-question-card");
     var display = byId("quest-illustration");
     var saved = byId("quest-local-note");
+    var hintButton = byId("quest-hint");
+    var hintText = byId("quest-hint-text");
+    var diagram = byId("quest-graphic");
     var reviewOpen = false;
 
     function renderReview(answers) {
@@ -203,7 +211,9 @@
         correct.textContent = "Resposta mais adequada: " + m.correct;
         var explanation = document.createElement("p");
         explanation.textContent = m.explanation;
-        item.append(heading,prompt,chosen,correct,explanation);
+        var reason = document.createElement("p");
+        reason.textContent = "Sobre sua alternativa: " + m.reason;
+        item.append(heading,prompt,chosen,correct,reason,explanation);
         list.appendChild(item);
       });
       reviewToggle.hidden = mistakes.length === 0;
@@ -266,8 +276,14 @@
       replaceText("quest-title", q.prompt);
       replaceText("quest-context", q.context);
       replaceText("quest-visual-title", q.label);
-      replaceText("quest-visual-mark", q.mark);
       display.dataset.kind = q.kind;
+      // Apenas os nove SVGs estáticos produzidos no arquivo local de ilustrações.
+      if (DIDACTIC) diagram.innerHTML = DIDACTIC.VISUALS[state.index].html;
+      hintButton.hidden = state.answers.length > state.index;
+      hintButton.setAttribute("aria-expanded", "false");
+      hintButton.textContent = "Ver uma dica";
+      hintText.hidden = true;
+      hintText.textContent = DIDACTIC ? DIDACTIC.HINTS[state.index] : "Observe os dados fornecidos antes de escolher.";
       var answered = state.answers.length > state.index;
       options.replaceChildren();
       var legend = document.createElement("legend");
@@ -300,6 +316,12 @@
         var paragraph = document.createElement("p");
         paragraph.textContent = outcome.detail;
         explanation.append(heading, paragraph);
+        if (outcome.reason) {
+          var reason = document.createElement("p");
+          reason.className = "quest-choice-reason";
+          reason.textContent = "Por que sua alternativa foi avaliada assim: " + outcome.reason;
+          explanation.appendChild(reason);
+        }
         if (state.answers.length % 3 === 0 && state.answers.length === state.index + 1) {
           var milestone = document.createElement("p");
           milestone.className = "quest-milestone";
@@ -318,6 +340,13 @@
       }
     }
 
+    hintButton.addEventListener("click",function() {
+      if (state.answers.length > state.index || state.index >= QUESTIONS.length) return;
+      var open = hintButton.getAttribute("aria-expanded") !== "true";
+      hintButton.setAttribute("aria-expanded", String(open));
+      hintButton.textContent = open ? "Ocultar dica" : "Ver uma dica";
+      hintText.hidden = !open;
+    });
     check.addEventListener("click",function(){
       if (state.index >= QUESTIONS.length || state.answers.length !== state.index) return;
       var selected = options.querySelector('input[name="quest-choice"]:checked');
