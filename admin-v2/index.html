@@ -32,6 +32,11 @@ body.admin-dashboard-open .admin-hub-panels{overflow:visible!important;min-heigh
 body.admin-dashboard-open .admin-hub-panel{min-height:0!important}
 body.admin-dashboard-open .admin-hub-sidebar{overflow:visible!important;min-height:100dvh!important}
 body.admin-dashboard-open .admin-hub-sidebar nav{overflow:visible!important}
+/* Atalhos editoriais ativos no Admin V2. */
+.admin-v2-extra-nav{display:grid;gap:6px;margin-top:14px;padding-top:14px;border-top:1px solid #312820}
+.admin-v2-extra-nav a{display:grid;grid-template-columns:25px minmax(0,1fr);align-items:center;gap:10px;width:100%;min-height:45px;padding:10px 12px;border:1px solid transparent;background:transparent;color:#b8a995;text-decoration:none;text-align:left;font:600 11px "IBM Plex Mono",monospace;letter-spacing:.05em}
+.admin-v2-extra-nav a:hover,.admin-v2-extra-nav a:focus-visible{border-color:#4f2422;background:#21100f;color:#eee5d7}
+.admin-v2-extra-nav a:focus-visible{outline:2px solid #d5aa73;outline-offset:2px}
 .admin-v2-registrations{margin-top:22px}
 .admin-v2-registrations h2{font:700 24px "Cormorant Garamond",serif;color:#eee5d7}
 .admin-v2-registrations p{color:#a79b8c;font:12px/1.7 "IBM Plex Mono",monospace}
@@ -107,6 +112,14 @@ if(params.get("section")==="especiais"){
  catch(editorError){alert(editorError.message);}
 }
 if(hub){
+ var nav=hub.querySelector(".admin-hub-sidebar nav");
+ if(nav){
+   var extras=document.createElement("div");
+   extras.className="admin-v2-extra-nav";
+   extras.setAttribute("aria-label","Ferramentas editoriais");
+   extras.innerHTML='<a href="./editorial/"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span>Estúdio de livros</span></a><a href="./campanhas.html"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span>Campanhas temáticas</span></a>';
+   nav.appendChild(extras);
+ }
  // Entradas experimentais permanecem fora do menu até a liberação editorial.
  // As páginas e os dados existentes não são removidos por esta simplificação.
  var overview=hub.querySelector('[data-admin-hub-panel="overview"]');if(overview){overview.appendChild(metrics);updateRegistrations();}
