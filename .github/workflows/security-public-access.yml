@@ -9,6 +9,9 @@ on:
       - 'js/public-narration.js'
       - 'lite-preview/lite.js'
       - 'tests/security-public-access.test.cjs'
+      - 'admin-v2/js/auth.js'
+      - 'tests/admin-auth-guards.test.cjs'
+      - 'tests/live-security-smoke.mjs'
       - 'tests/test_static_security.py'
       - '.github/workflows/security-public-access.yml'
 permissions:
@@ -24,5 +27,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: node --test tests/security-public-access.test.cjs
+      - run: node --test tests/security-public-access.test.cjs tests/admin-auth-guards.test.cjs
       - run: python -m unittest discover -s tests -p test_static_security.py
+  production-smoke:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Probar somente leitura e negativas em produção (sem contas nem secrets)
+        run: node --test --test-concurrency=1 tests/live-security-smoke.mjs
