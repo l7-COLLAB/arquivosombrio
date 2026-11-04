@@ -1,0 +1,27 @@
+name: Atlas Criminal — curadoria administrativa
+on:
+  pull_request:
+    paths:
+      - 'admin-v2/atlas.html'
+      - 'admin-v2/css/atlas-admin.css'
+      - 'admin-v2/js/atlas-admin.js'
+      - 'admin-v2/index.html'
+      - 'sql/atlas-admin-curadoria-e-localidades-20261104.sql'
+      - 'tests/atlas-admin.test.cjs'
+      - '.github/workflows/atlas-admin-checks.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'admin-v2/atlas.html'
+      - 'admin-v2/js/atlas-admin.js'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar JavaScript do painel
+        run: node --check admin-v2/js/atlas-admin.js
+      - name: Testar revisão, permissões e integração
+        run: node --test tests/atlas-admin.test.cjs

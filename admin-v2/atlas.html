@@ -1,0 +1,32 @@
+<!doctype html><html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Curadoria do Atlas Criminal | Admin V2</title><link rel="icon" href="../favicon.ico">
+<link rel="stylesheet" href="./css/atlas-admin.css?v=1">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" defer></script><script src="./js/atlas-admin.js?v=1" defer></script>
+</head><body>
+<header><div class="wrap nav"><a class="brand" href="./index.html">ARQUIVO SOMBRIO <span>ADMIN V2</span></a><nav><a href="./index.html">Painel principal</a><a href="../atlas.html" target="_blank" rel="noopener noreferrer">Atlas público</a></nav></div></header>
+<main class="wrap"><div class="hero"><div><p class="eyebrow">CATÁLOGO GEOGRÁFICO / CURADORIA</p><h1>Atlas Criminal</h1><p>Associe os registros a cidades documentadas. Salvar uma proposta não a publica: a revisão é uma segunda etapa.</p></div><div class="hero-stat" id="summary" aria-live="polite">Aguardando acesso</div></div>
+<p id="status" role="status" aria-live="polite">Validando sessão administrativa...</p>
+<div id="restricted" class="restriction" hidden><p>Acesso reservado à administração. Faça login na Central V2 para continuar.</p><a href="./index.html">Voltar à Central V2</a></div>
+<div id="workspace" class="layout" hidden>
+<aside class="sidebar"><div class="section-heading"><h2>Localizações</h2><button type="button" id="refresh">Atualizar</button></div>
+<label for="record-filter">Pesquisar registro ou cidade</label><input type="search" id="record-filter" placeholder="Título, cidade ou país">
+<label for="status-filter">Situação</label><select id="status-filter"><option value="all">Todos os locais</option><option value="published">Ativos no atlas</option><option value="pending">Pendentes de revisão</option><option value="awaiting">Aprovados não exibidos</option><option value="inactive">Desativados</option></select>
+<div id="location-list" class="record-list" aria-live="polite"></div>
+<h2>Casos sem marcador</h2><p class="hint">Os rascunhos podem ser preparados, mas só registros publicados aparecem no atlas público.</p><div id="unmapped-list" class="record-list compact"></div>
+</aside>
+<section class="editor" aria-labelledby="form-title"><div class="section-heading"><div><p class="eyebrow">FICHA GEOGRÁFICA</p><h2 id="form-title">Nova localização</h2></div><button id="new-entry" type="button">Novo cadastro</button></div>
+<form id="location-form" novalidate>
+<div class="grid two"><label for="source-type">Tipo de publicação<select id="source-type" required><option value="dossie">Dossiê</option><option value="garimpo">Garimpo / especial factual</option></select></label><label for="source-id">Registro vinculado<select id="source-id" required><option value="">Selecione um registro</option></select></label></div>
+<p id="original-place" class="original-place">O campo local do artigo aparecerá aqui.</p>
+<div class="grid two"><label for="country">País<input id="country" maxlength="100" required placeholder="Brasil"></label><label for="state-region">Estado / região<input id="state-region" maxlength="100" placeholder="Rio Grande do Sul"></label></div>
+<div class="grid two"><label for="city">Cidade ou município<input id="city" maxlength="120" required placeholder="Ijuí"></label><label for="neighborhood">Bairro (se documentado)<input id="neighborhood" maxlength="120" placeholder="Opcional"></label></div>
+<div class="grid three"><label for="event-year">Ano inicial do acontecimento<input id="event-year" type="number" min="1000" max="2100" step="1" required></label><label for="precision">Precisão geográfica<select id="precision"><option value="city">Cidade (centro aproximado)</option><option value="metro">Região metropolitana</option><option value="region">Região documentada</option></select></label><label for="reference">Base documental<input id="reference" maxlength="600" required placeholder="Artigo, decisão, boletim, fonte..."></label></div>
+<div class="grid coordinates"><label for="latitude">Latitude<input id="latitude" type="number" min="-90" max="90" step="0.000001" required placeholder="-28.3873"></label><label for="longitude">Longitude<input id="longitude" type="number" min="-180" max="180" step="0.000001" required placeholder="-53.9150"></label><div class="coord-actions"><button id="geocode" type="button">Localizar centro da cidade</button><a id="open-map" href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer">Conferir no mapa</a></div></div>
+<div id="geocode-results" hidden><label for="geocode-candidates">Selecione o resultado geográfico correto</label><select id="geocode-candidates"></select><button id="use-geocode" type="button">Usar coordenadas selecionadas</button><p class="hint">Busca manual no Nominatim/OpenStreetMap. Confirme se é o município esperado.</p></div>
+<label for="review-note">Observações para revisão<textarea id="review-note" rows="3" maxlength="2000" placeholder="Justifique a região escolhida e eventuais incertezas."></textarea></label>
+<p class="privacy-note"><strong>Proteção editorial:</strong> marque o centro da cidade ou região, nunca a residência de vítimas, familiares ou testemunhas. O bairro pode ser pesquisável, mas não determina o pino exato.</p>
+<div class="actions"><button id="save-draft" type="submit">Salvar como pendente</button><button id="publish" type="button" disabled>Revisar e ativar no atlas</button><button id="deactivate" type="button" disabled>Desativar marcador</button></div>
+<p class="hint" id="save-note">Primeiro salve como pendente. Depois confirme a localização e conclua a revisão.</p>
+</form></section></div></main><footer><div class="wrap">Arquivo Sombrio · Cartografia editorial sem geolocalização de visitantes · <a href="../atlas.html">Atlas público</a></div></footer>
+</body></html>
