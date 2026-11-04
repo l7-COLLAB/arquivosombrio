@@ -149,6 +149,7 @@ jobs:
           PY
 
       - name: Homologar Atlas publicado e acesso anônimo à API
+        if: ${{ always() && steps.deployment.outcome == 'success' }}
         run: |
           python3 scripts/qa-atlas-production.py --report /tmp/atlas-production-qa.json
       - name: Anexar relatório da homologação do Atlas
