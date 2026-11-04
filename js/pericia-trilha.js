@@ -167,9 +167,13 @@
     try {return validateState(JSON.parse(localStorage.getItem(KEY)));} catch (_) {return validateState(null);}
   }
   function write(state) {
+    var bridge = window.ArquivoPericiaProgresso;
+    if (bridge && bridge.isAccountActive()) {bridge.save("trilha",state);return;}
     try {localStorage.setItem(KEY, JSON.stringify(state));} catch (_) { /* Sem armazenamento: quiz continua funcional. */ }
   }
   function remove() {
+    var bridge = window.ArquivoPericiaProgresso;
+    if (bridge && bridge.isAccountActive()) {bridge.save("trilha",{index:0,answers:[]});return;}
     try {localStorage.removeItem(KEY);} catch (_) {}
   }
   function describeBadges(completed) {
@@ -404,6 +408,17 @@
       });
     });
     render();
+    if (window.ArquivoPericiaProgresso) {
+      window.ArquivoPericiaProgresso.register("trilha",{
+        apply:function(remote) {
+          var normalized=validateState(remote);
+          state=normalized;
+          reviewOpen=false;
+          explanation.hidden=true;
+          render();
+        }
+      });
+    }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
