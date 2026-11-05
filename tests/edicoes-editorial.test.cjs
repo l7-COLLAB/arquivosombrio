@@ -44,6 +44,8 @@ test("V2 esconde cadastros arquivados e mostra versões no capítulo", () => {
   const html = read("admin-v2/editorial/index.html");
   const js = read("admin-v2/editorial/editorial.js");
   assert.match(js,/\.is\("archived_at",null\)/);
+  assert.match(js,/const legacyAlternative = requestedSlug === "miani-nora-versoes-alternativas"/);
+  assert.match(js,/history\.replaceState\(null,"",redirected\.href\)/);
   assert.match(html,/id="version-panel"/);
   assert.match(html,/id="version-compare"/);
   assert.match(html,/id="save-alternative"/);
