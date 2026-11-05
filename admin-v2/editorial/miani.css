@@ -23,3 +23,17 @@ input,select{background:#151316;border-color:#5c4c51;padding:12px 13px;border-ra
 @media(max-width:760px){header{min-height:88px;padding:18px 20px}.brand-name{font-size:28px}main{padding:20px 14px 40px}#editor-intro{padding:22px 20px}.shell{grid-template-columns:1fr;gap:16px}.sidebar{position:static;max-height:300px}.editor{padding:18px}.control-row button{flex:1 1 145px}.eyebrow{gap:10px;font-size:9px}textarea{font-size:17px;padding:22px 18px}#preview{padding:24px 20px}#preview h2{font-size:25px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
 @media print{body{background:#fff}main{padding:0}#preview{background:#fff;color:#000;box-shadow:none;border:0;padding:0}#preview h2{color:#000}}
+
+/* Original approved artwork; logo window selects the horizontal variant. */
+body{background:#141315 url('./assets/miani-moldura.webp') center top/cover fixed no-repeat;isolation:isolate}
+body::before{content:"";position:fixed;inset:0;background:linear-gradient(90deg,#0f0b0dd9,#0f0b0d9e 45%,#0f0b0db8);z-index:-1;pointer-events:none}
+header{background:#100d0ef2;min-height:140px;padding-block:12px}
+.brand-art{display:block;width:315px;height:125px;background-image:url('./assets/miani-identidade.webp');background-size:768px 512px;background-position:-435px -28px;background-repeat:no-repeat}
+#editor-intro{min-height:355px;padding:35px 300px 35px 32px;background:#1c171af5;overflow:hidden}
+#editor-intro::after{content:"";position:absolute;right:14px;top:14px;bottom:14px;width:230px;background:url('./assets/miani-moldura.webp') center/contain no-repeat;pointer-events:none}
+#editor-intro h1{font-size:clamp(28px,3vw,44px)}
+.sidebar,.editor,.fallback{background:#1c191bf5;box-shadow:0 12px 35px #0005}
+#message{display:table;background:#161216f2;border-radius:3px;padding:8px 12px}
+@media(max-width:900px){#editor-intro{padding-right:240px;min-height:320px}#editor-intro::after{width:195px}}
+@media(max-width:600px){header{gap:10px;min-height:112px}.brand-art{width:220px;height:88px;background-size:537.6px 358.4px;background-position:-304.5px -19.6px}header nav{font-size:12px}#editor-intro{padding:22px 20px 240px;min-height:0}#editor-intro::after{top:auto;bottom:12px;left:50%;right:auto;transform:translateX(-50%);height:210px;width:150px}body{background-attachment:scroll}body::before{background:#100c0ed9}}
+@media print{body{background:#fff}body::before,#editor-intro::after{display:none}#message{display:none}}
