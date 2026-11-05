@@ -10,13 +10,14 @@
     node.style.color = isError ? "#efaba2" : "";
   };
   let client, book, chapters = [], current = null, dirty = false, busy = false;
+  let versions = [], selectedVersion = null;
 
   function locked() {
     $("#unauthorized").hidden = false;
     $("#workspace").hidden = true;
   }
   function enableEditor(enabled) {
-    for (const id of ["chapter-title", "chapter-body", "chapter-status", "save", "preview-button", "download"]) {
+    for (const id of ["chapter-title", "chapter-body", "chapter-status", "save", "preview-button", "download", "save-alternative"]) {
       $("#" + id).disabled = !enabled;
     }
   }
@@ -36,7 +37,7 @@
   function renderList() {
     const list = $("#chapter-list");
     list.replaceChildren();
-    $("#count").textContent = chapters.length + " / " + (book?.planned_chapters || "30");
+    $("#count").textContent = chapters.filter(c => sectionLabel(c) !== "Prólogo").length + " / " + (book?.planned_chapters || "30");
     for (const item of chapters) {
       const b = document.createElement("button");
       b.type = "button";
@@ -81,6 +82,8 @@
       enableEditor(true);
       setDirty(false);
       renderList();
+      $("#version-panel").hidden = false;
+      await loadVersions();
       message("Capítulo aberto. Alterações só são gravadas ao clicar em Salvar.");
     } catch (e) {
       message("Não foi possível abrir o capítulo: " + (e.message || e), true);
@@ -116,13 +119,135 @@
       current = {...current,title,body,status:$("#chapter-status").value,updated_at:data[0].updated_at};
       setDirty(false);
       await loadList();
-      message("Capítulo salvo com sucesso. Não foi publicado no site.");
+      await loadVersions();
+      message("Capítulo salvo. A versão anterior foi guardada automaticamente quando houve alteração.");
     } catch (e) {
       setDirty(true);
       message("Falha ao salvar: " + (e.message || e) + " O texto permanece nesta tela.", true);
     } finally {
       busy = false;
       $("#save").disabled = false;
+    }
+  }
+
+  function clearComparison() {
+    selectedVersion = null;
+    $("#version-compare").hidden = true;
+    $("#restore-version").disabled = true;
+    $("#version-description").textContent = "";
+    $("#version-previous").value = "";
+    $("#version-current").value = "";
+  }
+  async function loadVersions() {
+    clearComparison();
+    versions = [];
+    const select = $("#version-select");
+    select.replaceChildren();
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Nenhuma versão anterior";
+    select.append(placeholder);
+    select.disabled = true;
+    $("#compare-version").disabled = true;
+    if (!current) return;
+    const {data,error} = await client.from("editorial_chapter_versions")
+      .select("id,version_label,source_kind,created_at")
+      .eq("chapter_id",current.id).order("created_at",{ascending:false});
+    if (error) throw error;
+    versions = data || [];
+    for (const v of versions) {
+      const option = document.createElement("option");
+      option.value = v.id;
+      option.textContent = v.version_label + (v.source_kind === "alternativa" ? " · alternativa" : " · anterior");
+      select.append(option);
+    }
+    if (versions.length) {
+      placeholder.textContent = "Escolha uma das " + versions.length + " versões";
+      select.disabled = false;
+    }
+    $("#compare-version").disabled = !versions.length;
+  }
+  async function compareVersion() {
+    if (!current || busy) return;
+    const id = $("#version-select").value;
+    if (!id) {message("Selecione uma versão para comparar.",true);return;}
+    busy = true;
+    $("#compare-version").disabled = true;
+    try {
+      const {data,error} = await client.from("editorial_chapter_versions")
+        .select("id,chapter_id,version_label,title,body,status,source_kind,created_at")
+        .eq("id",id).eq("chapter_id",current.id).single();
+      if (error) throw error;
+      selectedVersion = data;
+      $("#version-current").value = $("#chapter-body").value;
+      $("#version-previous").value = data.body;
+      $("#version-description").textContent = data.version_label + " · " +
+        (data.source_kind === "alternativa" ? "Redação alternativa" : "Redação anterior") +
+        " · " + new Date(data.created_at).toLocaleString("pt-BR");
+      $("#version-compare").hidden = false;
+      $("#restore-version").disabled = false;
+      message("Comparação aberta. Os dois textos permanecem privados e nenhum foi alterado.");
+    } catch (e) {
+      message("Falha ao consultar a versão: "+(e.message||e),true);
+    } finally {
+      busy = false;
+      $("#compare-version").disabled = false;
+    }
+  }
+  async function saveAlternative() {
+    if (!current || busy) return;
+    const title = $("#chapter-title").value.trim();
+    if (!title) {message("Informe o título do capítulo antes de guardar a alternativa.",true);return;}
+    const body = $("#chapter-body").value;
+    if (body.length > 600000) {message("O texto excedeu o limite do editor.",true);return;}
+    const versionLabel = $("#version-label").value.trim() || "Alternativa manual · " + new Date().toLocaleString("pt-BR");
+    if (versionLabel.length > 180) {message("O nome da versão deve ter até 180 caracteres.",true);return;}
+    busy = true;
+    $("#save-alternative").disabled = true;
+    try {
+      const {error} = await client.from("editorial_chapter_versions").insert({
+        chapter_id:current.id, version_label:versionLabel, title,
+        body, status:$("#chapter-status").value, source_kind:"alternativa"
+      });
+      if (error) throw error;
+      $("#version-label").value = "";
+      await loadVersions();
+      message("Versão alternativa preservada. O capítulo principal não foi substituído.");
+    } catch(e) {
+      message("Falha ao guardar alternativa: "+(e.message||e)+" O texto continua no editor.",true);
+    } finally {
+      busy = false;
+      $("#save-alternative").disabled = false;
+    }
+  }
+  async function restoreVersion() {
+    if (!current || !selectedVersion || busy) return;
+    if (!window.confirm("Tornar esta versão o texto vigente? O texto atual será preservado automaticamente no histórico. Alterações NÃO SALVAS no editor serão descartadas.")) return;
+    const restored = selectedVersion;
+    busy = true;
+    $("#restore-version").disabled = true;
+    try {
+      const now = new Date().toISOString();
+      const {data,error} = await client.from("editorial_chapters").update({
+        title:restored.title, body:restored.body, status:restored.status, updated_at:now
+      }).eq("id",current.id).eq("book_id",book.id).eq("updated_at",current.updated_at)
+        .select("id,updated_at");
+      if (error) throw error;
+      if (!data || data.length !== 1) throw Error("O capítulo mudou em outra sessão. Nenhum texto foi substituído.");
+      current = {...current,title:restored.title,body:restored.body,
+        status:restored.status,updated_at:data[0].updated_at};
+      $("#chapter-title").value = restored.title;
+      $("#chapter-body").value = restored.body;
+      $("#chapter-status").value = restored.status;
+      setDirty(false);
+      await loadList();
+      await loadVersions();
+      message("Versão restaurada como vigente. O texto anterior foi preservado no histórico.");
+    } catch(e) {
+      message("Falha ao restaurar versão: "+(e.message||e),true);
+    } finally {
+      busy = false;
+      $("#restore-version").disabled = !selectedVersion;
     }
   }
   function preview() {
@@ -176,7 +301,7 @@
       const {data:isAdmin,error:roleError} = await client.rpc("is_arquivo_sombrio_admin");
       if (roleError || isAdmin !== true) {locked();message("Autorização administrativa não confirmada.",true);return;}
       const {data:books,error:bookError} = await client.from("editorial_books")
-        .select("id,slug,title,subtitle,planned_chapters").order("created_at", {ascending:true});
+        .select("id,slug,title,subtitle,planned_chapters").is("archived_at",null).order("created_at", {ascending:true});
       if (bookError || !books?.length) throw bookError || Error("Nenhum livro cadastrado.");
       const requestedSlug = new URL(window.location.href).searchParams.get("book");
       book = books.find(item => item.slug === (requestedSlug || "oficio-do-espanto"));
@@ -221,6 +346,11 @@
     $("#save").addEventListener("click",save);
     $("#preview-button").addEventListener("click",preview);
     $("#download").addEventListener("click",download);
+    $("#save-alternative").addEventListener("click",saveAlternative);
+    $("#compare-version").addEventListener("click",compareVersion);
+    $("#restore-version").addEventListener("click",restoreVersion);
+    $("#close-version").addEventListener("click",clearComparison);
+    $("#version-select").addEventListener("change",clearComparison);
     $("#close-preview").addEventListener("click",closePreview);
     $("#print").addEventListener("click",() => window.print());
     window.addEventListener("beforeunload",e => {
