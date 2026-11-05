@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <link rel="icon" href="../../favicon.ico">
-<title>Estúdio Editorial · Arquivo Sombrio Edições</title>
+<title>Estúdio Editorial · MIANI Editora</title>
 <style>
 :root{color-scheme:dark;--bg:#10100f;--panel:#1c1b19;--border:#514535;--ink:#eee5d7;--dim:#bcb0a1;--accent:#b9966d}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
@@ -40,12 +40,12 @@ select{max-width:220px}.editor-header{display:flex;align-items:start;justify-con
 @media print{body{background:white;color:black}header,#editor-intro,.sidebar,.editor,.control-row,#message,.help{display:none!important}main{padding:0;max-width:none}#preview-section{display:block!important}#preview{box-shadow:none;background:white;border:0;min-height:0;max-width:none;margin:0;padding:0;break-after:auto}#preview p{orphans:3;widows:3}#preview h2{break-after:avoid}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" defer></script>
-<script src="./editorial.js?v=1" defer></script>
+<script src="./editorial.js?v=2" defer></script>
 </head>
 <body>
-<header><strong>ARQUIVO SOMBRIO · EDIÇÕES</strong><nav><a href="../index.html">Painel principal</a></nav></header>
+<header><strong>MIANI EDITORA</strong><nav><a href="../index.html">Painel principal</a></nav></header>
 <main>
-<section id="editor-intro"><p class="small muted">ESTÚDIO EDITORIAL PRIVADO</p><h1>O Ofício do Espanto</h1><p class="muted">30 capítulos · Escrever, revisar e visualizar. O texto não é publicado automaticamente.</p></section>
+<section id="editor-intro"><p class="small muted">ESTÚDIO EDITORIAL PRIVADO</p><h1 id="book-title">Estúdio de livros</h1><p class="muted" id="book-description">Escrever, revisar e visualizar. O texto não é publicado automaticamente.</p><div id="book-picker" hidden><label for="book-select">Livro</label><select id="book-select" style="max-width:100%;width:min(100%,520px)"></select></div></section>
 <p id="message" role="status" aria-live="polite">Validando acesso administrativo...</p>
 <div id="unauthorized" class="fallback" hidden><h2>Área restrita</h2><p>Entre no painel principal com sua conta administrativa para acessar os manuscritos.</p><a href="../index.html">Abrir Central Administrativa</a></div>
 <div class="shell" id="workspace" hidden>
