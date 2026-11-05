@@ -39,3 +39,31 @@ test("Esquema de livros protege todos os rascunhos por RLS", () => {
   assert.match(sql,/on conflict\(book_id,chapter_number\) do nothing/);
 });
 
+
+test("V2 esconde cadastros arquivados e mostra versões no capítulo", () => {
+  const html = read("admin-v2/editorial/index.html");
+  const js = read("admin-v2/editorial/editorial.js");
+  assert.match(js,/\.is\("archived_at",null\)/);
+  assert.match(html,/id="version-panel"/);
+  assert.match(html,/id="version-compare"/);
+  assert.match(html,/id="save-alternative"/);
+  assert.match(html,/id="restore-version"/);
+  assert.match(js,/from\("editorial_chapter_versions"\)/);
+  assert.match(js,/\.eq\("chapter_id",current\.id\)/);
+  assert.match(js,/\.eq\("updated_at",current\.updated_at\)/);
+  assert.match(js,/window\.confirm\("Tornar esta versão/);
+  assert.match(js,/\.textContent = data\.version_label/);
+});
+
+test("Histórico preserva versões por trigger e RLS administrativa", () => {
+  const sql = read("supabase/migrations/20261105153000_miani_editorial_chapter_versions.sql");
+  assert.match(sql,/CREATE TABLE IF NOT EXISTS public\.editorial_chapter_versions/);
+  assert.match(sql,/ALTER TABLE public\.editorial_chapter_versions ENABLE ROW LEVEL SECURITY/);
+  assert.match(sql,/REVOKE ALL ON public\.editorial_chapter_versions FROM public, anon, authenticated/);
+  assert.match(sql,/CREATE POLICY editorial_chapter_versions_admin_select/);
+  assert.match(sql,/public\.is_arquivo_sombrio_admin\(\)/);
+  assert.match(sql,/SECURITY INVOKER/);
+  assert.match(sql,/BEFORE UPDATE OF title,body,status/);
+  assert.match(sql,/ON CONFLICT \(source_chapter_id\) DO NOTHING/);
+  assert.match(sql,/archived_at=COALESCE\(archived_at,now\(\)\)/);
+});
