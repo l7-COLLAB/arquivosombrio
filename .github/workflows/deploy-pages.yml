@@ -39,6 +39,9 @@ jobs:
           test -f _site/admin-v2/js/atlas-admin.js
           node --check _site/js/atlas-criminal.js
           node --check _site/admin-v2/js/atlas-admin.js
+          node --check _site/admin-v2/js/novels-publication-guard.js
+          node --check _site/admin-v2/js/novels-admin.js
+          node --test tests/novels-publication-guard.mjs
           python3 scripts/build-seo-pages.py _site
           python3 scripts/build-novels-seo.py _site
           python3 scripts/audit-seo-build.py _site
