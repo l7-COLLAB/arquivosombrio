@@ -304,9 +304,16 @@
         .select("id,slug,title,subtitle,planned_chapters").is("archived_at",null).order("created_at", {ascending:true});
       if (bookError || !books?.length) throw bookError || Error("Nenhum livro cadastrado.");
       const requestedSlug = new URL(window.location.href).searchParams.get("book");
-      book = books.find(item => item.slug === (requestedSlug || "oficio-do-espanto"));
-      if (!book && requestedSlug) throw Error("Livro não encontrado.");
+      const legacyAlternative = requestedSlug === "miani-nora-versoes-alternativas";
+      const selectedSlug = legacyAlternative ? "miani-romance-nora-whitmore" : requestedSlug;
+      book = books.find(item => item.slug === (selectedSlug || "oficio-do-espanto"));
+      if (!book && selectedSlug) throw Error("Livro não encontrado.");
       book ||= books[0];
+      if (legacyAlternative) {
+        const redirected = new URL(window.location.href);
+        redirected.searchParams.set("book",book.slug);
+        window.history.replaceState(null,"",redirected.href);
+      }
       $("#book-title").textContent = book.title;
       $("#book-description").textContent = book.subtitle || "Escrever, revisar e visualizar. Sem publicação automática.";
       const select = $("#book-select");
@@ -333,7 +340,7 @@
       $("#workspace").hidden = false;
       $("#unauthorized").hidden = true;
       await loadList();
-      if (chapters.length) await openChapter(chapters[0].id);
+      if (chapters.length) await openChapter((legacyAlternative && chapters.find(item => item.chapter_number === 10)?.id) || chapters[0].id);
       message("Estúdio pronto. Os rascunhos são privados e não serão publicados automaticamente.");
     } catch(e) {
       locked();
