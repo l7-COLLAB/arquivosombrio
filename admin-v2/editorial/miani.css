@@ -37,3 +37,17 @@ header{background:#100d0ef2;min-height:140px;padding-block:12px}
 @media(max-width:900px){#editor-intro{padding-right:240px;min-height:320px}#editor-intro::after{width:195px}}
 @media(max-width:600px){header{gap:10px;min-height:112px}.brand-art{width:220px;height:88px;background-size:537.6px 358.4px;background-position:-304.5px -19.6px}header nav{font-size:12px}#editor-intro{padding:22px 20px 240px;min-height:0}#editor-intro::after{top:auto;bottom:12px;left:50%;right:auto;transform:translateX(-50%);height:210px;width:150px}body{background-attachment:scroll}body::before{background:#100c0ed9}}
 @media print{body{background:#fff}body::before,#editor-intro::after{display:none}#message{display:none}}
+
+/* Histórico de versões do manuscrito: leitura e comparação sem sobrescrever texto. */
+.version-panel{margin-top:24px;padding:20px;border-top:1px solid #775963;background:#181518;border-radius:3px}
+.version-panel h3{font:500 23px/1.25 Georgia,serif;margin:0 0 8px}
+.version-heading p{max-width:90ch}
+.version-toolbar,.version-capture{display:flex;gap:12px;align-items:end;margin-top:14px;flex-wrap:wrap}
+.version-toolbar>div,.version-capture>div{flex:1 1 270px}
+.version-toolbar button,.version-capture button{flex:0 0 auto;margin-bottom:0}
+#version-compare{margin-top:20px;padding-top:14px;border-top:1px solid #5c4c51}
+.version-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.version-columns textarea{height:360px;min-height:280px;font-size:15px;line-height:1.65;padding:16px;resize:vertical;background:#f6f0e5;color:#292328}
+#restore-version{border-color:#cc8996}
+@media(max-width:900px){.version-columns{grid-template-columns:1fr}.version-toolbar button,.version-capture button{flex:1 1 160px}}
+@media print{.version-panel{display:none!important}}
