@@ -28,6 +28,11 @@
     if (hasText) return status === "revisao" ? "Em revisão" : "Rascunho";
     return status === "a_importar" ? "A importar" : "Planejado";
   }
+  function sectionLabel(item) {
+    const hasPrologue = chapters[0]?.chapter_number === 1 && /^prólogo(?:\b|$)/i.test(chapters[0].title);
+    if (hasPrologue && item.chapter_number === 1) return "Prólogo";
+    return "Capítulo " + (item.chapter_number - (hasPrologue ? 1 : 0));
+  }
   function renderList() {
     const list = $("#chapter-list");
     list.replaceChildren();
@@ -38,7 +43,7 @@
       b.className = "chapter" + (current?.id === item.id ? " active" : "");
       b.setAttribute("aria-pressed", String(current?.id === item.id));
       const title = document.createElement("b");
-      title.textContent = String(item.chapter_number).padStart(2,"0") + " · " + item.title;
+      title.textContent = sectionLabel(item) === "Prólogo" ? item.title : sectionLabel(item) + " · " + item.title;
       const status = document.createElement("small");
       status.textContent = chapterLabel(item.status, item.hasText);
       b.append(title,status);
@@ -69,7 +74,7 @@
         .eq("id", id).eq("book_id", book.id).single();
       if (error) throw error;
       current = data;
-      $("#selected-chapter").textContent = "Capítulo " + data.chapter_number;
+      $("#selected-chapter").textContent = sectionLabel(data);
       $("#chapter-title").value = data.title;
       $("#chapter-body").value = data.body || "";
       $("#chapter-status").value = data.status;
@@ -122,7 +127,7 @@
   }
   function preview() {
     if (!current) return;
-    $("#preview-title").textContent = "Capítulo " + current.chapter_number + " — " + $("#chapter-title").value.trim();
+    $("#preview-title").textContent = sectionLabel(current) === "Prólogo" ? $("#chapter-title").value.trim() : sectionLabel(current) + " — " + $("#chapter-title").value.trim();
     const text = $("#preview-text");
     text.replaceChildren();
     const paragraphs = $("#chapter-body").value.replace(/\r\n/g,"\n").split(/\n\s*\n/);
@@ -149,14 +154,14 @@
   }
   function download() {
     if (!current) return;
-    const text = "O OFÍCIO DO ESPANTO\n" +
-      "Capítulo " + current.chapter_number + " — " + $("#chapter-title").value.trim() +
+    const text = book.title + "\n" +
+      sectionLabel(current) + " — " + $("#chapter-title").value.trim() +
       "\n\n" + $("#chapter-body").value;
     const blob = new Blob([text],{type:"text/plain;charset=utf-8"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "oficio-do-espanto-capitulo-" + String(current.chapter_number).padStart(2,"0") + ".txt";
+    a.download = book.slug + "-" + (sectionLabel(current) === "Prólogo" ? "prologo" : "capitulo-" + sectionLabel(current).replace("Capítulo ", "").padStart(2,"0")) + ".txt";
     document.body.appendChild(a);a.click();a.remove();
     setTimeout(() => URL.revokeObjectURL(url),1000);
   }
@@ -170,11 +175,36 @@
       if(authError || !user || user.app_metadata?.role !== "admin") {locked();message("Acesso reservado a administradores.",true);return;}
       const {data:isAdmin,error:roleError} = await client.rpc("is_arquivo_sombrio_admin");
       if (roleError || isAdmin !== true) {locked();message("Autorização administrativa não confirmada.",true);return;}
-      const {data:bookData,error:bookError} = await client.from("editorial_books")
-        .select("id,title,subtitle,planned_chapters")
-        .eq("slug","oficio-do-espanto").single();
-      if (bookError || !bookData) throw bookError || Error("Livro não encontrado.");
-      book = bookData;
+      const {data:books,error:bookError} = await client.from("editorial_books")
+        .select("id,slug,title,subtitle,planned_chapters").order("created_at", {ascending:true});
+      if (bookError || !books?.length) throw bookError || Error("Nenhum livro cadastrado.");
+      const requestedSlug = new URL(window.location.href).searchParams.get("book");
+      book = books.find(item => item.slug === (requestedSlug || "oficio-do-espanto"));
+      if (!book && requestedSlug) throw Error("Livro não encontrado.");
+      book ||= books[0];
+      $("#book-title").textContent = book.title;
+      $("#book-description").textContent = book.subtitle || "Escrever, revisar e visualizar. Sem publicação automática.";
+      const select = $("#book-select");
+      select.replaceChildren();
+      for (const item of books) {
+        const option = document.createElement("option");
+        option.value = item.slug;
+        option.textContent = item.title;
+        select.append(option);
+      }
+      select.value = book.slug;
+      select.addEventListener("change", () => {
+        if (busy) {select.value = book.slug;return;}
+        if (dirty && !window.confirm("Há alterações não salvas. Descartá-las para abrir outro livro?")) {
+          select.value = book.slug;
+          return;
+        }
+        setDirty(false);
+        const url = new URL(window.location.href);
+        url.searchParams.set("book",select.value);
+        window.location.assign(url.href);
+      });
+      $("#book-picker").hidden = false;
       $("#workspace").hidden = false;
       $("#unauthorized").hidden = true;
       await loadList();

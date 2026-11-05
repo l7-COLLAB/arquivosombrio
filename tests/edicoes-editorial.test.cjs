@@ -10,8 +10,8 @@ test("Editora em desenvolvimento não possui entrada pública", () => {
   assert.equal(fs.existsSync(path.join(root,"edicoes","index.html")),false);
   const home = read("index.html");
   const studio = read("admin-v2/editorial/index.html");
-  assert.doesNotMatch(home,/href=["'](?:\\/)?edicoes\\/["']/);
-  assert.doesNotMatch(studio,/href=["']\\.\\.\\/\\.\\.\\/edicoes\\/["']/);
+  assert.doesNotMatch(home,/href=["'](?:\/)?edicoes\/["']/);
+  assert.doesNotMatch(studio,/href=["']\\.\\.\/\\.\\.\/edicoes\/["']/);
   assert.match(studio,/Estúdio Editorial/);
 });
 
@@ -38,3 +38,4 @@ test("Esquema de livros protege todos os rascunhos por RLS", () => {
   assert.match(sql,/public\.is_arquivo_sombrio_admin\(\)/);
   assert.match(sql,/on conflict\(book_id,chapter_number\) do nothing/);
 });
+
