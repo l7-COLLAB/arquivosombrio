@@ -1,0 +1,34 @@
+name: Novels Editorial Release Guard
+on:
+  pull_request:
+    paths:
+      - 'admin-v2/js/novels-admin.js'
+      - 'admin-v2/js/novels-publication-guard.js'
+      - 'admin-v2/novels.html'
+      - 'tests/novels-publication-guard.mjs'
+      - '.github/workflows/novels-editorial-checks.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate admin scripts and editorial guard
+        run: |
+          node --check admin-v2/js/novels-publication-guard.js
+          node --check admin-v2/js/novels-admin.js
+          node --test tests/novels-publication-guard.mjs
+      - name: Ensure guard is loaded before the Admin V2 novel editor
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path("admin-v2/novels.html").read_text(encoding="utf-8")
+          assert "novels-publication-guard.js" in html
+          assert html.index("novels-publication-guard.js") < html.index("novels-admin.js")
+          js = Path("admin-v2/js/novels-admin.js").read_text(encoding="utf-8")
+          assert "publicationGuard.checkChapter(row)" in js
+          assert "publicationGuard.checkBook(" in js
+          print("Editorial gate wired into both publication forms.")
+          PY
