@@ -39,35 +39,36 @@ select{max-width:220px}.editor-header{display:flex;align-items:start;justify-con
 @page{size:160mm 230mm;margin:18mm}
 @media print{body{background:white;color:black}header,#editor-intro,.sidebar,.editor,.control-row,#message,.help{display:none!important}main{padding:0;max-width:none}#preview-section{display:block!important}#preview{box-shadow:none;background:white;border:0;min-height:0;max-width:none;margin:0;padding:0;break-after:auto}#preview p{orphans:3;widows:3}#preview h2{break-after:avoid}}
 </style>
+<link rel="stylesheet" href="./miani.css?v=20261105-1">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" defer></script>
 <script src="./editorial.js?v=2" defer></script>
 </head>
 <body>
-<header><strong>MIANI EDITORA</strong><nav><a href="../index.html">Painel principal</a></nav></header>
+<header><a class="miani-brand" href="./" aria-label="MIANI Editora, Estúdio de livros"><span class="brand-name">MIANI</span><span class="brand-caption">E D I T O R A</span></a><span class="header-caption">Casa de histórias · Estúdio de livros</span><nav aria-label="Navegação do estúdio"><a href="../index.html">← Painel principal</a></nav></header>
 <main>
-<section id="editor-intro"><p class="small muted">ESTÚDIO EDITORIAL PRIVADO</p><h1 id="book-title">Estúdio de livros</h1><p class="muted" id="book-description">Escrever, revisar e visualizar. O texto não é publicado automaticamente.</p><div id="book-picker" hidden><label for="book-select">Livro</label><select id="book-select" style="max-width:100%;width:min(100%,520px)"></select></div></section>
+<section id="editor-intro"><p class="eyebrow">MIANI · ESTÚDIO EDITORIAL <span class="private-badge">Acesso privado</span></p><h1 id="book-title">Estúdio de livros</h1><p class="muted" id="book-description">Escrever, revisar e visualizar. O texto não é publicado automaticamente.</p><div id="book-picker" hidden><label for="book-select">Manuscrito em trabalho</label><select id="book-select" style="max-width:100%;width:min(100%,520px)"></select></div></section>
 <p id="message" role="status" aria-live="polite">Validando acesso administrativo...</p>
 <div id="unauthorized" class="fallback" hidden><h2>Área restrita</h2><p>Entre no painel principal com sua conta administrativa para acessar os manuscritos.</p><a href="../index.html">Abrir Central Administrativa</a></div>
 <div class="shell" id="workspace" hidden>
 <aside class="sidebar" aria-labelledby="chapters-heading">
 <div class="editor-header"><h2 id="chapters-heading">Capítulos</h2><span id="count" class="status"></span></div>
-<p class="small muted">Selecione um capítulo para editar.</p>
+<p class="small muted">O percurso do seu manuscrito.</p>
 <div id="chapter-list" class="list"></div>
 </aside>
 <section class="editor" aria-label="Editor do capítulo">
 <div class="editor-header"><h2 id="selected-chapter">Selecione um capítulo</h2><span class="status" id="save-state"></span></div>
-<label for="chapter-title">Título</label><input id="chapter-title" maxlength="250" disabled>
-<label for="chapter-status">Etapa editorial</label><select id="chapter-status" disabled>
+<div class="manuscript-fields"><div><label for="chapter-title">Título do capítulo</label><input id="chapter-title" maxlength="250" disabled>
+</div><div><label for="chapter-status">Etapa editorial</label><select id="chapter-status" disabled>
 <option value="planejado">Planejado</option><option value="a_importar">Texto a importar</option>
 <option value="rascunho">Rascunho</option><option value="revisao">Em revisão</option>
-</select>
+</select></div></div>
 <label for="chapter-body">Texto do capítulo</label><textarea id="chapter-body" spellcheck="true" placeholder="Cole aqui o manuscrito do capítulo ou comece a escrever." disabled></textarea>
 <div class="control-row">
 <button id="save" type="button" class="action primary" disabled>Salvar capítulo</button>
 <button id="preview-button" type="button" class="action" disabled>Prévia de página</button>
 <button id="download" type="button" class="action" disabled>Exportar TXT</button>
 </div>
-<p class="small muted help">O texto é guardado de forma privada no Supabase após clicar em Salvar. Sem publicação automática. Exporte uma cópia ao terminar uma sessão importante.</p>
+<p class="small muted help">Seu manuscrito permanece privado. Clique em Salvar capítulo para guardar as alterações. Exporte uma cópia ao terminar uma sessão importante.</p>
 </section>
 </div>
 <section id="preview-section" hidden aria-label="Prévia do capítulo">
