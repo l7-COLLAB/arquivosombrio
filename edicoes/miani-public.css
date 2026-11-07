@@ -2,26 +2,26 @@
 :root{color-scheme:dark;--background:#141113;--panel:#1d181b;--paper:#f2e8d9;--muted:#c7b9b1;--line:#70515c;--red:#a92f43;--red-light:#d77c90}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;color:var(--paper);background:linear-gradient(90deg,#110f11f0,#110f11e4),url("../admin-v2/editorial/assets/miani-moldura.webp") center top/cover fixed no-repeat,#141113;font:16px/1.75 system-ui,-apple-system,"Segoe UI",sans-serif}
+body{margin:0;color:var(--paper);background:linear-gradient(90deg,#110f11f0,#110f11e4),url("./assets/miani-moldura.webp") center top/cover fixed no-repeat,#141113;font:16px/1.75 system-ui,-apple-system,"Segoe UI",sans-serif}
 a{color:inherit}a:hover{text-decoration-color:var(--red-light)}:focus-visible{outline:3px solid #f5becc;outline-offset:4px}
 .skip{position:absolute;top:-80px;left:12px;background:var(--paper);color:#141113;padding:9px 16px;z-index:10}.skip:focus{top:12px}
 .masthead{background:#0e0c0eea;border-bottom:1px solid #704950}
 .topline{max-width:1140px;margin:auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #ffffff19;color:#d8c8c1;letter-spacing:.12em;font-size:11px}
 .topline a{text-decoration:none;letter-spacing:.02em;font-size:13px}.topline a:hover{color:#f3b9c5}
 .masthead-inner{max-width:1140px;margin:auto;min-height:157px;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-.miani-brand{display:inline-block;flex:0 0 auto;text-decoration:none}.brand-art{display:block;width:315px;height:125px;background-image:url("../admin-v2/editorial/assets/miani-identidade.webp");background-size:768px 512px;background-position:-435px -28px;background-repeat:no-repeat}
+.miani-brand{display:inline-block;flex:0 0 auto;text-decoration:none}.brand-art{display:block;width:315px;height:125px;background-image:url("./assets/miani-identidade.webp");background-size:768px 512px;background-position:-435px -28px;background-repeat:no-repeat}
 .masthead-note{color:#c2aeb0;font:italic 17px/1.5 Georgia,serif;text-align:right}
 main{max-width:1140px;margin:auto;padding:48px 24px 85px}
 .introduction{display:grid;grid-template-columns:minmax(0,1fr) 260px;align-items:center;gap:35px;background:#1d171bf4;border:1px solid #5b4048;border-left:4px solid var(--red);padding:29px 36px;margin-bottom:46px}
 .introduction h1{font:500 clamp(2.6rem,5vw,4.2rem)/1.1 Georgia,serif;letter-spacing:.05em;margin:8px 0 20px}
 .introduction h1 em{font-weight:400;letter-spacing:0;color:#f2d9df}
 .introduction p{max-width:66ch;color:var(--muted);margin:0}
-.identity-illustration{height:236px;width:100%;background:url("../admin-v2/editorial/assets/miani-moldura.webp") center/contain no-repeat;filter:drop-shadow(0 9px 15px #0009)}
+.identity-illustration{height:236px;width:100%;background:url("./assets/miani-moldura.webp") center/contain no-repeat;filter:drop-shadow(0 9px 15px #0009)}
 .eyebrow{display:block;color:#dc9ba9;font:600 11px/1.5 system-ui;letter-spacing:.2em}
 .featured-book{display:grid;grid-template-columns:minmax(265px,.83fr) minmax(0,1.17fr);gap:clamp(24px,5vw,68px);align-items:center;scroll-margin-top:22px}
-.book-identity{position:relative;isolation:isolate;min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding:26px 20px 30px;background:linear-gradient(155deg,#20181ceb,#120f12f2 70%),url("../admin-v2/editorial/assets/miani-moldura.webp") center/cover;border:1px solid #916574;box-shadow:9px 14px 35px #0008}
+.book-identity{position:relative;isolation:isolate;min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding:26px 20px 30px;background:linear-gradient(155deg,#20181ceb,#120f12f2 70%),url("./assets/miani-moldura.webp") center/cover;border:1px solid #916574;box-shadow:9px 14px 35px #0008}
 .book-identity::before{content:"";position:absolute;inset:14px;border:1px solid #936a75a6;pointer-events:none}
-.book-identity::after{content:"";position:absolute;z-index:-1;inset:52px 25px;background:url("../admin-v2/editorial/assets/miani-moldura.webp") center/contain no-repeat;opacity:.42;pointer-events:none}
+.book-identity::after{content:"";position:absolute;z-index:-1;inset:52px 25px;background:url("./assets/miani-moldura.webp") center/contain no-repeat;opacity:.42;pointer-events:none}
 .book-visual-caption,.book-visual-footer{font-size:10px;letter-spacing:.15em;color:#d3bac0}
 .book-visual-title{display:grid;gap:28px;width:100%;padding:24px 0}
 .book-visual-title small{font-size:11px;letter-spacing:.23em;color:#e6c6ca}
