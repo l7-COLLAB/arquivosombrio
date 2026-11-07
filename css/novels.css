@@ -350,3 +350,9 @@ body.novels:has(#novel-grid) .novel-banner{position:relative;margin:0;border:1px
  .novel-chapter-alert{align-items:flex-start;flex-direction:column}
  .novel-personal-filters button{flex:1 1 125px}
 }
+
+/* Livro impresso da MIANI, apresentado separadamente das novels do acervo. */
+.novels .miani-novel-promo{display:flex;gap:12px 24px;align-items:center;flex-wrap:wrap;padding:15px 19px;margin:18px 0 28px;background:#241b20;border-left:3px solid #bd536c;border-top:1px solid #775361;border-right:1px solid #775361;border-bottom:1px solid #775361;color:#ece0db}
+.novels .miani-novel-promo strong{font:700 11px/1.4 system-ui,sans-serif;letter-spacing:.13em;color:#e9abb9}
+.novels .miani-novel-promo span{font-size:14px;flex:1 1 250px}
+.novels .miani-novel-promo a{font-weight:700;font-size:13px;color:#ffe3ec;text-underline-offset:4px}
