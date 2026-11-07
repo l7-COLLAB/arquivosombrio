@@ -6,13 +6,25 @@ const path = require("node:path");
 const root = path.join(__dirname,"..");
 const read = p => fs.readFileSync(path.join(root,p),"utf8");
 
-test("Editora em desenvolvimento não possui entrada pública", () => {
-  assert.equal(fs.existsSync(path.join(root,"edicoes","index.html")),false);
+test("MIANI possui vitrine pública e protege os manuscritos", () => {
+  const page = read("edicoes/index.html");
+  const css = read("edicoes/miani-public.css");
   const home = read("index.html");
+  const novels = read("novels.html");
   const studio = read("admin-v2/editorial/index.html");
-  assert.doesNotMatch(home,/href=["'](?:\/)?edicoes\/["']/);
-  assert.doesNotMatch(studio,/href=["']\\.\\.\/\\.\\.\/edicoes\/["']/);
-  assert.match(studio,/Estúdio Editorial/);
+  assert.ok(home.includes('href="edicoes/"'));
+  assert.ok(novels.includes('href="edicoes/"'));
+  assert.ok(page.includes("Os Dias de Outubro"));
+  assert.ok(page.includes("L.R. Muller"));
+  assert.ok(page.includes("https://loja.uiclap.com/titulo/ua220883/"));
+  assert.ok(page.includes('content="index,follow'));
+  assert.ok(!page.includes("editorial_chapters"));
+  assert.ok(!page.includes("supabase-js"));
+  assert.ok(css.includes("miani-identidade.webp"));
+  assert.ok(css.includes("miani-moldura.webp"));
+  assert.ok(studio.includes("noindex,nofollow"));
+  assert.ok(!studio.includes('href="../../edicoes/"'));
+  assert.ok(read("sitemap.xml").includes("https://arquivosombrio.net.br/edicoes/"));
 });
 
 test("Estúdio exige administrador e não contém publicação automática", () => {
