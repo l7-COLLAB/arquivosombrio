@@ -382,7 +382,7 @@
 /* MIANI Editora: acesso público após a publicação do primeiro livro. */
 .home-page .nav-menu .miani-public-nav-link{color:#e9bcc5!important;border-bottom:1px solid #9a5665;font-weight:700}
 .home-page .miani-home-feature{display:grid;grid-template-columns:170px minmax(0,1fr);gap:20px;align-items:center;padding:22px 26px;margin:15px 0 32px;border:1px solid #80505d;border-left:4px solid #ae3b51;background:linear-gradient(110deg,#23181d,#110f10);color:#f1e7df}
-.home-page .miani-home-feature-art{width:166px;height:145px;background:url('../admin-v2/editorial/assets/miani-identidade.webp') no-repeat;background-size:400px 267px;background-position:-227px -15px}
+.home-page .miani-home-feature-art{width:166px;height:145px;background:url('../edicoes/assets/miani-identidade.webp') no-repeat;background-size:400px 267px;background-position:-227px -15px}
 .home-page .miani-home-feature-copy p{color:#d998a7;font-size:11px;font-weight:700;letter-spacing:.15em;margin:0 0 6px}
 .home-page .miani-home-feature-copy h3{font:500 clamp(1.65rem,3vw,2.5rem)/1.15 Georgia,serif;letter-spacing:-.02em;margin:0 0 6px}
 .home-page .miani-home-feature-copy span{display:block;color:#ddc5c6;font-size:13px;margin-bottom:16px}
