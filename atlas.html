@@ -39,14 +39,6 @@
 </section>
 <section class="atlas-frame" aria-label="Explorador geográfico">
 <div class="panel-head"><div><span class="panel-number">01 / 02</span><h2>Escolha um lugar</h2></div><p>Explore as localidades já catalogadas ou amplie a busca para outras cidades.</p></div>
-<form id="atlas-filters" class="filters" role="search">
-<label>País<select id="atlas-country"><option value="">Todos os países</option></select></label>
-<label>Estado / região<select id="atlas-region"><option value="">Todas as regiões</option></select></label>
-<label>Cidade<select id="atlas-city"><option value="">Todas as cidades</option></select></label>
-<label>Bairro<select id="atlas-neighborhood"><option value="">Todos os bairros</option></select></label>
-<label class="searchbox">Buscar no acervo<input id="atlas-search" type="search" placeholder="Cidade, bairro ou caso" autocomplete="off"></label>
-<button id="atlas-clear" class="clear" type="reset">Limpar filtros</button>
-</form>
 <form id="atlas-discovery" class="discovery" role="search" aria-label="Pesquisar referências por local">
 <label for="atlas-place">Pesquisar casos por local</label>
 <div class="discovery-controls">
@@ -54,6 +46,14 @@
 <button type="submit">Buscar casos no local</button>
 </div>
 <p id="atlas-discovery-hint">Digite cidade, bairro ou região. Use vírgulas para acrescentar a cidade, o estado ou o país e distinguir lugares de mesmo nome. A busca consulta a Wikipédia.</p>
+</form>
+<form id="atlas-filters" class="filters" role="search">
+<label>País<select id="atlas-country"><option value="">Todos os países</option></select></label>
+<label>Estado / região<select id="atlas-region"><option value="">Todas as regiões</option></select></label>
+<label>Cidade<select id="atlas-city"><option value="">Todas as cidades</option></select></label>
+<label>Bairro<select id="atlas-neighborhood"><option value="">Todos os bairros</option></select></label>
+<label class="searchbox">Buscar no acervo<input id="atlas-search" type="search" placeholder="Cidade, bairro ou caso" autocomplete="off"></label>
+<button id="atlas-clear" class="clear" type="reset">Limpar filtros</button>
 </form>
 <div class="map-meta"><div><span class="map-indicator" aria-hidden="true"></span><strong>Mapa de ocorrências documentadas</strong></div><label class="viewport-toggle"><input id="atlas-viewport" type="checkbox" checked> Resultados na área visível</label></div>
 <div id="atlas-map" role="application" aria-label="Mapa interativo de localidades documentadas do Arquivo Sombrio"><div class="map-placeholder">Carregando o mapa...</div></div>
