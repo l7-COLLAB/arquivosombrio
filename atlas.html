@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Explore o Atlas Criminal do Arquivo Sombrio: navegue pelo mapa, pesquise casos reais por país, estado, cidade e bairro e consulte os acontecimentos em ordem cronológica.">
 <meta name="robots" content="index,follow,max-image-preview:large">
-<meta name="theme-color" content="#0a111b">
+<meta name="theme-color" content="#171715">
 <link rel="canonical" href="https://arquivosombrio.net.br/atlas.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Arquivo Sombrio">
@@ -16,13 +16,15 @@
 <link rel="icon" href="/favicon.ico">
 <title>Atlas Criminal — Casos Perto de Mim | Arquivo Sombrio</title>
 <link rel="preconnect" href="https://tile.openstreetmap.org">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&amp;family=DM+Mono:wght@500&amp;display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-<link rel="stylesheet" href="/css/atlas-criminal.css?v=2">
+<link rel="stylesheet" href="/css/identity-tokens-v1.css?v=tipografia-original-20261018">
+<link rel="stylesheet" href="/css/atlas-criminal.css?v=3">
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" defer></script>
-<script src="/js/atlas-criminal.js?v=3" defer></script>
+<script src="/js/atlas-criminal.js?v=4" defer></script>
 </head>
 <body>
 <a class="skip" href="#atlas-main">Ir para o atlas</a>
@@ -36,7 +38,7 @@
 <div class="intro-seal" aria-hidden="true"><span>AS</span><small>LOCALIZAÇÃO · HISTÓRIA · FONTES</small></div>
 </section>
 <section class="atlas-frame" aria-label="Explorador geográfico">
-<div class="panel-head"><div><span class="panel-number">01 / 02</span><h2>Escolha um lugar</h2></div><p>Os filtros dependem das localidades já catalogadas.</p></div>
+<div class="panel-head"><div><span class="panel-number">01 / 02</span><h2>Escolha um lugar</h2></div><p>Explore as localidades já catalogadas ou amplie a busca para outras cidades.</p></div>
 <form id="atlas-filters" class="filters" role="search">
 <label>País<select id="atlas-country"><option value="">Todos os países</option></select></label>
 <label>Estado / região<select id="atlas-region"><option value="">Todas as regiões</option></select></label>
@@ -45,16 +47,29 @@
 <label class="searchbox">Buscar no acervo<input id="atlas-search" type="search" placeholder="Cidade, bairro ou caso" autocomplete="off"></label>
 <button id="atlas-clear" class="clear" type="reset">Limpar filtros</button>
 </form>
+<form id="atlas-discovery" class="discovery" role="search" aria-label="Pesquisar referências por local">
+<label for="atlas-place">Pesquisar casos por local</label>
+<div class="discovery-controls">
+<input id="atlas-place" type="search" minlength="2" maxlength="100" required autocomplete="off" placeholder="Ex.: Santo André, São Paulo" aria-describedby="atlas-discovery-hint">
+<button type="submit">Buscar casos no local</button>
+</div>
+<p id="atlas-discovery-hint">Digite cidade, bairro ou região. Use vírgulas para acrescentar a cidade, o estado ou o país e distinguir lugares de mesmo nome. A busca consulta a Wikipédia.</p>
+</form>
 <div class="map-meta"><div><span class="map-indicator" aria-hidden="true"></span><strong>Mapa de ocorrências documentadas</strong></div><label class="viewport-toggle"><input id="atlas-viewport" type="checkbox" checked> Resultados na área visível</label></div>
 <div id="atlas-map" role="application" aria-label="Mapa interativo de localidades documentadas do Arquivo Sombrio"><div class="map-placeholder">Carregando o mapa...</div></div>
 <p class="map-note">Marcadores indicam a cidade ou região associada ao caso, não o endereço exato do crime. Arraste o mapa ou aproxime o zoom para explorar outras localidades. Base cartográfica: OpenStreetMap.</p>
 </section>
 <section class="results" id="atlas-results" aria-labelledby="results-title">
-<div class="panel-head results-head"><div><span class="panel-number">02 / 02</span><h2 id="results-title">Casos encontrados</h2></div><span class="count" id="atlas-count" aria-live="polite">Consultando o acervo...</span></div>
+<div class="panel-head results-head"><div><span class="panel-number">02 / 02</span><h2 id="results-title">Casos do Arquivo Sombrio</h2></div><span class="count" id="atlas-count" aria-live="polite">Consultando o acervo...</span></div>
 <p id="atlas-feedback" class="feedback" role="status" aria-live="polite">Buscando as localidades cadastradas...</p>
 <div class="timeline" id="atlas-list" aria-live="off"></div>
 </section>
-<aside class="method-note" aria-label="Critérios editoriais"><strong>Como funciona este atlas</strong><p>A sequência considera o ano inicial do acontecimento, nunca a data da postagem. Uma publicação pode envolver mais de uma cidade; só aparecem localidades revisadas editorialmente. A ausência de um marcador não significa que nenhum caso tenha ocorrido na região.</p></aside>
+<section class="results discovery-results" id="atlas-discovery-results" aria-labelledby="atlas-discovery-title" hidden>
+<div class="panel-head results-head"><div><span class="panel-number">BUSCA POR LOCAL</span><h2 id="atlas-discovery-title">Referências encontradas</h2></div></div>
+<p class="feedback" id="atlas-discovery-status" role="status"></p>
+<ul class="timeline discovery-list" id="atlas-discovery-list"></ul>
+</section>
+<aside class="method-note" aria-label="Critérios editoriais"><strong>Como funciona este atlas</strong><p>A sequência considera o ano inicial do acontecimento, nunca a data da postagem. Uma publicação pode envolver mais de uma cidade; só aparecem localidades revisadas editorialmente. As referências encontradas na Wikipédia são sugestões de pesquisa. Os marcadores do mapa são reservados a localidades revisadas pela equipe.</p></aside>
 </main>
 <footer class="footer"><div class="shell footer-inner"><span>ARQUIVO SOMBRIO · ATLAS CRIMINAL</span><nav aria-label="Rodapé"><a href="/">Início</a><a href="/pesquisa.html">Pesquisa geral</a><a href="/privacidade.html">Privacidade</a></nav></div></footer>
 </body>

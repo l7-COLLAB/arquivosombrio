@@ -25,7 +25,7 @@ test('Casos especiais publicados agora participam do atlas',()=>{
 });
 test('Pesquisa textual recentraliza o mapa',()=>{
  assert.match(js,/fields\.search\.addEventListener\('input',\s*\(\)\s*=>\s*\{[\s\S]*?const matching = locationMatches\(\);[\s\S]*?fitItems\(matching\)/);
- assert.match(html,/\/js\/atlas-criminal\.js\?v=3/);
+ assert.match(html,/\/js\/atlas-criminal\.js\?v=\d+/);
 });
 test('Não se expõem notas ou endereços pessoais no dataset público',()=>{
  assert.doesNotMatch(js,/review_note|review_reference|exact_address|navigator\.geolocation/);

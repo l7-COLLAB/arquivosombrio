@@ -37,8 +37,8 @@ test('CI de publicação compara versões reais dos scripts, não valores antigo
  assert.doesNotMatch(deploy,/'atlas-admin\.js\?v=1'/);
  const admin=read('admin-v2/atlas.html');
  const publicPage=read('atlas.html');
- assert.match(admin,/atlas-admin\.js\?v=2/);
- assert.match(publicPage,/atlas-criminal\.js\?v=3/);
+ assert.match(admin,/atlas-admin\.js\?v=\d+/);
+ assert.match(publicPage,/atlas-criminal\.js\?v=\d+/);
 });
 test('Relatório registra limites sobre autoria e São Paulo 2026',()=>{
  assert.match(report,/não representa validação jurídica da autoria/);

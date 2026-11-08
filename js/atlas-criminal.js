@@ -1,7 +1,7 @@
 /* Atlas Criminal — locais publicados, não endereços precisos. */
 (() => {
   'use strict';
-  const API = 'https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/case_atlas_public?select=source_type,source_id,title,summary,country,state_region,city,neighborhood,latitude,longitude,event_year,location_precision&order=event_year.asc&limit=1000';
+  const API = 'https://iuhotznurbyujzbyhizf.supabase.co/rest/v1/case_atlas_public?select=source_type,source_id,title,summary,country,state_region,city,neighborhood,latitude,longitude,event_year,location_precision,wikidata_id&order=event_year.asc&limit=1000';
   // Chave publicável de navegador; acesso efetivo controlado por GRANT, RLS e view security_invoker.
   const KEY = 'sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj';
   const byId = id => document.getElementById(id);
@@ -17,11 +17,29 @@
   const feedback = byId('atlas-feedback');
   const counter = byId('atlas-count');
   const form = byId('atlas-filters');
+  const discovery = byId('atlas-discovery');
+  const placeInput = byId('atlas-place');
+  const discoveryResults = byId('atlas-discovery-results');
+  const discoveryList = byId('atlas-discovery-list');
+  const discoveryStatus = byId('atlas-discovery-status');
+  const WIKI_LANGS = ['pt', 'en'];
+  const CRIME_TITLE = /\b(assassinato|homicidio|chacina|massacre|sequestro|desaparecimento|atentado|murder|murders|killing|killings|kidnapping|disappearance|shootings?|bombings?|attacks?)\b/;
+  const CRIME_EVENT = /\b(assassin\w*|homicidio|chacina|massacre|massacrad\w*|invadiu|refens?|refem|sequestr\w*|desaparec\w*|morto|morta|morrer\w*|atentado|murder\w*|kill\w*|kidnap\w*|disappear\w*|shoot\w*|shot|bomb\w*|stabbed)\b/;
+  const BRAZIL_STATES = {
+    ac:'acre', al:'alagoas', ap:'amapa', am:'amazonas', ba:'bahia', ce:'ceara',
+    df:'distrito federal', es:'espirito santo', go:'goias', ma:'maranhao', mt:'mato grosso',
+    ms:'mato grosso do sul', mg:'minas gerais', pa:'para', pb:'paraiba', pr:'parana',
+    pe:'pernambuco', pi:'piaui', rj:'rio de janeiro', rn:'rio grande do norte',
+    rs:'rio grande do sul', ro:'rondonia', rr:'roraima', sc:'santa catarina',
+    sp:'sao paulo', se:'sergipe', to:'tocantins'
+  };
   const collator = new Intl.Collator('pt-BR', {sensitivity: 'base'});
   let records = [];
   let map = null;
   let pointsLayer = null;
   let loaded = false;
+  let discoveryScope = null;
+  let discoveryRequest = null;
 
   function normalize(value) {
     return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim();
@@ -64,6 +82,7 @@
     fields.neighborhood.disabled = !inCity.some(item => item.neighborhood);
   }
   function matches(item) {
+    if (discoveryScope && !matchesPlace(item, discoveryScope)) return false;
     if (fields.country.value && item.country !== fields.country.value) return false;
     if (fields.region.value && item.state_region !== fields.region.value) return false;
     if (fields.city.value && item.city !== fields.city.value) return false;
@@ -108,7 +127,7 @@
     list.replaceChildren();
     counter.textContent = uniqueCases.length + (uniqueCases.length === 1 ? ' caso' : ' casos');
     if (!uniqueCases.length) {
-      list.append(createElement('p', 'empty', 'Nenhum registro catalogado nesta seleção. Isso não significa que a região não tenha casos: o atlas é ampliado conforme novas localidades são revisadas.'));
+      list.append(createElement('p', 'empty', 'Nenhum caso do Arquivo Sombrio nesta seleção. A busca por local também pode encontrar referências na Wikipédia.'));
       feedback.textContent = !matching.length ?
         'Nenhum registro corresponde a esta pesquisa ou combinação de filtros. Tente outra cidade ou limpe os filtros.' :
         fields.viewport.checked ?
@@ -158,6 +177,8 @@
     return box;
   }
   function focusCity(group) {
+    clearDiscovery();
+    placeInput.value = '';
     fields.country.value = group.country;
     updateChoices();
     fields.region.value = group.region || '';
@@ -245,12 +266,188 @@
     map.on('moveend', renderList);
     map.on('zoomend', renderList);
   }
+  function placeWords(value) {
+    return normalize(value).replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  }
+  function parsePlace(value) {
+    const parts = value.split(',').map(part => part.trim()).filter(Boolean);
+    if (!parts.length || parts.length > 4 || parts.some(part =>
+      !/^[\p{L}\p{M}\d .’'-]+$/u.test(part) || !/\p{L}/u.test(part) || placeWords(part).length < 2)) return null;
+    const [name, ...qualifiers] = parts;
+    return {name, key: placeWords(name), qualifiers, label: parts.join(', ')};
+  }
+  function hasPlace(text, key) {
+    return (' ' + text + ' ').includes(' ' + key + ' ');
+  }
+  function hasQualifier(text, qualifier) {
+    const key = placeWords(qualifier);
+    return hasPlace(text, key) || Boolean(BRAZIL_STATES[key] && hasPlace(text, BRAZIL_STATES[key]));
+  }
+  function matchesPlace(item, place) {
+    const locations = [item.neighborhood, item.city, item.state_region, item.country].map(placeWords);
+    return locations.includes(place.key) && place.qualifiers.every(qualifier =>
+      locations.some(location => hasQualifier(location, qualifier)));
+  }
+  function eventTitle(value) {
+    return placeWords(value.split(':', 1)[0]).replace(/^(?:caso|assassinato|homicidio|morte|desaparecimento|sequestro|murder|killing|death|disappearance|kidnapping) (?:d[aeo]s? |of )?/, '');
+  }
+  function publishedMatch(candidate, place) {
+    const nearby = records.filter(item => matchesPlace(item, place));
+    const sameId = candidate.wikidataId ? nearby.filter(item => item.wikidata_id === candidate.wikidataId) : [];
+    const title = eventTitle(candidate.title);
+    const options = sameId.length ? sameId : nearby.filter(item =>
+      title.includes(' ') && eventTitle(item.title) === title &&
+      (!candidate.wikidataId || !item.wikidata_id || item.wikidata_id === candidate.wikidataId));
+    const cases = new Map(options.map(item => [item.source_type + ':' + item.source_id, item]));
+    return cases.size === 1 ? cases.values().next().value : null;
+  }
+  function wikiCandidate(page, lang, place) {
+    const {title, pageid, extract = '', pageprops = {}} = page;
+    if (typeof title !== 'string' || typeof extract !== 'string' ||
+        !Number.isSafeInteger(pageid) || pageid < 1 || 'disambiguation' in pageprops) return null;
+    const heading = placeWords(title);
+    if (/^(lista|list|categoria|category|cronologia|timeline|histor(i|y)a?|reactions to|reacoes ao)\b/.test(heading) ||
+        /\b(conspiracy theories|teorias da conspiracao|shooting sports)\b/.test(heading)) return null;
+    const wikidataId = typeof pageprops.wikibase_item === 'string' && /^Q[1-9][0-9]{0,11}$/.test(pageprops.wikibase_item) ? pageprops.wikibase_item : '';
+    const candidate = {title, pageid, lang, wikidataId};
+    if (publishedMatch(candidate, place)) return candidate;
+    const lead = extract.slice(0, 1800);
+    const text = placeWords(title + ' ' + lead);
+    if (!place.qualifiers.every(part => hasQualifier(text, part))) return null;
+    // A busca encontra menções. Só sugerimos verbetes cujo início ou título associa o local ao acontecimento.
+    const explicitTitle = CRIME_TITLE.test(heading);
+    const lifeEvent = /\b(nasceu|nascid[oa]|born|cresceu|grew up)\b/;
+    const locative = new RegExp('\\b(?:em|na|nas|no|nos|in|at|near) (?:a |o |the )?(?:(?:cidade|bairro|municipio|estado|regiao|distrito) (?:de|do|da) |(?:city|town|state|district|neighborhood) of )?(?:central |north |south |east |west |northeast |northwest |southeast |southwest )?' + place.key + '(?: |$)');
+    const titlePlacesEvent = locative.test(heading) ||
+      new RegExp('(?:^| )' + place.key + ' (?:bombings?|shootings?|attacks?|murders?|massacre)(?: |$)').test(heading);
+    const locationInEvent = lead.split(/(?<=[.!?])\s+|\n+/u).slice(0, 3).some(sentence => {
+      const statement = placeWords(sentence);
+      return !lifeEvent.test(statement) &&
+        locative.test(statement) && CRIME_EVENT.test(statement);
+    });
+    if (!((explicitTitle && !lifeEvent.test(heading) && titlePlacesEvent) ||
+        ((explicitTitle || /^caso\b/.test(heading)) && locationInEvent))) return null;
+    return candidate;
+  }
+  async function searchWiki(lang, place, signal) {
+    const keywords = lang === 'pt' ? 'assassinato|homicidio|homicídio|chacina|massacre|sequestro|desaparecimento|atentado|caso' :
+      'murder|murders|killing|killings|massacre|kidnapping|disappearance|shooting|bombing|attack';
+    const params = new URLSearchParams({
+      action:'query', generator:'search', gsrnamespace:'0', gsrlimit:'15',
+      gsrsearch:'"' + place.name + '" intitle:/(' + keywords + ')/i',
+      prop:'extracts|pageprops', ppprop:'wikibase_item|disambiguation',
+      exintro:'1', explaintext:'1', exlimit:'15',
+      format:'json', formatversion:'2', origin:'*'
+    });
+    const response = await fetch('https://' + lang + '.wikipedia.org/w/api.php?' + params, {
+      credentials:'omit', referrerPolicy:'no-referrer', signal
+    });
+    if (!response.ok) throw new Error('Wikipédia: HTTP ' + response.status);
+    const data = await response.json();
+    if (data.error) throw new Error('Wikipédia: consulta indisponível');
+    return (data.query?.pages || []).sort((a,b) => a.index - b.index);
+  }
+  function clearDiscovery() {
+    discoveryRequest?.abort();
+    discoveryRequest = null;
+    discoveryScope = null;
+    discoveryResults.hidden = true;
+    discoveryResults.removeAttribute('aria-busy');
+    discoveryList.replaceChildren();
+  }
+  function renderDiscovery(responses, place) {
+    const seen = new Set();
+    const catalogued = new Set(locationMatches().filter(inViewport).map(item => item.source_type + ':' + item.source_id));
+    const external = [];
+    let alreadyListed = 0;
+    let failures = 0;
+    for (const [index, result] of responses.entries()) {
+      if (result.status === 'rejected') {
+        failures++;
+        continue;
+      }
+      const lang = WIKI_LANGS[index];
+      for (const page of result.value) {
+        const candidate = wikiCandidate(page, lang, place);
+        if (!candidate) continue;
+        const match = publishedMatch(candidate, place);
+        const key = match ? match.source_type + ':' + match.source_id : candidate.wikidataId || lang + ':' + candidate.pageid;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        if (catalogued.has(key)) alreadyListed++;
+        else external.push({candidate, match});
+      }
+    }
+    discoveryList.replaceChildren();
+    for (const {candidate, match} of external.slice(0, 12)) {
+      const item = createElement('li', 'case-body');
+      item.append(createElement('span', 'case-meta', match ? 'ARQUIVO SOMBRIO' :
+        'FONTE EXTERNA · WIKIPÉDIA (' + candidate.lang.toUpperCase() + ')'));
+      item.append(createElement('h3', '', match?.title || candidate.title));
+      const link = createElement('a', '', match ? 'Ler no Arquivo Sombrio' : 'Abrir referência na Wikipédia');
+      link.href = match ? articleUrl(match) : 'https://' + candidate.lang + '.wikipedia.org/?curid=' + candidate.pageid;
+      if (!match) {
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+      }
+      link.setAttribute('aria-label', link.textContent + ': ' + (match?.title || candidate.title));
+      item.append(link);
+      discoveryList.append(item);
+    }
+    const suffix = ' Local pesquisado: ' + place.label + '.';
+    if (failures === WIKI_LANGS.length) {
+      discoveryStatus.textContent = 'A consulta à Wikipédia está temporariamente indisponível. Tente novamente.' + suffix;
+    } else if (!external.length) {
+      discoveryStatus.textContent = (alreadyListed ? 'Os casos correspondentes estão listados no acervo acima.' :
+        'A busca não encontrou referências que associassem um caso a este local. Tente outra grafia ou inclua a região.') + suffix;
+    } else {
+      discoveryStatus.textContent = 'Links externos são sugestões de pesquisa. Confirme a localização e as fontes no verbete.' + suffix;
+    }
+    if (failures && failures < WIKI_LANGS.length) discoveryStatus.textContent += ' Uma das consultas à Wikipédia falhou.';
+  }
+  async function discover(event) {
+    event.preventDefault();
+    if (discoveryRequest && parsePlace(placeInput.value)?.label === discoveryScope?.label) return;
+    clearDiscovery();
+    discoveryResults.hidden = false;
+    const place = parsePlace(placeInput.value);
+    if (!place) {
+      discoveryStatus.textContent = 'Digite um local válido, com até quatro partes separadas por vírgulas.';
+      discoveryResults.scrollIntoView({block:'start'});
+      return;
+    }
+    discoveryScope = place;
+    for (const name of ['country','region','city','neighborhood','search']) fields[name].value = '';
+    refreshFilters();
+    byId('atlas-results').scrollIntoView({block:'start'});
+    discoveryStatus.textContent = 'Consultando referências para ' + place.label + '…';
+    discoveryResults.setAttribute('aria-busy', 'true');
+    const controller = new AbortController();
+    discoveryRequest = controller;
+    const timer = window.setTimeout(() => controller.abort(), 8000);
+    const results = await Promise.allSettled(WIKI_LANGS.map(lang => searchWiki(lang, place, controller.signal)));
+    window.clearTimeout(timer);
+    if (discoveryRequest !== controller) return;
+    discoveryRequest = null;
+    discoveryResults.removeAttribute('aria-busy');
+    renderDiscovery(results, place);
+    if (!loaded) catalogueReady.then(() => {
+      if (loaded && discoveryScope === place) renderDiscovery(results, place);
+    });
+  }
   function bindControls() {
+    discovery.addEventListener('submit', discover);
     ['country','region','city','neighborhood'].forEach(name => {
-      fields[name].addEventListener('change', () => refreshFilters(name));
+      fields[name].addEventListener('change', () => {
+        clearDiscovery();
+        placeInput.value = '';
+        refreshFilters(name);
+      });
     });
     // Localização pesquisada deve ficar visível mesmo quando o usuário estava com zoom em outra cidade.
     fields.search.addEventListener('input', () => {
+      clearDiscovery();
+      placeInput.value = '';
       rebuildMarkers();
       const matching = locationMatches();
       if (matching.length) fitItems(matching);
@@ -264,6 +461,8 @@
     });
     form.addEventListener('reset', event => {
       event.preventDefault();
+      clearDiscovery();
+      placeInput.value = '';
       Object.keys(fields).forEach(name => {
         if (['country','region','city','neighborhood','search'].includes(name)) fields[name].value = '';
       });
@@ -293,7 +492,8 @@
         latitude:Number(item.latitude),
         longitude:Number(item.longitude),
         event_year:Number(item.event_year),
-        location_precision:item.location_precision
+        location_precision:item.location_precision,
+        wikidata_id:safeText(item.wikidata_id)
       })).filter(item =>
         ['dossie','garimpo'].includes(item.source_type) &&
         Number.isSafeInteger(item.source_id) && item.source_id > 0 &&
@@ -319,5 +519,5 @@
       console.warn('Atlas Criminal:',error.message);
     }
   }
-  load();
+  const catalogueReady = load();
 })();
