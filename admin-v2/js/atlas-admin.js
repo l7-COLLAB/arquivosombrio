@@ -4,7 +4,7 @@
   const $ = id => document.getElementById(id);
   const PROJECT = 'https://iuhotznurbyujzbyhizf.supabase.co';
   const KEY = 'sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj';
-  const fields = ['country','state-region','city','neighborhood','event-year','precision','reference','latitude','longitude','review-note'];
+  const fields = ['country','state-region','city','neighborhood','event-year','precision','reference','latitude','longitude','review-note','wikidata-id'];
   const db = window.supabase?.createClient(PROJECT,KEY,{auth:{
     storageKey:'arquivo-sombrio-admin-auth-v2',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false
   }});
@@ -138,6 +138,7 @@
     setField('longitude',row.longitude);
     setField('reference',row.review_reference);
     setField('review-note',row.review_note);
+    setField('wikidata-id',row.wikidata_id);
     $('form-title').textContent='Editar localização #'+row.id;
     dirty=false;
     updateActions();
@@ -190,7 +191,7 @@
     const [d,g,l,v] = await Promise.all([
       db.from('Casos').select('id,titulo,local,ano,status_publicacao,categoria').order('id').limit(500),
       db.from('casos_diarios').select('id,titulo,local,data_caso,status_publicacao,categoria').order('id').limit(500),
-      db.from('case_atlas_locations').select('id,dossier_id,daily_id,place_key,country,state_region,city,neighborhood,latitude,longitude,event_year,location_precision,reviewed,is_active,review_reference,review_note,reviewed_at,updated_at').order('id').limit(1000),
+      db.from('case_atlas_locations').select('id,dossier_id,daily_id,place_key,country,state_region,city,neighborhood,latitude,longitude,event_year,location_precision,reviewed,is_active,review_reference,review_note,reviewed_at,updated_at,wikidata_id').order('id').limit(1000),
       db.from('case_atlas_public').select('source_type,source_id').limit(1000)
     ]);
     for(const result of [d,g,l,v])if(result.error)throw result.error;
@@ -226,7 +227,8 @@
       latitude,longitude,event_year:year,
       location_precision:$('precision').value,
       review_reference:$('reference').value.trim(),
-      review_note:$('review-note').value.trim()||null
+      review_note:$('review-note').value.trim()||null,
+      wikidata_id:$('wikidata-id').value.trim()||null
     };
     if(record.review_reference.length<12)throw new Error('Descreva a fonte documental com ao menos 12 caracteres.');
     record.place_key=keyFor(record);

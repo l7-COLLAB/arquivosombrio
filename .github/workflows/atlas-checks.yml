@@ -61,7 +61,8 @@ jobs:
                     'atlas-neighborhood','atlas-search','atlas-clear','atlas-viewport',
                     'atlas-list','atlas-count','atlas-feedback','atlas-filters','atlas-results']
           assert all(x in v.ids for x in required), 'Faltam elementos essenciais do atlas'
-          assert '/css/atlas-criminal.css?v=2' in v.links
+          assert any(link.startswith('/css/atlas-criminal.css?v=') for link in v.links)
+          assert any(link.startswith('/css/identity-tokens-v1.css?v=') for link in v.links)
           assert 'href="atlas.html"' in nav, 'Sem acesso pelo menu inicial'
           assert 'case_atlas_public' in script and 'event_year' in script
           root=ET.parse('sitemap.xml').getroot()

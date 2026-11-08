@@ -2,7 +2,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Curadoria do Atlas Criminal | Admin V2</title><link rel="icon" href="../favicon.ico">
 <link rel="stylesheet" href="./css/atlas-admin.css?v=1">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" defer></script><script src="./js/atlas-admin.js?v=2" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" defer></script><script src="./js/atlas-admin.js?v=3" defer></script>
 </head><body>
 <header><div class="wrap nav"><a class="brand" href="./index.html">ARQUIVO SOMBRIO <span>ADMIN V2</span></a><nav><a href="./index.html">Painel principal</a><a href="../atlas.html" target="_blank" rel="noopener noreferrer">Atlas público</a></nav></div></header>
 <main class="wrap"><div class="hero"><div><p class="eyebrow">CATÁLOGO GEOGRÁFICO / CURADORIA</p><h1>Atlas Criminal</h1><p>Associe os registros a cidades documentadas. Salvar uma proposta não a publica: a revisão é uma segunda etapa.</p></div><div class="hero-stat" id="summary" aria-live="polite">Aguardando acesso</div></div>
@@ -26,6 +26,8 @@
 <div id="geocode-results" hidden><label for="geocode-candidates">Selecione o resultado geográfico correto</label><select id="geocode-candidates"></select><button id="use-geocode" type="button">Usar coordenadas selecionadas</button><p class="hint">Busca manual no Nominatim/OpenStreetMap. Confirme se é o município esperado.</p></div>
 <p class="hint" id="reference-check"><a id="reference-link" href="https://arquivosombrio.net.br/" target="_blank" rel="noopener noreferrer" hidden>Consultar fonte documental informada</a></p>
 <label for="review-note">Observações para revisão<textarea id="review-note" rows="3" maxlength="2000" placeholder="Justifique a região escolhida e eventuais incertezas."></textarea></label>
+<label for="wikidata-id">Identificador do mesmo caso no Wikidata (opcional)<input id="wikidata-id" maxlength="13" pattern="Q[1-9][0-9]{0,11}" aria-describedby="wikidata-help" placeholder="Q seguido de números"></label>
+<p class="hint" id="wikidata-help">Informe o código do verbete que trata do mesmo acontecimento. Assim a busca do Atlas usa o artigo do Arquivo Sombrio mesmo quando os títulos são diferentes, depois que o caso e a localização estiverem públicos.</p>
 <p class="privacy-note"><strong>Proteção editorial:</strong> marque o centro da cidade ou região, nunca a residência de vítimas, familiares ou testemunhas. O bairro pode ser pesquisável, mas não determina o pino exato.</p>
 <div class="actions"><button id="save-draft" type="submit">Salvar como pendente</button><button id="publish" type="button" disabled>Revisar e ativar no atlas</button><button id="deactivate" type="button" disabled>Desativar marcador</button></div>
 <p class="hint" id="save-note">Primeiro salve como pendente. Depois confirme a localização e conclua a revisão.</p>

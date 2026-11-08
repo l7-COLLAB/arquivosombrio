@@ -25,7 +25,8 @@ FIXTURE = [
     dict(source_type="garimpo", source_id=39, title="Família em Setagaya",
          summary="Tóquio, 2000.", country="Japão",
          state_region="Tóquio", city="Tóquio", neighborhood="Setagaya",
-         latitude=35.676, longitude=139.65, event_year=2000, location_precision="city"),
+         latitude=35.676, longitude=139.65, event_year=2000, location_precision="city",
+         wikidata_id="Q12345"),
     dict(source_type="garimpo", source_id=66, title="Luis Andrés Colmenares",
          summary="Bogotá, 2010.", country="Colômbia", state_region="Bogotá D.C.",
          city="Bogotá", neighborhood=None, latitude=4.71, longitude=-74.07,
@@ -117,6 +118,7 @@ class AtlasBrowserTests(unittest.TestCase):
         page.on("pageerror", lambda error: self.fail(f"JavaScript falhou: {error}"))
         page.route("https://cdn.jsdelivr.net/**", lambda route: route.abort())
         page.route("https://tile.openstreetmap.org/**", lambda route: route.abort())
+        page.route("https://fonts.googleapis.com/**", lambda route: route.abort())
         if map_mock:
             page.add_init_script(FAKE_LEAFLET)
         def answer_api(route):
@@ -193,6 +195,57 @@ class AtlasBrowserTests(unittest.TestCase):
         self.assertEqual(page.locator(".case").count(), 5)
         page.locator("#atlas-search").fill("Redding")
         expect(page.locator("#atlas-count")).to_have_text("2 casos")
+        context.close()
+
+    def search_wiki(self, page, place, pages_pt, pages_en=(), status=200):
+        for lang, entries in [("pt", pages_pt), ("en", pages_en)]:
+            page.route(f"https://{lang}.wikipedia.org/w/api.php**", lambda route, _request, entries=entries:
+                       route.fulfill(status=status, json={"query": {"pages": entries}},
+                                     headers={"Access-Control-Allow-Origin": "*"}))
+        page.locator("#atlas-place").fill(place)
+        page.get_by_role("button", name="Buscar casos no local").click()
+        expect(page.locator("#atlas-discovery-results")).to_be_visible()
+
+    def test_external_place_without_curated_markers_and_geographic_filter(self):
+        context, page = self.page(390)
+        pimentel = {"pageid": 41, "title": "Caso Eloá Pimentel",
+                    "extract": "O sequestro ocorreu em Santo André, São Paulo.",
+                    "pageprops": {"wikibase_item": "Q41"}}
+        wrong_city = {"pageid": 43, "title": "Assassinato de outra pessoa",
+                      "extract": "O assassinato ocorreu em Santo André, na Bahia."}
+        biography = {"pageid": 42, "title": "Assassinato de pessoa nascida em Santo André",
+                     "extract": "A vítima nasceu em Santo André, São Paulo. O crime ocorreu em Recife."}
+        duplicate = dict(pimentel, pageid=52, title="Kidnapping in Santo André")
+        self.search_wiki(page, "Santo André, SP", [pimentel, wrong_city, biography], [duplicate])
+        expect(page.locator("#atlas-discovery-status")).to_contain_text("sugestões de pesquisa")
+        expect(page.locator("#atlas-discovery-list li")).to_have_count(1)
+        expect(page.locator("#atlas-discovery-list a")).to_have_attribute(
+            "href", "https://pt.wikipedia.org/?curid=41")
+        expect(page.locator("#atlas-count")).to_have_text("0 casos")
+        self.assertEqual(page.evaluate("window.__atlasMarkers.length"), 0)
+        context.close()
+
+    def test_published_case_replaces_its_external_link_only(self):
+        context, page = self.page()
+        same = {"pageid": 12, "title": "Assassinato da família Miyazawa",
+                "pageprops": {"wikibase_item": "Q12345"}}
+        other = {"pageid": 13, "title": "Sequestro em Tóquio",
+                 "extract": "O sequestro ocorreu em Tóquio."}
+        self.search_wiki(page, "Tóquio", [same, other])
+        expect(page.locator("#atlas-discovery-list li")).to_have_count(1)
+        expect(page.locator("#atlas-discovery-list a")).to_have_attribute(
+            "href", "https://pt.wikipedia.org/?curid=13")
+        expect(page.locator("#atlas-list a")).to_have_attribute("href", "/arquivo/garimpo-39.html")
+        page.locator("#atlas-clear").click()
+        expect(page.locator("#atlas-discovery-results")).to_be_hidden()
+        expect(page.locator("#atlas-count")).to_have_text("5 casos")
+        context.close()
+
+    def test_external_failure_keeps_the_catalogue_available(self):
+        context, page = self.page(390)
+        self.search_wiki(page, "Bogotá", [], status=503)
+        expect(page.locator("#atlas-discovery-status")).to_contain_text("temporariamente indisponível")
+        expect(page.locator("#atlas-list a")).to_have_attribute("href", "/arquivo/garimpo-66.html")
         context.close()
 
     def test_api_error_does_not_leave_loading_forever(self):
