@@ -4124,7 +4124,7 @@ function paragrafosPericia(valor) {
 
 function renderizarCasosRelacionadosPericia(valor) {
     return String(valor || "").split(/\n\s*\n/).map(trecho => {
-        const vinculo = trecho.trim().match(/^([^|\n]+?)\s*\|\s*((?:https:\/\/arquivosombrio\.net\.br)?\/?(?:garimpo|dossies)\.html\?id=\d+)$/);
+        const vinculo = trecho.trim().match(/^([^|\n]+?)\s*\|\s*((?:(?:https:\/\/arquivosombrio\.net\.br)?\/)?(?:garimpo|dossies)\.html\?id=\d+)$/);
         if (!vinculo) return paragrafosPericia(trecho);
         return '<p><a href="' + escaparHTML(vinculo[2]) + '">' +
             escaparHTML(vinculo[1].trim()) + "</a></p>";
