@@ -4122,15 +4122,24 @@ function paragrafosPericia(valor) {
     return renderizarTextoEditorialComTitulos(valor);
 }
 
+function renderizarCasosRelacionadosPericia(valor) {
+    return String(valor || "").split(/\n\s*\n/).map(trecho => {
+        const vinculo = trecho.trim().match(/^([^|\n]+?)\s*\|\s*((?:https:\/\/arquivosombrio\.net\.br)?\/?(?:garimpo|dossies)\.html\?id=\d+)$/);
+        if (!vinculo) return paragrafosPericia(trecho);
+        return '<p><a href="' + escaparHTML(vinculo[2]) + '">' +
+            escaparHTML(vinculo[1].trim()) + "</a></p>";
+    }).join("");
+}
+
 function renderizarDetalhePericia(grid, pericia) {
     const secoes = [
         ["Introdução", pericia.introducao], ["Como funciona", pericia.como_funciona],
         ["História da técnica", pericia.historia_tecnica], ["Aplicação em casos reais", pericia.aplicacao_casos_reais],
         ["Limitações e controvérsias", pericia.limitacoes_controversias], ["Curiosidades", pericia.curiosidades],
-        ["Casos relacionados", pericia.casos_relacionados], ["Fontes", pericia.fontes]
+        ["Casos relacionados", pericia.casos_relacionados, renderizarCasosRelacionadosPericia], ["Fontes", pericia.fontes]
     ].filter(item => String(item[1] || "").trim());
     const imagem = pericia.imagem ? '<figure class="forensic-detail-image"><img src="' + escaparHTML(pericia.imagem) + '" alt="' + escaparHTML(pericia.legenda_imagem || pericia.titulo || "") + '">' + (pericia.legenda_imagem ? "<figcaption>" + escaparHTML(pericia.legenda_imagem) + (pericia.fonte_imagem ? " · " + escaparHTML(pericia.fonte_imagem) : "") + "</figcaption>" : "") + "</figure>" : "";
-    grid.innerHTML = '<article class="forensic-detail"><a class="forensic-back" href="pericia.html#forense"><i class="fa-solid fa-arrow-left"></i> Voltar para todas as perícias</a><header><span class="badge category">' + escaparHTML(pericia.categoria || "CIÊNCIA FORENSE") + '</span><h1>' + escaparHTML(pericia.titulo || "Matéria forense") + '</h1><p>' + escaparHTML(pericia.resumo || "") + '</p></header>' + imagem + '<div class="forensic-detail-content">' + secoes.map(item => "<section><h2>" + escaparHTML(item[0]) + "</h2>" + paragrafosPericia(item[1]) + "</section>").join("") + "</div></article>";
+    grid.innerHTML = '<article class="forensic-detail"><a class="forensic-back" href="pericia.html#forense"><i class="fa-solid fa-arrow-left"></i> Voltar para todas as perícias</a><header><span class="badge category">' + escaparHTML(pericia.categoria || "CIÊNCIA FORENSE") + '</span><h1>' + escaparHTML(pericia.titulo || "Matéria forense") + '</h1><p>' + escaparHTML(pericia.resumo || "") + '</p></header>' + imagem + '<div class="forensic-detail-content">' + secoes.map(item => "<section><h2>" + escaparHTML(item[0]) + "</h2>" + (item[2] || paragrafosPericia)(item[1]) + "</section>").join("") + "</div></article>";
     window.ArquivoSEO?.aplicar({
         id: pericia.id,
         titulo: pericia.titulo,
