@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "stage": "6.1",
+  "status": "draft",
+  "defaultLocale": "pt-BR",
+  "notes": "Textos introdutórios piloto. Publicação internacional desativada até validação editorial, jurídica, links e metadados.",
+  "locales": {
+    "pt-BR": {
+      "title": "Arquivo Sombrio",
+      "tagline": "Cada arquivo guarda uma história. Cada detalhe merece ser examinado.",
+      "intro": "Explore dossiês criminais, investigações documentais, perícia forense, mistérios e narrativas de terror. Distinguimos fatos comprovados, depoimentos, hipóteses e controvérsias para que você possa acompanhar cada caso com contexto e rigor.",
+      "cta": "Explorar os arquivos"
+    },
+    "en-US": {
+      "title": "Arquivo Sombrio",
+      "tagline": "Every file holds a story. Every detail deserves scrutiny.",
+      "intro": "Explore true crime case files, documentary investigations, forensic science, mysteries, and horror fiction. We distinguish verified facts, witness accounts, hypotheses, and unresolved questions so you can follow each case with context and care.",
+      "cta": "Explore the archives"
+    },
+    "es-ES": {
+      "title": "Arquivo Sombrio",
+      "tagline": "Cada expediente guarda una historia. Cada detalle merece ser examinado.",
+      "intro": "Explora expedientes criminales, investigaciones documentales, ciencia forense, misterios y relatos de terror. Distinguimos los hechos verificados, los testimonios, las hipótesis y las controversias para que puedas conocer cada caso con contexto y rigor.",
+      "cta": "Explorar los archivos"
+    },
+    "fr-FR": {
+      "title": "Arquivo Sombrio",
+      "tagline": "Chaque dossier raconte une histoire. Chaque détail mérite d'être examiné.",
+      "intro": "Explorez des dossiers criminels, des enquêtes documentaires, la science médico-légale, des mystères et des récits d'horreur. Nous distinguons les faits vérifiés, les témoignages, les hypothèses et les points controversés afin de présenter chaque affaire avec rigueur et contexte.",
+      "cta": "Explorer les archives"
+    }
+  }
+}

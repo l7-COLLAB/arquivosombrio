@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "stage": "6.5",
+  "status": "draft",
+  "publicIndexEnabled": false,
+  "localeRoutesEnabled": false,
+  "notes": "Cadastro-piloto: identificador de origem por slug do arquivo Lite; validar correspondência com ID canônico do banco antes de importar. Não há traduções publicadas.",
+  "items": [
+    {
+      "sourceKey": "garimpo-ronald-obryan-veneno-doces-halloween",
+      "sourceSystem": "lite-static-archive",
+      "sourcePath": "/lite-preview/arquivos/garimpo-ronald-obryan-veneno-doces-halloween.html",
+      "canonicalDatabaseId": null,
+      "category": "garimpo",
+      "sourceLocale": "pt-BR",
+      "sourceRevision": "unverified",
+      "sourcePublishedState": "requires-verification",
+      "translations": {
+        "en-US": {
+          "status": "not_started",
+          "contentPath": null
+        },
+        "es-ES": {
+          "status": "not_started",
+          "contentPath": null
+        },
+        "fr-FR": {
+          "status": "not_started",
+          "contentPath": null
+        }
+      }
+    }
+  ]
+}

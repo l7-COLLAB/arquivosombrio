@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "stage": "6.4",
+  "status": "draft",
+  "notes": "Piloto; terminologia a validar. Categorias são rótulos informativos sem links enquanto as rotas internacionais não existem.",
+  "locales": {
+    "pt-BR": {
+      "stage": "Prévia editorial · Fase 6.4",
+      "language": "Idioma",
+      "sections": "Seções do arquivo",
+      "categories": [
+        "Dossiês",
+        "Garimpo Sombrio",
+        "Perícia Forense",
+        "Creepypastas",
+        "Lendas",
+        "Biblioteca"
+      ],
+      "notice": "Esta é uma prévia editorial. As páginas internacionais e seus dossiês ainda não estão publicados.",
+      "back": "Voltar ao site em português (Brasil)",
+      "error": "Não foi possível carregar o conteúdo desta versão.",
+      "loading": "Carregando prévia editorial…",
+      "description": "Prévia editorial do Arquivo Sombrio: dossiês criminais, ciência forense, mistérios e ficção de terror.",
+      "unavailable": "Seções disponíveis somente após a publicação internacional.",
+      "preview": "Prévia editorial não publicada"
+    },
+    "en-US": {
+      "stage": "Editorial preview · Phase 6.4",
+      "language": "Language",
+      "sections": "Archive sections",
+      "categories": [
+        "Case Files",
+        "Dark Discoveries",
+        "Forensic Science",
+        "Creepypastas",
+        "Legends",
+        "Library"
+      ],
+      "notice": "Editorial preview only. International pages and case files are not yet published.",
+      "back": "Visit the main website (Portuguese — Brazil)",
+      "error": "Unable to load this language version.",
+      "loading": "Loading editorial preview…",
+      "description": "Editorial preview of Arquivo Sombrio: true crime case files, forensic science, mysteries, and horror fiction.",
+      "unavailable": "Sections become available only after international publication.",
+      "preview": "Unpublished editorial preview"
+    },
+    "es-ES": {
+      "stage": "Vista previa editorial · Fase 6.4",
+      "language": "Idioma",
+      "sections": "Secciones del archivo",
+      "categories": [
+        "Expedientes",
+        "Hallazgos oscuros",
+        "Ciencia forense",
+        "Creepypastas",
+        "Leyendas",
+        "Biblioteca"
+      ],
+      "notice": "Vista previa editorial. Las páginas internacionales y sus expedientes todavía no están publicados.",
+      "back": "Visitar el sitio principal (portugués de Brasil)",
+      "error": "No se puede cargar el contenido de esta versión.",
+      "loading": "Cargando la vista previa…",
+      "description": "Vista previa editorial de Arquivo Sombrio: expedientes criminales, ciencia forense, misterios y ficción de terror.",
+      "unavailable": "Las secciones estarán disponibles tras el lanzamiento internacional.",
+      "preview": "Vista previa editorial sin publicar"
+    },
+    "fr-FR": {
+      "stage": "Aperçu éditorial · Phase 6.4",
+      "language": "Langue",
+      "sections": "Rubriques des archives",
+      "categories": [
+        "Dossiers criminels",
+        "Découvertes sombres",
+        "Sciences forensiques",
+        "Creepypastas",
+        "Légendes",
+        "Bibliothèque"
+      ],
+      "notice": "Aperçu éditorial uniquement. Les pages internationales et leurs dossiers ne sont pas encore publiés.",
+      "back": "Consulter le site principal (portugais du Brésil)",
+      "error": "Impossible de charger le contenu de cette version.",
+      "loading": "Chargement de l’aperçu éditorial…",
+      "description": "Aperçu éditorial d’Arquivo Sombrio : dossiers criminels, sciences forensiques, mystères et fiction d’horreur.",
+      "unavailable": "Rubriques accessibles uniquement après la publication internationale.",
+      "preview": "Aperçu éditorial non publié"
+    }
+  }
+}

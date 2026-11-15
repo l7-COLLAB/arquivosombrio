@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="theme-color" content="#080706">
+<title>Internacionalização · Admin V2 · Arquivo Sombrio</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#080706;color:#e8ddd0;font:15px/1.5 system-ui,Arial,sans-serif}
+main{max-width:1120px;padding:28px 18px 65px;margin:auto}.eyebrow{color:#c18c67;font-size:11px;letter-spacing:.13em;text-transform:uppercase}
+h1{font:600 clamp(30px,5vw,46px)/1.1 Georgia,serif;margin:10px 0}h2{font:600 20px/1.3 Georgia,serif}p{color:#afa294}
+a{color:#e3c6aa}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #e5b188;outline-offset:3px}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;margin:23px 0}.toolbar>label{display:grid;gap:6px;color:#bdb0a1;font-size:12px}
+input,select,button{min-height:40px;padding:8px 12px;background:#211914;border:1px solid #624b3c;color:#f2e8da;border-radius:4px;font:inherit}
+button{cursor:pointer}button[disabled]{opacity:.5;cursor:not-allowed}.notice{border:1px solid #745137;padding:14px 16px;background:#1c1410}
+#status{font-size:13px;min-height:30px}.editor{margin-top:24px;padding:20px;border:1px solid #594334;background:#120e0c}.editor label{display:grid;gap:6px;margin:12px 0;color:#c5b4a1}.editor textarea{width:100%;min-height:140px;padding:12px;background:#211914;border:1px solid #624b3c;color:#f2e8da;font:inherit}.editor input{width:100%}.editor-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}.editor small{color:#aa9280}ul.results{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.results li{border:1px solid #342820;background:#100d0b;padding:16px}
+.results strong{display:block;font-size:17px}.meta{font:12px/1.6 ui-monospace,monospace;color:#b29e8e}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.grid div{border:1px solid #3b3027;padding:9px;font-size:12px;color:#c0b0a1}
+@media(max-width:660px){.grid{grid-template-columns:1fr}.toolbar>label{width:100%}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<div class="eyebrow">Arquivo Sombrio · Admin V2 · Macroetapa 6.12</div>
+<h1>Traduções internacionais</h1>
+<p>Consulta administrativa do acervo brasileiro. As traduções ainda não estão habilitadas para salvamento ou publicação.</p>
+<p><a href="../index.html">Voltar ao Admin V2</a></p>
+<div id="status" role="status" aria-live="polite">Verificando acesso…</div>
+<section id="panel" hidden>
+<div class="notice"><strong>Modo de preparação.</strong> Nenhum botão desta página cria traduções, altera casos ou publica conteúdo. A tabela internacional ainda depende de migração validada.</div>
+<div class="toolbar">
+<label for="type">Acervo<select id="type"><option value="Casos">Dossiês</option><option value="casos_diarios">Garimpo Sombrio</option></select></label>
+<label for="search">Buscar título<input id="search" type="search" placeholder="Pesquisar nos resultados carregados"></label>
+<button id="refresh" type="button">Atualizar lista</button>
+</div>
+<h2>Arquivos de origem</h2>
+<ul id="results" class="results"></ul>
+<p id="empty" hidden>Nenhum registro encontrado.</p>
+<section id="draft-editor" class="editor" hidden aria-label="Prévia de tradução">
+<h2>Prévia de rascunho internacional</h2>
+<p id="draft-origin"></p><p id="draft-revision" class="meta">Sem revisão persistida</p>
+<label for="draft-locale">Idioma<select id="draft-locale"><option value="en-US">Inglês (EUA)</option><option value="es-ES">Espanhol (Espanha)</option><option value="fr-FR">Francês (França)</option></select></label>
+<label for="draft-title">Título traduzido<input id="draft-title" maxlength="200"></label>
+<label for="draft-summary">Resumo traduzido<textarea id="draft-summary" maxlength="2000"></textarea></label>
+<label for="draft-body">Blocos narrativos (JSON estruturado: type, text)<textarea id="draft-body"></textarea></label>
+<label for="draft-sources">Fontes documentais (JSON estruturado: id, url, description)<textarea id="draft-sources"></textarea></label>
+<div class="editor-actions"><button type="button" id="preview-local">Conferir texto localmente</button><button type="button" id="save-draft" disabled aria-disabled="true">Salvar rascunho (bloqueado)</button><button type="button" id="submit-review" disabled aria-disabled="true">Enviar para revisão (bloqueado)</button></div>
+<p id="draft-feedback" role="status" aria-live="polite"></p><h3>Histórico editorial</h3><ul id="draft-history"></ul><small>Campos digitados não são salvos. Rascunhos existentes podem ser consultados somente se a tabela e a política RLS estiverem ativas.</small>
+</section>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
+<script src="../legacy/js/admin-auth.js?v=security-1"></script>
+<script src="./draft-workflow.js?v=6-12"></script>
+<script>
+(function(){
+'use strict';
+var panel=document.getElementById('panel'),status=document.getElementById('status');
+var results=document.getElementById('results'),type=document.getElementById('type');
+var search=document.getElementById('search'),empty=document.getElementById('empty');
+var client=null,records=[],requestSerial=0,selectedRecord=null;
+var editor=document.getElementById('draft-editor');
+var editFeedback=document.getElementById('draft-feedback');
+var draftSession=0,loadedRevision=0,loadedTranslationId=null;
+var translationReadSupported=false;
+function setStatus(text){status.textContent=text}
+function makeElement(tag,text,cls){var el=document.createElement(tag);if(cls)el.className=cls;el.textContent=text;return el}
+function render(){
+ var q=search.value.trim().toLocaleLowerCase('pt-BR');
+ var selected=records.filter(function(r){return String(r.titulo||'').toLocaleLowerCase('pt-BR').includes(q)});
+ results.textContent='';empty.hidden=selected.length!==0;
+ selected.forEach(function(r){
+  var li=document.createElement('li');
+  li.appendChild(makeElement('strong',r.titulo||'Sem título'));
+  li.appendChild(makeElement('div','ID original: '+r.id+' · '+(r.categoria||type.options[type.selectedIndex].text)+' · '+(r.status_publicacao||'Status não informado'),'meta'));
+  var grid=makeElement('div','','grid');
+  ['en-US','es-ES','fr-FR'].forEach(function(code){
+   grid.appendChild(makeElement('div',code+' · Tradução não verificada'));
+  });
+  li.appendChild(grid);
+  var btn=makeElement('button','Preparar tradução (sem salvar)');btn.type='button';
+  btn.addEventListener('click',function(){selectedRecord=r;editor.hidden=false;document.getElementById('draft-origin').textContent='Origem: '+r.titulo+' · ID '+r.id+' · '+type.options[type.selectedIndex].text;
+   ['draft-title','draft-summary','draft-body','draft-sources'].forEach(function(id){document.getElementById(id).value=''});
+   document.getElementById('draft-revision').textContent='Sem revisão persistida';
+   loadedRevision=0;loadedTranslationId=null;document.getElementById('draft-history').textContent=''; editFeedback.textContent='Consultando estado da tradução…';
+   editor.scrollIntoView({behavior:'smooth',block:'start'});loadTranslation();
+  });li.appendChild(btn);results.appendChild(li);
+ });
+}
+async function load(){
+ var thisRequest=++requestSerial;
+ setStatus('Consultando o acervo com as permissões administrativas…');
+ records=[];selectedRecord=null;editor.hidden=true;draftSession++;loadedTranslationId=null;render();
+ var table=type.value;
+ var res=await client.from(table).select('id,titulo,categoria,status_publicacao').order('id',{ascending:false}).limit(100);
+ if(thisRequest!==requestSerial)return;
+ if(res.error){setStatus('Consulta indisponível: '+res.error.message);return}
+ records=res.data||[];setStatus(records.length+' registros consultados (máximo 100 por vez). Dados de tradução não disponíveis nesta fase.');
+ render();
+}
+async function start(){
+ try{
+  if(typeof obterSessaoAdminIsolada!=='function')throw Error('Autenticação administrativa não carregou.');
+  var sessao=await obterSessaoAdminIsolada();
+  var verifiedAt=Number(sessionStorage.getItem('arquivo-admin-verified-at')||0);
+  var verifiedUser=sessionStorage.getItem('arquivo-admin-verified-user')||'';
+  if(!sessao||!verifiedAt||Date.now()-verifiedAt>=30*60*1000||verifiedUser!==String(sessao.user.id)){
+   location.replace('../../admin.html?session=verificacao&next=adm');return;
+  }
+  client=obterClienteAdminIsolado();
+  var user=await client.auth.getUser();
+  if(user.error||user.data?.user?.app_metadata?.role!=='admin')throw Error('Sessão administrativa inválida.');
+  panel.hidden=false;await load();
+ }catch(error){setStatus('Acesso indisponível: '+String(error.message||error))}
+}
+
+async function loadTranslation(){
+ var current=++draftSession;
+ if(!selectedRecord||!client)return;
+ var sourceType=type.value==='Casos'?'dossie':'garimpo';
+ var sourceId=selectedRecord.id;
+ var locale=document.getElementById('draft-locale').value;
+ var idColumn=sourceType==='dossie'?'dossier_id':'daily_case_id';
+ // Apenas leitura com RLS. Se a tabela nao estiver implantada, permanece no modo offline.
+ var response=await client.from('international_content_versions')
+   .select('id,locale,revision,editorial_status,translated_title,translated_summary,body_blocks,translated_sources')
+   .eq('source_type',sourceType).eq(idColumn,sourceId).eq('locale',locale).maybeSingle();
+ if(current!==draftSession||!selectedRecord||selectedRecord.id!==sourceId||type.value!==(sourceType==='dossie'?'Casos':'casos_diarios'))return;
+ if(response.error){
+  translationReadSupported=false;loadedTranslationId=null;
+  editFeedback.textContent='Prévia local: banco internacional ainda não habilitado ou consulta indisponível.';
+  document.getElementById('draft-revision').textContent='Sem revisão persistida';
+  return;
+ }
+ translationReadSupported=true;
+ var row=response.data;
+ if(!row){loadedRevision=0;loadedTranslationId=null;document.getElementById('draft-history').textContent='';editFeedback.textContent='Ainda não há rascunho salvo neste idioma.';document.getElementById('draft-revision').textContent='Novo rascunho · revisão esperada 0';return}
+ loadedRevision=row.revision;loadedTranslationId=row.id;
+ document.getElementById('draft-revision').textContent='Registro existente · revisão '+row.revision+' · '+row.editorial_status;
+ document.getElementById('draft-title').value=row.translated_title||'';
+ document.getElementById('draft-summary').value=row.translated_summary||'';
+ document.getElementById('draft-body').value=JSON.stringify(row.body_blocks||[],null,2);
+ document.getElementById('draft-sources').value=JSON.stringify(row.translated_sources||[],null,2);
+ editFeedback.textContent=row.editorial_status==='draft'?'Rascunho carregado para conferência. Salvamento ainda bloqueado.':'Tradução em revisão: edição bloqueada.';
+ try{var history=await window.arquivoI18nDraft.audit(client,row.id);if(current!==draftSession)return;
+ var list=document.getElementById('draft-history');list.textContent='';history.forEach(function(entry){var li=document.createElement('li');li.textContent=entry.action+' · revisão '+entry.to_revision+' · '+new Date(entry.occurred_at).toLocaleString('pt-BR');list.appendChild(li)})}
+ catch(_){if(current===draftSession)document.getElementById('draft-history').textContent='Histórico indisponível.'}
+}
+document.getElementById('draft-locale').addEventListener('change',function(){
+ ['draft-title','draft-summary','draft-body','draft-sources'].forEach(function(id){document.getElementById(id).value=''});
+ document.getElementById('draft-history').textContent='';loadedTranslationId=null;
+ if(selectedRecord){editFeedback.textContent='Consultando estado da tradução…';loadTranslation()}
+});
+
+document.getElementById('preview-local').addEventListener('click',function(){
+ try{window.arquivoI18nDraft.validate();editFeedback.textContent='Estrutura preenchida. Revisão factual e gravação ainda não aprovadas.'}
+ catch(error){editFeedback.textContent='Pendências: '+error.message}
+});
+// Ligação completa preparada, mas indisponível enquanto enabled=false.
+document.getElementById('save-draft').addEventListener('click',async function(){
+ if(!window.arquivoI18nDraft.enabled||!selectedRecord)return;
+ try{
+  editFeedback.textContent='Salvando rascunho…';
+  var result=await window.arquivoI18nDraft.save(client,selectedRecord,type.value,loadedRevision);
+  if(!result||!result.translation_id)throw Error('Resposta de gravação incompleta.');
+  loadedTranslationId=result.translation_id;loadedRevision=result.new_revision;
+  editFeedback.textContent='Rascunho salvo · revisão '+loadedRevision;
+  await loadTranslation();
+ }catch(error){editFeedback.textContent='Falha ao salvar: '+String(error.message||error)}
+});
+document.getElementById('submit-review').addEventListener('click',async function(){
+ if(!window.arquivoI18nDraft.enabled||!loadedTranslationId)return;
+ try{
+  editFeedback.textContent='Enviando para revisão…';
+  await window.arquivoI18nDraft.submit(client,loadedTranslationId,loadedRevision);
+  editFeedback.textContent='Enviado para revisão.';
+  await loadTranslation();
+ }catch(error){editFeedback.textContent='Não foi possível enviar: '+String(error.message||error)}
+});
+['save-draft','submit-review'].forEach(function(id){
+ var b=document.getElementById(id);b.disabled=!window.arquivoI18nDraft.enabled;
+ b.setAttribute('aria-disabled',String(!window.arquivoI18nDraft.enabled));
+});
+type.addEventListener('change',load);
+search.addEventListener('input',render);
+document.getElementById('refresh').addEventListener('click',load);
+start();
+})();
+</script>
+</body>
+</html>
