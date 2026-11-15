@@ -14,6 +14,29 @@ Deno.serve(async(req:Request)=>{
  const {data:ok,error:authError}=await db.rpc("verify_welcome_dispatch_token",{p_token:candidate});
  if(authError||ok!==true)return respond({error:"Unauthorized"},401);
  const resend=Deno.env.get("RESEND_API_KEY")||"";
+ if(req.headers.get("x-welcome-diagnostic")==="status"){
+  const configured=Boolean(resend);
+  let domainStatus="not_checked";
+  let sendingEnabled=false;
+  const inspectionKey=Deno.env.get("RESEND_MANAGEMENT_API_KEY")||resend;
+  if(inspectionKey){
+   try{
+    const check=await fetch("https://api.resend.com/domains",{headers:{Authorization:"Bearer "+inspectionKey},signal:AbortSignal.timeout(6000)});
+    if(check.status===401||check.status===403)domainStatus="inspection_not_authorized";
+    else if(!check.ok)domainStatus="provider_unavailable";
+    else{
+     const payload=await check.json();
+     if(!Array.isArray(payload?.data)||payload.has_more===true)domainStatus="inspection_incomplete";
+     else{
+      const domain=payload.data.find((d:{name?:string})=>d.name==="arquivosombrio.net.br");
+      domainStatus=domain?.status||"domain_not_found";
+      sendingEnabled=Boolean(domain&&["verified","partially_verified"].includes(domain.status)&&domain.capabilities?.sending==="enabled");
+     }
+    }
+   }catch{domainStatus="provider_unavailable";}
+  }else domainStatus="api_key_missing";
+  return respond({ok:true,welcome_enabled:Deno.env.get("WELCOME_EMAIL_ENABLED")==="true",resend_api_key_present:configured,domain_status:domainStatus,domain_sending_enabled:sendingEnabled,sender:"boasvindas@arquivosombrio.net.br",read_only:true});
+ }
  const from="boasvindas@arquivosombrio.net.br";
  // Distinct from newsletter flags. Do not consume queued messages until verified credentials are configured.
  if(Deno.env.get("WELCOME_EMAIL_ENABLED")!=="true"||!resend)return respond({ok:true,enabled:false,sent:0});
