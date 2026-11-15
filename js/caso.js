@@ -2206,6 +2206,24 @@ function renderizarDocumentoBlocoDossie(dados) {
         );
     }
 
+    // Metadados facultativos: arquivos antigos continuam válidos.
+    const metadados = [
+        ["Tipo", dados.tipo_documento || dados.classificacao],
+        ["Instituição", dados.instituicao || dados.autor],
+        ["Data", dados.data_documento || dados.data_publicacao],
+        ["Referência", dados.referencia]
+    ].filter(([, valor]) => textoBlocoDossie(valor));
+
+    if (metadados.length) {
+        const descricao = document.createElement("dl");
+        descricao.className = "case-content-document-metadata";
+        metadados.forEach(([rotulo, valor]) => {
+            descricao.appendChild(criarElementoTextoDossie("dt", rotulo));
+            descricao.appendChild(criarElementoTextoDossie("dd", textoBlocoDossie(valor)));
+        });
+        ficha.appendChild(descricao);
+    }
+
     const acoes =
         document.createElement("div");
 
@@ -2576,14 +2594,10 @@ function renderizarCardsBlocoDossie(
     dados
 ) {
 
-    const limite =
-        tipo === "evidencias"
-            ? 5
-            : Infinity;
-
+    // Nunca ocultar evidências adicionais: a integridade do dossiê
+    // prevalece sobre limites visuais arbitrários.
     const itens =
-        normalizarItensBlocoDossie(dados)
-            .slice(0, limite);
+        normalizarItensBlocoDossie(dados);
 
     if (!itens.length) {
         return null;
@@ -2731,6 +2745,24 @@ function renderizarCardsBlocoDossie(
                 )
             );
             detalhes.appendChild(texto);
+
+            // Identificação documental opcional, exibida apenas quando fornecida.
+            const metadadosEvidencia = [
+                ["Classificação", obterCampoItemDossie(objeto, ["classificacao", "tipo"])],
+                ["Procedência", obterCampoItemDossie(objeto, ["procedencia", "instituicao", "origem"])],
+                ["Data", obterCampoItemDossie(objeto, ["data_documento", "data", "data_publicacao"])],
+                ["Situação da informação", obterCampoItemDossie(objeto, ["situacao_documental", "grau_confirmacao"])]
+            ].filter(([, valor]) => Boolean(valor));
+
+            if (metadadosEvidencia.length) {
+                const ficha = document.createElement("dl");
+                ficha.className = "case-evidence-metadata";
+                metadadosEvidencia.forEach(([rotulo, valor]) => {
+                    ficha.appendChild(criarElementoTextoDossie("dt", rotulo));
+                    ficha.appendChild(criarElementoTextoDossie("dd", valor));
+                });
+                detalhes.appendChild(ficha);
+            }
 
             const fonte =
                 obterCampoItemDossie(objeto, ["fonte"]);
@@ -2956,8 +2988,12 @@ function renderizarSituacaoOficialBlocoDossie(dados) {
 function chaveFonteDossie(item) {
 
     if (typeof item === "string") {
-        return textoBlocoDossie(item)
-            .toLocaleLowerCase("pt-BR");
+        const texto = textoBlocoDossie(item);
+        const url = texto.match(/https?:\/\/[^\s]+/i);
+        // Evita a mesma fonte repetida com títulos levemente diferentes.
+        // A coleção de dados original permanece intacta.
+        if (url) return "url:" + url[0].replace(/[),.;]+$/, "").toLowerCase();
+        return texto.replace(/\s+/g, " ").toLocaleLowerCase("pt-BR");
     }
 
     if (!item || typeof item !== "object") {
@@ -2982,8 +3018,16 @@ function renderizarFontesBlocoDossie(dados) {
 
     const vistos = new Set();
 
+    // Uma referência antiga costuma ocupar título e URL em duas linhas.
+    // Separe referências por parágrafos, não cada linha da mesma referência.
     const itens =
-        normalizarItensBlocoDossie(dados, true)
+        Array.isArray(dados.itens)
+            ? normalizarItensBlocoDossie(dados, true)
+            : textoBlocoDossie(dados.texto)
+                .split(/\n\s*\n/g)
+                .map(parte => parte.trim())
+                .filter(Boolean);
+    const fontesUnicas = itens
             .filter(item => {
 
                 const chave =
@@ -2997,7 +3041,7 @@ function renderizarFontesBlocoDossie(dados) {
                 return true;
             });
 
-    if (!itens.length) {
+    if (!fontesUnicas.length) {
         return null;
     }
 
@@ -3022,7 +3066,7 @@ function renderizarFontesBlocoDossie(dados) {
     const lista =
         document.createElement("ol");
 
-    itens.forEach(item => {
+    fontesUnicas.forEach(item => {
 
         const linha =
             document.createElement("li");

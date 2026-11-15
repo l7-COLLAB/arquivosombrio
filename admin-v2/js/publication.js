@@ -14,6 +14,13 @@ export function compileDossierForPublic(draft){
   if(type==="documento"&&!txt(data.url)){errors.push("Documento "+(i+1)+" sem URL.");return}
   compiled.push(out)
  });
+ // Diagnóstico editorial não bloqueante: preserva a publicação legada.
+ const temBloco=tipo=>compiled.some(b=>b.tipo===tipo);
+ const temLista=valor=>Array.isArray(valor)&&valor.some(item=>item!=null&&String(typeof item==="object"?JSON.stringify(item):item).trim());
+ if(!temBloco("fontes"))warnings.push("Revisão documental: bloco de fontes não identificado. Confira se as referências estão presentes na narrativa.");
+ if(!temBloco("cronologia"))warnings.push("Revisão documental: cronologia estruturada não identificada. Avalie se é aplicável.");
+ if(!temBloco("documento")&&!temLista(d.documentos))warnings.push("Revisão documental: sem documentos vinculados. Isso não impede a publicação.");
+ if(!temBloco("evidencias")&&!temLista(d.evidencias))warnings.push("Revisão documental: evidências estruturadas não identificadas; verifique se são pertinentes ao caso.");
  const row={
   titulo:txt(d.titulo),categoria:txt(d.categoria),local:txt(d.local),ano:txt(d.ano),status:txt(d.status),
   imagem:txt(d.imagem),resumo:txt(d.resumo),historia:txt(d.historia),
