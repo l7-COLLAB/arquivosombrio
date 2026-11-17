@@ -12,4 +12,4 @@ for i,seconds in segments:
     subprocess.run(['ffmpeg','-y','-v','error','-i',source,'-af',f'atempo={speed:.6f},loudnorm=I=-18:TP=-2:LRA=7,apad,atrim=duration={seconds},afade=t=out:st={seconds-.12}:d=0.12','-ar','48000','-ac','1',target],check=True)
     files.append(f"file '{target}'")
 pathlib.Path('concat.txt').write_text('\n'.join(files))
-subprocess.run(['ffmpeg','-y','-v','error','-f','concat','-safe','0','-i','concat.txt','-c:a','pcm_s16le','narration.wav'],check=True)
+subprocess.run(['ffmpeg','-y','-v','error','-f','concat','-safe','0','-i','concat.txt','-af','apad,atrim=duration=20','-c:a','pcm_s16le','narration.wav'],check=True)
