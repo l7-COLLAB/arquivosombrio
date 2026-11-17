@@ -28,7 +28,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y ffmpeg espeak-ng
-          npm install --prefix /tmp/hf-runtime @hyperframes/cli@0.9.59 gsap@3.14.2 --no-audit --no-fund
+          npm install --prefix /tmp/hf-runtime hyperframes@latest gsap@3.14.2 --no-audit --no-fund
           echo "/tmp/hf-runtime/node_modules/.bin" >> "$GITHUB_PATH"
           python -m pip install kokoro-onnx soundfile
       - name: Scaffold HyperFrames project
