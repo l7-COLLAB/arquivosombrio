@@ -49,8 +49,9 @@ jobs:
         working-directory: /tmp/arquivo-sombrio-gacy
         run: |
           mkdir -p qa
-          hyperframes lint > qa/lint.txt 2>&1
-          hyperframes check --json > qa/check.json
+          set -o pipefail
+          hyperframes lint 2>&1 | tee qa/lint.txt
+          hyperframes check --json 2>&1 | tee qa/check.json
       - name: Render MP4
         working-directory: /tmp/arquivo-sombrio-gacy
         run: |
