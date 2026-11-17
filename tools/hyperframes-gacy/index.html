@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=1080, initial-scale=1">
+<title>Arquivo Sombrio | Gacy: identificação das vítimas</title>
+<script src="./gsap.min.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#171715;color:#EAE3D5}
+body{font-family:"Libre Baskerville",Georgia,serif}
+#root{position:relative;width:1080px;height:1920px;overflow:hidden;background:#171715}
+.scene{position:absolute;inset:0;width:1080px;height:1920px;background:#171715;overflow:hidden}
+.scene:not(:first-child){opacity:0}
+.content{width:100%;height:100%;padding:230px 108px 260px;display:flex;flex-direction:column;justify-content:center;gap:46px}
+.kicker,.source,.brand,.handle,.tag{font-family:"DM Mono",monospace;font-weight:400}
+.kicker{font-size:30px;letter-spacing:4px;color:#A98A5F;margin:0}
+h1,h2,p{margin:0}h1{font-size:96px;line-height:1.22;font-weight:700;letter-spacing:-3px;max-width:840px}
+h2{font-size:76px;line-height:1.28;font-weight:700;letter-spacing:-2px;max-width:840px}
+.copy{font-size:44px;line-height:1.5;max-width:810px;color:#EAE3D5}
+.source{font-size:27px;line-height:1.55;max-width:810px;color:#C9B99E}
+.brand{font-size:30px;letter-spacing:5px;color:#EAE3D5}
+.handle{font-size:34px;line-height:1.5;color:#EAE3D5}
+.rule{width:116px;height:6px;background:#713C39}
+.big{font-family:"Libre Baskerville",Georgia,serif;font-size:290px;line-height:1.08;letter-spacing:-14px;font-weight:700;font-variant-numeric:tabular-nums}
+.tag{font-size:28px;line-height:1.5;letter-spacing:2px;color:#A98A5F}
+.paper{position:absolute;top:180px;right:-70px;width:350px;height:1100px;background:#29241F;transform:rotate(11deg);border:2px solid #713C39;opacity:.34}
+.orbit{position:absolute;bottom:330px;right:-240px;width:650px;height:650px;border:2px solid #713C39;border-radius:50%;opacity:.5}
+</style></head><body>
+<div id="root" data-composition-id="gacy" data-width="1080" data-height="1920" data-fps="30" data-start="0" data-duration="20">
+<section class="scene" id="s1">
+<div class="paper" data-layout-ignore></div>
+<div class="content"><p class="brand">ARQUIVO SOMBRIO</p><div class="rule"></div><p class="kicker">DOSSIÊ · DEZEMBRO DE 1978</p><h1>O desaparecimento de Robert Piest.</h1><p class="copy">A investigação levou a John Wayne Gacy.</p><p class="source">Fonte: People v. Gacy, Illinois, 1984.</p></div>
+</section>
+<section class="scene" id="s2"><div class="orbit" data-layout-ignore></div><div class="content"><p class="brand">ARQUIVO SOMBRIO</p><div class="rule"></div><p class="kicker">JOHN WAYNE GACY</p><p class="big">33</p><h2>condenações por homicídio.</h2><p class="source">Fonte: Suprema Corte de Illinois, 1984.</p></div></section>
+<section class="scene" id="s3"><div class="paper" data-layout-ignore></div><div class="content"><p class="brand">ARQUIVO SOMBRIO</p><div class="rule"></div><p class="kicker">IDENTIFICAÇÃO FORENSE</p><h2>Décadas depois, o DNA devolveu nomes.</h2><p class="copy">Exames genéticos ajudaram a identificar vítimas que permaneciam desconhecidas.</p><p class="source">Fonte: Cook County Sheriff, identificações de 2011, 2017 e 2021.</p></div></section>
+<section class="scene" id="s4"><div class="orbit" data-layout-ignore></div><div class="content"><p class="brand">ARQUIVO SOMBRIO</p><div class="rule"></div><p class="kicker">LEIA O DOSSIÊ</p><h2>As vítimas e a investigação.</h2><p class="copy">Acesse pelo link na bio.</p><p class="handle">@arquivosombrio.br</p><p class="tag">arquivosombrio.net.br</p></div></section>
+<audio id="narration" src="narration.wav" data-start="0" data-duration="20" data-track-index="1" data-volume="1"></audio>
+</div>
+<script>
+window.__timelines=window.__timelines||{};
+const tl=gsap.timeline({paused:true});
+const starts=[0,5,10,17];
+starts.forEach((start,i)=>{
+ const scene="#s"+(i+1);
+ if(i>0){
+  tl.to("#s"+i,{opacity:0,duration:.5,ease:"power2.inOut"},start);
+  tl.fromTo(scene,{opacity:0},{opacity:1,duration:.5,ease:"power2.inOut"},start);
+ }
+ tl.from(scene+" .brand",{y:12,opacity:0,duration:.55,ease:"sine.out"},start+.12);
+ tl.from(scene+" .rule",{scaleX:0,transformOrigin:"left",duration:.7,ease:"power2.out"},start+.16);
+ tl.from(scene+" .kicker",{x:-18,opacity:0,duration:.55,ease:"power3.out"},start+.22);
+ tl.from(scene+" h1,"+scene+" h2,"+scene+" .big",{y:36,opacity:0,duration:.8,stagger:.12,ease:"expo.out"},start+.32);
+ tl.from(scene+" .copy",{y:20,opacity:0,duration:.7,ease:"power2.out"},start+.5);
+ tl.from(scene+" .source,"+scene+" .handle,"+scene+" .tag",{y:10,opacity:0,duration:.6,stagger:.12,ease:"sine.out"},start+.65);
+ tl.from(scene+" .paper,"+scene+" .orbit",{x:32,opacity:0,duration:1.2,ease:"sine.out"},start+.18);
+});
+tl.to("#s4",{opacity:0,duration:.35,ease:"sine.in"},19.65);
+window.__timelines.gacy=tl;
+</script></body></html>

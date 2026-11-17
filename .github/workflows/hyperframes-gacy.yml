@@ -1,0 +1,79 @@
+name: Render HyperFrames · Gacy
+on:
+  push:
+    branches: ['video/hyperframes-gacy-20261116']
+    paths: ['tools/hyperframes-gacy/**', '.github/workflows/hyperframes-gacy.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: hyperframes-gacy
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      CI: 'true'
+      HF_NO_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install rendering and narration dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg espeak-ng
+          npm install --prefix /tmp/hf-runtime @hyperframes/cli@0.9.59 gsap@3.14.2 --no-audit --no-fund
+          echo "/tmp/hf-runtime/node_modules/.bin" >> "$GITHUB_PATH"
+          python -m pip install kokoro-onnx soundfile
+      - name: Scaffold HyperFrames project
+        run: |
+          hyperframes init /tmp/arquivo-sombrio-gacy --non-interactive --skip-skills
+          cp tools/hyperframes-gacy/* /tmp/arquivo-sombrio-gacy/
+          cp /tmp/hf-runtime/node_modules/gsap/dist/gsap.min.js /tmp/arquivo-sombrio-gacy/
+          hyperframes browser ensure
+      - name: Generate Brazilian Portuguese narration
+        working-directory: /tmp/arquivo-sombrio-gacy
+        run: |
+          hyperframes tts voice-0.txt --voice pf_dora --speed 1.1 --output voice-0.wav
+          hyperframes tts voice-1.txt --voice pf_dora --speed 1.1 --output voice-1.wav
+          hyperframes tts voice-2.txt --voice pf_dora --speed 1.1 --output voice-2.wav
+          hyperframes tts voice-3.txt --voice pf_dora --speed 1.1 --output voice-3.wav
+          python fit-audio.py
+      - name: Check composition
+        working-directory: /tmp/arquivo-sombrio-gacy
+        run: |
+          mkdir -p qa
+          hyperframes lint > qa/lint.txt 2>&1
+          hyperframes check --json > qa/check.json
+      - name: Render MP4
+        working-directory: /tmp/arquivo-sombrio-gacy
+        run: |
+          hyperframes render --fps 30 --quality looks --workers 2 --output arquivo-sombrio-gacy-20s.mp4
+          ffprobe -v error -show_format -show_streams -of json arquivo-sombrio-gacy-20s.mp4 > qa/video-metadata.json
+          ffmpeg -y -v error -ss 2 -i arquivo-sombrio-gacy-20s.mp4 -frames:v 1 poster.jpg
+          python - <<'PY'
+          import json
+          d=json.load(open('qa/video-metadata.json'))
+          v=next(s for s in d['streams'] if s['codec_type']=='video')
+          assert (v['width'],v['height'])==(1080,1920),v
+          assert any(s['codec_type']=='audio' for s in d['streams'])
+          assert abs(float(d['format']['duration'])-20)<.15,d
+          print('Verified: 1080x1920, 20 seconds, audio present.')
+          PY
+      - name: Save video and quality reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arquivo-sombrio-gacy-hyperframes
+          path: |
+            /tmp/arquivo-sombrio-gacy/arquivo-sombrio-gacy-20s.mp4
+            /tmp/arquivo-sombrio-gacy/poster.jpg
+            /tmp/arquivo-sombrio-gacy/qa/
+          if-no-files-found: warn
+          retention-days: 30
