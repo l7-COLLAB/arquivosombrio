@@ -1,5 +1,5 @@
 "use strict";
-const literaryContentStyles=document.createElement("link");literaryContentStyles.rel="stylesheet";literaryContentStyles.href="css/arquivo-literario-conteudo.css?v=1";document.head.appendChild(literaryContentStyles);
+const literaryContentStyles=document.createElement("link");literaryContentStyles.rel="stylesheet";literaryContentStyles.href="css/arquivo-literario-conteudo.css?v=20261120-mobile-audit";document.head.appendChild(literaryContentStyles);
 const LIT_SUPABASE_URL="https://iuhotznurbyujzbyhizf.supabase.co",LIT_SUPABASE_KEY="sb_publishable_bpAZ5EhYLIuVoE4Q97s_-A_XQwwRxUj";
 const tipoArquivo=document.body.dataset.archiveType||"",config=tipoArquivo==="lendas"?{table:"lendas",label:"LENDA"}:{table:"creepypastas",label:"CREEPYPASTA"};
 function carregarSEO(){if(window.ArquivoSEO)return Promise.resolve();return new Promise(resolve=>{const existente=document.querySelector('script[data-seo-publicacao="true"]');if(existente){existente.addEventListener("load",resolve,{once:true});existente.addEventListener("error",resolve,{once:true});return;}const script=document.createElement("script");script.src="js/seo-publicacao.js?v=20260919-1";script.dataset.seoPublicacao="true";script.addEventListener("load",resolve,{once:true});script.addEventListener("error",resolve,{once:true});document.head.appendChild(script);});}
