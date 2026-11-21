@@ -13,3 +13,22 @@
 .archive-literary-items h4{margin:0 0 .45rem;color:#ded2c1;font-family:"Libre Baskerville",serif;font-size:.95rem}.archive-literary-items small{display:block;margin-bottom:.5rem;color:#b1915c;font-family:"DM Mono",monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase}
 .archive-literary-items p{margin:0;color:#9b9185;font-family:"Libre Baskerville",serif;font-size:.86rem;line-height:1.7}
 .archive-literary-fiction-notice{margin:0 0 1.8rem;padding:.8rem 1rem;border:1px solid rgba(164,19,19,.38);color:#b9aa97;font-family:"DM Mono",monospace;font-size:.67rem;letter-spacing:.08em;text-transform:uppercase}
+
+/* Auditoria mobile 20/11/2026 — leitor Lendas/Creepypastas (iPhone 11, 414px) */
+@media (max-width: 520px) {
+  body[data-archive-type="lendas"] #literary-detail.archive-literary-detail,
+  body[data-archive-type="creepypastas"] #literary-detail.archive-literary-detail { padding-top: 1.65rem; padding-bottom: 3.2rem; }
+  body[data-archive-type="lendas"] #literary-detail .archive-literary-title,
+  body[data-archive-type="creepypastas"] #literary-detail .archive-literary-title {
+    font-size: clamp(1.95rem, 7.6vw, 2.3rem);
+    line-height: 1.17;
+    letter-spacing: -.015em;
+    overflow-wrap: anywhere;
+  }
+  #literary-detail .archive-literary-detail-cover { height: auto; max-height: 420px; object-fit: contain; margin-block: 1.25rem 1.65rem; }
+  #literary-detail .archive-literary-body { font-size: 1rem; line-height: 1.82; overflow-wrap: break-word; }
+  #literary-detail .archive-literary-subtitle { font-size: clamp(1.21rem, 5vw, 1.55rem); line-height: 1.36; margin-top: 2.1rem; }
+  #literary-detail .archive-literary-figure { margin-block: 1.65rem; }
+  #literary-detail .archive-literary-figure figcaption { font-size: .78rem; color: #b9ad9b; line-height: 1.6; }
+  #literary-detail .archive-literary-fiction-notice { font-size: .78rem; line-height: 1.6; letter-spacing: .04em; }
+}
