@@ -74,6 +74,20 @@
           img.dataset.coverCredit = path;
           return;
         }
+        // Capas vetoriais autorais das novas Lendas e Creepypastas. Exibir crédito visível.
+        var originalArt = false;
+        try {
+          var artworkUrl = new URL(img.src, document.baseURI);
+          originalArt = artworkUrl.hostname === 'raw.githubusercontent.com' &&
+            /^\/l7-COLLAB\/arquivosombrio\/[^/]+\/assets\/capas-editoriais\/[^/]+\.svg$/.test(artworkUrl.pathname);
+        } catch (_) { /* A fonte já foi validada acima. */ }
+        if (originalArt) {
+          var artworkCaption = captionFor(img);
+          artworkCaption.replaceChildren(document.createTextNode(illustrationCaption + ' Arte e créditos: Arquivo Sombrio.'));
+          img.alt = 'Capa editorial original do Arquivo Sombrio, representação gráfica ilustrativa.';
+          img.dataset.coverCredit = path;
+          return;
+        }
         var entry = Array.from(documentary.entries()).find(function (pair) { return path.endsWith(pair[0]); });
         if (!entry) return;
         var row = entry[1];
