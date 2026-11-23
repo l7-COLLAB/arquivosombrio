@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="Arte de capa do Dossiê Nancy Anderson, com paisagem noturna estilizada de Waikiki e título editorial">
+<defs><linearGradient id="bg" x1="0" x2=".7" y1="0" y2="1"><stop stop-color="#10212c"/><stop offset="1" stop-color="#070c12"/></linearGradient><linearGradient id="ocean" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#20313d" stop-opacity=".75"/><stop offset="1" stop-color="#101922"/></linearGradient></defs>
+<rect width="1200" height="675" fill="url(#bg)"/><circle cx="980" cy="156" r="83" fill="#b8b1a3" opacity=".06"/><circle cx="980" cy="156" r="60" fill="none" stroke="#b7a892" opacity=".13"/>
+<path d="M0 441 L85 437 L85 398 L127 398 L127 421 L190 421 L190 347 L250 347 L250 440 L285 440 L285 383 L325 383 L325 432 L367 432 L367 368 L420 368 L420 437 L497 437 L497 406 L530 406 L530 442 L650 442 L650 375 L710 375 L710 410 L785 410 L785 435 L825 435 L825 335 L867 335 L867 424 L930 424 L930 389 L999 389 L999 433 L1050 433 L1050 359 L1092 359 L1092 436 L1200 436 L1200 675 L0 675 Z" fill="#24303a" opacity=".40"/>
+<path d="M0 485 C220 467 356 507 591 487 S975 461 1200 485 L1200 675 H0 Z" fill="url(#ocean)"/><g opacity=".26" stroke="#afbac0" stroke-width="1.2" fill="none"><path d="M20 511 C270 505 357 536 596 511 S985 495 1190 517"/><path d="M0 553 C281 538 411 579 648 555 S982 532 1210 566"/><path d="M10 614 C250 596 490 645 701 617 S1060 596 1200 623"/></g>
+<path d="M78 77 V142" stroke="#9d5855" stroke-width="7"/><text x="101" y="101" fill="#e0ded8" font-family="Georgia,serif" font-size="25" letter-spacing="4">ARQUIVO SOMBRIO</text><text x="101" y="139" fill="#a8bac0" font-family="Arial,sans-serif" font-size="16" letter-spacing="3">DOSSIÊ INVESTIGATIVO • WAIKIKI • 1972</text>
+<path d="M78 188 H1122" stroke="#52616b" opacity=".7"/>
+<text x="78" y="308" fill="#f1eee8" font-family="Georgia,serif" font-size="84">NANCY ANDERSON</text>
+<text x="81" y="373" fill="#cfdbde" font-family="Georgia,serif" font-size="35">A jovem de Waikiki e o vestígio</text><text x="81" y="417" fill="#cfdbde" font-family="Georgia,serif" font-size="35">que atravessou cinquenta anos</text>
+<path d="M80 452 H205" stroke="#a75653" stroke-width="5"/>
+<text x="81" y="589" fill="#a8b7bc" font-family="Arial,sans-serif" font-size="19" letter-spacing="2.2">INVESTIGAÇÃO · PERÍCIA FORENSE · MEMÓRIA</text>
+<text x="1120" y="625" text-anchor="end" fill="#798c95" font-family="Arial,sans-serif" font-size="15">ARQUIVO EDITORIAL • 2026</text>
+</svg>
