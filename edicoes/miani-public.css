@@ -12,11 +12,11 @@ a{color:inherit}a:hover{text-decoration-color:var(--red-light)}:focus-visible{ou
 .miani-brand{display:inline-block;flex:0 0 auto;text-decoration:none}.brand-art{display:block;width:315px;height:125px;background-image:url("./assets/miani-identidade.webp");background-size:768px 512px;background-position:-435px -28px;background-repeat:no-repeat}
 .masthead-note{color:#c2aeb0;font:italic 17px/1.5 Georgia,serif;text-align:right}
 main{max-width:1140px;margin:auto;padding:48px 24px 85px}
-.introduction{display:grid;grid-template-columns:minmax(0,1fr) 260px;align-items:center;gap:35px;background:#1d171bf4;border:1px solid #5b4048;border-left:4px solid var(--red);padding:29px 36px;margin-bottom:46px}
+.introduction{display:block;background:#1d171bf4;border:1px solid #5b4048;border-left:4px solid var(--red);padding:29px 36px;margin-bottom:46px}
 .introduction h1{font:500 clamp(2.6rem,5vw,4.2rem)/1.1 Georgia,serif;letter-spacing:.05em;margin:8px 0 20px}
 .introduction h1 em{font-weight:400;letter-spacing:0;color:#f2d9df}
 .introduction p{max-width:66ch;color:var(--muted);margin:0}
-.identity-illustration{height:236px;width:100%;background:url("./assets/miani-moldura.webp") center/contain no-repeat;filter:drop-shadow(0 9px 15px #0009)}
+
 .eyebrow{display:block;color:#dc9ba9;font:600 11px/1.5 system-ui;letter-spacing:.2em}
 .featured-book{display:grid;grid-template-columns:minmax(265px,.83fr) minmax(0,1.17fr);gap:clamp(24px,5vw,68px);align-items:center;scroll-margin-top:22px}
 .book-identity{position:relative;isolation:isolate;min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding:26px 20px 30px;background:linear-gradient(155deg,#20181ceb,#120f12f2 70%),url("./assets/miani-moldura.webp") center/cover;border:1px solid #916574;box-shadow:9px 14px 35px #0008}
@@ -37,7 +37,7 @@ main{max-width:1140px;margin:auto;padding:48px 24px 85px}
 .external-note{font-size:12px;line-height:1.7;color:#c7b8b4;max-width:65ch;margin:20px 0 0}
 .site-footer{max-width:1140px;margin:auto;padding:23px 24px 36px;border-top:1px solid #76515c;display:flex;justify-content:space-between;align-items:center;gap:18px;font-size:13px;color:#c9bcb7}
 .site-footer>div{display:grid;gap:3px}.site-footer strong{font:600 18px Georgia,serif;color:#eee5dc}.site-footer a{text-underline-offset:4px}
-@media(max-width:800px){.introduction{grid-template-columns:1fr}.identity-illustration{height:170px;max-width:220px;margin:auto}.featured-book{grid-template-columns:1fr;gap:33px}.book-identity{max-width:430px;width:100%;margin:auto;min-height:475px}}
+@media(max-width:800px){.introduction{padding:26px 28px}.featured-book{grid-template-columns:1fr;gap:33px}.book-identity{max-width:430px;width:100%;margin:auto;min-height:475px}}
 @media(max-width:520px){body{background-attachment:scroll}.topline{padding:10px 15px;flex-wrap:wrap;font-size:10px}.topline .catalog-link{display:none}.masthead-inner{min-height:110px;padding:11px 15px}.brand-art{width:220px;height:88px;background-size:537.6px 358.4px;background-position:-304.5px -19.6px}.masthead-note{display:none}main{padding:24px 14px 48px}.introduction{padding:23px 20px;gap:16px;margin-bottom:29px}.introduction h1{font-size:2.5rem}.book-detail h2{font-size:2.65rem}.book-identity{min-height:430px}.book-visual-title strong{font-size:2.8rem}.buy-link{width:100%}.site-footer{padding:22px 16px 32px;flex-direction:column;align-items:flex-start}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
