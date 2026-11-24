@@ -18,6 +18,11 @@ test("MIANI possui vitrine pública e protege os manuscritos", () => {
   assert.ok(page.includes("Letícia Sandri"));
   assert.ok(page.includes('ler-os-dias-de-outubro.html'));
   assert.ok(page.includes('class="book-cover-image"'));
+  assert.ok(page.includes('./assets/os-dias-de-outubro-capa-original.jpg'));
+  assert.ok(!page.includes("drive.google.com/thumbnail"));
+  assert.ok(!page.includes("cover-waiting"));
+  assert.ok(fs.existsSync(path.join(root,"edicoes/assets/os-dias-de-outubro-capa-original.jpg")));
+  assert.ok(fs.statSync(path.join(root,"edicoes/assets/os-dias-de-outubro-capa-original.jpg")).size > 100000);
   assert.ok(!page.includes('class="book-identity"'));
   assert.ok(read("edicoes/ler-os-dias-de-outubro.html").includes("CAPÍTULO 3"));
   assert.ok(page.includes("https://loja.uiclap.com/titulo/ua220883/"));
