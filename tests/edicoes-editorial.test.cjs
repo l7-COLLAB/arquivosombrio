@@ -15,7 +15,11 @@ test("MIANI possui vitrine pública e protege os manuscritos", () => {
   assert.ok(home.includes('href="edicoes/"'));
   assert.ok(novels.includes('href="edicoes/"'));
   assert.ok(page.includes("Os Dias de Outubro"));
-  assert.ok(page.includes("L.R. Muller"));
+  assert.ok(page.includes("Letícia Sandri"));
+  assert.ok(page.includes('ler-os-dias-de-outubro.html'));
+  assert.ok(page.includes('class="book-cover-image"'));
+  assert.ok(!page.includes('class="book-identity"'));
+  assert.ok(read("edicoes/ler-os-dias-de-outubro.html").includes("CAPÍTULO 3"));
   assert.ok(page.includes("https://loja.uiclap.com/titulo/ua220883/"));
   assert.ok(page.includes('content="index,follow'));
   assert.ok(!page.includes("editorial_chapters"));
