@@ -54,3 +54,8 @@ main{max-width:1140px;margin:auto;padding:48px 24px 85px}
 .free-preview .buy-link{margin-top:12px}
 @media(max-width:800px){.book-cover-wrap{max-width:360px}}
 @media(max-width:520px){.cover-waiting{min-height:400px}.free-preview{margin-top:34px;padding:24px 18px}}
+
+/* Segundo volume: mesma identidade, proporções originais da capa. */
+.featured-book + .featured-book{margin-top:64px;padding-top:55px;border-top:1px solid #6d4653}
+#fora-da-planta .book-cover-image{aspect-ratio:692/1063}
+@media(max-width:520px){.featured-book + .featured-book{margin-top:38px;padding-top:32px}}
